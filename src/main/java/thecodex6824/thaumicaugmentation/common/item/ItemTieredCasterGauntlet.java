@@ -26,6 +26,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -34,6 +35,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.IItemPropertyGetter;
@@ -47,6 +49,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -378,17 +381,26 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 				((IInteractWithCaster) state.getBlock()).onCasterRightClick(world, player.getHeldItem(hand), player, pos, side, hand))
 			return EnumActionResult.PASS;
 		
+		ItemStack stack = player.getHeldItem(hand);
+		if (state.getBlock() == Blocks.CAULDRON && state.getValue(BlockCauldron.LEVEL) > 0 && 
+				getDyedColor(stack) != getDefaultDyedColorForMeta(stack.getMetadata())) {
+			setDyedColor(stack, getDefaultDyedColorForMeta(stack.getMetadata()));
+			world.setBlockState(pos, state.withProperty(BlockCauldron.LEVEL, state.getValue(BlockCauldron.LEVEL) - 1));
+			world.playSound(null, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 0.5F, 1.0F);
+			return EnumActionResult.SUCCESS;
+		}
+		
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof IInteractWithCaster && 
-				((IInteractWithCaster) tile).onCasterRightClick(world, player.getHeldItem(hand), player, pos, side, hand))
+				((IInteractWithCaster) tile).onCasterRightClick(world, stack, player, pos, side, hand))
 			return EnumActionResult.PASS;
 		
 		if (CasterTriggerRegistry.hasTrigger(state))
-			return CasterTriggerRegistry.performTrigger(world, player.getHeldItem(hand), player, pos, side, state) ? 
+			return CasterTriggerRegistry.performTrigger(world, stack, player, pos, side, state) ? 
 					EnumActionResult.SUCCESS : EnumActionResult.FAIL;
 		
-		if (isStoringFocus(player.getHeldItem(hand))) {
-			ItemStack focus = getFocusStack(player.getHeldItem(hand));
+		if (isStoringFocus(stack)) {
+			ItemStack focus = getFocusStack(stack);
 			FocusPackage fPackage = ItemFocus.getPackage(focus);
 			if (fPackage != null) {
 				for (IFocusElement element : fPackage.nodes) {

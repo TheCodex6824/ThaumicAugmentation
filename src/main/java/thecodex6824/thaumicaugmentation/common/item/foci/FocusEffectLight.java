@@ -26,6 +26,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -33,15 +34,12 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.FocusEffect;
 import thaumcraft.api.casters.NodeSetting;
 import thaumcraft.api.casters.Trajectory;
-
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
-
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.tile.TileTemporaryLight;
@@ -75,7 +73,7 @@ public class FocusEffectLight extends FocusEffect {
 			if (state.getBlock().isAir(state, getPackage().world, result.getBlockPos()) || 
 					state.getBlock().isReplaceable(getPackage().world, result.getBlockPos())) {
 				
-				return placeLightSource(result.getBlockPos(), getSettingValue("duration"), getSettingValue("intensity"));
+				return placeLightSource(result.getBlockPos(), result.sideHit, getSettingValue("duration"), getSettingValue("intensity"));
 			}
 			else {
 				BlockPos pos = result.getBlockPos().offset(result.sideHit);
@@ -83,11 +81,11 @@ public class FocusEffectLight extends FocusEffect {
 				if (state.getBlock().isAir(state, getPackage().world, pos) || 
 					state.getBlock().isReplaceable(getPackage().world, pos))
 					
-					return placeLightSource(pos, getSettingValue("duration"), getSettingValue("intensity"));
+					return placeLightSource(pos, result.sideHit, getSettingValue("duration"), getSettingValue("intensity"));
 			}
 		}
 		else if (result.typeOfHit == Type.MISS) 
-			return placeLightSource(result.getBlockPos(), getSettingValue("duration"), getSettingValue("intensity"));
+			return placeLightSource(result.getBlockPos(), result.sideHit, getSettingValue("duration"), getSettingValue("intensity"));
 		else if (result.entityHit instanceof EntityLivingBase) {
 			((EntityLivingBase) result.entityHit).addPotionEffect(new PotionEffect(MobEffects.GLOWING, getSettingValue("duration") * 20, 0, true, false));
 			return true;
@@ -96,15 +94,20 @@ public class FocusEffectLight extends FocusEffect {
 		return false;
 	}
 	
-	protected boolean placeLightSource(BlockPos pos, int duration, int intensity) {
-		boolean result = getPackage().world.setBlockState(pos, TABlocks.TEMPORARY_LIGHT.getDefaultState());
-		if (getPackage().world.getTileEntity(pos) instanceof TileTemporaryLight) {
-			TileTemporaryLight tile = (TileTemporaryLight) getPackage().world.getTileEntity(pos);
-			tile.setTicksRemaining(duration * 20);
-			tile.setLightLevel(intensity);
+	protected boolean placeLightSource(BlockPos pos, EnumFacing side, int duration, int intensity) {
+		World world = getPackage().world;
+		if (world.isAreaLoaded(pos, pos) && world.mayPlace(TABlocks.TEMPORARY_LIGHT, pos, true, side, getPackage().getCaster())) {
+			boolean result = world.setBlockState(pos, TABlocks.TEMPORARY_LIGHT.getDefaultState());
+			if (world.getTileEntity(pos) instanceof TileTemporaryLight) {
+				TileTemporaryLight tile = (TileTemporaryLight) world.getTileEntity(pos);
+				tile.setTicksRemaining(duration * 20);
+				tile.setLightLevel(intensity);
+			}
+			
+			return result;
 		}
 		
-		return result;
+		return false;
 	}
 	
 	@Override
