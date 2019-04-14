@@ -1,0 +1,91 @@
+{
+    "entries": [
+        {
+            "key": "WARDED_ARCANA",
+            "name": "thaumicaugmentation.research.warded_arcana.title",
+            "icons": [
+                "thaumicaugmentation:warded_chest"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "THAUMIC_AUGMENTATION_BASE",
+                "WARDEDJARS",
+                "METALLURGY"
+            ],
+            "location": [
+                0,
+                3
+            ],
+            "meta": [
+            	"ROUND"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.warded_arcana.0",
+                    "required_item": [
+                        "thaumcraft:jar_normal"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.warded_arcana.1",
+                    "required_item": [
+                    	"oredict:chestWood",
+                        "thaumicaugmentation:material;1;1"
+                    ],
+                    "required_knowledge": [
+                    	"THEORY;ARTIFICE;1"
+                    ],
+                    "recipes": [
+                    	"thaumicaugmentation:WardingSigil"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.warded_arcana.2",
+                    "recipes": [
+                    	"thaumicaugmentation:WardedChest"
+                    ]
+                }
+            ]
+        },
+        {
+        	"key": "ARCANE_DOOR",
+            "name": "thaumicaugmentation.research.arcane_door.title",
+            "icons": [
+                "thaumicaugmentation:arcane_door;1;0",
+                "thaumicaugmentation:arcane_door;1;1"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "WARDED_ARCANA"
+            ],
+            "location": [
+                -3,
+                3
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.arcane_door.0",
+                    "required_item": [
+                        "oredict:doorWood",
+                        "minecraft:iron_door"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.arcane_door.1",
+                    "recipes": [
+                    	"thaumicaugmentation:ArcaneDoorWood",
+                    	"thaumicaugmentation:ArcaneDoorMetal"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,58 @@
+tile.thaumicaugmentation.vis_regenerator.name=Vis Regenerator
+tile.thaumicaugmentation.warded_chest.name=Warded Chest
+tile.thaumicaugmentation.arcane_door.name=Arcane Door
+tile.thaumicaugmentation.temporary_light.name=Casted Light
+
+item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
+item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet
+item.thaumicaugmentation.material.lattice.name=Vis Regeneration Lattice
+item.thaumicaugmentation.material.warding_sigil.name=Warding Sigil
+item.thaumicaugmentation.seal_copier.name=Seal Copier
+item.thaumicaugmentation.arcane_door.wood.name=Wooden Arcane Door
+item.thaumicaugmentation.arcane_door.metal.name=Thaumium Arcane Door
+
+itemGroup.thaumicaugmentation=Thaumic Augmentation
+
+focus.thaumicaugmentation.light.name=Light
+focus.thaumicaugmentation.light.text=Creates light at the target
+focus.thaumicaugmentation.light.intensity=Intensity
+focus.thaumicaugmentation.light.duration=Duration
+
+tc.research_category.THAUMIC_AUGMENTATION=Thaumic Augmentation
+thaumicaugmentation.research.thaumic_augmentation_base.title=Thaumic Augmentation
+thaumicaugmentation.research.thaumic_augmentation_base.0=I'll dedicate this section of the Thaumonomicon to any miscellaneous discoveries I make. Who knows what I may come up with?
+
+thaumicaugmentation.research.gauntlet_thaumium.title=Thaumium Caster's Gauntlet
+thaumicaugmentation.research.gauntlet_thaumium.0=As I noted before, iron is a very poor vis conductor. It gets the job done, but now that I have discovered thaumium, it should be a simple task to upgrade my old caster's gauntlet prototype to be much more effective than before.<BR>While I am making modifications, I might as well investigate enchanted fabric's usefullness as a replacement for leather.
+thaumicaugmentation.research.gauntlet_thaumium.1=I have successfully created the new casting gauntlet, which I am (uncreatively) calling the Thaumium Caster's Gauntlet. The introduction of Thaumium allows the caster to be more about 10% more efficient with the usage of Vis, in addition to slightly reducing the cooldown between casts.<BR>It seems that the enchanted fabric takes very well to dyes - I only need to combine the gauntlet with one or more dyes on a mundane crafting table to get a new color. To remove the dye, I need to use the gauntlet on a filled cauldron.
+
+thaumicaugmentation.research.gauntlet_void.title=Voidseer Caster's Gauntlet
+thaumicaugmentation.research.gauntlet_void.0=While the thaumium casting gauntlet was certaintly a success, I can't help but wonder if void metal is as effective a vis conductor as thaumium is. Even if it isn't, I have trouble believing its morphic properties won't have some benefit. 
+thaumicaugmentation.research.gauntlet_void.1=My results so far have been surprisingly disappointing. I have seen a small reduction in the vis cost of casting, but not enough to outweigh thaumium's faster recharge abilities.<BR>Perhaps I have been looking at the wrong component to improve...
+thaumicaugmentation.research.gauntlet_void.2=It seems my previous conjecture has proven to be correct. Upon replacing the vis resonator with a voidseer's pearl, the gauntlet felt much more connected to the surronding aura. So connected, in fact, that not only have I measured a 30% vis discount over my original prototype, but it also absorbs vis over a much wider area. Hopefully this will mean I can cast with very complex foci without depleting the local aura nearly as quickly as before.<BR>It seems that while the cooldown time of this gauntlet is still better than the original caster, the thaumium gauntlet is still superior in this regard. I will have to decide which trait, vis usage or cooldown time, I find more valuable. Luckilly, the ability to dye the gauntlet was retained from its predecessor. The method to apply and remove dye is the same as for the thaumium gauntlet.
+
+thaumicaugmentation.research.vis_regenerator.title=Vis Regenerator
+thaumicaugmentation.research.vis_regenerator.0=As I have come to experience, a session of advanced arcane crafting or foci casting can leave the aura completely depleted. I should try to find something that can help regenerate the aura a bit quicker than letting it recover naturally.
+research.f_LEAFSILVERWOOD.text=Something that can replenish the aura
+thaumicaugmentation.research.vis_regenerator.1=I have drawn up plans for a device I am calling the Vis Regenerator. It consists of a lattice layer, made of silverwood leaves and an essentia filter, with an outer casing that attempts to "recirculate" the aura through the lattice.<BR>An interesting characteristic of this device is that the effectiveness seems to be tied to the total capacity of the local aura. In other words, areas that naturally have a low amount of vis will experience a higher rate of regeneration.<BR>If I need to disable the Vis Regenerator for any reason, applying a redstone signal should do the job.
+thaumicaugmentation.research.vis_regenerator.2=Because of the Vis Regenerator's delicate relationship with the local aura, I should avoid using it in areas with a lot of flux. I have a feeling it would the make aura pollution much worse...
+
+thaumicaugmentation.research.seal_copier.title=Seal Copier
+thaumicaugmentation.research.seal_copier.0=Configuring golem seals by hand is fine for small projects, but when stacks of seals get involved it becomes tedious and error-prone. I should research a way to quickly configure large amounts of seals.
+thaumicaugmentation.research.seal_copier.1=I have created plans for a basic seal copying device. I just need to configure one seal with the settings I need, then right click it with the copier. I then only need to right click every other seal I want to apply the settings to. If I want to clear the memory of the copier, I need to right click while sneaking. I can then copy new settings and continue.<BR>It seems that the seal copier is unable to interact with seals that were not placed by the owner. I should keep this in mind if I am working with other Thaumaturges.
+
+thaumicaugmentation.research.more_auromancy.title=More Auromancy
+thaumicaugmentation.research.more_auromancy.0=I have already discovered some foci effects, but I feel there is still much more to discover. There are so many aspects of essentia I have not experimented with, that I am bound to find something useful.
+
+thaumicaugmentation.research.focus_light.title=Focus Effect: Light
+thaumicaugmentation.research.focus_light.0=While fire does give off light, it can be a bit... destructive. It should be somewhat simple to create an effect completely dedicated to giving off light. To begin, I should examine some light sources I already have access to.
+thaumicaugmentation.research.focus_light.1=The light pattern does exactly what I was hoping - it creates a bright light source wherever it is used. Unfortunately, the light source will not last forever, but it will be able to last several minutes.<BR>I do wonder what would happen if a living creature was exposed to this pattern's blast of light.
+
+thaumicaugmentation.research.warded_arcana.title=Warded Arcana
+thaumicaugmentation.research.warded_arcana.0=While browsing some of the old manuscripts in the Thaumonomicon, I came across a section that described the applications of warding arcana. Being able to create objects that are protected against everything except its owner sounds like something I should investigate. I should begin my studies by examining the warded device I have already created, the Warded Jar.
+thaumicaugmentation.research.warded_arcana.1=My examination of the Warded Jar provided me with all I need to know - it should be possible to apply protective properties to almost all materials, so long as I apply a special rune to the object first. While I'm excited by the possibilities this can lead to, I think it would be best to start with something simple - like a chest.
+thaumicaugmentation.research.warded_arcana.2=By taking a mundane chest and applying a warding sigil, I have created a container that is not only almost invoidable to all outside forces, but is also only accessible to me. This means I cannot use neither traditional methods of extracting and inserting items, such as hoppers, nor golems - maybe this is something I can look into in the future.
+
+thaumicaugmentation.research.arcane_door.title=Arcane Door
+thaumicaugmentation.research.arcane_door.0=Now that I have the basics of warding objects down, I think I can move on to something a bit more advanced. The original manuscripts I read described an indestructable door, which sounds like something worth researching. After all, replacing doors broken down by zombies does get annoying after a while...
+thaumicaugmentation.research.arcane_door.1=I have managed to create the warded door described in the manuscript, which I am calling the Arcane Door. Just like the Warded Chest, the doors will only open for their owner, and are extremely difficult to remove by normal means. I have also made two different styles - wood and thaumium. They both are functionally the same, but it is nice to have options for decoration purposes.<BR>If I want to remove the door, I need to sneak and then right click the bottom half of it.

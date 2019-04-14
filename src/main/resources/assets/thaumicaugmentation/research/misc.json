@@ -1,0 +1,116 @@
+{
+    "entries": [
+        {
+            "key": "THAUMIC_AUGMENTATION_BASE",
+            "name": "thaumicaugmentation.research.thaumic_augmentation_base.title",
+            "icons": [
+            	"thaumicaugmentation:gauntlet;1;0",
+                "thaumicaugmentation:vis_regenerator",
+                "thaumicaugmentation:seal_copier",
+                "thaumicaugmentation:warded_chest",
+                "thaumicaugmentation:arcane_door;1;0",
+                "thaumicaugmentation:arcane_door;1;1"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+            	"~FIRSTSTEPS"
+            ],
+            "siblings": [
+            	"~FIRSTSTEPS"
+            ],
+            "meta": [
+            	"ROUND",
+            	"HIDDEN"
+            ],
+            "location": [
+                0,
+                0
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.thaumic_augmentation_base.0"
+                }
+            ]
+        },
+        {
+            "key": "VIS_REGENERATOR",
+            "name": "thaumicaugmentation.research.vis_regenerator.title",
+            "icons": [
+                "thaumicaugmentation:vis_regenerator"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "THAUMIC_AUGMENTATION_BASE",
+                "METALLURGY@2"
+            ],
+            "location": [
+                1.5,
+                -1.5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.vis_regenerator.0",
+                    "required_research": [
+                        "f_LEAFSILVERWOOD"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ALCHEMY;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.vis_regenerator.1",
+                    "recipes": [
+                    	"thaumicaugmentation:Lattice",
+                        "thaumicaugmentation:VisRegenerator"
+                    ]
+                }
+            ],
+            "addenda": [
+            	{
+            		"text": "thaumicaugmentation.research.vis_regenerator.2",
+            		"required_research": [
+            			"FLUX"
+            		]
+            	}
+            ]
+        },
+        {
+        	"key": "SEAL_COPIER",
+            "name": "thaumicaugmentation.research.seal_copier.title",
+            "icons": [
+            	"thaumicaugmentation:seal_copier"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+            	"THAUMIC_AUGMENTATION_BASE",
+            	"~BASEGOLEMANCY",
+            	"~BASEINFUSION"
+            ],
+            "location": [
+                0,
+                -3
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.seal_copier.0",
+                    "required_item": [
+                        "thaumcraft:seals;1;0",
+                        "thaumcraft:brain"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;GOLEMANCY;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.seal_copier.1",
+                    "recipes": [
+                        "thaumicaugmentation:SealCopier"
+                    ]
+                }
+            ]
+        }
+    ]
+}

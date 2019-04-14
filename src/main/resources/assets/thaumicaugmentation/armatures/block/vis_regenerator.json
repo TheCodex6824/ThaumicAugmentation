@@ -1,0 +1,40 @@
+{
+    "joints": {
+        "fan": {
+            "19": [1.0],
+            "20": [1.0],
+            "21": [1.0],
+            "22": [1.0],
+            "23": [1.0]
+        }
+    },
+    "clips": {
+        "ta_enabled": {
+            "loop": true,
+            "joint_clips": {
+                "fan": [
+                	{
+	                    "variable": "axis_y",
+	                    "type": "uniform",
+	                    "interpolation": "nearest",
+	                    "samples": [1]
+                	},
+                	{
+                		"variable": "angle",
+	                    "type": "uniform",
+	                    "interpolation": "linear",
+	                    "samples": [
+	                        0, 90, 180, 270
+	                    ]
+                	}
+                ]
+            },
+            "events": {}
+        },
+        "ta_disabled": {
+            "loop": false,
+            "joint_clips": {},
+            "events": {}
+        }
+    }
+}

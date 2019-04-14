@@ -1,0 +1,94 @@
+{
+    "entries": [
+        {
+            "key": "GAUNTLET_THAUMIUM",
+            "name": "thaumicaugmentation.research.gauntlet_thaumium.title",
+            "icons": [
+                "thaumicaugmentation:gauntlet;1;0"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "~BASEAUROMANCY",
+                "~METALLURGY",
+                "THAUMIC_AUGMENTATION_BASE"
+            ],
+            "location": [
+                -3,
+                0
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.gauntlet_thaumium.0",
+                    "required_item": [
+                        "thaumcraft:plate;1;2",
+                        "thaumcraft:vis_resonator",
+                        "thaumcraft:fabric"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;ALCHEMY;1",
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.gauntlet_thaumium.1",
+                    "recipes": [
+                        "thaumicaugmentation:GauntletThaumium"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "GAUNTLET_VOID",
+            "name": "thaumicaugmentation.research.gauntlet_void.title",
+            "icons": [
+                "thaumicaugmentation:gauntlet;1;1"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "~BASEAUROMANCY",
+                "~BASEINFUSION",
+                "~METALLURGY",
+                "~BASEELDRITCH",
+                "GAUNTLET_THAUMIUM"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "location": [
+                -3,
+                -3
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.gauntlet_void.0",
+                    "required_item": [
+                        "thaumcraft:plate;1;3",
+                        "thaumcraft:vis_resonator"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.gauntlet_void.1",
+                    "required_craft": [
+                        "thaumcraft:voidseer_charm"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ELDRITCH;1"
+                    ],
+                    "warp": 2
+                },
+                {
+                    "text": "thaumicaugmentation.research.gauntlet_void.2",
+                    "recipes": [
+                        "thaumicaugmentation:GauntletVoid"
+                    ]
+                }
+            ]
+        }
+    ]
+}

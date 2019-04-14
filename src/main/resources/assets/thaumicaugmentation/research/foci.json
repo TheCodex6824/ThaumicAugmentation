@@ -1,0 +1,62 @@
+{
+    "entries": [
+        {
+            "key": "MORE_AUROMANCY",
+            "name": "thaumicaugmentation.research.more_auromancy.title",
+            "icons": [
+                "focus:focus.thaumicaugmentation.light"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "~FOCUSELEMENTAL",
+                "THAUMIC_AUGMENTATION_BASE"
+            ],
+            "location": [
+                3,
+                0
+            ],
+            "meta": [
+            	"ROUND"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.more_auromancy.0"
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_LIGHT",
+            "name": "thaumicaugmentation.research.focus_light.title",
+            "icons": [
+                "focus:focus.thaumicaugmentation.light"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "MORE_AUROMANCY"
+            ],
+            "location": [
+                3,
+                -3
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.focus_light.0",
+                    "required_item": [
+                        "oredict:torch",
+                        "oredict:dustGlowstone"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;AUROMANCY;1"
+                    ],
+                    "required_research": [
+                    	"!lux"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_light.1"
+                }
+            ]
+        }
+    ]
+}

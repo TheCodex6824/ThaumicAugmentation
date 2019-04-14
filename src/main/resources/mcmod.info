@@ -1,0 +1,18 @@
+[
+{
+  "modid": "thaumicaugmentation",
+  "name": "Thaumic Augmentation",
+  "description": "An addon mod for Thaumcraft that tries to add new content that fits in with the source material.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["TheCodex6824"],
+  "credits": "Azanor for all of his work on Thaumcraft, as well as KingLemming and others for maintaining the mod in the future.",
+  "logoFile": "",
+  "screenshots": [],
+  "useDependencyInformation": true,
+  "requiredMods": ["thaumcraft"],
+  "dependencies": ["thaumcraft"]
+}
+]

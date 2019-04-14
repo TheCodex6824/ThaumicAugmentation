@@ -1,0 +1,26 @@
+{
+	"parameters": {
+		"time": ["/", "#cycle_length"]
+	},
+	"clips": {
+		"ta_enabled": [
+			"apply",
+			"thaumicaugmentation:block/vis_regenerator@ta_enabled",
+			"#time"
+		],
+		"ta_disabled": [
+			"apply",
+			"thaumicaugmentation:block/vis_regenerator@ta_disabled",
+			"#time"
+		]
+	},
+	"states": [
+		"ta_enabled",
+		"ta_disabled"
+	],
+	"transitions": {
+		"ta_enabled": "ta_disabled",
+		"ta_disabled": "ta_enabled"
+	},
+	"start_state": "ta_disabled"
+}

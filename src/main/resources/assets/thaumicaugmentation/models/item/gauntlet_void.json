@@ -1,0 +1,13 @@
+{
+    "parent": "item/generated",    
+    "overrides": [
+        {
+            "predicate": {"focus": 0},
+            "model": "thaumicaugmentation:item/gauntlet_void_empty"
+        },
+        {
+            "predicate": {"focus": 1},
+            "model": "thaumicaugmentation:item/gauntlet_void_focus"
+        }
+    ]
+}

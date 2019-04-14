@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:block/door_bottom",
+    "textures": {
+        "bottom": "thaumicaugmentation:blocks/arcane_door_lower_wood",
+        "top": "thaumicaugmentation:blocks/arcane_door_upper_wood"
+    }
+}

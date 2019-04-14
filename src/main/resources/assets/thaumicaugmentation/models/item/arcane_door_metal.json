@@ -1,0 +1,6 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "thaumicaugmentation:items/arcane_door_metal"
+    }
+}

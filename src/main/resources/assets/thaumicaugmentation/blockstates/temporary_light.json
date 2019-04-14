@@ -1,0 +1,12 @@
+{
+    "forge_marker": 1,
+    "variants": {
+    	"normal": {
+    		"model": "thaumicaugmentation:temporary_light"
+    	},
+	    "inventory": {
+		    "model": "thaumicaugmentation:temporary_light",
+		    "transform": "forge:default-block"
+	    }
+    }
+}

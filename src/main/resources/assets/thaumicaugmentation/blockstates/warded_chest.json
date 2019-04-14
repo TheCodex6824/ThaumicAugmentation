@@ -1,0 +1,17 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+    	"model": "thaumicaugmentation:warded_chest"
+    },
+    "variants": {
+	    "ta_direction_h": {
+		    "south": {"y": 180},
+            "west": {"y": 270},
+            "north": {"y": 0},
+            "east": {"y": 90}
+	    },
+	    "inventory": {
+		    "transform": "forge:default-block"
+	    }
+    }
+}
