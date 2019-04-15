@@ -10,8 +10,14 @@ item.thaumicaugmentation.material.warding_sigil.name=Warding Sigil
 item.thaumicaugmentation.seal_copier.name=Seal Copier
 item.thaumicaugmentation.arcane_door.wood.name=Wooden Arcane Door
 item.thaumicaugmentation.arcane_door.metal.name=Thaumium Arcane Door
+item.thaumicaugmentation.key.iron.name=Iron Key
+item.thaumicaugmentation.key.brass.name=Brass key
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
+
+thaumicaugmentation.text.key_bound=This key is now bound to you
+thaumicaugmentation.text.key_unbound=This key is no longer bound to anyone
+thaumicaugmentation.text.bound_to=Bound to: %s
 
 focus.thaumicaugmentation.light.name=Light
 focus.thaumicaugmentation.light.text=Creates light at the target

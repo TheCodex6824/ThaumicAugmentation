@@ -54,6 +54,10 @@ public class BlockTABase extends Block {
 
 	protected Class<? extends TileEntity> tileClass;
 	
+	public BlockTABase(Material mat) {
+		super(mat);
+	}
+	
 	public BlockTABase(String name, Material mat, Class<? extends TileEntity> tClass) {
 		super(mat);
 		setRegistryName(name);

@@ -32,6 +32,7 @@ import net.minecraftforge.common.MinecraftForge;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thecodex6824.thaumicaugmentation.api.event.WardedBlockPermissionEvent;
+import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
 
 public abstract class TileWarded extends TileEntity implements IInteractWithCaster, IWardedTile {
@@ -54,6 +55,24 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 		return owner;
 	}
 	
+	protected boolean checkPermission(EntityPlayer player) {
+		if (owner.equals(player.getUniqueID().toString()))
+			return true;
+		else {
+			ItemStack stack = null;
+			for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
+				stack = player.inventory.getStackInSlot(i);
+				if (stack.getItem() instanceof IWardAuthenticator && 
+						((IWardAuthenticator) stack.getItem()).permitsUsage(world, pos, stack, player, owner)) {
+					
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	@Override
 	public boolean hasPermission(EntityPlayer player) {
 		WardedBlockPermissionEvent event = new WardedBlockPermissionEvent(world, pos, world.getBlockState(pos), player);
@@ -62,7 +81,7 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 			switch (event.getResult()) {
 				case ALLOW: return true;
 				case DENY: return false;
-				default: return owner.equals(player.getUniqueID().toString());
+				default: return checkPermission(player);
 			}
 		}
 		else

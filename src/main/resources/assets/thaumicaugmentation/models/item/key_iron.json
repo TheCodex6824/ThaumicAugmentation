@@ -1,0 +1,7 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "thaumicaugmentation:items/key_iron",
+        "layer1": "thaumicaugmentation:items/key_color_overlay"
+    }
+}

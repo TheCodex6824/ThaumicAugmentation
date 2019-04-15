@@ -38,6 +38,7 @@ public class TAItems {
 	public static final Item MATERIAL = null;
 	public static final Item SEAL_COPIER = null;
 	public static final Item ARCANE_DOOR = null;
+	public static final Item KEY = null;
 	
 	public static CreativeTabs CREATIVE_TAB = new CreativeTabs(ThaumicAugmentationAPI.MODID) {
 		@Override
@@ -47,7 +48,7 @@ public class TAItems {
 	};
 	
 	public static Item[] getAllItems() {
-		return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR};
+		return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR, KEY};
 	}
 	
 }

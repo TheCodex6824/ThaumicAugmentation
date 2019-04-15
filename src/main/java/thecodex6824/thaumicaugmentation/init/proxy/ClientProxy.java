@@ -37,6 +37,7 @@ import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
+import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 
@@ -78,7 +79,18 @@ public class ClientProxy extends CommonProxy {
 				return -1;
 			}
 		};
-		registerTo.registerItemColorHandler(casterFocusColors, new Item[]{TAItems.GAUNTLET});
+		registerTo.registerItemColorHandler(casterFocusColors, TAItems.GAUNTLET);
+		
+		IItemColor keyIDColors = new IItemColor() {
+			@Override
+			public int colorMultiplier(ItemStack stack, int tintIndex) {
+				if (tintIndex == 1 && stack.getItem() instanceof ItemKey)
+					return ((ItemKey) stack.getItem()).getKeyColor(stack);
+				
+				return -1;
+			}
+		};
+		registerTo.registerItemColorHandler(keyIDColors, TAItems.KEY);
 	}
 	
 }

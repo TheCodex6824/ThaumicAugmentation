@@ -38,9 +38,11 @@ import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.INoAutomaticItemBlockRegistration;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
+import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.recipe.AuthorizedKeyCreationRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.DyeableItemRecipe;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileTemporaryLight;
@@ -76,11 +78,13 @@ public class RegistryHandler {
 		registry.register(new ItemTABase("material", "lattice", "warding_sigil"));
 		registry.register(new ItemSealCopier("seal_copier"));
 		registry.register(new ItemArcaneDoor("arcane_door"));
+		registry.register(new ItemKey("key"));
 	}
 	
 	@SubscribeEvent
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		event.getRegistry().register(new DyeableItemRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "dyeable_item")));
+		event.getRegistry().register(new AuthorizedKeyCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "bound_key")));
 	}
 	
 }
