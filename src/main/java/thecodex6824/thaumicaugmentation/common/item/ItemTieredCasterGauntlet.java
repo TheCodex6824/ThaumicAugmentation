@@ -76,6 +76,7 @@ import thaumcraft.common.lib.utils.BlockUtils;
 import thaumcraft.common.world.aura.AuraChunk;
 import thaumcraft.common.world.aura.AuraHandler;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.item.ITieredCaster;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
@@ -469,12 +470,17 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 	
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-		super.getSubItems(tab, items);
-		for (ItemStack stack : items) {
-			if (!stack.hasTagCompound())
-				stack.setTagCompound(new NBTTagCompound());
-			
-			stack.getTagCompound().setInteger("color", getDefaultDyedColorForMeta(stack.getMetadata()));
+		if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
+			if (subItemNames.length > 0) {
+				for (int i = 0; i < subItemNames.length; ++i) {
+					ItemStack toAdd = new ItemStack(this, 1, i);
+					toAdd.setTagCompound(new NBTTagCompound());
+					setDyedColor(toAdd, getDefaultDyedColorForMeta(i));
+					items.add(toAdd);
+				}
+			}
+			else
+				super.getSubItems(tab, items);
 		}
 	}
 	
