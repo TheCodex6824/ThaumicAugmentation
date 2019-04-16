@@ -33,17 +33,13 @@ import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.common.recipe.VoidseerGauntletInfusionRecipe;
 
 public class RecipeHandler {
 
 	public static void init() {
 		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "GauntletVoid"), 
-				new InfusionRecipe("GAUNTLET_VOID", new ItemStack(TAItems.GAUNTLET, 1, 1), 6, 
-				new AspectList().add(Aspect.ENERGY, 25).add(Aspect.ELDRITCH, 50).add(Aspect.VOID, 50), 
-				new ItemStack(TAItems.GAUNTLET, 1, 0), new Object[] {
-						new ItemStack(ItemsTC.charmVoidseer), "plateVoid", "plateVoid", "plateVoid", "plateVoid", new ItemStack(ItemsTC.salisMundus)
-				}
-		));
+				new VoidseerGauntletInfusionRecipe());
 		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "SealCopier"), 
 				new InfusionRecipe("SEAL_COPIER", new ItemStack(TAItems.SEAL_COPIER), 1, 
 				new AspectList().add(Aspect.MIND, 25).add(Aspect.MECHANISM, 10), 
