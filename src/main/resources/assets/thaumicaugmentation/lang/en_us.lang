@@ -12,12 +12,16 @@ item.thaumicaugmentation.arcane_door.wood.name=Wooden Arcane Door
 item.thaumicaugmentation.arcane_door.metal.name=Thaumium Arcane Door
 item.thaumicaugmentation.key.iron.name=Iron Key
 item.thaumicaugmentation.key.brass.name=Brass key
+item.thaumicaugmentation.key.thaumium.name=Thaumium Key
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
 
-thaumicaugmentation.text.key_bound=This key is now bound to you
-thaumicaugmentation.text.key_unbound=This key is no longer bound to anyone
+thaumicaugmentation.text.key_bound=Key bound
+thaumicaugmentation.text.key_bound_object=Key bound to %s at %s
+thaumicaugmentation.text.key_unbound=Key unbound
 thaumicaugmentation.text.bound_to=Bound to: %s
+thaumicaugmentation.text.bound_to_type=Bound block: %s
+thaumicaugmentation.text.bound_to_pos=Bound position: %s
 
 focus.thaumicaugmentation.light.name=Light
 focus.thaumicaugmentation.light.text=Creates light at the target

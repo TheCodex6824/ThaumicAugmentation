@@ -28,26 +28,40 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 
-public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
-	
+public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+
 	@Override
 	public boolean canFit(int width, int height) {
-		return width * height >= 2;
+		return width * height >= 3;
+	}
+	
+	protected boolean isThaumiumKeyValid(ItemStack key) {
+		return key.hasTagCompound() && key.getTagCompound().hasKey("boundTo", NBT.TAG_STRING) && 
+				key.getTagCompound().hasKey("boundType", NBT.TAG_STRING) &&
+				key.getTagCompound().hasKey("boundBlockPos", NBT.TAG_INT_ARRAY) &&
+				key.getTagCompound().getIntArray("boundBlockPos").length == 3;
 	}
 	
 	@Override
 	public boolean matches(InventoryCrafting inv, World worldIn) {
-		boolean hasIronKey = false;
-		boolean hasBrassKey = false;
+		boolean hasEmptyThaumiumKey = false;
+		ItemStack thaumiumKey = null;
+		ItemStack brassKey = null;
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack != null && !stack.isEmpty()) {
 				if (stack.getItem() instanceof ItemKey) {
-					if (stack.getMetadata() == 0 && !hasIronKey && !stack.hasTagCompound())
-						hasIronKey = true;
-					else if (stack.getMetadata() == 1 && !hasBrassKey && stack.hasTagCompound() && 
+					if (stack.getMetadata() == 2) {
+						if (!stack.hasTagCompound() && !hasEmptyThaumiumKey)
+							hasEmptyThaumiumKey = true;
+						else if (isThaumiumKeyValid(stack) && thaumiumKey == null)
+							thaumiumKey = stack;
+						else
+							return false;
+					}
+					else if (stack.getMetadata() == 1 && brassKey == null && stack.hasTagCompound() && 
 							stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
-						hasBrassKey = true;
+						brassKey = stack;
 					else
 						return false;
 				}
@@ -56,20 +70,29 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
 			}
 		}
 		
-		return hasIronKey && hasBrassKey;
+		return hasEmptyThaumiumKey && thaumiumKey != null && brassKey != null && 
+				thaumiumKey.getTagCompound().getString("boundTo").equals(brassKey.getTagCompound().getString("boundTo"));
 	}
 	
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		ItemStack ironKey = null;
+		ItemStack emptyThaumiumKey = null;
+		ItemStack thaumiumKey = null;
 		ItemStack brassKey = null;
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack != null && !stack.isEmpty()) {
 				if (stack.getItem() instanceof ItemKey) {
-					if (stack.getMetadata() == 0 && ironKey == null)
-						ironKey = stack;
-					else if (stack.getMetadata() == 1 && brassKey == null)
+					if (stack.getMetadata() == 2) {
+						if (!stack.hasTagCompound() && emptyThaumiumKey == null)
+							emptyThaumiumKey = stack;
+						else if (isThaumiumKeyValid(stack) && thaumiumKey == null)
+							thaumiumKey = stack;
+						else
+							return ItemStack.EMPTY;
+					}
+					else if (stack.getMetadata() == 1 && brassKey == null && stack.hasTagCompound() && 
+							stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
 						brassKey = stack;
 					else
 						return ItemStack.EMPTY;
@@ -79,12 +102,9 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
 			}
 		}
 		
-		if (ironKey != null && brassKey != null) {
-			ItemStack output = brassKey.copy();
-			output.setItemDamage(0);
-			
-			return output;
-		}
+		if (emptyThaumiumKey != null && thaumiumKey != null && brassKey != null && 
+				thaumiumKey.getTagCompound().getString("boundTo").equals(brassKey.getTagCompound().getString("boundTo")))
+			return thaumiumKey.copy();
 		else
 			return ItemStack.EMPTY;
 	}

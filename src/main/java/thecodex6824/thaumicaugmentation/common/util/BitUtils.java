@@ -29,8 +29,8 @@ public class BitUtils {
 	public static int getBits(int meta, int start, int end) {
 		int result = 0;
 		for (int i = start; i < end; ++i)
-			result |= (meta & (1 << i)) >> (i - start);
-		
+			result |= (meta & (1 << i)) >>> start;
+
 		return result;
 	}
 	
@@ -40,7 +40,7 @@ public class BitUtils {
 	
 	public static int setBits(int meta, int start, int end, int number) {
 		for (int i = start; i < end; ++i)
-			meta |= (number & (1 << (i - start)) << i);
+			meta |= ((number & (1 << (i - start))) << start);
 		
 		return meta;
 	}

@@ -55,6 +55,11 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 		return owner;
 	}
 	
+	@Override
+	public BlockPos getPosition() {
+		return pos;
+	}
+	
 	protected boolean checkPermission(EntityPlayer player) {
 		if (owner.equals(player.getUniqueID().toString()))
 			return true;
@@ -63,7 +68,7 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 			for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
 				stack = player.inventory.getStackInSlot(i);
 				if (stack.getItem() instanceof IWardAuthenticator && 
-						((IWardAuthenticator) stack.getItem()).permitsUsage(world, pos, stack, player, owner)) {
+						((IWardAuthenticator) stack.getItem()).permitsUsage(this, stack, player)) {
 					
 					return true;
 				}

@@ -44,6 +44,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.recipe.AuthorizedKeyCreationRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.DyeableItemRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumKeyCopyRecipe;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileTemporaryLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
@@ -84,7 +85,8 @@ public class RegistryHandler {
 	@SubscribeEvent
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		event.getRegistry().register(new DyeableItemRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "dyeable_item")));
-		event.getRegistry().register(new AuthorizedKeyCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "bound_key")));
+		event.getRegistry().register(new AuthorizedKeyCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "bound_key_creation")));
+		event.getRegistry().register(new ThaumiumKeyCopyRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_key_copy")));
 	}
 	
 }

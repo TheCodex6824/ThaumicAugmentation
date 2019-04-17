@@ -94,6 +94,11 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
 		super.readFromNBT(compound);
 	}
 	
+	@Override
+	public String getUniqueTypeID() {
+		return ThaumicAugmentationAPI.MODID + ":warded_chest";
+	}
+	
 	public ItemStackHandler getInventory( ) {
 		return inventory;
 	}

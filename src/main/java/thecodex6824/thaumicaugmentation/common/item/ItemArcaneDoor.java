@@ -58,7 +58,7 @@ public class ItemArcaneDoor extends ItemTABase {
 
         ItemStack itemstack = player.getHeldItem(hand);
         if (player.canPlayerEdit(pos, facing, itemstack) && TABlocks.ARCANE_DOOR.canPlaceBlockAt(world, pos)) {
-            EnumFacing enumfacing = EnumFacing.fromAngle((double)player.rotationYaw);
+            EnumFacing enumfacing = player.getHorizontalFacing();
             int i = enumfacing.getXOffset();
             int j = enumfacing.getZOffset();
             boolean flag = i < 0 && hitZ < 0.5F || i > 0 && hitZ > 0.5F || j < 0 && hitX > 0.5F || j > 0 && hitX < 0.5F;
@@ -93,6 +93,7 @@ public class ItemArcaneDoor extends ItemTABase {
         worldIn.getBlockState(pos).getBlock().onBlockPlacedBy(worldIn, pos, worldIn.getBlockState(pos), player, stack);
         worldIn.notifyNeighborsOfStateChange(pos, door, false);
         worldIn.notifyNeighborsOfStateChange(blockpos2, door, false);
+        System.out.println(worldIn.getBlockState(blockpos2).getValue(IHorizontallyDirectionalBlock.DIRECTION));
     }
 	
 }
