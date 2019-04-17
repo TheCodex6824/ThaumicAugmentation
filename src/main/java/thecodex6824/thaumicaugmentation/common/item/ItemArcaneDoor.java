@@ -93,7 +93,6 @@ public class ItemArcaneDoor extends ItemTABase {
         worldIn.getBlockState(pos).getBlock().onBlockPlacedBy(worldIn, pos, worldIn.getBlockState(pos), player, stack);
         worldIn.notifyNeighborsOfStateChange(pos, door, false);
         worldIn.notifyNeighborsOfStateChange(blockpos2, door, false);
-        System.out.println(worldIn.getBlockState(blockpos2).getValue(IHorizontallyDirectionalBlock.DIRECTION));
     }
 	
 }
