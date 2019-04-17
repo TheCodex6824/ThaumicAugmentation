@@ -80,6 +80,11 @@ public class RecipeHandler {
 						'L', new ItemStack(TAItems.MATERIAL, 1, 0), 'E', new ItemStack(ItemsTC.mechanismSimple)
 				}
 		));
+		
+		/**
+		 * Warded Stuff
+		 */
+		
 		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardingSigil"), new ShapedArcaneRecipe(
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardingSigil"), "WARDED_ARCANA@2", 10, 
 				new AspectList().add(Aspect.ORDER, 1), 
@@ -118,6 +123,41 @@ public class RecipeHandler {
 						"TST",
 						"TIT",
 						'T', new ItemStack(ItemsTC.plate, 1, 2), 'I', new ItemStack(ItemsTC.plate, 1, 1), 'S', new ItemStack(TAItems.MATERIAL, 1, 1)
+				}
+		));
+		
+		/**
+		 * Keys
+		 */
+		
+		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyIron"), new ShapedArcaneRecipe(
+				new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyIron"), "WARD_KEYS", 15, 
+				new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
+				new ItemStack(TAItems.KEY, 1, 0), new Object[] {
+						"  B",
+						" NN",
+						"NN ",
+						'B', new ItemStack(ItemsTC.brain), 'N', "nuggetIron"
+				}
+		));
+		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyBrass"), new ShapedArcaneRecipe(
+				new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyBrass"), "WARD_KEYS", 15, 
+				new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
+				new ItemStack(TAItems.KEY, 1, 1), new Object[] {
+						"  B",
+						" NN",
+						"NN ",
+						'B', new ItemStack(ItemsTC.brain), 'N', new ItemStack(ItemsTC.nuggets, 1, 8)
+				}
+		));
+		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyThaumium"), new ShapedArcaneRecipe(
+				new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyThaumium"), "WARD_KEYS", 15, 
+				new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
+				new ItemStack(TAItems.KEY, 1, 2), new Object[] {
+						"  B",
+						" NN",
+						"NN ",
+						'B', new ItemStack(ItemsTC.brain), 'N', new ItemStack(ItemsTC.nuggets, 1, 6)
 				}
 		));
 	}

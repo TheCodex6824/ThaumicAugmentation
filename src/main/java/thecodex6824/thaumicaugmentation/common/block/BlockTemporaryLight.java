@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
@@ -43,6 +44,11 @@ public class BlockTemporaryLight extends BlockTACustomModel implements INoAutoma
 		super(name, Material.CLOTH, TileTemporaryLight.class);
 		setHardness(0.0F);
 		setResistance(0.0F);
+	}
+	
+	@Override
+	public SoundType getSoundType() {
+		return SoundType.CLOTH;
 	}
 	
 	@Override

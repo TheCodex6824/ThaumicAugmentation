@@ -96,7 +96,8 @@ public class FocusEffectLight extends FocusEffect {
 	
 	protected boolean placeLightSource(BlockPos pos, EnumFacing side, int duration, int intensity) {
 		World world = getPackage().world;
-		if (world.isAreaLoaded(pos, pos) && world.mayPlace(TABlocks.TEMPORARY_LIGHT, pos, true, side, getPackage().getCaster())) {
+		if (world.isAreaLoaded(pos, pos) && world.getBlockState(pos).getBlock() != TABlocks.TEMPORARY_LIGHT 
+				&& world.mayPlace(TABlocks.TEMPORARY_LIGHT, pos, true, side, getPackage().getCaster())) {
 			boolean result = world.setBlockState(pos, TABlocks.TEMPORARY_LIGHT.getDefaultState());
 			if (world.getTileEntity(pos) instanceof TileTemporaryLight) {
 				TileTemporaryLight tile = (TileTemporaryLight) world.getTileEntity(pos);
