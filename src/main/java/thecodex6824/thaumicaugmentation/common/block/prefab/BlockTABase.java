@@ -196,9 +196,8 @@ public class BlockTABase extends Block {
     }
 	
 	@Override
-	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(CreativeTabs item, NonNullList<ItemStack> items) {
-		if (item == TAItems.CREATIVE_TAB)
+		if (item == TAItems.CREATIVE_TAB || item == CreativeTabs.SEARCH)
 			items.add(new ItemStack(this, 1, 0));
 	}
 	

@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "thaumicaugmentation:items/void_boots",
+        "layer1": "thaumicaugmentation:items/void_boots_overlay"
+    }
+}

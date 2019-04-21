@@ -40,6 +40,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class TAConfig {
 	
+	// TODO localize all the strings here
+	
 	@Name("GauntletVisDiscounts")
 	@Comment({
 	    "The discounts that will be applied to the vis cost of foci used in the thaumium and void metal caster gauntlets."
@@ -61,6 +63,53 @@ public class TAConfig {
 	})
 	@RangeInt(min = 1, max = 32)
 	public static int voidseerArea = 3;
+	
+	@Name("VoidBootsLandSpeedBoost")
+	@Comment({
+		"The boost applied while the wearer is on the ground, and on dry land.",
+		"This is added to the base movement of the player per tick."
+	})
+	@RangeDouble(min = 0.0F, max = 10.0F)
+	public static double voidBootsLandSpeedBoost = 0.12;
+	
+	@Name("VoidBootsWaterSpeedBoost")
+	@Comment({
+		"The boost applied while the wearer is in water.",
+		"This is added to the base movement of the player per tick."
+	})
+	@RangeDouble(min = 0.0F, max = 10.0F)
+	public static double voidBootsWaterSpeedBoost = 0.075;
+	
+	@Name("VoidBootsJumpBoost")
+	@Comment({
+		"The boost applied when the wearer jumps.",
+		"This is added to the base jump height of the player."
+	})
+	@RangeDouble(min = 0.0F, max = 10.0F)
+	public static double voidBootsJumpBoost = 0.5;
+	
+	@Name("VoidBootsJumpFactor")
+	@Comment({
+		"The boost applied to player movement while in the air.",
+		"This itself is a speed, so it can make movement faster in the air than on the ground."
+	})
+	@RangeDouble(min = 0.0F, max = 10.0F)
+	public static double voidBootsJumpFactor = 0.05;
+	
+	@Name("VoidBootsStepHeight")
+	@Comment({
+		"The boost applied to the player's step height (while not sneaking).",
+		"This is added to the vanilla default value of 0.6."
+	})
+	@RangeDouble(min = 0.0F, max = 10.0F)
+	public static double voidBootsStepHeight = 0.41;
+	
+	@Name("VoidBootsSneakReduction")
+	@Comment({
+		"Any speed boosts (not jump) will be divided by this value while sneaking"
+	})
+	@RangeDouble(min = 1.0F, max = 10.0F)
+	public static double voidBootsSneakReduction = 4.0F;
 	
 	@SubscribeEvent
 	public static void onConfigChanged(OnConfigChangedEvent event) {

@@ -27,23 +27,32 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
-import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.item.trait.IModelProvider;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public class ModelRegistryHandler {
 
 	@SubscribeEvent
 	public static void registerModels(ModelRegistryEvent event) {
-		for (Block b : TABlocks.getAllBlocks())
-			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(b), 0, ((BlockTABase) b).getModelResourceLocation(0));
+		for (Block b : TABlocks.getAllBlocks()) {
+			if (b instanceof BlockTABase)
+				ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(b), 0, ((BlockTABase) b).getModelResourceLocation(0));
+			else
+				ThaumicAugmentation.getLogger().warn("A block model ({}) was not registered! This is probably a bad thing!", b.getRegistryName());
+		}
 		
 		for (Item item : TAItems.getAllItems()) {
-			for (int i = 0; i < ((ItemTABase) item).getTotalSubtypes(); ++i)
-				ModelLoader.setCustomModelResourceLocation(item, i, ((ItemTABase) item).getModelResourceLocation(i));
+			if (item instanceof IModelProvider) {
+				for (int i = 0; i < ((IModelProvider) item).getTotalSubtypes(); ++i)
+					ModelLoader.setCustomModelResourceLocation(item, i, ((IModelProvider) item).getModelResourceLocation(i));
+			}
+			else
+				ThaumicAugmentation.getLogger().warn("An item model ({}) was not registered! This is probably a bad thing!", item.getRegistryName());
 		}
 	}
 	

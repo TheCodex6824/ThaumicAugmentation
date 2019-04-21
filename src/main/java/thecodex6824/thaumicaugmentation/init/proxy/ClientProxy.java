@@ -25,7 +25,6 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -91,6 +90,17 @@ public class ClientProxy extends CommonProxy {
 			}
 		};
 		registerTo.registerItemColorHandler(keyIDColors, TAItems.KEY);
+		
+		IItemColor dyeableMisc = new IItemColor() {
+			@Override
+			public int colorMultiplier(ItemStack stack, int tintIndex) {
+				if (tintIndex == 1 && stack.getItem() instanceof IDyeableItem)
+					return ((IDyeableItem) stack.getItem()).getDyedColor(stack);
+				
+				return -1;
+			}
+		};
+		registerTo.registerItemColorHandler(dyeableMisc, TAItems.VOID_BOOTS);
 	}
 	
 }

@@ -46,6 +46,19 @@ import thecodex6824.thaumicaugmentation.common.tile.TileTemporaryLight;
 
 public class FocusEffectLight extends FocusEffect {
 
+	protected class NodeSettingLightIntensity extends NodeSetting.NodeSettingIntRange {
+		
+		public NodeSettingLightIntensity() {
+			super(1, 15);
+		}
+		
+		@Override
+		public int getDefault() {
+			return 8;
+		}
+		
+	}
+	
 	@Override
 	public Aspect getAspect() {
 		return Aspect.LIGHT;
@@ -53,7 +66,7 @@ public class FocusEffectLight extends FocusEffect {
 	
 	@Override
 	public int getComplexity() {
-		return getSettingValue("duration") / 5 + (int) (getSettingValue("intensity") * 1.25F);
+		return getSettingValue("intensity");
 	}
 	
 	@Override
@@ -73,7 +86,7 @@ public class FocusEffectLight extends FocusEffect {
 			if (state.getBlock().isAir(state, getPackage().world, result.getBlockPos()) || 
 					state.getBlock().isReplaceable(getPackage().world, result.getBlockPos())) {
 				
-				return placeLightSource(result.getBlockPos(), result.sideHit, getSettingValue("duration"), getSettingValue("intensity"));
+				return placeLightSource(result.getBlockPos(), result.sideHit, getSettingValue("intensity"));
 			}
 			else {
 				BlockPos pos = result.getBlockPos().offset(result.sideHit);
@@ -81,27 +94,26 @@ public class FocusEffectLight extends FocusEffect {
 				if (state.getBlock().isAir(state, getPackage().world, pos) || 
 					state.getBlock().isReplaceable(getPackage().world, pos))
 					
-					return placeLightSource(pos, result.sideHit, getSettingValue("duration"), getSettingValue("intensity"));
+					return placeLightSource(pos, result.sideHit, getSettingValue("intensity"));
 			}
 		}
 		else if (result.typeOfHit == Type.MISS) 
-			return placeLightSource(result.getBlockPos(), result.sideHit, getSettingValue("duration"), getSettingValue("intensity"));
+			return placeLightSource(result.getBlockPos(), result.sideHit, getSettingValue("intensity"));
 		else if (result.entityHit instanceof EntityLivingBase) {
-			((EntityLivingBase) result.entityHit).addPotionEffect(new PotionEffect(MobEffects.GLOWING, getSettingValue("duration") * 20, 0, true, false));
+			((EntityLivingBase) result.entityHit).addPotionEffect(new PotionEffect(MobEffects.GLOWING, getSettingValue("intensity") * 10, 0, true, false));
 			return true;
 		}
 		
 		return false;
 	}
 	
-	protected boolean placeLightSource(BlockPos pos, EnumFacing side, int duration, int intensity) {
+	protected boolean placeLightSource(BlockPos pos, EnumFacing side, int intensity) {
 		World world = getPackage().world;
 		if (world.isAreaLoaded(pos, pos) && world.getBlockState(pos).getBlock() != TABlocks.TEMPORARY_LIGHT 
 				&& world.mayPlace(TABlocks.TEMPORARY_LIGHT, pos, true, side, getPackage().getCaster())) {
 			boolean result = world.setBlockState(pos, TABlocks.TEMPORARY_LIGHT.getDefaultState());
 			if (world.getTileEntity(pos) instanceof TileTemporaryLight) {
 				TileTemporaryLight tile = (TileTemporaryLight) world.getTileEntity(pos);
-				tile.setTicksRemaining(duration * 20);
 				tile.setLightLevel(intensity);
 			}
 			
@@ -114,8 +126,7 @@ public class FocusEffectLight extends FocusEffect {
 	@Override
 	public NodeSetting[] createSettings() {
 		return new NodeSetting[] {
-				new NodeSetting("intensity", "focus." + ThaumicAugmentationAPI.MODID + ".light.intensity", new NodeSetting.NodeSettingIntRange(1, 15)),
-				new NodeSetting("duration", "focus." + ThaumicAugmentationAPI.MODID + ".light.duration", new NodeSetting.NodeSettingIntRange(10, 180))
+				new NodeSetting("intensity", "focus." + ThaumicAugmentationAPI.MODID + ".light.intensity", new NodeSettingLightIntensity())
 		};
 	}
 	

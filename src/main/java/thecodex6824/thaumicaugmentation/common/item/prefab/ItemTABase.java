@@ -29,19 +29,24 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.common.item.trait.IModelProvider;
 
-public class ItemTABase extends Item {
-
+public class ItemTABase extends Item implements IModelProvider {
+	
+	public static void sharedInit(Item item, String name, String... subItems) {
+		item.setRegistryName(name);
+		item.setTranslationKey(ThaumicAugmentationAPI.MODID + "." + name);
+		item.setHasSubtypes(subItems.length > 0);
+		item.setCreativeTab(TAItems.CREATIVE_TAB);	
+	}
+	
 	protected String[] subItemNames;
 	
 	public ItemTABase() {}
 	
 	public ItemTABase(String name, String... subItems) {
-		setRegistryName(name);
-		setTranslationKey(ThaumicAugmentationAPI.MODID + "." + name);
+		sharedInit(this, name, subItems);
 		subItemNames = subItems;
-		setHasSubtypes(subItemNames.length > 0);
-		setCreativeTab(TAItems.CREATIVE_TAB);	
 	}
 	
 	@Override
@@ -64,6 +69,7 @@ public class ItemTABase extends Item {
 		}
 	}
 	
+	@Override
 	public int getTotalSubtypes() {
 		return subItemNames.length > 0 ? subItemNames.length : 1;
 	}
@@ -74,6 +80,7 @@ public class ItemTABase extends Item {
 	}
 	
 	@SideOnly(Side.CLIENT)
+	@Override
 	public ModelResourceLocation getModelResourceLocation(int metadata) {
 		if (subItemNames.length > 0 && metadata < subItemNames.length)
 			return new ModelResourceLocation(getRegistryName() + "_" + subItemNames[metadata], "inventory");

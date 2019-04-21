@@ -41,6 +41,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
+import thecodex6824.thaumicaugmentation.common.item.ItemVoidBoots;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.recipe.AuthorizedKeyCreationRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.DyeableItemRecipe;
@@ -80,6 +81,7 @@ public class RegistryHandler {
 		registry.register(new ItemSealCopier("seal_copier"));
 		registry.register(new ItemArcaneDoor("arcane_door"));
 		registry.register(new ItemKey("key"));
+		registry.register(new ItemVoidBoots("void_boots"));
 	}
 	
 	@SubscribeEvent

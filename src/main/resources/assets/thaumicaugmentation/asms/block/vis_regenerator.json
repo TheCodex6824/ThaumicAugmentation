@@ -1,26 +1,45 @@
 {
 	"parameters": {
-		"time": ["/", "#cycle_length"]
+		"time": ["/", "#cycle_length"],
+		"end_anim": ["compose", ["+", "#cycle_length"], "#act_time"],
+		"trigger_end": ["-", "#end_anim"],
+		"anim_progress": ["-/-", "#act_time", "#cycle_length", 0.01]
 	},
 	"clips": {
-		"ta_enabled": [
+		"enabled": [
 			"apply",
-			"thaumicaugmentation:block/vis_regenerator@ta_enabled",
+			"thaumicaugmentation:block/vis_regenerator@enabled",
 			"#time"
 		],
-		"ta_disabled": [
+		"starting": [
+			"trigger_positive",
+			["apply", "thaumicaugmentation:block/vis_regenerator@starting", "#anim_progress"],
+			"#trigger_end",
+			"!transition:enabled"
+		],
+		"stopping": [
+			"trigger_positive",
+			["apply", "thaumicaugmentation:block/vis_regenerator@stopping", "#anim_progress"],
+			"#trigger_end",
+			"!transition:disabled"
+		],
+		"disabled": [
 			"apply",
-			"thaumicaugmentation:block/vis_regenerator@ta_disabled",
+			"thaumicaugmentation:block/vis_regenerator@disabled",
 			"#time"
 		]
 	},
 	"states": [
-		"ta_enabled",
-		"ta_disabled"
+		"enabled",
+		"disabled",
+		"starting",
+		"stopping"
 	],
 	"transitions": {
-		"ta_enabled": "ta_disabled",
-		"ta_disabled": "ta_enabled"
+		"enabled": "stopping",
+		"disabled": "starting",
+		"starting": ["enabled", "stopping"],
+		"stopping": ["disabled", "starting"]
 	},
-	"start_state": "ta_disabled"
+	"start_state": "disabled"
 }

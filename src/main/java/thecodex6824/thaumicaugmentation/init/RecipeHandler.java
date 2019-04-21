@@ -33,13 +33,17 @@ import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.common.recipe.VoidseerGauntletInfusionRecipe;
 
 public class RecipeHandler {
 
 	public static void init() {
 		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "GauntletVoid"), 
-				new VoidseerGauntletInfusionRecipe());
+				new InfusionRecipe("GAUNTLET_VOID", new ItemStack(TAItems.GAUNTLET, 1, 1), 6, 
+				new AspectList().add(Aspect.ENERGY, 25).add(Aspect.ELDRITCH, 50).add(Aspect.VOID, 50), 
+				new ItemStack(ItemsTC.charmVoidseer), new Object[] {
+						new ItemStack(ItemsTC.fabric), "plateVoid", "plateVoid", "plateVoid", "plateVoid", new ItemStack(ItemsTC.salisMundus)
+				}
+		));
 		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "SealCopier"), 
 				new InfusionRecipe("SEAL_COPIER", new ItemStack(TAItems.SEAL_COPIER), 1, 
 				new AspectList().add(Aspect.MIND, 25).add(Aspect.MECHANISM, 10), 
@@ -87,7 +91,7 @@ public class RecipeHandler {
 		
 		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardingSigil"), new ShapedArcaneRecipe(
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardingSigil"), "WARDED_ARCANA@2", 10, 
-				new AspectList().add(Aspect.ORDER, 1), 
+				new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
 				new ItemStack(TAItems.MATERIAL, 1, 1), new Object[] {
 						" T ",
 						"PBP",
@@ -97,7 +101,7 @@ public class RecipeHandler {
 		));
 		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardedChest"), new ShapedArcaneRecipe(
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardedChest"), "WARDED_ARCANA", 75, 
-				new AspectList().add(Aspect.ORDER, 2), 
+				new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1),  
 				new ItemStack(TABlocks.WARDED_CHEST), new Object[] {
 						" S ",
 						"TCT",
@@ -107,7 +111,7 @@ public class RecipeHandler {
 		));
 		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorWood"), new ShapedArcaneRecipe(
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorWood"), "ARCANE_DOOR", 100, 
-				new AspectList().add(Aspect.ORDER, 2), 
+				new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
 				new ItemStack(TAItems.ARCANE_DOOR, 1, 0), new Object[] {
 						"GBG",
 						"GSG",
@@ -117,7 +121,7 @@ public class RecipeHandler {
 		));
 		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorMetal"), new ShapedArcaneRecipe(
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorMetal"), "ARCANE_DOOR", 100, 
-				new AspectList().add(Aspect.ORDER, 2), 
+				new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1),  
 				new ItemStack(TAItems.ARCANE_DOOR, 1, 1), new Object[] {
 						"TIT",
 						"TST",

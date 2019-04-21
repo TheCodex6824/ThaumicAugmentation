@@ -25,30 +25,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TileTemporaryLight extends TileEntity implements ITickable {
+public class TileTemporaryLight extends TileEntity {
 	
-	private static final int DELAY = 10;
-	
-	protected int ticksLeft;
 	protected int lightLevel;
 	
 	public TileTemporaryLight() {
 		super();
-		ticksLeft = 1;
 		lightLevel = 0;
-	}
-	
-	@Override
-	public void update() {
-		if (!world.isRemote && world.getTotalWorldTime() % DELAY == 0) {
-			ticksLeft -= DELAY;
-			if (ticksLeft <= 0)
-				world.setBlockToAir(pos);
-		}
 	}
 	
 	public void setLightLevel(int newLevel) {
@@ -60,15 +46,6 @@ public class TileTemporaryLight extends TileEntity implements ITickable {
 	
 	public int getLightLevel() {
 		return lightLevel;
-	}
-	
-	public void setTicksRemaining(int ticks) {
-		ticksLeft = ticks;
-		markDirty();
-	}
-	
-	public int getTicksRemaining() {
-		return ticksLeft;
 	}
 	
 	@Override
@@ -89,14 +66,12 @@ public class TileTemporaryLight extends TileEntity implements ITickable {
 	
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setInteger("ticksLeft", ticksLeft);
 		compound.setInteger("lightLevel", lightLevel);
 		return super.writeToNBT(compound);
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		ticksLeft = compound.getInteger("ticksLeft");
 		lightLevel = compound.getInteger("lightLevel");
 		super.readFromNBT(compound);
 	}

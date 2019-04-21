@@ -31,6 +31,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.animation.TimeValues.VariableValue;
@@ -53,13 +54,15 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
 	
 	protected IAnimationStateMachine asm;
 	protected VariableValue cycleLength;
+	protected VariableValue actionTime;
 	protected boolean lastState = false;
 	
 	public TileVisRegenerator() {
 		super();
 		cycleLength = new VariableValue(1);
+		actionTime = new VariableValue(Float.MIN_VALUE);
 		asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/vis_regenerator.json"), 
-				ImmutableMap.<String, ITimeValue>of("cycle_length", cycleLength));
+				ImmutableMap.<String, ITimeValue>of("cycle_length", cycleLength, "act_time", actionTime));
 	}
 	
 	private float getAuraOffset() {
@@ -89,7 +92,8 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
 			boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
 			if (enabled != lastState) {
 				lastState = enabled;
-				asm.transition(lastState ? "ta_enabled" : "ta_disabled");
+				actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
+				asm.transition(lastState ? "starting" : "stopping");
 			}
 		}
 	}
