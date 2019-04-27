@@ -96,6 +96,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			cooldown.setAccessible(true);
 		}
 		catch (Exception ex) {
+			// just to give the exception a bit more context than a random reflection error
 			FMLCommonHandler.instance().raiseException(ex, "Failed to access Thaumcraft's CasterManager#isOnCooldown", true);
 		}
 		
@@ -229,7 +230,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			if (fPackage != null) {
 				for (IFocusElement element : fPackage.nodes) {
 					if (element instanceof IArchitect)
-						return ((IArchitect) fPackage).getArchitectBlocks(stack, world, pos, side, player);
+						return ((IArchitect) element).getArchitectBlocks(stack, world, pos, side, player);
 				}
 			}
 		}
@@ -254,14 +255,15 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			return ItemStack.EMPTY;
 		
 		ItemStack ret = null;
-		if (isStoringFocus(stack) && stack.hasTagCompound() && stack.getTagCompound().hasKey("pickedBlock")) {
-			FocusPackage fPackage = ItemFocus.getPackage(getFocusStack(stack));
-			if (fPackage != null) {
+		if (isStoringFocus(stack)) {
+			ItemStack focus = getFocusStack(stack);
+			FocusPackage fPackage = ItemFocus.getPackage(focus);
+			if (fPackage != null && focus.hasTagCompound() && focus.getTagCompound().hasKey("pickedBlock", NBT.TAG_COMPOUND)) {
 				for (IFocusElement element : fPackage.nodes) {
 					if (element instanceof IFocusBlockPicker) {
 						ret = ItemStack.EMPTY;
 						try {
-							ret = new ItemStack(stack.getTagCompound().getCompoundTag("pickedBlock"));
+							ret = new ItemStack(focus.getTagCompound().getCompoundTag("pickedBlock"));
 						}
 						catch (Exception rip) {}
 					}
@@ -297,7 +299,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 	public int getDefaultDyedColorForMeta(int meta) {
 		switch (meta) {
 			case 0: return 0x008EFF;
-			case 1: return 0x2A1A3D;
+			case 1: return 0x6A3880;
 			default: return 0xFFFFFFFF;
 		}
 	}
@@ -416,12 +418,13 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 								}
 							}
 							catch (Exception oof) {}
-							focus.setTagInfo("pickedBlock", toStore.writeToNBT(new NBTTagCompound()));
+							focus.getTagCompound().setTag("pickedBlock", toStore.writeToNBT(new NBTTagCompound()));
+							return EnumActionResult.SUCCESS;
 						}
-						else
+						else {
 							player.swingArm(hand);
-						
-						return EnumActionResult.SUCCESS;
+							return EnumActionResult.PASS;
+						}
 					}
 				}
 			}  
@@ -436,6 +439,8 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 		}
 		catch (InvocationTargetException | IllegalAccessException ex) {
 			FMLCommonHandler.instance().raiseException(ex, "Failed to invoke Thaumcraft's CasterManager#isOnCooldown", true);
+			
+			// this shouldn't return, but java gets angry if it's not here so yeah
 			return true;
 		}
 	}

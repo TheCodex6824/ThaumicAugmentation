@@ -179,7 +179,7 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
 	
 	@Override
 	public int getMaxCharge(ItemStack stack, EntityLivingBase entity) {
-		return 960;
+		return 480;
 	}
 	
 	@Override
@@ -189,7 +189,7 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
 	
 	@Override
 	public int getDefaultDyedColorForMeta(int meta) {
-		return meta == 0 ? 0x2A1A3D : 0xFF;
+		return meta == 0 ? 0x6A3880 : 0xFF;
 	}
 	
 	@Override

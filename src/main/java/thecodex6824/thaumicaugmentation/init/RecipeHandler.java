@@ -21,25 +21,29 @@
 package thecodex6824.thaumicaugmentation.init;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.blocks.BlocksTC;
+import thaumcraft.api.crafting.CrucibleRecipe;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.crafting.ShapedArcaneRecipe;
 import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.common.recipe.RiftSeedFluxGrowthRecipe;
 
 public class RecipeHandler {
 
 	public static void init() {
 		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "GauntletVoid"), 
 				new InfusionRecipe("GAUNTLET_VOID", new ItemStack(TAItems.GAUNTLET, 1, 1), 6, 
-				new AspectList().add(Aspect.ENERGY, 25).add(Aspect.ELDRITCH, 50).add(Aspect.VOID, 50), 
+				new AspectList().add(Aspect.ENERGY, 50).add(Aspect.ELDRITCH, 75).add(Aspect.VOID, 75), 
 				new ItemStack(ItemsTC.charmVoidseer), new Object[] {
 						new ItemStack(ItemsTC.fabric), "plateVoid", "plateVoid", "plateVoid", "plateVoid", new ItemStack(ItemsTC.salisMundus)
 				}
@@ -51,6 +55,49 @@ public class RecipeHandler {
 						new ItemStack(ItemsTC.brain), new ItemStack(ItemsTC.brain), new ItemStack(ItemsTC.seals, 1, 0)
 				}
 		));
+		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "BootsVoid"),
+				new InfusionRecipe("BOOTS_VOID", new ItemStack(TAItems.VOID_BOOTS), 6,
+				new AspectList().add(Aspect.VOID, 50).add(Aspect.ELDRITCH, 50).add(Aspect.MOTION, 150).add(Aspect.FLIGHT, 150), 
+				new ItemStack(ItemsTC.travellerBoots), new Object[] {
+						new ItemStack(ItemsTC.fabric), new ItemStack(ItemsTC.fabric), "plateVoid", "plateVoid", new ItemStack(Items.FEATHER),
+						new ItemStack(Items.FISH), new ItemStack(ItemsTC.primordialPearl), new ItemStack(ItemsTC.quicksilver)
+				}
+		));
+		
+		/**
+		 * Flux rift seed crafting and growing
+		 */
+		
+		ItemStack fluxSeedStack = new ItemStack(TAItems.RIFT_SEED, 1, 0);
+		fluxSeedStack.setTagCompound(new NBTTagCompound());
+		fluxSeedStack.getTagCompound().setInteger("riftSize", 20);
+		ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFlux"), 
+				new CrucibleRecipe("RIFT_STUDIES", fluxSeedStack, ItemsTC.voidSeed, 
+				new AspectList().add(Aspect.FLUX, 35).add(Aspect.VOID, 15)));
+		
+		for (int i = 1; i < 4; ++i) {
+			ItemStack in = new ItemStack(TAItems.RIFT_SEED, 1, 0);
+			in.setTagCompound(new NBTTagCompound());
+			in.getTagCompound().setInteger("riftSize", 20);
+			in.getTagCompound().setBoolean("grown", false);
+			ItemStack out = in.copy();
+			out.getTagCompound().setInteger("riftSize", i == 3 ? 100 : i * 10 + 20);
+			out.getTagCompound().setBoolean("grown", true);
+			Object[] inputs = new Object[i == 3 ? 8 : i];
+			for (int k = 0; k < (i == 3 ? 8 : i); ++k)
+				inputs[k] = new ItemStack(ItemsTC.voidSeed);
+			
+			ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFluxGrowthFake" + (i == 3 ? 100 : i * 10 + 20)), 
+					new InfusionRecipe("RIFT_STUDIES", out, i == 3 ? 8 : i, new AspectList().add(Aspect.FLUX, i == 3 ? 120 : i * 15),
+					in, inputs));
+		}
+		
+		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFluxGrowth"), 
+				new RiftSeedFluxGrowthRecipe());
+		
+		/**
+		 * Random stuff
+		 */
 		
 		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "GauntletThaumium"), new ShapedArcaneRecipe(
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "GAUNTLET_THAUMIUM"), "GAUNTLET_THAUMIUM", 250, 

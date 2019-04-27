@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -31,6 +32,7 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.item.trait.IModelProvider;
 
@@ -39,6 +41,9 @@ public class ModelRegistryHandler {
 
 	@SubscribeEvent
 	public static void registerModels(ModelRegistryEvent event) {
+		
+		ModelLoader.setCustomStateMapper(TABlocks.TEMPORARY_LIGHT, new StateMap.Builder().ignore(ILightSourceBlock.LIGHT_LEVEL).build());
+		
 		for (Block b : TABlocks.getAllBlocks()) {
 			if (b instanceof BlockTABase)
 				ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(b), 0, ((BlockTABase) b).getModelResourceLocation(0));

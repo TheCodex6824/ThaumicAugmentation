@@ -4,12 +4,7 @@
             "key": "THAUMIC_AUGMENTATION_BASE",
             "name": "thaumicaugmentation.research.thaumic_augmentation_base.title",
             "icons": [
-            	"thaumicaugmentation:gauntlet;1;0",
-                "thaumicaugmentation:vis_regenerator",
-                "thaumicaugmentation:seal_copier",
-                "thaumicaugmentation:warded_chest",
-                "thaumicaugmentation:arcane_door;1;0",
-                "thaumicaugmentation:arcane_door;1;1"
+            	"thaumicaugmentation:textures/gui/icon.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
@@ -108,6 +103,43 @@
                     "text": "thaumicaugmentation.research.seal_copier.1",
                     "recipes": [
                         "thaumicaugmentation:SealCopier"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "BOOTS_VOID",
+            "name": "thaumicaugmentation.research.boots_void.title",
+            "icons": [
+                "thaumicaugmentation:void_boots"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+            	"THAUMIC_AUGMENTATION_BASE",
+                "~BOOTSTRAVELLER",
+                "~BASEELDRITCH"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "location": [
+                -1.5,
+                -1.5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.boots_void.0",
+                    "required_knowledge": [
+                        "OBSERVATION;INFUSION;1",
+                        "THEORY;INFUSION;1",
+                        "THEORY;ELDRITCH;1"
+                    ],
+                    "warp": 2
+                },
+                {
+                    "text": "thaumicaugmentation.research.boots_void.1",
+                    "recipes": [
+                        "thaumicaugmentation:BootsVoid"
                     ]
                 }
             ]

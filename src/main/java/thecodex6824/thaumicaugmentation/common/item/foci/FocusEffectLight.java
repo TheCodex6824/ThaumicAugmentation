@@ -42,7 +42,7 @@ import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.common.tile.TileTemporaryLight;
+import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 
 public class FocusEffectLight extends FocusEffect {
 
@@ -111,13 +111,8 @@ public class FocusEffectLight extends FocusEffect {
 		World world = getPackage().world;
 		if (world.isAreaLoaded(pos, pos) && world.getBlockState(pos).getBlock() != TABlocks.TEMPORARY_LIGHT 
 				&& world.mayPlace(TABlocks.TEMPORARY_LIGHT, pos, true, side, getPackage().getCaster())) {
-			boolean result = world.setBlockState(pos, TABlocks.TEMPORARY_LIGHT.getDefaultState());
-			if (world.getTileEntity(pos) instanceof TileTemporaryLight) {
-				TileTemporaryLight tile = (TileTemporaryLight) world.getTileEntity(pos);
-				tile.setLightLevel(intensity);
-			}
 			
-			return result;
+			return world.setBlockState(pos, TABlocks.TEMPORARY_LIGHT.getDefaultState().withProperty(ILightSourceBlock.LIGHT_LEVEL, intensity));
 		}
 		
 		return false;

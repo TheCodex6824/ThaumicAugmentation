@@ -178,11 +178,11 @@ public class BlockArcaneDoor extends BlockWardedCustomModel implements IHorizont
 	@Override
 	public int getMetaFromState(IBlockState state) {
 		int meta = 0;
-		meta = BitUtils.setBitIf(meta, 0, state.getValue(IArcaneDoorHalf.DOOR_HALF) == EnumDoorHalf.UPPER);
+		meta = BitUtils.setBit(meta, 0, state.getValue(IArcaneDoorHalf.DOOR_HALF) == EnumDoorHalf.UPPER);
 		if (state.getValue(IArcaneDoorHalf.DOOR_HALF) == EnumDoorHalf.LOWER) {
-			meta = BitUtils.setBitIf(meta, 1, state.getValue(IArcaneDoorType.TYPE) == ArcaneDoorType.METAL);
-			meta = BitUtils.setBitIf(meta, 2, state.getValue(IArcaneDoorOpen.DOOR_OPEN));
-			meta = BitUtils.setBitIf(meta, 3, state.getValue(IArcaneDoorHinge.HINGE_SIDE) == EnumHingePosition.RIGHT);
+			meta = BitUtils.setBit(meta, 1, state.getValue(IArcaneDoorType.TYPE) == ArcaneDoorType.METAL);
+			meta = BitUtils.setBit(meta, 2, state.getValue(IArcaneDoorOpen.DOOR_OPEN));
+			meta = BitUtils.setBit(meta, 3, state.getValue(IArcaneDoorHinge.HINGE_SIDE) == EnumHingePosition.RIGHT);
 		}
 		else
 			meta = BitUtils.setBits(meta, 1, 3, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());

@@ -40,16 +40,17 @@ public class TAItems {
 	public static final Item ARCANE_DOOR = null;
 	public static final Item KEY = null;
 	public static final Item VOID_BOOTS = null;
+	public static final Item RIFT_SEED = null;
 	
 	public static CreativeTabs CREATIVE_TAB = new CreativeTabs(ThaumicAugmentationAPI.MODID) {
 		@Override
 		public ItemStack createIcon() {
-			return new ItemStack(GAUNTLET);
+			return new ItemStack(MATERIAL, 1, 2);
 		}
 	};
 	
 	public static Item[] getAllItems() {
-		return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR, KEY, VOID_BOOTS};
+		return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR, KEY, VOID_BOOTS, RIFT_SEED};
 	}
 	
 }

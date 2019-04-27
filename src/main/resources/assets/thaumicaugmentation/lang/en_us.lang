@@ -7,6 +7,7 @@ item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
 item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet
 item.thaumicaugmentation.material.lattice.name=Vis Regeneration Lattice
 item.thaumicaugmentation.material.warding_sigil.name=Warding Sigil
+item.thaumicaugmentation.material.amalgamated_gear.name=Amalgamated Gear
 item.thaumicaugmentation.seal_copier.name=Seal Copier
 item.thaumicaugmentation.arcane_door.wood.name=Wooden Arcane Door
 item.thaumicaugmentation.arcane_door.metal.name=Thaumium Arcane Door
@@ -14,8 +15,9 @@ item.thaumicaugmentation.key.iron.name=Iron Key
 item.thaumicaugmentation.key.brass.name=Brass key
 item.thaumicaugmentation.key.thaumium.name=Thaumium Key
 item.thaumicaugmentation.void_boots.name=Boots of the Riftstrider
+item.thaumicaugmentation.rift_seed.flux.name=Flux Rift Seed
 
-itemGroup.thaumicaugmentation=Augmentation
+itemGroup.thaumicaugmentation=Thaumic Augmentation
 
 thaumicaugmentation.text.key_bound=Key bound
 thaumicaugmentation.text.key_bound_object=Key bound to %s at %s
@@ -23,13 +25,14 @@ thaumicaugmentation.text.key_unbound=Key unbound
 thaumicaugmentation.text.bound_to=Bound to: %s
 thaumicaugmentation.text.bound_to_type=Bound block: %s
 thaumicaugmentation.text.bound_to_pos=Bound position: %s
+thaumicaugmentation.text.rift_seed_size=Size: %d
+thaumicaugmentation.text.rift_seed_grown=Grown
 
 focus.thaumicaugmentation.light.name=Light
 focus.thaumicaugmentation.light.text=Creates light at the target
 focus.thaumicaugmentation.light.intensity=Intensity
-focus.thaumicaugmentation.light.duration=Duration
 
-tc.research_category.THAUMIC_AUGMENTATION=Thaumic Augmentation
+tc.research_category.THAUMIC_AUGMENTATION=Augmentation
 thaumicaugmentation.research.thaumic_augmentation_base.title=Thaumic Augmentation
 thaumicaugmentation.research.thaumic_augmentation_base.0=I'll dedicate this section of the Thaumonomicon to any miscellaneous discoveries I make. Who knows what I may come up with?
 
@@ -57,7 +60,7 @@ thaumicaugmentation.research.more_auromancy.0=I have already discovered some foc
 
 thaumicaugmentation.research.focus_light.title=Focus Effect: Light
 thaumicaugmentation.research.focus_light.0=While fire does give off light, it can be a bit... destructive. It should be somewhat simple to create an effect completely dedicated to giving off light. To begin, I should examine some light sources I already have access to.
-thaumicaugmentation.research.focus_light.1=The light pattern does exactly what I was hoping - it creates a bright light source wherever it is used. Unfortunately, the light source will not last forever, but it will be able to last several minutes.<BR>I do wonder what would happen if a living creature was exposed to this pattern's blast of light.
+thaumicaugmentation.research.focus_light.1=The light pattern does exactly what I was hoping - it creates a bright light source wherever it is used. The light source will even be able to last forever - meaning I can use it for permanent lighting if I wish.<BR>I do wonder what would happen if a living creature was exposed to this pattern's blast of light.
 
 thaumicaugmentation.research.warded_arcana.title=Warded Arcana
 thaumicaugmentation.research.warded_arcana.0=While browsing some of the old manuscripts in the Thaumonomicon, I came across a section that described the applications of warding arcana. Being able to create objects that are protected against everything except its owner sounds like something I should investigate. I should begin my studies by examining the warded device I have already created, the Warded Jar.
@@ -71,3 +74,11 @@ thaumicaugmentation.research.arcane_door.1=I have managed to create the warded d
 thaumicaugmentation.research.ward_keys.title=Access Control
 thaumicaugmentation.research.ward_keys.0=Being able to have private objects is nice and all, but sometimes I need to share my belongings with fellow Thaumaturges. I should devise a way to selectively grant access to those I want to permit.
 thaumicaugmentation.research.ward_keys.1=I have created objects to allow others to access arbitrary warded objects - keys. But these are not any ordinary keys, as they will learn to emulate the person they are bound to. This seems sufficient to bypass the protections of the wards, provided the bound person matches with the object. Each key works slightly differently - I have written instructions for each type of key on the following pages, should I need to reference them.<PAGE>Iron Key<DIV><IMG>thaumicaugmentation:textures/items/key_iron.png:0:0:255:255:0.125</IMG>These are the simplest of the three types of keys. To bind one to my warded objects, I only need to use it. It will then allow anyone possessing the key access. To unbind the key, I should use the key while sneaking.<PAGE>Brass Key<DIV><IMG>thaumicaugmentation:textures/items/key_brass.png:0:0:255:255:0.125</IMG>This key functions in a similar way to the iron key - use to bind, sneak while using to unbind. However, the brass key has the ability to copy its binding to an iron key. To do this, one needs to place both the brass key and an unbound iron key in a mundane crafting grid. The brass key will not be consumed by this process. Copying thaumium keys will be described in the following section. <PAGE>Thaumium Key<DIV><IMG>thaumicaugmentation:textures/items/key_thaumium.png:0:0:255:255:0.125</IMG>The thaumium key is interesting in that it does not only bind to beings - it also binds to the object and its location. In other words, this key will permit to access to a single warded object at a location. To bind this key, I need to use it on the warded object I want to bind it to. This binding will still be valid even if I remove and replace the object at a location, but only if it still matches the type of object the key was originally bound to. Sneaking while using the key will unbind it, like the others. To copy a Thaumium key, I need to combine it in a mundane crafting grid with an empty Thaumium key and a brass key bound to the same person as the thaumium key.
+
+thaumicaugmentation.research.boots_void.title=Boots of the Riftstrider
+thaumicaugmentation.research.boots_void.0=With void metal allowing me to upgrade most of my existing armor to take advantage of its superior capabilities, it only makes sense for me to try to apply this material to the Boots of the Traveler as well.
+thaumicaugmentation.research.boots_void.1=I have succeeded in upgrading the Boots of the Traveler into a superior form I am calling the Boots of the Riftstrider. These boots have the expected boosts to speed and jump height over the original (at the cost of slightly increased vis consumption), as well as the auto-repair capabilities of all void metal items. Most notably, fall damage is greatly reduced beyond the jump height of these boots - I can practically fall into a ravine and walk away unharmed.<BR>These boots are also now dyeable. I simply need to craft them with the dye(s) I want to color them, or use them on a filled cauldron to wash away the dye.
+
+thaumicaugmentation.research.rift_studies.title=Rift Studies
+thaumicaugmentation.research.rift_studies.0=I think that flux rifts are much more important to my studies than they may seem. When they are created from an excess of flux, they open and connect to the void. There must be a way to manipulate them to tear through to places that are more... hospitable.<BR>However, studying flux rifts currently requires me to saturate the aura with flux, which is very destructive to the local arua. Additionally, I cannot control exactly where the rift is formed when this happens, which creates a high risk of damage to life and property. If I can come up with a controlled method of creating flux rifts, studying them will be much easier.
+thaumicaugmentation.research.rift_studies.1=By concentrating a large amount of vitium essentia into a void seed, the flux created will be able tear a hole into the void. I should be very careful with these flux rift seeds - "planting" them will instantly open the rift, consuming the seed.<BR>Sadly, even with the amount of vitium I added to the seed, the rift created is somewhat small. If I need to make a larger rift for some reason, I should be able to infuse even more vitium and void seeds into the smaller rift seed to make it grow larger, creating a larger rift. However, not only does the instability and vitium cost in the infusion increase with size, but I only seem to be able to safely use this process once on any given rift seed.

@@ -39,6 +39,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.INoAutomaticItemBlockRegistration;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
+import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
 import thecodex6824.thaumicaugmentation.common.item.ItemVoidBoots;
@@ -47,7 +48,6 @@ import thecodex6824.thaumicaugmentation.common.recipe.AuthorizedKeyCreationRecip
 import thecodex6824.thaumicaugmentation.common.recipe.DyeableItemRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumKeyCopyRecipe;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
-import thecodex6824.thaumicaugmentation.common.tile.TileTemporaryLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 
@@ -65,7 +65,6 @@ public class RegistryHandler {
 		GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
 		GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
 		GameRegistry.registerTileEntity(TileArcaneDoor.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_door"));
-		GameRegistry.registerTileEntity(TileTemporaryLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "temporary_light"));
 	}
 	
 	@SubscribeEvent
@@ -77,11 +76,12 @@ public class RegistryHandler {
 		}
 		
 		registry.register(new ItemTieredCasterGauntlet("gauntlet"));
-		registry.register(new ItemTABase("material", "lattice", "warding_sigil"));
+		registry.register(new ItemTABase("material", "lattice", "warding_sigil", "amalgamated_gear"));
 		registry.register(new ItemSealCopier("seal_copier"));
 		registry.register(new ItemArcaneDoor("arcane_door"));
 		registry.register(new ItemKey("key"));
 		registry.register(new ItemVoidBoots("void_boots"));
+		registry.register(new ItemRiftSeed("rift_seed"));
 	}
 	
 	@SubscribeEvent

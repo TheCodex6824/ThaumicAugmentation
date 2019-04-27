@@ -48,7 +48,9 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 import thecodex6824.thaumicaugmentation.common.block.trait.IDeferPropertyLoading;
+import thecodex6824.thaumicaugmentation.common.util.BitUtils;
 
 public class BlockTABase extends Block {
 
@@ -56,6 +58,19 @@ public class BlockTABase extends Block {
 	
 	public BlockTABase(Material mat) {
 		super(mat);
+	}
+	
+	protected void verifyProperties() {
+		int totalBits = 0;
+		if (this instanceof IEnabledBlock)
+			++totalBits;
+		if (this instanceof IHorizontallyDirectionalBlock)
+			++totalBits;
+		if (this instanceof ILightSourceBlock)
+			totalBits += 4;
+		
+		if (totalBits > 4)
+			throw new IllegalStateException("Required storage space of blockstate properties is greater than total allowed (4 bits)");
 	}
 	
 	public BlockTABase(String name, Material mat, Class<? extends TileEntity> tClass) {
@@ -66,11 +81,14 @@ public class BlockTABase extends Block {
 		tileClass = tClass;
 		
 		if (!(this instanceof IDeferPropertyLoading)) {
+			verifyProperties();
 			IBlockState state = blockState.getBaseState();
 			if (this instanceof IEnabledBlock)
 				state = state.withProperty(IEnabledBlock.ENABLED, true);
 			if (this instanceof IHorizontallyDirectionalBlock)
 				state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.SOUTH);
+			if (this instanceof ILightSourceBlock)
+				state = state.withProperty(ILightSourceBlock.LIGHT_LEVEL, 0);
 	
 			setDefaultState(state);
 		}
@@ -83,6 +101,8 @@ public class BlockTABase extends Block {
 			list.add(IEnabledBlock.ENABLED);
 		if (this instanceof IHorizontallyDirectionalBlock)
 			list.add(IHorizontallyDirectionalBlock.DIRECTION);
+		if (this instanceof ILightSourceBlock)
+			list.add(ILightSourceBlock.LIGHT_LEVEL);
 		
 		return new BlockStateContainer(this, list.toArray(new IProperty<?>[list.size()]));
 	}
@@ -92,9 +112,11 @@ public class BlockTABase extends Block {
 		if (!(this instanceof IDeferPropertyLoading)) {
 			int meta = 0;
 			if (this instanceof IEnabledBlock)
-				meta |= state.getValue(IEnabledBlock.ENABLED) ? 1 : 0;
+				meta = BitUtils.setBit(meta, 0, state.getValue(IEnabledBlock.ENABLED));
 			if (this instanceof IHorizontallyDirectionalBlock)
-				meta |= state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex() << 1;
+				meta = BitUtils.setBits(meta, 1, 3, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());
+			if (this instanceof ILightSourceBlock)
+				meta = state.getValue(ILightSourceBlock.LIGHT_LEVEL);
 			
 			return meta;
 		}
@@ -108,9 +130,11 @@ public class BlockTABase extends Block {
 		if (!(this instanceof IDeferPropertyLoading)) {
 			IBlockState state = getDefaultState();
 			if (this instanceof IEnabledBlock)
-				state = state.withProperty(IEnabledBlock.ENABLED, (meta & 1) == 1 ? true : false);
+				state = state.withProperty(IEnabledBlock.ENABLED, BitUtils.isBitSet(meta, 0));
 			if (this instanceof IHorizontallyDirectionalBlock)
-				state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.byHorizontalIndex((meta & 6) >> 1));
+				state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.byHorizontalIndex(BitUtils.getBits(meta, 1, 3)));
+			if (this instanceof ILightSourceBlock)
+				state = state.withProperty(ILightSourceBlock.LIGHT_LEVEL, meta);
 			
 			return state;
 		}
@@ -194,6 +218,11 @@ public class BlockTABase extends Block {
     public IBlockState withMirror(IBlockState state, Mirror mirror) {
         return state.withRotation(mirror.toRotation((EnumFacing)state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
     }
+	
+	@Override
+	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+		return this instanceof ILightSourceBlock ? state.getValue(ILightSourceBlock.LIGHT_LEVEL) : 0;
+	}
 	
 	@Override
 	public void getSubBlocks(CreativeTabs item, NonNullList<ItemStack> items) {

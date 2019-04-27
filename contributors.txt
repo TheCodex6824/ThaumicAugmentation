@@ -1,0 +1,7 @@
+This is going to be the place where people that have contributed to the mod (whatever that contribution may be) will go, since a small
+area in mcmod.info is not much room.
+
+If anyone is not included (or you would rather have a different name appear here), let me know or submit a PR.
+
+- TechnoMysterio - Research background and icon, ideas
+- the_spider_overlord - Boots of the Riftstrider idea

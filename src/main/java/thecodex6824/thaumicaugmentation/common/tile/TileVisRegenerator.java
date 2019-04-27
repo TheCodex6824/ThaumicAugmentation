@@ -88,7 +88,7 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
 		}
 		else if (world.isRemote && world.getTotalWorldTime() % 5 == 0) {
 			float aura = getAuraOffset();
-			cycleLength.setValue(1.0F / Math.max(aura, Float.MIN_VALUE));
+			cycleLength.setValue(Math.min(1.0F / Math.max(aura, Float.MIN_VALUE), 15));
 			boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
 			if (enabled != lastState) {
 				lastState = enabled;

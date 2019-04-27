@@ -34,13 +34,14 @@ public class ResearchHandler {
 	
 	public static void init() {
 		ResearchCategories.registerCategory("THAUMIC_AUGMENTATION", "FIRSTSTEPS", new AspectList(),
-				new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/items/seal_copier.png"),
+				new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/gui/icon.png"),
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/gui/research_background.jpg"), new ResourceLocation("thaumcraft", "textures/gui/gui_research_back_over.png")
 		);
 		ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/misc.json"));
 		ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/foci.json"));
 		ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/gauntlets.json"));
 		ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/warded.json"));
+		ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/rift.json"));
 		
 		ScanningManager.addScannableThing(new ScanBlock("f_LEAFSILVERWOOD", new Block[] {BlocksTC.leafSilverwood}));
 	}

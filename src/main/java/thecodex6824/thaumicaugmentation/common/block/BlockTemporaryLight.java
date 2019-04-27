@@ -31,17 +31,17 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTACustomModel;
 import thecodex6824.thaumicaugmentation.common.block.trait.INoAutomaticItemBlockRegistration;
-import thecodex6824.thaumicaugmentation.common.tile.TileTemporaryLight;
 
-public class BlockTemporaryLight extends BlockTACustomModel implements INoAutomaticItemBlockRegistration {
+public class BlockTemporaryLight extends BlockTACustomModel implements ILightSourceBlock, INoAutomaticItemBlockRegistration {
 
 	protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.375, 0.375, 0.375, 0.625, 0.625, 0.625);
 	protected static final AxisAlignedBB COLLISION_BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 	
 	public BlockTemporaryLight(String name) {
-		super(name, Material.CLOTH, TileTemporaryLight.class);
+		super(name, Material.CLOTH, null);
 		setHardness(0.0F);
 		setResistance(0.0F);
 	}
@@ -49,6 +49,11 @@ public class BlockTemporaryLight extends BlockTACustomModel implements INoAutoma
 	@Override
 	public SoundType getSoundType() {
 		return SoundType.CLOTH;
+	}
+	
+	@Override
+	public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) {
+		return 0;
 	}
 	
 	@Override
@@ -74,19 +79,6 @@ public class BlockTemporaryLight extends BlockTACustomModel implements INoAutoma
 	@Override
 	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
 			int fortune) {}
-	
-	@Override
-	public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) {
-		return 0;
-	}
-	
-	@Override
-	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-		if (world.getTileEntity(pos) instanceof TileTemporaryLight)
-			return ((TileTemporaryLight) world.getTileEntity(pos)).getLightLevel();
-		else
-			return 0;
-	}
 	
 	@Override
 	public EnumPushReaction getPushReaction(IBlockState state) {
