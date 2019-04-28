@@ -48,7 +48,7 @@ public class RiftSeedFluxGrowthRecipe extends InfusionRecipe {
 	
 	@Override
 	public boolean matches(List<ItemStack> input, ItemStack central, World world, EntityPlayer player) {
-		if (input.size() > 7 || input.isEmpty())
+		if (input.size() > 9 || input.isEmpty())
 			return false;
 		
 		if (!(central.isItemEqual(ALLOWED_STACK) && ThaumcraftCapabilities.knowsResearch(player, research) &&
@@ -66,13 +66,13 @@ public class RiftSeedFluxGrowthRecipe extends InfusionRecipe {
 	
 	@Override
 	public AspectList getAspects(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
-		return new AspectList().add(Aspect.FLUX, comps.size() * 15);
+		return new AspectList().add(Aspect.FLUX, comps.size() * 25);
 	}
 	
 	@Override
 	public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
 		ItemStack toReturn = input.copy();
-		toReturn.getTagCompound().setInteger("riftSize", comps.size() * 10 + 20);
+		toReturn.getTagCompound().setInteger("riftSize", comps.size() * 10 + 10);
 		toReturn.getTagCompound().setBoolean("grown", true);
 		return toReturn;
 	}

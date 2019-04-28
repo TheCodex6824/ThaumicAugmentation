@@ -70,25 +70,25 @@ public class RecipeHandler {
 		
 		ItemStack fluxSeedStack = new ItemStack(TAItems.RIFT_SEED, 1, 0);
 		fluxSeedStack.setTagCompound(new NBTTagCompound());
-		fluxSeedStack.getTagCompound().setInteger("riftSize", 20);
+		fluxSeedStack.getTagCompound().setInteger("riftSize", 10);
 		ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFlux"), 
 				new CrucibleRecipe("RIFT_STUDIES", fluxSeedStack, ItemsTC.voidSeed, 
-				new AspectList().add(Aspect.FLUX, 35).add(Aspect.VOID, 15)));
+				new AspectList().add(Aspect.FLUX, 50).add(Aspect.VOID, 25)));
 		
 		for (int i = 1; i < 4; ++i) {
 			ItemStack in = new ItemStack(TAItems.RIFT_SEED, 1, 0);
 			in.setTagCompound(new NBTTagCompound());
-			in.getTagCompound().setInteger("riftSize", 20);
+			in.getTagCompound().setInteger("riftSize", 10);
 			in.getTagCompound().setBoolean("grown", false);
 			ItemStack out = in.copy();
-			out.getTagCompound().setInteger("riftSize", i == 3 ? 100 : i * 10 + 20);
+			out.getTagCompound().setInteger("riftSize", i == 3 ? 100 : i * 10 + 10);
 			out.getTagCompound().setBoolean("grown", true);
-			Object[] inputs = new Object[i == 3 ? 8 : i];
-			for (int k = 0; k < (i == 3 ? 8 : i); ++k)
+			Object[] inputs = new Object[i == 3 ? 9 : i];
+			for (int k = 0; k < (i == 3 ? 9 : i); ++k)
 				inputs[k] = new ItemStack(ItemsTC.voidSeed);
 			
-			ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFluxGrowthFake" + (i == 3 ? 100 : i * 10 + 20)), 
-					new InfusionRecipe("RIFT_STUDIES", out, i == 3 ? 8 : i, new AspectList().add(Aspect.FLUX, i == 3 ? 120 : i * 15),
+			ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFluxGrowthFake" + (i == 3 ? 100 : i * 10 + 10)), 
+					new InfusionRecipe("RIFT_STUDIES", out, i == 3 ? 9 : i, new AspectList().add(Aspect.FLUX, i == 3 ? 225 : i * 25),
 					in, inputs));
 		}
 		

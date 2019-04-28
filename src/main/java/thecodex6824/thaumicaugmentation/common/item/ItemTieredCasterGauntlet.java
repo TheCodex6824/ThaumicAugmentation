@@ -71,6 +71,7 @@ import thaumcraft.api.items.IArchitect;
 import thaumcraft.api.items.IWarpingGear;
 import thaumcraft.common.items.casters.CasterManager;
 import thaumcraft.common.items.casters.ItemFocus;
+import thaumcraft.common.items.casters.foci.FocusEffectExchange;
 import thaumcraft.common.lib.network.misc.PacketAuraToClient;
 import thaumcraft.common.lib.utils.BlockUtils;
 import thaumcraft.common.world.aura.AuraChunk;
@@ -79,6 +80,7 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.item.ITieredCaster;
+import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectExchangeCompat;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
@@ -445,6 +447,13 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 		}
 	}
 	
+	protected void fixFoci(FocusPackage p) {
+		for (int i = 0; i < p.nodes.size(); ++i) {
+			if (p.nodes.get(i).getClass().equals(FocusEffectExchange.class))
+				p.nodes.set(i, new FocusEffectExchangeCompat((FocusEffectExchange) p.nodes.get(i)));
+		}
+	}
+	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
 		if (isStoringFocus(player.getHeldItem(hand)) && !isCasterOnCooldown(player)) {
@@ -462,7 +471,9 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 	        	return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
 	        
 	        if (consumeVis(player.getHeldItem(hand), player, ((ItemFocus) focus.getItem()).getVisCost(focus), false, false)) {
-	        	FocusEngine.castFocusPackage(player, core);
+	        	FocusPackage copy = core.copy(player);
+	        	fixFoci(copy);
+	        	FocusEngine.castFocusPackage(player, copy, true);
 	    	    player.swingArm(hand);
 	    	    return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
 	        }

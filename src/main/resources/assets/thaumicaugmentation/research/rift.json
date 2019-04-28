@@ -36,8 +36,8 @@
                     "text": "thaumicaugmentation.research.rift_studies.1",
                     "recipes": [
                     	"thaumicaugmentation:RiftSeedFlux",
+                    	"thaumicaugmentation:RiftSeedFluxGrowthFake20",
                     	"thaumicaugmentation:RiftSeedFluxGrowthFake30",
-                    	"thaumicaugmentation:RiftSeedFluxGrowthFake40",
                     	"thaumicaugmentation:RiftSeedFluxGrowthFake100"
                     ]
                 }

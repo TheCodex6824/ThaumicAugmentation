@@ -91,10 +91,9 @@ public class PlayerEventHandler {
 	public static void onFallSound(PlaySoundAtEntityEvent event) {
 		if (event.getEntity() instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) event.getEntity();
-			if (player.getLastDamageSource() == DamageSource.FALL && event.getSound() == SoundEvents.ENTITY_PLAYER_BIG_FALL ||
-					event.getSound() == SoundEvents.ENTITY_PLAYER_SMALL_FALL) {
+			if (event.getSound() == SoundEvents.ENTITY_PLAYER_BIG_FALL || event.getSound() == SoundEvents.ENTITY_PLAYER_SMALL_FALL) {
 				boolean shouldSilenceFall = false;
-				for (ItemStack stack : ((EntityPlayer) event.getEntity()).getArmorInventoryList()) {
+				for (ItemStack stack : player.getArmorInventoryList()) {
 					if (stack.getItem() instanceof IArmorReduceFallDamage) {
 						shouldSilenceFall = true;
 						break;

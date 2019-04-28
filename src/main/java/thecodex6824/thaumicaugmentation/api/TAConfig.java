@@ -86,7 +86,7 @@ public class TAConfig {
 		"This is added to the base jump height of the player."
 	})
 	@RangeDouble(min = 0.0F, max = 10.0F)
-	public static double voidBootsJumpBoost = 0.5;
+	public static double voidBootsJumpBoost = 0.45;
 	
 	@Name("VoidBootsJumpFactor")
 	@Comment({

@@ -70,7 +70,7 @@ public class ItemRiftSeed extends ItemTABase {
 			EntityFluxRift rift = new EntityFluxRift(world);
 			rift.setRiftSeed(world.rand.nextInt());
 			rift.setLocationAndAngles(position.x, position.y, position.z, world.rand.nextInt(360), 0.0F);
-			rift.setRiftStability(50.0F);
+			rift.setRiftStability(0.0F);
 			rift.setRiftSize(player.getHeldItem(hand).getTagCompound().getInteger("riftSize"));
 			world.spawnEntity(rift);
 			if (!player.capabilities.isCreativeMode)
@@ -87,7 +87,7 @@ public class ItemRiftSeed extends ItemTABase {
 		if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
 			ItemStack fluxSeed = new ItemStack(this, 1, 0);
 			fluxSeed.setTagCompound(new NBTTagCompound());
-			fluxSeed.getTagCompound().setInteger("riftSize", 20);
+			fluxSeed.getTagCompound().setInteger("riftSize", 10);
 			items.add(fluxSeed);
 			ItemStack maxSeed = fluxSeed.copy();
 			maxSeed.getTagCompound().setInteger("riftSize", 100);

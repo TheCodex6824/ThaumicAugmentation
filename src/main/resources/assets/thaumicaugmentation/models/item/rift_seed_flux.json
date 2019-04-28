@@ -1,6 +1,10 @@
 {
     "parent": "item/generated",
     "overrides": [
+    	{
+            "predicate": {"size": 0.1},
+            "model": "thaumicaugmentation:item/rift_seed_flux_1"
+        },
         {
             "predicate": {"size": 0.2},
             "model": "thaumicaugmentation:item/rift_seed_flux_2"
