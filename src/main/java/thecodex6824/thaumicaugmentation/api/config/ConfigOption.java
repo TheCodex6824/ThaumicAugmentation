@@ -18,23 +18,37 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.network;
+package thecodex6824.thaumicaugmentation.api.config;
 
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.relauncher.Side;
-import thaumcraft.common.lib.network.misc.PacketAuraToClient;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
-public class TANetwork {
-
-	public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(ThaumicAugmentationAPI.MODID);
+public abstract class ConfigOption<T> {
 	
-	public static void init() {
-		int id = 0;
-		INSTANCE.registerMessage(PacketAuraToClient.class, PacketAuraToClient.class, id++, Side.CLIENT);
-		INSTANCE.registerMessage(PacketSpawnParticle.Handler.class, PacketSpawnParticle.class, id++, Side.CLIENT);
-		INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, id++, Side.CLIENT);
+	protected boolean enforceServer;
+	
+	public ConfigOption(boolean enforceServer) {
+		this.enforceServer = enforceServer;
+	}
+	
+	public boolean shouldSyncValue(Side s) {
+		if (s == Side.CLIENT)
+			return enforceServer;
+		
+		return false;
+	}
+	
+	public abstract void serialize(ByteBuf buf);
+	
+	public abstract void deserialize(ByteBuf buf);
+	
+	public abstract T getValue();
+	
+	public abstract void setValue(T value);
+	
+	public void setValue(T value, Side logicalSide) {
+		if (!shouldSyncValue(logicalSide))
+			setValue(value);
 	}
 	
 }

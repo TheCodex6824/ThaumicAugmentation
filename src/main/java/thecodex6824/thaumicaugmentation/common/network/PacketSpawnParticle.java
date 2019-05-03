@@ -118,8 +118,10 @@ public class PacketSpawnParticle implements IMessage {
 		
 		@Override
 		public IMessage onMessage(PacketSpawnParticle message, MessageContext ctx) {
-			Minecraft.getMinecraft().world.spawnParticle(message.getParticleType(), message.getX(), message.getY(), message.getZ(),
+			Minecraft.getMinecraft().addScheduledTask(() -> {
+				Minecraft.getMinecraft().world.spawnParticle(message.getParticleType(), message.getX(), message.getY(), message.getZ(),
 					message.getSpeedX(), message.getSpeedY(), message.getSpeedZ(), message.getParam());
+			});
 			
 			return null;
 		}

@@ -18,23 +18,38 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.network;
+package thecodex6824.thaumicaugmentation.api.config;
 
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import java.util.ArrayList;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.relauncher.Side;
-import thaumcraft.common.lib.network.misc.PacketAuraToClient;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
-public class TANetwork {
+public class TAConfigManager {
 
-	public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(ThaumicAugmentationAPI.MODID);
+	private static ArrayList<ConfigOption<?>> config = new ArrayList<>();
 	
-	public static void init() {
-		int id = 0;
-		INSTANCE.registerMessage(PacketAuraToClient.class, PacketAuraToClient.class, id++, Side.CLIENT);
-		INSTANCE.registerMessage(PacketSpawnParticle.Handler.class, PacketSpawnParticle.class, id++, Side.CLIENT);
-		INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, id++, Side.CLIENT);
+	public static <T extends ConfigOption<?>> T addOption(T option) {
+		config.add(option);
+		return option;
+	}
+	
+	public static void sync(Side logicalSide, ByteBuf buf) {
+		for (ConfigOption<?> option : config) {
+			if (option.shouldSyncValue(logicalSide))
+				option.deserialize(buf);
+		}
+	}
+	
+	public static ByteBuf createSyncBuffer(Side targetSide) {
+		ByteBuf buf = Unpooled.buffer();
+		for (ConfigOption<?> option : config) {
+			if (option.shouldSyncValue(targetSide))
+				option.serialize(buf);
+		}
+		
+		return buf;
 	}
 	
 }

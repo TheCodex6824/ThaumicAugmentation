@@ -54,15 +54,14 @@ import thaumcraft.api.items.IRechargable;
 import thaumcraft.api.items.IVisDiscountGear;
 import thaumcraft.api.items.IWarpingGear;
 import thaumcraft.api.items.RechargeHelper;
-
-import thecodex6824.thaumicaugmentation.api.PlayerMovementAbilityManager.MovementType;
 import thecodex6824.thaumicaugmentation.api.PlayerMovementAbilityManager;
+import thecodex6824.thaumicaugmentation.api.PlayerMovementAbilityManager.MovementType;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.item.IArmorReduceFallDamage;
+import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.item.trait.IModelProvider;
 
@@ -80,19 +79,19 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
 		public Float apply(EntityPlayer player, MovementType type) {
 			switch (type) {
 				case DRY_GROUND: {
-					float boost = (float) TAConfig.voidBootsLandSpeedBoost;
-					return player.isSneaking() ? boost / (float) TAConfig.voidBootsSneakReduction : boost;
+					float boost = TAConfig.voidBootsLandSpeedBoost.getValue().floatValue();
+					return player.isSneaking() ? boost / TAConfig.voidBootsSneakReduction.getValue().floatValue() : boost;
 				}
-				case JUMP_BEGIN: return (float) TAConfig.voidBootsJumpBoost;
-				case JUMP_FACTOR: return (float) TAConfig.voidBootsJumpFactor;
-				case STEP_HEIGHT: return !player.isSneaking() ? (float) TAConfig.voidBootsStepHeight : 0.0F;
+				case JUMP_BEGIN: return TAConfig.voidBootsJumpBoost.getValue().floatValue();
+				case JUMP_FACTOR: return TAConfig.voidBootsJumpFactor.getValue().floatValue();
+				case STEP_HEIGHT: return !player.isSneaking() ? TAConfig.voidBootsStepHeight.getValue().floatValue() : 0.0F;
 				case WATER_GROUND: {
-					float boost = Math.max((float) TAConfig.voidBootsLandSpeedBoost / 4.0F, (float) TAConfig.voidBootsWaterSpeedBoost);
-					return player.isSneaking() ? boost / (float) TAConfig.voidBootsSneakReduction : boost;
+					float boost = Math.max(TAConfig.voidBootsLandSpeedBoost.getValue().floatValue() / 4.0F, TAConfig.voidBootsWaterSpeedBoost.getValue().floatValue());
+					return player.isSneaking() ? boost / TAConfig.voidBootsSneakReduction.getValue().floatValue() : boost;
 				}
 				case WATER_SWIM: {
-					float boost = (float) TAConfig.voidBootsWaterSpeedBoost;
-					return player.isSneaking() ? boost / (float) TAConfig.voidBootsSneakReduction : boost;
+					float boost = TAConfig.voidBootsWaterSpeedBoost.getValue().floatValue();
+					return player.isSneaking() ? boost / TAConfig.voidBootsSneakReduction.getValue().floatValue() : boost;
 				}
 				default: return 0.0F;
 			}

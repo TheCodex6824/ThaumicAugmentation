@@ -119,7 +119,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 	@Override
 	public boolean consumeVis(ItemStack stack, EntityPlayer user, float amount, boolean crafting, boolean simulate) {
 		amount *= getConsumptionModifier(stack, user, crafting);
-		if (stack.getMetadata() == 0 || TAConfig.voidseerArea <= 1) {
+		if (stack.getMetadata() == 0 || TAConfig.voidseerArea.getValue() <= 1) {
 			if (amount <= AuraHelper.getVis(user.getEntityWorld(), user.getPosition())) {
 				amount -= AuraHelper.drainVis(user.getEntityWorld(), user.getPosition(), amount, simulate);
 				return amount <= 0.0F;
@@ -128,10 +128,10 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			return false;
 		}
 		else {
-			int validChunks = 0;
+			int validChunks = 0, voidseerArea = TAConfig.voidseerArea.getValue();
 			float totalVis = 0.0F;
-			for (int x = -TAConfig.voidseerArea / 2; x < (int) Math.ceil(TAConfig.voidseerArea / 2); ++x) {
-				for (int z = -TAConfig.voidseerArea / 2; z < (int) Math.ceil(TAConfig.voidseerArea / 2); ++z) {
+			for (int x = -voidseerArea / 2; x < (int) Math.ceil(voidseerArea / 2); ++x) {
+				for (int z = -voidseerArea / 2; z < (int) Math.ceil(voidseerArea / 2); ++z) {
 					BlockPos loc = user.getPosition().add(x * 16, 0, z * 16);
 					if (user.getEntityWorld().isBlockLoaded(loc, true)) {
 						totalVis += AuraHelper.getVis(user.getEntityWorld(), loc);
@@ -142,8 +142,8 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			
 			if (totalVis >= amount) {
 				float toRemove = amount / validChunks;
-				for (int x = -TAConfig.voidseerArea / 2; x < (int) Math.ceil(TAConfig.voidseerArea / 2); ++x) {
-					for (int z = -TAConfig.voidseerArea / 2; z < (int) Math.ceil(TAConfig.voidseerArea / 2); ++z) {
+				for (int x = -voidseerArea / 2; x < (int) Math.ceil(voidseerArea / 2); ++x) {
+					for (int z = -voidseerArea / 2; z < (int) Math.ceil(voidseerArea / 2); ++z) {
 						BlockPos loc = user.getPosition().add(x * 16, 0, z * 16);
 						if (user.getEntityWorld().isBlockLoaded(loc, true)) {
 							amount -= AuraHelper.drainVis(user.getEntityWorld(), loc, Math.min(amount, toRemove), simulate);
@@ -205,8 +205,8 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 	public float getCasterVisDiscount(ItemStack stack) {
 		if (stack.getItem() == this) {
 			switch (stack.getMetadata()) {
-				case 0: return (float) TAConfig.gauntletVisDiscounts[0];
-				case 1: return (float) TAConfig.gauntletVisDiscounts[1];
+				case 0: return (float) TAConfig.gauntletVisDiscounts.getValue()[0];
+				case 1: return (float) TAConfig.gauntletVisDiscounts.getValue()[1];
 			}
 		}
 		
@@ -217,8 +217,8 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 	public float getCasterCooldownModifier(ItemStack stack) {
 		if (stack.getItem() == this) {
 			switch (stack.getMetadata()) {
-				case 0: return (float) TAConfig.gauntletCooldownModifiers[0];
-				case 1: return (float) TAConfig.gauntletCooldownModifiers[1];
+				case 0: return (float) TAConfig.gauntletCooldownModifiers.getValue()[0];
+				case 1: return (float) TAConfig.gauntletCooldownModifiers.getValue()[1];
 			}
 		}
 		

@@ -18,24 +18,37 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api;
+package thecodex6824.thaumicaugmentation.api.config;
 
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
+import io.netty.buffer.ByteBuf;
 
-public class TAConfig {
+public class ConfigOptionDouble extends ConfigOption<Double> {
+
+	protected double value;
 	
-	public static ConfigOptionDoubleList gauntletVisDiscounts;
-	public static ConfigOptionDoubleList gauntletCooldownModifiers;
+	public ConfigOptionDouble(boolean enforceServer, double defaultValue) {
+		super(enforceServer);
+		value = defaultValue;
+	}
 	
-	public static ConfigOptionInt voidseerArea;
+	@Override
+	public void serialize(ByteBuf buf) {
+		buf.writeDouble(value);
+	}
 	
-	public static ConfigOptionDouble voidBootsLandSpeedBoost;
-	public static ConfigOptionDouble voidBootsWaterSpeedBoost;
-	public static ConfigOptionDouble voidBootsJumpBoost;
-	public static ConfigOptionDouble voidBootsJumpFactor;
-	public static ConfigOptionDouble voidBootsStepHeight;
-	public static ConfigOptionDouble voidBootsSneakReduction;
+	@Override
+	public void deserialize(ByteBuf buf) {
+		value = buf.readDouble();
+	};
+	
+	@Override
+	public Double getValue() {
+		return value;
+	}
+	
+	@Override
+	public void setValue(Double value) {
+		this.value = value;
+	}
 	
 }

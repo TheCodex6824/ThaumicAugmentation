@@ -30,13 +30,20 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import thecodex6824.thaumicaugmentation.api.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.item.IArmorReduceFallDamage;
+import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class PlayerEventHandler {
 
+	@SubscribeEvent
+	public static void onJoin(PlayerLoggedInEvent event) {
+		TAConfigHolder.loadOrSyncConfig(event.player);
+	}
+	
 	@SubscribeEvent
 	public static void onJump(LivingEvent.LivingJumpEvent event) {
 		if (event.getEntity() instanceof EntityPlayer)
