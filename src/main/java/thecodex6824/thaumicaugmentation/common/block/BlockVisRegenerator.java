@@ -32,7 +32,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 
 public class BlockVisRegenerator extends BlockTACustomModel implements IEnabledBlock, IAnimatedBlock {
 
-	protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1.0, 0.6875, 1.0);
+	protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1.0, 0.875, 1.0);
 	
 	public BlockVisRegenerator(String name) {
 		super(name, Material.WOOD, TileVisRegenerator.class);

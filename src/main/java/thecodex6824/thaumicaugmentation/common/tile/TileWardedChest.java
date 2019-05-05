@@ -38,12 +38,14 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.tile.IWardedInventory;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
-public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapabilityProvider {
+public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapabilityProvider, IWardedInventory {
 	
 	protected ItemStackHandler inventory;
 	protected IAnimationStateMachine asm;
@@ -99,7 +101,8 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
 		return ThaumicAugmentationAPI.MODID + ":warded_chest";
 	}
 	
-	public ItemStackHandler getInventory( ) {
+	@Override
+	public IItemHandler getInventory( ) {
 		return inventory;
 	}
 	

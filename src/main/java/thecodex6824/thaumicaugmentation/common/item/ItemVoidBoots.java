@@ -161,8 +161,13 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
 	
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-		if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH)
-			super.getSubItems(tab, items);
+		if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
+			ItemStack base = new ItemStack(this, 1, 0);
+			items.add(base);
+			ItemStack charged = base.copy();
+			RechargeHelper.rechargeItemBlindly(charged, null, getMaxCharge(charged, null));
+			items.add(charged);
+		}
 	}
 	
 	@Override
@@ -260,7 +265,7 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
 	@Override
 	public float getNewFallDamage(ItemStack stack, float origDamage, float distance) {
 		if (RechargeHelper.getCharge(stack) > 0)
-			return origDamage / 8.0F - 1.0F;
+			return origDamage / 12.0F - 1.0F;
 		
 		return origDamage;
 	}

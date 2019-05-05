@@ -251,8 +251,13 @@ public class BlockArcaneDoor extends BlockWardedCustomModel implements IHorizont
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
 		if (state.getValue(IArcaneDoorHalf.DOOR_HALF) == EnumDoorHalf.LOWER)
 			return new ItemStack(TAItems.ARCANE_DOOR, 1, state.getValue(IArcaneDoorType.TYPE) == ArcaneDoorType.METAL ? 1 : 0);
-		else
-			return ItemStack.EMPTY;
+		else {
+			IBlockState below = worldIn.getBlockState(pos.down());
+			if (below.getBlock() == this)
+				return new ItemStack(TAItems.ARCANE_DOOR, 1, below.getValue(IArcaneDoorType.TYPE) == ArcaneDoorType.METAL ? 1 : 0);
+			else
+				return ItemStack.EMPTY;
+		}
 	}
 	
 	@Override

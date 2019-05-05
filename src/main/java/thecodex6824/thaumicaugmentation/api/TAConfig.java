@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api;
 
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionBoolean;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
@@ -37,5 +38,7 @@ public class TAConfig {
 	public static ConfigOptionDouble voidBootsJumpFactor;
 	public static ConfigOptionDouble voidBootsStepHeight;
 	public static ConfigOptionDouble voidBootsSneakReduction;
+	
+	public static ConfigOptionBoolean opWardOverride;
 	
 }

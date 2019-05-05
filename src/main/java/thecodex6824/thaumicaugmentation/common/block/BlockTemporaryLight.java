@@ -20,22 +20,29 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import java.util.Random;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.client.fx.FXDispatcher;
 import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTACustomModel;
-import thecodex6824.thaumicaugmentation.common.block.trait.INoAutomaticItemBlockRegistration;
 
-public class BlockTemporaryLight extends BlockTACustomModel implements ILightSourceBlock, INoAutomaticItemBlockRegistration {
+public class BlockTemporaryLight extends BlockTACustomModel implements ILightSourceBlock {
 
 	protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.375, 0.375, 0.375, 0.625, 0.625, 0.625);
 	protected static final AxisAlignedBB COLLISION_BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
@@ -93,6 +100,17 @@ public class BlockTemporaryLight extends BlockTACustomModel implements ILightSou
 	@Override
 	public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos) {
 		return true;
+	}
+	
+	@Override
+	public void getSubBlocks(CreativeTabs item, NonNullList<ItemStack> items) {}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
+		int color = Aspect.LIGHT.getColor();
+		FXDispatcher.INSTANCE.drawWispyMotes(pos.getX() + 0.5 + rand.nextGaussian() / 2, pos.getY() + 0.5 + rand.nextGaussian() / 2,
+				pos.getZ() + 0.5 + rand.nextGaussian() / 2, 0, 0, 0, 40, ((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 0.01F);
 	}
 	
 }

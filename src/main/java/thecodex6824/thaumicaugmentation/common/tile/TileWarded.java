@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,8 +30,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IInteractWithCaster;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.event.WardedBlockPermissionEvent;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
@@ -61,7 +65,9 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 	}
 	
 	protected boolean checkPermission(EntityPlayer player) {
-		if (owner.equals(player.getUniqueID().toString()))
+		if (player == null)
+			return false;
+		else if (owner.equals(player.getUniqueID().toString()))
 			return true;
 		else {
 			ItemStack stack = null;
@@ -78,11 +84,26 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 		return false;
 	}
 	
+	protected boolean playerHasSpecialPermission(EntityPlayer player) {
+		if (player == null)
+			return false;
+		else if (!player.world.isRemote && TAConfig.opWardOverride.getValue() && FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers().
+				getEntry(player.getGameProfile()) != null)
+			return true;
+		else if (FMLCommonHandler.instance().getSide() == Side.CLIENT && Minecraft.getMinecraft().isSingleplayer())
+			return true;
+		else
+			return false;
+	}
+	
 	@Override
 	public boolean hasPermission(EntityPlayer player) {
-		WardedBlockPermissionEvent event = new WardedBlockPermissionEvent(world, pos, world.getBlockState(pos), player);
+		boolean specialPermission = playerHasSpecialPermission(player);
+		WardedBlockPermissionEvent event = new WardedBlockPermissionEvent(world, pos, world.getBlockState(pos), player, specialPermission);
 		MinecraftForge.EVENT_BUS.post(event);
-		if (!event.isCanceled()) {
+		if (specialPermission)
+			return true;
+		else if (!event.isCanceled()) {
 			switch (event.getResult()) {
 				case ALLOW: return true;
 				case DENY: return false;

@@ -37,6 +37,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionBoolean;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
@@ -119,10 +120,17 @@ public class TAConfigHolder {
 	
 	@Name("VoidBootsSneakReduction")
 	@Comment({
-		"Any speed boosts (not jump) will be divided by this value while sneaking"
+		"Any speed boosts (not jump) will be divided by this value while sneaking."
 	})
 	@RangeDouble(min = 1.0F, max = 10.0F)
 	public static double voidBootsSneakReduction = 4.0F;
+	
+	@Name("AllowOPWardOverride")
+	@Comment({
+		"Allow server operators to always be able to interact with any warded block.",
+		"Note that if this is set to true, OPs will not fire events for interacting with warded blocks."
+	})
+	public static boolean opWardOverride = true;
 	
 	@SubscribeEvent
 	public static void onConfigChanged(OnConfigChangedEvent event) {
@@ -151,6 +159,8 @@ public class TAConfigHolder {
 		TAConfig.voidBootsJumpFactor.setValue(voidBootsJumpFactor, side);
 		TAConfig.voidBootsStepHeight.setValue(voidBootsStepHeight, side);
 		TAConfig.voidBootsSneakReduction.setValue(voidBootsSneakReduction, side);
+		
+		TAConfig.opWardOverride.setValue(opWardOverride, side);
 	}
 	
 	public static void syncConfig(EntityPlayerMP target) {
@@ -180,6 +190,8 @@ public class TAConfigHolder {
 		TAConfig.voidBootsJumpFactor = TAConfigManager.addOption(new ConfigOptionDouble(true, voidBootsJumpFactor));
 		TAConfig.voidBootsStepHeight = TAConfigManager.addOption(new ConfigOptionDouble(true, voidBootsStepHeight));
 		TAConfig.voidBootsSneakReduction = TAConfigManager.addOption(new ConfigOptionDouble(true, voidBootsSneakReduction));
+	
+		TAConfig.opWardOverride = TAConfigManager.addOption(new ConfigOptionBoolean(false, opWardOverride));
 	}
 	
 }

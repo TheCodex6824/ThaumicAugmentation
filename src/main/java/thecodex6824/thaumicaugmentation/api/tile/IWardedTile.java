@@ -62,8 +62,10 @@ public interface IWardedTile {
 	/**
 	 * Method called when a player tries to interact with a warded tile. This should fire
 	 * a {@link thecodex6824.thaumicaugmentation.api.event.WardedBlockPermissionEvent WardedBlockPermissionEvent}, 
-	 * and should react to its result and/or cancellation. The default check can be defined by the implementation, 
-	 * but should generally check if the player is the owner and/or the player has an 
+	 * and should react to its result and/or cancellation, unless the player is a server operator and 
+	 * {@link thecodex6824.thaumicaugmentation.api.TAConfig#opWardOverride opWardOverride} is true, 
+	 * in which case they should be granted access without firing an event. The default check can be defined by 
+	 * the implementation, but should generally check if the player is the owner and/or the player has an 
 	 * {@link thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator IWardAuthenticator} that allows access.
 	 * @param player The player trying to access this warded tile.
 	 * @return If the player has permission, and the interaction should continue

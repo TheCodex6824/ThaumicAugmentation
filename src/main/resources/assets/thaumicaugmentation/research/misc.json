@@ -4,7 +4,7 @@
             "key": "THAUMIC_AUGMENTATION_BASE",
             "name": "thaumicaugmentation.research.thaumic_augmentation_base.title",
             "icons": [
-            	"thaumicaugmentation:textures/gui/icon.png"
+            	"thaumicaugmentation:textures/gui/base_research_icon.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [

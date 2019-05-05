@@ -43,13 +43,15 @@ public class WardedBlockPermissionEvent extends Event {
 	protected EntityPlayer player;
 	protected BlockPos position;
 	protected IBlockState state;
+	protected boolean informative;
 	
-	public WardedBlockPermissionEvent(World w, BlockPos pos, IBlockState s, EntityPlayer p) {
+	public WardedBlockPermissionEvent(World w, BlockPos pos, IBlockState s, EntityPlayer p, boolean i) {
 		result = Result.DEFAULT;
 		world = w;
 		player = p;
 		position = pos;
 		state = s;
+		informative = i;
 	}
 	
 	/**
@@ -85,11 +87,23 @@ public class WardedBlockPermissionEvent extends Event {
 	}
 	
 	/**
+	 * Returns if this event is informative, or otherwise is solely for other mods
+	 * to know when a warded block is used. If this is true, then any permission
+	 * returned in this event is ignored, and the interaction will still take place
+	 * if the event is cancelled.
+	 * @return If this event is informative
+	 */
+	public boolean isInformative() {
+		return informative;
+	}
+	
+	/**
 	 * Sets the result of this event. A result of ALLOW will let
 	 * the player interact with the warded block, even if they would normally
 	 * not have permission to do so. A result of DENY will always disallow players
 	 * from interacting with the warded block, even if they normally would be able to.
-	 * A result of DEFAULT will fall back to the normal permission behavior.
+	 * A result of DEFAULT will fall back to the normal permission behavior. All results
+	 * will be ignored if {@link WardedBlockPermissionEvent#isInformative isInformative} is true.
 	 * @param value The result this event should use
 	 */
 	@Override
