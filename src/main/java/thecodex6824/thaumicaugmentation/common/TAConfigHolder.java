@@ -41,6 +41,7 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionBoolean;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
 import thecodex6824.thaumicaugmentation.common.network.PacketConfigSync;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -128,9 +129,31 @@ public class TAConfigHolder {
 	@Name("AllowOPWardOverride")
 	@Comment({
 		"Allow server operators to always be able to interact with any warded block.",
-		"Note that if this is set to true, OPs will not fire events for interacting with warded blocks."
+		"Note that if this is set to true, other mods will NOT be able to stop them from interacting with the block."
 	})
 	public static boolean opWardOverride = true;
+	
+	@Name("SimpleCastedLightRendering")
+	@Comment({
+		"Disables the casted light from rendering particles, falling back to a (ugly) static model instead."
+	})
+	public static boolean castedLightSimpleRenderer = false;
+	
+	@Name("DefaultCastingGauntletColors")
+	@Comment({
+		"The default dye colors for the thaumium and void gauntlets, in that order.",
+		"The dyed color is multiplied with the color of the texture.",
+		"This is a server-side setting."
+	})
+	public static int[] defaultGauntletColors = new int[] {0xFFFFFF, 0x6A3880};
+	
+	@Name("DefaultVoidBootsColor")
+	@Comment({
+		"The default dye color for the Boots of the Riftstrider.",
+		"The dyed color is multiplied with the color of the texture.",
+		"This is a server-side setting."
+	})
+	public static int defaultVoidBootsColor = 0x6A3880;
 	
 	@SubscribeEvent
 	public static void onConfigChanged(OnConfigChangedEvent event) {
@@ -161,6 +184,11 @@ public class TAConfigHolder {
 		TAConfig.voidBootsSneakReduction.setValue(voidBootsSneakReduction, side);
 		
 		TAConfig.opWardOverride.setValue(opWardOverride, side);
+		
+		TAConfig.castedLightSimpleRenderer.setValue(castedLightSimpleRenderer, side);
+		
+		TAConfig.defaultGauntletColors.setValue(defaultGauntletColors, side);
+		TAConfig.defaultVoidBootsColor.setValue(defaultVoidBootsColor, side);
 	}
 	
 	public static void syncConfig(EntityPlayerMP target) {
@@ -192,6 +220,11 @@ public class TAConfigHolder {
 		TAConfig.voidBootsSneakReduction = TAConfigManager.addOption(new ConfigOptionDouble(true, voidBootsSneakReduction));
 	
 		TAConfig.opWardOverride = TAConfigManager.addOption(new ConfigOptionBoolean(false, opWardOverride));
+		
+		TAConfig.castedLightSimpleRenderer = TAConfigManager.addOption(new ConfigOptionBoolean(false, castedLightSimpleRenderer));
+	
+		TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, defaultGauntletColors));
+		TAConfig.defaultVoidBootsColor = TAConfigManager.addOption(new ConfigOptionInt(true, defaultVoidBootsColor));
 	}
 	
 }

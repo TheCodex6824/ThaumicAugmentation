@@ -74,11 +74,6 @@ public class BlockTACustomModel extends BlockTABase {
 	}
 	
 	@Override
-	public boolean isNormalCube(IBlockState state) {
-		return false;
-	}
-	
-	@Override
 	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
 		return false;
 	}

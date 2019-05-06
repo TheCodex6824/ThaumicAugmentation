@@ -29,6 +29,8 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -39,16 +41,18 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.client.fx.FXDispatcher;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
-import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTACustomModel;
+import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
+import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 
-public class BlockTemporaryLight extends BlockTACustomModel implements ILightSourceBlock {
+public class BlockCastedLight extends BlockTABase implements ILightSourceBlock {
 
 	protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.375, 0.375, 0.375, 0.625, 0.625, 0.625);
 	protected static final AxisAlignedBB COLLISION_BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 	
-	public BlockTemporaryLight(String name) {
-		super(name, Material.CLOTH, null);
+	public BlockCastedLight(String name) {
+		super(name, Material.CLOTH, TileCastedLight.class);
 		setHardness(0.0F);
 		setResistance(0.0F);
 	}
@@ -103,14 +107,56 @@ public class BlockTemporaryLight extends BlockTACustomModel implements ILightSou
 	}
 	
 	@Override
+	public boolean isFullCube(IBlockState state) {
+		return false;
+	}
+	
+	@Override
+	public boolean isFullBlock(IBlockState state) {
+		return false;
+	}
+	
+	@Override
+	public boolean isTopSolid(IBlockState state) {
+		return false;
+	}
+	
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
+	
+	@Override
+	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
+		return false;
+	}
+	
+	@Override
+	public BlockRenderLayer getRenderLayer() {
+		return BlockRenderLayer.CUTOUT;
+	}
+	
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state) {
+		return TAConfig.castedLightSimpleRenderer.getValue() ? EnumBlockRenderType.MODEL : EnumBlockRenderType.INVISIBLE;
+	}
+	
+	@Override
+	public float getAmbientOcclusionLightValue(IBlockState state) {
+		return state.getValue(ILightSourceBlock.LIGHT_LEVEL);
+	}
+	
+	@Override
 	public void getSubBlocks(CreativeTabs item, NonNullList<ItemStack> items) {}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
-		int color = Aspect.LIGHT.getColor();
-		FXDispatcher.INSTANCE.drawWispyMotes(pos.getX() + 0.5 + rand.nextGaussian() / 2, pos.getY() + 0.5 + rand.nextGaussian() / 2,
-				pos.getZ() + 0.5 + rand.nextGaussian() / 2, 0, 0, 0, 40, ((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 0.01F);
+		if (!TAConfig.castedLightSimpleRenderer.getValue() && rand.nextBoolean()) {
+			int color = Aspect.LIGHT.getColor();
+			FXDispatcher.INSTANCE.drawWispyMotes(pos.getX() + 0.5F + rand.nextGaussian() / 4, pos.getY() + 0.5F + rand.nextGaussian() / 4,
+					pos.getZ() + 0.5F + rand.nextGaussian() / 4, 0, 0, 0, 40, ((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 0.01F);
+		}
 	}
 	
 }

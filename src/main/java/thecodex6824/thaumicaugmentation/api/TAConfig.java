@@ -24,6 +24,7 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionBoolean;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 
 public class TAConfig {
 	
@@ -40,5 +41,10 @@ public class TAConfig {
 	public static ConfigOptionDouble voidBootsSneakReduction;
 	
 	public static ConfigOptionBoolean opWardOverride;
+	
+	public static ConfigOptionBoolean castedLightSimpleRenderer;
+	
+	public static ConfigOptionIntList defaultGauntletColors;
+	public static ConfigOptionInt defaultVoidBootsColor;
 	
 }

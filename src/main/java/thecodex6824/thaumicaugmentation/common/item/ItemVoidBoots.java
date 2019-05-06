@@ -193,7 +193,7 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
 	
 	@Override
 	public int getDefaultDyedColorForMeta(int meta) {
-		return meta == 0 ? 0x6A3880 : 0xFF;
+		return meta == 0 ? TAConfig.defaultVoidBootsColor.getValue() : 0;
 	}
 	
 	@Override

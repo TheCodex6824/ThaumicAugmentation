@@ -33,7 +33,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoor;
-import thecodex6824.thaumicaugmentation.common.block.BlockTemporaryLight;
+import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
 import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.INoAutomaticItemBlockRegistration;
@@ -48,6 +48,7 @@ import thecodex6824.thaumicaugmentation.common.recipe.AuthorizedKeyCreationRecip
 import thecodex6824.thaumicaugmentation.common.recipe.DyeableItemRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumKeyCopyRecipe;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
+import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 
@@ -60,11 +61,12 @@ public class RegistryHandler {
 		registry.register(new BlockVisRegenerator("vis_regenerator"));
 		registry.register(new BlockWardedChest("warded_chest"));
 		registry.register(new BlockArcaneDoor("arcane_door"));
-		registry.register(new BlockTemporaryLight("temporary_light"));
+		registry.register(new BlockCastedLight("temporary_light"));
 		
 		GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
 		GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
 		GameRegistry.registerTileEntity(TileArcaneDoor.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_door"));
+		GameRegistry.registerTileEntity(TileCastedLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "temporary_light"));
 	}
 	
 	@SubscribeEvent

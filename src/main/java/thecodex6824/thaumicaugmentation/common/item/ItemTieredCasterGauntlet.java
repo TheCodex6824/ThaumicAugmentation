@@ -299,11 +299,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 	
 	@Override
 	public int getDefaultDyedColorForMeta(int meta) {
-		switch (meta) {
-			case 0: return 0x008EFF;
-			case 1: return 0x6A3880;
-			default: return 0xFFFFFFFF;
-		}
+		return meta < TAConfig.defaultGauntletColors.getValue().length ? TAConfig.defaultGauntletColors.getValue()[meta] : 0;
 	}
 	
 	@Override
