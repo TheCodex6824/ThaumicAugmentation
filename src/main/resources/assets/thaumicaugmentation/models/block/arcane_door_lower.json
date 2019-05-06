@@ -1,7 +1,21 @@
 {
-	"parent": "minecraft:block/door_bottom",
     "textures": {
         "bottom": "thaumicaugmentation:blocks/arcane_door_lower_wood",
-        "top": "thaumicaugmentation:blocks/arcane_door_upper_wood"
-    }
+        "top": "thaumicaugmentation:blocks/arcane_door_upper_wood",
+        "side": "thaumicaugmentation:blocks/arcane_door_side_wood",
+        "particle": "#bottom"
+    },
+    "ambientocclusion": false,
+    "elements": [
+        {   "from": [ 0, 0, 0 ],
+            "to": [ 3, 16, 16 ],
+            "faces": {
+                "down":  { "uv": [ 0, 0, 3, 16 ], "texture": "#bottom", "cullface": "down" },
+                "north": { "uv": [  3, 0,  0, 16 ], "texture": "#side", "cullface": "north" },
+                "south": { "uv": [  0, 0,  3, 16 ], "texture": "#side", "cullface": "south" },
+                "west":  { "uv": [  0, 0, 16, 16 ], "texture": "#bottom", "cullface": "west" },
+                "east":  { "uv": [ 16, 0,  0, 16 ], "texture": "#bottom" }
+            }
+        }
+    ]
 }
