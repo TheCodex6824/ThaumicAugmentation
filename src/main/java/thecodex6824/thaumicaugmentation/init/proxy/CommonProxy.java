@@ -29,14 +29,27 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
+import thecodex6824.thaumicaugmentation.common.util.TARenderHelperCommon;
 import thecodex6824.thaumicaugmentation.init.MiscHandler;
 import thecodex6824.thaumicaugmentation.init.RecipeHandler;
 import thecodex6824.thaumicaugmentation.init.ResearchHandler;
 
 public class CommonProxy implements ISidedProxy {
 
+	protected static ITARenderHelper renderHelper;
+	
+	@Override
 	public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params) {
 		return null;
+	}
+	
+	@Override
+	public ITARenderHelper getRenderHelper() {
+		if (renderHelper == null)
+			renderHelper = new TARenderHelperCommon();
+		
+		return renderHelper;
 	}
 	
 	@Override

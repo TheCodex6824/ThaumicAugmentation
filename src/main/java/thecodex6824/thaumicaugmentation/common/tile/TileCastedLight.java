@@ -26,8 +26,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import thaumcraft.api.aspects.Aspect;
-import thaumcraft.client.fx.ParticleEngine;
-import thaumcraft.client.fx.particles.FXFireMote;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 
 public class TileCastedLight extends TileEntity implements ITickable {
@@ -51,15 +50,11 @@ public class TileCastedLight extends TileEntity implements ITickable {
 		if (world.isRemote && world.getTotalWorldTime() % DELAY == 0) {
 			if (lastRenderState != TAConfig.castedLightSimpleRenderer.getValue()) {
 				lastRenderState = !lastRenderState;
-				world.markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+				world.markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
 			}
-			if (!TAConfig.castedLightSimpleRenderer.getValue()) {
-				int color = Aspect.LIGHT.getColor();
-				FXFireMote sphere = new FXFireMote(world, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 0, 0, 0,
-						((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F,
-						3.0F, 0);
-				sphere.setMaxAge(48);
-				ParticleEngine.addEffect(world, sphere);
+			if (!lastRenderState) {
+				ThaumicAugmentation.proxy.getRenderHelper().renderGlowingSphere(world, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 
+						Aspect.LIGHT.getColor());
 			}
 		}
 	}

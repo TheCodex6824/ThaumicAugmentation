@@ -18,25 +18,22 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.init.proxy;
+package thecodex6824.thaumicaugmentation.client.renderer;
 
-import com.google.common.collect.ImmutableMap;
-
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.animation.ITimeValue;
-import net.minecraftforge.common.model.animation.IAnimationStateMachine;
+import net.minecraft.world.World;
+import thaumcraft.client.fx.ParticleEngine;
+import thaumcraft.client.fx.particles.FXFireMote;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
-public interface ISidedProxy {
-	
-	public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params);
-	
-	public ITARenderHelper getRenderHelper();
-	
-	public void preInit();
-	
-	public void init();
-	
-	public void postInit();
+public class TARenderHelperClient implements ITARenderHelper {
+
+	@Override
+	public void renderGlowingSphere(World world, double x, double y, double z, int color) {
+		FXFireMote sphere = new FXFireMote(world, x, y, z, 0, 0, 0,
+				((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F,
+				3.0F, 0);
+		sphere.setMaxAge(48);
+		ParticleEngine.addEffect(world, sphere);
+	}
 	
 }

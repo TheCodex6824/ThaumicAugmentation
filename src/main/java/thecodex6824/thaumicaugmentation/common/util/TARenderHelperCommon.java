@@ -18,25 +18,13 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.init.proxy;
+package thecodex6824.thaumicaugmentation.common.util;
 
-import com.google.common.collect.ImmutableMap;
+import net.minecraft.world.World;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.animation.ITimeValue;
-import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
+public class TARenderHelperCommon implements ITARenderHelper {
 
-public interface ISidedProxy {
-	
-	public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params);
-	
-	public ITARenderHelper getRenderHelper();
-	
-	public void preInit();
-	
-	public void init();
-	
-	public void postInit();
+	@Override
+	public void renderGlowingSphere(World world, double x, double y, double z, int color) {}
 	
 }

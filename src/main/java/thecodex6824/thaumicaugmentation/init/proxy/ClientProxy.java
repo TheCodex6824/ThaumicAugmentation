@@ -36,15 +36,25 @@ import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
+import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
+import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public class ClientProxy extends CommonProxy {
-
+	
 	@Override
 	public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params) {
 		return ModelLoaderRegistry.loadASM(loc, params);
+	}
+	
+	@Override
+	public ITARenderHelper getRenderHelper() {
+		if (renderHelper == null)
+			renderHelper = new TARenderHelperClient();
+		
+		return renderHelper;
 	}
 	
 	@Override
