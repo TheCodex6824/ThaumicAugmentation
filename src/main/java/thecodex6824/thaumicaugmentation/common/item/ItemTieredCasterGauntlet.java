@@ -512,7 +512,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 				tooltip.add(TextFormatting.ITALIC + "" + TextFormatting.AQUA + new TextComponentTranslation("tc.vis.cost").getFormattedText() + 
 						" " + TextFormatting.RESET + VIS_FORMATTER.format(visCost) + " " + new TextComponentTranslation("item.Focus.cost1").getFormattedText());
 			
-			tooltip.add(TextFormatting.BOLD + "" + TextFormatting.ITALIC + "" + TextFormatting.GREEN + focus.getItem().getItemStackDisplayName(focus));
+			tooltip.add(TextFormatting.BOLD + "" + TextFormatting.ITALIC + "" + TextFormatting.GREEN + focus.getDisplayName());
 			((ItemFocus) focus.getItem()).addFocusInformation(focus, world, tooltip, flag);
 		}
 	}
