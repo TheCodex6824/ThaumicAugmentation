@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,20 +79,7 @@ public class ItemKey extends ItemTABase implements IWardAuthenticator {
 		}
 		catch (IllegalArgumentException ex) {}
 		
-		byte[] toHash = null;
-		if (uuid != null)
-			toHash = ByteBuffer.allocate(16).putLong(uuid.getLeastSignificantBits()).putLong(uuid.getMostSignificantBits()).array();
-		else
-			toHash = id.getBytes(StandardCharsets.UTF_8);
-		
-		// this hash function is probably terrible, but it's not for anything important so whatever
-		int output = 15065339;
-		for (byte b : toHash) {
-			output ^= b;
-			output *= 26016127;
-		}
-		
-		return output;
+		return uuid != null ? uuid.hashCode() : id.hashCode();
 	}
 	
 	public int getKeyColor(ItemStack stack) {

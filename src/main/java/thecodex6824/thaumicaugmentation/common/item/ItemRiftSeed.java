@@ -24,6 +24,7 @@ import java.util.List;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.IItemPropertyGetter;
@@ -34,6 +35,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -60,6 +62,13 @@ public class ItemRiftSeed extends ItemTABase {
 		});
 	}
 	
+	protected <T extends Entity> List<T> getEntitiesInRange(Class<T> entityClass, World world, Vec3d pos, double radius) {
+		List<T> toReturn = world.getEntitiesWithinAABB(entityClass, new AxisAlignedBB(pos.x, pos.y, pos.z, 
+				pos.x, pos.y, pos.z).grow(radius));
+		
+		return toReturn;
+	}
+	
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
 			EnumFacing facing, float hitX, float hitY, float hitZ) {
@@ -67,14 +76,18 @@ public class ItemRiftSeed extends ItemTABase {
 		if (!world.isRemote) {
 			BlockPos offset = pos.offset(facing);
 			Vec3d position = new Vec3d(offset.getX() + 0.5, offset.getY() + 0.5, offset.getZ() + 0.5);
-			EntityFluxRift rift = new EntityFluxRift(world);
-			rift.setRiftSeed(world.rand.nextInt());
-			rift.setLocationAndAngles(position.x, position.y, position.z, world.rand.nextInt(360), 0.0F);
-			rift.setRiftStability(0.0F);
-			rift.setRiftSize(player.getHeldItem(hand).getTagCompound().getInteger("riftSize"));
-			world.spawnEntity(rift);
-			if (!player.capabilities.isCreativeMode)
-				player.getHeldItem(hand).shrink(1);
+			if (getEntitiesInRange(EntityFluxRift.class, world, position, 32.0).isEmpty()) {
+				EntityFluxRift rift = new EntityFluxRift(world);
+				rift.setRiftSeed(world.rand.nextInt());
+				rift.setLocationAndAngles(position.x, position.y, position.z, world.rand.nextInt(360), 0.0F);
+				rift.setRiftStability(0.0F);
+				rift.setRiftSize(player.getHeldItem(hand).getTagCompound().getInteger("riftSize"));
+				world.spawnEntity(rift);
+				if (!player.capabilities.isCreativeMode)
+					player.getHeldItem(hand).shrink(1);
+			}
+			else
+				player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.rift_too_close"), true);
 			
 			return EnumActionResult.SUCCESS;
 		}
