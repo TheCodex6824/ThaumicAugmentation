@@ -27,41 +27,41 @@ import io.netty.buffer.ByteBuf;
 
 public class ConfigOptionStringToIntMap extends ConfigOption<Map<String, Integer>>{
 
-	private Map<String, Integer> value;
-	
-	public ConfigOptionStringToIntMap(boolean enforceServer, Map<String, Integer> map) {
-		super(enforceServer);
-		value = map;
-	}
-	
-	@Override
-	public void serialize(ByteBuf buf) {
-		buf.writeInt(value.size());
-		value.forEach((String k, Integer v) -> {
-			buf.writeInt(k.length());
-			buf.writeBytes(k.getBytes(StandardCharsets.UTF_8));
-			buf.writeInt(v);
-		});
-	}
+    private Map<String, Integer> value;
+    
+    public ConfigOptionStringToIntMap(boolean enforceServer, Map<String, Integer> map) {
+        super(enforceServer);
+        value = map;
+    }
+    
+    @Override
+    public void serialize(ByteBuf buf) {
+        buf.writeInt(value.size());
+        value.forEach((String k, Integer v) -> {
+            buf.writeInt(k.length());
+            buf.writeBytes(k.getBytes(StandardCharsets.UTF_8));
+            buf.writeInt(v);
+        });
+    }
 
-	@Override
-	public void deserialize(ByteBuf buf) {
-		int entries = buf.readInt();
-		for (int i = 0; i < entries; ++i) {
-			byte[] name = new byte[buf.readInt()];
-			buf.readBytes(name);
-			value.put(new String(name, StandardCharsets.UTF_8), buf.readInt());
-		}
-	}
+    @Override
+    public void deserialize(ByteBuf buf) {
+        int entries = buf.readInt();
+        for (int i = 0; i < entries; ++i) {
+            byte[] name = new byte[buf.readInt()];
+            buf.readBytes(name);
+            value.put(new String(name, StandardCharsets.UTF_8), buf.readInt());
+        }
+    }
 
-	@Override
-	public Map<String, Integer> getValue() {
-		return value;
-	}
+    @Override
+    public Map<String, Integer> getValue() {
+        return value;
+    }
 
-	@Override
-	public void setValue(Map<String, Integer> value) {
-		this.value = value;
-	}
-	
+    @Override
+    public void setValue(Map<String, Integer> value) {
+        this.value = value;
+    }
+    
 }

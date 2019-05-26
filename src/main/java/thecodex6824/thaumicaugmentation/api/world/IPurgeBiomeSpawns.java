@@ -22,6 +22,6 @@ package thecodex6824.thaumicaugmentation.api.world;
 
 public interface IPurgeBiomeSpawns {
 
-	public void purgeSpawns();
-	
+    public void purgeSpawns();
+    
 }

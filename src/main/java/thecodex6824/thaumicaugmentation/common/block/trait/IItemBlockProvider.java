@@ -24,9 +24,9 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 
 public interface IItemBlockProvider {
-	
-	public default ItemBlock createItemBlock() {
-		return new ItemBlock((Block) this);
-	}
-	
+    
+    public default ItemBlock createItemBlock() {
+        return new ItemBlock((Block) this);
+    }
+    
 }

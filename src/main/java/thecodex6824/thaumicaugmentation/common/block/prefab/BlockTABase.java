@@ -29,14 +29,14 @@ import thecodex6824.thaumicaugmentation.api.util.IModelProvider;
 
 public class BlockTABase extends Block implements IModelProvider<Block> {
 
-	public BlockTABase(Material material) {
-		super(material);
-	}
+    public BlockTABase(Material material) {
+        super(material);
+    }
 
-	@Override
-	public void registerModels() {
-		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
-				getRegistryName().toString(), "inventory"));
-	}
+    @Override
+    public void registerModels() {
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
+                getRegistryName().toString(), "inventory"));
+    }
 
 }

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -27,13 +27,13 @@ import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public class TARenderHelperClient implements ITARenderHelper {
 
-	@Override
-	public void renderGlowingSphere(World world, double x, double y, double z, int color) {
-		FXFireMote sphere = new FXFireMote(world, x, y, z, 0, 0, 0,
-				((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F,
-				3.0F, 0);
-		sphere.setMaxAge(48);
-		ParticleEngine.addEffect(world, sphere);
-	}
+    @Override
+    public void renderGlowingSphere(World world, double x, double y, double z, int color) {
+        FXFireMote sphere = new FXFireMote(world, x, y, z, 0, 0, 0,
+                ((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F,
+                3.0F, 0);
+        sphere.setMaxAge(48);
+        ParticleEngine.addEffect(world, sphere);
+    }
 
 }

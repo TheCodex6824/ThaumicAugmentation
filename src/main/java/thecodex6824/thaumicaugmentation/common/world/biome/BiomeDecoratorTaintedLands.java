@@ -32,32 +32,32 @@ import thaumcraft.common.entities.monster.tainted.EntityTaintSeed;
 import thaumcraft.common.entities.monster.tainted.EntityTaintSeedPrime;
 
 public class BiomeDecoratorTaintedLands extends BiomeDecorator {
-	
-	@Override
-	public void decorate(World world, Random rand, Biome biome, BlockPos pos) {
-		BlockPos p = world.getTopSolidOrLiquidBlock(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16)));
-		if (!world.isAirBlock(p.down()) && world.getBlockState(p.down()).isNormalCube()) {
-			EntityLiving thingToSpawn = null;
-			int result = rand.nextInt(500);
-			if (result == 0)
-				thingToSpawn = new EntityTaintacleGiant(world);
-			else if (result < 51) {
-				thingToSpawn = new EntityTaintSeedPrime(world);
-				((EntityTaintSeedPrime) thingToSpawn).boost = 1200;
-			}
-			else if (result < 151) {
-				thingToSpawn = new EntityTaintSeed(world);
-				((EntityTaintSeed) thingToSpawn).boost = 200;
-			}
-			
-			if (thingToSpawn != null) {
-				thingToSpawn.setLocationAndAngles(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, rand.nextInt(360), 0);
-				if (thingToSpawn.getCanSpawnHere() && thingToSpawn.isNotColliding()) {
-					thingToSpawn.enablePersistence();
-					world.spawnEntity(thingToSpawn);
-				}
-			}
-		}
-	}
-	
+    
+    @Override
+    public void decorate(World world, Random rand, Biome biome, BlockPos pos) {
+        BlockPos p = world.getTopSolidOrLiquidBlock(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16)));
+        if (!world.isAirBlock(p.down()) && world.getBlockState(p.down()).isNormalCube()) {
+            EntityLiving thingToSpawn = null;
+            int result = rand.nextInt(500);
+            if (result == 0)
+                thingToSpawn = new EntityTaintacleGiant(world);
+            else if (result < 51) {
+                thingToSpawn = new EntityTaintSeedPrime(world);
+                ((EntityTaintSeedPrime) thingToSpawn).boost = 1200;
+            }
+            else if (result < 151) {
+                thingToSpawn = new EntityTaintSeed(world);
+                ((EntityTaintSeed) thingToSpawn).boost = 200;
+            }
+            
+            if (thingToSpawn != null) {
+                thingToSpawn.setLocationAndAngles(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, rand.nextInt(360), 0);
+                if (thingToSpawn.getCanSpawnHere() && thingToSpawn.isNotColliding()) {
+                    thingToSpawn.enablePersistence();
+                    world.spawnEntity(thingToSpawn);
+                }
+            }
+        }
+    }
+    
 }

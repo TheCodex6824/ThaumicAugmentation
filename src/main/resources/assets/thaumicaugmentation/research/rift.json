@@ -17,8 +17,8 @@
                 -1.5
             ],
             "meta": [
-            	"ROUND",
-            	"HIDDEN"
+                "ROUND",
+                "HIDDEN"
             ],
             "stages": [
                 {
@@ -35,10 +35,10 @@
                 {
                     "text": "thaumicaugmentation.research.rift_studies.1",
                     "recipes": [
-                    	"thaumicaugmentation:RiftSeedFlux",
-                    	"thaumicaugmentation:RiftSeedFluxGrowthFake20",
-                    	"thaumicaugmentation:RiftSeedFluxGrowthFake30",
-                    	"thaumicaugmentation:RiftSeedFluxGrowthFake100"
+                        "thaumicaugmentation:RiftSeedFlux",
+                        "thaumicaugmentation:RiftSeedFluxGrowthFake20",
+                        "thaumicaugmentation:RiftSeedFluxGrowthFake30",
+                        "thaumicaugmentation:RiftSeedFluxGrowthFake100"
                     ]
                 }
             ]

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -31,43 +31,43 @@ import thecodex6824.thaumicaugmentation.api.util.IModelProvider;
 
 public class ItemTABase extends Item implements IModelProvider<Item> {
 
-	protected String[] subItemNames;
+    protected String[] subItemNames;
 
-	public ItemTABase(String... subItems) {
-		setHasSubtypes(subItems.length > 0);
-		subItemNames = subItems;
-	}
+    public ItemTABase(String... subItems) {
+        setHasSubtypes(subItems.length > 0);
+        subItemNames = subItems;
+    }
 
-	@Override
-	public String getTranslationKey(ItemStack stack) {
-		if (subItemNames.length > 0 && stack.getMetadata() < subItemNames.length)
-			return super.getTranslationKey() + "." + subItemNames[stack.getMetadata()];
-		else
-			return super.getTranslationKey();
-	}
+    @Override
+    public String getTranslationKey(ItemStack stack) {
+        if (subItemNames.length > 0 && stack.getMetadata() < subItemNames.length)
+            return super.getTranslationKey() + "." + subItemNames[stack.getMetadata()];
+        else
+            return super.getTranslationKey();
+    }
 
-	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-		if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
-			if (subItemNames.length > 0) {
-				for (int i = 0; i < subItemNames.length; ++i)
-					items.add(new ItemStack(this, 1, i));
-			}
-			else
-				super.getSubItems(tab, items);
-		}
-	}
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
+            if (subItemNames.length > 0) {
+                for (int i = 0; i < subItemNames.length; ++i)
+                    items.add(new ItemStack(this, 1, i));
+            }
+            else
+                super.getSubItems(tab, items);
+        }
+    }
 
-	@Override
-	public void registerModels() {
-		if (subItemNames.length > 0) {
-			for (int i = 0; i < subItemNames.length; ++i) {
-				ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(
-						getRegistryName() + "_" + subItemNames[i], "inventory"));
-			}
-		}
-		else
-			ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName().toString(), "inventory"));
-	}
+    @Override
+    public void registerModels() {
+        if (subItemNames.length > 0) {
+            for (int i = 0; i < subItemNames.length; ++i) {
+                ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(
+                        getRegistryName() + "_" + subItemNames[i], "inventory"));
+            }
+        }
+        else
+            ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName().toString(), "inventory"));
+    }
 
 }

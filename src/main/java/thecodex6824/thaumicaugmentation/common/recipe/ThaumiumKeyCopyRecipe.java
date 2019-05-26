@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -30,88 +30,88 @@ import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 
 public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
-	@Override
-	public boolean canFit(int width, int height) {
-		return width * height >= 3;
-	}
+    @Override
+    public boolean canFit(int width, int height) {
+        return width * height >= 3;
+    }
 
-	protected boolean isThaumiumKeyValid(ItemStack key) {
-		return key.hasTagCompound() && key.getTagCompound().hasKey("boundTo", NBT.TAG_STRING) && 
-				key.getTagCompound().hasKey("boundType", NBT.TAG_STRING) &&
-				key.getTagCompound().hasKey("boundBlockPos", NBT.TAG_INT_ARRAY) &&
-				key.getTagCompound().getIntArray("boundBlockPos").length == 3;
-	}
+    protected boolean isThaumiumKeyValid(ItemStack key) {
+        return key.hasTagCompound() && key.getTagCompound().hasKey("boundTo", NBT.TAG_STRING) && 
+                key.getTagCompound().hasKey("boundType", NBT.TAG_STRING) &&
+                key.getTagCompound().hasKey("boundBlockPos", NBT.TAG_INT_ARRAY) &&
+                key.getTagCompound().getIntArray("boundBlockPos").length == 3;
+    }
 
-	@Override
-	public boolean matches(InventoryCrafting inv, World worldIn) {
-		boolean hasEmptyThaumiumKey = false;
-		ItemStack thaumiumKey = null;
-		ItemStack brassKey = null;
-		for (int i = 0; i < inv.getSizeInventory(); ++i) {
-			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null && !stack.isEmpty()) {
-				if (stack.getItem() instanceof ItemKey) {
-					if (stack.getMetadata() == 2) {
-						if (!stack.hasTagCompound() && !hasEmptyThaumiumKey)
-							hasEmptyThaumiumKey = true;
-						else if (isThaumiumKeyValid(stack) && thaumiumKey == null)
-							thaumiumKey = stack;
-						else
-							return false;
-					}
-					else if (stack.getMetadata() == 1 && brassKey == null && stack.hasTagCompound() && 
-							stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
-						brassKey = stack;
-					else
-						return false;
-				}
-				else
-					return false;
-			}
-		}
+    @Override
+    public boolean matches(InventoryCrafting inv, World worldIn) {
+        boolean hasEmptyThaumiumKey = false;
+        ItemStack thaumiumKey = null;
+        ItemStack brassKey = null;
+        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+            ItemStack stack = inv.getStackInSlot(i);
+            if (stack != null && !stack.isEmpty()) {
+                if (stack.getItem() instanceof ItemKey) {
+                    if (stack.getMetadata() == 2) {
+                        if (!stack.hasTagCompound() && !hasEmptyThaumiumKey)
+                            hasEmptyThaumiumKey = true;
+                        else if (isThaumiumKeyValid(stack) && thaumiumKey == null)
+                            thaumiumKey = stack;
+                        else
+                            return false;
+                    }
+                    else if (stack.getMetadata() == 1 && brassKey == null && stack.hasTagCompound() && 
+                            stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
+                        brassKey = stack;
+                    else
+                        return false;
+                }
+                else
+                    return false;
+            }
+        }
 
-		return hasEmptyThaumiumKey && thaumiumKey != null && brassKey != null && 
-				thaumiumKey.getTagCompound().getString("boundTo").equals(brassKey.getTagCompound().getString("boundTo"));
-	}
+        return hasEmptyThaumiumKey && thaumiumKey != null && brassKey != null && 
+                thaumiumKey.getTagCompound().getString("boundTo").equals(brassKey.getTagCompound().getString("boundTo"));
+    }
 
-	@Override
-	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		ItemStack emptyThaumiumKey = null;
-		ItemStack thaumiumKey = null;
-		ItemStack brassKey = null;
-		for (int i = 0; i < inv.getSizeInventory(); ++i) {
-			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null && !stack.isEmpty()) {
-				if (stack.getItem() instanceof ItemKey) {
-					if (stack.getMetadata() == 2) {
-						if (!stack.hasTagCompound() && emptyThaumiumKey == null)
-							emptyThaumiumKey = stack;
-						else if (isThaumiumKeyValid(stack) && thaumiumKey == null)
-							thaumiumKey = stack;
-						else
-							return ItemStack.EMPTY;
-					}
-					else if (stack.getMetadata() == 1 && brassKey == null && stack.hasTagCompound() && 
-							stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
-						brassKey = stack;
-					else
-						return ItemStack.EMPTY;
-				}
-				else
-					return ItemStack.EMPTY;
-			}
-		}
+    @Override
+    public ItemStack getCraftingResult(InventoryCrafting inv) {
+        ItemStack emptyThaumiumKey = null;
+        ItemStack thaumiumKey = null;
+        ItemStack brassKey = null;
+        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+            ItemStack stack = inv.getStackInSlot(i);
+            if (stack != null && !stack.isEmpty()) {
+                if (stack.getItem() instanceof ItemKey) {
+                    if (stack.getMetadata() == 2) {
+                        if (!stack.hasTagCompound() && emptyThaumiumKey == null)
+                            emptyThaumiumKey = stack;
+                        else if (isThaumiumKeyValid(stack) && thaumiumKey == null)
+                            thaumiumKey = stack;
+                        else
+                            return ItemStack.EMPTY;
+                    }
+                    else if (stack.getMetadata() == 1 && brassKey == null && stack.hasTagCompound() && 
+                            stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
+                        brassKey = stack;
+                    else
+                        return ItemStack.EMPTY;
+                }
+                else
+                    return ItemStack.EMPTY;
+            }
+        }
 
-		if (emptyThaumiumKey != null && thaumiumKey != null && brassKey != null && 
-				thaumiumKey.getTagCompound().getString("boundTo").equals(brassKey.getTagCompound().getString("boundTo")))
-			return thaumiumKey.copy();
-		else
-			return ItemStack.EMPTY;
-	}
+        if (emptyThaumiumKey != null && thaumiumKey != null && brassKey != null && 
+                thaumiumKey.getTagCompound().getString("boundTo").equals(brassKey.getTagCompound().getString("boundTo")))
+            return thaumiumKey.copy();
+        else
+            return ItemStack.EMPTY;
+    }
 
-	@Override
-	public ItemStack getRecipeOutput() {
-		return ItemStack.EMPTY;
-	}
+    @Override
+    public ItemStack getRecipeOutput() {
+        return ItemStack.EMPTY;
+    }
 
 }

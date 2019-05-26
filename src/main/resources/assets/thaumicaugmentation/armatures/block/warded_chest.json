@@ -6,107 +6,107 @@
         }
     },
     "clips": {
-    	"model": {
-    		"loop": false,
+        "model": {
+            "loop": false,
             "joint_clips": {
                 "lid": [
-                	{
-	                    "variable": "axis_x",
-	                    "type": "uniform",
-	                    "interpolation": "nearest",
-	                    "samples": [1]
-                	},
-                	{
-                		"variable": "origin_y",
-	                    "type": "uniform",
-	                    "interpolation": "nearest",
-	                    "samples": [0.625]
-                	},
-                	{
-                		"variable": "origin_z",
-	                    "type": "uniform",
-	                    "interpolation": "nearest",
-	                    "samples": [0.9375]
-                	},
-                	{
-                		"variable": "angle",
-	                    "type": "uniform",
-	                    "interpolation": "nearest",
-	                    "samples": [
-	                    	0, 90
-	                    ]
-                	}
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "origin_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.625]
+                    },
+                    {
+                        "variable": "origin_z",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.9375]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [
+                            0, 90
+                        ]
+                    }
                 ]
             },
             "events": {}
-    	},
-    	"opening": {
-    		"loop": false,
+        },
+        "opening": {
+            "loop": false,
             "joint_clips": {
                 "lid": [
-                	{
-	                    "variable": "axis_x",
-	                    "type": "uniform",
-	                    "interpolation": "nearest",
-	                    "samples": [1]
-                	},
-                	{
-                		"variable": "origin_y",
-	                    "type": "uniform",
-	                    "interpolation": "nearest",
-	                    "samples": [0.625]
-                	},
-                	{
-                		"variable": "origin_z",
-	                    "type": "uniform",
-	                    "interpolation": "nearest",
-	                    "samples": [0.9375]
-                	},
-                	{
-                		"variable": "angle",
-	                    "type": "uniform",
-	                    "interpolation": "linear",
-	                    "samples": [
-	                        0, 15, 30, 45, 60, 75, 90
-	                    ]
-                	}
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "origin_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.625]
+                    },
+                    {
+                        "variable": "origin_z",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.9375]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            0, 15, 30, 45, 60, 75, 90
+                        ]
+                    }
                 ]
             },
             "events": {}
-    	},
-    	"closing": {
-    		"loop": false,
+        },
+        "closing": {
+            "loop": false,
             "joint_clips": {
                 "lid": [
-                	{
-	                    "variable": "axis_x",
-	                    "type": "uniform",
-	                    "interpolation": "nearest",
-	                    "samples": [1]
-                	},
-                	{
-                		"variable": "origin_y",
-	                    "type": "uniform",
-	                    "interpolation": "nearest",
-	                    "samples": [0.625]
-                	},
-                	{
-                		"variable": "origin_z",
-	                    "type": "uniform",
-	                    "interpolation": "nearest",
-	                    "samples": [0.9375]
-                	},
-                	{
-                		"variable": "angle",
-	                    "type": "uniform",
-	                    "interpolation": "linear",
-	                    "samples": [
-	                        90, 75, 60, 45, 30, 15, 0
-	                    ]
-                	}
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "origin_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.625]
+                    },
+                    {
+                        "variable": "origin_z",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.9375]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            90, 75, 60, 45, 30, 15, 0
+                        ]
+                    }
                 ]
             },
             "events": {}
-    	}
+        }
     }
 }

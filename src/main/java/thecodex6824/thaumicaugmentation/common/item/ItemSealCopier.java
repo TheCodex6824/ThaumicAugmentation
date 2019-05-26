@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -41,60 +41,60 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
 
-	public ItemSealCopier() {
-		super();
-		setMaxStackSize(1);
-	}
+    public ItemSealCopier() {
+        super();
+        setMaxStackSize(1);
+    }
 
-	@Override
-	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing Side, float hitX,
-			float hitY, float hitZ, EnumHand hand) {
+    @Override
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing Side, float hitX,
+            float hitY, float hitZ, EnumHand hand) {
 
-		if (!world.isRemote) {
-			if (!player.isSneaking()) {
-				ItemStack held = player.getHeldItem(hand);
-				RayTraceResult result = player.rayTrace(10.0F, 1.0F);
-				// seals don't seem to actually exist in a physical state, so raytracing and events don't work (directly)
-				ISealEntity seal = SealHandler.getSealEntity(world.provider.getDimension(), new SealPos(result.getBlockPos(), result.sideHit));
-				if (seal != null) {
-					if (held.hasTagCompound() && held.getTagCompound().hasKey("seal", NBT.TAG_COMPOUND)) {
-						if (held.getTagCompound().getString("sealType").equals(seal.getSeal().getKey()) && (!seal.isLocked() || 
-								seal.getOwner().isEmpty() || seal.getOwner().equals(player.getUniqueID().toString()))) {
+        if (!world.isRemote) {
+            if (!player.isSneaking()) {
+                ItemStack held = player.getHeldItem(hand);
+                RayTraceResult result = player.rayTrace(10.0F, 1.0F);
+                // seals don't seem to actually exist in a physical state, so raytracing and events don't work (directly)
+                ISealEntity seal = SealHandler.getSealEntity(world.provider.getDimension(), new SealPos(result.getBlockPos(), result.sideHit));
+                if (seal != null) {
+                    if (held.hasTagCompound() && held.getTagCompound().hasKey("seal", NBT.TAG_COMPOUND)) {
+                        if (held.getTagCompound().getString("sealType").equals(seal.getSeal().getKey()) && (!seal.isLocked() || 
+                                seal.getOwner().isEmpty() || seal.getOwner().equals(player.getUniqueID().toString()))) {
 
-							SealPos oldPos = seal.getSealPos();
-							seal.readNBT(held.getTagCompound().getCompoundTag("seal"));
-							seal.getSealPos().face = oldPos.face;
-							seal.getSealPos().pos = oldPos.pos;
-							return EnumActionResult.SUCCESS;
-						}
-					}
-					else if (!seal.isLocked() || seal.getOwner().isEmpty() || seal.getOwner().equals(player.getUniqueID().toString())) {
-						NBTTagCompound newCompound = new NBTTagCompound();
-						newCompound.setTag("seal", seal.writeNBT());
-						// so we don't have to depend on Thaumcraft's internals for the type check
-						newCompound.setString("sealType", seal.getSeal().getKey());
-						held.setTagCompound(newCompound);
-						return EnumActionResult.SUCCESS;
-					}
-				}
-			}
-			else {
-				player.getHeldItem(hand).setTagCompound(null);
-				return EnumActionResult.SUCCESS;
-			}
-		}
+                            SealPos oldPos = seal.getSealPos();
+                            seal.readNBT(held.getTagCompound().getCompoundTag("seal"));
+                            seal.getSealPos().face = oldPos.face;
+                            seal.getSealPos().pos = oldPos.pos;
+                            return EnumActionResult.SUCCESS;
+                        }
+                    }
+                    else if (!seal.isLocked() || seal.getOwner().isEmpty() || seal.getOwner().equals(player.getUniqueID().toString())) {
+                        NBTTagCompound newCompound = new NBTTagCompound();
+                        newCompound.setTag("seal", seal.writeNBT());
+                        // so we don't have to depend on Thaumcraft's internals for the type check
+                        newCompound.setString("sealType", seal.getSeal().getKey());
+                        held.setTagCompound(newCompound);
+                        return EnumActionResult.SUCCESS;
+                    }
+                }
+            }
+            else {
+                player.getHeldItem(hand).setTagCompound(null);
+                return EnumActionResult.SUCCESS;
+            }
+        }
 
-		return EnumActionResult.PASS;
-	}
+        return EnumActionResult.PASS;
+    }
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-		if (player.isSneaking()) {
-			player.getHeldItem(hand).setTagCompound(null);
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-		}
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        if (player.isSneaking()) {
+            player.getHeldItem(hand).setTagCompound(null);
+            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        }
 
-		return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
-	}
+        return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
+    }
 
 }

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -33,8 +33,8 @@ import net.minecraft.world.IBlockAccess;
  */
 public interface ILightSourceBlock {
 
-	public static final PropertyInteger LIGHT_LEVEL = PropertyInteger.create("ta_light_level", 0, 15);
+    public static final PropertyInteger LIGHT_LEVEL = PropertyInteger.create("ta_light_level", 0, 15);
 
-	public int getLightLevel(IBlockState state, IBlockAccess world, BlockPos pos);
+    public int getLightLevel(IBlockState state, IBlockAccess world, BlockPos pos);
 
 }

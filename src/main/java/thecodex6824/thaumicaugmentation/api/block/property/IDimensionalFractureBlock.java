@@ -25,35 +25,35 @@ import net.minecraft.util.IStringSerializable;
 
 public interface IDimensionalFractureBlock {
 
-	public enum BlockType implements IStringSerializable {
-		MAIN(0),
-		DUMMY(1);
-		
-		private int meta;
-		
-		private BlockType(int m) {
-			meta = m;
-		}
-		
-		public int getMeta() {
-			return meta;
-		}
-		
-		@Override
-		public String getName() {
-			return name().toLowerCase();
-		}
-		
-		public static BlockType fromMeta(int m) {
-			for (BlockType t : values()) {
-				if (t.getMeta() == m)
-					return t;
-			}
-			
-			return null;
-		}
-	}
-	
-	public static final PropertyEnum<BlockType> BLOCK_TYPE = PropertyEnum.create("ta_fracture_block_type", BlockType.class);
-	
+    public enum BlockType implements IStringSerializable {
+        MAIN(0),
+        DUMMY(1);
+        
+        private int meta;
+        
+        private BlockType(int m) {
+            meta = m;
+        }
+        
+        public int getMeta() {
+            return meta;
+        }
+        
+        @Override
+        public String getName() {
+            return name().toLowerCase();
+        }
+        
+        public static BlockType fromMeta(int m) {
+            for (BlockType t : values()) {
+                if (t.getMeta() == m)
+                    return t;
+            }
+            
+            return null;
+        }
+    }
+    
+    public static final PropertyEnum<BlockType> BLOCK_TYPE = PropertyEnum.create("ta_fracture_block_type", BlockType.class);
+    
 }

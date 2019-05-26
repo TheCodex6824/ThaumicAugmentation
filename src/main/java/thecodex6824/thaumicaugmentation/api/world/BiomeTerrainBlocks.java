@@ -28,41 +28,41 @@ import net.minecraft.world.biome.Biome;
 
 public class BiomeTerrainBlocks {
 
-	public static class TerrainBlocks {
+    public static class TerrainBlocks {
 
-		private IBlockState top;
-		private IBlockState filler;
+        private IBlockState top;
+        private IBlockState filler;
 
-		public TerrainBlocks(IBlockState t, IBlockState f) {
-			top = t;
-			filler = f;
-		}
+        public TerrainBlocks(IBlockState t, IBlockState f) {
+            top = t;
+            filler = f;
+        }
 
-		public IBlockState getTopState() {
-			return top;
-		}
+        public IBlockState getTopState() {
+            return top;
+        }
 
-		public IBlockState getFillerState() {
-			return filler;
-		}
+        public IBlockState getFillerState() {
+            return filler;
+        }
 
-	}
+    }
 
-	private static HashMap<ResourceLocation, TerrainBlocks> terrain = new HashMap<>();
+    private static HashMap<ResourceLocation, TerrainBlocks> terrain = new HashMap<>();
 
-	public static void init() {
-		Biome.REGISTRY.forEach(biome -> {
-			terrain.put(biome.getRegistryName(), new TerrainBlocks(biome.topBlock, 
-					biome.fillerBlock));
-		});
-	}
+    public static void init() {
+        Biome.REGISTRY.forEach(biome -> {
+            terrain.put(biome.getRegistryName(), new TerrainBlocks(biome.topBlock, 
+                    biome.fillerBlock));
+        });
+    }
 
-	public static void registerBiomeOverride(Biome biome, IBlockState top, IBlockState filler) {
-		terrain.put(biome.getRegistryName(), new TerrainBlocks(top, filler));
-	}
+    public static void registerBiomeOverride(Biome biome, IBlockState top, IBlockState filler) {
+        terrain.put(biome.getRegistryName(), new TerrainBlocks(top, filler));
+    }
 
-	public static TerrainBlocks getTerrainBlocksForBiome(Biome biome) {
-		return terrain.get(biome.getRegistryName());
-	}
+    public static TerrainBlocks getTerrainBlocksForBiome(Biome biome) {
+        return terrain.get(biome.getRegistryName());
+    }
 
 }

@@ -7,11 +7,11 @@
     },
     "variants": {
         "normal": {
-    	    "model": "cube_all"
-    	},
-    	"inventory": {
-    	    "model": "cube_all",
-		    "transform": "forge:default-block"
-	    }
+            "model": "cube_all"
+        },
+        "inventory": {
+            "model": "cube_all",
+            "transform": "forge:default-block"
+        }
     }
 }

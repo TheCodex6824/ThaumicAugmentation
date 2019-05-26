@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -34,47 +34,47 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 
 public class RiftSeedFluxGrowthRecipe extends InfusionRecipe {
 
-	private static final ItemStack ALLOWED_STACK = new ItemStack(TAItems.RIFT_SEED, 1, 0);
+    private static final ItemStack ALLOWED_STACK = new ItemStack(TAItems.RIFT_SEED, 1, 0);
 
-	public RiftSeedFluxGrowthRecipe() {
-		super("RIFT_STUDIES", new ItemStack(TAItems.RIFT_SEED, 1, 0), 6, new AspectList().add(Aspect.FLUX, 25),
-				new ItemStack(TAItems.RIFT_SEED, 1, 0), new Object[] {});
-	}
+    public RiftSeedFluxGrowthRecipe() {
+        super("RIFT_STUDIES", new ItemStack(TAItems.RIFT_SEED, 1, 0), 6, new AspectList().add(Aspect.FLUX, 25),
+                new ItemStack(TAItems.RIFT_SEED, 1, 0), new Object[] {});
+    }
 
-	@Override
-	public int getInstability(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
-		return comps.size();
-	}
+    @Override
+    public int getInstability(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
+        return comps.size();
+    }
 
-	@Override
-	public boolean matches(List<ItemStack> input, ItemStack central, World world, EntityPlayer player) {
-		if (input.size() > 9 || input.isEmpty())
-			return false;
+    @Override
+    public boolean matches(List<ItemStack> input, ItemStack central, World world, EntityPlayer player) {
+        if (input.size() > 9 || input.isEmpty())
+            return false;
 
-		if (!(central.isItemEqual(ALLOWED_STACK) && ThaumcraftCapabilities.knowsResearch(player, research) &&
-				central.hasTagCompound() && central.getTagCompound().getInteger("riftSize") < 100 && 
-				!central.getTagCompound().getBoolean("grown")))
-			return false;
+        if (!(central.isItemEqual(ALLOWED_STACK) && ThaumcraftCapabilities.knowsResearch(player, research) &&
+                central.hasTagCompound() && central.getTagCompound().getInteger("riftSize") < 100 && 
+                !central.getTagCompound().getBoolean("grown")))
+            return false;
 
-		for (ItemStack stack : input) {
-			if (stack.getItem() != ItemsTC.voidSeed)
-				return false;
-		}
+        for (ItemStack stack : input) {
+            if (stack.getItem() != ItemsTC.voidSeed)
+                return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public AspectList getAspects(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
-		return new AspectList().add(Aspect.FLUX, comps.size() * 25);
-	}
+    @Override
+    public AspectList getAspects(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
+        return new AspectList().add(Aspect.FLUX, comps.size() * 25);
+    }
 
-	@Override
-	public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
-		ItemStack toReturn = input.copy();
-		toReturn.getTagCompound().setInteger("riftSize", comps.size() * 10 + 10);
-		toReturn.getTagCompound().setBoolean("grown", true);
-		return toReturn;
-	}
+    @Override
+    public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
+        ItemStack toReturn = input.copy();
+        toReturn.getTagCompound().setInteger("riftSize", comps.size() * 10 + 10);
+        toReturn.getTagCompound().setBoolean("grown", true);
+        return toReturn;
+    }
 
 }

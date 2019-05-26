@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -41,100 +41,100 @@ import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 
 public class BlockVisRegenerator extends BlockTABase implements IEnabledBlock, IItemBlockProvider {
 
-	protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1.0, 0.875, 1.0);
+    protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1.0, 0.875, 1.0);
 
-	public BlockVisRegenerator() {
-		super(Material.WOOD);
-		setHardness(2.0F);
-		setResistance(20.0F);
-		setDefaultState(getDefaultState().withProperty(IEnabledBlock.ENABLED, true));
-	}
+    public BlockVisRegenerator() {
+        super(Material.WOOD);
+        setHardness(2.0F);
+        setResistance(20.0F);
+        setDefaultState(getDefaultState().withProperty(IEnabledBlock.ENABLED, true));
+    }
 
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer.Builder(this).add(IEnabledBlock.ENABLED).add(Properties.AnimationProperty).build();
-	}
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer.Builder(this).add(IEnabledBlock.ENABLED).add(Properties.AnimationProperty).build();
+    }
 
-	@Override
-	public int getMetaFromState(IBlockState state) {
-		return state.getValue(IEnabledBlock.ENABLED) ? 1 : 0;
-	}
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(IEnabledBlock.ENABLED) ? 1 : 0;
+    }
 
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(IEnabledBlock.ENABLED, meta == 1);
-	}
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(IEnabledBlock.ENABLED, meta == 1);
+    }
 
-	protected void update(IBlockState state, World world, BlockPos pos) {
-		boolean powered = world.isBlockPowered(pos);
-		if (powered == state.getValue(IEnabledBlock.ENABLED))
-			world.setBlockState(pos, state.cycleProperty(IEnabledBlock.ENABLED), 3);
-	}
+    protected void update(IBlockState state, World world, BlockPos pos) {
+        boolean powered = world.isBlockPowered(pos);
+        if (powered == state.getValue(IEnabledBlock.ENABLED))
+            world.setBlockState(pos, state.cycleProperty(IEnabledBlock.ENABLED), 3);
+    }
 
-	@Override
-	public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-		update(state, world, pos);
-		super.onBlockAdded(world, pos, state);
-	}
+    @Override
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+        update(state, world, pos);
+        super.onBlockAdded(world, pos, state);
+    }
 
-	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
-		update(state, world, pos);
-	}
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+        update(state, world, pos);
+    }
 
-	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		return BOUNDING_BOX;
-	}
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return BOUNDING_BOX;
+    }
 
-	@Override
-	public boolean hasTileEntity(IBlockState state) {
-		return true;
-	}
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
+    }
 
-	@Override
-	public TileEntity createTileEntity(World world, IBlockState state) {
-		return new TileVisRegenerator();
-	}
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new TileVisRegenerator();
+    }
 
-	@Override
-	public boolean isFullCube(IBlockState state) {
-		return false;
-	}
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
 
-	@Override
-	public boolean isFullBlock(IBlockState state) {
-		return false;
-	}
+    @Override
+    public boolean isFullBlock(IBlockState state) {
+        return false;
+    }
 
-	@Override
-	public boolean isTopSolid(IBlockState state) {
-		return false;
-	}
+    @Override
+    public boolean isTopSolid(IBlockState state) {
+        return false;
+    }
 
-	@Override
-	public boolean isOpaqueCube(IBlockState state) {
-		return false;
-	}
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
 
-	@Override
-	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
-		return false;
-	}
+    @Override
+    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return false;
+    }
 
-	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
-		return BlockFaceShape.UNDEFINED;
-	}
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+        return BlockFaceShape.UNDEFINED;
+    }
 
-	@Override
-	public BlockRenderLayer getRenderLayer() {
-		return BlockRenderLayer.CUTOUT;
-	}
+    @Override
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
+    }
 
-	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state) {
-		return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
-	}
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+    }
 
 }

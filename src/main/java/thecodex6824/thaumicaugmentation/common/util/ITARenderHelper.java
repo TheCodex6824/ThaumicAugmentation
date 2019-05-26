@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,6 +24,6 @@ import net.minecraft.world.World;
 
 public interface ITARenderHelper {
 
-	public void renderGlowingSphere(World world, double x, double y, double z, int color);
+    public void renderGlowingSphere(World world, double x, double y, double z, int color);
 
 }

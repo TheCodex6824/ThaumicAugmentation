@@ -44,63 +44,63 @@ import thecodex6824.thaumicaugmentation.common.util.BitUtils;
 
 public class BlockTAStone extends BlockTABase implements ITAStoneType, IItemBlockProvider {
 
-	public BlockTAStone() {
-		super(Material.ROCK);
-		setDefaultState(getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID));
-		setHardness(2.0F);
-		setResistance(10.0F);
-		setSoundType(SoundType.STONE);
-		setHarvestLevel("pickaxe", 0);
-	}
-	
-	@Override
-	public ItemBlock createItemBlock() {
-		return new ItemMultiTexture(this, null, ITAStoneType.STONE_TYPE.getAllowedValues().stream().map(
-				ITAStoneType.STONE_TYPE::getName).collect(Collectors.toList()).toArray(new String[ITAStoneType.STONE_TYPE.getAllowedValues().size()]));
-	}
-	
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, ITAStoneType.STONE_TYPE);
-	}
-	
-	@Override
-	public Material getMaterial(IBlockState state) {
-		return state.getValue(ITAStoneType.STONE_TYPE).getMaterial();
-	}
-	
-	@Override
-	public SoundType getSoundType(IBlockState state, World world, BlockPos pos, Entity entity) {
-		return state.getValue(ITAStoneType.STONE_TYPE).getSoundType();
-	}
-	
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.fromMeta(BitUtils.getBits(meta, 0, 2)));
-	}
-	
-	@Override
-	public int getMetaFromState(IBlockState state) {
-		return state.getValue(ITAStoneType.STONE_TYPE).getMeta();
-	}
-	
-	@Override
-	public int damageDropped(IBlockState state) {
-		return state.getValue(ITAStoneType.STONE_TYPE).getMeta();
-	}
-	
-	@Override
-	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-		for (StoneType type : StoneType.values())
-			items.add(new ItemStack(this, 1, type.getMeta()));
-	}
-	
-	@Override
-	public void registerModels() {
-		for (StoneType type : StoneType.values()) {
-			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), type.getMeta(), new ModelResourceLocation(
-					getRegistryName().getNamespace() + ":" + type.getName(), "inventory"));
-		}
-	}
-	
+    public BlockTAStone() {
+        super(Material.ROCK);
+        setDefaultState(getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID));
+        setHardness(2.0F);
+        setResistance(10.0F);
+        setSoundType(SoundType.STONE);
+        setHarvestLevel("pickaxe", 0);
+    }
+    
+    @Override
+    public ItemBlock createItemBlock() {
+        return new ItemMultiTexture(this, null, ITAStoneType.STONE_TYPE.getAllowedValues().stream().map(
+                ITAStoneType.STONE_TYPE::getName).collect(Collectors.toList()).toArray(new String[ITAStoneType.STONE_TYPE.getAllowedValues().size()]));
+    }
+    
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, ITAStoneType.STONE_TYPE);
+    }
+    
+    @Override
+    public Material getMaterial(IBlockState state) {
+        return state.getValue(ITAStoneType.STONE_TYPE).getMaterial();
+    }
+    
+    @Override
+    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, Entity entity) {
+        return state.getValue(ITAStoneType.STONE_TYPE).getSoundType();
+    }
+    
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.fromMeta(BitUtils.getBits(meta, 0, 2)));
+    }
+    
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(ITAStoneType.STONE_TYPE).getMeta();
+    }
+    
+    @Override
+    public int damageDropped(IBlockState state) {
+        return state.getValue(ITAStoneType.STONE_TYPE).getMeta();
+    }
+    
+    @Override
+    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
+        for (StoneType type : StoneType.values())
+            items.add(new ItemStack(this, 1, type.getMeta()));
+    }
+    
+    @Override
+    public void registerModels() {
+        for (StoneType type : StoneType.values()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), type.getMeta(), new ModelResourceLocation(
+                    getRegistryName().getNamespace() + ":" + type.getName(), "inventory"));
+        }
+    }
+    
 }

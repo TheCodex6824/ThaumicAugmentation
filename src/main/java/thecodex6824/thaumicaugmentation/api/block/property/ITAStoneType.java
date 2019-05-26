@@ -31,48 +31,48 @@ import thaumcraft.common.lib.SoundsTC;
 
 public interface ITAStoneType {
 
-	public enum StoneType implements IStringSerializable {
-		STONE_VOID(0, Material.ROCK, () -> SoundType.STONE),
-		STONE_TAINT_NODECAY(1, ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE),
-		SOIL_STONE_TAINT_NODECAY(2, ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE);
-		
-		private int meta;
-		private Material mat;
-		private Supplier<SoundType> sound;
-		
-		private StoneType(int m, Material mt, Supplier<SoundType> s) {
-			meta = m;
-			mat = mt;
-			sound = s;
-		}
-		
-		public int getMeta() {
-			return meta;
-		}
-		
-		public Material getMaterial() {
-			return mat;
-		}
-		
-		public SoundType getSoundType() {
-			return sound.get();
-		}
-		
-		@Override
-		public String getName() {
-			return name().toLowerCase();
-		}
-		
-		public static StoneType fromMeta(int id) {
-			for (StoneType type : values()) {
-				if (type.getMeta() == id)
-					return type;
-			}
-			
-			return null;
-		}
-	}
-	
-	public static PropertyEnum<StoneType> STONE_TYPE = PropertyEnum.create("ta_stone_type", StoneType.class);
-	
+    public enum StoneType implements IStringSerializable {
+        STONE_VOID(0, Material.ROCK, () -> SoundType.STONE),
+        STONE_TAINT_NODECAY(1, ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE),
+        SOIL_STONE_TAINT_NODECAY(2, ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE);
+        
+        private int meta;
+        private Material mat;
+        private Supplier<SoundType> sound;
+        
+        private StoneType(int m, Material mt, Supplier<SoundType> s) {
+            meta = m;
+            mat = mt;
+            sound = s;
+        }
+        
+        public int getMeta() {
+            return meta;
+        }
+        
+        public Material getMaterial() {
+            return mat;
+        }
+        
+        public SoundType getSoundType() {
+            return sound.get();
+        }
+        
+        @Override
+        public String getName() {
+            return name().toLowerCase();
+        }
+        
+        public static StoneType fromMeta(int id) {
+            for (StoneType type : values()) {
+                if (type.getMeta() == id)
+                    return type;
+            }
+            
+            return null;
+        }
+    }
+    
+    public static PropertyEnum<StoneType> STONE_TYPE = PropertyEnum.create("ta_stone_type", StoneType.class);
+    
 }

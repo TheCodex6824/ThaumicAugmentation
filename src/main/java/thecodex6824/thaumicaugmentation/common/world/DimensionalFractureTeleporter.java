@@ -28,25 +28,25 @@ import net.minecraftforge.common.util.ITeleporter;
 
 public class DimensionalFractureTeleporter implements ITeleporter {
 
-	protected BlockPos pos;
+    protected BlockPos pos;
 
-	public DimensionalFractureTeleporter(BlockPos destination) {
-		pos = destination;
-	}
+    public DimensionalFractureTeleporter(BlockPos destination) {
+        pos = destination;
+    }
 
-	@Override
-	public void placeEntity(World world, Entity entity, float yaw) {
-		// we need to set the blockpos ourselves because the teleport code
-		// sets it equal to the scaled position, while the fracture is at a
-		// scaled *chunk* position with an offset
-		if (entity instanceof EntityPlayerMP) {
-			((EntityPlayerMP) entity).connection.setPlayerLocation(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 
-					yaw, entity.rotationPitch);
-		}
-		else {
-			entity.setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 
-					yaw, entity.rotationPitch);
-		}
-	}
+    @Override
+    public void placeEntity(World world, Entity entity, float yaw) {
+        // we need to set the blockpos ourselves because the teleport code
+        // sets it equal to the scaled position, while the fracture is at a
+        // scaled *chunk* position with an offset
+        if (entity instanceof EntityPlayerMP) {
+            ((EntityPlayerMP) entity).connection.setPlayerLocation(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 
+                    yaw, entity.rotationPitch);
+        }
+        else {
+            entity.setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 
+                    yaw, entity.rotationPitch);
+        }
+    }
 
 }

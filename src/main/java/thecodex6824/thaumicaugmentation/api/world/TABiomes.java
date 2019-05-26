@@ -27,11 +27,11 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 @ObjectHolder(value = ThaumicAugmentationAPI.MODID)
 public class TABiomes {
 
-	public static final Biome EMPTINESS = null;
-	public static final Biome TAINTED_LANDS = null;
-	
-	public static Biome[] getAllBiomes() {
-		return new Biome[] {EMPTINESS, TAINTED_LANDS};
-	}
+    public static final Biome EMPTINESS = null;
+    public static final Biome TAINTED_LANDS = null;
+    
+    public static Biome[] getAllBiomes() {
+        return new Biome[] {EMPTINESS, TAINTED_LANDS};
+    }
 
 }

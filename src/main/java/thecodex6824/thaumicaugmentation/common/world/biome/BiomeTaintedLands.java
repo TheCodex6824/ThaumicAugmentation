@@ -39,62 +39,62 @@ import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 
 public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFluxBiome {
 
-	public BiomeTaintedLands() {
-		super(new BiomeProperties("Tainted Lands").setBaseHeight(-1.8F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
-				0xFF00FF).setWaterColor(0xFF00FF));
+    public BiomeTaintedLands() {
+        super(new BiomeProperties("Tainted Lands").setBaseHeight(-1.8F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
+                0xFF00FF).setWaterColor(0xFF00FF));
 
-		purgeSpawns();
-		flowers.clear();
-		topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY);
-		fillerBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY);
-	}
-	
-	@Override
-	public void purgeSpawns() {
-		spawnableCreatureList.clear();
-		spawnableMonsterList.clear();
-		spawnableMonsterList.add(new SpawnListEntry(EntityTaintCrawler.class, 100, 3, 5));
-		spawnableMonsterList.add(new SpawnListEntry(EntityTaintacleSmall.class, 75, 1, 2));
-		spawnableMonsterList.add(new SpawnListEntry(EntityTaintacle.class, 50, 1, 1));
-		
-		spawnableWaterCreatureList.clear();
-		spawnableCaveCreatureList.clear();
-	}
-	
-	@Override
-	public float getBaseFluxConcentration() {
-		return 0.65F;
-	}
+        purgeSpawns();
+        flowers.clear();
+        topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY);
+        fillerBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY);
+    }
+    
+    @Override
+    public void purgeSpawns() {
+        spawnableCreatureList.clear();
+        spawnableMonsterList.clear();
+        spawnableMonsterList.add(new SpawnListEntry(EntityTaintCrawler.class, 100, 3, 5));
+        spawnableMonsterList.add(new SpawnListEntry(EntityTaintacleSmall.class, 75, 1, 2));
+        spawnableMonsterList.add(new SpawnListEntry(EntityTaintacle.class, 50, 1, 1));
+        
+        spawnableWaterCreatureList.clear();
+        spawnableCaveCreatureList.clear();
+    }
+    
+    @Override
+    public float getBaseFluxConcentration() {
+        return 0.65F;
+    }
 
-	@Override
-	public boolean canRain() {
-		return false;
-	}
+    @Override
+    public boolean canRain() {
+        return false;
+    }
 
-	@Override
-	public int getSkyColorByTemp(float currentTemperature) {
-		return 0;
-	}
+    @Override
+    public int getSkyColorByTemp(float currentTemperature) {
+        return 0;
+    }
 
-	@Override
-	public void genTerrainBlocks(World world, Random rand, ChunkPrimer primer, int x, int z, double noiseVal) {
-		int cX = x & 15;
-		int cZ = z & 15;
-		for (int y = world.getActualHeight(); y >= 0; --y) {
-			IBlockState current = primer.getBlockState(cX, y, cZ);
-			if (!current.getBlock().isAir(current, world, new BlockPos(x, y, z)))
-				primer.setBlockState(cX, y, cZ, primer.getBlockState(cX, y + 1, cZ).isNormalCube() ? fillerBlock : topBlock);
-		}
-	}
+    @Override
+    public void genTerrainBlocks(World world, Random rand, ChunkPrimer primer, int x, int z, double noiseVal) {
+        int cX = x & 15;
+        int cZ = z & 15;
+        for (int y = world.getActualHeight(); y >= 0; --y) {
+            IBlockState current = primer.getBlockState(cX, y, cZ);
+            if (!current.getBlock().isAir(current, world, new BlockPos(x, y, z)))
+                primer.setBlockState(cX, y, cZ, primer.getBlockState(cX, y + 1, cZ).isNormalCube() ? fillerBlock : topBlock);
+        }
+    }
 
-	@Override
-	public BiomeDecorator createBiomeDecorator() {
-		return new BiomeDecoratorTaintedLands();
-	}
+    @Override
+    public BiomeDecorator createBiomeDecorator() {
+        return new BiomeDecoratorTaintedLands();
+    }
 
-	@Override
-	public EnumFlowerType pickRandomFlower(Random rand, BlockPos pos) {
-		return EnumFlowerType.ALLIUM;
-	}
-	
+    @Override
+    public EnumFlowerType pickRandomFlower(Random rand, BlockPos pos) {
+        return EnumFlowerType.ALLIUM;
+    }
+    
 }

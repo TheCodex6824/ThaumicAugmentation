@@ -1,13 +1,13 @@
 {
     "forge_marker": 1,
     "variants": {
-    	"ta_fracture_block_type": {
-    		"main": {"model": "cube"},
-    		"dummy": {"model": "cube"}
-    	},
-	    "inventory": {
-	    	"model": "cube",
-		    "transform": "forge:default-block"
-	    }
+        "ta_fracture_block_type": {
+            "main": {"model": "cube"},
+            "dummy": {"model": "cube"}
+        },
+        "inventory": {
+            "model": "cube",
+            "transform": "forge:default-block"
+        }
     }
 }

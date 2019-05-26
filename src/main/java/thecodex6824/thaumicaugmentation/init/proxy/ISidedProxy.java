@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -29,14 +29,14 @@ import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public interface ISidedProxy {
 
-	public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params);
+    public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params);
 
-	public ITARenderHelper getRenderHelper();
+    public ITARenderHelper getRenderHelper();
 
-	public void preInit();
+    public void preInit();
 
-	public void init();
+    public void init();
 
-	public void postInit();
+    public void postInit();
 
 }

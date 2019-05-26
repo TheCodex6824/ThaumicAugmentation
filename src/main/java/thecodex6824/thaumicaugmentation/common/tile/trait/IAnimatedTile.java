@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,6 +24,6 @@ import net.minecraftforge.common.animation.Event;
 
 public interface IAnimatedTile {
 
-	public void handleEvents(float time, Iterable<Event> pastEvents);
+    public void handleEvents(float time, Iterable<Event> pastEvents);
 
 }

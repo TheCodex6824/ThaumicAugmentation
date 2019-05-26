@@ -49,58 +49,58 @@ import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenVoidStoneSp
 
 public class ChunkGeneratorEmptiness implements IChunkGenerator {
 
-	protected World world;
-	protected Random rand;
+    protected World world;
+    protected Random rand;
 
-	protected NoiseGeneratorOctaves min;
-	protected NoiseGeneratorOctaves max;
-	protected NoiseGeneratorOctaves main;
-	protected NoiseGeneratorOctaves scale;
-	protected NoiseGeneratorOctaves depth;
-	protected NoiseGeneratorPerlin gen4;
-	
-	protected WorldGenVoidStoneSpike spikeGen;
-	
-	protected double[] biomeWeights;
+    protected NoiseGeneratorOctaves min;
+    protected NoiseGeneratorOctaves max;
+    protected NoiseGeneratorOctaves main;
+    protected NoiseGeneratorOctaves scale;
+    protected NoiseGeneratorOctaves depth;
+    protected NoiseGeneratorPerlin gen4;
+    
+    protected WorldGenVoidStoneSpike spikeGen;
+    
+    protected double[] biomeWeights;
 
-	public ChunkGeneratorEmptiness(World w) {
-		world = w;
-		rand = new Random(world.getSeed());
-		min = new NoiseGeneratorOctaves(rand, 16);
-		max = new NoiseGeneratorOctaves(rand, 16);
-		main = new NoiseGeneratorOctaves(rand, 8);
-		scale = new NoiseGeneratorOctaves(rand, 10);
-		depth = new NoiseGeneratorOctaves(rand, 16);
-		gen4 = new NoiseGeneratorPerlin(rand, 4);
+    public ChunkGeneratorEmptiness(World w) {
+        world = w;
+        rand = new Random(world.getSeed());
+        min = new NoiseGeneratorOctaves(rand, 16);
+        max = new NoiseGeneratorOctaves(rand, 16);
+        main = new NoiseGeneratorOctaves(rand, 8);
+        scale = new NoiseGeneratorOctaves(rand, 10);
+        depth = new NoiseGeneratorOctaves(rand, 16);
+        gen4 = new NoiseGeneratorPerlin(rand, 4);
 
-		spikeGen = new WorldGenVoidStoneSpike();
-		
-		biomeWeights = new double[25];
-		for (int x = -2; x <= 2; ++x) {
+        spikeGen = new WorldGenVoidStoneSpike();
+        
+        biomeWeights = new double[25];
+        for (int x = -2; x <= 2; ++x) {
             for (int z = -2; z <= 2; ++z)
                 biomeWeights[z + 2 + (x + 2) * 5] = 10.0F / MathHelper.sqrt((float)(x * x + z * z) + 0.2F);
         }
-		
-		InitNoiseGensEvent.Context ctx = new InitNoiseGensEvent.Context(min, max, main, scale, depth);
-		ctx = TerrainGen.getModdedNoiseGenerators(world, rand, ctx);
-		min = ctx.getLPerlin1();
-		max = ctx.getLPerlin2();
-		main = ctx.getPerlin();
-		scale = ctx.getScale();
-		depth = ctx.getDepth();
-	}
+        
+        InitNoiseGensEvent.Context ctx = new InitNoiseGensEvent.Context(min, max, main, scale, depth);
+        ctx = TerrainGen.getModdedNoiseGenerators(world, rand, ctx);
+        min = ctx.getLPerlin1();
+        max = ctx.getLPerlin2();
+        main = ctx.getPerlin();
+        scale = ctx.getScale();
+        depth = ctx.getDepth();
+    }
 
-	protected double[] generateHeights(int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ) {
-		Biome[] biomes = world.getBiomeProvider().getBiomes(null, posX * 4 - 2, posZ * 4 - 2, 10, 10);
-		double[] output = new double[sizeX * sizeY * sizeZ];
-		InitNoiseField noiseEvent = new InitNoiseField(this, output, posX, posY, posZ, sizeX, sizeY, sizeZ);
-		MinecraftForge.EVENT_BUS.post(noiseEvent);
-		if (noiseEvent.getResult() == Result.DENY)
-			return noiseEvent.getNoisefield();
-		
-		double coordScale = 684.412;
-		double heightScale = 684.412;
-		double[] depthNoise = depth.generateNoiseOctaves(null, posX, posZ, sizeX, sizeZ, coordScale, coordScale, 0.5);
+    protected double[] generateHeights(int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ) {
+        Biome[] biomes = world.getBiomeProvider().getBiomes(null, posX * 4 - 2, posZ * 4 - 2, 10, 10);
+        double[] output = new double[sizeX * sizeY * sizeZ];
+        InitNoiseField noiseEvent = new InitNoiseField(this, output, posX, posY, posZ, sizeX, sizeY, sizeZ);
+        MinecraftForge.EVENT_BUS.post(noiseEvent);
+        if (noiseEvent.getResult() == Result.DENY)
+            return noiseEvent.getNoisefield();
+        
+        double coordScale = 684.412;
+        double heightScale = 684.412;
+        double[] depthNoise = depth.generateNoiseOctaves(null, posX, posZ, sizeX, sizeZ, coordScale, coordScale, 0.5);
         double[] mainNoise = main.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, coordScale / 80.0, heightScale / 160.0, coordScale / 80.0);
         double[] minNoise = min.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, coordScale, heightScale, coordScale);
         double[] maxNoise = max.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, coordScale, heightScale, coordScale);
@@ -186,13 +186,13 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         }
         
         return output;
-	}
+    }
 
-	protected void setBlocksInChunk(int xPos, int zPos, ChunkPrimer primer) {
-		IBlockState filler = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
-		int scaleX = 5, scaleY = 33, scaleZ = 5;
-		double[] heights = generateHeights(xPos * 4, 0, zPos * 4, scaleX, scaleY, scaleZ);
-		for (int i = 0; i < 4; ++i) {
+    protected void setBlocksInChunk(int xPos, int zPos, ChunkPrimer primer) {
+        IBlockState filler = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
+        int scaleX = 5, scaleY = 33, scaleZ = 5;
+        double[] heights = generateHeights(xPos * 4, 0, zPos * 4, scaleX, scaleY, scaleZ);
+        for (int i = 0; i < 4; ++i) {
             int j = i * 5;
             int k = (i + 1) * 5;
 
@@ -239,73 +239,73 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
                 }
             }
         }
-	}
+    }
 
-	protected void replaceBlocksForBiome(int x, int z, ChunkPrimer primer, Biome[] biomes) {
-		if (!ForgeEventFactory.onReplaceBiomeBlocks(this, x, z, primer, world))
-			return;
-		
-		double[] noise = gen4.getRegion(null, x * 16, z * 16, 16, 16, 0.03125 * 2, 0.03125 * 2, 1);
-		for (int cZ = 0; cZ < 16; ++cZ) {
-			for (int cX = 0; cX < 16; ++cX) {
-				Biome biome = biomes[cX + cZ * 16];
-				biome.genTerrainBlocks(world, rand, primer, x * 16 + cX, z * 16 + cZ, noise[cX + cZ * 16]);
-			}
-		}
-	}
-	
-	@Override
-	public Chunk generateChunk(int x, int z) {
-		ChunkPrimer primer = new ChunkPrimer();
-		setBlocksInChunk(x, z, primer);
-		Biome[] biomes = world.getBiomeProvider().getBiomes(null, x * 16, z * 16, 16, 16);
-		replaceBlocksForBiome(x, z, primer, biomes);
-		Chunk chunk = new Chunk(world, primer, x, z);
-		for (int i = 0; i < chunk.getBiomeArray().length; ++i)
-			chunk.getBiomeArray()[i] = (byte) Biome.getIdForBiome(biomes[i]);
-		
-		chunk.generateSkylightMap();
-		return chunk;
-	}
+    protected void replaceBlocksForBiome(int x, int z, ChunkPrimer primer, Biome[] biomes) {
+        if (!ForgeEventFactory.onReplaceBiomeBlocks(this, x, z, primer, world))
+            return;
+        
+        double[] noise = gen4.getRegion(null, x * 16, z * 16, 16, 16, 0.03125 * 2, 0.03125 * 2, 1);
+        for (int cZ = 0; cZ < 16; ++cZ) {
+            for (int cX = 0; cX < 16; ++cX) {
+                Biome biome = biomes[cX + cZ * 16];
+                biome.genTerrainBlocks(world, rand, primer, x * 16 + cX, z * 16 + cZ, noise[cX + cZ * 16]);
+            }
+        }
+    }
+    
+    @Override
+    public Chunk generateChunk(int x, int z) {
+        ChunkPrimer primer = new ChunkPrimer();
+        setBlocksInChunk(x, z, primer);
+        Biome[] biomes = world.getBiomeProvider().getBiomes(null, x * 16, z * 16, 16, 16);
+        replaceBlocksForBiome(x, z, primer, biomes);
+        Chunk chunk = new Chunk(world, primer, x, z);
+        for (int i = 0; i < chunk.getBiomeArray().length; ++i)
+            chunk.getBiomeArray()[i] = (byte) Biome.getIdForBiome(biomes[i]);
+        
+        chunk.generateSkylightMap();
+        return chunk;
+    }
 
-	@Override
-	public void populate(int x, int z) {
-		ForgeEventFactory.onChunkPopulate(true, this, world, rand, x, z, false);
-		BlockFalling.fallInstantly = true;
+    @Override
+    public void populate(int x, int z) {
+        ForgeEventFactory.onChunkPopulate(true, this, world, rand, x, z, false);
+        BlockFalling.fallInstantly = true;
 
-		BlockPos pos = new BlockPos(x * 16, 0, z * 16);
-		Biome biome = world.getBiome(pos.add(16, 0, 16));
-		biome.decorate(world, rand, pos);
-		
-		spikeGen.generate(world, rand, world.getTopSolidOrLiquidBlock(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16))));
+        BlockPos pos = new BlockPos(x * 16, 0, z * 16);
+        Biome biome = world.getBiome(pos.add(16, 0, 16));
+        biome.decorate(world, rand, pos);
+        
+        spikeGen.generate(world, rand, world.getTopSolidOrLiquidBlock(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16))));
 
-		BlockFalling.fallInstantly = false;
-		ForgeEventFactory.onChunkPopulate(false, this, world, rand, x, z, false);
-	}
+        BlockFalling.fallInstantly = false;
+        ForgeEventFactory.onChunkPopulate(false, this, world, rand, x, z, false);
+    }
 
-	@Override
-	public boolean generateStructures(Chunk chunkIn, int x, int z) {
-		return false;
-	}
+    @Override
+    public boolean generateStructures(Chunk chunkIn, int x, int z) {
+        return false;
+    }
 
-	@Override
-	public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position,
-			boolean findUnexplored) {
+    @Override
+    public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position,
+            boolean findUnexplored) {
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public List<SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
-		return world.getBiome(pos).getSpawnableList(creatureType);
-	}
+    @Override
+    public List<SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
+        return world.getBiome(pos).getSpawnableList(creatureType);
+    }
 
-	@Override
-	public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos) {
-		return false;
-	}
+    @Override
+    public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos) {
+        return false;
+    }
 
-	@Override
-	public void recreateStructures(Chunk chunkIn, int x, int z) {}
+    @Override
+    public void recreateStructures(Chunk chunkIn, int x, int z) {}
 
 }

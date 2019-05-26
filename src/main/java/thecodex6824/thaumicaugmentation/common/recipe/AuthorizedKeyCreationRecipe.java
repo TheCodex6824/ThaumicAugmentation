@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -30,68 +30,68 @@ import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 
 public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
-	@Override
-	public boolean canFit(int width, int height) {
-		return width * height >= 2;
-	}
+    @Override
+    public boolean canFit(int width, int height) {
+        return width * height >= 2;
+    }
 
-	@Override
-	public boolean matches(InventoryCrafting inv, World worldIn) {
-		boolean hasIronKey = false;
-		boolean hasBrassKey = false;
-		for (int i = 0; i < inv.getSizeInventory(); ++i) {
-			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null && !stack.isEmpty()) {
-				if (stack.getItem() instanceof ItemKey) {
-					if (stack.getMetadata() == 0 && !hasIronKey && !stack.hasTagCompound())
-						hasIronKey = true;
-					else if (stack.getMetadata() == 1 && !hasBrassKey && stack.hasTagCompound() && 
-							stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
-						hasBrassKey = true;
-					else
-						return false;
-				}
-				else
-					return false;
-			}
-		}
+    @Override
+    public boolean matches(InventoryCrafting inv, World worldIn) {
+        boolean hasIronKey = false;
+        boolean hasBrassKey = false;
+        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+            ItemStack stack = inv.getStackInSlot(i);
+            if (stack != null && !stack.isEmpty()) {
+                if (stack.getItem() instanceof ItemKey) {
+                    if (stack.getMetadata() == 0 && !hasIronKey && !stack.hasTagCompound())
+                        hasIronKey = true;
+                    else if (stack.getMetadata() == 1 && !hasBrassKey && stack.hasTagCompound() && 
+                            stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
+                        hasBrassKey = true;
+                    else
+                        return false;
+                }
+                else
+                    return false;
+            }
+        }
 
-		return hasIronKey && hasBrassKey;
-	}
+        return hasIronKey && hasBrassKey;
+    }
 
-	@Override
-	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		ItemStack ironKey = null;
-		ItemStack brassKey = null;
-		for (int i = 0; i < inv.getSizeInventory(); ++i) {
-			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null && !stack.isEmpty()) {
-				if (stack.getItem() instanceof ItemKey) {
-					if (stack.getMetadata() == 0 && ironKey == null)
-						ironKey = stack;
-					else if (stack.getMetadata() == 1 && brassKey == null)
-						brassKey = stack;
-					else
-						return ItemStack.EMPTY;
-				}
-				else
-					return ItemStack.EMPTY;
-			}
-		}
+    @Override
+    public ItemStack getCraftingResult(InventoryCrafting inv) {
+        ItemStack ironKey = null;
+        ItemStack brassKey = null;
+        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+            ItemStack stack = inv.getStackInSlot(i);
+            if (stack != null && !stack.isEmpty()) {
+                if (stack.getItem() instanceof ItemKey) {
+                    if (stack.getMetadata() == 0 && ironKey == null)
+                        ironKey = stack;
+                    else if (stack.getMetadata() == 1 && brassKey == null)
+                        brassKey = stack;
+                    else
+                        return ItemStack.EMPTY;
+                }
+                else
+                    return ItemStack.EMPTY;
+            }
+        }
 
-		if (ironKey != null && brassKey != null) {
-			ItemStack output = brassKey.copy();
-			output.setItemDamage(0);
+        if (ironKey != null && brassKey != null) {
+            ItemStack output = brassKey.copy();
+            output.setItemDamage(0);
 
-			return output;
-		}
-		else
-			return ItemStack.EMPTY;
-	}
+            return output;
+        }
+        else
+            return ItemStack.EMPTY;
+    }
 
-	@Override
-	public ItemStack getRecipeOutput() {
-		return ItemStack.EMPTY;
-	}
+    @Override
+    public ItemStack getRecipeOutput() {
+        return ItemStack.EMPTY;
+    }
 
 }

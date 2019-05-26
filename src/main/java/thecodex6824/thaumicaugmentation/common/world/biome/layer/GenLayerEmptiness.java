@@ -29,45 +29,45 @@ import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 
 public class GenLayerEmptiness extends GenLayer {
 
-	// multiple entries for easy weighting
-	protected static final Biome[] ALLOWED_BIOMES = new Biome[] {TABiomes.EMPTINESS, TABiomes.TAINTED_LANDS,
-			TABiomes.EMPTINESS, TABiomes.EMPTINESS};
-	
-	public GenLayerEmptiness(long seed) {
-		super(seed);
-	}
-	
-	@Override
-	public int[] getInts(int areaX, int areaY, int areaWidth, int areaHeight) {
-		int[] ret = IntCache.getIntCache(areaWidth * areaHeight);
-		
-		for (int y = 0; y < areaHeight; ++y) {
-			for (int x = 0; x < areaWidth; ++x) {
-				initChunkSeed(areaX + x, areaY + y);
-				ret[x + y * areaWidth] = Biome.getIdForBiome(ALLOWED_BIOMES[nextInt(ALLOWED_BIOMES.length)]);
-			}
-		}
-		
-		return ret;
-	}
-	
-	// it's 2019 and java doesn't have tuples/pairs. fun...
-	public static GenLayer[] createLayers(long seed) {
-		
-		GenLayer biome = new GenLayerEmptiness(14676);
-		biome = new GenLayerZoom(10000, biome);
-		biome = new GenLayerZoom(10001, biome);
-		biome = new GenLayerZoom(10002, biome);
-		biome = new GenLayerZoom(10003, biome);
-		biome = new GenLayerZoom(10004, biome);
-		biome = new GenLayerZoom(10005, biome);
-		biome = new GenLayerZoom(10006, biome);
-		
-		GenLayer voronoiZoom = new GenLayerVoronoiZoom(10, biome);
-		biome.initWorldGenSeed(seed);
-		voronoiZoom.initWorldGenSeed(seed);
-		
-		return new GenLayer[] {biome, voronoiZoom};
-	}
-	
+    // multiple entries for easy weighting
+    protected static final Biome[] ALLOWED_BIOMES = new Biome[] {TABiomes.EMPTINESS, TABiomes.TAINTED_LANDS,
+            TABiomes.EMPTINESS, TABiomes.EMPTINESS};
+    
+    public GenLayerEmptiness(long seed) {
+        super(seed);
+    }
+    
+    @Override
+    public int[] getInts(int areaX, int areaY, int areaWidth, int areaHeight) {
+        int[] ret = IntCache.getIntCache(areaWidth * areaHeight);
+        
+        for (int y = 0; y < areaHeight; ++y) {
+            for (int x = 0; x < areaWidth; ++x) {
+                initChunkSeed(areaX + x, areaY + y);
+                ret[x + y * areaWidth] = Biome.getIdForBiome(ALLOWED_BIOMES[nextInt(ALLOWED_BIOMES.length)]);
+            }
+        }
+        
+        return ret;
+    }
+    
+    // it's 2019 and java doesn't have tuples/pairs. fun...
+    public static GenLayer[] createLayers(long seed) {
+        
+        GenLayer biome = new GenLayerEmptiness(14676);
+        biome = new GenLayerZoom(10000, biome);
+        biome = new GenLayerZoom(10001, biome);
+        biome = new GenLayerZoom(10002, biome);
+        biome = new GenLayerZoom(10003, biome);
+        biome = new GenLayerZoom(10004, biome);
+        biome = new GenLayerZoom(10005, biome);
+        biome = new GenLayerZoom(10006, biome);
+        
+        GenLayer voronoiZoom = new GenLayerVoronoiZoom(10, biome);
+        biome.initWorldGenSeed(seed);
+        voronoiZoom.initWorldGenSeed(seed);
+        
+        return new GenLayer[] {biome, voronoiZoom};
+    }
+    
 }

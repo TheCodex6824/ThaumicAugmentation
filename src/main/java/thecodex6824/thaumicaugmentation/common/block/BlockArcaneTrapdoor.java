@@ -56,39 +56,39 @@ import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.util.BitUtils;
 
 public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDirectionalBlock, IArcaneDoorHalf,
-	IArcaneDoorOpen, IItemBlockProvider {
+    IArcaneDoorOpen, IItemBlockProvider {
 
-	protected static final AxisAlignedBB EAST_OPEN_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.1875D, 1.0D, 1.0D);
+    protected static final AxisAlignedBB EAST_OPEN_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.1875D, 1.0D, 1.0D);
     protected static final AxisAlignedBB WEST_OPEN_AABB = new AxisAlignedBB(0.8125D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
     protected static final AxisAlignedBB SOUTH_OPEN_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 0.1875D);
     protected static final AxisAlignedBB NORTH_OPEN_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.8125D, 1.0D, 1.0D, 1.0D);
     protected static final AxisAlignedBB BOTTOM_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.1875D, 1.0D);
     protected static final AxisAlignedBB TOP_AABB = new AxisAlignedBB(0.0D, 0.8125D, 0.0D, 1.0D, 1.0D, 1.0D);
-	
-	public BlockArcaneTrapdoor() {
-		super(Material.WOOD);
-		setBlockUnbreakable();
-		setResistance(Float.MAX_VALUE / 16.0F);
-		IBlockState state = getDefaultState();
-		state = state.withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.LOWER);
-		state = state.withProperty(IArcaneDoorOpen.DOOR_OPEN, false);
-		state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.SOUTH);
+    
+    public BlockArcaneTrapdoor() {
+        super(Material.WOOD);
+        setBlockUnbreakable();
+        setResistance(Float.MAX_VALUE / 16.0F);
+        IBlockState state = getDefaultState();
+        state = state.withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.LOWER);
+        state = state.withProperty(IArcaneDoorOpen.DOOR_OPEN, false);
+        state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.SOUTH);
 
-		setDefaultState(state);
-	}
-	
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] {IArcaneDoorHalf.DOOR_HALF, 
-				IHorizontallyDirectionalBlock.DIRECTION, IArcaneDoorOpen.DOOR_OPEN});
-	}
-	
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        setDefaultState(state);
+    }
+    
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, new IProperty[] {IArcaneDoorHalf.DOOR_HALF, 
+                IHorizontallyDirectionalBlock.DIRECTION, IArcaneDoorOpen.DOOR_OPEN});
+    }
+    
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if (state.getValue(IArcaneDoorOpen.DOOR_OPEN)) {
             switch ((EnumFacing)state.getValue(IHorizontallyDirectionalBlock.DIRECTION)) {
                 case NORTH:
                 default:
-                	return NORTH_OPEN_AABB;
+                    return NORTH_OPEN_AABB;
                 case SOUTH:
                     return SOUTH_OPEN_AABB;
                 case WEST:
@@ -102,80 +102,80 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
         else
             return BOTTOM_AABB;
     }
-	
-	@Override
-	public boolean isPassable(IBlockAccess world, BlockPos pos) {
-		return !world.getBlockState(pos).getValue(IArcaneDoorOpen.DOOR_OPEN);
-	}
+    
+    @Override
+    public boolean isPassable(IBlockAccess world, BlockPos pos) {
+        return !world.getBlockState(pos).getValue(IArcaneDoorOpen.DOOR_OPEN);
+    }
 
-	protected SoundEvent getOpenSound(IBlockState state) {
-		return material == Material.IRON ? SoundEvents.BLOCK_IRON_DOOR_OPEN : 
-			SoundEvents.BLOCK_WOODEN_DOOR_OPEN;
-	}
+    protected SoundEvent getOpenSound(IBlockState state) {
+        return material == Material.IRON ? SoundEvents.BLOCK_IRON_DOOR_OPEN : 
+            SoundEvents.BLOCK_WOODEN_DOOR_OPEN;
+    }
 
-	protected SoundEvent getCloseSound(IBlockState state) {
-		return material == Material.IRON ? SoundEvents.BLOCK_IRON_DOOR_CLOSE : 
-			SoundEvents.BLOCK_WOODEN_DOOR_CLOSE;
-	}
-	
-	@Override
-	public SoundType getSoundType() {
-		return SoundType.WOOD;
-	}
+    protected SoundEvent getCloseSound(IBlockState state) {
+        return material == Material.IRON ? SoundEvents.BLOCK_IRON_DOOR_CLOSE : 
+            SoundEvents.BLOCK_WOODEN_DOOR_CLOSE;
+    }
+    
+    @Override
+    public SoundType getSoundType() {
+        return SoundType.WOOD;
+    }
 
-	@Override
-	public SoundType getSoundType(IBlockState state, World world, BlockPos pos, Entity entity) {
-		return material == Material.IRON ? SoundType.METAL : SoundType.WOOD;
-	}
-	
-	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    @Override
+    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, Entity entity) {
+        return material == Material.IRON ? SoundType.METAL : SoundType.WOOD;
+    }
+    
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
+            EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-		if (!world.isRemote && world.getTileEntity(pos) instanceof IWardedTile) {
-			if (((IWardedTile) world.getTileEntity(pos)).hasPermission(player)) {
-				state = state.cycleProperty(IArcaneDoorOpen.DOOR_OPEN);
-				world.setBlockState(pos, state, 10);
-				world.markBlockRangeForRenderUpdate(pos, pos);
-				world.playSound(null, pos, state.getValue(IArcaneDoorOpen.DOOR_OPEN) ? 
-						getOpenSound(state) : getCloseSound(state), SoundCategory.BLOCKS, 1.0F, 1.0F);
-				return true;
-			}
-		}
+        if (!world.isRemote && world.getTileEntity(pos) instanceof IWardedTile) {
+            if (((IWardedTile) world.getTileEntity(pos)).hasPermission(player)) {
+                state = state.cycleProperty(IArcaneDoorOpen.DOOR_OPEN);
+                world.setBlockState(pos, state, 10);
+                world.markBlockRangeForRenderUpdate(pos, pos);
+                world.playSound(null, pos, state.getValue(IArcaneDoorOpen.DOOR_OPEN) ? 
+                        getOpenSound(state) : getCloseSound(state), SoundCategory.BLOCKS, 1.0F, 1.0F);
+                return true;
+            }
+        }
 
-		return true;
-	}
-	
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		IBlockState state = getDefaultState();
-		state = state.withProperty(IArcaneDoorHalf.DOOR_HALF, !BitUtils.isBitSet(meta, 0) ? ArcaneDoorHalf.LOWER : ArcaneDoorHalf.UPPER);
-		state = state.withProperty(IArcaneDoorOpen.DOOR_OPEN, BitUtils.isBitSet(meta, 1));
-		state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.byHorizontalIndex(BitUtils.getBits(meta, 2, 4)));
-	
-		return state;
-	}
+        return true;
+    }
+    
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        IBlockState state = getDefaultState();
+        state = state.withProperty(IArcaneDoorHalf.DOOR_HALF, !BitUtils.isBitSet(meta, 0) ? ArcaneDoorHalf.LOWER : ArcaneDoorHalf.UPPER);
+        state = state.withProperty(IArcaneDoorOpen.DOOR_OPEN, BitUtils.isBitSet(meta, 1));
+        state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.byHorizontalIndex(BitUtils.getBits(meta, 2, 4)));
+    
+        return state;
+    }
 
-	@Override
-	public int getMetaFromState(IBlockState state) {
-		int meta = 0;
-		meta = BitUtils.setBit(meta, 0, state.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.UPPER);
-		meta = BitUtils.setBit(meta, 1, state.getValue(IArcaneDoorOpen.DOOR_OPEN));
-		meta = BitUtils.setBits(meta, 2, 4, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        int meta = 0;
+        meta = BitUtils.setBit(meta, 0, state.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.UPPER);
+        meta = BitUtils.setBit(meta, 1, state.getValue(IArcaneDoorOpen.DOOR_OPEN));
+        meta = BitUtils.setBits(meta, 2, 4, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());
 
-		return meta;
-	}
-	
-	@Override
-	public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side) {
-		return true;
-	}
-	
-	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
-			float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        return meta;
+    }
+    
+    @Override
+    public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side) {
+        return true;
+    }
+    
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
+            float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
 
-		IBlockState state = getDefaultState();
+        IBlockState state = getDefaultState();
         if (facing.getAxis().isHorizontal()) {
             state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, facing).withProperty(IArcaneDoorOpen.DOOR_OPEN, false);
             state = state.withProperty(IArcaneDoorHalf.DOOR_HALF, hitY > 0.5F ? ArcaneDoorHalf.UPPER : ArcaneDoorHalf.LOWER);
@@ -186,32 +186,32 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
         }
 
         return state;
-	}
+    }
 
-	@Override
-	public IBlockState withRotation(IBlockState state, Rotation rot) {
-		return state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, 
-				rot.rotate((EnumFacing)state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
-	}
+    @Override
+    public IBlockState withRotation(IBlockState state, Rotation rot) {
+        return state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, 
+                rot.rotate((EnumFacing)state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
+    }
 
-	@Override
-	public IBlockState withMirror(IBlockState state, Mirror mirror) {
-		return state.withRotation(mirror.toRotation((EnumFacing)state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
-	}
+    @Override
+    public IBlockState withMirror(IBlockState state, Mirror mirror) {
+        return state.withRotation(mirror.toRotation((EnumFacing)state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
+    }
 
-	@Override
-	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
-			ItemStack stack) {
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
+            ItemStack stack) {
 
-		if (!world.isRemote && world.getTileEntity(pos) instanceof IWardedTile) {
-			((IWardedTile) world.getTileEntity(pos)).setOwner(placer instanceof EntityPlayer ? 
-					((EntityPlayer) placer).getUniqueID().toString() : placer.getName());
-		}
+        if (!world.isRemote && world.getTileEntity(pos) instanceof IWardedTile) {
+            ((IWardedTile) world.getTileEntity(pos)).setOwner(placer instanceof EntityPlayer ? 
+                    ((EntityPlayer) placer).getUniqueID().toString() : placer.getName());
+        }
 
-		super.onBlockPlacedBy(world, pos, state, placer, stack);
-	}
-	
-	@Override
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
+    }
+    
+    @Override
     public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
         if (state.getValue(IArcaneDoorOpen.DOOR_OPEN)) {
             IBlockState down = world.getBlockState(pos.down());
@@ -221,89 +221,89 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
         return false;
     }
 
-	@Override
-	public boolean canBeReplacedByLeaves(IBlockState state, IBlockAccess world, BlockPos pos) {
-		return false;
-	}
+    @Override
+    public boolean canBeReplacedByLeaves(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return false;
+    }
 
-	@Override
-	public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
-		return false;
-	}
+    @Override
+    public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
+        return false;
+    }
 
-	@Override
-	public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
-		return 0;
-	}
+    @Override
+    public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
+        return 0;
+    }
 
-	@Override
-	public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
-		return 0;
-	}
+    @Override
+    public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
+        return 0;
+    }
 
-	@Override
-	public EnumPushReaction getPushReaction(IBlockState state) {
-		return EnumPushReaction.IGNORE;
-	}
+    @Override
+    public EnumPushReaction getPushReaction(IBlockState state) {
+        return EnumPushReaction.IGNORE;
+    }
 
-	@Override
-	public boolean isFlammable(IBlockAccess world, BlockPos pos, EnumFacing face) {
-		return false;
-	}
+    @Override
+    public boolean isFlammable(IBlockAccess world, BlockPos pos, EnumFacing face) {
+        return false;
+    }
 
-	@Override
-	public boolean isFullCube(IBlockState state) {
-		return false;
-	}
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
 
-	@Override
-	public boolean isFullBlock(IBlockState state) {
-		return false;
-	}
+    @Override
+    public boolean isFullBlock(IBlockState state) {
+        return false;
+    }
 
-	@Override
-	public boolean isTopSolid(IBlockState state) {
-		return false;
-	}
+    @Override
+    public boolean isTopSolid(IBlockState state) {
+        return false;
+    }
 
-	@Override
-	public boolean isOpaqueCube(IBlockState state) {
-		return false;
-	}
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
 
-	@Override
-	public boolean isNormalCube(IBlockState state) {
-		return false;
-	}
+    @Override
+    public boolean isNormalCube(IBlockState state) {
+        return false;
+    }
 
-	@Override
-	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
-		return false;
-	}
+    @Override
+    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return false;
+    }
 
-	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
-		return BlockFaceShape.UNDEFINED;
-	}
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+        return BlockFaceShape.UNDEFINED;
+    }
 
-	@Override
-	public BlockRenderLayer getRenderLayer() {
-		return BlockRenderLayer.CUTOUT;
-	}
+    @Override
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
+    }
 
-	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state) {
-		return EnumBlockRenderType.MODEL;
-	}
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.MODEL;
+    }
 
-	@Override
-	public boolean hasTileEntity(IBlockState state) {
-		return true;
-	}
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
+    }
 
-	@Override
-	public TileEntity createTileEntity(World world, IBlockState state) {
-		return new TileArcaneTrapdoor();
-	}
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new TileArcaneTrapdoor();
+    }
 
 }

@@ -32,17 +32,17 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 
 public class WorldGenVoidStoneSpike extends WorldGenerator {
 
-	@Override
-	protected void setBlockAndNotifyAdequately(World world, BlockPos pos, IBlockState state) {
-		world.setBlockState(pos, state, 2 | 16);
-	}
-	
-	@Override
-	public boolean generate(World world, Random rand, BlockPos position) {
-		position = position.down();
-		if (!world.isAirBlock(position)) {
-			Biome biome = world.getBiome(position);
-			position = position.up(rand.nextInt(4));
+    @Override
+    protected void setBlockAndNotifyAdequately(World world, BlockPos pos, IBlockState state) {
+        world.setBlockState(pos, state, 2 | 16);
+    }
+    
+    @Override
+    public boolean generate(World world, Random rand, BlockPos position) {
+        position = position.down();
+        if (!world.isAirBlock(position)) {
+            Biome biome = world.getBiome(position);
+            position = position.up(rand.nextInt(4));
             int height = rand.nextInt(4) + 7;
             int width = height / 4 + rand.nextInt(2);
 
@@ -58,9 +58,9 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                         float f2 = MathHelper.abs(z) - 0.25F;
 
                         if ((x == 0 && z == 0 || f1 * f1 + f2 * f2 <= f * f) && ((x != -l && x != l && z != -l && z != l) || rand.nextFloat() <= 0.75F)) {
-                        	BlockPos pos = position.add(x, y, z);
+                            BlockPos pos = position.add(x, y, z);
                             if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
-                            	setBlockAndNotifyAdequately(world, pos, biome.fillerBlock);
+                                setBlockAndNotifyAdequately(world, pos, biome.fillerBlock);
 
                             if (y != 0 && l > 1) {
                                 pos = position.add(x, -y, z);
@@ -98,9 +98,9 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
             }
 
             return true;
-		}
-		
-		return false;
-	}
-	
+        }
+        
+        return false;
+    }
+    
 }

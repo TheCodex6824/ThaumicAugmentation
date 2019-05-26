@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -40,131 +40,131 @@ import thaumcraft.common.lib.events.ServerEvents;
  */
 public class FocusEffectExchangeCompat extends FocusEffectExchange {
 
-	protected FocusEffectExchange wrapped;
+    protected FocusEffectExchange wrapped;
 
-	public FocusEffectExchangeCompat(FocusEffectExchange toWrap) {
-		super();
-		wrapped = toWrap;
-		initialize();
-	}
+    public FocusEffectExchangeCompat(FocusEffectExchange toWrap) {
+        super();
+        wrapped = toWrap;
+        initialize();
+    }
 
-	@Override
-	public String getResearch() {
-		return wrapped.getResearch();
-	}
+    @Override
+    public String getResearch() {
+        return wrapped.getResearch();
+    }
 
-	@Override
-	public String getKey() {
-		return wrapped.getKey();
-	}
+    @Override
+    public String getKey() {
+        return wrapped.getKey();
+    }
 
-	@Override
-	public Aspect getAspect() {
-		return wrapped.getAspect();
-	}
+    @Override
+    public Aspect getAspect() {
+        return wrapped.getAspect();
+    }
 
-	@Override
-	public int getComplexity() {
-		return wrapped.getComplexity();
-	}
+    @Override
+    public int getComplexity() {
+        return wrapped.getComplexity();
+    }
 
-	@Override
-	public boolean canSupply(EnumSupplyType arg0) {
-		return wrapped.canSupply(arg0);
-	}
+    @Override
+    public boolean canSupply(EnumSupplyType arg0) {
+        return wrapped.canSupply(arg0);
+    }
 
-	@Override
-	public NodeSetting[] createSettings() {
-		return wrapped != null ? wrapped.createSettings() : null;
-	}
+    @Override
+    public NodeSetting[] createSettings() {
+        return wrapped != null ? wrapped.createSettings() : null;
+    }
 
-	@Override
-	public boolean execute(RayTraceResult target, Trajectory trajectory, float finalPower, int something) {
-		if (target.typeOfHit == RayTraceResult.Type.BLOCK) {
-			ItemStack casterStack = ItemStack.EMPTY;
-			if ((getPackage().getCaster().getHeldItemMainhand() != null) && ((getPackage().getCaster().getHeldItemMainhand().getItem() instanceof ICaster)))
-				casterStack = getPackage().getCaster().getHeldItemMainhand();
-			else if ((getPackage().getCaster().getHeldItemOffhand() != null) && ((getPackage().getCaster().getHeldItemOffhand().getItem() instanceof ICaster)))
-				casterStack = getPackage().getCaster().getHeldItemOffhand();
+    @Override
+    public boolean execute(RayTraceResult target, Trajectory trajectory, float finalPower, int something) {
+        if (target.typeOfHit == RayTraceResult.Type.BLOCK) {
+            ItemStack casterStack = ItemStack.EMPTY;
+            if ((getPackage().getCaster().getHeldItemMainhand() != null) && ((getPackage().getCaster().getHeldItemMainhand().getItem() instanceof ICaster)))
+                casterStack = getPackage().getCaster().getHeldItemMainhand();
+            else if ((getPackage().getCaster().getHeldItemOffhand() != null) && ((getPackage().getCaster().getHeldItemOffhand().getItem() instanceof ICaster)))
+                casterStack = getPackage().getCaster().getHeldItemOffhand();
 
-			if (casterStack.isEmpty())
-				return false;
+            if (casterStack.isEmpty())
+                return false;
 
-			boolean silk = getSettingValue("silk") > 0;
-			int fortune = getSettingValue("fortune");
-			if (getPackage().getCaster() instanceof EntityPlayer && ((ICaster)casterStack.getItem()).getPickedBlock(casterStack) != null && 
-					!((ICaster)casterStack.getItem()).getPickedBlock(casterStack).isEmpty()) {
+            boolean silk = getSettingValue("silk") > 0;
+            int fortune = getSettingValue("fortune");
+            if (getPackage().getCaster() instanceof EntityPlayer && ((ICaster)casterStack.getItem()).getPickedBlock(casterStack) != null && 
+                    !((ICaster)casterStack.getItem()).getPickedBlock(casterStack).isEmpty()) {
 
-				ServerEvents.addSwapper(getPackage().world, target.getBlockPos(), 
-						getPackage().world.getBlockState(target.getBlockPos()), ((ICaster)casterStack.getItem()).getPickedBlock(casterStack), true, 0, 
-						(EntityPlayer)getPackage().getCaster(), true, false, 8038177, true, silk, fortune, 
-						ServerEvents.DEFAULT_PREDICATE, 0.25F + (silk ? 0.25F : 0.0F) + fortune * 0.1F);
-			}
+                ServerEvents.addSwapper(getPackage().world, target.getBlockPos(), 
+                        getPackage().world.getBlockState(target.getBlockPos()), ((ICaster)casterStack.getItem()).getPickedBlock(casterStack), true, 0, 
+                        (EntityPlayer)getPackage().getCaster(), true, false, 8038177, true, silk, fortune, 
+                        ServerEvents.DEFAULT_PREDICATE, 0.25F + (silk ? 0.25F : 0.0F) + fortune * 0.1F);
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public float getDamageForDisplay(float finalPower) {
-		return wrapped.getDamageForDisplay(finalPower);
-	}
+    @Override
+    public float getDamageForDisplay(float finalPower) {
+        return wrapped.getDamageForDisplay(finalPower);
+    }
 
-	@Override
-	public float getPowerMultiplier() {
-		return wrapped.getPowerMultiplier();
-	}
+    @Override
+    public float getPowerMultiplier() {
+        return wrapped.getPowerMultiplier();
+    }
 
-	@Override
-	public EnumUnitType getType() {
-		return wrapped.getType();
-	}
+    @Override
+    public EnumUnitType getType() {
+        return wrapped.getType();
+    }
 
-	@Override
-	public String getUnlocalizedName() {
-		return wrapped.getUnlocalizedName();
-	}
+    @Override
+    public String getUnlocalizedName() {
+        return wrapped.getUnlocalizedName();
+    }
 
-	@Override
-	public String getUnlocalizedText() {
-		return wrapped.getUnlocalizedText();
-	}
+    @Override
+    public String getUnlocalizedText() {
+        return wrapped.getUnlocalizedText();
+    }
 
-	@Override
-	public boolean isExclusive() {
-		return wrapped.isExclusive();
-	}
+    @Override
+    public boolean isExclusive() {
+        return wrapped.isExclusive();
+    }
 
-	@Override
-	public void onCast(Entity caster) {
-		wrapped.onCast(caster);
-	}
+    @Override
+    public void onCast(Entity caster) {
+        wrapped.onCast(caster);
+    }
 
-	@Override
-	public void renderParticleFX(World world, double x, double y, double z, double vx, double vy, double vz) {
-		wrapped.renderParticleFX(world, x, y, z, vx, vy, vz);
-	}
+    @Override
+    public void renderParticleFX(World world, double x, double y, double z, double vx, double vy, double vz) {
+        wrapped.renderParticleFX(world, x, y, z, vx, vy, vz);
+    }
 
-	@Override
-	public void setParent(FocusNode parent) {
-		wrapped.setParent(parent);
-	}
+    @Override
+    public void setParent(FocusNode parent) {
+        wrapped.setParent(parent);
+    }
 
-	@Override
-	public RayTraceResult[] supplyTargets() {
-		return wrapped.supplyTargets();
-	}
+    @Override
+    public RayTraceResult[] supplyTargets() {
+        return wrapped.supplyTargets();
+    }
 
-	@Override
-	public Trajectory[] supplyTrajectories() {
-		return wrapped.supplyTrajectories();
-	}
+    @Override
+    public Trajectory[] supplyTrajectories() {
+        return wrapped.supplyTrajectories();
+    }
 
-	@Override
-	public EnumSupplyType[] willSupply() {
-		return wrapped.willSupply();
-	}
+    @Override
+    public EnumSupplyType[] willSupply() {
+        return wrapped.willSupply();
+    }
 
 }

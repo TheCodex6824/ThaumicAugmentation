@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -30,36 +30,36 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 
 public class GUIWardedChest extends GuiContainer {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/generic_54.png");
-	private InventoryPlayer inv;
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/generic_54.png");
+    private InventoryPlayer inv;
 
-	public GUIWardedChest(Container c, InventoryPlayer i) {
-		super(c);
-		inv = i;
-	}
+    public GUIWardedChest(Container c, InventoryPlayer i) {
+        super(c);
+        inv = i;
+    }
 
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		drawDefaultBackground();
-		super.drawScreen(mouseX, mouseY, partialTicks);
-		renderHoveredToolTip(mouseX, mouseY);
-	}
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        renderHoveredToolTip(mouseX, mouseY);
+    }
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.getTextureManager().bindTexture(TEXTURE);
-		int width = (this.width - this.xSize) / 2;
-		int height = (this.height - this.ySize) / 2;
-		drawTexturedModalRect(width, height, 0, 0, xSize, 3 * 18 + 17);
-		drawTexturedModalRect(width, height + 3 * 18 + 17, 0, 126, xSize, 96);
-	}
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        mc.getTextureManager().bindTexture(TEXTURE);
+        int width = (this.width - this.xSize) / 2;
+        int height = (this.height - this.ySize) / 2;
+        drawTexturedModalRect(width, height, 0, 0, xSize, 3 * 18 + 17);
+        drawTexturedModalRect(width, height + 3 * 18 + 17, 0, 126, xSize, 96);
+    }
 
-	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		String name = I18n.format("tile." + TABlocks.WARDED_CHEST.getRegistryName().toString().replace(':', '.') + ".name");
-		fontRenderer.drawString(name, 8, 6, 0x404040);
-		fontRenderer.drawString(inv.getDisplayName().getUnformattedText(), 8, ySize - 96 + 4, 0x404040);
-	}
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        String name = I18n.format("tile." + TABlocks.WARDED_CHEST.getRegistryName().toString().replace(':', '.') + ".name");
+        fontRenderer.drawString(name, 8, 6, 0x404040);
+        fontRenderer.drawString(inv.getDisplayName().getUnformattedText(), 8, ySize - 96 + 4, 0x404040);
+    }
 
 }

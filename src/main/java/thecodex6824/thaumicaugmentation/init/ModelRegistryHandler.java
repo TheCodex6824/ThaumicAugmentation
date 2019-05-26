@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -38,21 +38,21 @@ import thecodex6824.thaumicaugmentation.api.util.IModelProvider;
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public class ModelRegistryHandler {
 
-	@SubscribeEvent
-	public static void registerModels(ModelRegistryEvent event) {
+    @SubscribeEvent
+    public static void registerModels(ModelRegistryEvent event) {
 
-		ModelLoader.setCustomStateMapper(TABlocks.TEMPORARY_LIGHT, new StateMap.Builder().ignore(ILightSourceBlock.LIGHT_LEVEL).build());
-		ModelLoader.setCustomStateMapper(TABlocks.STONE, new StateMap.Builder().withName(ITAStoneType.STONE_TYPE).build());
-		
-		for (Block b : TABlocks.getAllBlocks()) {
-			if (b instanceof IModelProvider<?>)
-				((IModelProvider<?>) b).registerModels();
-		}
+        ModelLoader.setCustomStateMapper(TABlocks.TEMPORARY_LIGHT, new StateMap.Builder().ignore(ILightSourceBlock.LIGHT_LEVEL).build());
+        ModelLoader.setCustomStateMapper(TABlocks.STONE, new StateMap.Builder().withName(ITAStoneType.STONE_TYPE).build());
+        
+        for (Block b : TABlocks.getAllBlocks()) {
+            if (b instanceof IModelProvider<?>)
+                ((IModelProvider<?>) b).registerModels();
+        }
 
-		for (Item item : TAItems.getAllItems()) {
-			if (item instanceof IModelProvider<?>)
-				((IModelProvider<?>) item).registerModels();
-		}
-	}
+        for (Item item : TAItems.getAllItems()) {
+            if (item instanceof IModelProvider<?>)
+                ((IModelProvider<?>) item).registerModels();
+        }
+    }
 
 }

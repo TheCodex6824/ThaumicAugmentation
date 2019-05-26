@@ -17,7 +17,7 @@
                 3
             ],
             "meta": [
-            	"ROUND"
+                "ROUND"
             ],
             "stages": [
                 {
@@ -33,26 +33,26 @@
                 {
                     "text": "thaumicaugmentation.research.warded_arcana.1",
                     "required_item": [
-                    	"oredict:chestWood",
+                        "oredict:chestWood",
                         "thaumicaugmentation:material;1;1"
                     ],
                     "required_knowledge": [
-                    	"THEORY;ARTIFICE;1"
+                        "THEORY;ARTIFICE;1"
                     ],
                     "recipes": [
-                    	"thaumicaugmentation:WardingSigil"
+                        "thaumicaugmentation:WardingSigil"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.warded_arcana.2",
                     "recipes": [
-                    	"thaumicaugmentation:WardedChest"
+                        "thaumicaugmentation:WardedChest"
                     ]
                 }
             ]
         },
         {
-        	"key": "ARCANE_DOOR",
+            "key": "ARCANE_DOOR",
             "name": "thaumicaugmentation.research.arcane_door.title",
             "icons": [
                 "thaumicaugmentation:arcane_door;1;0",
@@ -81,14 +81,14 @@
                 {
                     "text": "thaumicaugmentation.research.arcane_door.1",
                     "recipes": [
-                    	"thaumicaugmentation:ArcaneDoorWood",
-                    	"thaumicaugmentation:ArcaneDoorMetal"
+                        "thaumicaugmentation:ArcaneDoorWood",
+                        "thaumicaugmentation:ArcaneDoorMetal"
                     ]
                 }
             ]
         },
         {
-        	"key": "WARD_KEYS",
+            "key": "WARD_KEYS",
             "name": "thaumicaugmentation.research.ward_keys.title",
             "icons": [
                 "thaumicaugmentation:key;1;0",
@@ -114,9 +114,9 @@
                 {
                     "text": "thaumicaugmentation.research.ward_keys.1",
                     "recipes": [
-                    	"thaumicaugmentation:KeyIron",
-                    	"thaumicaugmentation:KeyBrass",
-                    	"thaumicaugmentation:KeyThaumium"
+                        "thaumicaugmentation:KeyIron",
+                        "thaumicaugmentation:KeyBrass",
+                        "thaumicaugmentation:KeyThaumium"
                     ]
                 }
             ]

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -30,6 +30,6 @@ import net.minecraft.block.properties.PropertyEnum;
  */
 public interface IArcaneDoorHinge {
 
-	public static final PropertyEnum<EnumHingePosition> HINGE_SIDE = PropertyEnum.<EnumHingePosition>create("ta_hinge_side", EnumHingePosition.class);
+    public static final PropertyEnum<EnumHingePosition> HINGE_SIDE = PropertyEnum.<EnumHingePosition>create("ta_hinge_side", EnumHingePosition.class);
 
 }

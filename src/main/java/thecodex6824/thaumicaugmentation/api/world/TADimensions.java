@@ -24,6 +24,6 @@ import net.minecraft.world.DimensionType;
 
 public class TADimensions {
 
-	public static DimensionType EMPTINESS;
+    public static DimensionType EMPTINESS;
 
 }

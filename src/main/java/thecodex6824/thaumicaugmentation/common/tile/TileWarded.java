@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -41,106 +41,106 @@ import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
 
 public abstract class TileWarded extends TileEntity implements IInteractWithCaster, IWardedTile {
 
-	protected String owner;
+    protected String owner;
 
-	public TileWarded() {
-		super();
-		owner = "";
-	}
+    public TileWarded() {
+        super();
+        owner = "";
+    }
 
-	@Override
-	public void setOwner(String uuid) {
-		owner = uuid;
-		markDirty();
-	}
+    @Override
+    public void setOwner(String uuid) {
+        owner = uuid;
+        markDirty();
+    }
 
-	@Override
-	public String getOwner() {
-		return owner;
-	}
+    @Override
+    public String getOwner() {
+        return owner;
+    }
 
-	@Override
-	public BlockPos getPosition() {
-		return pos;
-	}
+    @Override
+    public BlockPos getPosition() {
+        return pos;
+    }
 
-	protected boolean checkPermission(EntityPlayer player) {
-		if (player == null)
-			return false;
-		else if (owner.equals(player.getUniqueID().toString()))
-			return true;
-		else {
-			ItemStack stack = null;
-			for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
-				stack = player.inventory.getStackInSlot(i);
-				if (stack.getItem() instanceof IWardAuthenticator && 
-						((IWardAuthenticator) stack.getItem()).permitsUsage(this, stack, player)) {
+    protected boolean checkPermission(EntityPlayer player) {
+        if (player == null)
+            return false;
+        else if (owner.equals(player.getUniqueID().toString()))
+            return true;
+        else {
+            ItemStack stack = null;
+            for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
+                stack = player.inventory.getStackInSlot(i);
+                if (stack.getItem() instanceof IWardAuthenticator && 
+                        ((IWardAuthenticator) stack.getItem()).permitsUsage(this, stack, player)) {
 
-					return true;
-				}
-			}
-		}
+                    return true;
+                }
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	protected boolean playerHasSpecialPermission(EntityPlayer player) {
-		if (player == null)
-			return false;
-		else if (!player.world.isRemote && TAConfig.opWardOverride.getValue() && FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers().
-				getEntry(player.getGameProfile()) != null)
-			return true;
-		else if (FMLCommonHandler.instance().getSide() == Side.CLIENT && Minecraft.getMinecraft().isSingleplayer())
-			return true;
-		else
-			return false;
-	}
+    protected boolean playerHasSpecialPermission(EntityPlayer player) {
+        if (player == null)
+            return false;
+        else if (!player.world.isRemote && TAConfig.opWardOverride.getValue() && FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers().
+                getEntry(player.getGameProfile()) != null)
+            return true;
+        else if (FMLCommonHandler.instance().getSide() == Side.CLIENT && Minecraft.getMinecraft().isSingleplayer())
+            return true;
+        else
+            return false;
+    }
 
-	@Override
-	public boolean hasPermission(EntityPlayer player) {
-		boolean specialPermission = playerHasSpecialPermission(player);
-		WardedBlockPermissionEvent event = new WardedBlockPermissionEvent(world, pos, world.getBlockState(pos), player, specialPermission);
-		MinecraftForge.EVENT_BUS.post(event);
-		if (specialPermission)
-			return true;
-		else if (!event.isCanceled()) {
-			switch (event.getResult()) {
-				case ALLOW: return true;
-				case DENY: return false;
-				default: return checkPermission(player);
-			}
-		}
-		else
-			return false;
-	}
+    @Override
+    public boolean hasPermission(EntityPlayer player) {
+        boolean specialPermission = playerHasSpecialPermission(player);
+        WardedBlockPermissionEvent event = new WardedBlockPermissionEvent(world, pos, world.getBlockState(pos), player, specialPermission);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (specialPermission)
+            return true;
+        else if (!event.isCanceled()) {
+            switch (event.getResult()) {
+                case ALLOW: return true;
+                case DENY: return false;
+                default: return checkPermission(player);
+            }
+        }
+        else
+            return false;
+    }
 
-	@Override
-	public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, EnumFacing facing,
-			EnumHand hand) {
-		if (!world.isRemote) {
-			if (hasPermission(player)) {
-				if (stack.getItem() instanceof ICaster && player.isSneaking())
-					world.destroyBlock(pos, !player.isCreative());
+    @Override
+    public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, EnumFacing facing,
+            EnumHand hand) {
+        if (!world.isRemote) {
+            if (hasPermission(player)) {
+                if (stack.getItem() instanceof ICaster && player.isSneaking())
+                    world.destroyBlock(pos, !player.isCreative());
 
-				return true;
-			}
-			else
-				return false;
-		}
+                return true;
+            }
+            else
+                return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setString("owner", owner);
-		return super.writeToNBT(compound);
-	}
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        compound.setString("owner", owner);
+        return super.writeToNBT(compound);
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		owner = compound.getString("owner");
-		super.readFromNBT(compound);
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        owner = compound.getString("owner");
+        super.readFromNBT(compound);
+    }
 
 }

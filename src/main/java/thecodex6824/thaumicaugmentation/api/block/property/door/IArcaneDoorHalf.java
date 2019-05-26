@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -30,18 +30,18 @@ import net.minecraft.util.IStringSerializable;
  */
 public interface IArcaneDoorHalf {
 
-	public enum ArcaneDoorHalf implements IStringSerializable {
-		
-		UPPER,
-		LOWER;
-		
-		@Override
-		public String getName() {
-			return name().toLowerCase();
-		}
-	}
-	
-	public static final PropertyEnum<ArcaneDoorHalf> DOOR_HALF = PropertyEnum.<ArcaneDoorHalf>create(
-			"ta_door_half", ArcaneDoorHalf.class);
-	
+    public enum ArcaneDoorHalf implements IStringSerializable {
+        
+        UPPER,
+        LOWER;
+        
+        @Override
+        public String getName() {
+            return name().toLowerCase();
+        }
+    }
+    
+    public static final PropertyEnum<ArcaneDoorHalf> DOOR_HALF = PropertyEnum.<ArcaneDoorHalf>create(
+            "ta_door_half", ArcaneDoorHalf.class);
+    
 }

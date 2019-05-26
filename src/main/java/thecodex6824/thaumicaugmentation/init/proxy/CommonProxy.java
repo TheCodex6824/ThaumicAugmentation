@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -38,39 +38,39 @@ import thecodex6824.thaumicaugmentation.init.WorldHandler;
 
 public class CommonProxy implements ISidedProxy {
 
-	protected static ITARenderHelper renderHelper;
+    protected static ITARenderHelper renderHelper;
 
-	@Override
-	public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params) {
-		return null;
-	}
+    @Override
+    public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params) {
+        return null;
+    }
 
-	@Override
-	public ITARenderHelper getRenderHelper() {
-		if (renderHelper == null)
-			renderHelper = new TARenderHelperCommon();
+    @Override
+    public ITARenderHelper getRenderHelper() {
+        if (renderHelper == null)
+            renderHelper = new TARenderHelperCommon();
 
-		return renderHelper;
-	}
+        return renderHelper;
+    }
 
-	@Override
-	public void preInit() {
-		TAConfigHolder.preInit();
-		WorldHandler.preInit();
-		NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
-	}
+    @Override
+    public void preInit() {
+        TAConfigHolder.preInit();
+        WorldHandler.preInit();
+        NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
+    }
 
-	@Override
-	public void init() {
-		WorldHandler.init();
-		RecipeHandler.init();
-		ResearchHandler.init();
-		MiscHandler.init();
-	}
+    @Override
+    public void init() {
+        WorldHandler.init();
+        RecipeHandler.init();
+        ResearchHandler.init();
+        MiscHandler.init();
+    }
 
-	@Override
-	public void postInit() {
-		WorldHandler.postInit();
-	}
+    @Override
+    public void postInit() {
+        WorldHandler.postInit();
+    }
 
 }

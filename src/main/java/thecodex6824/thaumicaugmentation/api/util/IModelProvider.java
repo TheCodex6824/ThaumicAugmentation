@@ -22,6 +22,6 @@ package thecodex6824.thaumicaugmentation.api.util;
 
 public interface IModelProvider<T> {
 
-	public void registerModels();
+    public void registerModels();
 
 }

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -30,6 +30,6 @@ import net.minecraft.block.properties.PropertyBool;
  */
 public interface IEnabledBlock {
 
-	public static final PropertyBool ENABLED = PropertyBool.create("ta_enabled");
+    public static final PropertyBool ENABLED = PropertyBool.create("ta_enabled");
 
 }

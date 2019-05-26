@@ -37,106 +37,106 @@ import thecodex6824.thaumicaugmentation.client.renderer.RenderHandlerNoop;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeProviderEmptiness;
 
 public class WorldProviderEmptiness extends WorldProvider {
-	
-	@Override
-	protected void init() {
-		hasSkyLight = false;
-		biomeProvider = new BiomeProviderEmptiness(world);
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			setCloudRenderer(new RenderHandlerNoop());
-			setWeatherRenderer(new RenderHandlerNoop());
-			setSkyRenderer(new RenderHandlerEmptinessSky());
-		}
-	}
-	
-	@Override
-	public int getAverageGroundLevel() {
-		return 8;
-	}
+    
+    @Override
+    protected void init() {
+        hasSkyLight = false;
+        biomeProvider = new BiomeProviderEmptiness(world);
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            setCloudRenderer(new RenderHandlerNoop());
+            setWeatherRenderer(new RenderHandlerNoop());
+            setSkyRenderer(new RenderHandlerEmptinessSky());
+        }
+    }
+    
+    @Override
+    public int getAverageGroundLevel() {
+        return 8;
+    }
 
-	@Override
-	public double getMovementFactor() {
-		return TAConfig.emptinessMoveFactor.getValue();
-	}
+    @Override
+    public double getMovementFactor() {
+        return TAConfig.emptinessMoveFactor.getValue();
+    }
 
-	@Override
-	public DimensionType getDimensionType() {
-		return TADimensions.EMPTINESS;
-	}
+    @Override
+    public DimensionType getDimensionType() {
+        return TADimensions.EMPTINESS;
+    }
 
-	@Override
-	public BiomeProvider getBiomeProvider() {
-		return biomeProvider;
-	}
+    @Override
+    public BiomeProvider getBiomeProvider() {
+        return biomeProvider;
+    }
 
-	@Override
-	public IChunkGenerator createChunkGenerator() {
-		return new ChunkGeneratorEmptiness(world);
-	}
+    @Override
+    public IChunkGenerator createChunkGenerator() {
+        return new ChunkGeneratorEmptiness(world);
+    }
 
-	@Override
-	public boolean canDoLightning(Chunk chunk) {
-		return false;
-	}
+    @Override
+    public boolean canDoLightning(Chunk chunk) {
+        return false;
+    }
 
-	@Override
-	public boolean canDoRainSnowIce(Chunk chunk) {
-		return false;
-	}
+    @Override
+    public boolean canDoRainSnowIce(Chunk chunk) {
+        return false;
+    }
 
-	@Override
-	public float getSunBrightnessFactor(float par1) {
-		return 0.0F;
-	}
+    @Override
+    public float getSunBrightnessFactor(float par1) {
+        return 0.0F;
+    }
 
-	@Override
-	public float[] calcSunriseSunsetColors(float celestialAngle, float partialTicks) {
-		return null;
-	}
+    @Override
+    public float[] calcSunriseSunsetColors(float celestialAngle, float partialTicks) {
+        return null;
+    }
 
-	@Override
-	public float calculateCelestialAngle(long worldTime, float partialTicks) {
-		return 0.0F;
-	}
+    @Override
+    public float calculateCelestialAngle(long worldTime, float partialTicks) {
+        return 0.0F;
+    }
 
-	@Override
-	public boolean doesXZShowFog(int x, int z) {
-		return false;
-	}
+    @Override
+    public boolean doesXZShowFog(int x, int z) {
+        return false;
+    }
 
-	@Override
-	public Vec3d getFogColor(float x, float z) {
-		return new Vec3d(0, 0, 0);
-	}
+    @Override
+    public Vec3d getFogColor(float x, float z) {
+        return new Vec3d(0, 0, 0);
+    }
 
-	@Override
-	public float getSunBrightness(float par1) {
-		return 0.0F;
-	}
+    @Override
+    public float getSunBrightness(float par1) {
+        return 0.0F;
+    }
 
-	@Override
-	public float getStarBrightness(float par1) {
-		return 0.0F;
-	}
+    @Override
+    public float getStarBrightness(float par1) {
+        return 0.0F;
+    }
 
-	@Override
-	public boolean isSurfaceWorld() {
-		return false;
-	}
+    @Override
+    public boolean isSurfaceWorld() {
+        return false;
+    }
 
-	@Override
-	public boolean canRespawnHere() {
-		return false;
-	}
+    @Override
+    public boolean canRespawnHere() {
+        return false;
+    }
 
-	@Override
-	public WorldSleepResult canSleepAt(EntityPlayer player, BlockPos pos) {
-		return WorldSleepResult.DENY;
-	}
+    @Override
+    public WorldSleepResult canSleepAt(EntityPlayer player, BlockPos pos) {
+        return WorldSleepResult.DENY;
+    }
 
-	@Override
-	public boolean shouldMapSpin(String entity, double x, double z, double rotation) {
-		return true;
-	}
+    @Override
+    public boolean shouldMapSpin(String entity, double x, double z, double rotation) {
+        return true;
+    }
 
 }

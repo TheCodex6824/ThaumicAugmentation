@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -44,56 +44,56 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemArcaneDoor extends ItemTABase {
 
-	public ItemArcaneDoor() {
-		super(new String[] {"wood", "metal"});
-	}
+    public ItemArcaneDoor() {
+        super(new String[] {"wood", "metal"});
+    }
 
-	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, 
-			float hitX, float hitY, float hitZ) {
+    @Override
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, 
+            float hitX, float hitY, float hitZ) {
 
-		IBlockState iblockstate = world.getBlockState(pos);
-		Block block = iblockstate.getBlock();
-		if (!block.isReplaceable(world, pos))
-			pos = pos.offset(facing);
+        IBlockState iblockstate = world.getBlockState(pos);
+        Block block = iblockstate.getBlock();
+        if (!block.isReplaceable(world, pos))
+            pos = pos.offset(facing);
 
-		ItemStack itemstack = player.getHeldItem(hand);
-		if (player.canPlayerEdit(pos, facing, itemstack) && TABlocks.ARCANE_DOOR.canPlaceBlockAt(world, pos)) {
-			EnumFacing enumfacing = player.getHorizontalFacing();
-			int i = enumfacing.getXOffset();
-			int j = enumfacing.getZOffset();
-			boolean flag = i < 0 && hitZ < 0.5F || i > 0 && hitZ > 0.5F || j < 0 && hitX > 0.5F || j > 0 && hitX < 0.5F;
-			placeDoor(player, itemstack, world, pos, enumfacing, TABlocks.ARCANE_DOOR, flag);
-			SoundType soundtype = world.getBlockState(pos).getBlock().getSoundType(world.getBlockState(pos), world, pos, player);
-			world.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-			itemstack.shrink(1);
-			return EnumActionResult.SUCCESS;
-		}
-		else
-			return EnumActionResult.FAIL;
-	}
+        ItemStack itemstack = player.getHeldItem(hand);
+        if (player.canPlayerEdit(pos, facing, itemstack) && TABlocks.ARCANE_DOOR.canPlaceBlockAt(world, pos)) {
+            EnumFacing enumfacing = player.getHorizontalFacing();
+            int i = enumfacing.getXOffset();
+            int j = enumfacing.getZOffset();
+            boolean flag = i < 0 && hitZ < 0.5F || i > 0 && hitZ > 0.5F || j < 0 && hitX > 0.5F || j > 0 && hitX < 0.5F;
+            placeDoor(player, itemstack, world, pos, enumfacing, TABlocks.ARCANE_DOOR, flag);
+            SoundType soundtype = world.getBlockState(pos).getBlock().getSoundType(world.getBlockState(pos), world, pos, player);
+            world.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+            itemstack.shrink(1);
+            return EnumActionResult.SUCCESS;
+        }
+        else
+            return EnumActionResult.FAIL;
+    }
 
-	protected static void placeDoor(EntityPlayer player, ItemStack stack, World worldIn, BlockPos pos, EnumFacing facing, Block door, boolean isRightHinge) {
-		BlockPos blockpos = pos.offset(facing.rotateY());
-		BlockPos blockpos1 = pos.offset(facing.rotateYCCW());
-		int i = (worldIn.getBlockState(blockpos1).isNormalCube() ? 1 : 0) + (worldIn.getBlockState(blockpos1.up()).isNormalCube() ? 1 : 0);
-		int j = (worldIn.getBlockState(blockpos).isNormalCube() ? 1 : 0) + (worldIn.getBlockState(blockpos.up()).isNormalCube() ? 1 : 0);
-		boolean flag = worldIn.getBlockState(blockpos1).getBlock() == door || worldIn.getBlockState(blockpos1.up()).getBlock() == door;
-		boolean flag1 = worldIn.getBlockState(blockpos).getBlock() == door || worldIn.getBlockState(blockpos.up()).getBlock() == door;
+    protected static void placeDoor(EntityPlayer player, ItemStack stack, World worldIn, BlockPos pos, EnumFacing facing, Block door, boolean isRightHinge) {
+        BlockPos blockpos = pos.offset(facing.rotateY());
+        BlockPos blockpos1 = pos.offset(facing.rotateYCCW());
+        int i = (worldIn.getBlockState(blockpos1).isNormalCube() ? 1 : 0) + (worldIn.getBlockState(blockpos1.up()).isNormalCube() ? 1 : 0);
+        int j = (worldIn.getBlockState(blockpos).isNormalCube() ? 1 : 0) + (worldIn.getBlockState(blockpos.up()).isNormalCube() ? 1 : 0);
+        boolean flag = worldIn.getBlockState(blockpos1).getBlock() == door || worldIn.getBlockState(blockpos1.up()).getBlock() == door;
+        boolean flag1 = worldIn.getBlockState(blockpos).getBlock() == door || worldIn.getBlockState(blockpos.up()).getBlock() == door;
 
-		if ((!flag || flag1) && j <= i) {
-			if (flag1 && !flag || j < i)
-				isRightHinge = false;
-		}
-		else
-			isRightHinge = true;
+        if ((!flag || flag1) && j <= i) {
+            if (flag1 && !flag || j < i)
+                isRightHinge = false;
+        }
+        else
+            isRightHinge = true;
 
-		BlockPos blockpos2 = pos.up();
-		worldIn.setBlockState(pos, door.getDefaultState().withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.LOWER).withProperty(IArcaneDoorHinge.HINGE_SIDE, isRightHinge ? BlockDoor.EnumHingePosition.RIGHT : BlockDoor.EnumHingePosition.LEFT).withProperty(IArcaneDoorType.TYPE, stack.getMetadata() == 1 ? ArcaneDoorType.METAL : ArcaneDoorType.WOOD).withProperty(IArcaneDoorOpen.DOOR_OPEN, false), 2);
-		worldIn.setBlockState(blockpos2, door.getDefaultState().withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.UPPER).withProperty(IHorizontallyDirectionalBlock.DIRECTION, facing), 2);
-		worldIn.getBlockState(pos).getBlock().onBlockPlacedBy(worldIn, pos, worldIn.getBlockState(pos), player, stack);
-		worldIn.notifyNeighborsOfStateChange(pos, door, false);
-		worldIn.notifyNeighborsOfStateChange(blockpos2, door, false);
-	}
+        BlockPos blockpos2 = pos.up();
+        worldIn.setBlockState(pos, door.getDefaultState().withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.LOWER).withProperty(IArcaneDoorHinge.HINGE_SIDE, isRightHinge ? BlockDoor.EnumHingePosition.RIGHT : BlockDoor.EnumHingePosition.LEFT).withProperty(IArcaneDoorType.TYPE, stack.getMetadata() == 1 ? ArcaneDoorType.METAL : ArcaneDoorType.WOOD).withProperty(IArcaneDoorOpen.DOOR_OPEN, false), 2);
+        worldIn.setBlockState(blockpos2, door.getDefaultState().withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.UPPER).withProperty(IHorizontallyDirectionalBlock.DIRECTION, facing), 2);
+        worldIn.getBlockState(pos).getBlock().onBlockPlacedBy(worldIn, pos, worldIn.getBlockState(pos), player, stack);
+        worldIn.notifyNeighborsOfStateChange(pos, door, false);
+        worldIn.notifyNeighborsOfStateChange(blockpos2, door, false);
+    }
 
 }

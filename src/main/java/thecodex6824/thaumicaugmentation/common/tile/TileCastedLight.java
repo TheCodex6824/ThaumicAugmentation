@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -31,32 +31,32 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 
 public class TileCastedLight extends TileEntity implements ITickable {
 
-	protected static final int DELAY = 5;
+    protected static final int DELAY = 5;
 
-	protected boolean lastRenderState;
+    protected boolean lastRenderState;
 
-	public TileCastedLight() {
-		super();
-		lastRenderState = TAConfig.castedLightSimpleRenderer.getValue();
-	}
+    public TileCastedLight() {
+        super();
+        lastRenderState = TAConfig.castedLightSimpleRenderer.getValue();
+    }
 
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-		return oldState.getBlock() != newState.getBlock();
-	}
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock();
+    }
 
-	@Override
-	public void update() {
-		if (world.isRemote && world.getTotalWorldTime() % DELAY == 0) {
-			if (lastRenderState != TAConfig.castedLightSimpleRenderer.getValue()) {
-				lastRenderState = !lastRenderState;
-				world.markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
-			}
-			if (!lastRenderState) {
-				ThaumicAugmentation.proxy.getRenderHelper().renderGlowingSphere(world, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 
-						Aspect.LIGHT.getColor());
-			}
-		}
-	}
+    @Override
+    public void update() {
+        if (world.isRemote && world.getTotalWorldTime() % DELAY == 0) {
+            if (lastRenderState != TAConfig.castedLightSimpleRenderer.getValue()) {
+                lastRenderState = !lastRenderState;
+                world.markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
+            }
+            if (!lastRenderState) {
+                ThaumicAugmentation.proxy.getRenderHelper().renderGlowingSphere(world, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 
+                        Aspect.LIGHT.getColor());
+            }
+        }
+    }
 
 }

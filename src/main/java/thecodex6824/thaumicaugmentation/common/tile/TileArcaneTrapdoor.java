@@ -27,18 +27,18 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
 public class TileArcaneTrapdoor extends TileWarded {
 
-	public TileArcaneTrapdoor() {
-		super();
-	}
+    public TileArcaneTrapdoor() {
+        super();
+    }
 
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-		return oldState.getBlock() != newState.getBlock();
-	}
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock();
+    }
 
-	@Override
-	public String getUniqueTypeID() {
-		return ThaumicAugmentationAPI.MODID + ":warded_trapdoor";
-	}
-	
+    @Override
+    public String getUniqueTypeID() {
+        return ThaumicAugmentationAPI.MODID + ":warded_trapdoor";
+    }
+    
 }

@@ -26,7 +26,7 @@ import net.minecraftforge.client.IRenderHandler;
 
 public class RenderHandlerNoop extends IRenderHandler {
 
-	@Override
-	public void render(float partialTicks, WorldClient world, Minecraft mc) {}
+    @Override
+    public void render(float partialTicks, WorldClient world, Minecraft mc) {}
 
 }

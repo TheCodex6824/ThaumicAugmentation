@@ -16,7 +16,7 @@
                 1.5
             ],
             "meta": [
-            	"ROUND"
+                "ROUND"
             ],
             "stages": [
                 {
@@ -50,7 +50,7 @@
                         "THEORY;AUROMANCY;1"
                     ],
                     "required_research": [
-                    	"!lux"
+                        "!lux"
                     ]
                 },
                 {

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -29,6 +29,6 @@ import net.minecraft.block.properties.PropertyBool;
  */
 public interface IArcaneDoorOpen {
 
-	public static final PropertyBool DOOR_OPEN = PropertyBool.create("ta_door_open");
+    public static final PropertyBool DOOR_OPEN = PropertyBool.create("ta_door_open");
 
 }

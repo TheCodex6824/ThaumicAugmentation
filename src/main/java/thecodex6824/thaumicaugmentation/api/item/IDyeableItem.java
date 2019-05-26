@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -29,10 +29,10 @@ import net.minecraft.item.ItemStack;
  */
 public interface IDyeableItem {
 
-	public int getDyedColor(ItemStack stack);
+    public int getDyedColor(ItemStack stack);
 
-	public void setDyedColor(ItemStack stack, int color);
+    public void setDyedColor(ItemStack stack, int color);
 
-	public int getDefaultDyedColorForMeta(int meta);
+    public int getDefaultDyedColorForMeta(int meta);
 
 }

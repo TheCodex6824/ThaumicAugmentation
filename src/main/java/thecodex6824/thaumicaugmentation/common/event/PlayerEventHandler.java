@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -39,78 +39,78 @@ import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class PlayerEventHandler {
 
-	@SubscribeEvent
-	public static void onJoin(PlayerLoggedInEvent event) {
-		TAConfigHolder.loadOrSyncConfig(event.player);
-	}
+    @SubscribeEvent
+    public static void onJoin(PlayerLoggedInEvent event) {
+        TAConfigHolder.loadOrSyncConfig(event.player);
+    }
 
-	@SubscribeEvent
-	public static void onJump(LivingEvent.LivingJumpEvent event) {
-		if (event.getEntity() instanceof EntityPlayer)
-			PlayerMovementAbilityManager.onJump((EntityPlayer) event.getEntity());
-	}
+    @SubscribeEvent
+    public static void onJump(LivingEvent.LivingJumpEvent event) {
+        if (event.getEntity() instanceof EntityPlayer)
+            PlayerMovementAbilityManager.onJump((EntityPlayer) event.getEntity());
+    }
 
-	@SubscribeEvent
-	public static void onTick(LivingEvent.LivingUpdateEvent event) {
-		if (event.getEntity() instanceof EntityPlayer)
-			PlayerMovementAbilityManager.tick((EntityPlayer) event.getEntity());
-	}
+    @SubscribeEvent
+    public static void onTick(LivingEvent.LivingUpdateEvent event) {
+        if (event.getEntity() instanceof EntityPlayer)
+            PlayerMovementAbilityManager.tick((EntityPlayer) event.getEntity());
+    }
 
-	@SubscribeEvent
-	public static void onFallFirst(LivingAttackEvent event) {
-		// damage can't be reduced to non-zero here, but cancelling it removes the screen shake and damage sound
-		if (event.getSource() == DamageSource.FALL) {
-			float damage = event.getAmount();
-			for (ItemStack stack : event.getEntityLiving().getArmorInventoryList()) {
-				if (stack.getItem() instanceof IArmorReduceFallDamage) {
-					damage = ((IArmorReduceFallDamage) stack.getItem()).getNewFallDamage(stack, damage, event.getEntityLiving().fallDistance);
-				}
-			}
+    @SubscribeEvent
+    public static void onFallFirst(LivingAttackEvent event) {
+        // damage can't be reduced to non-zero here, but cancelling it removes the screen shake and damage sound
+        if (event.getSource() == DamageSource.FALL) {
+            float damage = event.getAmount();
+            for (ItemStack stack : event.getEntityLiving().getArmorInventoryList()) {
+                if (stack.getItem() instanceof IArmorReduceFallDamage) {
+                    damage = ((IArmorReduceFallDamage) stack.getItem()).getNewFallDamage(stack, damage, event.getEntityLiving().fallDistance);
+                }
+            }
 
-			damage = Math.max(0.0F, damage);
-			if (damage < 1.0F) 
-				event.setCanceled(true);
-		}
-	}
+            damage = Math.max(0.0F, damage);
+            if (damage < 1.0F) 
+                event.setCanceled(true);
+        }
+    }
 
-	@SubscribeEvent
-	public static void onFallDamage(LivingHurtEvent event) {
-		// this is needed to actually reduce damage if it's not 0
-		if (event.getSource() == DamageSource.FALL) {
-			float damage = event.getAmount();
-			for (ItemStack stack : event.getEntityLiving().getArmorInventoryList()) {
-				if (stack.getItem() instanceof IArmorReduceFallDamage) {
-					damage = ((IArmorReduceFallDamage) stack.getItem()).getNewFallDamage(stack, damage, event.getEntityLiving().fallDistance);
-				}
-			}
+    @SubscribeEvent
+    public static void onFallDamage(LivingHurtEvent event) {
+        // this is needed to actually reduce damage if it's not 0
+        if (event.getSource() == DamageSource.FALL) {
+            float damage = event.getAmount();
+            for (ItemStack stack : event.getEntityLiving().getArmorInventoryList()) {
+                if (stack.getItem() instanceof IArmorReduceFallDamage) {
+                    damage = ((IArmorReduceFallDamage) stack.getItem()).getNewFallDamage(stack, damage, event.getEntityLiving().fallDistance);
+                }
+            }
 
-			damage = Math.max(0.0F, damage);
-			if (damage < 1.0F) {
-				event.setAmount(0.0F);
-				event.setCanceled(true);
-			}
-			else
-				event.setAmount(damage);
-		}
-	}
+            damage = Math.max(0.0F, damage);
+            if (damage < 1.0F) {
+                event.setAmount(0.0F);
+                event.setCanceled(true);
+            }
+            else
+                event.setAmount(damage);
+        }
+    }
 
-	@SubscribeEvent
-	public static void onFallSound(PlaySoundAtEntityEvent event) {
-		if (event.getEntity() instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) event.getEntity();
-			if (event.getSound() == SoundEvents.ENTITY_PLAYER_BIG_FALL || event.getSound() == SoundEvents.ENTITY_PLAYER_SMALL_FALL) {
-				boolean shouldSilenceFall = false;
-				for (ItemStack stack : player.getArmorInventoryList()) {
-					if (stack.getItem() instanceof IArmorReduceFallDamage) {
-						shouldSilenceFall = true;
-						break;
-					}
-				}
+    @SubscribeEvent
+    public static void onFallSound(PlaySoundAtEntityEvent event) {
+        if (event.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getEntity();
+            if (event.getSound() == SoundEvents.ENTITY_PLAYER_BIG_FALL || event.getSound() == SoundEvents.ENTITY_PLAYER_SMALL_FALL) {
+                boolean shouldSilenceFall = false;
+                for (ItemStack stack : player.getArmorInventoryList()) {
+                    if (stack.getItem() instanceof IArmorReduceFallDamage) {
+                        shouldSilenceFall = true;
+                        break;
+                    }
+                }
 
-				if (shouldSilenceFall)
-					event.setCanceled(true);
-			}
-		}
-	}
+                if (shouldSilenceFall)
+                    event.setCanceled(true);
+            }
+        }
+    }
 
 }

@@ -1,6 +1,6 @@
 {
-	"parent": "thaumicaugmentation:item/caster_gauntlet_focus",
-	"textures": {
-		"skin": "thaumicaugmentation:items/gauntlet_thaumium"
-	}
+    "parent": "thaumicaugmentation:item/caster_gauntlet_focus",
+    "textures": {
+        "skin": "thaumicaugmentation:items/gauntlet_thaumium"
+    }
 }

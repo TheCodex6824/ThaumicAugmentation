@@ -22,6 +22,6 @@ package thecodex6824.thaumicaugmentation.common.world.biome;
 
 public interface IFluxBiome {
 
-	public float getBaseFluxConcentration();
-	
+    public float getBaseFluxConcentration();
+    
 }

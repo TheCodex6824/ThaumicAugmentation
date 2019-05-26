@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -26,7 +26,7 @@ import net.minecraftforge.common.util.EnumHelper;
 
 public class TAMaterials {
 
-	public static final ArmorMaterial VOID_BOOTS = EnumHelper.addArmorMaterial(ThaumicAugmentationAPI.MODID + ":VOID_BOOTS", 
-			ThaumicAugmentationAPI.MODID + ":void_boots", 18, new int[] {4, 7, 9, 4}, 18, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 2.0F);
+    public static final ArmorMaterial VOID_BOOTS = EnumHelper.addArmorMaterial(ThaumicAugmentationAPI.MODID + ":VOID_BOOTS", 
+            ThaumicAugmentationAPI.MODID + ":void_boots", 18, new int[] {4, 7, 9, 4}, 18, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 2.0F);
 
 }

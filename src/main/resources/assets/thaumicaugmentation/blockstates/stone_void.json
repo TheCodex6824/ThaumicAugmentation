@@ -6,12 +6,12 @@
         }
     },
     "variants": {
-    	"normal": {
+        "normal": {
             "model": "cube_all"
         },
-    	"inventory": {
-    	    "model": "cube_all",
-		    "transform": "forge:default-block"
-	    }
+        "inventory": {
+            "model": "cube_all",
+            "transform": "forge:default-block"
+        }
     }
 }

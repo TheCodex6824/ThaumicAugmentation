@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -31,12 +31,12 @@ import net.minecraftforge.items.IItemHandler;
  */
 public interface IWardedInventory {
 
-	/**
-	 * Returns the inventory associated with this warded block. It is assumed that
-	 * users of this method have done the proper permission checks to permit
-	 * access.
-	 * @return The inventory stored in this warded block
-	 */
-	public IItemHandler getInventory();
+    /**
+     * Returns the inventory associated with this warded block. It is assumed that
+     * users of this method have done the proper permission checks to permit
+     * access.
+     * @return The inventory stored in this warded block
+     */
+    public IItemHandler getInventory();
 
 }

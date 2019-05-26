@@ -27,18 +27,18 @@ import net.minecraft.world.WorldProvider;
 
 public class WorldProviderCache {
 
-	private static HashMap<Integer, WorldProvider> providers = new HashMap<>();
+    private static HashMap<Integer, WorldProvider> providers = new HashMap<>();
 
-	public static void addOrReplaceProvider(WorldProvider provider) {
-		providers.put(provider.getDimension(), provider);
-	}
+    public static void addOrReplaceProvider(WorldProvider provider) {
+        providers.put(provider.getDimension(), provider);
+    }
 
-	public static WorldProvider getProvider(int dim) {
-		return providers.get(dim);
-	}
+    public static WorldProvider getProvider(int dim) {
+        return providers.get(dim);
+    }
 
-	public static Set<Integer> listAllDimensions() {
-		return providers.keySet();
-	}
+    public static Set<Integer> listAllDimensions() {
+        return providers.keySet();
+    }
 
 }

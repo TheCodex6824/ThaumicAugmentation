@@ -29,9 +29,9 @@ import net.minecraft.world.biome.BiomeDecorator;
 
 public class BiomeDecoratorEmptiness extends BiomeDecorator {
 
-	@Override
-	public void decorate(World world, Random rand, Biome biome, BlockPos pos) {
-		// nope
-	}
+    @Override
+    public void decorate(World world, Random rand, Biome biome, BlockPos pos) {
+        // nope
+    }
 
 }

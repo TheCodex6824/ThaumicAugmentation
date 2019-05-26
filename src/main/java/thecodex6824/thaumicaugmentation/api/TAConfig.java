@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -30,36 +30,36 @@ import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 
 public class TAConfig {
 
-	public static ConfigOptionDoubleList gauntletVisDiscounts;
-	public static ConfigOptionDoubleList gauntletCooldownModifiers;
+    public static ConfigOptionDoubleList gauntletVisDiscounts;
+    public static ConfigOptionDoubleList gauntletCooldownModifiers;
 
-	public static ConfigOptionInt voidseerArea;
+    public static ConfigOptionInt voidseerArea;
 
-	public static ConfigOptionDouble voidBootsLandSpeedBoost;
-	public static ConfigOptionDouble voidBootsWaterSpeedBoost;
-	public static ConfigOptionDouble voidBootsJumpBoost;
-	public static ConfigOptionDouble voidBootsJumpFactor;
-	public static ConfigOptionDouble voidBootsStepHeight;
-	public static ConfigOptionDouble voidBootsSneakReduction;
+    public static ConfigOptionDouble voidBootsLandSpeedBoost;
+    public static ConfigOptionDouble voidBootsWaterSpeedBoost;
+    public static ConfigOptionDouble voidBootsJumpBoost;
+    public static ConfigOptionDouble voidBootsJumpFactor;
+    public static ConfigOptionDouble voidBootsStepHeight;
+    public static ConfigOptionDouble voidBootsSneakReduction;
 
-	public static ConfigOptionBoolean opWardOverride;
+    public static ConfigOptionBoolean opWardOverride;
 
-	public static ConfigOptionBoolean castedLightSimpleRenderer;
+    public static ConfigOptionBoolean castedLightSimpleRenderer;
 
-	public static ConfigOptionIntList defaultGauntletColors;
-	public static ConfigOptionInt defaultVoidBootsColor;
+    public static ConfigOptionIntList defaultGauntletColors;
+    public static ConfigOptionInt defaultVoidBootsColor;
 
-	public static ConfigOptionInt emptinessDimID;
-	public static ConfigOptionDouble emptinessMoveFactor;
-	public static ConfigOptionInt fractureGenChance;
-	public static ConfigOptionStringToIntMap fractureDimList;
-	
-	public static void addConfigListener(Runnable listener) {
-		TAConfigHolder.addListener(listener);
-	}
-	
-	public static boolean removeConfigListener(Runnable listener) {
-		return TAConfigHolder.removeListener(listener);
-	}
+    public static ConfigOptionInt emptinessDimID;
+    public static ConfigOptionDouble emptinessMoveFactor;
+    public static ConfigOptionInt fractureGenChance;
+    public static ConfigOptionStringToIntMap fractureDimList;
+    
+    public static void addConfigListener(Runnable listener) {
+        TAConfigHolder.addListener(listener);
+    }
+    
+    public static boolean removeConfigListener(Runnable listener) {
+        return TAConfigHolder.removeListener(listener);
+    }
 
 }

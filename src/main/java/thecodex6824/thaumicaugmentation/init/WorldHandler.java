@@ -28,8 +28,8 @@ import thecodex6824.thaumicaugmentation.common.world.WorldProviderCache;
 import thecodex6824.thaumicaugmentation.common.world.WorldProviderEmptiness;
 
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -50,71 +50,71 @@ import thecodex6824.thaumicaugmentation.common.world.WorldProviderEmptiness;
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class WorldHandler {
 
-	private static int findFreeDimensionID() {
-		for (int i = 2; i < Integer.MAX_VALUE; ++i) {
-			if (!DimensionManager.isDimensionRegistered(i))
-				return i;
-		}
+    private static int findFreeDimensionID() {
+        for (int i = 2; i < Integer.MAX_VALUE; ++i) {
+            if (!DimensionManager.isDimensionRegistered(i))
+                return i;
+        }
 
-		throw new IllegalStateException("Could not find a free dimension ID (there are over 2 billion used?!?!)");
-	}
+        throw new IllegalStateException("Could not find a free dimension ID (there are over 2 billion used?!?!)");
+    }
 
-	private static int currentIDOrSubstitute(int id) {
-		boolean conflict = false;
-		for (DimensionType type : DimensionType.values()) {
-			if (type.getId() == id) {
-				conflict = true;
-				break;
-			}
-		}
+    private static int currentIDOrSubstitute(int id) {
+        boolean conflict = false;
+        for (DimensionType type : DimensionType.values()) {
+            if (type.getId() == id) {
+                conflict = true;
+                break;
+            }
+        }
 
-		if (!conflict)
-			return id;
-		else
-			return findFreeDimensionID();
-	}
+        if (!conflict)
+            return id;
+        else
+            return findFreeDimensionID();
+    }
 
-	@SubscribeEvent
-	public static void onWorldLoad(WorldEvent.Load event) {
-		if (!event.getWorld().isRemote)
-			WorldProviderCache.addOrReplaceProvider(event.getWorld().provider);
-	}
+    @SubscribeEvent
+    public static void onWorldLoad(WorldEvent.Load event) {
+        if (!event.getWorld().isRemote)
+            WorldProviderCache.addOrReplaceProvider(event.getWorld().provider);
+    }
 
-	public static void preInit() {
-		int emptinessID = currentIDOrSubstitute(TAConfig.emptinessDimID.getValue());
-		if (emptinessID != TAConfig.emptinessDimID.getValue()) {
-			ThaumicAugmentation.getLogger().warn("The dimension ID {} was already taken. Assigning {} instead and updating the config...",
-					TAConfig.emptinessDimID.getValue(), emptinessID);
-			TAConfigHolder.emptinessDimID = emptinessID;
-			TAConfigHolder.syncLocally();
-			TAConfigHolder.syncConfig();
-		}
+    public static void preInit() {
+        int emptinessID = currentIDOrSubstitute(TAConfig.emptinessDimID.getValue());
+        if (emptinessID != TAConfig.emptinessDimID.getValue()) {
+            ThaumicAugmentation.getLogger().warn("The dimension ID {} was already taken. Assigning {} instead and updating the config...",
+                    TAConfig.emptinessDimID.getValue(), emptinessID);
+            TAConfigHolder.emptinessDimID = emptinessID;
+            TAConfigHolder.syncLocally();
+            TAConfigHolder.syncConfig();
+        }
 
-		TADimensions.EMPTINESS = DimensionType.register("emptiness", "_emptiness", emptinessID, WorldProviderEmptiness.class, false);
-		DimensionManager.registerDimension(emptinessID, TADimensions.EMPTINESS);
-		BiomeHandler.addDimBlacklist(emptinessID, 0);
-	}
+        TADimensions.EMPTINESS = DimensionType.register("emptiness", "_emptiness", emptinessID, WorldProviderEmptiness.class, false);
+        DimensionManager.registerDimension(emptinessID, TADimensions.EMPTINESS);
+        BiomeHandler.addDimBlacklist(emptinessID, 0);
+    }
 
-	public static void init() {
-		BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(TABiomes.EMPTINESS, 0));
-		BiomeDictionary.addTypes(TABiomes.EMPTINESS, Type.COLD, Type.SPARSE, Type.SPOOKY, Type.VOID);
-		BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(TABiomes.TAINTED_LANDS, 0));
-		BiomeDictionary.addTypes(TABiomes.TAINTED_LANDS, Type.COLD, Type.SPOOKY, Type.VOID);
-		
-		GameRegistry.registerWorldGenerator(new TAWorldGenerator(), 20);
-	}
+    public static void init() {
+        BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(TABiomes.EMPTINESS, 0));
+        BiomeDictionary.addTypes(TABiomes.EMPTINESS, Type.COLD, Type.SPARSE, Type.SPOOKY, Type.VOID);
+        BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(TABiomes.TAINTED_LANDS, 0));
+        BiomeDictionary.addTypes(TABiomes.TAINTED_LANDS, Type.COLD, Type.SPOOKY, Type.VOID);
+        
+        GameRegistry.registerWorldGenerator(new TAWorldGenerator(), 20);
+    }
 
-	public static void postInit() {
-		BiomeTerrainBlocks.init();
-		BiomeTerrainBlocks.registerBiomeOverride(Biomes.HELL, Blocks.NETHERRACK.getDefaultState(), 
-				Blocks.NETHERRACK.getDefaultState());
-		BiomeTerrainBlocks.registerBiomeOverride(Biomes.SKY, Blocks.END_STONE.getDefaultState(), 
-				Blocks.END_STONE.getDefaultState());
-		
-		for (Biome biome : TABiomes.getAllBiomes()) {
-			if (biome instanceof IPurgeBiomeSpawns)
-				((IPurgeBiomeSpawns) biome).purgeSpawns();
-		}
-	}
+    public static void postInit() {
+        BiomeTerrainBlocks.init();
+        BiomeTerrainBlocks.registerBiomeOverride(Biomes.HELL, Blocks.NETHERRACK.getDefaultState(), 
+                Blocks.NETHERRACK.getDefaultState());
+        BiomeTerrainBlocks.registerBiomeOverride(Biomes.SKY, Blocks.END_STONE.getDefaultState(), 
+                Blocks.END_STONE.getDefaultState());
+        
+        for (Biome biome : TABiomes.getAllBiomes()) {
+            if (biome instanceof IPurgeBiomeSpawns)
+                ((IPurgeBiomeSpawns) biome).purgeSpawns();
+        }
+    }
 
 }

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -29,9 +29,9 @@ import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectLight;
 
 public class MiscHandler {
 
-	public static void init() {
-		FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 
-				Aspect.LIGHT.getColor());
-	}
+    public static void init() {
+        FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 
+                Aspect.LIGHT.getColor());
+    }
 
 }

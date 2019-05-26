@@ -35,52 +35,52 @@ import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 
 public class BiomeEmptiness extends Biome implements IPurgeBiomeSpawns, IFluxBiome {
 
-	public BiomeEmptiness() {
-		super(new BiomeProperties("Emptiness").setBaseHeight(-1.8F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
-				0xAA00AA).setWaterColor(0xAA00AA));
+    public BiomeEmptiness() {
+        super(new BiomeProperties("Emptiness").setBaseHeight(-1.8F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
+                0xAA00AA).setWaterColor(0xAA00AA));
 
-		purgeSpawns();
-		flowers.clear();
-		topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
-		fillerBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
-	}
-	
-	@Override
-	public void purgeSpawns() {
-		spawnableCreatureList.clear();
-		spawnableMonsterList.clear();
-		spawnableWaterCreatureList.clear();
-		spawnableCaveCreatureList.clear();
-	}
-	
-	@Override
-	public float getBaseFluxConcentration() {
-		return 0.25F;
-	}
+        purgeSpawns();
+        flowers.clear();
+        topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
+        fillerBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
+    }
+    
+    @Override
+    public void purgeSpawns() {
+        spawnableCreatureList.clear();
+        spawnableMonsterList.clear();
+        spawnableWaterCreatureList.clear();
+        spawnableCaveCreatureList.clear();
+    }
+    
+    @Override
+    public float getBaseFluxConcentration() {
+        return 0.25F;
+    }
 
-	@Override
-	public boolean canRain() {
-		return false;
-	}
+    @Override
+    public boolean canRain() {
+        return false;
+    }
 
-	@Override
-	public int getSkyColorByTemp(float currentTemperature) {
-		return 0;
-	}
+    @Override
+    public int getSkyColorByTemp(float currentTemperature) {
+        return 0;
+    }
 
-	@Override
-	public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noiseVal) {
-		// so nothing to do here
-	}
+    @Override
+    public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noiseVal) {
+        // so nothing to do here
+    }
 
-	@Override
-	public BiomeDecorator createBiomeDecorator() {
-		return new BiomeDecoratorEmptiness();
-	}
+    @Override
+    public BiomeDecorator createBiomeDecorator() {
+        return new BiomeDecoratorEmptiness();
+    }
 
-	@Override
-	public EnumFlowerType pickRandomFlower(Random rand, BlockPos pos) {
-		return EnumFlowerType.ALLIUM;
-	}
+    @Override
+    public EnumFlowerType pickRandomFlower(Random rand, BlockPos pos) {
+        return EnumFlowerType.ALLIUM;
+    }
 
 }
