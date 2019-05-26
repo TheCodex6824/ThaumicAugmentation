@@ -40,5 +40,5 @@ public interface IWardAuthenticator {
 	 * @return If this item should allow the player to interact with the warded tile
 	 */
 	public boolean permitsUsage(IWardedTile tile, ItemStack stack, EntityPlayer user);
-	
+
 }

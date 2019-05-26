@@ -25,5 +25,5 @@ import net.minecraft.item.ItemStack;
 public interface IArmorReduceFallDamage {
 
 	public float getNewFallDamage(ItemStack stack, float origDamage, float distance);
-	
+
 }

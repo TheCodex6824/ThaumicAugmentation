@@ -25,19 +25,19 @@ import io.netty.buffer.ByteBuf;
 public class ConfigOptionDoubleList extends ConfigOption<double[]> {
 
 	protected double[] value;
-	
+
 	public ConfigOptionDoubleList(boolean enforceServer, double[] defaultValue) {
 		super(enforceServer);
 		value = defaultValue;
 	}
-	
+
 	@Override
 	public void serialize(ByteBuf buf) {
 		buf.writeInt(value.length);
 		for (double d : value)
 			buf.writeDouble(d);
 	}
-	
+
 	@Override
 	public void deserialize(ByteBuf buf) {
 		int size = buf.readInt();
@@ -45,15 +45,15 @@ public class ConfigOptionDoubleList extends ConfigOption<double[]> {
 		for (int i = 0; i < value.length; ++i)
 			value[i] = buf.readDouble();
 	}
-	
+
 	@Override
 	public double[] getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public void setValue(double[] value) {
 		this.value = value;
 	}
-	
+
 }

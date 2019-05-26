@@ -42,28 +42,28 @@ import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
 public abstract class TileWarded extends TileEntity implements IInteractWithCaster, IWardedTile {
 
 	protected String owner;
-	
+
 	public TileWarded() {
 		super();
 		owner = "";
 	}
-	
+
 	@Override
 	public void setOwner(String uuid) {
 		owner = uuid;
 		markDirty();
 	}
-	
+
 	@Override
 	public String getOwner() {
 		return owner;
 	}
-	
+
 	@Override
 	public BlockPos getPosition() {
 		return pos;
 	}
-	
+
 	protected boolean checkPermission(EntityPlayer player) {
 		if (player == null)
 			return false;
@@ -75,15 +75,15 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 				stack = player.inventory.getStackInSlot(i);
 				if (stack.getItem() instanceof IWardAuthenticator && 
 						((IWardAuthenticator) stack.getItem()).permitsUsage(this, stack, player)) {
-					
+
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	protected boolean playerHasSpecialPermission(EntityPlayer player) {
 		if (player == null)
 			return false;
@@ -95,7 +95,7 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 		else
 			return false;
 	}
-	
+
 	@Override
 	public boolean hasPermission(EntityPlayer player) {
 		boolean specialPermission = playerHasSpecialPermission(player);
@@ -113,7 +113,7 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 		else
 			return false;
 	}
-	
+
 	@Override
 	public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, EnumFacing facing,
 			EnumHand hand) {
@@ -121,26 +121,26 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 			if (hasPermission(player)) {
 				if (stack.getItem() instanceof ICaster && player.isSneaking())
 					world.destroyBlock(pos, !player.isCreative());
-				
+
 				return true;
 			}
 			else
 				return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setString("owner", owner);
 		return super.writeToNBT(compound);
 	}
-	
+
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		owner = compound.getString("owner");
 		super.readFromNBT(compound);
 	}
-	
+
 }

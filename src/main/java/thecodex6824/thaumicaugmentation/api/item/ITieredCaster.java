@@ -32,7 +32,7 @@ import thaumcraft.api.casters.ICaster;
 public interface ITieredCaster extends ICaster {
 
 	public float getCasterVisDiscount(ItemStack stack);
-	
+
 	public float getCasterCooldownModifier(ItemStack stack);
-	
+
 }

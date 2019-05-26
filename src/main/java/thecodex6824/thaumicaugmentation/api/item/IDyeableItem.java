@@ -30,9 +30,9 @@ import net.minecraft.item.ItemStack;
 public interface IDyeableItem {
 
 	public int getDyedColor(ItemStack stack);
-	
+
 	public void setDyedColor(ItemStack stack, int color);
-	
+
 	public int getDefaultDyedColorForMeta(int meta);
-	
+
 }

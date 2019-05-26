@@ -88,9 +88,9 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 
 	protected static final DecimalFormat VIS_FORMATTER = new DecimalFormat("#######.#");
 	protected static final Method CASTER_IS_ON_COOLDOWN;
-	
+
 	protected static final float EPSILON = 1E-5F;
-	
+
 	static {
 		Method cooldown = null;
 		try {
@@ -101,12 +101,12 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			// just to give the exception a bit more context than a random reflection error
 			FMLCommonHandler.instance().raiseException(ex, "Failed to access Thaumcraft's CasterManager#isOnCooldown", true);
 		}
-		
+
 		CASTER_IS_ON_COOLDOWN = cooldown;
 	}
-	
-	public ItemTieredCasterGauntlet(String name) {
-		super(name, new String[] {"thaumium", "void"});
+
+	public ItemTieredCasterGauntlet() {
+		super(new String[] {"thaumium", "void"});
 		setMaxStackSize(1);
 		addPropertyOverride(new ResourceLocation("focus"), new IItemPropertyGetter() {
 			@Override
@@ -115,7 +115,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			}
 		});
 	}
-	
+
 	@Override
 	public boolean consumeVis(ItemStack stack, EntityPlayer user, float amount, boolean crafting, boolean simulate) {
 		amount *= getConsumptionModifier(stack, user, crafting);
@@ -124,7 +124,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 				amount -= AuraHelper.drainVis(user.getEntityWorld(), user.getPosition(), amount, simulate);
 				return amount <= 0.0F;
 			}
-			
+
 			return false;
 		}
 		else {
@@ -139,7 +139,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 					}
 				}
 			}
-			
+
 			if (totalVis >= amount) {
 				float toRemove = amount / validChunks;
 				for (int x = -voidseerArea / 2; x < (int) Math.ceil(voidseerArea / 2); ++x) {
@@ -154,77 +154,77 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 					}
 				}
 			}
-			
+
 			return amount <= 0.0F + EPSILON;
 		}
 	}
-	
+
 	@Override
 	public float getConsumptionModifier(ItemStack stack, EntityPlayer user, boolean crafting) {
 		float baseModifier = 1.0F;
 		if (user != null)
 			baseModifier -= CasterManager.getTotalVisDiscount(user);	
-		
+
 		if (stack.getItem() == this)
 			baseModifier -= getCasterVisDiscount(stack);
-		
+
 		return Math.max(baseModifier, 0.1F);
 	}
-	
+
 	@Override
 	public Item getFocus(ItemStack stack) {
 		ItemStack focusStack = getFocusStack(stack);
 		if (focusStack != null && !focusStack.isEmpty())
 			return focusStack.getItem();
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public ItemStack getFocusStack(ItemStack stack) {
 		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("storedFocus"))
 			return new ItemStack(stack.getTagCompound().getCompoundTag("storedFocus"));
-		
+
 		return null;
 	}
-	
+
 	protected boolean isStoringFocus(ItemStack stack) {
 		return stack.getItem() instanceof ICaster && ((ICaster) stack.getItem()).getFocus(stack) instanceof ItemFocus;
 	}
-		
+
 	@Override
 	public void setFocus(ItemStack stack, ItemStack focus) {
 		if (focus == null || focus.isEmpty())
 			stack.getTagCompound().removeTag("storedFocus");
 		else
 			stack.setTagInfo("storedFocus", focus.writeToNBT(new NBTTagCompound()));
-		
+
 	}
-	
+
 	@Override
 	public float getCasterVisDiscount(ItemStack stack) {
 		if (stack.getItem() == this) {
 			switch (stack.getMetadata()) {
-				case 0: return (float) TAConfig.gauntletVisDiscounts.getValue()[0];
-				case 1: return (float) TAConfig.gauntletVisDiscounts.getValue()[1];
+			case 0: return (float) TAConfig.gauntletVisDiscounts.getValue()[0];
+			case 1: return (float) TAConfig.gauntletVisDiscounts.getValue()[1];
 			}
 		}
-		
+
 		return 0.0F;
 	}
-	
+
 	@Override
 	public float getCasterCooldownModifier(ItemStack stack) {
 		if (stack.getItem() == this) {
 			switch (stack.getMetadata()) {
-				case 0: return (float) TAConfig.gauntletCooldownModifiers.getValue()[0];
-				case 1: return (float) TAConfig.gauntletCooldownModifiers.getValue()[1];
+			case 0: return (float) TAConfig.gauntletCooldownModifiers.getValue()[0];
+			case 1: return (float) TAConfig.gauntletCooldownModifiers.getValue()[1];
 			}
 		}
-		
+
 		return 1.0F;
 	}
-	
+
 	@Override
 	public ArrayList<BlockPos> getArchitectBlocks(ItemStack stack, World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
 		if (isStoringFocus(stack)) {
@@ -236,26 +236,26 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 				}
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public RayTraceResult getArchitectMOP(ItemStack stack, World world, EntityLivingBase user) {
 		if (isStoringFocus(stack)) {
 			FocusPackage fPackage = ItemFocus.getPackage(getFocusStack(stack));
 			if (fPackage != null && FocusEngine.doesPackageContainElement(fPackage, "thaumcraft.PLAN"));
-				return ((IArchitect) FocusEngine.getElement("thaumcraft.PLAN")).getArchitectMOP(stack, world, user);
+			return ((IArchitect) FocusEngine.getElement("thaumcraft.PLAN")).getArchitectMOP(stack, world, user);
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public ItemStack getPickedBlock(ItemStack stack) {
 		if (stack == null || stack.isEmpty())
 			return ItemStack.EMPTY;
-		
+
 		ItemStack ret = null;
 		if (isStoringFocus(stack)) {
 			ItemStack focus = getFocusStack(stack);
@@ -272,10 +272,10 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 				}
 			}
 		}
-		
+
 		return ret;
 	}
-	
+
 	@Override
 	public boolean showAxis(ItemStack stack, World world, EntityPlayer player, EnumFacing side, EnumAxis axis) {
 		if (isStoringFocus(stack)) {
@@ -288,25 +288,25 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 				}
 			} 
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public int getWarp(ItemStack stack, EntityPlayer player) {
 		return stack.getItem() == this && stack.getMetadata() == 1 ? 2 : 0;
 	}
-	
+
 	@Override
 	public int getDefaultDyedColorForMeta(int meta) {
 		return meta < TAConfig.defaultGauntletColors.getValue().length ? TAConfig.defaultGauntletColors.getValue()[meta] : 0;
 	}
-	
+
 	@Override
 	public int getDyedColor(ItemStack stack) {
 		if (!stack.hasTagCompound())
 			stack.setTagCompound(new NBTTagCompound());
-		
+
 		if (stack.getTagCompound().hasKey("color", NBT.TAG_INT))
 			return stack.getTagCompound().getInteger("color");
 		else {
@@ -314,51 +314,51 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			return stack.getTagCompound().getInteger("color");
 		}
 	}
-	
+
 	@Override
 	public void setDyedColor(ItemStack stack, int color) {
 		if (!stack.hasTagCompound())
 			stack.setTagCompound(new NBTTagCompound());
-		
+
 		stack.getTagCompound().setInteger("color", color);
 	}
-	
+
 	@Override
 	public boolean useBlockHighlight(ItemStack stack) {
 		return false;
 	}
-	
+
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
 		return EnumAction.BOW;
 	}
-	
+
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
 		return 72000;
 	}
-	
+
 	@Override
 	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-	    if (oldStack.getItem() instanceof ICaster && newStack.getItem() instanceof ICaster && isStoringFocus(oldStack) && isStoringFocus(newStack)) {
-	    	ItemStack oldFocus = ((ICaster) oldStack.getItem()).getFocusStack(oldStack);
-	    	ItemStack newFocus = ((ICaster) newStack.getItem()).getFocusStack(newStack);
-	    	return ((oldFocus == null && newFocus != null) || (oldFocus != null && newFocus == null) || ((ItemFocus) oldFocus.getItem()).getSortingHelper(oldFocus).hashCode() != 
-	    			((ItemFocus) newFocus.getItem()).getSortingHelper(newFocus).hashCode());
-	    }
-	    else
-	    	return oldStack.getItem() != newStack.getItem() || oldStack.getMetadata() != newStack.getMetadata();
+		if (oldStack.getItem() instanceof ICaster && newStack.getItem() instanceof ICaster && isStoringFocus(oldStack) && isStoringFocus(newStack)) {
+			ItemStack oldFocus = ((ICaster) oldStack.getItem()).getFocusStack(oldStack);
+			ItemStack newFocus = ((ICaster) newStack.getItem()).getFocusStack(newStack);
+			return ((oldFocus == null && newFocus != null) || (oldFocus != null && newFocus == null) || ((ItemFocus) oldFocus.getItem()).getSortingHelper(oldFocus).hashCode() != 
+					((ItemFocus) newFocus.getItem()).getSortingHelper(newFocus).hashCode());
+		}
+		else
+			return oldStack.getItem() != newStack.getItem() || oldStack.getMetadata() != newStack.getMetadata();
 	}
-	
+
 	@Override
 	public EnumRarity getRarity(ItemStack stack) {
 		switch (stack.getMetadata()) {
-			case 0: return EnumRarity.RARE;
-			case 1: return EnumRarity.EPIC;
-			default: return EnumRarity.UNCOMMON;
+		case 0: return EnumRarity.RARE;
+		case 1: return EnumRarity.EPIC;
+		default: return EnumRarity.UNCOMMON;
 		}
 	}
-	
+
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
 		if (!world.isRemote && entity.ticksExisted % 10 == 0 && entity instanceof EntityPlayerMP) {
@@ -373,7 +373,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			}
 		}
 	}
-	
+
 	@Override
 	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
 			float hitY, float hitZ, EnumHand hand) {
@@ -381,7 +381,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 		if (state.getBlock() instanceof IInteractWithCaster && 
 				((IInteractWithCaster) state.getBlock()).onCasterRightClick(world, player.getHeldItem(hand), player, pos, side, hand))
 			return EnumActionResult.PASS;
-		
+
 		ItemStack stack = player.getHeldItem(hand);
 		if (state.getBlock() == Blocks.CAULDRON && state.getValue(BlockCauldron.LEVEL) > 0 && 
 				getDyedColor(stack) != getDefaultDyedColorForMeta(stack.getMetadata())) {
@@ -390,16 +390,16 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			world.playSound(null, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 0.5F, 1.0F);
 			return EnumActionResult.SUCCESS;
 		}
-		
+
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof IInteractWithCaster && 
 				((IInteractWithCaster) tile).onCasterRightClick(world, stack, player, pos, side, hand))
 			return EnumActionResult.PASS;
-		
+
 		if (CasterTriggerRegistry.hasTrigger(state))
 			return CasterTriggerRegistry.performTrigger(world, stack, player, pos, side, state) ? 
 					EnumActionResult.SUCCESS : EnumActionResult.FAIL;
-		
+
 		if (isStoringFocus(stack)) {
 			ItemStack focus = getFocusStack(stack);
 			FocusPackage fPackage = ItemFocus.getPackage(focus);
@@ -427,59 +427,59 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 				}
 			}  
 		}
-		
+
 		return EnumActionResult.PASS;
 	}
-	
+
 	protected boolean isCasterOnCooldown(EntityLivingBase entity) {
 		try {
 			return (Boolean) CASTER_IS_ON_COOLDOWN.invoke(null, entity);
 		}
 		catch (InvocationTargetException | IllegalAccessException ex) {
 			FMLCommonHandler.instance().raiseException(ex, "Failed to invoke Thaumcraft's CasterManager#isOnCooldown", true);
-			
+
 			// this shouldn't return, but java gets angry if it's not here so yeah
 			return true;
 		}
 	}
-	
+
 	protected void fixFoci(FocusPackage p) {
 		for (int i = 0; i < p.nodes.size(); ++i) {
 			if (p.nodes.get(i).getClass().equals(FocusEffectExchange.class))
 				p.nodes.set(i, new FocusEffectExchangeCompat((FocusEffectExchange) p.nodes.get(i)));
 		}
 	}
-	
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
 		if (isStoringFocus(player.getHeldItem(hand)) && !isCasterOnCooldown(player)) {
 			ItemStack focus = getFocusStack(player.getHeldItem(hand));
 			CasterManager.setCooldown(player, (int) (((ItemFocus) focus.getItem()).getActivationTime(focus) * getCasterCooldownModifier(player.getHeldItem(hand))));
 			FocusPackage core = ItemFocus.getPackage(focus);
-	        if (player.isSneaking()) {
-	            for (IFocusElement element : core.nodes) {
-	            	if (element instanceof IFocusBlockPicker && player.isSneaking())
-	            		return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
-	            }
-	        }
-	        
-	        if (world.isRemote)
-	        	return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-	        
-	        if (consumeVis(player.getHeldItem(hand), player, ((ItemFocus) focus.getItem()).getVisCost(focus), false, false)) {
-	        	FocusPackage copy = core.copy(player);
-	        	fixFoci(copy);
-	        	FocusEngine.castFocusPackage(player, copy, true);
-	    	    player.swingArm(hand);
-	    	    return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-	        }
-	       
-	        return new ActionResult<ItemStack>(EnumActionResult.FAIL, player.getHeldItem(hand));
+			if (player.isSneaking()) {
+				for (IFocusElement element : core.nodes) {
+					if (element instanceof IFocusBlockPicker && player.isSneaking())
+						return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
+				}
+			}
+
+			if (world.isRemote)
+				return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+
+			if (consumeVis(player.getHeldItem(hand), player, ((ItemFocus) focus.getItem()).getVisCost(focus), false, false)) {
+				FocusPackage copy = core.copy(player);
+				fixFoci(copy);
+				FocusEngine.castFocusPackage(player, copy, true);
+				player.swingArm(hand);
+				return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+			}
+
+			return new ActionResult<ItemStack>(EnumActionResult.FAIL, player.getHeldItem(hand));
 		}
-		
+
 		return super.onItemRightClick(world, player, hand);
 	}
-	
+
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 		if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
@@ -495,13 +495,13 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 				super.getSubItems(tab, items);
 		}
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean isFull3D() {
 		return true;
 	}	
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
@@ -511,10 +511,10 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 			if (visCost > 0.0F)
 				tooltip.add(TextFormatting.ITALIC + "" + TextFormatting.AQUA + new TextComponentTranslation("tc.vis.cost").getFormattedText() + 
 						" " + TextFormatting.RESET + VIS_FORMATTER.format(visCost) + " " + new TextComponentTranslation("item.Focus.cost1").getFormattedText());
-			
+
 			tooltip.add(TextFormatting.BOLD + "" + TextFormatting.ITALIC + "" + TextFormatting.GREEN + focus.getDisplayName());
 			((ItemFocus) focus.getItem()).addFocusInformation(focus, world, tooltip, flag);
 		}
 	}
-	
+
 }

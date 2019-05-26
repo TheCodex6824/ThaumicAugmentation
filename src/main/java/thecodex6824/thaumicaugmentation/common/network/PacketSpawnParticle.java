@@ -35,9 +35,9 @@ public class PacketSpawnParticle implements IMessage {
 	private double x, y, z;
 	private double xSpeed, ySpeed, zSpeed;
 	private int param;
-	
+
 	public PacketSpawnParticle() {}
-	
+
 	public PacketSpawnParticle(EnumParticleTypes particle, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int param) {
 		type = particle;
 		this.x = x;
@@ -48,39 +48,39 @@ public class PacketSpawnParticle implements IMessage {
 		this.zSpeed = zSpeed;
 		this.param = param;
 	}
-	
+
 	public EnumParticleTypes getParticleType() {
 		return type;
 	}
-	
+
 	public double getX() {
 		return x;
 	}
-	
+
 	public double getY() {
 		return y;
 	}
-	
+
 	public double getZ() {
 		return z;
 	}
-	
+
 	public double getSpeedX() {
 		return xSpeed;
 	}
-	
+
 	public double getSpeedY() {
 		return ySpeed;
 	}
-	
+
 	public double getSpeedZ() {
 		return zSpeed;
 	}
-	
+
 	public int getParam() {
 		return param;
 	}
-	
+
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		int length = buf.readInt();
@@ -91,7 +91,7 @@ public class PacketSpawnParticle implements IMessage {
 			if (t.name().equals(name))
 				type = t;
 		}
-		
+
 		x = buf.readDouble();
 		y = buf.readDouble();
 		z = buf.readDouble();
@@ -100,7 +100,7 @@ public class PacketSpawnParticle implements IMessage {
 		zSpeed = buf.readDouble();
 		param = buf.readInt();
 	}
-	
+
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(type.name().length());
@@ -113,19 +113,19 @@ public class PacketSpawnParticle implements IMessage {
 		buf.writeDouble(zSpeed);
 		buf.writeInt(param);
 	}
-	
+
 	public static class Handler implements IMessageHandler<PacketSpawnParticle, IMessage> {
-		
+
 		@Override
 		public IMessage onMessage(PacketSpawnParticle message, MessageContext ctx) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				Minecraft.getMinecraft().world.spawnParticle(message.getParticleType(), message.getX(), message.getY(), message.getZ(),
-					message.getSpeedX(), message.getSpeedY(), message.getSpeedZ(), message.getParam());
+						message.getSpeedX(), message.getSpeedY(), message.getSpeedZ(), message.getParam());
 			});
-			
+
 			return null;
 		}
-		
+
 	}
-	
+
 }

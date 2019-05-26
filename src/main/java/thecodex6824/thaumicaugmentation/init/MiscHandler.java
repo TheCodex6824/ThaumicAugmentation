@@ -33,5 +33,5 @@ public class MiscHandler {
 		FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 
 				Aspect.LIGHT.getColor());
 	}
-	
+
 }

@@ -23,12 +23,12 @@ package thecodex6824.thaumicaugmentation.api.block.property.door;
 import net.minecraft.block.properties.PropertyBool;
 
 /**
-* Property interface marking if the Arcane Door is open or not.
-* @author TheCodex6824
-*
-*/
+ * Property interface marking if the Arcane Door is open or not.
+ * @author TheCodex6824
+ *
+ */
 public interface IArcaneDoorOpen {
 
 	public static final PropertyBool DOOR_OPEN = PropertyBool.create("ta_door_open");
-	
+
 }

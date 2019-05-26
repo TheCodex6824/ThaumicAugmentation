@@ -2,6 +2,12 @@ tile.thaumicaugmentation.vis_regenerator.name=Vis Regenerator
 tile.thaumicaugmentation.warded_chest.name=Warded Chest
 tile.thaumicaugmentation.arcane_door.name=Arcane Door
 tile.thaumicaugmentation.temporary_light.name=Casted Light
+tile.thaumicaugmentation.stone.stone_void.name=Void Stone
+tile.thaumicaugmentation.stone.stone_taint_nodecay.name=Tainted Void Stone
+tile.thaumicaugmentation.stone.soil_stone_taint_nodecay.name=Tainted Void Stone Soil
+tile.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
+tile.thaumicaugmentation.arcane_trapdoor_wood.name=Wooden Arcane Trapdoor
+tile.thaumicaugmentation.arcane_trapdoor_metal.name=Thaumium Arcane Trapdoor
 
 item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
 item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet
@@ -28,6 +34,7 @@ thaumicaugmentation.text.bound_to_pos=Bound position: %s
 thaumicaugmentation.text.rift_seed_size=Size: %d
 thaumicaugmentation.text.rift_seed_grown=Grown
 thaumicaugmentation.text.rift_too_close=Another rift is nearby. Placing another would be a bad idea...
+thaumicaugmentation.text.no_fracture_target=This fracture does not lead anywhere...
 
 focus.thaumicaugmentation.light.name=Light
 focus.thaumicaugmentation.light.text=Creates light at the target

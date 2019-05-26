@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -18,6 +18,27 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.block.trait;
+package thecodex6824.thaumicaugmentation.common.world;
 
-public interface IDeferPropertyLoading {}
+import java.util.HashMap;
+import java.util.Set;
+
+import net.minecraft.world.WorldProvider;
+
+public class WorldProviderCache {
+
+	private static HashMap<Integer, WorldProvider> providers = new HashMap<>();
+
+	public static void addOrReplaceProvider(WorldProvider provider) {
+		providers.put(provider.getDimension(), provider);
+	}
+
+	public static WorldProvider getProvider(int dim) {
+		return providers.get(dim);
+	}
+
+	public static Set<Integer> listAllDimensions() {
+		return providers.keySet();
+	}
+
+}

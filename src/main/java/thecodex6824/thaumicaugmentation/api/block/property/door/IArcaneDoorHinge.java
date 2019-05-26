@@ -24,12 +24,12 @@ import net.minecraft.block.BlockDoor.EnumHingePosition;
 import net.minecraft.block.properties.PropertyEnum;
 
 /**
-* Property interface marking the side the Arcane Door's hinge is on.
-* @author TheCodex6824
-*
-*/
+ * Property interface marking the side the Arcane Door's hinge is on.
+ * @author TheCodex6824
+ *
+ */
 public interface IArcaneDoorHinge {
 
 	public static final PropertyEnum<EnumHingePosition> HINGE_SIDE = PropertyEnum.<EnumHingePosition>create("ta_hinge_side", EnumHingePosition.class);
-	
+
 }

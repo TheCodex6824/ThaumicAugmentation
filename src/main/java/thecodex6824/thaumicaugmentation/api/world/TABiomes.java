@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -18,6 +18,20 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.block.trait;
+package thecodex6824.thaumicaugmentation.api.world;
 
-public interface INoAutomaticItemBlockRegistration {}
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+
+@ObjectHolder(value = ThaumicAugmentationAPI.MODID)
+public class TABiomes {
+
+	public static final Biome EMPTINESS = null;
+	public static final Biome TAINTED_LANDS = null;
+	
+	public static Biome[] getAllBiomes() {
+		return new Biome[] {EMPTINESS, TAINTED_LANDS};
+	}
+
+}

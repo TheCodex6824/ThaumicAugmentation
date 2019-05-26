@@ -31,7 +31,7 @@ import thaumcraft.api.research.ScanningManager;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
 public class ResearchHandler {
-	
+
 	public static void init() {
 		ResearchCategories.registerCategory("THAUMIC_AUGMENTATION", "FIRSTSTEPS", new AspectList(),
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/gui/base_research_icon.png"),
@@ -42,8 +42,8 @@ public class ResearchHandler {
 		ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/gauntlets.json"));
 		ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/warded.json"));
 		ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/rift.json"));
-		
+
 		ScanningManager.addScannableThing(new ScanBlock("f_LEAFSILVERWOOD", new Block[] {BlocksTC.leafSilverwood}));
 	}
-	
+
 }

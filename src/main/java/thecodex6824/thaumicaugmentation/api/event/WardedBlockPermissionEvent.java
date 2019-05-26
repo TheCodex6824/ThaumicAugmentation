@@ -29,11 +29,11 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
-* Event fired whenever a player attempts to interact with a warded block. Intended for mods that
-* have "teams" or other situtations where players should be able to access each other's things.
-* @author TheCodex6824
-*
-*/
+ * Event fired whenever a player attempts to interact with a warded block. Intended for mods that
+ * have "teams" or other situtations where players should be able to access each other's things.
+ * @author TheCodex6824
+ *
+ */
 @HasResult
 @Cancelable
 public class WardedBlockPermissionEvent extends Event {
@@ -44,16 +44,16 @@ public class WardedBlockPermissionEvent extends Event {
 	protected BlockPos position;
 	protected IBlockState state;
 	protected boolean informative;
-	
-	public WardedBlockPermissionEvent(World w, BlockPos pos, IBlockState s, EntityPlayer p, boolean i) {
+
+	public WardedBlockPermissionEvent(World w, BlockPos pos, IBlockState s, EntityPlayer p, boolean info) {
 		result = Result.DEFAULT;
 		world = w;
 		player = p;
 		position = pos;
 		state = s;
-		informative = i;
+		informative = info;
 	}
-	
+
 	/**
 	 * Returns the world the warded block is in.
 	 * @return The world the warded block is in
@@ -61,7 +61,7 @@ public class WardedBlockPermissionEvent extends Event {
 	public World getWorld() {
 		return world;
 	}
-	
+
 	/**
 	 * Returns the player interacting with the warded block.
 	 * @return The player interacting with the warded block
@@ -69,7 +69,7 @@ public class WardedBlockPermissionEvent extends Event {
 	public EntityPlayer getPlayer() {
 		return player;
 	}
-	
+
 	/**
 	 * Returns the position of the warded block.
 	 * @return The position of the warded block
@@ -77,7 +77,7 @@ public class WardedBlockPermissionEvent extends Event {
 	public BlockPos getPos() {
 		return position;
 	}
-	
+
 	/**
 	 * Returns the blockstate of the warded block.
 	 * @return The blockstate of the warded block
@@ -85,7 +85,7 @@ public class WardedBlockPermissionEvent extends Event {
 	public IBlockState getState() {
 		return state;
 	}
-	
+
 	/**
 	 * Returns if this event is informative, or otherwise is solely for other mods
 	 * to know when a warded block is used. If this is true, then any permission
@@ -96,7 +96,7 @@ public class WardedBlockPermissionEvent extends Event {
 	public boolean isInformative() {
 		return informative;
 	}
-	
+
 	/**
 	 * Sets the result of this event. A result of ALLOW will let
 	 * the player interact with the warded block, even if they would normally
@@ -110,7 +110,7 @@ public class WardedBlockPermissionEvent extends Event {
 	public void setResult(Result value) {
 		result = value;
 	}
-	
+
 	/**
 	 * Returns the result of this event (DEFAULT by default).
 	 * @return The result of this event
@@ -120,5 +120,5 @@ public class WardedBlockPermissionEvent extends Event {
 	public Result getResult() {
 		return result;
 	}
-	
+
 }

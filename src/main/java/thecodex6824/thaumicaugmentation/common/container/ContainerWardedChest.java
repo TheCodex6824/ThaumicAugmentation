@@ -32,51 +32,51 @@ import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 public class ContainerWardedChest extends Container {
 
 	protected TileWardedChest chest;
-	
+
 	public ContainerWardedChest(InventoryPlayer inv, TileWardedChest c) {
 		chest = c;
 		IItemHandler inventory = chest.getInventory();
 		for (int y = 0; y < 3; ++y) {
-            for (int x = 0; x < 9; ++x) {
-                addSlotToContainer(new SlotItemHandler(inventory, x + y * 9, 8 + x * 18, 18 + y * 18) {
-        			@Override
-        			public void onSlotChanged() {
-        				chest.markDirty();
-        			}
-        		});
-            }
-        }
+			for (int x = 0; x < 9; ++x) {
+				addSlotToContainer(new SlotItemHandler(inventory, x + y * 9, 8 + x * 18, 18 + y * 18) {
+					@Override
+					public void onSlotChanged() {
+						chest.markDirty();
+					}
+				});
+			}
+		}
 
-        for (int y = 0; y < 3; ++y) {
-            for (int x = 0; x < 9; ++x)
-                this.addSlotToContainer(new Slot(inv, x + y * 9 + 9, 8 + x * 18, 103 + y * 18 - 18));
-        }
+		for (int y = 0; y < 3; ++y) {
+			for (int x = 0; x < 9; ++x)
+				this.addSlotToContainer(new Slot(inv, x + y * 9 + 9, 8 + x * 18, 103 + y * 18 - 18));
+		}
 
-        for (int x = 0; x < 9; ++x)
-            this.addSlotToContainer(new Slot(inv, x, 8 + x * 18, 143));
-        
-        chest.onOpenInventory();
+		for (int x = 0; x < 9; ++x)
+			this.addSlotToContainer(new Slot(inv, x, 8 + x * 18, 143));
+
+		chest.onOpenInventory();
 	}
-	
+
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
 		return chest.hasPermission(player);
 	}
-	
+
 	@Override
 	public void onContainerClosed(EntityPlayer playerIn) {
 		chest.onCloseInventory();
 	}
-	
+
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int index) {
 		ItemStack stack = ItemStack.EMPTY;
 		Slot slot = inventorySlots.get(index);
-	
+
 		if (slot != null && slot.getHasStack()) {
 			ItemStack otherStack = slot.getStack();
 			stack = otherStack.copy();
-	
+
 			int containerSlots = inventorySlots.size() - player.inventory.mainInventory.size();
 			if (index < containerSlots) {
 				if (!this.mergeItemStack(otherStack, containerSlots, inventorySlots.size(), true))
@@ -84,19 +84,19 @@ public class ContainerWardedChest extends Container {
 			}
 			else if (!this.mergeItemStack(otherStack, 0, containerSlots, false))
 				return ItemStack.EMPTY;
-	
+
 			if (otherStack.getCount() == 0)
 				slot.putStack(ItemStack.EMPTY);
 			else
 				slot.onSlotChanged();
-	
+
 			if (otherStack.getCount() == stack.getCount())
 				return ItemStack.EMPTY;
-	
+
 			slot.onTake(player, otherStack);
 		}
-	
+
 		return stack;
 	}
-	
+
 }

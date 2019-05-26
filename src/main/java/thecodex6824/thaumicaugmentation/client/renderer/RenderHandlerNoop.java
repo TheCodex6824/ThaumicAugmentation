@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -18,6 +18,15 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.block.trait;
+package thecodex6824.thaumicaugmentation.client.renderer;
 
-public interface IAnimatedBlock {}
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraftforge.client.IRenderHandler;
+
+public class RenderHandlerNoop extends IRenderHandler {
+
+	@Override
+	public void render(float partialTicks, WorldClient world, Minecraft mc) {}
+
+}

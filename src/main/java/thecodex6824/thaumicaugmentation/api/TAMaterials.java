@@ -28,5 +28,5 @@ public class TAMaterials {
 
 	public static final ArmorMaterial VOID_BOOTS = EnumHelper.addArmorMaterial(ThaumicAugmentationAPI.MODID + ":VOID_BOOTS", 
 			ThaumicAugmentationAPI.MODID + ":void_boots", 18, new int[] {4, 7, 9, 4}, 18, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 2.0F);
-	
+
 }

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -18,17 +18,10 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.item.trait;
+package thecodex6824.thaumicaugmentation.api.util;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+public interface IModelProvider<T> {
 
-public interface IModelProvider {
+	public void registerModels();
 
-	public int getTotalSubtypes();
-	
-	@SideOnly(Side.CLIENT)
-	public ModelResourceLocation getModelResourceLocation(int meta);
-	
 }

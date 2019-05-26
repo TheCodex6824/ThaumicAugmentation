@@ -35,35 +35,35 @@ import thecodex6824.thaumicaugmentation.init.proxy.ISidedProxy;
 
 @Mod(modid = ThaumicAugmentationAPI.MODID, name = ThaumicAugmentationAPI.NAME, version = ThaumicAugmentation.VERSION, useMetadata = true)
 public class ThaumicAugmentation {
-	
-    public static final String VERSION = "@VERSION@";
 
-    @Instance(ThaumicAugmentationAPI.MODID)
-    public static ThaumicAugmentation instance;
-    
-    private static Logger logger;
-    
-    @SidedProxy(serverSide = "thecodex6824.thaumicaugmentation.init.proxy.CommonProxy", clientSide = "thecodex6824.thaumicaugmentation.init.proxy.ClientProxy")
-    public static ISidedProxy proxy = null;
+	public static final String VERSION = "@VERSION@";
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        logger = event.getModLog();
-        proxy.preInit();
-    }
+	@Instance(ThaumicAugmentationAPI.MODID)
+	public static ThaumicAugmentation instance;
 
-    @EventHandler
-    public void init(FMLInitializationEvent event) {
-        TANetwork.init();
-        proxy.init();
-    }
-    
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-    	proxy.postInit();
-    }
-    
-    public static Logger getLogger() {
-    	return logger;
-    }
+	private static Logger logger;
+
+	@SidedProxy(serverSide = "thecodex6824.thaumicaugmentation.init.proxy.CommonProxy", clientSide = "thecodex6824.thaumicaugmentation.init.proxy.ClientProxy")
+	public static ISidedProxy proxy = null;
+
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		logger = event.getModLog();
+		proxy.preInit();
+	}
+
+	@EventHandler
+	public void init(FMLInitializationEvent event) {
+		TANetwork.init();
+		proxy.init();
+	}
+
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event) {
+		proxy.postInit();
+	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
 }

@@ -48,8 +48,8 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemRiftSeed extends ItemTABase {
 
-	public ItemRiftSeed(String name) {
-		super(name, "flux");
+	public ItemRiftSeed() {
+		super("flux");
 		setMaxStackSize(1);
 		addPropertyOverride(new ResourceLocation("size"), new IItemPropertyGetter() {
 			@Override
@@ -61,14 +61,14 @@ public class ItemRiftSeed extends ItemTABase {
 			}
 		});
 	}
-	
+
 	protected <T extends Entity> List<T> getEntitiesInRange(Class<T> entityClass, World world, Vec3d pos, double radius) {
 		List<T> toReturn = world.getEntitiesWithinAABB(entityClass, new AxisAlignedBB(pos.x, pos.y, pos.z, 
 				pos.x, pos.y, pos.z).grow(radius));
-		
+
 		return toReturn;
 	}
-	
+
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
 			EnumFacing facing, float hitX, float hitY, float hitZ) {
@@ -88,13 +88,13 @@ public class ItemRiftSeed extends ItemTABase {
 			}
 			else
 				player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.rift_too_close"), true);
-			
+
 			return EnumActionResult.SUCCESS;
 		}
-		
+
 		return EnumActionResult.PASS;
 	}
-	
+
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 		if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
@@ -108,17 +108,17 @@ public class ItemRiftSeed extends ItemTABase {
 			items.add(maxSeed);
 		}
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		if (stack.hasTagCompound()) {
 			tooltip.add(new TextComponentTranslation(
 					"thaumicaugmentation.text.rift_seed_size", stack.getTagCompound().getInteger("riftSize")).getFormattedText());
-			
+
 			if (stack.getTagCompound().getBoolean("grown"))
 				tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.rift_seed_grown").getFormattedText());
 		}
 	}
-	
+
 }

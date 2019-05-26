@@ -37,7 +37,7 @@ public interface IWardedTile {
 	 * @return The BlockPos of this tile, or (0, 0, 0) if it does not have one
 	 */
 	public BlockPos getPosition();
-	
+
 	/**
 	 * Returns a unique type ID for this warded tile. All instances of this tile should
 	 * share this ID. It does not matter what it is, as long as it is unique. This is used
@@ -45,20 +45,20 @@ public interface IWardedTile {
 	 * @return A unique type ID for this warded tile
 	 */
 	public String getUniqueTypeID();
-	
+
 	/**
 	 * Sets the owner of this warded tile. For players, this should be their UUID, as
 	 * usernames can change.
 	 * @param uuid The UUID (or just string for NPCs) of the owner
 	 */
 	public void setOwner(String uuid);
-	
+
 	/**
 	 * Returns the owner of this warded tile.
 	 * @return The owner
 	 */
 	public String getOwner();
-	
+
 	/**
 	 * Method called when a player tries to interact with a warded tile. This should fire
 	 * a {@link thecodex6824.thaumicaugmentation.api.event.WardedBlockPermissionEvent WardedBlockPermissionEvent}, 
@@ -71,5 +71,5 @@ public interface IWardedTile {
 	 * @return If the player has permission, and the interaction should continue
 	 */
 	public boolean hasPermission(EntityPlayer player);
-	
+
 }

@@ -28,15 +28,15 @@ import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public interface ISidedProxy {
-	
+
 	public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params);
-	
+
 	public ITARenderHelper getRenderHelper();
-	
+
 	public void preInit();
-	
+
 	public void init();
-	
+
 	public void postInit();
-	
+
 }

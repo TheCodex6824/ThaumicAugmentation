@@ -26,19 +26,19 @@ import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
 public class TileArcaneDoor extends TileWarded {
-	
+
 	public TileArcaneDoor() {
 		super();
 	}
-	
+
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
 		return oldState.getBlock() != newState.getBlock();
 	}
-	
+
 	@Override
 	public String getUniqueTypeID() {
 		return ThaumicAugmentationAPI.MODID + ":warded_door";
 	}
-	
+
 }

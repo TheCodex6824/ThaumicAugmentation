@@ -41,15 +41,15 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
 
-	public ItemSealCopier(String name) {
-		super(name);
+	public ItemSealCopier() {
+		super();
 		setMaxStackSize(1);
 	}
-	
+
 	@Override
 	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing Side, float hitX,
 			float hitY, float hitZ, EnumHand hand) {
-		
+
 		if (!world.isRemote) {
 			if (!player.isSneaking()) {
 				ItemStack held = player.getHeldItem(hand);
@@ -60,7 +60,7 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
 					if (held.hasTagCompound() && held.getTagCompound().hasKey("seal", NBT.TAG_COMPOUND)) {
 						if (held.getTagCompound().getString("sealType").equals(seal.getSeal().getKey()) && (!seal.isLocked() || 
 								seal.getOwner().isEmpty() || seal.getOwner().equals(player.getUniqueID().toString()))) {
-							
+
 							SealPos oldPos = seal.getSealPos();
 							seal.readNBT(held.getTagCompound().getCompoundTag("seal"));
 							seal.getSealPos().face = oldPos.face;
@@ -83,18 +83,18 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
 				return EnumActionResult.SUCCESS;
 			}
 		}
-		
+
 		return EnumActionResult.PASS;
 	}
-	
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
 		if (player.isSneaking()) {
 			player.getHeldItem(hand).setTagCompound(null);
 			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
 		}
-		
+
 		return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
 	}
-	
+
 }

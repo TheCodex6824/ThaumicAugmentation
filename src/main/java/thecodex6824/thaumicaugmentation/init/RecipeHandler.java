@@ -42,39 +42,39 @@ public class RecipeHandler {
 
 	public static void init() {
 		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "GauntletVoid"), 
-				new InfusionRecipe("GAUNTLET_VOID", new ItemStack(TAItems.GAUNTLET, 1, 1), 6, 
-				new AspectList().add(Aspect.ENERGY, 50).add(Aspect.ELDRITCH, 75).add(Aspect.VOID, 75), 
-				new ItemStack(ItemsTC.charmVoidseer), new Object[] {
-						new ItemStack(ItemsTC.fabric), "plateVoid", "plateVoid", "plateVoid", "plateVoid", new ItemStack(ItemsTC.salisMundus)
-				}
+			new InfusionRecipe("GAUNTLET_VOID", new ItemStack(TAItems.GAUNTLET, 1, 1), 6, 
+					new AspectList().add(Aspect.ENERGY, 50).add(Aspect.ELDRITCH, 75).add(Aspect.VOID, 75), 
+					new ItemStack(ItemsTC.charmVoidseer), new Object[] {
+							new ItemStack(ItemsTC.fabric), "plateVoid", "plateVoid", "plateVoid", "plateVoid", new ItemStack(ItemsTC.salisMundus)
+					}
 		));
 		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "SealCopier"), 
-				new InfusionRecipe("SEAL_COPIER", new ItemStack(TAItems.SEAL_COPIER), 1, 
-				new AspectList().add(Aspect.MIND, 25).add(Aspect.MECHANISM, 10), 
-				new ItemStack(ItemsTC.golemBell), new Object[] { 
-						new ItemStack(ItemsTC.brain), new ItemStack(ItemsTC.brain), new ItemStack(ItemsTC.seals, 1, 0)
-				}
+			new InfusionRecipe("SEAL_COPIER", new ItemStack(TAItems.SEAL_COPIER), 1, 
+					new AspectList().add(Aspect.MIND, 25).add(Aspect.MECHANISM, 10), 
+					new ItemStack(ItemsTC.golemBell), new Object[] { 
+							new ItemStack(ItemsTC.brain), new ItemStack(ItemsTC.brain), new ItemStack(ItemsTC.seals, 1, 0)
+					}
 		));
 		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "BootsVoid"),
-				new InfusionRecipe("BOOTS_VOID", new ItemStack(TAItems.VOID_BOOTS), 6,
-				new AspectList().add(Aspect.VOID, 50).add(Aspect.ELDRITCH, 50).add(Aspect.MOTION, 150).add(Aspect.FLIGHT, 150), 
-				new ItemStack(ItemsTC.travellerBoots), new Object[] {
-						new ItemStack(ItemsTC.fabric), new ItemStack(ItemsTC.fabric), "plateVoid", "plateVoid", new ItemStack(Items.FEATHER),
-						new ItemStack(Items.FISH), new ItemStack(ItemsTC.primordialPearl), new ItemStack(ItemsTC.quicksilver)
-				}
+			new InfusionRecipe("BOOTS_VOID", new ItemStack(TAItems.VOID_BOOTS), 6,
+					new AspectList().add(Aspect.VOID, 50).add(Aspect.ELDRITCH, 50).add(Aspect.MOTION, 150).add(Aspect.FLIGHT, 150), 
+					new ItemStack(ItemsTC.travellerBoots), new Object[] {
+							new ItemStack(ItemsTC.fabric), new ItemStack(ItemsTC.fabric), "plateVoid", "plateVoid", new ItemStack(Items.FEATHER),
+							new ItemStack(Items.FISH), new ItemStack(ItemsTC.primordialPearl), new ItemStack(ItemsTC.quicksilver)
+					}
 		));
-		
+
 		/**
 		 * Flux rift seed crafting and growing
 		 */
-		
+
 		ItemStack fluxSeedStack = new ItemStack(TAItems.RIFT_SEED, 1, 0);
 		fluxSeedStack.setTagCompound(new NBTTagCompound());
 		fluxSeedStack.getTagCompound().setInteger("riftSize", 10);
 		ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFlux"), 
 				new CrucibleRecipe("RIFT_STUDIES", fluxSeedStack, ItemsTC.voidSeed, 
-				new AspectList().add(Aspect.FLUX, 50).add(Aspect.VOID, 25)));
-		
+						new AspectList().add(Aspect.FLUX, 50).add(Aspect.VOID, 25)));
+
 		for (int i = 1; i < 4; ++i) {
 			ItemStack in = new ItemStack(TAItems.RIFT_SEED, 1, 0);
 			in.setTagCompound(new NBTTagCompound());
@@ -86,29 +86,29 @@ public class RecipeHandler {
 			Object[] inputs = new Object[i == 3 ? 9 : i];
 			for (int k = 0; k < (i == 3 ? 9 : i); ++k)
 				inputs[k] = new ItemStack(ItemsTC.voidSeed);
-			
+
 			ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFluxGrowthFake" + (i == 3 ? 100 : i * 10 + 10)), 
 					new InfusionRecipe("RIFT_STUDIES", out, i == 3 ? 9 : i, new AspectList().add(Aspect.FLUX, i == 3 ? 225 : i * 25),
-					in, inputs));
+							in, inputs));
 		}
-		
+
 		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFluxGrowth"), 
 				new RiftSeedFluxGrowthRecipe());
-		
+
 		/**
 		 * Random stuff
 		 */
-		
+
 		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "GauntletThaumium"), new ShapedArcaneRecipe(
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "GAUNTLET_THAUMIUM"), "GAUNTLET_THAUMIUM", 250, 
 				new AspectList().add(Aspect.AIR, 2).add(Aspect.EARTH, 2).add(Aspect.ENTROPY, 2).add(Aspect.FIRE, 2).add(
-				Aspect.ORDER, 2).add(Aspect.WATER, 2), new ItemStack(TAItems.GAUNTLET, 1, 0), new Object[] {
-						"PPP",
-						"FRF",
-						"FTF",
-						'P', new ItemStack(ItemsTC.plate, 1, 2), 'F', new ItemStack(ItemsTC.fabric), 'R', new ItemStack(ItemsTC.visResonator),
-						'T', new ItemStack(ItemsTC.thaumometer)
-				}
+						Aspect.ORDER, 2).add(Aspect.WATER, 2), new ItemStack(TAItems.GAUNTLET, 1, 0), new Object[] {
+								"PPP",
+								"FRF",
+								"FTF",
+								'P', new ItemStack(ItemsTC.plate, 1, 2), 'F', new ItemStack(ItemsTC.fabric), 'R', new ItemStack(ItemsTC.visResonator),
+								'T', new ItemStack(ItemsTC.thaumometer)
+						}
 		));
 		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "Lattice"), new ShapedArcaneRecipe(
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "LATTICE"), "VIS_REGENERATOR", 25, 
@@ -131,11 +131,11 @@ public class RecipeHandler {
 						'L', new ItemStack(TAItems.MATERIAL, 1, 0), 'E', new ItemStack(ItemsTC.mechanismSimple)
 				}
 		));
-		
+
 		/**
 		 * Warded Stuff
 		 */
-		
+
 		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardingSigil"), new ShapedArcaneRecipe(
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardingSigil"), "WARDED_ARCANA@2", 10, 
 				new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
@@ -176,11 +176,11 @@ public class RecipeHandler {
 						'T', new ItemStack(ItemsTC.plate, 1, 2), 'I', new ItemStack(ItemsTC.plate, 1, 1), 'S', new ItemStack(TAItems.MATERIAL, 1, 1)
 				}
 		));
-		
+
 		/**
 		 * Keys
 		 */
-		
+
 		ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyIron"), new ShapedArcaneRecipe(
 				new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyIron"), "WARD_KEYS", 15, 
 				new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
@@ -212,5 +212,5 @@ public class RecipeHandler {
 				}
 		));
 	}
-	
+
 }

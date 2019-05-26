@@ -34,38 +34,43 @@ import thecodex6824.thaumicaugmentation.common.util.TARenderHelperCommon;
 import thecodex6824.thaumicaugmentation.init.MiscHandler;
 import thecodex6824.thaumicaugmentation.init.RecipeHandler;
 import thecodex6824.thaumicaugmentation.init.ResearchHandler;
+import thecodex6824.thaumicaugmentation.init.WorldHandler;
 
 public class CommonProxy implements ISidedProxy {
 
 	protected static ITARenderHelper renderHelper;
-	
+
 	@Override
 	public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params) {
 		return null;
 	}
-	
+
 	@Override
 	public ITARenderHelper getRenderHelper() {
 		if (renderHelper == null)
 			renderHelper = new TARenderHelperCommon();
-		
+
 		return renderHelper;
 	}
-	
+
 	@Override
 	public void preInit() {
 		TAConfigHolder.preInit();
+		WorldHandler.preInit();
 		NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
 	}
-	
+
 	@Override
 	public void init() {
+		WorldHandler.init();
 		RecipeHandler.init();
 		ResearchHandler.init();
 		MiscHandler.init();
 	}
-	
+
 	@Override
-	public void postInit() {}
-	
+	public void postInit() {
+		WorldHandler.postInit();
+	}
+
 }

@@ -31,5 +31,5 @@ import net.minecraft.block.properties.PropertyBool;
 public interface IEnabledBlock {
 
 	public static final PropertyBool ENABLED = PropertyBool.create("ta_enabled");
-	
+
 }

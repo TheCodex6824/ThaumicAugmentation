@@ -20,8 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property.door;
 
-import net.minecraft.block.BlockDoor.EnumDoorHalf;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.util.IStringSerializable;
 
 /**
  * Property interface marking the upper and lower half of the Arcane Door.
@@ -30,6 +30,18 @@ import net.minecraft.block.properties.PropertyEnum;
  */
 public interface IArcaneDoorHalf {
 
-	public static final PropertyEnum<EnumDoorHalf> DOOR_HALF = PropertyEnum.<EnumDoorHalf>create("ta_door_half", EnumDoorHalf.class);
+	public enum ArcaneDoorHalf implements IStringSerializable {
+		
+		UPPER,
+		LOWER;
+		
+		@Override
+		public String getName() {
+			return name().toLowerCase();
+		}
+	}
+	
+	public static final PropertyEnum<ArcaneDoorHalf> DOOR_HALF = PropertyEnum.<ArcaneDoorHalf>create(
+			"ta_door_half", ArcaneDoorHalf.class);
 	
 }

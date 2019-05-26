@@ -43,19 +43,19 @@ public class PlayerEventHandler {
 	public static void onJoin(PlayerLoggedInEvent event) {
 		TAConfigHolder.loadOrSyncConfig(event.player);
 	}
-	
+
 	@SubscribeEvent
 	public static void onJump(LivingEvent.LivingJumpEvent event) {
 		if (event.getEntity() instanceof EntityPlayer)
 			PlayerMovementAbilityManager.onJump((EntityPlayer) event.getEntity());
 	}
-	
+
 	@SubscribeEvent
 	public static void onTick(LivingEvent.LivingUpdateEvent event) {
 		if (event.getEntity() instanceof EntityPlayer)
 			PlayerMovementAbilityManager.tick((EntityPlayer) event.getEntity());
 	}
-	
+
 	@SubscribeEvent
 	public static void onFallFirst(LivingAttackEvent event) {
 		// damage can't be reduced to non-zero here, but cancelling it removes the screen shake and damage sound
@@ -66,13 +66,13 @@ public class PlayerEventHandler {
 					damage = ((IArmorReduceFallDamage) stack.getItem()).getNewFallDamage(stack, damage, event.getEntityLiving().fallDistance);
 				}
 			}
-			
+
 			damage = Math.max(0.0F, damage);
 			if (damage < 1.0F) 
 				event.setCanceled(true);
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void onFallDamage(LivingHurtEvent event) {
 		// this is needed to actually reduce damage if it's not 0
@@ -83,7 +83,7 @@ public class PlayerEventHandler {
 					damage = ((IArmorReduceFallDamage) stack.getItem()).getNewFallDamage(stack, damage, event.getEntityLiving().fallDistance);
 				}
 			}
-			
+
 			damage = Math.max(0.0F, damage);
 			if (damage < 1.0F) {
 				event.setAmount(0.0F);
@@ -93,7 +93,7 @@ public class PlayerEventHandler {
 				event.setAmount(damage);
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void onFallSound(PlaySoundAtEntityEvent event) {
 		if (event.getEntity() instanceof EntityPlayer) {
@@ -106,11 +106,11 @@ public class PlayerEventHandler {
 						break;
 					}
 				}
-				
+
 				if (shouldSilenceFall)
 					event.setCanceled(true);
 			}
 		}
 	}
-	
+
 }

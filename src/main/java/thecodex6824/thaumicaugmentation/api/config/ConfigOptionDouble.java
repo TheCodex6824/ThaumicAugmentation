@@ -25,30 +25,30 @@ import io.netty.buffer.ByteBuf;
 public class ConfigOptionDouble extends ConfigOption<Double> {
 
 	protected double value;
-	
+
 	public ConfigOptionDouble(boolean enforceServer, double defaultValue) {
 		super(enforceServer);
 		value = defaultValue;
 	}
-	
+
 	@Override
 	public void serialize(ByteBuf buf) {
 		buf.writeDouble(value);
 	}
-	
+
 	@Override
 	public void deserialize(ByteBuf buf) {
 		value = buf.readDouble();
 	};
-	
+
 	@Override
 	public Double getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public void setValue(Double value) {
 		this.value = value;
 	}
-	
+
 }

@@ -26,5 +26,5 @@ public class TARenderHelperCommon implements ITARenderHelper {
 
 	@Override
 	public void renderGlowingSphere(World world, double x, double y, double z, int color) {}
-	
+
 }

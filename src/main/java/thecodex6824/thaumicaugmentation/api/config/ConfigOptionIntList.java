@@ -25,19 +25,19 @@ import io.netty.buffer.ByteBuf;
 public class ConfigOptionIntList extends ConfigOption<int[]> {
 
 	protected int[] value;
-	
+
 	public ConfigOptionIntList(boolean enforceServer, int[] defaultValue) {
 		super(enforceServer);
 		value = defaultValue;
 	}
-	
+
 	@Override
 	public void serialize(ByteBuf buf) {
 		buf.writeInt(value.length);
 		for (int i : value)
 			buf.writeInt(i);
 	}
-	
+
 	@Override
 	public void deserialize(ByteBuf buf) {
 		int size = buf.readInt();
@@ -45,15 +45,15 @@ public class ConfigOptionIntList extends ConfigOption<int[]> {
 		for (int i = 0; i < value.length; ++i)
 			value[i] = buf.readInt();
 	}
-	
+
 	@Override
 	public int[] getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public void setValue(int[] value) {
 		this.value = value;
 	}
-	
+
 }

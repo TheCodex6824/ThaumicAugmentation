@@ -34,14 +34,14 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
 	public boolean canFit(int width, int height) {
 		return width * height >= 3;
 	}
-	
+
 	protected boolean isThaumiumKeyValid(ItemStack key) {
 		return key.hasTagCompound() && key.getTagCompound().hasKey("boundTo", NBT.TAG_STRING) && 
 				key.getTagCompound().hasKey("boundType", NBT.TAG_STRING) &&
 				key.getTagCompound().hasKey("boundBlockPos", NBT.TAG_INT_ARRAY) &&
 				key.getTagCompound().getIntArray("boundBlockPos").length == 3;
 	}
-	
+
 	@Override
 	public boolean matches(InventoryCrafting inv, World worldIn) {
 		boolean hasEmptyThaumiumKey = false;
@@ -69,11 +69,11 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
 					return false;
 			}
 		}
-		
+
 		return hasEmptyThaumiumKey && thaumiumKey != null && brassKey != null && 
 				thaumiumKey.getTagCompound().getString("boundTo").equals(brassKey.getTagCompound().getString("boundTo"));
 	}
-	
+
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
 		ItemStack emptyThaumiumKey = null;
@@ -101,17 +101,17 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
 					return ItemStack.EMPTY;
 			}
 		}
-		
+
 		if (emptyThaumiumKey != null && thaumiumKey != null && brassKey != null && 
 				thaumiumKey.getTagCompound().getString("boundTo").equals(brassKey.getTagCompound().getString("boundTo")))
 			return thaumiumKey.copy();
 		else
 			return ItemStack.EMPTY;
 	}
-	
+
 	@Override
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
 	}
-	
+
 }

@@ -35,5 +35,5 @@ public interface IHorizontallyDirectionalBlock {
 
 	public static final PropertyDirection DIRECTION = PropertyDirection.create("ta_direction_h", 
 			Arrays.asList(EnumFacing.HORIZONTALS));
-	
+
 }

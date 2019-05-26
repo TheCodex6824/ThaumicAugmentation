@@ -40,24 +40,24 @@ public class PlayerMovementAbilityManager {
 		JUMP_FACTOR,
 		STEP_HEIGHT
 	}
-	
+
 	private static class PlayerFunctions {
-		
+
 		public PlayerFunctions(BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> pred) {
 			tickFunction = func;
 			continueFunction = pred;
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof PlayerFunctions) {
 				PlayerFunctions func = (PlayerFunctions) obj;
 				return tickFunction.equals(func.tickFunction) && continueFunction.equals(func.continueFunction);
 			}
-			
+
 			return false;
 		}
-		
+
 		@Override
 		public int hashCode() {
 			int ret = 7 * 31;
@@ -66,37 +66,37 @@ public class PlayerMovementAbilityManager {
 			ret += continueFunction.hashCode();
 			return ret;
 		}
-		
+
 		public BiFunction<EntityPlayer, MovementType, Float> tickFunction;
 		public Predicate<EntityPlayer> continueFunction;
 	}
-	
+
 	private static class OldMovementData {
-		
+
 		public OldMovementData(float s, float j) {
 			stepHeight = s;
 			jumpMovementFactor = j;
 		}
-		
+
 		public float stepHeight;
 		public float jumpMovementFactor;	
 	}
-	
+
 	private static HashMap<String, OldMovementData> oldMovementValues = new HashMap<>();
 	private static Multimap<String, PlayerFunctions> players = 
 			MultimapBuilder.hashKeys().arrayListValues().build();
-	
+
 	public static void put(EntityPlayer player, BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> continueApplying) {
 		if (!oldMovementValues.containsKey(player.getCachedUniqueIdString()))
 			oldMovementValues.put(player.getCachedUniqueIdString(), new OldMovementData(player.stepHeight, player.jumpMovementFactor));
-		
+
 		players.put(player.getCachedUniqueIdString(), new PlayerFunctions(func, continueApplying));
 	}
-	
+
 	public static boolean remove(EntityPlayer player, BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> pred) {
 		boolean result = players.remove(player.getCachedUniqueIdString(), new PlayerFunctions(func, pred));
 		if (players.containsKey(player.getCachedUniqueIdString()) && players.get(player.getCachedUniqueIdString()).size() == 0) {
-			
+
 			OldMovementData data = oldMovementValues.get(player.getCachedUniqueIdString());
 			player.stepHeight -= player.stepHeight - data.stepHeight;
 			player.jumpMovementFactor -= player.jumpMovementFactor - data.jumpMovementFactor;
@@ -104,30 +104,30 @@ public class PlayerMovementAbilityManager {
 			if (oldMovementValues.containsKey(player.getCachedUniqueIdString()))
 				oldMovementValues.remove(player.getCachedUniqueIdString());
 		}
-		
+
 		return result;
 	}
-	
+
 	public static boolean playerHasAbility(EntityPlayer player, BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> pred) {
 		return players.containsEntry(player.getCachedUniqueIdString(), new PlayerFunctions(func, pred));
 	}
-	
+
 	private static boolean isPlayerMovingNotVertically(EntityPlayer player) {
 		return player.moveForward > 0.0001F || player.moveForward < -0.0001F || player.moveStrafing > 0.0F || 
 				player.moveStrafing < -0.0001F;
 	}
-	
+
 	private static void movePlayer(EntityPlayer player, float factor) {
 		if ((player.moveForward > 0.0001F || player.moveForward < -0.0001F) && (player.moveStrafing > 0.0F || 
 				player.moveStrafing < -0.0001F))
-			
+
 			player.moveRelative(factor * Math.signum(player.moveStrafing), 0.0F, factor * Math.signum(player.moveForward), 1.0F);
 		else if (player.moveForward > 0.0001F || player.moveForward < -0.0001F)
 			player.moveRelative(0.0F, 0.0F, factor * Math.signum(player.moveForward), 1.0F);
 		else
 			player.moveRelative(factor * Math.signum(player.moveStrafing), 0.0F, 0.0F, 1.0F);
 	}
-	
+
 	public static void tick(EntityPlayer player) {
 		if (player.getEntityWorld().isRemote && players.containsKey(player.getCachedUniqueIdString())) {
 			OldMovementData data = oldMovementValues.get(player.getCachedUniqueIdString());
@@ -140,37 +140,37 @@ public class PlayerMovementAbilityManager {
 					it.remove();
 					if (players.containsKey(player.getCachedUniqueIdString()) && players.get(player.getCachedUniqueIdString()).size() == 0 &&
 							oldMovementValues.containsKey(player.getCachedUniqueIdString())) {
-						
+
 						player.stepHeight -= player.stepHeight - data.stepHeight;
 						player.jumpMovementFactor -= player.jumpMovementFactor - data.jumpMovementFactor;
 						players.removeAll(player.getCachedUniqueIdString());
 						oldMovementValues.remove(player.getCachedUniqueIdString());
 					}
-					
+
 					return;
 				}
-				
+
 				stepHeight += func.tickFunction.apply(player, MovementType.STEP_HEIGHT);
 				if (player.onGround && isPlayerMovingNotVertically(player))
 					movePlayer(player, func.tickFunction.apply(player, player.isInWater() ? MovementType.WATER_GROUND : MovementType.DRY_GROUND));
 				else {
 					if (player.moveForward > 0.0F && player.isInWater())
 						movePlayer(player, func.tickFunction.apply(player, MovementType.WATER_SWIM));
-					
+
 					jumpMovementFactor += func.tickFunction.apply(player, MovementType.JUMP_FACTOR);
 				}
 			}
-			
+
 			player.stepHeight = stepHeight;
 			player.jumpMovementFactor = jumpMovementFactor;
 		}
 	}
-	
+
 	public static void onJump(EntityPlayer player) {
 		if (players.containsKey(player.getCachedUniqueIdString())) {
 			for (PlayerFunctions func : players.get(player.getCachedUniqueIdString()))
 				player.motionY += func.tickFunction.apply(player, MovementType.JUMP_BEGIN);
 		}
 	}
-	
+
 }

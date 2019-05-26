@@ -29,12 +29,12 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 
 public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
-	
+
 	@Override
 	public boolean canFit(int width, int height) {
 		return width * height >= 2;
 	}
-	
+
 	@Override
 	public boolean matches(InventoryCrafting inv, World worldIn) {
 		boolean hasIronKey = false;
@@ -55,10 +55,10 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
 					return false;
 			}
 		}
-		
+
 		return hasIronKey && hasBrassKey;
 	}
-	
+
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
 		ItemStack ironKey = null;
@@ -78,20 +78,20 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
 					return ItemStack.EMPTY;
 			}
 		}
-		
+
 		if (ironKey != null && brassKey != null) {
 			ItemStack output = brassKey.copy();
 			output.setItemDamage(0);
-			
+
 			return output;
 		}
 		else
 			return ItemStack.EMPTY;
 	}
-	
+
 	@Override
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
 	}
-	
+
 }

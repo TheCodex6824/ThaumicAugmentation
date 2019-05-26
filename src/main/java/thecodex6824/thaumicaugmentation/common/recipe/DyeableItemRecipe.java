@@ -50,10 +50,10 @@ public class DyeableItemRecipe extends RecipesArmorDyes {
 					return false;
 			}
 		}
-		
+
 		return hasDyedItem && hasDye;
 	}
-	
+
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
 		ItemStack toDye = null;
@@ -73,7 +73,7 @@ public class DyeableItemRecipe extends RecipesArmorDyes {
 					return ItemStack.EMPTY;
 			}
 		}
-		
+
 		if (toDye != null && dyes.size() > 0) {
 			ItemStack toOutput = toDye.copy();
 			toOutput.setCount(1);
@@ -87,12 +87,12 @@ public class DyeableItemRecipe extends RecipesArmorDyes {
 				totalComponents[2] += dyeColor[2];
 				totalMaximum += Math.max(dyeColor[0], Math.max(dyeColor[1], dyeColor[2]));
 			}
-			
+
 			totalComponents[0] /= dyes.size() + 1;
 			totalComponents[1] /= dyes.size() + 1;
 			totalComponents[2] /= dyes.size() + 1;
 			totalMaximum /= dyes.size() + 1;
-			
+
 			float gainFactor = totalMaximum / Math.max(totalComponents[0], Math.max(totalComponents[1], totalComponents[2]));
 			totalComponents[0] *= gainFactor;
 			totalComponents[1] *= gainFactor;
@@ -101,8 +101,8 @@ public class DyeableItemRecipe extends RecipesArmorDyes {
 			((IDyeableItem) toOutput.getItem()).setDyedColor(toOutput, newColor);
 			return toOutput;
 		}
-		
+
 		return ItemStack.EMPTY;
 	}
-	
+
 }

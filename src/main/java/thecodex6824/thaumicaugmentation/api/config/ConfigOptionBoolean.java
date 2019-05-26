@@ -25,30 +25,30 @@ import io.netty.buffer.ByteBuf;
 public class ConfigOptionBoolean extends ConfigOption<Boolean> {
 
 	protected boolean value;
-	
+
 	public ConfigOptionBoolean(boolean enforceServer, boolean defaultValue) {
 		super(enforceServer);
 		value = defaultValue;
 	}
-	
+
 	@Override
 	public void serialize(ByteBuf buf) {
 		buf.writeBoolean(value);
 	}
-	
+
 	@Override
 	public void deserialize(ByteBuf buf) {
 		value = buf.readBoolean();
 	};
-	
+
 	@Override
 	public Boolean getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public void setValue(Boolean value) {
 		this.value = value;
 	}
-	
+
 }

@@ -23,7 +23,9 @@ package thecodex6824.thaumicaugmentation.api.tile;
 import net.minecraftforge.items.IItemHandler;
 
 /**
- * Interface for warded blocks that have a private internal inventory.
+ * Interface for warded blocks that have a private internal inventory. The inventory is exposed
+ * here instead of in a capability so that other things can't (inadvertently) bypass the ward
+ * permission checks.
  * @author TheCodex6824
  *
  */
@@ -36,5 +38,5 @@ public interface IWardedInventory {
 	 * @return The inventory stored in this warded block
 	 */
 	public IItemHandler getInventory();
-	
+
 }

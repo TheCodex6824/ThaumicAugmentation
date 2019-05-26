@@ -24,25 +24,25 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 
 /**
-* Property interface marking the type/meta of the Arcane Door.
-* @author TheCodex6824
-*
-*/
+ * Property interface marking the type/meta of the Arcane Door.
+ * @author TheCodex6824
+ *
+ */
 public interface IArcaneDoorType {
 
 	public enum ArcaneDoorType implements IStringSerializable {
-		
+
 		WOOD,
 		METAL;
-		
+
 		@Override
 		public String getName() {
 			return name().toLowerCase();
 		}
-		
+
 	}
-	
+
 	public static final PropertyEnum<ArcaneDoorType> TYPE = 
 			PropertyEnum.<ArcaneDoorType>create("ta_doortype", ArcaneDoorType.class);
-	
+
 }

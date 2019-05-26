@@ -43,16 +43,16 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemKey extends ItemTABase implements IWardAuthenticator {
 
-	public ItemKey(String name) {
-		super(name, "iron", "brass", "thaumium");
+	public ItemKey() {
+		super("iron", "brass", "thaumium");
 		setMaxStackSize(1);
 	}
-	
+
 	@Override
 	public boolean permitsUsage(IWardedTile tile, ItemStack stack, EntityPlayer user) {
 		if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
 			return false;
-		
+
 		if (stack.getMetadata() != 2)
 			return stack.getTagCompound().getString("boundTo").equals(tile.getOwner());
 		else {
@@ -71,52 +71,52 @@ public class ItemKey extends ItemTABase implements IWardAuthenticator {
 				return false;
 		}
 	}
-	
+
 	protected int generateKeyColor(String id) {
 		UUID uuid = null;
 		try {
 			uuid = UUID.fromString(id);
 		}
 		catch (IllegalArgumentException ex) {}
-		
+
 		return uuid != null ? uuid.hashCode() : id.hashCode();
 	}
-	
+
 	public int getKeyColor(ItemStack stack) {
 		return stack.hasTagCompound() && stack.getTagCompound().hasKey("boundToColor", NBT.TAG_INT) ?
 				stack.getTagCompound().getInteger("boundToColor") : 0;
 	}
-	
+
 	public void setBoundTo(ItemStack stack, String display, String id) {
 		if (!stack.hasTagCompound())
 			stack.setTagCompound(new NBTTagCompound());
-		
+
 		stack.getTagCompound().setString("boundTo", id.toString());
 		stack.getTagCompound().setString("boundToDisplay", display);
 		stack.getTagCompound().setInteger("boundToColor", generateKeyColor(id));
 	}
-	
+
 	public void setBoundBlock(ItemStack stack, BlockPos pos, String type, String typeDisplay) {
 		if (!stack.hasTagCompound())
 			stack.setTagCompound(new NBTTagCompound());
-		
+
 		stack.getTagCompound().setIntArray("boundBlockPos", new int[] {pos.getX(), pos.getY(), pos.getZ()});
 		stack.getTagCompound().setString("boundType", type);
 		stack.getTagCompound().setString("boundTypeDisplay", typeDisplay);
 	}
-	
+
 	protected String formatBlockPos(BlockPos pos) {
 		return "(" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")";
 	}
-	
+
 	protected String formatBlockPos(int[] pos) {
 		return "(" + pos[0] + ", " + pos[1] + ", " + pos[2] + ")";
 	}
-	
+
 	@Override
 	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
 			float hitY, float hitZ, EnumHand hand) {
-		
+
 		if (!world.isRemote && player.getHeldItem(hand).getMetadata() == 2) {
 			ItemStack stack = player.getHeldItem(hand);
 			if (!player.isSneaking() && !stack.hasTagCompound() && world.getTileEntity(pos) instanceof IWardedTile) {
@@ -124,23 +124,23 @@ public class ItemKey extends ItemTABase implements IWardAuthenticator {
 				stack.getTagCompound().setString("boundTo", player.getUniqueID().toString());
 				stack.getTagCompound().setString("boundToDisplay", player.getName());
 				stack.getTagCompound().setInteger("boundToColor", generateKeyColor(player.getUniqueID().toString()));
-				
+
 				stack.getTagCompound().setIntArray("boundBlockPos", new int[] {pos.getX(), pos.getY(), pos.getZ()});
 				stack.getTagCompound().setString("boundType", ((IWardedTile) world.getTileEntity(pos)).getUniqueTypeID());
 				stack.getTagCompound().setString("boundTypeDisplay", world.getBlockState(pos).getBlock().getTranslationKey() + ".name");
-				
+
 				player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_bound_object", 
 						new TextComponentTranslation(world.getBlockState(pos).getBlock().getTranslationKey() + ".name"), formatBlockPos(pos)), true);
 				return EnumActionResult.SUCCESS;
 			}
 		}
-		
+
 		return EnumActionResult.PASS;
 	}
-	
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-		
+
 		if (!world.isRemote) {
 			ItemStack stack = player.getHeldItem(hand);
 			if (!player.isSneaking() && !stack.hasTagCompound() && stack.getMetadata() != 2) {
@@ -157,15 +157,15 @@ public class ItemKey extends ItemTABase implements IWardAuthenticator {
 				return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 			}
 		}
-		
+
 		return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
 	}
-	
+
 	@Override
 	public boolean hasContainerItem(ItemStack stack) {
 		return stack.getMetadata() == 1 || stack.getMetadata() == 2;
 	}
-	
+
 	@Override
 	public ItemStack getContainerItem(ItemStack stack) {
 		if (stack.getMetadata() == 1)
@@ -175,19 +175,19 @@ public class ItemKey extends ItemTABase implements IWardAuthenticator {
 		else
 			return ItemStack.EMPTY;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flagIn) {
 		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("boundToDisplay")) {
-			
+
 			tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.bound_to", 
 					stack.getTagCompound().getString("boundToDisplay")).getFormattedText());
-			
+
 			if (stack.getMetadata() == 2 && stack.getTagCompound().hasKey("boundTypeDisplay", NBT.TAG_STRING)) {
 				tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.bound_to_type", 
 						new TextComponentTranslation(stack.getTagCompound().getString("boundTypeDisplay"))).getFormattedText());
-				
+
 				int[] pos = stack.getTagCompound().getIntArray("boundBlockPos");
 				if (pos.length == 3) {
 					tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.bound_to_pos", 
@@ -196,5 +196,5 @@ public class ItemKey extends ItemTABase implements IWardAuthenticator {
 			}
 		}
 	}
-	
+
 }

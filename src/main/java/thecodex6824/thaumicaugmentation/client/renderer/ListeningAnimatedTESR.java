@@ -31,5 +31,5 @@ public class ListeningAnimatedTESR<TE extends TileEntity & IAnimatedTile> extend
 	public void handleEvents(TE te, float time, Iterable<Event> pastEvents) {
 		te.handleEvents(time, pastEvents);
 	}
-	
+
 }

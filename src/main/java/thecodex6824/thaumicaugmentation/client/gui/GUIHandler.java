@@ -31,29 +31,29 @@ import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 public class GUIHandler implements IGuiHandler {
 
 	public enum TAInventory {
-		
+
 		WARDED_CHEST(0);
-		
+
 		private int id;
-		
+
 		private TAInventory(int id) {
 			this.id = id;
 		}
-		
+
 		public int getID() {
 			return id;
 		}
 	}
-	
+
 	@Override
 	public Container getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		switch (TAInventory.values()[ID]) {
 			case WARDED_CHEST: return new ContainerWardedChest(player.inventory, 
-					(TileWardedChest) world.getTileEntity(new BlockPos(x, y, z)));
+				(TileWardedChest) world.getTileEntity(new BlockPos(x, y, z)));
 			default: return null;
 		}
 	}
-	
+
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		switch (TAInventory.values()[ID]) {
@@ -61,5 +61,5 @@ public class GUIHandler implements IGuiHandler {
 			default: return null;
 		}
 	}
-	
+
 }

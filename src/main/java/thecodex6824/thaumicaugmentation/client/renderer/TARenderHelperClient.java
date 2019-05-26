@@ -35,5 +35,5 @@ public class TARenderHelperClient implements ITARenderHelper {
 		sphere.setMaxAge(48);
 		ParticleEngine.addEffect(world, sphere);
 	}
-	
+
 }

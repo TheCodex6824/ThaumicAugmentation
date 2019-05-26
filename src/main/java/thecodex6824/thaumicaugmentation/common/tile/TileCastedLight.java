@@ -32,19 +32,19 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 public class TileCastedLight extends TileEntity implements ITickable {
 
 	protected static final int DELAY = 5;
-	
+
 	protected boolean lastRenderState;
-	
+
 	public TileCastedLight() {
 		super();
 		lastRenderState = TAConfig.castedLightSimpleRenderer.getValue();
 	}
-	
+
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
 		return oldState.getBlock() != newState.getBlock();
 	}
-	
+
 	@Override
 	public void update() {
 		if (world.isRemote && world.getTotalWorldTime() % DELAY == 0) {
@@ -58,5 +58,5 @@ public class TileCastedLight extends TileEntity implements ITickable {
 			}
 		}
 	}
-	
+
 }

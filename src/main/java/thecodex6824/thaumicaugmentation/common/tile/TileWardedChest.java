@@ -46,12 +46,12 @@ import thecodex6824.thaumicaugmentation.api.tile.IWardedInventory;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
 public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapabilityProvider, IWardedInventory {
-	
+
 	protected ItemStackHandler inventory;
 	protected IAnimationStateMachine asm;
 	protected VariableValue openSpeed;
 	protected VariableValue openTime;
-	
+
 	public TileWardedChest() {
 		super();
 		inventory = new ItemStackHandler(27);
@@ -60,12 +60,12 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
 		asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/warded_chest.json"), 
 				ImmutableMap.<String, ITimeValue>of("open_speed", openSpeed, "open_time", openTime));
 	}
-	
+
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
 		return oldState.getBlock() != newState.getBlock();
 	}
-	
+
 	public void onOpenInventory() {
 		if (!world.isRemote)
 			world.playSound(null, pos, SoundEvents.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5F, 1.0F);
@@ -74,7 +74,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
 			asm.transition("opening");
 		}
 	}
-	
+
 	public void onCloseInventory() {
 		if (!world.isRemote)
 			world.playSound(null, pos, SoundEvents.BLOCK_CHEST_CLOSE, SoundCategory.BLOCKS, 0.5F, 1.0F);
@@ -83,39 +83,39 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
 			asm.transition("closing");
 		}
 	}
-	
+
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setTag("inventory", inventory.serializeNBT());
 		return super.writeToNBT(compound);
 	}
-	
+
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		inventory.deserializeNBT(compound.getCompoundTag("inventory"));
 		super.readFromNBT(compound);
 	}
-	
+
 	@Override
 	public String getUniqueTypeID() {
 		return ThaumicAugmentationAPI.MODID + ":warded_chest";
 	}
-	
+
 	@Override
 	public IItemHandler getInventory( ) {
 		return inventory;
 	}
-	
+
 	@Override
 	public boolean hasFastRenderer() {
 		return true;
 	}
-	
+
 	@Override
 	public void handleEvents(float time, Iterable<Event> pastEvents) {
 		// nope
 	}
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
@@ -123,7 +123,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
 		else
 			return super.hasCapability(capability, facing);
 	}
-	
+
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
@@ -131,5 +131,5 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
 		else
 			return super.getCapability(capability, facing);
 	}
-	
+
 }

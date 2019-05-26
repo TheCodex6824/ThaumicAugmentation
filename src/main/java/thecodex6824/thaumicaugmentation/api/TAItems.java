@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  */
 @ObjectHolder(ThaumicAugmentationAPI.MODID)
 public class TAItems {
-	
+
 	public static final Item GAUNTLET = null;
 	public static final Item MATERIAL = null;
 	public static final Item SEAL_COPIER = null;
@@ -41,16 +41,16 @@ public class TAItems {
 	public static final Item KEY = null;
 	public static final Item VOID_BOOTS = null;
 	public static final Item RIFT_SEED = null;
-	
+
 	public static CreativeTabs CREATIVE_TAB = new CreativeTabs(ThaumicAugmentationAPI.MODID) {
 		@Override
 		public ItemStack createIcon() {
 			return new ItemStack(MATERIAL, 1, 2);
 		}
 	};
-	
+
 	public static Item[] getAllItems() {
 		return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR, KEY, VOID_BOOTS, RIFT_SEED};
 	}
-	
+
 }

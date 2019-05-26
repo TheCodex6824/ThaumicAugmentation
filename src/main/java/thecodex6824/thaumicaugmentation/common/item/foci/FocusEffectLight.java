@@ -47,53 +47,53 @@ import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 public class FocusEffectLight extends FocusEffect {
 
 	protected class NodeSettingLightIntensity extends NodeSetting.NodeSettingIntRange {
-		
+
 		public NodeSettingLightIntensity() {
 			super(1, 15);
 		}
-		
+
 		@Override
 		public int getDefault() {
 			return 8;
 		}
-		
+
 	}
-	
+
 	@Override
 	public Aspect getAspect() {
 		return Aspect.LIGHT;
 	}
-	
+
 	@Override
 	public int getComplexity() {
 		return getSettingValue("intensity");
 	}
-	
+
 	@Override
 	public String getKey() {
 		return "focus." + ThaumicAugmentationAPI.MODID + ".light";
 	}
-	
+
 	@Override
 	public String getResearch() {
 		return "FOCUS_LIGHT";
 	}
-	
+
 	@Override
 	public boolean execute(RayTraceResult result, Trajectory trajectory, float finalPower, int something) {
 		if (result.typeOfHit == Type.BLOCK) {
 			IBlockState state = getPackage().world.getBlockState(result.getBlockPos());
 			if (state.getBlock().isAir(state, getPackage().world, result.getBlockPos()) || 
 					state.getBlock().isReplaceable(getPackage().world, result.getBlockPos())) {
-				
+
 				return placeLightSource(result.getBlockPos(), result.sideHit, getSettingValue("intensity"));
 			}
 			else {
 				BlockPos pos = result.getBlockPos().offset(result.sideHit);
 				state = getPackage().world.getBlockState(pos);
 				if (state.getBlock().isAir(state, getPackage().world, pos) || 
-					state.getBlock().isReplaceable(getPackage().world, pos))
-					
+						state.getBlock().isReplaceable(getPackage().world, pos))
+
 					return placeLightSource(pos, result.sideHit, getSettingValue("intensity"));
 			}
 		}
@@ -103,49 +103,49 @@ public class FocusEffectLight extends FocusEffect {
 			((EntityLivingBase) result.entityHit).addPotionEffect(new PotionEffect(MobEffects.GLOWING, getSettingValue("intensity") * 10, 0, true, false));
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	protected boolean placeLightSource(BlockPos pos, EnumFacing side, int intensity) {
 		World world = getPackage().world;
 		if (world.isAreaLoaded(pos, pos) && world.getBlockState(pos).getBlock() != TABlocks.TEMPORARY_LIGHT 
 				&& world.mayPlace(TABlocks.TEMPORARY_LIGHT, pos, true, side, getPackage().getCaster())) {
-			
+
 			return world.setBlockState(pos, TABlocks.TEMPORARY_LIGHT.getDefaultState().withProperty(ILightSourceBlock.LIGHT_LEVEL, intensity));
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public NodeSetting[] createSettings() {
 		return new NodeSetting[] {
 				new NodeSetting("intensity", "focus." + ThaumicAugmentationAPI.MODID + ".light.intensity", new NodeSettingLightIntensity())
 		};
 	}
-	
+
 	@Override
 	public void onCast(Entity caster) {
 		caster.world.playSound(null, caster.getPosition().up(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 
 				SoundCategory.PLAYERS, 0.2F, 1.2F);
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderParticleFX(World world, double posX, double posY, double posZ, double velX, double velY,
 			double velZ) {
-		
+
 		FXGeneric fb = new FXGeneric(world, posX, posY, posZ, velX, velY, velZ);
-	    fb.setMaxAge(40 + world.rand.nextInt(40));
-	    fb.setParticles(16, 1, 1);
-	    fb.setSlowDown(0.5D);
-	    fb.setAlphaF(new float[] { 1.0F, 0.0F });
-	    fb.setScale(new float[] { (float)(0.699999988079071D + world.rand.nextGaussian() * 0.30000001192092896D) });
-	    int color = getAspect().getColor();
-	    fb.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
-	    fb.setRotationSpeed(world.rand.nextFloat(), 0.0F);
-	    ParticleEngine.addEffectWithDelay(world, fb, 0);
+		fb.setMaxAge(40 + world.rand.nextInt(40));
+		fb.setParticles(16, 1, 1);
+		fb.setSlowDown(0.5D);
+		fb.setAlphaF(new float[] { 1.0F, 0.0F });
+		fb.setScale(new float[] { (float)(0.699999988079071D + world.rand.nextGaussian() * 0.30000001192092896D) });
+		int color = getAspect().getColor();
+		fb.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
+		fb.setRotationSpeed(world.rand.nextFloat(), 0.0F);
+		ParticleEngine.addEffectWithDelay(world, fb, 0);
 	}
-	
+
 }

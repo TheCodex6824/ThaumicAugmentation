@@ -1,0 +1,33 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:arcane_trapdoor_lower",
+        "textures": {
+            "texture": "thaumicaugmentation:blocks/arcane_trapdoor_wood",
+            "side": "thaumicaugmentation:blocks/arcane_trapdoor_wood_side",
+            "side_vert": "thaumicaugmentation:blocks/arcane_trapdoor_wood_side_vert"
+        }
+    },
+    "variants": {
+        "ta_direction_h=north,ta_door_half=lower,ta_door_open=false": { "model": "thaumicaugmentation:arcane_trapdoor_lower" },
+        "ta_direction_h=south,ta_door_half=lower,ta_door_open=false": { "model": "thaumicaugmentation:arcane_trapdoor_lower" },
+        "ta_direction_h=east,ta_door_half=lower,ta_door_open=false": { "model": "thaumicaugmentation:arcane_trapdoor_lower" },
+        "ta_direction_h=west,ta_door_half=lower,ta_door_open=false": { "model": "thaumicaugmentation:arcane_trapdoor_lower" },
+        "ta_direction_h=north,ta_door_half=upper,ta_door_open=false": { "model": "thaumicaugmentation:arcane_trapdoor_upper" },
+        "ta_direction_h=south,ta_door_half=upper,ta_door_open=false": { "model": "thaumicaugmentation:arcane_trapdoor_upper" },
+        "ta_direction_h=east,ta_door_half=upper,ta_door_open=false": { "model": "thaumicaugmentation:arcane_trapdoor_upper" },
+        "ta_direction_h=west,ta_door_half=upper,ta_door_open=false": { "model": "thaumicaugmentation:arcane_trapdoor_upper" },
+        "ta_direction_h=north,ta_door_half=lower,ta_door_open=true": { "model": "thaumicaugmentation:arcane_trapdoor_open" },
+        "ta_direction_h=south,ta_door_half=lower,ta_door_open=true": { "model": "thaumicaugmentation:arcane_trapdoor_open", "y": 180 },
+        "ta_direction_h=east,ta_door_half=lower,ta_door_open=true": { "model": "thaumicaugmentation:arcane_trapdoor_open", "y": 90 },
+        "ta_direction_h=west,ta_door_half=lower,ta_door_open=true": { "model": "thaumicaugmentation:arcane_trapdoor_open", "y": 270 },
+        "ta_direction_h=north,ta_door_half=upper,ta_door_open=true": { "model": "thaumicaugmentation:arcane_trapdoor_open" },
+        "ta_direction_h=south,ta_door_half=upper,ta_door_open=true": { "model": "thaumicaugmentation:arcane_trapdoor_open", "y": 180 },
+        "ta_direction_h=east,ta_door_half=upper,ta_door_open=true": { "model": "thaumicaugmentation:arcane_trapdoor_open", "y": 90 },
+        "ta_direction_h=west,ta_door_half=upper,ta_door_open=true": { "model": "thaumicaugmentation:arcane_trapdoor_open", "y": 270 },
+        "inventory": {
+            "model": "thaumicaugmentation:arcane_trapdoor_lower",
+            "transform": "forge:default-block"
+        }
+    }
+}
