@@ -78,7 +78,6 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
         do {
             int dimID = currentPicker.get(rand);
             WorldProvider dim = WorldProviderCache.getProvider(dimID);
-            System.out.println(dimID);
             if (dim != null && dim.getMovementFactor() <= maxFactor + 0.00001)
                 return dim;
             else

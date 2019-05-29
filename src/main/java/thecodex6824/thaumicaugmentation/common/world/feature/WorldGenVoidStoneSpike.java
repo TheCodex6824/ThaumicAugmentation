@@ -26,7 +26,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 
@@ -41,35 +40,39 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
     public boolean generate(World world, Random rand, BlockPos position) {
         position = position.down();
         if (!world.isAirBlock(position)) {
-            Biome biome = world.getBiome(position);
             position = position.up(rand.nextInt(4));
             int height = rand.nextInt(4) + 7;
             int width = height / 4 + rand.nextInt(2);
 
-            if (width > 1 && rand.nextInt(5) == 0)
+            boolean tall = false;
+            if (width > 1 && rand.nextInt(5) == 0) {
                 position = position.up(10 + rand.nextInt(30));
+                tall = true;
+            }
 
-            for (int y = 0; y < height; ++y) {
-                float f = (1.0F - y / (float) height) * width;
-                int l = MathHelper.ceil(f);
-                for (int x = -l; x <= l; ++x) {
-                    float f1 = MathHelper.abs(x) - 0.25F;
-                    for (int z = -l; z <= l; ++z) {
-                        float f2 = MathHelper.abs(z) - 0.25F;
-
-                        if ((x == 0 && z == 0 || f1 * f1 + f2 * f2 <= f * f) && ((x != -l && x != l && z != -l && z != l) || rand.nextFloat() <= 0.75F)) {
-                            BlockPos pos = position.add(x, y, z);
-                            if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
-                                setBlockAndNotifyAdequately(world, pos, biome.fillerBlock);
-
-                            if (y != 0 && l > 1) {
-                                pos = position.add(x, -y, z);
-                                if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
-                                    setBlockAndNotifyAdequately(world, pos, biome.fillerBlock);
-                            }
-                        }
-                    }
-                }
+            if (!tall || rand.nextBoolean()) {
+	            for (int y = 0; y < height; ++y) {
+	                float f = (1.0F - y / (float) height) * width;
+	                int l = MathHelper.ceil(f);
+	                for (int x = -l; x <= l; ++x) {
+	                    float f1 = MathHelper.abs(x) - 0.25F;
+	                    for (int z = -l; z <= l; ++z) {
+	                        float f2 = MathHelper.abs(z) - 0.25F;
+	
+	                        if ((x == 0 && z == 0 || f1 * f1 + f2 * f2 <= f * f) && ((x != -l && x != l && z != -l && z != l) || rand.nextFloat() <= 0.75F)) {
+	                            BlockPos pos = position.add(x, y, z);
+	                            if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
+	                                setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
+	
+	                            if (y != 0 && l > 1) {
+	                                pos = position.add(x, -y, z);
+	                                if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
+	                                    setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
+	                            }
+	                        }
+	                    }
+	                }
+	            }
             }
 
             int length = MathHelper.clamp(width - 1, 0, 1);
@@ -82,10 +85,38 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                         heightLeft = rand.nextInt(5);
 
                     while (pos.getY() > 0) {
-                        if (!world.isAirBlock(pos) && world.getBlockState(pos).getBlock() != biome.fillerBlock.getBlock())
+                        if (!world.isAirBlock(pos) && world.getBlockState(pos).getBlock() != world.getBiome(pos).fillerBlock.getBlock())
                             break;
 
-                        setBlockAndNotifyAdequately(world, pos, biome.fillerBlock);
+                        setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
+                        if (rand.nextBoolean()) {
+                        	if (x == -length || x == length) {
+                        		int zDir = rand.nextBoolean() ? 1 : -1;
+                        		int numBlocks = rand.nextInt(5) + 3;
+                        		numBlocks = numBlocks > 5 ? 1 : numBlocks;
+                        		int zOffset = 1;
+                        		for (int i = 0; i < numBlocks; ++i) {
+                        			if (world.isAirBlock(pos.add(0, 0, zOffset)))
+                        				setBlockAndNotifyAdequately(world, pos.add(0, 0, zOffset), world.getBiome(pos).fillerBlock);
+                        			
+                        			zOffset += zDir;
+                        		}
+                        	}
+                        }
+                        else {
+                        	if (z == -length || z == length) {
+                        		int xDir = rand.nextBoolean() ? 1 : -1;
+                        		int numBlocks = rand.nextInt(5) + 3;
+                        		numBlocks = numBlocks > 5 ? 1 : numBlocks;
+                        		int xOffset = 1;
+                        		for (int i = 0; i < numBlocks; ++i) {
+                        			if (world.isAirBlock(pos.add(xOffset, 0, 0)))
+                        				setBlockAndNotifyAdequately(world, pos.add(xOffset, 0, 0), world.getBiome(pos).fillerBlock);
+                        			
+                        			xOffset += xDir;
+                        		}
+                        	}
+                        }
                         pos = pos.down();
                         --heightLeft;
                         

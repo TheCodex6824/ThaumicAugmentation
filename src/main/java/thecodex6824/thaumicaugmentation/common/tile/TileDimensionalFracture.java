@@ -34,11 +34,14 @@ import thaumcraft.common.entities.monster.EntityEldritchGuardian;
 
 public class TileDimensionalFracture extends TileEntity implements ITickable {
 
+	protected static final int OPEN_TIME = 100;
+	
     protected int linkedDim;
     protected BlockPos linkedTo;
     protected boolean linkLocated;
     protected boolean linkInvalid;
     protected boolean open;
+    protected long timeOpened;
 
     @Override
     public void update() {
@@ -91,14 +94,37 @@ public class TileDimensionalFracture extends TileEntity implements ITickable {
         return linkInvalid;
     }
 
-    public void setOpen(boolean o) {
-        open = o;
+    public void open() {
+        open = true;
+        timeOpened = world.getTotalWorldTime();
         markDirty();
         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
     }
+    
+    public void open(boolean skipTransition) {
+        open = true;
+        timeOpened = world.getTotalWorldTime();
+        timeOpened += skipTransition ? OPEN_TIME : 0;
+        markDirty();
+        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+    }
+    
+    public void close() {
+    	open = false;
+    	markDirty();
+    	world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+    }
 
+    public boolean isOpening() {
+        return open && timeOpened < world.getTotalWorldTime() + OPEN_TIME;
+    }
+    
     public boolean isOpen() {
-        return open;
+    	return open && timeOpened >= world.getTotalWorldTime() + OPEN_TIME;
+    }
+    
+    public long getTimeOpened() {
+    	return timeOpened;
     }
 
     @Override
@@ -113,7 +139,7 @@ public class TileDimensionalFracture extends TileEntity implements ITickable {
 
     @Override
     public double getMaxRenderDistanceSquared() {
-        return 16384.0;
+        return 128.0 * 128.0;
     }
 
     @Override
@@ -134,6 +160,7 @@ public class TileDimensionalFracture extends TileEntity implements ITickable {
             compound.setBoolean("linkLocated", linkLocated);
             compound.setBoolean("linkInvalid", linkInvalid);
             compound.setBoolean("open", open);
+            compound.setLong("timeOpened", timeOpened);
         }
 
         return super.writeToNBT(compound);
@@ -148,6 +175,7 @@ public class TileDimensionalFracture extends TileEntity implements ITickable {
             linkLocated = compound.getBoolean("linkLocated");
             linkInvalid = compound.getBoolean("linkInvalid");
             open = compound.getBoolean("open");
+            timeOpened = compound.getLong("timeOpened");
         }
 
         super.readFromNBT(compound);

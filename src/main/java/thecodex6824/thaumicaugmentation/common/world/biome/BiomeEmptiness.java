@@ -55,7 +55,7 @@ public class BiomeEmptiness extends Biome implements IPurgeBiomeSpawns, IFluxBio
     
     @Override
     public float getBaseFluxConcentration() {
-        return 0.25F;
+        return 0.15F;
     }
 
     @Override

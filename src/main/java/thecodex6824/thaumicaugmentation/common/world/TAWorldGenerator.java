@@ -33,6 +33,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import thaumcraft.api.aura.AuraHelper;
+import thaumcraft.common.config.ModConfig;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.world.biome.IFluxBiome;
@@ -120,7 +121,8 @@ public class TAWorldGenerator implements IWorldGenerator {
             AuraHelper.polluteAura(world, pos, flux, false);
         }
         
-        generateFractures(random, chunkX, chunkZ, world);
+        if (!ModConfig.CONFIG_MISC.wussMode)
+        	generateFractures(random, chunkX, chunkZ, world);
     }
 
 }

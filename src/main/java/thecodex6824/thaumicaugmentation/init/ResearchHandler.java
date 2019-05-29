@@ -21,14 +21,20 @@
 package thecodex6824.thaumicaugmentation.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ScanBlock;
+import thaumcraft.api.research.ScanBlockState;
+import thaumcraft.api.research.ScanItem;
 import thaumcraft.api.research.ScanningManager;
+import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
+import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 
 public class ResearchHandler {
 
@@ -42,8 +48,18 @@ public class ResearchHandler {
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/gauntlets.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/warded.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/rift.json"));
-
+        ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/void.json"));
+        
         ScanningManager.addScannableThing(new ScanBlock("f_LEAFSILVERWOOD", new Block[] {BlocksTC.leafSilverwood}));
+        ScanningManager.addScannableThing(new ScanItem("f_LEAFSILVERWOOD", new ItemStack(BlocksTC.leafSilverwood)));
+        ScanningManager.addScannableThing(new ScanBlock("!DIMENSIONALFRACTURE", new Block[] {TABlocks.DIMENSIONAL_FRACTURE}));
+        ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONE", TABlocks.STONE.getDefaultState().withProperty(
+        		ITAStoneType.STONE_TYPE, StoneType.STONE_VOID)));
+        ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONETAINTED", TABlocks.STONE.getDefaultState().withProperty(
+        		ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY)));
+        ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONETAINTEDSOIL", TABlocks.STONE.getDefaultState().withProperty(
+        		ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY)));
+        ScanningManager.addScannableThing(new ScanItem("!VOIDSTONE", new ItemStack(TABlocks.STONE)));
     }
 
 }

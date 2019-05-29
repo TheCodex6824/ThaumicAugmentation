@@ -277,7 +277,8 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         Biome biome = world.getBiome(pos.add(16, 0, 16));
         biome.decorate(world, rand, pos);
         
-        spikeGen.generate(world, rand, world.getTopSolidOrLiquidBlock(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16))));
+        if (rand.nextBoolean())
+        	spikeGen.generate(world, rand, world.getHeight(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16))));
 
         BlockFalling.fallInstantly = false;
         ForgeEventFactory.onChunkPopulate(false, this, world, rand, x, z, false);

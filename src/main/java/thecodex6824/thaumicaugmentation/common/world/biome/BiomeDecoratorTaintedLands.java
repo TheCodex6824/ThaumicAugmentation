@@ -33,9 +33,8 @@ import thaumcraft.common.entities.monster.tainted.EntityTaintSeedPrime;
 
 public class BiomeDecoratorTaintedLands extends BiomeDecorator {
     
-    @Override
-    public void decorate(World world, Random rand, Biome biome, BlockPos pos) {
-        BlockPos p = world.getTopSolidOrLiquidBlock(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16)));
+	private void generateEntities(World world, Random rand, Biome biome, BlockPos pos) {
+		BlockPos p = world.getTopSolidOrLiquidBlock(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16)));
         if (!world.isAirBlock(p.down()) && world.getBlockState(p.down()).isNormalCube()) {
             EntityLiving thingToSpawn = null;
             int result = rand.nextInt(500);
@@ -58,6 +57,22 @@ public class BiomeDecoratorTaintedLands extends BiomeDecorator {
                 }
             }
         }
+	}
+	
+	private void generateFeatures(World world, Random rand, Biome biome, BlockPos pos) {
+		for (int i = 0; i < 2; ++i) {
+            int x = rand.nextInt(16) + 8;
+            int z = rand.nextInt(16) + 8;
+            BlockPos gen = world.getTopSolidOrLiquidBlock(pos.add(x, 0, z));
+            if (!world.isAirBlock(gen.down()) && world.isAirBlock(gen))
+            	biome.getRandomWorldGenForGrass(rand).generate(world, rand, gen);
+        }
+	}
+	
+    @Override
+    public void decorate(World world, Random rand, Biome biome, BlockPos pos) {
+        generateFeatures(world, rand, biome, pos);
+        generateEntities(world, rand, biome, pos);
     }
     
 }

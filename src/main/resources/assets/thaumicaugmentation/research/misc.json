@@ -45,8 +45,8 @@
             "stages": [
                 {
                     "text": "thaumicaugmentation.research.vis_regenerator.0",
-                    "required_research": [
-                        "f_LEAFSILVERWOOD"
+                    "required_item": [
+                        "thaumcraft:leaves_silverwood"
                     ],
                     "required_knowledge": [
                         "OBSERVATION;ARTIFICE;1",

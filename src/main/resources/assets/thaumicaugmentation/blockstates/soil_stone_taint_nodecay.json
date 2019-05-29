@@ -2,15 +2,17 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {
-            "all": "thaumcraft:blocks/taint_soil_0"
+            "top": "thaumcraft:blocks/taint_soil_0",
+            "side": "thaumicaugmentation:blocks/void_stone_soil_taint",
+            "bottom": "thaumicaugmentation:blocks/void_stone_taint"
         }
     },
     "variants": {
         "normal": {
-            "model": "cube_all"
+            "model": "cube_bottom_top"
         },
         "inventory": {
-            "model": "cube_all",
+            "model": "cube_bottom_top",
             "transform": "forge:default-block"
         }
     }

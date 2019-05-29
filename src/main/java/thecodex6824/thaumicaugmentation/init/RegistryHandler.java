@@ -38,6 +38,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
 import thecodex6824.thaumicaugmentation.common.block.BlockDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
+import thecodex6824.thaumicaugmentation.common.block.BlockTaintFlower;
 import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
@@ -84,6 +85,7 @@ public class RegistryHandler {
         registry.register(setupBlock(new BlockDimensionalFracture(), "dimensional_fracture"));
         registry.register(setupBlock(new BlockArcaneTrapdoor(), "arcane_trapdoor_wood"));
         registry.register(setupBlock(new BlockArcaneTrapdoor(), "arcane_trapdoor_metal"));
+        registry.register(setupBlock(new BlockTaintFlower(), "taint_flower"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));

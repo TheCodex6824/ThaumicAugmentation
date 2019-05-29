@@ -33,7 +33,7 @@ thaumicaugmentation.text.bound_to_type=Bound block: %s
 thaumicaugmentation.text.bound_to_pos=Bound position: %s
 thaumicaugmentation.text.rift_seed_size=Size: %d
 thaumicaugmentation.text.rift_seed_grown=Grown
-thaumicaugmentation.text.rift_too_close=Another rift is nearby. Placing another would be a bad idea...
+thaumicaugmentation.text.rift_too_close=Another rift is nearby. Placing another would not work...
 thaumicaugmentation.text.no_fracture_target=This fracture does not lead anywhere...
 
 focus.thaumicaugmentation.light.name=Light
@@ -55,7 +55,6 @@ thaumicaugmentation.research.gauntlet_void.2=It seems my previous conjecture has
 
 thaumicaugmentation.research.vis_regenerator.title=Vis Regenerator
 thaumicaugmentation.research.vis_regenerator.0=As I have come to experience, a session of advanced arcane crafting or foci casting can leave the aura completely depleted. I should try to find something that can help regenerate the aura a bit quicker than letting it recover naturally.
-research.f_LEAFSILVERWOOD.text=Something that can replenish the aura
 thaumicaugmentation.research.vis_regenerator.1=I have drawn up plans for a device I am calling the Vis Regenerator. It consists of a lattice layer, made of silverwood leaves and an essentia filter, with an outer casing that attempts to "recirculate" the aura through the lattice.<BR>An interesting characteristic of this device is that the effectiveness seems to be tied to the total capacity of the local aura. In other words, areas that naturally have a low amount of vis will experience a higher rate of regeneration.<BR>If I need to disable the Vis Regenerator for any reason, applying a redstone signal should do the job.
 thaumicaugmentation.research.vis_regenerator.2=Because of the Vis Regenerator's delicate relationship with the local aura, I should avoid using it in areas with a lot of flux. I have a feeling it would the make aura pollution much worse...
 
@@ -77,7 +76,7 @@ thaumicaugmentation.research.warded_arcana.2=By taking a mundane chest and apply
 
 thaumicaugmentation.research.arcane_door.title=Arcane Door
 thaumicaugmentation.research.arcane_door.0=Now that I have the basics of warding objects down, I think I can move on to something a bit more advanced. The original manuscripts I read described an indestructable door, which sounds like something worth researching. After all, replacing doors broken down by zombies does get annoying after a while...
-thaumicaugmentation.research.arcane_door.1=I have managed to create the warded door described in the manuscript, which I am calling the Arcane Door. Just like the Warded Chest, the doors will only open for their owner, and are extremely difficult to remove by normal means. I have also made two different styles - wood and thaumium. They both are functionally the same, but it is nice to have options for decoration purposes.<BR>If I want to remove the door, I need to sneak and then use the bottom half of it with any casting gauntlet.
+thaumicaugmentation.research.arcane_door.1=I have managed to create the warded door described in the manuscript, which I am calling the Arcane Door. Just like the Warded Chest, the doors will only open for their owner, and are extremely difficult to remove by normal means. I have also made two different styles - wood and thaumium. They both are functionally the same, but it is nice to have options for decoration purposes.<BR>If I want to remove the door, I need to sneak and then use the bottom half of it with any casting gauntlet.<BR>I have also created trapdoor forms of these doors. They work in the same way as the normal doors, just in a smaller profile.
 
 thaumicaugmentation.research.ward_keys.title=Access Control
 thaumicaugmentation.research.ward_keys.0=Being able to have private objects is nice and all, but sometimes I need to share my belongings with fellow Thaumaturges. I should devise a way to selectively grant access to those I want to permit.

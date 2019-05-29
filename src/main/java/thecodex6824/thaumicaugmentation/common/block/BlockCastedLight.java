@@ -51,7 +51,6 @@ import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 public class BlockCastedLight extends BlockTABase implements ILightSourceBlock, IItemBlockProvider {
 
     protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.375, 0.375, 0.375, 0.625, 0.625, 0.625);
-    protected static final AxisAlignedBB COLLISION_BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
     public BlockCastedLight() {
         super(Material.CLOTH);
@@ -103,7 +102,7 @@ public class BlockCastedLight extends BlockTABase implements ILightSourceBlock, 
 
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        return COLLISION_BOUNDING_BOX;
+        return null;
     }
 
     @Override

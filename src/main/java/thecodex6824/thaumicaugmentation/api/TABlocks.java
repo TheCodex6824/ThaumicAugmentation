@@ -40,10 +40,11 @@ public class TABlocks {
     public static final Block DIMENSIONAL_FRACTURE = null;
     public static final Block ARCANE_TRAPDOOR_WOOD = null;
     public static final Block ARCANE_TRAPDOOR_METAL = null;
+    public static final Block TAINT_FLOWER = null;
 
     public static Block[] getAllBlocks() {
         return new Block[] {VIS_REGENERATOR, WARDED_CHEST, ARCANE_DOOR, TEMPORARY_LIGHT, STONE,
-                DIMENSIONAL_FRACTURE, ARCANE_TRAPDOOR_WOOD, ARCANE_TRAPDOOR_METAL};
+                DIMENSIONAL_FRACTURE, ARCANE_TRAPDOOR_WOOD, ARCANE_TRAPDOOR_METAL, TAINT_FLOWER};
     }
 
 }

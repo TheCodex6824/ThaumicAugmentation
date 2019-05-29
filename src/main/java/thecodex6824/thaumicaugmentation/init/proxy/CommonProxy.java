@@ -71,6 +71,7 @@ public class CommonProxy implements ISidedProxy {
     @Override
     public void postInit() {
         WorldHandler.postInit();
+        MiscHandler.postInit();
     }
 
 }

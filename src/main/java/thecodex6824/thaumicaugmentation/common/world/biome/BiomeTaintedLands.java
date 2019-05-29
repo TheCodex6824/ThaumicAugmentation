@@ -29,6 +29,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.gen.feature.WorldGenerator;
 import thaumcraft.common.entities.monster.tainted.EntityTaintCrawler;
 import thaumcraft.common.entities.monster.tainted.EntityTaintacle;
 import thaumcraft.common.entities.monster.tainted.EntityTaintacleSmall;
@@ -36,9 +37,12 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
+import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenTaintFlower;
 
 public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFluxBiome {
 
+	protected static final WorldGenTaintFlower FLOWER_GENERATOR = new WorldGenTaintFlower();
+	
     public BiomeTaintedLands() {
         super(new BiomeProperties("Tainted Lands").setBaseHeight(-1.8F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
                 0xFF00FF).setWaterColor(0xFF00FF));
@@ -63,7 +67,7 @@ public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFlux
     
     @Override
     public float getBaseFluxConcentration() {
-        return 0.65F;
+        return 0.5F;
     }
 
     @Override
@@ -85,6 +89,11 @@ public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFlux
             if (!current.getBlock().isAir(current, world, new BlockPos(x, y, z)))
                 primer.setBlockState(cX, y, cZ, primer.getBlockState(cX, y + 1, cZ).isNormalCube() ? fillerBlock : topBlock);
         }
+    }
+    
+    @Override
+    public WorldGenerator getRandomWorldGenForGrass(Random rand) {
+    	return FLOWER_GENERATOR;
     }
 
     @Override

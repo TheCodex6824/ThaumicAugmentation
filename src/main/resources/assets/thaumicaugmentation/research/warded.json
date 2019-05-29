@@ -82,7 +82,9 @@
                     "text": "thaumicaugmentation.research.arcane_door.1",
                     "recipes": [
                         "thaumicaugmentation:ArcaneDoorWood",
-                        "thaumicaugmentation:ArcaneDoorMetal"
+                        "thaumicaugmentation:ArcaneDoorMetal",
+                        "thaumicaugmentation:ArcaneTrapdoorWood",
+                        "thaumicaugmentation:ArcaneTrapdoorMetal"
                     ]
                 }
             ]
