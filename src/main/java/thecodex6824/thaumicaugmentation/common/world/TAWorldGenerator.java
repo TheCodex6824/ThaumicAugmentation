@@ -122,7 +122,7 @@ public class TAWorldGenerator implements IWorldGenerator {
         }
         
         if (!ModConfig.CONFIG_MISC.wussMode)
-        	generateFractures(random, chunkX, chunkZ, world);
+            generateFractures(random, chunkX, chunkZ, world);
     }
 
 }

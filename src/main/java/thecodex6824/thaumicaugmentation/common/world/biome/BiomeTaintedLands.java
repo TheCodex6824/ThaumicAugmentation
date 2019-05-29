@@ -41,8 +41,8 @@ import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenTaintFlower
 
 public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFluxBiome {
 
-	protected static final WorldGenTaintFlower FLOWER_GENERATOR = new WorldGenTaintFlower();
-	
+    protected static final WorldGenTaintFlower FLOWER_GENERATOR = new WorldGenTaintFlower();
+    
     public BiomeTaintedLands() {
         super(new BiomeProperties("Tainted Lands").setBaseHeight(-1.8F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
                 0xFF00FF).setWaterColor(0xFF00FF));
@@ -93,7 +93,7 @@ public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFlux
     
     @Override
     public WorldGenerator getRandomWorldGenForGrass(Random rand) {
-    	return FLOWER_GENERATOR;
+        return FLOWER_GENERATOR;
     }
 
     @Override

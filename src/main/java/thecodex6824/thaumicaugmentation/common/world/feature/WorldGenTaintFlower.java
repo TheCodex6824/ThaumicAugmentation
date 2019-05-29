@@ -30,25 +30,25 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 
 public class WorldGenTaintFlower extends WorldGenerator {
 
-	public WorldGenTaintFlower() {
-		super();
-	}
-	
-	@Override
-	protected void setBlockAndNotifyAdequately(World world, BlockPos pos, IBlockState state) {
-		world.setBlockState(pos, state, 2 | 16);
-	}
-	
-	@Override
-	public boolean generate(World world, Random rand, BlockPos position) {
-		for (int i = 0; i < 64; ++i) {
+    public WorldGenTaintFlower() {
+        super();
+    }
+    
+    @Override
+    protected void setBlockAndNotifyAdequately(World world, BlockPos pos, IBlockState state) {
+        world.setBlockState(pos, state, 2 | 16);
+    }
+    
+    @Override
+    public boolean generate(World world, Random rand, BlockPos position) {
+        for (int i = 0; i < 64; ++i) {
             BlockPos blockpos = position.add(rand.nextInt(8) - rand.nextInt(8), rand.nextInt(4) - rand.nextInt(4), rand.nextInt(8) - rand.nextInt(8));
             if (world.isAirBlock(blockpos) && TABlocks.TAINT_FLOWER.canPlaceBlockAt(world, blockpos))
                 setBlockAndNotifyAdequately(world, blockpos, TABlocks.TAINT_FLOWER.getDefaultState());
         }
 
-		world.getChunk(position).checkLight();
+        world.getChunk(position).checkLight();
         return true;
-	}
-	
+    }
+    
 }

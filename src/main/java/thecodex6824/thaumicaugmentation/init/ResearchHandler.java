@@ -54,11 +54,11 @@ public class ResearchHandler {
         ScanningManager.addScannableThing(new ScanItem("f_LEAFSILVERWOOD", new ItemStack(BlocksTC.leafSilverwood)));
         ScanningManager.addScannableThing(new ScanBlock("!DIMENSIONALFRACTURE", new Block[] {TABlocks.DIMENSIONAL_FRACTURE}));
         ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONE", TABlocks.STONE.getDefaultState().withProperty(
-        		ITAStoneType.STONE_TYPE, StoneType.STONE_VOID)));
+                ITAStoneType.STONE_TYPE, StoneType.STONE_VOID)));
         ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONETAINTED", TABlocks.STONE.getDefaultState().withProperty(
-        		ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY)));
+                ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY)));
         ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONETAINTEDSOIL", TABlocks.STONE.getDefaultState().withProperty(
-        		ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY)));
+                ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY)));
         ScanningManager.addScannableThing(new ScanItem("!VOIDSTONE", new ItemStack(TABlocks.STONE)));
     }
 

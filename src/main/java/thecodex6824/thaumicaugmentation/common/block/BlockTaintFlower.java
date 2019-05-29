@@ -49,78 +49,78 @@ import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 
 public class BlockTaintFlower extends BlockTABase implements ITaintBlock, IPlantable, IShearable, IItemBlockProvider {
 
-	protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.05, 0, 0.05, 0.95, 1.0, 0.95);;
-	
-	public BlockTaintFlower() {
-		super(ThaumcraftMaterials.MATERIAL_TAINT);
-		setHardness(0.0F);
-		setSoundType(SoundsTC.GORE);
-	}
-	
-	@Override
-	public SoundType getSoundType() {
-		return SoundsTC.GORE;
-	}
-	
-	@Override
-	public void die(World world, BlockPos pos, IBlockState state) {}
-	
-	@Override
-	public IBlockState getPlant(IBlockAccess world, BlockPos pos) {
-		return getDefaultState();
-	}
-	
-	@Override
-	public EnumPlantType getPlantType(IBlockAccess world, BlockPos pos) {
-		return EnumPlantType.Plains;
-	}
-	
-	@Override
-	public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos) {
-		return true;
-	}
-	
-	@Override
-	public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
-		return NonNullList.withSize(1, new ItemStack(this, 1));
-	}
-	
-	@Override
-	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-		return NonNullList.create();
-	}
-	
-	protected boolean canStateSupportBlock(IBlockState state) {
-		return state.getBlock() == TABlocks.STONE && state.getValue(ITAStoneType.STONE_TYPE) == StoneType.SOIL_STONE_TAINT_NODECAY;
-	}
-	
-	@Override
-	public boolean canPlaceBlockAt(World world, BlockPos pos) {
-		return canStateSupportBlock(world.getBlockState(pos.down()));
-	}
-	
-	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
-		if (!canStateSupportBlock(world.getBlockState(pos.down())))
-			world.setBlockToAir(pos);
-	}
-	
-	@Override
-	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-		return 6;
-	}
-	
-	@Override
-	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-		return false;
-	}
-	
-	@Override
-	public boolean isPassable(IBlockAccess worldIn, BlockPos pos) {
-		return true;
-	}
-	
-	@Override
+    protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.05, 0, 0.05, 0.95, 1.0, 0.95);;
+    
+    public BlockTaintFlower() {
+        super(ThaumcraftMaterials.MATERIAL_TAINT);
+        setHardness(0.0F);
+        setSoundType(SoundsTC.GORE);
+    }
+    
+    @Override
+    public SoundType getSoundType() {
+        return SoundsTC.GORE;
+    }
+    
+    @Override
+    public void die(World world, BlockPos pos, IBlockState state) {}
+    
+    @Override
+    public IBlockState getPlant(IBlockAccess world, BlockPos pos) {
+        return getDefaultState();
+    }
+    
+    @Override
+    public EnumPlantType getPlantType(IBlockAccess world, BlockPos pos) {
+        return EnumPlantType.Plains;
+    }
+    
+    @Override
+    public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos) {
+        return true;
+    }
+    
+    @Override
+    public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
+        return NonNullList.withSize(1, new ItemStack(this, 1));
+    }
+    
+    @Override
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        return NonNullList.create();
+    }
+    
+    protected boolean canStateSupportBlock(IBlockState state) {
+        return state.getBlock() == TABlocks.STONE && state.getValue(ITAStoneType.STONE_TYPE) == StoneType.SOIL_STONE_TAINT_NODECAY;
+    }
+    
+    @Override
+    public boolean canPlaceBlockAt(World world, BlockPos pos) {
+        return canStateSupportBlock(world.getBlockState(pos.down()));
+    }
+    
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        if (!canStateSupportBlock(world.getBlockState(pos.down())))
+            world.setBlockToAir(pos);
+    }
+    
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return 6;
+    }
+    
+    @Override
+    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return false;
+    }
+    
+    @Override
+    public boolean isPassable(IBlockAccess worldIn, BlockPos pos) {
+        return true;
+    }
+    
+    @Override
     public boolean isFullCube(IBlockState state) {
         return false;
     }
@@ -147,37 +147,37 @@ public class BlockTaintFlower extends BlockTABase implements ITaintBlock, IPlant
     
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-    	return BOUNDING_BOX;
+        return BOUNDING_BOX;
     }
     
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-    	return null;
+        return null;
     }
-	
-	@Override
-	public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
-		return 3;
-	}
-	
-	@Override
-	public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
-		return 3;
-	}
-	
-	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
-		return BlockFaceShape.UNDEFINED;
-	}
-	
-	@Override
-	public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-		return MapColor.PURPLE;
-	}
-	
-	@Override
-	public BlockRenderLayer getRenderLayer() {
-		return BlockRenderLayer.CUTOUT;
-	}
-	
+    
+    @Override
+    public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
+        return 3;
+    }
+    
+    @Override
+    public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
+        return 3;
+    }
+    
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+        return BlockFaceShape.UNDEFINED;
+    }
+    
+    @Override
+    public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        return MapColor.PURPLE;
+    }
+    
+    @Override
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
+    }
+    
 }

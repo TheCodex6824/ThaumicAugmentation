@@ -51,28 +51,28 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
             }
 
             if (!tall || rand.nextBoolean()) {
-	            for (int y = 0; y < height; ++y) {
-	                float f = (1.0F - y / (float) height) * width;
-	                int l = MathHelper.ceil(f);
-	                for (int x = -l; x <= l; ++x) {
-	                    float f1 = MathHelper.abs(x) - 0.25F;
-	                    for (int z = -l; z <= l; ++z) {
-	                        float f2 = MathHelper.abs(z) - 0.25F;
-	
-	                        if ((x == 0 && z == 0 || f1 * f1 + f2 * f2 <= f * f) && ((x != -l && x != l && z != -l && z != l) || rand.nextFloat() <= 0.75F)) {
-	                            BlockPos pos = position.add(x, y, z);
-	                            if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
-	                                setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
-	
-	                            if (y != 0 && l > 1) {
-	                                pos = position.add(x, -y, z);
-	                                if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
-	                                    setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
-	                            }
-	                        }
-	                    }
-	                }
-	            }
+                for (int y = 0; y < height; ++y) {
+                    float f = (1.0F - y / (float) height) * width;
+                    int l = MathHelper.ceil(f);
+                    for (int x = -l; x <= l; ++x) {
+                        float f1 = MathHelper.abs(x) - 0.25F;
+                        for (int z = -l; z <= l; ++z) {
+                            float f2 = MathHelper.abs(z) - 0.25F;
+    
+                            if ((x == 0 && z == 0 || f1 * f1 + f2 * f2 <= f * f) && ((x != -l && x != l && z != -l && z != l) || rand.nextFloat() <= 0.75F)) {
+                                BlockPos pos = position.add(x, y, z);
+                                if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
+                                    setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
+    
+                                if (y != 0 && l > 1) {
+                                    pos = position.add(x, -y, z);
+                                    if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
+                                        setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             int length = MathHelper.clamp(width - 1, 0, 1);
@@ -90,32 +90,32 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
 
                         setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
                         if (rand.nextBoolean()) {
-                        	if (x == -length || x == length) {
-                        		int zDir = rand.nextBoolean() ? 1 : -1;
-                        		int numBlocks = rand.nextInt(5) + 3;
-                        		numBlocks = numBlocks > 5 ? 1 : numBlocks;
-                        		int zOffset = 1;
-                        		for (int i = 0; i < numBlocks; ++i) {
-                        			if (world.isAirBlock(pos.add(0, 0, zOffset)))
-                        				setBlockAndNotifyAdequately(world, pos.add(0, 0, zOffset), world.getBiome(pos).fillerBlock);
-                        			
-                        			zOffset += zDir;
-                        		}
-                        	}
+                            if (x == -length || x == length) {
+                                int zDir = rand.nextBoolean() ? 1 : -1;
+                                int numBlocks = rand.nextInt(5) + 3;
+                                numBlocks = numBlocks > 5 ? 1 : numBlocks;
+                                int zOffset = 1;
+                                for (int i = 0; i < numBlocks; ++i) {
+                                    if (world.isAirBlock(pos.add(0, 0, zOffset)))
+                                        setBlockAndNotifyAdequately(world, pos.add(0, 0, zOffset), world.getBiome(pos).fillerBlock);
+                                    
+                                    zOffset += zDir;
+                                }
+                            }
                         }
                         else {
-                        	if (z == -length || z == length) {
-                        		int xDir = rand.nextBoolean() ? 1 : -1;
-                        		int numBlocks = rand.nextInt(5) + 3;
-                        		numBlocks = numBlocks > 5 ? 1 : numBlocks;
-                        		int xOffset = 1;
-                        		for (int i = 0; i < numBlocks; ++i) {
-                        			if (world.isAirBlock(pos.add(xOffset, 0, 0)))
-                        				setBlockAndNotifyAdequately(world, pos.add(xOffset, 0, 0), world.getBiome(pos).fillerBlock);
-                        			
-                        			xOffset += xDir;
-                        		}
-                        	}
+                            if (z == -length || z == length) {
+                                int xDir = rand.nextBoolean() ? 1 : -1;
+                                int numBlocks = rand.nextInt(5) + 3;
+                                numBlocks = numBlocks > 5 ? 1 : numBlocks;
+                                int xOffset = 1;
+                                for (int i = 0; i < numBlocks; ++i) {
+                                    if (world.isAirBlock(pos.add(xOffset, 0, 0)))
+                                        setBlockAndNotifyAdequately(world, pos.add(xOffset, 0, 0), world.getBiome(pos).fillerBlock);
+                                    
+                                    xOffset += xDir;
+                                }
+                            }
                         }
                         pos = pos.down();
                         --heightLeft;

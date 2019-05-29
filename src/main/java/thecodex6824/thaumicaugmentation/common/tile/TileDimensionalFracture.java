@@ -34,8 +34,8 @@ import thaumcraft.common.entities.monster.EntityEldritchGuardian;
 
 public class TileDimensionalFracture extends TileEntity implements ITickable {
 
-	protected static final int OPEN_TIME = 100;
-	
+    protected static final int OPEN_TIME = 100;
+    
     protected int linkedDim;
     protected BlockPos linkedTo;
     protected boolean linkLocated;
@@ -110,9 +110,9 @@ public class TileDimensionalFracture extends TileEntity implements ITickable {
     }
     
     public void close() {
-    	open = false;
-    	markDirty();
-    	world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+        open = false;
+        markDirty();
+        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
     }
 
     public boolean isOpening() {
@@ -120,11 +120,11 @@ public class TileDimensionalFracture extends TileEntity implements ITickable {
     }
     
     public boolean isOpen() {
-    	return open && timeOpened >= world.getTotalWorldTime() + OPEN_TIME;
+        return open && timeOpened >= world.getTotalWorldTime() + OPEN_TIME;
     }
     
     public long getTimeOpened() {
-    	return timeOpened;
+        return timeOpened;
     }
 
     @Override

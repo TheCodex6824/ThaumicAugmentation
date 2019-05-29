@@ -101,8 +101,8 @@ public class RenderDimensionalFracture extends TileEntitySpecialRenderer<TileDim
     }
 
     protected double lerp(double initial, double last, double currentTime, double timeOpened) {
-    	double factor = MathHelper.clamp((currentTime - timeOpened) / OPEN_TIME, 0, 1.0);
-    	return (1.0 - factor) * initial + factor * last;
+        double factor = MathHelper.clamp((currentTime - timeOpened) / OPEN_TIME, 0, 1.0);
+        return (1.0 - factor) * initial + factor * last;
     }
     
     @Override
