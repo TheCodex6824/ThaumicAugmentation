@@ -53,7 +53,7 @@ public final class TAItems {
     };
 
     public static Item[] getAllItems() {
-        return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR, KEY, VOID_BOOTS, RIFT_SEED};
+        return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR, KEY, VOID_BOOTS, RIFT_SEED, AUGMENT_CASTER_ELEMENTAL};
     }
 
 }

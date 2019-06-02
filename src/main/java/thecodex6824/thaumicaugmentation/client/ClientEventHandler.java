@@ -40,7 +40,7 @@ public final class ClientEventHandler {
     private static void handleAugmentTooltips(ItemTooltipEvent event, IAugmentableItem cap) {
         for (ItemStack augment : cap.getAllAugments()) {
             if (augment.getItem() instanceof IAugment) {
-                event.getToolTip().add("    " + new TextComponentTranslation(augment.getItem().getTranslationKey(augment)).getFormattedText());
+                event.getToolTip().add("    " + new TextComponentTranslation(augment.getItem().getTranslationKey(augment) + ".name").getFormattedText());
                 IAugment aug = (IAugment) augment.getItem();
                 if (aug.hasAdditionalAugmentTooltip(augment)) {
                     for (String s : aug.getAdditionalAugmentTooltip(augment))

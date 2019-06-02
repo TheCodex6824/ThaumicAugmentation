@@ -39,7 +39,7 @@
                 "METALLURGY@2"
             ],
             "location": [
-                1.5,
+                -1.5,
                 -1.5
             ],
             "stages": [
@@ -84,8 +84,8 @@
                 "~BASEINFUSION"
             ],
             "location": [
-                0,
-                -3
+                -3,
+                -0
             ],
             "stages": [
                 {
@@ -123,8 +123,8 @@
                 "HIDDEN"
             ],
             "location": [
-                -1.5,
-                -1.5
+                1.5,
+                1.5
             ],
             "stages": [
                 {

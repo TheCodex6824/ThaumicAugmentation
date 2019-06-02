@@ -30,6 +30,7 @@ import net.minecraft.world.biome.BiomeDecorator;
 import thaumcraft.common.entities.monster.boss.EntityTaintacleGiant;
 import thaumcraft.common.entities.monster.tainted.EntityTaintSeed;
 import thaumcraft.common.entities.monster.tainted.EntityTaintSeedPrime;
+import thaumcraft.common.lib.utils.EntityUtils;
 
 public class BiomeDecoratorTaintedLands extends BiomeDecorator {
     
@@ -38,8 +39,10 @@ public class BiomeDecoratorTaintedLands extends BiomeDecorator {
         if (!world.isAirBlock(p.down()) && world.getBlockState(p.down()).isNormalCube()) {
             EntityLiving thingToSpawn = null;
             int result = rand.nextInt(500);
-            if (result == 0)
+            if (result == 0) {
                 thingToSpawn = new EntityTaintacleGiant(world);
+                EntityUtils.makeChampion((EntityTaintacleGiant) thingToSpawn, true);
+            }
             else if (result < 51) {
                 thingToSpawn = new EntityTaintSeedPrime(world);
                 ((EntityTaintSeedPrime) thingToSpawn).boost = 1200;

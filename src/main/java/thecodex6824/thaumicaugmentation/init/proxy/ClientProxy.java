@@ -38,6 +38,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
@@ -123,6 +124,17 @@ public class ClientProxy extends CommonProxy {
             }
         };
         registerTo.registerItemColorHandler(dyeableMisc, TAItems.VOID_BOOTS);
+        
+        IItemColor elementalResonatorColor = new IItemColor() {
+            @Override
+            public int colorMultiplier(ItemStack stack, int tintIndex) {
+                if (tintIndex == 1 && stack.getItem() instanceof IAssociatedAspect)
+                    return ((IAssociatedAspect) stack.getItem()).getAspect(stack).getColor();
+                
+                return -1;
+            }
+        };
+        registerTo.registerItemColorHandler(elementalResonatorColor, TAItems.AUGMENT_CASTER_ELEMENTAL);
     }
 
 }

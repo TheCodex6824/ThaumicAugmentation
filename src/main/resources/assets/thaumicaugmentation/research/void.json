@@ -1,6 +1,49 @@
 {
     "entries": [
         {
+            "key": "RIFT_STUDIES",
+            "name": "thaumicaugmentation.research.rift_studies.title",
+            "icons": [
+                "thaumcraft:textures/research/r_fluxrift.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "THAUMIC_AUGMENTATION_BASE",
+                "~UNLOCKELDRITCH",
+                "~BASEINFUSION"
+            ],
+            "location": [
+                0,
+                -4
+            ],
+            "meta": [
+                "ROUND",
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.rift_studies.0",
+                    "required_item": [
+                        "thaumcraft:void_seed"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ELDRITCH;1"
+                    ],
+                    "warp": 1
+                },
+                {
+                    "text": "thaumicaugmentation.research.rift_studies.1",
+                    "recipes": [
+                        "thaumicaugmentation:RiftSeedFlux",
+                        "thaumicaugmentation:RiftSeedFluxGrowthFake20",
+                        "thaumicaugmentation:RiftSeedFluxGrowthFake30",
+                        "thaumicaugmentation:RiftSeedFluxGrowthFake100"
+                    ]
+                }
+            ]
+        },
+        {
             "key": "!VOIDSTONE",
             "name": "thaumicaugmentation.research.void_stone.title",
             "icons": [
@@ -9,8 +52,8 @@
             "category": "THAUMIC_AUGMENTATION",
             "parents": [],
             "location": [
-                3,
-                -3.5
+                -4,
+                -3
             ],
             "meta": [
                 "ROUND",
@@ -48,8 +91,8 @@
                 "!VOIDSTONE"
             ],
             "location": [
-                5,
-                -3.5
+                -2.5,
+                -3
             ],
             "meta": [
                 "HIDDEN"
@@ -58,13 +101,14 @@
                 {
                     "text": "thaumicaugmentation.research.void_stone_usage.0",
                     "required_item": [
-                        "thaumicaugmentation:stone;1;0"
+                        "thaumicaugmentation:stone;1;0",
+                        "thaumcraft:phial;1;1;{Aspects:[{amount:10,key:'alienis'}]}"
                     ],
                     "required_knowledge": [
                         "OBSERVATION;ELDRITCH;1",
                         "THEORY;ELDRITCH;1"
                     ],
-                    "warp": 2
+                    "warp": 1
                 },
                 {
                     "text": "thaumicaugmentation.research.void_stone_usage.1",
@@ -75,24 +119,27 @@
             ]
         },
         {
-            "key": "!DIMENSIONALFRACTURE",
-            "name": "thaumicaugmentation.research.dimensional_fracture.title",
+            "key": "HARNESSING_VOID",
+            "name": "thaumicaugmentation.research.harnessing_void.title",
             "icons": [
                 "thaumcraft:textures/research/r_fluxrift.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
-            "parents": [],
+            "parents": [
+                "RIFT_STUDIES",
+                "GAUNTLET_AUGMENTATION"
+            ],
             "location": [
-                7,
-                -3.5
+                4.5,
+                -3
             ],
             "meta": [
-                "ROUND",
+                "SPIKY",
                 "HIDDEN"
             ],
             "stages": [
                 {
-                    "text": "thaumicaugmentation.research.dimensional_fracture.0"
+                    "text": "thaumicaugmentation.research.harnessing_void.0"
                 }
             ]
         }

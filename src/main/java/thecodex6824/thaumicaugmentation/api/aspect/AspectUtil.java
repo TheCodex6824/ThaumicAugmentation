@@ -60,7 +60,7 @@ public final class AspectUtil {
     
     public static String getChatColorForAspect(Aspect aspect, Set<TextFormatting> forbiddenColors) {
         if (aspect.getChatcolor() != null)
-            return aspect.getChatcolor();
+            return '\u00a7' + aspect.getChatcolor();
         else {
             int smallestDistance = Integer.MAX_VALUE;
             String color = "";
