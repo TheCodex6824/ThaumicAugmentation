@@ -1,5 +1,7 @@
 Thaumic Augmentation
 ======
+**WARNING:** This is the *experimental* branch, which is where I keep the things I am currently working on. While you are welcome to try it out, I cannot guarantee that the experimental branch won't break worlds or be incompatible with future versions without notice. *Please* only use experimental versions if you understand the risks, **AND** ensure you are either using a disposable world or have backups.
+
 Thaumic Augmentation is a Thaumcraft addon for Minecraft 1.12 that tries to add new content that would fit in with the base mod. There's not *tons* of stuff yet, but more content is planned.
 
 For downloads, visit the [project's page on CurseForge](https://minecraft.curseforge.com/projects/thaumic-augmentation).
