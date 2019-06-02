@@ -18,18 +18,38 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.world;
+package thecodex6824.thaumicaugmentation.api.entity;
 
-import net.minecraft.world.DimensionType;
+import net.minecraft.util.math.BlockPos;
 
-public final class TADimensions {
+public interface IDimensionalFracture {
 
-    private TADimensions() {}
+    public void setLinkedPosition(BlockPos pos);
+
+    public BlockPos getLinkedPosition();
+
+    public void setLinkedDimension(int dim);
+
+    public int getLinkedDimension();
+
+    public void setLinkLocated();
+
+    public boolean wasLinkLocated();
+
+    public void setLinkInvalid();
+
+    public boolean isLinkInvalid();
+
+    public void open();
     
-    public static DimensionType EMPTINESS;
+    public void open(boolean skipTransition);
     
-    public static DimensionType[] getAllDimensions() {
-        return new DimensionType[] {EMPTINESS};
-    }
+    public void close();
 
+    public boolean isOpening();
+    
+    public boolean isOpen();
+    
+    public long getTimeOpened();
+    
 }

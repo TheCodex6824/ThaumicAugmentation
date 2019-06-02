@@ -36,8 +36,10 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.util.IModelProvider;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
-public class ModelRegistryHandler {
+public final class ModelRegistryHandler {
 
+    private ModelRegistryHandler() {}
+    
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
 

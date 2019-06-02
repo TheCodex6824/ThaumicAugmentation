@@ -40,7 +40,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
-import thecodex6824.thaumicaugmentation.common.util.BitUtils;
+import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockTAStone extends BlockTABase implements ITAStoneType, IItemBlockProvider {
 
@@ -76,7 +76,7 @@ public class BlockTAStone extends BlockTABase implements ITAStoneType, IItemBloc
     
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.fromMeta(BitUtils.getBits(meta, 0, 2)));
+        return getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.fromMeta(BitUtil.getBits(meta, 0, 2)));
     }
     
     @Override

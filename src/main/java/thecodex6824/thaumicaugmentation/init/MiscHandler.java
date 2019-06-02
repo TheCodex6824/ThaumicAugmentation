@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import java.util.Collections;
+
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import thaumcraft.api.aspects.Aspect;
@@ -29,10 +32,14 @@ import thaumcraft.api.casters.FocusEngine;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectLight;
 
-public class MiscHandler {
+public final class MiscHandler {
 
+    private MiscHandler() {}
+    
     public static void init() {
         FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 
                 Aspect.LIGHT.getColor());
@@ -61,6 +68,14 @@ public class MiscHandler {
         proxy.registerObjectTag(new ItemStack(TABlocks.TAINT_FLOWER), new AspectList().add(Aspect.FLUX, 10).add(Aspect.PLANT, 5));
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.VIS_REGENERATOR), new AspectList().add(Aspect.AURA, 20).add(Aspect.MECHANISM, 15).add(Aspect.ENERGY, 5));
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.WARDED_CHEST), new AspectList().add(Aspect.PROTECT, 7));
+    
+        AspectElementInteractionManager.init();
+        AugmentAPI.addAugmentItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
+            if (entity instanceof EntityLivingBase)
+                return ((EntityLivingBase) entity).getEquipmentAndArmor();
+            
+            return Collections.<ItemStack>emptyList();
+        });
     }
 
 }

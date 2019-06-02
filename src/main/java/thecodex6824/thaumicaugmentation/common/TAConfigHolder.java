@@ -59,8 +59,10 @@ import thecodex6824.thaumicaugmentation.common.network.TANetwork;
  */
 @Config(modid = ThaumicAugmentationAPI.MODID)
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
-public class TAConfigHolder {
+public final class TAConfigHolder {
 
+    private TAConfigHolder() {}
+    
     // TODO localize all the strings here
 
     @Name("GauntletVisDiscounts")
@@ -181,7 +183,7 @@ public class TAConfigHolder {
         "The chance for a fracture to generate in a chunk in the Void dimension.",
         "The approximate chance will be 1 / chance (assuming the chunk meets all other conditions)."
     })
-    public static int fractureGenChance = 50;
+    public static int fractureGenChance = 35;
     
     @Name("FractureDimList")
     @Comment({
@@ -212,7 +214,7 @@ public class TAConfigHolder {
         // erebus
         fractureDimList.put("66", 7);
         
-        // wizardy (slightly less because 2 dims)
+        // wizardry (slightly less because 2 dims)
         fractureDimList.put("33", 4);
         fractureDimList.put("34", 4);
     }

@@ -26,15 +26,17 @@ import com.sasmaster.glelwjgl.java.CoreGLE;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.common.tile.TileDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 
-public class RenderDimensionalFracture extends TileEntitySpecialRenderer<TileDimensionalFracture> {
+public class RenderDimensionalFracture extends Render<EntityDimensionalFracture> {
 
     protected static final ResourceLocation TEXTURE_CLOSED = new ResourceLocation("minecraft", "textures/environment/end_sky.png");
     protected static final ResourceLocation TEXTURE_OPEN = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
@@ -91,13 +93,14 @@ public class RenderDimensionalFracture extends TileEntitySpecialRenderer<TileDim
 
     protected CoreGLE gle;
 
-    public RenderDimensionalFracture() {
+    public RenderDimensionalFracture(RenderManager manager) {
+        super(manager);
         gle = new CoreGLE();
     }
 
     @Override
-    public boolean isGlobalRenderer(TileDimensionalFracture te) {
-        return EntityUtils.hasGoggles(Minecraft.getMinecraft().player);
+    protected ResourceLocation getEntityTexture(EntityDimensionalFracture entity) {
+        return entity.isOpen() ? TEXTURE_OPEN : TEXTURE_CLOSED;
     }
 
     protected double lerp(double initial, double last, double currentTime, double timeOpened) {
@@ -106,13 +109,13 @@ public class RenderDimensionalFracture extends TileEntitySpecialRenderer<TileDim
     }
     
     @Override
-    public void render(TileDimensionalFracture te, double x, double y, double z, float partialTicks, int destroyStage,
-            float alpha) {
+    public void doRender(EntityDimensionalFracture entity, double x, double y, double z, float yaw, float partialTicks) {
 
+        World world = entity.getEntityWorld();
         boolean isRevealing = EntityUtils.hasGoggles(Minecraft.getMinecraft().player);
 
         GL11.glPushMatrix();
-        bindTexture(te.isOpen() ? TEXTURE_OPEN : TEXTURE_CLOSED);
+        bindTexture(entity.isOpen() ? TEXTURE_OPEN : TEXTURE_CLOSED);
         GL11.glEnable(GL11.GL_BLEND);
         for (int layer = 0; layer < 4; ++layer) {
             if (layer != 3) {
@@ -128,23 +131,23 @@ public class RenderDimensionalFracture extends TileEntitySpecialRenderer<TileDim
             float[][] colorBuffer = new float[POINTS_CLOSED.length][4];
             double[] radiusBuffer = new double[POINTS_CLOSED.length];
             for (int i = 0; i < POINTS_CLOSED.length; ++i) {
-                double time = te.getWorld().getTotalWorldTime() + partialTicks;
+                double time = world.getTotalWorldTime() + partialTicks;
                 if (time > POINTS_CLOSED.length / 2)
                     time -= i * 10;
                 else if (time < POINTS_CLOSED.length / 2)
                     time += i * 10;
 
-                pointBuffer[i][0] = lerp(POINTS_CLOSED[i].x, POINTS_OPEN[i].x, te.getWorld().getTotalWorldTime(), te.getTimeOpened()) + x + Math.sin(time / 50) * 0.1;
-                pointBuffer[i][1] = lerp(POINTS_CLOSED[i].y, POINTS_OPEN[i].y, te.getWorld().getTotalWorldTime(), te.getTimeOpened()) + y + Math.sin(time / 60) * 0.1;
-                pointBuffer[i][2] = lerp(POINTS_CLOSED[i].z, POINTS_OPEN[i].z, te.getWorld().getTotalWorldTime(), te.getTimeOpened()) + z + Math.sin(time / 70) * 0.1;
+                pointBuffer[i][0] = lerp(POINTS_CLOSED[i].x, POINTS_OPEN[i].x, world.getTotalWorldTime(), entity.getTimeOpened()) + x - 0.5 + Math.sin(time / 50) * 0.1;
+                pointBuffer[i][1] = lerp(POINTS_CLOSED[i].y, POINTS_OPEN[i].y, world.getTotalWorldTime(), entity.getTimeOpened()) + y + 1.0 + Math.sin(time / 60) * 0.1;
+                pointBuffer[i][2] = lerp(POINTS_CLOSED[i].z, POINTS_OPEN[i].z, world.getTotalWorldTime(), entity.getTimeOpened()) + z - 0.5 + Math.sin(time / 70) * 0.1;
 
                 colorBuffer[i][0] = 1.0F;
                 colorBuffer[i][1] = 1.0F;
                 colorBuffer[i][2] = 1.0F;
-                colorBuffer[i][3] = (float) lerp(0.25F, 1.0F, te.getWorld().getTotalWorldTime(), te.getTimeOpened());
+                colorBuffer[i][3] = (float) lerp(0.25F, 1.0F, world.getTotalWorldTime(), entity.getTimeOpened());
 
                 double widthMultiplier = 1.0 - Math.sin(time / 8) * 0.1;
-                radiusBuffer[i] = lerp(WIDTHS_CLOSED[i], WIDTHS_OPEN[i], te.getWorld().getTotalWorldTime(), te.getTimeOpened()) * widthMultiplier * (layer != 3 ? 1.25 + 0.5 * layer : 1.0);
+                radiusBuffer[i] = lerp(WIDTHS_CLOSED[i], WIDTHS_OPEN[i], world.getTotalWorldTime(), entity.getTimeOpened()) * widthMultiplier * (layer != 3 ? 1.25 + 0.5 * layer : 1.0);
             }
 
             gle.set_POLYCYL_TESS(CoreGLE.GLE_TEXTURE_NORMAL_SPH);

@@ -28,4 +28,5 @@
  */
 @net.minecraftforge.fml.common.API(owner = ThaumicAugmentationAPI.MODID, provides = ThaumicAugmentationAPI.PROVIDES, 
     apiVersion = ThaumicAugmentationAPI.API_VERSION)
+@javax.annotation.ParametersAreNonnullByDefault
 package thecodex6824.thaumicaugmentation.api;

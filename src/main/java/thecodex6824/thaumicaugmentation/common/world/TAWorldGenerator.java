@@ -40,7 +40,7 @@ import thecodex6824.thaumicaugmentation.common.world.biome.IFluxBiome;
 import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenDimensionalFracture;
 
 public class TAWorldGenerator implements IWorldGenerator {
-
+    
     private static final int WORLD_BORDER_MAX = 29999984;
 
     private WorldGenDimensionalFracture fractureGen = new WorldGenDimensionalFracture();
@@ -84,7 +84,7 @@ public class TAWorldGenerator implements IWorldGenerator {
             BlockPos check = pos.add(0, y, 0);
             IBlockState state = world.getBlockState(check);
             if (state.getMaterial().blocksMovement() && !state.getBlock().isLeaves(state, world, check) &&
-                    !state.getBlock().isFoliage(world, check) && state.getBlockHardness(world, check) != -1.0F &&
+                    !state.getBlock().isFoliage(world, check) && state.getBlockHardness(world, check) >= 0.0F &&
                     world.getBlockState(check.up()).getBlock().isAir(world.getBlockState(check.up()), world, check))
                 return pos.add(0, y + 2, 0);
         }

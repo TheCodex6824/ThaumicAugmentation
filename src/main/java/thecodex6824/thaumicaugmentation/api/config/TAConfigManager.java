@@ -26,8 +26,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class TAConfigManager {
+public final class TAConfigManager {
 
+    private TAConfigManager() {}
+    
     private static ArrayList<ConfigOption<?>> config = new ArrayList<>();
 
     public static <T extends ConfigOption<?>> T addOption(T option) {

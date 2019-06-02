@@ -91,10 +91,10 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (player.isSneaking()) {
             player.getHeldItem(hand).setTagCompound(null);
-            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+            return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
         }
 
-        return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
+        return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
 }

@@ -25,8 +25,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
 @ObjectHolder(value = ThaumicAugmentationAPI.MODID)
-public class TABiomes {
+public final class TABiomes {
 
+    private TABiomes() {}
+    
     public static final Biome EMPTINESS = null;
     public static final Biome TAINTED_LANDS = null;
     

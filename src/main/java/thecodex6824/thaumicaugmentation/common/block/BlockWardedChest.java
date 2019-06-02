@@ -51,7 +51,7 @@ import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
-import thecodex6824.thaumicaugmentation.common.util.BitUtils;
+import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockWardedChest extends BlockTABase implements IHorizontallyDirectionalBlock, IItemBlockProvider {
 
@@ -75,12 +75,12 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
         // this is a legacy thing from when all blocks shared meta space
         // horizontal direction took bits 1 and 2 here (bit 0 was for enabled block)
         // yeah that system needed to go away a long time ago...
-        return BitUtils.setBits(0, 1, 3, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());
+        return BitUtil.setBits(0, 1, 3, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.byHorizontalIndex(BitUtils.getBits(meta, 1, 3)));
+        return getDefaultState().withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.byHorizontalIndex(BitUtil.getBits(meta, 1, 3)));
     }
 
     @Override

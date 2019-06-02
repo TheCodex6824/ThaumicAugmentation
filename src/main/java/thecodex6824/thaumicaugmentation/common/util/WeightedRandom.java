@@ -106,18 +106,18 @@ public class WeightedRandom<T extends Comparable<T>> {
     
     public WeightedRandom<T> removeChoice(T element) {
         ArrayList<T> newList = new ArrayList<>(choice);
-        ArrayList<Integer> weightList = new ArrayList<Integer>(Arrays.asList(ArrayUtils.toObject(weight)));
+        ArrayList<Integer> weightList = new ArrayList<>(Arrays.asList(ArrayUtils.toObject(weight)));
         int toRemoveIndex = linearSearch(newList, element);
         newList.remove(toRemoveIndex);
         int value = toRemoveIndex > 0 ? weightList.remove(toRemoveIndex) - weightList.get(toRemoveIndex - 1) : weightList.remove(toRemoveIndex);
         for (int i = toRemoveIndex; i < weightList.size(); ++i)
             weightList.set(i, weightList.get(i) - value);
-        return new WeightedRandom<T>(newList, ArrayUtils.toPrimitive(weightList.toArray(new Integer[weightList.size()])));
+        return new WeightedRandom<>(newList, ArrayUtils.toPrimitive(weightList.toArray(new Integer[weightList.size()])));
     }
     
     public WeightedRandom<T> removeChoice(Collection<T> toRemove) {
         ArrayList<T> newList = new ArrayList<>(choice);
-        ArrayList<Integer> weightList = new ArrayList<Integer>(Arrays.asList(ArrayUtils.toObject(weight)));
+        ArrayList<Integer> weightList = new ArrayList<>(Arrays.asList(ArrayUtils.toObject(weight)));
         for (T element : toRemove) {
             int toRemoveIndex = linearSearch(newList, element);
             newList.remove(toRemoveIndex);
@@ -125,7 +125,7 @@ public class WeightedRandom<T extends Comparable<T>> {
             for (int i = toRemoveIndex; i < weightList.size(); ++i)
                 weightList.set(i, weightList.get(i) - value);
         }
-        return new WeightedRandom<T>(newList, ArrayUtils.toPrimitive(weightList.toArray(new Integer[weightList.size()])));
+        return new WeightedRandom<>(newList, ArrayUtils.toPrimitive(weightList.toArray(new Integer[weightList.size()])));
     }
     
 }

@@ -18,31 +18,16 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.util;
+package thecodex6824.thaumicaugmentation.init;
 
-public class BitUtils {
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityAugmentableItemImpl;
 
-    public static boolean isBitSet(int meta, int bit) {
-        return ((meta >> bit) & 1) == 1;
+public final class CapabilityHandler {
+
+    private CapabilityHandler() {}
+    
+    public static void preInit() {
+        CapabilityAugmentableItemImpl.init();
     }
-
-    public static int getBits(int meta, int start, int end) {
-        int result = 0;
-        for (int i = start; i < end; ++i)
-            result |= (meta & (1 << i)) >>> start;
-
-            return result;
-    }
-
-    public static int setBit(int meta, int bit, boolean predicate) {
-        return predicate ? meta |= (1 << bit) : meta;
-    }
-
-    public static int setBits(int meta, int start, int end, int number) {
-        for (int i = start; i < end; ++i)
-            meta |= ((number & (1 << (i - start))) << start);
-
-        return meta;
-    }
-
+    
 }

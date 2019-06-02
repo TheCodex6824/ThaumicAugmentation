@@ -25,8 +25,10 @@ import java.util.Set;
 
 import net.minecraft.world.WorldProvider;
 
-public class WorldProviderCache {
+public final class WorldProviderCache {
 
+    private WorldProviderCache() {}
+    
     private static HashMap<Integer, WorldProvider> providers = new HashMap<>();
 
     public static void addOrReplaceProvider(WorldProvider provider) {

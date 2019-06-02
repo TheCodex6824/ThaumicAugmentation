@@ -29,15 +29,19 @@ import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ScanBlock;
 import thaumcraft.api.research.ScanBlockState;
+import thaumcraft.api.research.ScanEntity;
 import thaumcraft.api.research.ScanItem;
 import thaumcraft.api.research.ScanningManager;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
+import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 
-public class ResearchHandler {
+public final class ResearchHandler {
 
+    private ResearchHandler() {}
+    
     public static void init() {
         ResearchCategories.registerCategory("THAUMIC_AUGMENTATION", "FIRSTSTEPS", new AspectList(),
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/gui/base_research_icon.png"),
@@ -52,7 +56,7 @@ public class ResearchHandler {
         
         ScanningManager.addScannableThing(new ScanBlock("f_LEAFSILVERWOOD", new Block[] {BlocksTC.leafSilverwood}));
         ScanningManager.addScannableThing(new ScanItem("f_LEAFSILVERWOOD", new ItemStack(BlocksTC.leafSilverwood)));
-        ScanningManager.addScannableThing(new ScanBlock("!DIMENSIONALFRACTURE", new Block[] {TABlocks.DIMENSIONAL_FRACTURE}));
+        ScanningManager.addScannableThing(new ScanEntity("!DIMENSIONALFRACTURE", EntityDimensionalFracture.class, false));
         ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONE", TABlocks.STONE.getDefaultState().withProperty(
                 ITAStoneType.STONE_TYPE, StoneType.STONE_VOID)));
         ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONETAINTED", TABlocks.STONE.getDefaultState().withProperty(

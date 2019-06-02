@@ -31,6 +31,7 @@ import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperCommon;
+import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
 import thecodex6824.thaumicaugmentation.init.MiscHandler;
 import thecodex6824.thaumicaugmentation.init.RecipeHandler;
 import thecodex6824.thaumicaugmentation.init.ResearchHandler;
@@ -56,6 +57,7 @@ public class CommonProxy implements ISidedProxy {
     @Override
     public void preInit() {
         TAConfigHolder.preInit();
+        CapabilityHandler.preInit();
         WorldHandler.preInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
     }

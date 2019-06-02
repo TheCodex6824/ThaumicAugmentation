@@ -26,8 +26,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.common.lib.network.misc.PacketAuraToClient;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
-public class TANetwork {
+public final class TANetwork {
 
+    private TANetwork() {}
+    
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(ThaumicAugmentationAPI.MODID);
 
     public static void init() {
@@ -35,6 +37,7 @@ public class TANetwork {
         INSTANCE.registerMessage(PacketAuraToClient.class, PacketAuraToClient.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(PacketSpawnParticle.Handler.class, PacketSpawnParticle.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketAugmentableItemSync.Handler.class, PacketAugmentableItemSync.class, id++, Side.CLIENT);
     }
 
 }

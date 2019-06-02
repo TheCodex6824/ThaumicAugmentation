@@ -25,12 +25,16 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
@@ -38,8 +42,8 @@ import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
+import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
-import thecodex6824.thaumicaugmentation.common.tile.TileDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
@@ -62,6 +66,12 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit() {
         super.preInit();
+        RenderingRegistry.registerEntityRenderingHandler(EntityDimensionalFracture.class, new IRenderFactory<EntityDimensionalFracture>() {
+            @Override
+            public Render<EntityDimensionalFracture> createRenderFor(RenderManager manager) {
+                return new RenderDimensionalFracture(manager);
+            }
+        });
     }
 
     @Override
@@ -69,7 +79,6 @@ public class ClientProxy extends CommonProxy {
         super.init();
         ClientRegistry.bindTileEntitySpecialRenderer(TileVisRegenerator.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileWardedChest.class, new ListeningAnimatedTESR<>());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileDimensionalFracture.class, new RenderDimensionalFracture());
         registerItemColorHandlers();
     }
 

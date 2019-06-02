@@ -32,8 +32,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  * 
  */
 @ObjectHolder(ThaumicAugmentationAPI.MODID)
-public class TAItems {
+public final class TAItems {
 
+    private TAItems() {}
+    
     public static final Item GAUNTLET = null;
     public static final Item MATERIAL = null;
     public static final Item SEAL_COPIER = null;
@@ -41,6 +43,7 @@ public class TAItems {
     public static final Item KEY = null;
     public static final Item VOID_BOOTS = null;
     public static final Item RIFT_SEED = null;
+    public static final Item AUGMENT_CASTER_ELEMENTAL = null;
 
     public static CreativeTabs CREATIVE_TAB = new CreativeTabs(ThaumicAugmentationAPI.MODID) {
         @Override

@@ -30,8 +30,10 @@ import com.google.common.collect.MultimapBuilder;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PlayerMovementAbilityManager {
+public final class PlayerMovementAbilityManager {
 
+    private PlayerMovementAbilityManager() {}
+    
     public static enum MovementType {
         DRY_GROUND,
         WATER_GROUND,
@@ -41,7 +43,7 @@ public class PlayerMovementAbilityManager {
         STEP_HEIGHT
     }
 
-    private static class PlayerFunctions {
+    private static final class PlayerFunctions {
 
         public PlayerFunctions(BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> pred) {
             tickFunction = func;
@@ -71,7 +73,7 @@ public class PlayerMovementAbilityManager {
         public Predicate<EntityPlayer> continueFunction;
     }
 
-    private static class OldMovementData {
+    private static final class OldMovementData {
 
         public OldMovementData(float s, float j) {
             stepHeight = s;

@@ -26,8 +26,10 @@ package thecodex6824.thaumicaugmentation.api;
  * @author TheCodex6824
  * 
  */
-public class ThaumicAugmentationAPI {
+public final class ThaumicAugmentationAPI {
 
+    private ThaumicAugmentationAPI() {}
+    
     public static final String MODID = "thaumicaugmentation";
     public static final String NAME = "Thaumic Augmentation";
     public static final String PROVIDES = MODID + "api";

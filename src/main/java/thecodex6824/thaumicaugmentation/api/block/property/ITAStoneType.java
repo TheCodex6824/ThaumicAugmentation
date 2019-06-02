@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.api.block.property;
 
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -63,6 +65,7 @@ public interface ITAStoneType {
             return name().toLowerCase();
         }
         
+        @Nullable
         public static StoneType fromMeta(int id) {
             for (StoneType type : values()) {
                 if (type.getMeta() == id)

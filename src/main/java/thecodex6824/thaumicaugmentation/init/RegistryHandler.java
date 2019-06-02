@@ -28,6 +28,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
@@ -36,34 +38,39 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
-import thecodex6824.thaumicaugmentation.common.block.BlockDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
 import thecodex6824.thaumicaugmentation.common.block.BlockTaintFlower;
 import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
+import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
+import thecodex6824.thaumicaugmentation.common.item.ItemElementalAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
 import thecodex6824.thaumicaugmentation.common.item.ItemVoidBoots;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.recipe.AugmentAdditionRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.AugmentRemovalRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.AuthorizedKeyCreationRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.DyeableItemRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.ElementChangeRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumKeyCopyRecipe;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
-import thecodex6824.thaumicaugmentation.common.tile.TileDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeTaintedLands;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
-public class RegistryHandler {
+public final class RegistryHandler {
 
+    private RegistryHandler() {}
+    
     private static Block setupBlock(Block block, String name) {
         return block.setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, name)).setTranslationKey(
                 ThaumicAugmentationAPI.MODID + "." + name).setCreativeTab(TAItems.CREATIVE_TAB);
@@ -82,7 +89,6 @@ public class RegistryHandler {
         registry.register(setupBlock(new BlockArcaneDoor(), "arcane_door"));
         registry.register(setupBlock(new BlockCastedLight(), "temporary_light"));
         registry.register(setupBlock(new BlockTAStone(), "stone"));
-        registry.register(setupBlock(new BlockDimensionalFracture(), "dimensional_fracture"));
         registry.register(setupBlock(new BlockArcaneTrapdoor(), "arcane_trapdoor_wood"));
         registry.register(setupBlock(new BlockArcaneTrapdoor(), "arcane_trapdoor_metal"));
         registry.register(setupBlock(new BlockTaintFlower(), "taint_flower"));
@@ -91,7 +97,6 @@ public class RegistryHandler {
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
         GameRegistry.registerTileEntity(TileArcaneDoor.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_door"));
         GameRegistry.registerTileEntity(TileCastedLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "temporary_light"));
-        GameRegistry.registerTileEntity(TileDimensionalFracture.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "dimensional_fracture"));
         GameRegistry.registerTileEntity(TileArcaneTrapdoor.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_trapdoor"));
     }
 
@@ -110,6 +115,7 @@ public class RegistryHandler {
         registry.register(setupItem(new ItemKey(), "key"));
         registry.register(setupItem(new ItemVoidBoots(), "void_boots"));
         registry.register(setupItem(new ItemRiftSeed(), "rift_seed"));
+        registry.register(setupItem(new ItemElementalAugment(), "augment_caster_elemental"));
     }
 
     @SubscribeEvent
@@ -117,12 +123,23 @@ public class RegistryHandler {
         event.getRegistry().register(new DyeableItemRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "dyeable_item")));
         event.getRegistry().register(new AuthorizedKeyCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "bound_key_creation")));
         event.getRegistry().register(new ThaumiumKeyCopyRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_key_copy")));
+        event.getRegistry().register(new AugmentAdditionRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "augment_addition")));
+        event.getRegistry().register(new AugmentRemovalRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "augment_removal")));
+        event.getRegistry().register(new ElementChangeRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "element_swap")));
     }
 
     @SubscribeEvent
     public static void registerBiomes(RegistryEvent.Register<Biome> event) {
         event.getRegistry().register(new BiomeEmptiness().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness")));
         event.getRegistry().register(new BiomeTaintedLands().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "tainted_lands")));
+    }
+    
+    @SubscribeEvent
+    public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
+        int id = 0;
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityDimensionalFracture.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "dimensional_fracture"), id++).name(
+                "dimensional_fracture").tracker(128, 4, false).build());
     }
 
 }

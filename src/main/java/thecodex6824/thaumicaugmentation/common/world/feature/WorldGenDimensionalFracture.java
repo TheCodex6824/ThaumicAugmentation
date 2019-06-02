@@ -32,15 +32,12 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
-import thecodex6824.thaumicaugmentation.api.block.property.IDimensionalFractureBlock;
-import thecodex6824.thaumicaugmentation.api.block.property.IDimensionalFractureBlock.BlockType;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks.TerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
-import thecodex6824.thaumicaugmentation.common.tile.TileDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
 import thecodex6824.thaumicaugmentation.common.world.WorldProviderCache;
 
@@ -144,11 +141,11 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                     BlockPos pos = fracture.add(x, y, z);
                     IBlockState state = world.getBlockState(pos);
                     if (Math.abs(x) < 2 && Math.abs(y) < 2 && Math.abs(z) < 2) {
-                        if (!state.getBlock().isAir(state, world, pos) && state.getBlockHardness(world, pos) != -1.0F)
+                        if (!state.getBlock().isAir(state, world, pos) && state.getBlockHardness(world, pos) >= 0.0F)
                             setBlockAndNotifyAdequately(world, pos, Blocks.AIR.getDefaultState());
                     }
                     else {
-                        if ((!state.getBlock().isAir(state, world, pos) || (y == -2 && (Math.abs(x) != 3 || Math.abs(z) != 3))) && !state.getMaterial().isLiquid() && state.getBlockHardness(world, pos) != -1.0F) {
+                        if ((!state.getBlock().isAir(state, world, pos) || (y == -2 && (Math.abs(x) != 3 || Math.abs(z) != 3))) && !state.getMaterial().isLiquid() && state.getBlockHardness(world, pos) >= 0.0F) {
                             IBlockState up = world.getBlockState(pos.up());
                             setBlockAndNotifyAdequately(world, pos, up.getBlock().isAir(up, world, pos.up()) ? blocks.getTopState() : blocks.getFillerState());
                         }
@@ -168,15 +165,11 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                 if (Math.abs(scaled.getX()) < WORLD_BORDER_MAX && Math.abs(scaled.getZ()) < WORLD_BORDER_MAX) {
                     Biome linkedBiome = dim.getBiomeProvider().getBiome(scaled);
                     generateBiomeTerrain(world, rand, position, BiomeTerrainBlocks.getTerrainBlocksForBiome(linkedBiome));
-                    setBlockAndNotifyAdequately(world, position.down(), TABlocks.DIMENSIONAL_FRACTURE.getDefaultState());
-                    setBlockAndNotifyAdequately(world, position, TABlocks.DIMENSIONAL_FRACTURE.getDefaultState().withProperty(IDimensionalFractureBlock.BLOCK_TYPE, BlockType.MAIN));
-                    setBlockAndNotifyAdequately(world, position.up(), TABlocks.DIMENSIONAL_FRACTURE.getDefaultState());
-                    world.getChunk(position).checkLight();
-                    if (world.getTileEntity(position) instanceof TileDimensionalFracture) {
-                        TileDimensionalFracture tile = (TileDimensionalFracture) world.getTileEntity(position);
-                        tile.setLinkedDimension(dim.getDimension());
-                        tile.setLinkedPosition(scaled);
-                    }
+                    EntityDimensionalFracture fracture = new EntityDimensionalFracture(world);
+                    fracture.setLocationAndAngles(position.getX() + 0.5, position.getY() - 1.0, position.getZ() + 0.5, 0.0F, 0.0F);
+                    fracture.setLinkedDimension(dim.getDimension());
+                    fracture.setLinkedPosition(scaled);
+                    world.spawnEntity(fracture);
 
                     return true;
                 }
@@ -186,15 +179,11 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
             BlockPos scaled = scaleBlockPosReverse(world.provider, position);
             if (Math.abs(scaled.getX()) < WORLD_BORDER_MAX && Math.abs(scaled.getZ()) < WORLD_BORDER_MAX) {
                 generateBiomeTerrain(world, rand, position, BiomeTerrainBlocks.getTerrainBlocksForBiome(TABiomes.EMPTINESS));
-                setBlockAndNotifyAdequately(world, position.down(), TABlocks.DIMENSIONAL_FRACTURE.getDefaultState());
-                setBlockAndNotifyAdequately(world, position, TABlocks.DIMENSIONAL_FRACTURE.getDefaultState().withProperty(IDimensionalFractureBlock.BLOCK_TYPE, BlockType.MAIN));
-                setBlockAndNotifyAdequately(world, position.up(), TABlocks.DIMENSIONAL_FRACTURE.getDefaultState());
-                world.getChunk(position).checkLight();
-                if (world.getTileEntity(position) instanceof TileDimensionalFracture) {
-                    TileDimensionalFracture tile = (TileDimensionalFracture) world.getTileEntity(position);
-                    tile.setLinkedDimension(TADimensions.EMPTINESS.getId());
-                    tile.setLinkedPosition(scaled);
-                }
+                EntityDimensionalFracture fracture = new EntityDimensionalFracture(world);
+                fracture.setLocationAndAngles(position.getX() + 0.5, position.getY() - 1.0, position.getZ() + 0.5, 0.0F, 0.0F);
+                fracture.setLinkedDimension(TADimensions.EMPTINESS.getId());
+                fracture.setLinkedPosition(scaled);
+                world.spawnEntity(fracture);
 
                 return true;
             }

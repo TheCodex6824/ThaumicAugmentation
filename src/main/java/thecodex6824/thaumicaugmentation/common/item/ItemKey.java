@@ -149,16 +149,16 @@ public class ItemKey extends ItemTABase implements IWardAuthenticator {
                 stack.getTagCompound().setString("boundToDisplay", player.getName());
                 stack.getTagCompound().setInteger("boundToColor", generateKeyColor(player.getUniqueID().toString()));
                 player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_bound"), true);
-                return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+                return new ActionResult<>(EnumActionResult.SUCCESS, stack);
             }
             else if (player.isSneaking() && stack.hasTagCompound()) {
                 stack.setTagCompound(null);
                 player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_unbound"), true);
-                return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+                return new ActionResult<>(EnumActionResult.SUCCESS, stack);
             }
         }
 
-        return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
+        return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
     @Override

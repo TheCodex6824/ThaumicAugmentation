@@ -30,21 +30,22 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  * 
  */
 @ObjectHolder(ThaumicAugmentationAPI.MODID)
-public class TABlocks {
+public final class TABlocks {
 
+    private TABlocks() {}
+    
     public static final Block VIS_REGENERATOR = null;
     public static final Block WARDED_CHEST = null;
     public static final Block ARCANE_DOOR = null;
     public static final Block TEMPORARY_LIGHT = null;
     public static final Block STONE = null;
-    public static final Block DIMENSIONAL_FRACTURE = null;
     public static final Block ARCANE_TRAPDOOR_WOOD = null;
     public static final Block ARCANE_TRAPDOOR_METAL = null;
     public static final Block TAINT_FLOWER = null;
 
     public static Block[] getAllBlocks() {
         return new Block[] {VIS_REGENERATOR, WARDED_CHEST, ARCANE_DOOR, TEMPORARY_LIGHT, STONE,
-                DIMENSIONAL_FRACTURE, ARCANE_TRAPDOOR_WOOD, ARCANE_TRAPDOOR_METAL, TAINT_FLOWER};
+               ARCANE_TRAPDOOR_WOOD, ARCANE_TRAPDOOR_METAL, TAINT_FLOWER};
     }
 
 }

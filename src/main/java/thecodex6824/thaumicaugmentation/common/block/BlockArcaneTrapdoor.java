@@ -53,7 +53,7 @@ import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
-import thecodex6824.thaumicaugmentation.common.util.BitUtils;
+import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDirectionalBlock, IArcaneDoorHalf,
     IArcaneDoorOpen, IItemBlockProvider {
@@ -83,6 +83,7 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
                 IHorizontallyDirectionalBlock.DIRECTION, IArcaneDoorOpen.DOOR_OPEN});
     }
     
+    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if (state.getValue(IArcaneDoorOpen.DOOR_OPEN)) {
             switch ((EnumFacing)state.getValue(IHorizontallyDirectionalBlock.DIRECTION)) {
@@ -149,9 +150,9 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
     @Override
     public IBlockState getStateFromMeta(int meta) {
         IBlockState state = getDefaultState();
-        state = state.withProperty(IArcaneDoorHalf.DOOR_HALF, !BitUtils.isBitSet(meta, 0) ? ArcaneDoorHalf.LOWER : ArcaneDoorHalf.UPPER);
-        state = state.withProperty(IArcaneDoorOpen.DOOR_OPEN, BitUtils.isBitSet(meta, 1));
-        state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.byHorizontalIndex(BitUtils.getBits(meta, 2, 4)));
+        state = state.withProperty(IArcaneDoorHalf.DOOR_HALF, !BitUtil.isBitSet(meta, 0) ? ArcaneDoorHalf.LOWER : ArcaneDoorHalf.UPPER);
+        state = state.withProperty(IArcaneDoorOpen.DOOR_OPEN, BitUtil.isBitSet(meta, 1));
+        state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.byHorizontalIndex(BitUtil.getBits(meta, 2, 4)));
     
         return state;
     }
@@ -159,9 +160,9 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
     @Override
     public int getMetaFromState(IBlockState state) {
         int meta = 0;
-        meta = BitUtils.setBit(meta, 0, state.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.UPPER);
-        meta = BitUtils.setBit(meta, 1, state.getValue(IArcaneDoorOpen.DOOR_OPEN));
-        meta = BitUtils.setBits(meta, 2, 4, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());
+        meta = BitUtil.setBit(meta, 0, state.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.UPPER);
+        meta = BitUtil.setBit(meta, 1, state.getValue(IArcaneDoorOpen.DOOR_OPEN));
+        meta = BitUtil.setBits(meta, 2, 4, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());
 
         return meta;
     }

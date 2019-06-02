@@ -55,6 +55,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -78,8 +79,12 @@ import thaumcraft.common.world.aura.AuraChunk;
 import thaumcraft.common.world.aura.AuraHandler;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.augment.capability.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.event.AugmentEventHelper;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.item.ITieredCaster;
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityAugmentableItemImpl;
+import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectExchangeCompat;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -114,6 +119,12 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
                 return isStoringFocus(stack) ? 1.0F : 0.0F;
             }
         });
+    }
+    
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+        return new SimpleCapabilityProvider<>(new CapabilityAugmentableItemImpl.DefaultImpl(1), 
+                CapabilityAugmentableItem.AUGMENTABLE_ITEM);
     }
 
     @Override
@@ -343,8 +354,14 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         if (oldStack.getItem() instanceof ICaster && newStack.getItem() instanceof ICaster && isStoringFocus(oldStack) && isStoringFocus(newStack)) {
             ItemStack oldFocus = ((ICaster) oldStack.getItem()).getFocusStack(oldStack);
             ItemStack newFocus = ((ICaster) newStack.getItem()).getFocusStack(newStack);
-            return ((oldFocus == null && newFocus != null) || (oldFocus != null && newFocus == null) || ((ItemFocus) oldFocus.getItem()).getSortingHelper(oldFocus).hashCode() != 
+            if ((oldFocus == null && newFocus != null) || (oldFocus != null && newFocus == null))
+                return true;
+            else if (oldFocus != null && newFocus != null){
+                return (((ItemFocus) oldFocus.getItem()).getSortingHelper(oldFocus).hashCode() != 
                     ((ItemFocus) newFocus.getItem()).getSortingHelper(newFocus).hashCode());
+            }
+            else
+                return false;
         }
         else
             return oldStack.getItem() != newStack.getItem() || oldStack.getMetadata() != newStack.getMetadata();
@@ -367,8 +384,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
                     // TODO replace with something that doesn't hijack internal thaumcraft stuff
                     AuraChunk chunk = AuraHandler.getAuraChunk(world.provider.getDimension(), entity.chunkCoordX, entity.chunkCoordZ);
                     if (chunk != null)
-                        TANetwork.INSTANCE.sendTo(new PacketAuraToClient(chunk != null ? chunk : new AuraChunk(null, (short) 0, 0.0F, 0.0F)), 
-                                (EntityPlayerMP) entity);
+                        TANetwork.INSTANCE.sendTo(new PacketAuraToClient(chunk), (EntityPlayerMP) entity);
                 }
             }
         }
@@ -452,29 +468,33 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        if (isStoringFocus(player.getHeldItem(hand)) && !isCasterOnCooldown(player)) {
-            ItemStack focus = getFocusStack(player.getHeldItem(hand));
-            CasterManager.setCooldown(player, (int) (((ItemFocus) focus.getItem()).getActivationTime(focus) * getCasterCooldownModifier(player.getHeldItem(hand))));
+        ItemStack caster = player.getHeldItem(hand);
+        if (isStoringFocus(caster) && !isCasterOnCooldown(player)) {
+            ItemStack focus = getFocusStack(caster);
+            CasterManager.setCooldown(player, (int) (((ItemFocus) focus.getItem()).getActivationTime(focus) * getCasterCooldownModifier(caster)));
             FocusPackage core = ItemFocus.getPackage(focus);
             if (player.isSneaking()) {
                 for (IFocusElement element : core.nodes) {
                     if (element instanceof IFocusBlockPicker && player.isSneaking())
-                        return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
+                        return new ActionResult<>(EnumActionResult.PASS, caster);
                 }
             }
 
             if (world.isRemote)
-                return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+                return new ActionResult<>(EnumActionResult.SUCCESS, caster);
 
-            if (consumeVis(player.getHeldItem(hand), player, ((ItemFocus) focus.getItem()).getVisCost(focus), false, false)) {
+            if (consumeVis(caster, player, ((ItemFocus) focus.getItem()).getVisCost(focus), false, false)) {
                 FocusPackage copy = core.copy(player);
                 fixFoci(copy);
+                if (caster.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
+                    AugmentEventHelper.fireCastEvent(caster.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), caster, copy, player);
+   
                 FocusEngine.castFocusPackage(player, copy, true);
                 player.swingArm(hand);
-                return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+                return new ActionResult<>(EnumActionResult.SUCCESS, caster);
             }
 
-            return new ActionResult<ItemStack>(EnumActionResult.FAIL, player.getHeldItem(hand));
+            return new ActionResult<>(EnumActionResult.FAIL, caster);
         }
 
         return super.onItemRightClick(world, player, hand);

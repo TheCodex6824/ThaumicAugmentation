@@ -18,18 +18,15 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.world;
+package thecodex6824.thaumicaugmentation.api.item;
 
-import net.minecraft.world.DimensionType;
+import net.minecraft.item.ItemStack;
+import thaumcraft.api.aspects.Aspect;
 
-public final class TADimensions {
+public interface IAssociatedAspect {
 
-    private TADimensions() {}
+    public void setAspect(ItemStack stack, Aspect aspect);
     
-    public static DimensionType EMPTINESS;
+    public Aspect getAspect(ItemStack stack);
     
-    public static DimensionType[] getAllDimensions() {
-        return new DimensionType[] {EMPTINESS};
-    }
-
 }

@@ -18,18 +18,30 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.world;
+package thecodex6824.thaumicaugmentation.api.augment;
 
-import net.minecraft.world.DimensionType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 
-public final class TADimensions {
+public interface IAugmentableItem extends INBTSerializable<NBTTagCompound> {
 
-    private TADimensions() {}
+    public int getTotalAugmentSlots();
     
-    public static DimensionType EMPTINESS;
+    public boolean isAugmentAcceptable(ItemStack augment, int slot);
     
-    public static DimensionType[] getAllDimensions() {
-        return new DimensionType[] {EMPTINESS};
-    }
-
+    public void setAugment(ItemStack augment, int slot);
+    
+    public ItemStack getAugment(int slot);
+    
+    public ItemStack[] getAllAugments();
+    
+    public ItemStack[] setAllAugments(ItemStack[] augs);
+    
+    public ItemStack removeAugment(int slot);
+    
+    public int getNextAvailableSlot();
+    
+    public boolean isAugmented();
+    
 }

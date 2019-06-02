@@ -48,8 +48,10 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.recipe.RiftSeedFluxGrowthRecipe;
 
-public class RecipeHandler {
+public final class RecipeHandler {
 
+    private RecipeHandler() {}
+    
     private static final Field TRIGGER_RESEARCH;
     
     static {

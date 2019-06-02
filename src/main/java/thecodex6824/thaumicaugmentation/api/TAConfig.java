@@ -28,8 +28,10 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 
-public class TAConfig {
+public final class TAConfig {
 
+    private TAConfig() {}
+    
     public static ConfigOptionDoubleList gauntletVisDiscounts;
     public static ConfigOptionDoubleList gauntletCooldownModifiers;
 

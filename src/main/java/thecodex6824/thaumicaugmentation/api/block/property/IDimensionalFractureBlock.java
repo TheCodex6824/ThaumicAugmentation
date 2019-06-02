@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 
@@ -44,6 +46,7 @@ public interface IDimensionalFractureBlock {
             return name().toLowerCase();
         }
         
+        @Nullable
         public static BlockType fromMeta(int m) {
             for (BlockType t : values()) {
                 if (t.getMeta() == m)

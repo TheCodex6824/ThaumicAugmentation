@@ -58,7 +58,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorType;
 import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
-import thecodex6824.thaumicaugmentation.common.util.BitUtils;
+import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirectionalBlock, IArcaneDoorHalf, 
     IArcaneDoorHinge, IArcaneDoorOpen, IArcaneDoorType {
@@ -169,15 +169,15 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
     @Override
     public IBlockState getStateFromMeta(int meta) {
         IBlockState state = getDefaultState();
-        boolean isLower = !BitUtils.isBitSet(meta, 0);
+        boolean isLower = !BitUtil.isBitSet(meta, 0);
         state = state.withProperty(IArcaneDoorHalf.DOOR_HALF, isLower ? ArcaneDoorHalf.LOWER : ArcaneDoorHalf.UPPER);
         if (isLower) {
-            state = state.withProperty(IArcaneDoorType.TYPE, BitUtils.isBitSet(meta, 1) ? ArcaneDoorType.METAL : ArcaneDoorType.WOOD);
-            state = state.withProperty(IArcaneDoorOpen.DOOR_OPEN, BitUtils.isBitSet(meta, 2));
-            state = state.withProperty(IArcaneDoorHinge.HINGE_SIDE, BitUtils.isBitSet(meta, 3) ? EnumHingePosition.RIGHT : EnumHingePosition.LEFT);
+            state = state.withProperty(IArcaneDoorType.TYPE, BitUtil.isBitSet(meta, 1) ? ArcaneDoorType.METAL : ArcaneDoorType.WOOD);
+            state = state.withProperty(IArcaneDoorOpen.DOOR_OPEN, BitUtil.isBitSet(meta, 2));
+            state = state.withProperty(IArcaneDoorHinge.HINGE_SIDE, BitUtil.isBitSet(meta, 3) ? EnumHingePosition.RIGHT : EnumHingePosition.LEFT);
         }
         else
-            state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.byHorizontalIndex(BitUtils.getBits(meta, 1, 3)));
+            state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.byHorizontalIndex(BitUtil.getBits(meta, 1, 3)));
 
         return state;
     }
@@ -185,14 +185,14 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
     @Override
     public int getMetaFromState(IBlockState state) {
         int meta = 0;
-        meta = BitUtils.setBit(meta, 0, state.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.UPPER);
+        meta = BitUtil.setBit(meta, 0, state.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.UPPER);
         if (state.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.LOWER) {
-            meta = BitUtils.setBit(meta, 1, state.getValue(IArcaneDoorType.TYPE) == ArcaneDoorType.METAL);
-            meta = BitUtils.setBit(meta, 2, state.getValue(IArcaneDoorOpen.DOOR_OPEN));
-            meta = BitUtils.setBit(meta, 3, state.getValue(IArcaneDoorHinge.HINGE_SIDE) == EnumHingePosition.RIGHT);
+            meta = BitUtil.setBit(meta, 1, state.getValue(IArcaneDoorType.TYPE) == ArcaneDoorType.METAL);
+            meta = BitUtil.setBit(meta, 2, state.getValue(IArcaneDoorOpen.DOOR_OPEN));
+            meta = BitUtil.setBit(meta, 3, state.getValue(IArcaneDoorHinge.HINGE_SIDE) == EnumHingePosition.RIGHT);
         }
         else
-            meta = BitUtils.setBits(meta, 1, 3, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());
+            meta = BitUtil.setBits(meta, 1, 3, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());
 
         return meta;
     }

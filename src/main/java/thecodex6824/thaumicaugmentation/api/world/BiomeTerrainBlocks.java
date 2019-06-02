@@ -23,11 +23,12 @@ package thecodex6824.thaumicaugmentation.api.world;
 import java.util.HashMap;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 
-public class BiomeTerrainBlocks {
+public final class BiomeTerrainBlocks {
 
+    private BiomeTerrainBlocks() {}
+    
     public static class TerrainBlocks {
 
         private IBlockState top;
@@ -48,21 +49,21 @@ public class BiomeTerrainBlocks {
 
     }
 
-    private static HashMap<ResourceLocation, TerrainBlocks> terrain = new HashMap<>();
+    private static HashMap<String, TerrainBlocks> terrain = new HashMap<>();
 
     public static void init() {
         Biome.REGISTRY.forEach(biome -> {
-            terrain.put(biome.getRegistryName(), new TerrainBlocks(biome.topBlock, 
+            terrain.put(biome.getRegistryName().toString(), new TerrainBlocks(biome.topBlock, 
                     biome.fillerBlock));
         });
     }
 
     public static void registerBiomeOverride(Biome biome, IBlockState top, IBlockState filler) {
-        terrain.put(biome.getRegistryName(), new TerrainBlocks(top, filler));
+        terrain.put(biome.getRegistryName().toString(), new TerrainBlocks(top, filler));
     }
 
     public static TerrainBlocks getTerrainBlocksForBiome(Biome biome) {
-        return terrain.get(biome.getRegistryName());
+        return terrain.get(biome.getRegistryName().toString());
     }
 
 }

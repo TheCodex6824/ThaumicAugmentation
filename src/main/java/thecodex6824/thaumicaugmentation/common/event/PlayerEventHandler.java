@@ -31,17 +31,25 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thecodex6824.thaumicaugmentation.api.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.item.IArmorReduceFallDamage;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
-public class PlayerEventHandler {
+public final class PlayerEventHandler {
 
+    private PlayerEventHandler() {}
+    
     @SubscribeEvent
     public static void onJoin(PlayerLoggedInEvent event) {
         TAConfigHolder.loadOrSyncConfig(event.player);
+        if (ThaumcraftCapabilities.knowsResearchStrict(event.player, "FIRSTSTEPS") && 
+                !ThaumcraftCapabilities.knowsResearchStrict(event.player, "THAUMIC_AUGMENTATION_BASE")) {
+            
+            ThaumcraftCapabilities.getKnowledge(event.player).addResearch("THAUMIC_AUGMENTATION_BASE");
+        }
     }
 
     @SubscribeEvent

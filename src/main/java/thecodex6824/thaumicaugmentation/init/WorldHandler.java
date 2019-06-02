@@ -48,8 +48,10 @@ import thecodex6824.thaumicaugmentation.common.world.WorldProviderEmptiness;
  */
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
-public class WorldHandler {
+public final class WorldHandler {
 
+    private WorldHandler() {}
+    
     private static int findFreeDimensionID() {
         for (int i = 2; i < Integer.MAX_VALUE; ++i) {
             if (!DimensionManager.isDimensionRegistered(i))
