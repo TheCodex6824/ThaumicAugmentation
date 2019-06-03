@@ -36,11 +36,11 @@ thaumicaugmentation.text.rift_seed_size=Size: %d
 thaumicaugmentation.text.rift_seed_grown=Grown
 thaumicaugmentation.text.rift_too_close=Another rift is nearby. Placing another would not work...
 thaumicaugmentation.text.no_fracture_target=This fracture does not lead anywhere...
-thaumicaugmentation.text.augmented=Augmented
+thaumicaugmentation.text.augmented=§cAugmented§r (%d/%d)
 thaumicaugmentation.text.elemental_aspect=Aspect: %s
 
 focus.thaumicaugmentation.light.name=Light
-focus.thaumicaugmentation.light.text=Creates light at the target
+focus.thaumicaugmentation.light.text=Creates light at the target location. This light source will last forever, until it is broken.
 focus.thaumicaugmentation.light.intensity=Intensity
 
 tc.research_category.THAUMIC_AUGMENTATION=Augmentation

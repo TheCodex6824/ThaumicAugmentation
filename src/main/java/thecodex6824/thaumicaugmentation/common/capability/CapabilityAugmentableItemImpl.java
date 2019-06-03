@@ -104,6 +104,16 @@ public final class CapabilityAugmentableItemImpl {
         }
         
         @Override
+        public int getUsedAugmentSlots() {
+            for (int i = 0; i < augments.length; ++i) {
+                if (augments[i].isEmpty())
+                    return i;
+            }
+            
+            return getTotalAugmentSlots();
+        }
+        
+        @Override
         public int getTotalAugmentSlots() {
             return augments.length;
         }

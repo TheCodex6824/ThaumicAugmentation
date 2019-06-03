@@ -134,8 +134,8 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
     }
 
     @Override
-    public SoundType getSoundType() {
-        return SoundType.WOOD;
+    public Material getMaterial(IBlockState state) {
+        return state.getValue(IArcaneDoorType.TYPE) == ArcaneDoorType.METAL ? Material.IRON : Material.WOOD;
     }
 
     @Override

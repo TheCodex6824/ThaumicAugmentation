@@ -46,6 +46,7 @@ import thaumcraft.common.lib.crafting.DustTriggerMultiblock;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.common.recipe.ElementalAugmentCraftingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.RiftSeedFluxGrowthRecipe;
 
 public final class RecipeHandler {
@@ -261,6 +262,7 @@ public final class RecipeHandler {
                         'T', new ItemStack(ItemsTC.plate, 1, 2), 'I', new ItemStack(ItemsTC.plate, 1, 1), 'S', new ItemStack(TAItems.MATERIAL, 1, 1)
                 }
         ));
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentationGauntletElemental"), new ElementalAugmentCraftingRecipe());
     }
     
     private static String getDustTriggerResearch(DustTriggerMultiblock trigger) {

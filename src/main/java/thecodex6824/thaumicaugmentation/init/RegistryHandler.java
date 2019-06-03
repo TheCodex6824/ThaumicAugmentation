@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
@@ -89,8 +90,8 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockArcaneDoor(), "arcane_door"));
         registry.register(setupBlock(new BlockCastedLight(), "temporary_light"));
         registry.register(setupBlock(new BlockTAStone(), "stone"));
-        registry.register(setupBlock(new BlockArcaneTrapdoor(), "arcane_trapdoor_wood"));
-        registry.register(setupBlock(new BlockArcaneTrapdoor(), "arcane_trapdoor_metal"));
+        registry.register(setupBlock(new BlockArcaneTrapdoor(Material.WOOD), "arcane_trapdoor_wood"));
+        registry.register(setupBlock(new BlockArcaneTrapdoor(Material.IRON), "arcane_trapdoor_metal"));
         registry.register(setupBlock(new BlockTaintFlower(), "taint_flower"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));

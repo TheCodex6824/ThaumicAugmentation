@@ -26,6 +26,8 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 public interface IAugmentableItem extends INBTSerializable<NBTTagCompound> {
 
+    public int getUsedAugmentSlots();
+    
     public int getTotalAugmentSlots();
     
     public boolean isAugmentAcceptable(ItemStack augment, int slot);

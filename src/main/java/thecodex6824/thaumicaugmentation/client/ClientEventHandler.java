@@ -22,7 +22,6 @@ package thecodex6824.thaumicaugmentation.client;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -55,8 +54,8 @@ public final class ClientEventHandler {
         if (event.getItemStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
             IAugmentableItem cap = event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
             if (cap.isAugmented()) {
-                event.getToolTip().add(TextFormatting.BOLD + "" + TextFormatting.RED + new TextComponentTranslation(
-                        "thaumicaugmentation.text.augmented").getFormattedText());
+                event.getToolTip().add(new TextComponentTranslation("thaumicaugmentation.text.augmented", 
+                        cap.getUsedAugmentSlots(), cap.getTotalAugmentSlots()).getFormattedText());
                 handleAugmentTooltips(event, cap);
             }
         }

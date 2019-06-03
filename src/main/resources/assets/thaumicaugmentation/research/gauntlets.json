@@ -109,33 +109,27 @@
                 {
                     "text": "thaumicaugmentation.research.gauntlet_augmentation.0",
                     "required_item": [
-                        "thaumcraft:plate;1;2",
                         "thaumcraft:vis_resonator",
-                        "thaumcraft:fabric"
+                        "thaumcraft:crystal_essence;1;0;{Aspects:[{amount:1,key:'ordo'}]}"
                     ],
                     "required_knowledge": [
                         "OBSERVATION;AUROMANCY;1",
-                        "OBSERVATION;ALCHEMY;1",
                         "THEORY;AUROMANCY;1"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.gauntlet_augmentation.1",
-                    "required_item": [
-                        "thaumcraft:plate;1;2",
-                        "thaumcraft:vis_resonator",
-                        "thaumcraft:fabric"
+                    "required_craft": [
+                        "thaumicaugmentation:augment_caster_elemental"
                     ],
-                    "required_knowledge": [
-                        "OBSERVATION;AUROMANCY;1",
-                        "OBSERVATION;ALCHEMY;1",
-                        "THEORY;AUROMANCY;1"
+                    "recipes": [
+                        "thaumicaugmentation:AugmentGauntletElemental"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.gauntlet_augmentation.2",
                     "recipes": [
-                        "thaumicaugmentation:GauntletThaumium"
+                        "thaumicaugmentation:AugmentGauntletElemental"
                     ]
                 }
             ]

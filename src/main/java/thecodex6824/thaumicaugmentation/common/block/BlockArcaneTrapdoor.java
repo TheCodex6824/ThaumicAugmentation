@@ -65,8 +65,8 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
     protected static final AxisAlignedBB BOTTOM_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.1875D, 1.0D);
     protected static final AxisAlignedBB TOP_AABB = new AxisAlignedBB(0.0D, 0.8125D, 0.0D, 1.0D, 1.0D, 1.0D);
     
-    public BlockArcaneTrapdoor() {
-        super(Material.WOOD);
+    public BlockArcaneTrapdoor(Material type) {
+        super(type);
         setBlockUnbreakable();
         setResistance(Float.MAX_VALUE / 16.0F);
         IBlockState state = getDefaultState();
