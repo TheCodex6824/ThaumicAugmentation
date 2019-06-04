@@ -113,7 +113,7 @@ public final class RecipeHandler {
                     new FluxSeedGrowthRecipe());
             
             ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "EldritchStoneInfusion"), 
-                    new InfusionRecipe("VOID_STONE", new ItemStack(BlocksTC.stoneEldritchTile), 12, new AspectList().add(Aspect.ELDRITCH, 30), 
+                    new InfusionRecipe("VOID_STONE", new ItemStack(BlocksTC.stoneEldritchTile), 12, new AspectList().add(Aspect.ELDRITCH, 35), 
                     new ItemStack(TABlocks.STONE, 1, 0), new Object[] {
                             ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH), ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH)
                     }
@@ -280,7 +280,7 @@ public final class RecipeHandler {
      * of 1 for ancient and 2 for eldritch. However, the meta value is for the redstone inlay power
      * going through the pedestal (the arcane/ancient/eldritch pillars are their own blocks).
      * Removing the metadata requirement fixes the multiblocks. This was probably an oversight in
-     * the last few betas (since the stablizier mechanics were reworked)
+     * the last few betas (since the stablizier mechanics were reworked).
      */
     private static void fixInfusionAltarMultiblocks() {
         Part matrix = new Part(BlocksTC.infusionMatrix, null);

@@ -20,9 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import java.util.Collections;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -33,9 +37,15 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectEventProxy;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.aspects.AspectRegistryEvent;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
@@ -141,6 +151,40 @@ public final class RegistryHandler {
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityDimensionalFracture.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "dimensional_fracture"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".dimensional_fracture").tracker(128, 4, false).build());
+    }
+    
+    @SubscribeEvent
+    public static void registerAspects(AspectRegistryEvent event) {
+        AspectEventProxy proxy = event.register;
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 0), new AspectList().add(Aspect.PROTECT, 23));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 1), new AspectList().add(Aspect.PROTECT, 19));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.GAUNTLET, 1, 0), new AspectList().add(Aspect.MAGIC, 8));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.GAUNTLET, 1, 1), new AspectList().add(Aspect.ELDRITCH, 27).add(Aspect.VOID, 23));
+        proxy.registerObjectTag(new ItemStack(TAItems.KEY, 1, 0), new AspectList().add(Aspect.PROTECT, 5).add(Aspect.MIND, 10).add(Aspect.METAL, 3));
+        proxy.registerObjectTag(new ItemStack(TAItems.KEY, 1, 1), new AspectList().add(Aspect.PROTECT, 5).add(Aspect.MIND, 10).add(Aspect.METAL, 3));
+        proxy.registerObjectTag(new ItemStack(TAItems.KEY, 1, 2), new AspectList().add(Aspect.PROTECT, 5).add(Aspect.MIND, 10).add(Aspect.METAL, 3));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.MATERIAL, 1, 0), new AspectList().add(Aspect.AURA, 7).add(Aspect.PLANT, 6));
+        proxy.registerObjectTag(new ItemStack(TAItems.MATERIAL, 1, 1), new AspectList().add(Aspect.PROTECT, 15).add(Aspect.MIND, 10));
+        proxy.registerObjectTag(new ItemStack(TAItems.RIFT_SEED), new AspectList());
+        proxy.registerObjectTag(new ItemStack(TAItems.SEAL_COPIER), new AspectList().add(Aspect.MIND, 15).add(Aspect.TOOL, 5));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.VOID_BOOTS), new AspectList().add(Aspect.ELDRITCH, 43).add(Aspect.VOID, 23));
+        
+        proxy.registerComplexObjectTag(new ItemStack(TABlocks.ARCANE_TRAPDOOR_METAL), new AspectList().add(Aspect.PROTECT, 7));
+        proxy.registerComplexObjectTag(new ItemStack(TABlocks.ARCANE_TRAPDOOR_WOOD), new AspectList().add(Aspect.PROTECT, 7));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 0), new AspectList().add(Aspect.EARTH, 5).add(Aspect.VOID, 5).add(Aspect.DARKNESS, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 1), new AspectList().add(Aspect.EARTH, 3).add(Aspect.VOID, 3).add(Aspect.DARKNESS, 3).add(Aspect.FLUX, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 2), new AspectList().add(Aspect.EARTH, 3).add(Aspect.VOID, 3).add(Aspect.DARKNESS, 3).add(Aspect.FLUX, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.TAINT_FLOWER), new AspectList().add(Aspect.FLUX, 10).add(Aspect.PLANT, 5));
+        proxy.registerComplexObjectTag(new ItemStack(TABlocks.VIS_REGENERATOR), new AspectList().add(Aspect.AURA, 20).add(Aspect.MECHANISM, 15).add(Aspect.ENERGY, 5));
+        proxy.registerComplexObjectTag(new ItemStack(TABlocks.WARDED_CHEST), new AspectList().add(Aspect.PROTECT, 7));
+    
+        AspectElementInteractionManager.init();
+        AugmentAPI.addAugmentItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
+            if (entity instanceof EntityLivingBase)
+                return ((EntityLivingBase) entity).getEquipmentAndArmor();
+            
+            return Collections.<ItemStack>emptyList();
+        });
     }
 
 }
