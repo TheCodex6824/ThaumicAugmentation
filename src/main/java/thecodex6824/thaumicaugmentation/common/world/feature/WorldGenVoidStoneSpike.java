@@ -26,14 +26,24 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.common.world.biome.IBiomeSpecificSpikeBlockProvider;
 
 public class WorldGenVoidStoneSpike extends WorldGenerator {
 
     @Override
     protected void setBlockAndNotifyAdequately(World world, BlockPos pos, IBlockState state) {
         world.setBlockState(pos, state, 2 | 16);
+    }
+    
+    protected IBlockState getBlockStateToPlace(World world, BlockPos pos) {
+        Biome biome = world.getBiome(pos);
+        if (biome instanceof IBiomeSpecificSpikeBlockProvider)
+            return ((IBiomeSpecificSpikeBlockProvider) biome).getSpikeState(world, pos);
+        else
+            return biome.fillerBlock;
     }
     
     @Override
@@ -62,12 +72,12 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                             if ((x == 0 && z == 0 || f1 * f1 + f2 * f2 <= f * f) && ((x != -l && x != l && z != -l && z != l) || rand.nextFloat() <= 0.75F)) {
                                 BlockPos pos = position.add(x, y, z);
                                 if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
-                                    setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
+                                    setBlockAndNotifyAdequately(world, pos, getBlockStateToPlace(world, pos));
     
                                 if (y != 0 && l > 1) {
                                     pos = position.add(x, -y, z);
                                     if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
-                                        setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
+                                        setBlockAndNotifyAdequately(world, pos, getBlockStateToPlace(world, pos));
                                 }
                             }
                         }
@@ -85,10 +95,10 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                         heightLeft = rand.nextInt(5);
 
                     while (pos.getY() > 0) {
-                        if (!world.isAirBlock(pos) && world.getBlockState(pos).getBlock() != world.getBiome(pos).fillerBlock.getBlock())
+                        if (!world.isAirBlock(pos) && world.getBlockState(pos).getBlock() != getBlockStateToPlace(world, pos).getBlock())
                             break;
 
-                        setBlockAndNotifyAdequately(world, pos, world.getBiome(pos).fillerBlock);
+                        setBlockAndNotifyAdequately(world, pos, getBlockStateToPlace(world, pos));
                         if (rand.nextBoolean()) {
                             if (x == -length || x == length) {
                                 int zDir = rand.nextBoolean() ? 1 : -1;
@@ -97,7 +107,7 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                                 int zOffset = 1;
                                 for (int i = 0; i < numBlocks; ++i) {
                                     if (world.isAirBlock(pos.add(0, 0, zOffset)))
-                                        setBlockAndNotifyAdequately(world, pos.add(0, 0, zOffset), world.getBiome(pos).fillerBlock);
+                                        setBlockAndNotifyAdequately(world, pos.add(0, 0, zOffset), getBlockStateToPlace(world, pos));
                                     
                                     zOffset += zDir;
                                 }
@@ -111,7 +121,7 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                                 int xOffset = 1;
                                 for (int i = 0; i < numBlocks; ++i) {
                                     if (world.isAirBlock(pos.add(xOffset, 0, 0)))
-                                        setBlockAndNotifyAdequately(world, pos.add(xOffset, 0, 0), world.getBiome(pos).fillerBlock);
+                                        setBlockAndNotifyAdequately(world, pos.add(xOffset, 0, 0), getBlockStateToPlace(world, pos));
                                     
                                     xOffset += xDir;
                                 }

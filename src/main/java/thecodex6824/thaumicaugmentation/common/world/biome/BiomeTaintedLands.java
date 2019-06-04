@@ -39,7 +39,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneTyp
 import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenTaintFlower;
 
-public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFluxBiome {
+public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFluxBiome, IBiomeSpecificSpikeBlockProvider {
 
     protected static final WorldGenTaintFlower FLOWER_GENERATOR = new WorldGenTaintFlower();
     
@@ -50,7 +50,7 @@ public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFlux
         purgeSpawns();
         flowers.clear();
         topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY);
-        fillerBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY);
+        fillerBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
     }
     
     @Override
@@ -63,6 +63,11 @@ public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFlux
         
         spawnableWaterCreatureList.clear();
         spawnableCaveCreatureList.clear();
+    }
+    
+    @Override
+    public IBlockState getSpikeState(World world, BlockPos pos) {
+        return TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY);
     }
     
     @Override

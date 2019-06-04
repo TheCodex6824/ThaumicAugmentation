@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.common.world.biome;
 import java.util.Random;
 
 import net.minecraft.block.BlockFlower.EnumFlowerType;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -33,7 +34,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 
-public class BiomeEmptiness extends Biome implements IPurgeBiomeSpawns, IFluxBiome {
+public class BiomeEmptiness extends Biome implements IPurgeBiomeSpawns, IFluxBiome, IBiomeSpecificSpikeBlockProvider {
 
     public BiomeEmptiness() {
         super(new BiomeProperties("Emptiness").setBaseHeight(-1.8F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
@@ -51,6 +52,11 @@ public class BiomeEmptiness extends Biome implements IPurgeBiomeSpawns, IFluxBio
         spawnableMonsterList.clear();
         spawnableWaterCreatureList.clear();
         spawnableCaveCreatureList.clear();
+    }
+    
+    @Override
+    public IBlockState getSpikeState(World world, BlockPos pos) {
+        return fillerBlock;
     }
     
     @Override

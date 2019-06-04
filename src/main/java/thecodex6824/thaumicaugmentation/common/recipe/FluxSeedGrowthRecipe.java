@@ -27,18 +27,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.aspects.IEssentiaContainerItem;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 
-public class RiftSeedFluxGrowthRecipe extends InfusionRecipe {
+public class FluxSeedGrowthRecipe extends InfusionRecipe {
 
-    private static final ItemStack ALLOWED_STACK = new ItemStack(TAItems.RIFT_SEED, 1, 0);
+    private static final ItemStack ALLOWED_STACK = new ItemStack(TAItems.RIFT_SEED, 1, 1);
 
-    public RiftSeedFluxGrowthRecipe() {
-        super("RIFT_STUDIES", new ItemStack(TAItems.RIFT_SEED, 1, 0), 6, new AspectList().add(Aspect.FLUX, 25),
-                new ItemStack(TAItems.RIFT_SEED, 1, 0), new Object[] {});
+    public FluxSeedGrowthRecipe() {
+        super("RIFT_STUDIES", new ItemStack(TAItems.RIFT_SEED, 1, 1), 6, new AspectList().add(Aspect.FLUX, 50),
+                new ItemStack(TAItems.RIFT_SEED, 1, 1), new Object[] {});
     }
 
     @Override
@@ -52,12 +53,12 @@ public class RiftSeedFluxGrowthRecipe extends InfusionRecipe {
             return false;
 
         if (!(central.isItemEqual(ALLOWED_STACK) && ThaumcraftCapabilities.knowsResearch(player, research) &&
-                central.hasTagCompound() && central.getTagCompound().getInteger("riftSize") < 100 && 
+                central.hasTagCompound() && central.getTagCompound().getInteger("flux") < 1000 && 
                 !central.getTagCompound().getBoolean("grown")))
             return false;
 
         for (ItemStack stack : input) {
-            if (stack.getItem() != ItemsTC.voidSeed)
+            if (stack.getItem() != ItemsTC.crystalEssence || ((IEssentiaContainerItem) stack.getItem()).getAspects(stack).getAspects()[0] != Aspect.FLUX)
                 return false;
         }
 
@@ -66,13 +67,13 @@ public class RiftSeedFluxGrowthRecipe extends InfusionRecipe {
 
     @Override
     public AspectList getAspects(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
-        return new AspectList().add(Aspect.FLUX, comps.size() * 25);
+        return new AspectList().add(Aspect.FLUX, comps.size() * 50);
     }
 
     @Override
     public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
         ItemStack toReturn = input.copy();
-        toReturn.getTagCompound().setInteger("riftSize", comps.size() * 10 + 10);
+        toReturn.getTagCompound().setInteger("flux", comps.size() * 100 + 100);
         toReturn.getTagCompound().setBoolean("grown", true);
         return toReturn;
     }

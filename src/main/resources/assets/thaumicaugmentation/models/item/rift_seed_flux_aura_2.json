@@ -1,0 +1,38 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "thaumicaugmentation:items/rift_seed_flux_aura"
+    },
+    "display": {
+        "gui": {
+            "scale": [0.6, 0.6, 0.6]
+        },
+        "thirdperson_righthand": {
+            "scale": [0.15, 0.15, 0.15],
+            "translation": [0, 3, 1]
+        },
+        "thirdperson_lefthand": {
+            "scale": [-0.15, 0.15, 0.15],
+            "translation": [0, 3, 1]
+        },
+        "firstperson_righthand": {
+            "scale": [0.28, 0.28, 0.28],
+            "translation": [1.13, 3.2, 1.13],
+            "rotation": [0, -90, 25]
+        },
+        "firstperson_lefthand": {
+            "scale": [-0.28, 0.28, 0.28],
+            "translation": [1.13, 3.2, 1.13],
+            "rotation": [0, -90, 25]
+        },
+        "ground": {
+            "scale": [0.1, 0.1, 0.1],
+            "translation": [0, 2, 0],
+            "rotation": [0, 0, 0.5]
+        },
+        "fixed": {
+            "scale": [0.6, 0.6, 0.6],
+            "rotation": [0, 180, 0]
+        }
+    }
+}

@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.entity;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAreaEffectCloud;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +40,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import thaumcraft.common.entities.monster.EntityEldritchGuardian;
+import thaumcraft.common.entities.projectile.EntityFocusCloud;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.world.DimensionalFractureTeleporter;
 
@@ -119,6 +121,11 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     }
     
     @Override
+    public boolean canBeCollidedWith() {
+        return true;
+    }
+    
+    @Override
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote && getDataManager().get(open) && world.getTotalWorldTime() % 20 == 0 && world.getGameRules().getBoolean("doMobSpawning") && world.rand.nextInt(2000) < world.getDifficulty().getId()) {
@@ -139,7 +146,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                     world.destroyBlock(blockCheck.getBlockPos(), false);
             }
             for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox())) {
-                if (!entity.isDead)
+                if (!entity.isDead && !(entity instanceof EntityFocusCloud) && !(entity instanceof EntityAreaEffectCloud))
                     onCollide(entity);
             }
         }

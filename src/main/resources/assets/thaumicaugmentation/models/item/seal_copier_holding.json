@@ -1,0 +1,6 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "thaumicaugmentation:items/seal_copier_holding"
+    }
+}

@@ -145,7 +145,7 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                             setBlockAndNotifyAdequately(world, pos, Blocks.AIR.getDefaultState());
                     }
                     else {
-                        if ((!state.getBlock().isAir(state, world, pos) || (y == -2 && (Math.abs(x) != 3 || Math.abs(z) != 3))) && !state.getMaterial().isLiquid() && state.getBlockHardness(world, pos) >= 0.0F) {
+                        if ((!state.getBlock().isAir(state, world, pos) || (y == -2 && (Math.abs(x) != 3 || Math.abs(z) != 3))) && !state.getMaterial().isLiquid() && state.getBlockHardness(world, pos) >= 0.0F && state.isOpaqueCube()) {
                             IBlockState up = world.getBlockState(pos.up());
                             setBlockAndNotifyAdequately(world, pos, up.getBlock().isAir(up, world, pos.up()) ? blocks.getTopState() : blocks.getFillerState());
                         }

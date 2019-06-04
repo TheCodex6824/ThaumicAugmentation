@@ -20,22 +20,23 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-
 import thaumcraft.api.golems.ISealDisplayer;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.api.golems.seals.SealPos;
-
 import thaumcraft.common.golems.seals.SealHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
@@ -44,6 +45,15 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
     public ItemSealCopier() {
         super();
         setMaxStackSize(1);
+        addPropertyOverride(new ResourceLocation("holding"), new IItemPropertyGetter() {
+            @Override
+            public float apply(ItemStack stack, World world, EntityLivingBase entity) {
+                if (stack.hasTagCompound() && stack.getTagCompound().hasKey("seal", NBT.TAG_COMPOUND))
+                    return 1;
+                else
+                    return 0;
+            }
+        });
     }
 
     @Override

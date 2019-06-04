@@ -26,21 +26,19 @@ import net.minecraft.util.ResourceLocation;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.IEssentiaContainerItem;
-import thaumcraft.api.crafting.ShapedArcaneRecipe;
+import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
 
-public class ElementalAugmentCraftingRecipe extends ShapedArcaneRecipe {
+public class ElementalAugmentCraftingRecipe extends ShapelessArcaneRecipe {
 
     public ElementalAugmentCraftingRecipe() {
         super(new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentGauntletElemental"), "GAUNTLET_AUGMENTATION@2",
                 50, new AspectList().add(Aspect.AIR, 1).add(Aspect.EARTH, 1).add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 1).add(
                 Aspect.ORDER, 1).add(Aspect.WATER, 1), new ItemStack(TAItems.AUGMENT_CASTER_ELEMENTAL), new Object[] {
-                        " P ",
-                        "PCP",
-                        " P ", 'P', new ItemStack(ItemsTC.plate, 1, 2), 'C', new ItemStack(ItemsTC.crystalEssence)
+                        new ItemStack(ItemsTC.plate, 1, 2), new ItemStack(ItemsTC.crystalEssence), new ItemStack(ItemsTC.visResonator)
                 }
         );
     }

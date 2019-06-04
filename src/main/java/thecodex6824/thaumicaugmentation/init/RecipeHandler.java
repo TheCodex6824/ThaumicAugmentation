@@ -47,7 +47,7 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.recipe.ElementalAugmentCraftingRecipe;
-import thecodex6824.thaumicaugmentation.common.recipe.RiftSeedFluxGrowthRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.FluxSeedGrowthRecipe;
 
 public final class RecipeHandler {
 
@@ -93,24 +93,24 @@ public final class RecipeHandler {
             ));
 
             for (int i = 1; i < 4; ++i) {
-                ItemStack in = new ItemStack(TAItems.RIFT_SEED, 1, 0);
+                ItemStack in = new ItemStack(TAItems.RIFT_SEED, 1, 1);
                 in.setTagCompound(new NBTTagCompound());
-                in.getTagCompound().setInteger("riftSize", 10);
+                in.getTagCompound().setInteger("flux", 100);
                 in.getTagCompound().setBoolean("grown", false);
                 ItemStack out = in.copy();
-                out.getTagCompound().setInteger("riftSize", i == 3 ? 100 : i * 10 + 10);
+                out.getTagCompound().setInteger("flux", i == 3 ? 1000 : i * 100 + 100);
                 out.getTagCompound().setBoolean("grown", true);
                 Object[] inputs = new Object[i == 3 ? 9 : i];
                 for (int k = 0; k < (i == 3 ? 9 : i); ++k)
-                    inputs[k] = new ItemStack(ItemsTC.voidSeed);
+                    inputs[k] = ThaumcraftApiHelper.makeCrystal(Aspect.FLUX);
 
-                ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFluxGrowthFake" + (i == 3 ? 100 : i * 10 + 10)), 
-                        new InfusionRecipe("RIFT_STUDIES", out, i == 3 ? 9 : i, new AspectList().add(Aspect.FLUX, i == 3 ? 225 : i * 25),
+                ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "FluxSeedGrowthFake" + (i == 3 ? 1000 : i * 100 + 100)), 
+                        new InfusionRecipe("RIFT_STUDIES", out, i == 3 ? 9 : i, new AspectList().add(Aspect.FLUX, i == 3 ? 500 : i * 50),
                                 in, inputs));
             }
 
-            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFluxGrowth"), 
-                    new RiftSeedFluxGrowthRecipe());
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "FluxSeedGrowth"), 
+                    new FluxSeedGrowthRecipe());
             
             ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "EldritchStoneInfusion"), 
                     new InfusionRecipe("VOID_STONE", new ItemStack(BlocksTC.stoneEldritchTile), 12, new AspectList().add(Aspect.ELDRITCH, 30), 
@@ -121,12 +121,12 @@ public final class RecipeHandler {
     }
     
     private static void initCrucibleRecipes() {
-        ItemStack fluxSeedStack = new ItemStack(TAItems.RIFT_SEED, 1, 0);
+        ItemStack fluxSeedStack = new ItemStack(TAItems.RIFT_SEED, 1, 1);
         fluxSeedStack.setTagCompound(new NBTTagCompound());
-        fluxSeedStack.getTagCompound().setInteger("riftSize", 10);
-        ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftSeedFlux"), 
+        fluxSeedStack.getTagCompound().setInteger("flux", 100);
+        ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "FluxSeed"), 
                 new CrucibleRecipe("RIFT_STUDIES", fluxSeedStack, ItemsTC.voidSeed, 
-                        new AspectList().add(Aspect.FLUX, 50).add(Aspect.VOID, 25)));
+                        new AspectList().add(Aspect.FLUX, 50)));
     }
     
     private static void initArcaneCraftingRecipes() {

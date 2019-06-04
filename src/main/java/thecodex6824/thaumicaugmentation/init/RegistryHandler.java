@@ -140,7 +140,7 @@ public final class RegistryHandler {
         int id = 0;
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityDimensionalFracture.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "dimensional_fracture"), id++).name(
-                "dimensional_fracture").tracker(128, 4, false).build());
+                        ThaumicAugmentationAPI.MODID + ".dimensional_fracture").tracker(128, 4, false).build());
     }
 
 }

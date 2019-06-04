@@ -8,6 +8,7 @@ tile.thaumicaugmentation.stone.soil_stone_taint_nodecay.name=Tainted Void Stone 
 tile.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
 tile.thaumicaugmentation.arcane_trapdoor_wood.name=Wooden Arcane Trapdoor
 tile.thaumicaugmentation.arcane_trapdoor_metal.name=Thaumium Arcane Trapdoor
+tile.thaumicaugmentation.taint_flower.name=Taint Flower
 
 item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
 item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet
@@ -22,7 +23,10 @@ item.thaumicaugmentation.key.brass.name=Brass key
 item.thaumicaugmentation.key.thaumium.name=Thaumium Key
 item.thaumicaugmentation.void_boots.name=Boots of the Riftstrider
 item.thaumicaugmentation.rift_seed.flux.name=Flux Rift Seed
+item.thaumicaugmentation.rift_seed.flux_aura.name=Flux Seed
 item.thaumicaugmentation.augment_caster_elemental.name=Elemental Resonator
+
+entity.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
 
@@ -33,6 +37,8 @@ thaumicaugmentation.text.bound_to=Bound to: %s
 thaumicaugmentation.text.bound_to_type=Bound block: %s
 thaumicaugmentation.text.bound_to_pos=Bound position: %s
 thaumicaugmentation.text.rift_seed_size=Size: %d
+thaumicaugmentation.text.flux_seed_amount=Flux: %d
+thaumicaugmentation.text.rift_seed_phaseout=§oThis item is no longer craftable. But you have one, lucky you!
 thaumicaugmentation.text.rift_seed_grown=Grown
 thaumicaugmentation.text.rift_too_close=Another rift is nearby. Placing another would not work...
 thaumicaugmentation.text.no_fracture_target=This fracture does not lead anywhere...

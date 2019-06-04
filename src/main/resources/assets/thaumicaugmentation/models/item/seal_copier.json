@@ -2,5 +2,15 @@
     "parent": "item/handheld",
     "textures": {
         "layer0": "thaumicaugmentation:items/seal_copier"
-    }
+    },
+    "overrides": [
+        {
+            "predicate": {"holding": 0},
+            "model": "thaumicaugmentation:item/seal_copier_empty"
+        },
+        {
+            "predicate": {"holding": 1},
+            "model": "thaumicaugmentation:item/seal_copier_holding"
+        }
+    ]
 }

@@ -6,9 +6,36 @@
         }
     },
     "variants": {
-        "normal": {
-            "model": "cube_all"
-        },
+        "normal": [
+            {
+                "model": "cube_all",
+                "textures": {
+                    "all": "thaumicaugmentation:blocks/void_stone_taint"
+                }
+            },
+            {
+                "model": "cube_all",
+                "textures": {
+                    "all": "thaumicaugmentation:blocks/void_stone_taint"
+                },
+                "x": 90
+            },
+            {
+                "model": "cube_all",
+                "textures": {
+                    "all": "thaumicaugmentation:blocks/void_stone_taint"
+                },
+                "y": 90
+            },
+            {
+                "model": "cube_all",
+                "textures": {
+                    "all": "thaumicaugmentation:blocks/void_stone_taint"
+                },
+                "x": 90,
+                "y": 90
+            }
+        ],
         "inventory": {
             "model": "cube_all",
             "transform": "forge:default-block"
