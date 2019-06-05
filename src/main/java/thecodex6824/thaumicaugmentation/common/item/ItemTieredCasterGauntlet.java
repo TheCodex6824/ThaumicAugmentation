@@ -55,6 +55,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -80,7 +81,8 @@ import thaumcraft.common.world.aura.AuraHandler;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.augment.capability.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.event.AugmentEventHelper;
+import thecodex6824.thaumicaugmentation.api.event.CasterVisCostEvent;
+import thecodex6824.thaumicaugmentation.api.event.LivingCastEvent;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.item.ITieredCaster;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityAugmentableItemImpl;
@@ -123,13 +125,16 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new SimpleCapabilityProvider<>(new CapabilityAugmentableItemImpl.DefaultImpl(1), 
+        return new SimpleCapabilityProvider<>(new CapabilityAugmentableItemImpl.DefaultImpl(3), 
                 CapabilityAugmentableItem.AUGMENTABLE_ITEM);
     }
 
     @Override
     public boolean consumeVis(ItemStack stack, EntityPlayer user, float amount, boolean crafting, boolean simulate) {
         amount *= getConsumptionModifier(stack, user, crafting);
+        CasterVisCostEvent event = new CasterVisCostEvent(user, amount);
+        MinecraftForge.EVENT_BUS.post(event);
+        amount = event.getVisCost();
         if (stack.getMetadata() == 0 || TAConfig.voidseerArea.getValue() <= 1) {
             if (amount <= AuraHelper.getVis(user.getEntityWorld(), user.getPosition())) {
                 amount -= AuraHelper.drainVis(user.getEntityWorld(), user.getPosition(), amount, simulate);
@@ -486,12 +491,13 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
             if (consumeVis(caster, player, ((ItemFocus) focus.getItem()).getVisCost(focus), false, false)) {
                 FocusPackage copy = core.copy(player);
                 fixFoci(copy);
-                if (caster.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
-                    AugmentEventHelper.fireCastEvent(caster.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), caster, copy, player);
-   
-                FocusEngine.castFocusPackage(player, copy, true);
-                player.swingArm(hand);
-                return new ActionResult<>(EnumActionResult.SUCCESS, caster);
+                LivingCastEvent event = new LivingCastEvent(player, caster, copy);
+                MinecraftForge.EVENT_BUS.post(event);
+                if (!event.isCanceled()) {
+                    FocusEngine.castFocusPackage(player, copy, true);
+                    player.swingArm(hand);
+                    return new ActionResult<>(EnumActionResult.SUCCESS, caster);
+                }
             }
 
             return new ActionResult<>(EnumActionResult.FAIL, caster);

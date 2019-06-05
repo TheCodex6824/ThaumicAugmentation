@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.block.BlockFalling;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -32,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import thaumcraft.api.ThaumcraftMaterials;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks.TerrainBlocks;
@@ -145,7 +147,11 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                             setBlockAndNotifyAdequately(world, pos, Blocks.AIR.getDefaultState());
                     }
                     else {
-                        if ((!state.getBlock().isAir(state, world, pos) || (y == -2 && (Math.abs(x) != 3 || Math.abs(z) != 3))) && !state.getMaterial().isLiquid() && state.getBlockHardness(world, pos) >= 0.0F && state.isOpaqueCube()) {
+                        if (((!state.getBlock().isAir(state, world, pos) && (state.getMaterial() == Material.GRASS || state.getMaterial() == Material.GROUND || 
+                                state.getMaterial() == Material.ROCK || state.getMaterial() == Material.SAND || 
+                                state.getMaterial() == Material.SNOW || state.getMaterial() == Material.CLAY || state.getMaterial() == ThaumcraftMaterials.MATERIAL_TAINT)) || 
+                                (y == -2 && (Math.abs(x) != 3 || Math.abs(z) != 3))) && !state.getMaterial().isLiquid() && 
+                                state.getBlockHardness(world, pos) >= 0.0F) {
                             IBlockState up = world.getBlockState(pos.up());
                             setBlockAndNotifyAdequately(world, pos, up.getBlock().isAir(up, world, pos.up()) ? blocks.getTopState() : blocks.getFillerState());
                         }
@@ -166,7 +172,7 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                     Biome linkedBiome = dim.getBiomeProvider().getBiome(scaled);
                     generateBiomeTerrain(world, rand, position, BiomeTerrainBlocks.getTerrainBlocksForBiome(linkedBiome));
                     EntityDimensionalFracture fracture = new EntityDimensionalFracture(world);
-                    fracture.setLocationAndAngles(position.getX() + 0.5, position.getY() - 1.0, position.getZ() + 0.5, 0.0F, 0.0F);
+                    fracture.setLocationAndAngles(position.getX() + 0.5, position.getY() - 1.0, position.getZ() + 0.5, rand.nextInt(360), 0.0F);
                     fracture.setLinkedDimension(dim.getDimension());
                     fracture.setLinkedPosition(scaled);
                     world.spawnEntity(fracture);

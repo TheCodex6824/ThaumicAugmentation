@@ -79,7 +79,7 @@ public class ItemRiftSeed extends ItemTABase {
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
             EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-        if (!world.isRemote) {
+        if (!world.isRemote && player.canPlayerEdit(pos.offset(facing), facing, player.getHeldItem(hand))) {
             BlockPos offset = pos.offset(facing);
             Vec3d position = new Vec3d(offset.getX() + 0.5, offset.getY() + 0.5, offset.getZ() + 0.5);
             ItemStack stack = player.getHeldItem(hand);

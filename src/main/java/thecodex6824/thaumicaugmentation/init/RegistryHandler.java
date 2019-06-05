@@ -75,6 +75,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
+import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessHighlands;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeTaintedLands;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
@@ -143,6 +144,7 @@ public final class RegistryHandler {
     public static void registerBiomes(RegistryEvent.Register<Biome> event) {
         event.getRegistry().register(new BiomeEmptiness().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness")));
         event.getRegistry().register(new BiomeTaintedLands().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "tainted_lands")));
+        event.getRegistry().register(new BiomeEmptinessHighlands().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_highlands")));
     }
     
     @SubscribeEvent

@@ -18,23 +18,32 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.world;
+package thecodex6824.thaumicaugmentation.api.event;
 
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import thaumcraft.api.casters.FocusPackage;
 
-@ObjectHolder(value = ThaumicAugmentationAPI.MODID)
-public final class TABiomes {
+@Cancelable
+public class LivingCastEvent extends LivingEvent {
 
-    private TABiomes() {}
+    private FocusPackage fPackage;
+    private ItemStack caster;
     
-    public static final Biome EMPTINESS = null;
-    public static final Biome TAINTED_LANDS = null;
-    public static final Biome EMPTINESS_HIGHLANDS = null;
-    
-    public static Biome[] getAllBiomes() {
-        return new Biome[] {EMPTINESS, TAINTED_LANDS, EMPTINESS_HIGHLANDS};
+    public LivingCastEvent(EntityLivingBase castingEntity, ItemStack casterStack, FocusPackage castPackage) {
+        super(castingEntity);
+        caster = casterStack;
+        fPackage = castPackage;
     }
-
+    
+    public FocusPackage getFocusPackage() {
+        return fPackage;
+    }
+    
+    public ItemStack getCasterStack() {
+        return caster;
+    }
+    
 }

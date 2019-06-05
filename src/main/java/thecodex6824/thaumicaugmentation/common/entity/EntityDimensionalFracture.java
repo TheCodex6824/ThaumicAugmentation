@@ -74,7 +74,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     }
     
     protected void onCollide(Entity entity) {
-        if (!world.isRemote && entity.timeUntilPortal == 0) {
+        if (!world.isRemote && entity.timeUntilPortal == 0 && !entity.isRiding() && !entity.isBeingRidden() && entity.isNonBoss()) {
             if (true) {//tile.isOpen()) {
                 if (linkInvalid) {
                     if (world.getTotalWorldTime() % 20 == 0 && entity instanceof EntityPlayer)
@@ -118,11 +118,6 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                 }
             }
         }
-    }
-    
-    @Override
-    public boolean canBeCollidedWith() {
-        return true;
     }
     
     @Override

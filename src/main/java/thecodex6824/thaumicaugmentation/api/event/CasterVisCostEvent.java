@@ -18,23 +18,26 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.world;
+package thecodex6824.thaumicaugmentation.api.event;
 
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraftforge.event.entity.living.LivingEvent;
 
-@ObjectHolder(value = ThaumicAugmentationAPI.MODID)
-public final class TABiomes {
+public class CasterVisCostEvent extends LivingEvent {
 
-    private TABiomes() {}
+    private float cost;
     
-    public static final Biome EMPTINESS = null;
-    public static final Biome TAINTED_LANDS = null;
-    public static final Biome EMPTINESS_HIGHLANDS = null;
+    public CasterVisCostEvent(EntityLivingBase caster, float visCost) {
+        super(caster);
+        cost = visCost;
+    }
     
-    public static Biome[] getAllBiomes() {
-        return new Biome[] {EMPTINESS, TAINTED_LANDS, EMPTINESS_HIGHLANDS};
+    public float getVisCost() {
+        return cost;
+    }
+    
+    public void setVisCost(float newCost) {
+        cost = newCost;
     }
 
 }

@@ -93,7 +93,7 @@ public final class TAConfigHolder {
         "This is added to the base movement of the player per tick."
     })
     @RangeDouble(min = 0.0F, max = 10.0F)
-    public static double voidBootsLandSpeedBoost = 0.12;
+    public static double voidBootsLandSpeedBoost = 0.1;
 
     @Name("VoidBootsWaterSpeedBoost")
     @Comment({
@@ -101,7 +101,7 @@ public final class TAConfigHolder {
         "This is added to the base movement of the player per tick."
     })
     @RangeDouble(min = 0.0F, max = 10.0F)
-    public static double voidBootsWaterSpeedBoost = 0.075;
+    public static double voidBootsWaterSpeedBoost = 0.05;
 
     @Name("VoidBootsJumpBoost")
     @Comment({
@@ -109,7 +109,7 @@ public final class TAConfigHolder {
         "This is added to the base jump height of the player."
     })
     @RangeDouble(min = 0.0F, max = 10.0F)
-    public static double voidBootsJumpBoost = 0.45;
+    public static double voidBootsJumpBoost = 0.4;
 
     @Name("VoidBootsJumpFactor")
     @Comment({
@@ -117,7 +117,7 @@ public final class TAConfigHolder {
         "This itself is a speed, so it can make movement faster in the air than on the ground."
     })
     @RangeDouble(min = 0.0F, max = 10.0F)
-    public static double voidBootsJumpFactor = 0.05;
+    public static double voidBootsJumpFactor = 0.04;
 
     @Name("VoidBootsStepHeight")
     @Comment({

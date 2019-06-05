@@ -31,7 +31,7 @@ public class GenLayerEmptiness extends GenLayer {
 
     // multiple entries for easy weighting
     protected static final Biome[] ALLOWED_BIOMES = new Biome[] {TABiomes.EMPTINESS, TABiomes.TAINTED_LANDS,
-            TABiomes.EMPTINESS, TABiomes.EMPTINESS};
+            TABiomes.EMPTINESS, TABiomes.EMPTINESS, TABiomes.EMPTINESS_HIGHLANDS};
     
     public GenLayerEmptiness(long seed) {
         super(seed);
@@ -51,7 +51,6 @@ public class GenLayerEmptiness extends GenLayer {
         return ret;
     }
     
-    // it's 2019 and java doesn't have tuples/pairs. fun...
     public static GenLayer[] createLayers(long seed) {
         
         GenLayer biome = new GenLayerEmptiness(14676);
@@ -62,6 +61,7 @@ public class GenLayerEmptiness extends GenLayer {
         biome = new GenLayerZoom(10004, biome);
         biome = new GenLayerZoom(10005, biome);
         biome = new GenLayerZoom(10006, biome);
+        biome = new GenLayerZoom(10007, biome);
         
         GenLayer voronoiZoom = new GenLayerVoronoiZoom(10, biome);
         biome.initWorldGenSeed(seed);
