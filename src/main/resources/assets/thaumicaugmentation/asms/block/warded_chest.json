@@ -28,10 +28,10 @@
         "closed"
     ],
     "transitions": {
-        "opening": ["open", "closing"],
-        "open": "closing",
-        "closing": ["closed", "opening"],
-        "closed": "opening"
+        "opening": ["open", "closing", "closed"],
+        "open": ["closing", "closed", "opening"],
+        "closing": ["closed", "opening", "closing"],
+        "closed": ["opening", "open", "closing"]
     },
     "start_state": "closed"
 }

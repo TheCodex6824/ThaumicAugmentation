@@ -36,10 +36,10 @@
         "stopping"
     ],
     "transitions": {
-        "enabled": "stopping",
-        "disabled": "starting",
-        "starting": ["enabled", "stopping"],
-        "stopping": ["disabled", "starting"]
+        "enabled": ["stopping", "disabled", "starting"],
+        "disabled": ["starting", "enabled", "stopping"],
+        "starting": ["enabled", "stopping", "disabled"],
+        "stopping": ["disabled", "starting", "enabled"]
     },
     "start_state": "disabled"
 }
