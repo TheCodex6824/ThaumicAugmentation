@@ -124,7 +124,7 @@ public final class PlayerMovementAbilityManager {
                 player.moveStrafing < -0.0001F)) {
 
             float normalized = (float) Math.sqrt(player.moveStrafing * player.moveStrafing + player.moveForward * player.moveForward);
-            player.moveRelative(factor * (Math.signum(player.moveStrafing) / normalized), 0.0F, factor * (Math.signum(player.moveForward) / normalized), 1.0F);
+            player.moveRelative(factor * (Math.signum(player.moveStrafing) / (normalized > 1 ? normalized : 1 / normalized)), 0.0F, factor * (Math.signum(player.moveForward) / (normalized > 1 ? normalized : 1 / normalized)), 1.0F);
         }
         else if (player.moveForward > 0.0001F || player.moveForward < -0.0001F)
             player.moveRelative(0.0F, 0.0F, factor * Math.signum(player.moveForward), 1.0F);

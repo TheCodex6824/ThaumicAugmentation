@@ -57,7 +57,9 @@ public class WorldEventHandler {
     @SuppressWarnings("unchecked")
     private static int getTCEventHandlerServerTicks() {
         try {
-            return ((Map<Integer, Integer>) TC_SERVER_TICKS.get(null)).get(TADimensions.EMPTINESS.getId());
+            Map<Integer, Integer> ticks = (Map<Integer, Integer>) TC_SERVER_TICKS.get(null);
+            if (ticks.containsKey(TADimensions.EMPTINESS.getId()))
+                return ((Map<Integer, Integer>) TC_SERVER_TICKS.get(null)).get(TADimensions.EMPTINESS.getId());
         }
         catch (Exception ex) {
             FMLCommonHandler.instance().raiseException(ex, "Failed to access Thaumcraft's ServerEvents#serverTicks", true);
@@ -66,7 +68,7 @@ public class WorldEventHandler {
         return 0;
     }
     
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onWorldTick(WorldTickEvent event) {
         if (event.side == Side.SERVER && event.phase == Phase.END && event.world.provider.getDimension() == TADimensions.EMPTINESS.getId() &&
                 getTCEventHandlerServerTicks() % 20 == 0)

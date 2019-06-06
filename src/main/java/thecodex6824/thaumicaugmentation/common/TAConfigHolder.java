@@ -205,6 +205,9 @@ public final class TAConfigHolder {
         // twilight forest
         fractureDimList.put("7", 7);
         
+        // atum 2
+        fractureDimList.put("17", 7);
+        
         // betweenlands
         fractureDimList.put("20", 7);
         

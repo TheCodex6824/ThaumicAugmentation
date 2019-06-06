@@ -74,14 +74,14 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
     
     protected static final double[] WIDTHS_CLOSED = new double[] {
             0,
-            0.001,
-            0.016,
-            0.04,
-            0.05,
-            0.05,
-            0.034,
-            0.016,
-            0.001,
+            0.0011,
+            0.0016,
+            0.004,
+            0.005,
+            0.005,
+            0.0034,
+            0.0016,
+            0.0001,
             0
     };
     protected static final double[] WIDTHS_OPEN = new double[] {
@@ -170,7 +170,7 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
             }
 
             gle.set_POLYCYL_TESS(CoreGLE.GLE_TEXTURE_NORMAL_SPH);
-            gle.gleSetJoinStyle(CoreGLE.TUBE_JN_ROUND);
+            gle.gleSetJoinStyle(CoreGLE.TUBE_JN_ANGLE);
             gle.glePolyCone(pointBuffer.length, pointBuffer, colorBuffer, radiusBuffer, 1.0F, 0.0F);
 
             GL11.glPopMatrix();
