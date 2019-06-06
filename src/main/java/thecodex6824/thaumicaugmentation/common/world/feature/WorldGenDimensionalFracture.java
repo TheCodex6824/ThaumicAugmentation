@@ -23,7 +23,6 @@ package thecodex6824.thaumicaugmentation.common.world.feature;
 import java.util.HashMap;
 import java.util.Random;
 
-import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -37,7 +36,6 @@ import thaumcraft.api.ThaumcraftMaterials;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks.TerrainBlocks;
-import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
@@ -132,14 +130,16 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
         world.setBlockState(pos, state, 2 | 16);
     }
 
+    protected boolean isMaterialReplaceable(Material mat) {
+        return mat == Material.AIR || mat == Material.GRASS || mat == Material.GROUND || mat == Material.ROCK || 
+                mat == Material.SAND || mat == Material.SNOW ||mat == Material.CLAY || mat == ThaumcraftMaterials.MATERIAL_TAINT;
+    }
+    
     protected void generateBiomeTerrain(World world, Random rand, BlockPos fracture, TerrainBlocks blocks) {
-
-        boolean oldFall = BlockFalling.fallInstantly;
-        BlockFalling.fallInstantly = false;
         int depth = rand.nextInt(2) + 1;
-        for (int x = -3; x < 4; ++x) {
-            for (int y = 3; y > -4 - depth; --y) {
-                for (int z = -3; z < 4; ++z) {
+        for (int x = -5; x < 6; ++x) {
+            for (int y = 5; y > -6 - depth; --y) {
+                for (int z = -5; z < 6; ++z) {
                     BlockPos pos = fracture.add(x, y, z);
                     IBlockState state = world.getBlockState(pos);
                     if (Math.abs(x) < 2 && Math.abs(y) < 2 && Math.abs(z) < 2) {
@@ -147,19 +147,17 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                             setBlockAndNotifyAdequately(world, pos, Blocks.AIR.getDefaultState());
                     }
                     else {
-                        if (((!state.getBlock().isAir(state, world, pos) && (state.getMaterial() == Material.GRASS || state.getMaterial() == Material.GROUND || 
-                                state.getMaterial() == Material.ROCK || state.getMaterial() == Material.SAND || 
-                                state.getMaterial() == Material.SNOW || state.getMaterial() == Material.CLAY || state.getMaterial() == ThaumcraftMaterials.MATERIAL_TAINT)) || 
-                                (y == -2 && (Math.abs(x) != 3 || Math.abs(z) != 3))) && !state.getMaterial().isLiquid() && 
-                                state.getBlockHardness(world, pos) >= 0.0F) {
-                            IBlockState up = world.getBlockState(pos.up());
-                            setBlockAndNotifyAdequately(world, pos, up.getBlock().isAir(up, world, pos.up()) ? blocks.getTopState() : blocks.getFillerState());
+                        if ((!world.isAirBlock(pos) || y < -1) && !state.getMaterial().isLiquid() && state.getBlockHardness(world, pos) >= 0.0F) {
+                            int chanceFactor = Math.abs(x) + Math.abs(y) + Math.abs(z);
+                            if (chanceFactor < 5 || rand.nextInt((chanceFactor - 4) * 2) == 0) {
+                                IBlockState up = world.getBlockState(pos.up());
+                                setBlockAndNotifyAdequately(world, pos, up.getBlock().isAir(up, world, pos.up()) ? blocks.getTopState() : blocks.getFillerState());
+                            }
                         }
                     }
                 }
             }
         }
-        BlockFalling.fallInstantly = oldFall;
     }
 
     @Override
@@ -184,14 +182,18 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
         else {
             BlockPos scaled = scaleBlockPosReverse(world.provider, position);
             if (Math.abs(scaled.getX()) < WORLD_BORDER_MAX && Math.abs(scaled.getZ()) < WORLD_BORDER_MAX) {
-                generateBiomeTerrain(world, rand, position, BiomeTerrainBlocks.getTerrainBlocksForBiome(TABiomes.EMPTINESS));
-                EntityDimensionalFracture fracture = new EntityDimensionalFracture(world);
-                fracture.setLocationAndAngles(position.getX() + 0.5, position.getY() - 1.0, position.getZ() + 0.5, 0.0F, 0.0F);
-                fracture.setLinkedDimension(TADimensions.EMPTINESS.getId());
-                fracture.setLinkedPosition(scaled);
-                world.spawnEntity(fracture);
-
-                return true;
+                WorldProvider dim = WorldProviderCache.getProvider(TADimensions.EMPTINESS.getId());
+                if (dim != null) {
+                    Biome linkedBiome = dim.getBiomeProvider().getBiome(scaled);
+                    generateBiomeTerrain(world, rand, position, BiomeTerrainBlocks.getTerrainBlocksForBiome(linkedBiome));
+                    EntityDimensionalFracture fracture = new EntityDimensionalFracture(world);
+                    fracture.setLocationAndAngles(position.getX() + 0.5, position.getY() - 1.0, position.getZ() + 0.5, 0.0F, 0.0F);
+                    fracture.setLinkedDimension(TADimensions.EMPTINESS.getId());
+                    fracture.setLinkedPosition(scaled);
+                    world.spawnEntity(fracture);
+    
+                    return true;
+                }
             }
         }
 

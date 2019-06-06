@@ -20,6 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer;
 
+import java.util.function.Consumer;
+
+import org.lwjgl.opengl.ARBShaderObjects;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -30,10 +34,23 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IRenderHandler;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
+import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
+import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager.Shader;
 
 public class RenderHandlerEmptinessSky extends IRenderHandler {
 
     protected static final ResourceLocation END_SKY_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
+    
+    protected static final Consumer<Shader> SHADER_CALLBACK = shader -> {
+        Minecraft mc = Minecraft.getMinecraft();
+        
+        int x = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "yaw");
+        ARBShaderObjects.glUniform1fARB(x, (float) (mc.player.rotationYaw * 2.0F * Math.PI / 360.0));
+        
+        int z = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "pitch");
+        ARBShaderObjects.glUniform1fARB(z, (float) (-mc.player.rotationPitch * 2.0F * Math.PI / 360.0));
+    };
     
     @Override
     public void render(float partialTicks, WorldClient world, Minecraft mc) {
@@ -45,6 +62,7 @@ public class RenderHandlerEmptinessSky extends IRenderHandler {
         RenderHelper.disableStandardItemLighting();
         GlStateManager.depthMask(false);
         mc.getRenderManager().renderEngine.bindTexture(END_SKY_TEXTURE);
+        TAShaderManager.enableShader(TAShaders.FRACTURE_SHADER, SHADER_CALLBACK);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
 
@@ -87,6 +105,7 @@ public class RenderHandlerEmptinessSky extends IRenderHandler {
             GlStateManager.popMatrix();
         }
 
+        TAShaderManager.disableShaders();
         GlStateManager.depthMask(true);
         GlStateManager.enableTexture2D();
         GlStateManager.enableAlpha();

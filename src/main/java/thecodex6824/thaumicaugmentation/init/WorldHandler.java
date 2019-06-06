@@ -102,6 +102,8 @@ public final class WorldHandler {
         BiomeDictionary.addTypes(TABiomes.EMPTINESS, Type.COLD, Type.SPARSE, Type.SPOOKY, Type.VOID);
         BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(TABiomes.TAINTED_LANDS, 0));
         BiomeDictionary.addTypes(TABiomes.TAINTED_LANDS, Type.COLD, Type.SPOOKY, Type.VOID);
+        BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(TABiomes.EMPTINESS_HIGHLANDS, 0));
+        BiomeDictionary.addTypes(TABiomes.EMPTINESS_HIGHLANDS, Type.COLD, Type.SPARSE, Type.SPOOKY, Type.VOID, Type.HILLS, Type.MOUNTAIN);
         
         GameRegistry.registerWorldGenerator(new TAWorldGenerator(), 20);
     }

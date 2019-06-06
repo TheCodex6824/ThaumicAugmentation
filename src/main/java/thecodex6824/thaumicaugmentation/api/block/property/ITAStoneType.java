@@ -34,15 +34,15 @@ import thaumcraft.common.lib.SoundsTC;
 public interface ITAStoneType {
 
     public enum StoneType implements IStringSerializable {
-        STONE_VOID(0, Material.ROCK, () -> SoundType.STONE),
-        STONE_TAINT_NODECAY(1, ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE),
-        SOIL_STONE_TAINT_NODECAY(2, ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE);
+        STONE_VOID(0, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundType.STONE),
+        STONE_TAINT_NODECAY(1, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE),
+        SOIL_STONE_TAINT_NODECAY(2, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE);
         
         private int meta;
-        private Material mat;
+        private Supplier<Material> mat;
         private Supplier<SoundType> sound;
         
-        private StoneType(int m, Material mt, Supplier<SoundType> s) {
+        private StoneType(int m, Supplier<Material> mt, Supplier<SoundType> s) {
             meta = m;
             mat = mt;
             sound = s;
@@ -53,7 +53,7 @@ public interface ITAStoneType {
         }
         
         public Material getMaterial() {
-            return mat;
+            return mat.get();
         }
         
         public SoundType getSoundType() {

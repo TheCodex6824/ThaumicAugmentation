@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer;
 
+import java.util.function.Consumer;
+
+import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 
 import com.sasmaster.glelwjgl.java.CoreGLE;
@@ -34,11 +37,14 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
+import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager.Shader;
+import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 
 public class RenderDimensionalFracture extends Render<EntityDimensionalFracture> {
 
-    protected static final ResourceLocation TEXTURE_CLOSED = new ResourceLocation("minecraft", "textures/environment/end_sky.png");
+    protected static final ResourceLocation TEXTURE_CLOSED = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
     protected static final ResourceLocation TEXTURE_OPEN = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
     protected static final double OPEN_TIME = 100;
     protected static final Vec3d[] POINTS_CLOSED = new Vec3d[] {
@@ -55,15 +61,15 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
     };
     protected static final Vec3d[] POINTS_OPEN = new Vec3d[] {
             new Vec3d(0.85, 1.97, 0.39),
-            new Vec3d(0.60, 1.77, 0.45),
-            new Vec3d(0.48, 1.35, 0.53),
-            new Vec3d(0.29, 1.10, 0.66),
-            new Vec3d(0.15, 0.80, 0.78),
-            new Vec3d(0.25, 0.45, 0.62),
-            new Vec3d(0.45, 0.10, 0.52),
-            new Vec3d(0.65, -0.25, 0.38),
-            new Vec3d(0.60, -0.55, 0.25),
-            new Vec3d(0.50, -0.85, 0.20)
+            new Vec3d(0.60, 1.77, 0.50),
+            new Vec3d(0.54, 1.35, 0.45),
+            new Vec3d(0.36, 1.10, 0.60),
+            new Vec3d(0.50, 0.80, 0.50),
+            new Vec3d(0.50, 0.15, 0.50),
+            new Vec3d(0.39, -0.10, 0.58),
+            new Vec3d(0.58, -0.45, 0.42),
+            new Vec3d(0.60, -0.75, 0.50),
+            new Vec3d(0.50, -0.95, 0.20)
     };
     
     protected static final double[] WIDTHS_CLOSED = new double[] {
@@ -80,15 +86,25 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
     };
     protected static final double[] WIDTHS_OPEN = new double[] {
             0,
-            0.002,
-            0.032,
-            0.08,
-            0.1,
-            0.1,
-            0.068,
-            0.032,
-            0.002,
+            0.052,
+            0.179,
+            0.216,
+            0.250,
+            0.250,
+            0.228,
+            0.172,
+            0.052,
             0
+    };
+    
+    protected static final Consumer<Shader> SHADER_CALLBACK = shader -> {
+        Minecraft mc = Minecraft.getMinecraft();
+        
+        int x = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "yaw");
+        ARBShaderObjects.glUniform1fARB(x, (float) (mc.player.rotationYaw * 2.0F * Math.PI / 360.0));
+        
+        int z = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "pitch");
+        ARBShaderObjects.glUniform1fARB(z, (float) (-mc.player.rotationPitch * 2.0F * Math.PI / 360.0));
     };
 
     protected CoreGLE gle;
@@ -116,6 +132,7 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
 
         GL11.glPushMatrix();
         bindTexture(entity.isOpen() ? TEXTURE_OPEN : TEXTURE_CLOSED);
+        TAShaderManager.enableShader(TAShaders.FRACTURE_SHADER, SHADER_CALLBACK);
         GL11.glEnable(GL11.GL_BLEND);
         for (int layer = 0; layer < 4; ++layer) {
             if (layer != 3) {
@@ -137,10 +154,12 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
                 else if (time < POINTS_CLOSED.length / 2)
                     time += i * 10;
 
-                pointBuffer[i][0] = lerp(POINTS_CLOSED[i].x, POINTS_OPEN[i].x, world.getTotalWorldTime(), entity.getTimeOpened()) + x - 0.5 + Math.sin(time / 50) * 0.1;
-                pointBuffer[i][1] = lerp(POINTS_CLOSED[i].y, POINTS_OPEN[i].y, world.getTotalWorldTime(), entity.getTimeOpened()) + y + 1.0 + Math.sin(time / 60) * 0.1;
-                pointBuffer[i][2] = lerp(POINTS_CLOSED[i].z, POINTS_OPEN[i].z, world.getTotalWorldTime(), entity.getTimeOpened()) + z - 0.5 + Math.sin(time / 70) * 0.1;
-
+                Vec3d rotatedClosed = POINTS_CLOSED[i].add(-0.5, 1.0, -0.5).rotateYaw(yaw);
+                Vec3d rotatedOpen = POINTS_OPEN[i].add(-0.5, 1.0, -0.5).rotateYaw(yaw);
+                pointBuffer[i][0] = lerp(rotatedClosed.x, rotatedOpen.x, world.getTotalWorldTime(), entity.getTimeOpened()) + x + Math.sin(time / 50) * 0.1;
+                pointBuffer[i][1] = lerp(rotatedClosed.y, rotatedOpen.y, world.getTotalWorldTime(), entity.getTimeOpened()) + y + Math.sin(time / 60) * 0.1;
+                pointBuffer[i][2] = lerp(rotatedClosed.z, rotatedOpen.z, world.getTotalWorldTime(), entity.getTimeOpened()) + z + Math.sin(time / 70) * 0.1;
+                
                 colorBuffer[i][0] = 1.0F;
                 colorBuffer[i][1] = 1.0F;
                 colorBuffer[i][2] = 1.0F;
@@ -165,6 +184,7 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glDisable(GL11.GL_BLEND);
+        TAShaderManager.disableShaders();
         GL11.glPopMatrix();
     }
 

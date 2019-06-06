@@ -73,6 +73,13 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
             world.getChunk(pos);
     }
     
+    protected int getPortalCooldownTime(Entity entity) {
+        if (entity instanceof EntityPlayer)
+            return 200;
+        else
+            return entity.getPortalCooldown() > 500 ? entity.getPortalCooldown() : 500;
+    }
+    
     protected void onCollide(Entity entity) {
         if (!world.isRemote && entity.timeUntilPortal == 0 && !entity.isRiding() && !entity.isBeingRidden() && entity.isNonBoss()) {
             if (true) {//tile.isOpen()) {
@@ -113,7 +120,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                         linkInvalid = true;
                     else {
                         entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(target));
-                        entity.timeUntilPortal = entity.getPortalCooldown() < 300 ? 300 : entity.getPortalCooldown();
+                        entity.timeUntilPortal = getPortalCooldownTime(entity);
                     }
                 }
             }

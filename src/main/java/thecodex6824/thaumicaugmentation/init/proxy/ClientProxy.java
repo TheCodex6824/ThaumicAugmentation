@@ -38,11 +38,14 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
+import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
+import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
@@ -86,6 +89,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void postInit() {
         super.postInit();
+        if (TAShaderManager.shouldUseShaders())
+            TAShaders.FRACTURE_SHADER = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture"));
     }
 
     private static void registerItemColorHandlers() {
