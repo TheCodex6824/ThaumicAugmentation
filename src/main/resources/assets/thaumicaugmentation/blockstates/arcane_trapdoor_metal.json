@@ -4,8 +4,7 @@
         "model": "thaumicaugmentation:arcane_trapdoor_lower",
         "textures": {
             "texture": "thaumicaugmentation:blocks/arcane_trapdoor_metal",
-            "side": "thaumicaugmentation:blocks/arcane_trapdoor_metal_side",
-            "side_vert": "thaumicaugmentation:blocks/arcane_trapdoor_metal_side_vert"
+            "side": "thaumicaugmentation:blocks/arcane_trapdoor_metal_side"
         }
     },
     "variants": {

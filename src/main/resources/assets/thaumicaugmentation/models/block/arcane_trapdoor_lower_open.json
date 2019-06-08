@@ -10,8 +10,8 @@
                 "up":    { "uv": [ 0, 0, 16, 3 ], "texture": "#side", "cullface": "up" },
                 "north": { "uv": [  0,  0, 16, 16 ], "texture": "#texture", "rotation": 180 },
                 "south": { "uv": [  0,  0, 16, 16 ], "texture": "#texture", "rotation": 180, "cullface": "south" },
-                "west":  { "uv": [ 0, 0, 3, 16 ], "texture": "#side_vert", "cullface": "west" },
-                "east":  { "uv": [ 0, 0, 3, 16 ], "texture": "#side_vert", "cullface": "east" }
+                "west":  { "uv": [ 0, 0, 16, 3 ], "texture": "#side", "cullface": "west", "rotation": 90 },
+                "east":  { "uv": [ 0, 0, 16, 3 ], "texture": "#side", "cullface": "east", "rotation": 90 }
             }
         }
     ]

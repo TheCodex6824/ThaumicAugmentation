@@ -76,7 +76,7 @@ void main() {
 		float a = tcol.r * (0.05 + (1.0/mult) * 0.65) * (1-smoothstep(0.15, 0.48, abs(v-0.5)));
 		
 		// mix the colours
-		col = col*(1-a) + vec4(tcol.r,tcol.g,tcol.b,1)*a;
+		col = col*(a) + vec4(tcol.r,tcol.g,tcol.b,1)*(1-a);
 	}
     
     gl_FragColor = col;
