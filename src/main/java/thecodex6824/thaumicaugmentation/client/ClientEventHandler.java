@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.client;
 
+import java.util.LinkedList;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -27,9 +29,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.capability.CapabilityAugmentableItem;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public final class ClientEventHandler {
@@ -37,15 +39,23 @@ public final class ClientEventHandler {
     private ClientEventHandler() {}
     
     private static void handleAugmentTooltips(ItemTooltipEvent event, IAugmentableItem cap) {
+        LinkedList<LinkedList<String>> tooltip = new LinkedList<>();
         for (ItemStack augment : cap.getAllAugments()) {
             if (augment.getItem() instanceof IAugment) {
-                event.getToolTip().add("    " + new TextComponentTranslation(augment.getItem().getTranslationKey(augment) + ".name").getFormattedText());
+                LinkedList<String> thisTooltip = new LinkedList<>();
+                thisTooltip.add(new TextComponentTranslation(augment.getItem().getTranslationKey(augment) + ".name").getFormattedText());
                 IAugment aug = (IAugment) augment.getItem();
-                if (aug.hasAdditionalAugmentTooltip(augment)) {
-                    for (String s : aug.getAdditionalAugmentTooltip(augment))
-                        event.getToolTip().add("        " + s);
-                }
+                if (aug.hasAdditionalAugmentTooltip(augment))
+                    aug.appendAdditionalAugmentTooltip(augment, thisTooltip);
+                
+                tooltip.add(thisTooltip);
             }
+        }
+        
+        for (LinkedList<String> list : tooltip) {
+            event.getToolTip().add("    " + list.remove(0));
+            for (String str : list)
+                event.getToolTip().add("        " + str);
         }
     }
     

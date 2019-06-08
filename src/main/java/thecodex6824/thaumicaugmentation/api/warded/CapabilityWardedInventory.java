@@ -18,32 +18,21 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.event;
+package thecodex6824.thaumicaugmentation.api.warded;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import thaumcraft.api.casters.FocusPackage;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
-@Cancelable
-public class LivingCastEvent extends LivingEvent {
+public final class CapabilityWardedInventory {
 
-    private FocusPackage fPackage;
-    private ItemStack caster;
+    private CapabilityWardedInventory() {}
     
-    public LivingCastEvent(EntityLivingBase castingEntity, ItemStack casterStack, FocusPackage castPackage) {
-        super(castingEntity);
-        caster = casterStack;
-        fPackage = castPackage;
-    }
+    @CapabilityInject(IWardedInventory.class)
+    public static Capability<IWardedInventory> WARDED_INVENTORY = null;
     
-    public FocusPackage getFocusPackage() {
-        return fPackage;
-    }
-    
-    public ItemStack getCasterStack() {
-        return caster;
+    public static IWardedInventory create(int slots) {
+        return TAInternals.createWardedInventory(slots);
     }
     
 }

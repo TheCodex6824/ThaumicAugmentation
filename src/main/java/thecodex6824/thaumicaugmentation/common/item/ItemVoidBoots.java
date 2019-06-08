@@ -62,7 +62,7 @@ import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.item.IArmorReduceFallDamage;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
-import thecodex6824.thaumicaugmentation.api.util.IModelProvider;
+import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
 public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProvider<Item>, IArmorReduceFallDamage, IRechargable,
 IVisDiscountGear, ISpecialArmor, IWarpingGear {

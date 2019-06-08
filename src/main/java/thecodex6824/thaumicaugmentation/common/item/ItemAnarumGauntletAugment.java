@@ -20,56 +20,37 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.util.HashSet;
 import java.util.List;
-
-import com.google.common.collect.Sets;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.casters.FocusEffect;
-import thaumcraft.api.casters.FocusNode;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.ICaster;
-import thaumcraft.api.casters.IFocusElement;
-import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
-import thecodex6824.thaumicaugmentation.api.aspect.AspectUtil;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
+import thecodex6824.thaumicaugmentation.api.energy.CapabilityAnarumStorage;
+import thecodex6824.thaumicaugmentation.api.energy.IAnarumStorage;
 import thecodex6824.thaumicaugmentation.api.util.AugmentUtils;
+import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
-public class ItemElementalAugment extends ItemTABase implements IAugment, IAssociatedAspect {
+public class ItemAnarumGauntletAugment extends ItemTABase implements IAugment {
 
-    private static final HashSet<TextFormatting> DISALLOWED_COLORS = Sets.newHashSet(TextFormatting.BLACK);
-    
-    public ItemElementalAugment() {
+    public ItemAnarumGauntletAugment() {
         super();
         setMaxStackSize(1);
     }
     
     @Override
-    public void setAspect(ItemStack stack, Aspect newAspect) {
-        if (!stack.hasTagCompound())
-            stack.setTagCompound(new NBTTagCompound());
-        
-        stack.getTagCompound().setString("aspect", newAspect.getTag());
-    }
-    
-    @Override
-    public Aspect getAspect(ItemStack stack) {
-        if (!stack.hasTagCompound() || Aspect.getAspect(stack.getTagCompound().getString("aspect")) == null)
-            return Aspect.ORDER;
-        
-        return Aspect.getAspect(stack.getTagCompound().getString("aspect"));
+    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+        return new SimpleCapabilityProvider<>(CapabilityAnarumStorage.create(1000, 25), 
+                CapabilityAnarumStorage.ANARUM_STORAGE);
     }
     
     @Override
@@ -84,17 +65,13 @@ public class ItemElementalAugment extends ItemTABase implements IAugment, IAssoc
     
     @Override
     public void onUserCast(ItemStack stack, ItemStack caster, FocusPackage focusPackage, Entity user) {
-        float totalMultiplier = 1.0F;
-        for (IFocusElement node : focusPackage.nodes) {
-            if (node instanceof FocusEffect && ((FocusEffect) node).getAspect() == getAspect(stack))
-                totalMultiplier *= 1.5F;
-            else if (node instanceof FocusNode && AspectElementInteractionManager.getNegativeAspects(getAspect(stack)).contains(
-                    ((FocusNode) node).getAspect())) {
-                totalMultiplier *= 0.5F;
+        if (stack.hasCapability(CapabilityAnarumStorage.ANARUM_STORAGE, null)) {
+            IAnarumStorage energy = stack.getCapability(CapabilityAnarumStorage.ANARUM_STORAGE, null);
+            if (energy.extractEnergy(10, true) == 10) {
+                energy.extractEnergy(10, false);
+                AugmentUtils.setPackagePower(focusPackage, focusPackage.getPower() * 1.1F);
             }
         }
-        
-        AugmentUtils.setPackagePower(focusPackage, focusPackage.getPower() * totalMultiplier);
     }
     
     @Override
@@ -104,15 +81,19 @@ public class ItemElementalAugment extends ItemTABase implements IAugment, IAssoc
     
     @Override
     public void appendAdditionalAugmentTooltip(ItemStack stack, List<String> tooltip) {
-        Aspect aspect = getAspect(stack);
-        tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.elemental_aspect", AspectUtil.getChatColorForAspect(aspect, DISALLOWED_COLORS) + aspect.getName()).getFormattedText());
+        if (stack.hasCapability(CapabilityAnarumStorage.ANARUM_STORAGE, null)) {
+            IAnarumStorage energy = stack.getCapability(CapabilityAnarumStorage.ANARUM_STORAGE, null);
+            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy", energy.getEnergyStored(), energy.getMaxEnergyStored()).getFormattedText());
+        }
     }
     
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
-        Aspect aspect = getAspect(stack);
-        tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.elemental_aspect", AspectUtil.getChatColorForAspect(aspect, DISALLOWED_COLORS) + aspect.getName()).getFormattedText());
+        if (stack.hasCapability(CapabilityAnarumStorage.ANARUM_STORAGE, null)) {
+            IAnarumStorage energy = stack.getCapability(CapabilityAnarumStorage.ANARUM_STORAGE, null);
+            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy", energy.getEnergyStored(), energy.getMaxEnergyStored()).getFormattedText());
+        }
     }
     
 }

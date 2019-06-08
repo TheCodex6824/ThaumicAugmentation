@@ -36,7 +36,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
-import thecodex6824.thaumicaugmentation.api.augment.capability.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 
 public class PacketAugmentableItemSync implements IMessage {
     

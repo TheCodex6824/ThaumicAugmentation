@@ -20,7 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
-import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -58,8 +58,6 @@ public interface IAugment {
         return false;
     }
     
-    public default Iterable<String> getAdditionalAugmentTooltip(ItemStack stack) {
-        return Collections.emptyList();
-    }
+    public default void appendAdditionalAugmentTooltip(ItemStack stack, List<String> tooltip) {}
     
 }

@@ -20,7 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityAnarumStorageImpl;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityAugmentableItemImpl;
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityWardedInventoryImpl;
 
 public final class CapabilityHandler {
 
@@ -28,6 +30,8 @@ public final class CapabilityHandler {
     
     public static void preInit() {
         CapabilityAugmentableItemImpl.init();
+        CapabilityAnarumStorageImpl.init();
+        CapabilityWardedInventoryImpl.init();
     }
     
 }

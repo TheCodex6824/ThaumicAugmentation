@@ -33,7 +33,7 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
-import thecodex6824.thaumicaugmentation.api.util.IModelProvider;
+import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public final class ModelRegistryHandler {

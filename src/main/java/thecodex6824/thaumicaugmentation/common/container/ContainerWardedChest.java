@@ -27,6 +27,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 
 public class ContainerWardedChest extends Container {
@@ -35,7 +36,7 @@ public class ContainerWardedChest extends Container {
 
     public ContainerWardedChest(InventoryPlayer inv, TileWardedChest c) {
         chest = c;
-        IItemHandler inventory = chest.getInventory();
+        IItemHandler inventory = c.getCapability(CapabilityWardedInventory.WARDED_INVENTORY, null).getItemHandler();
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 9; ++x) {
                 addSlotToContainer(new SlotItemHandler(inventory, x + y * 9, 8 + x * 18, 18 + y * 18) {

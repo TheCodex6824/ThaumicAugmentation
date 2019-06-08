@@ -27,7 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.model.ModelLoader;
 import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.util.IModelProvider;
+import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
 public class ItemTABase extends Item implements IModelProvider<Item> {
 

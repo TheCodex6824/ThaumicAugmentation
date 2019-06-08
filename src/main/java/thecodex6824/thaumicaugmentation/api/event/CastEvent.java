@@ -18,10 +18,30 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.util;
+package thecodex6824.thaumicaugmentation.api.event;
 
-public interface IModelProvider<T> {
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import thaumcraft.api.casters.FocusPackage;
 
-    public void registerModels();
+public abstract class CastEvent extends LivingEvent {
 
+    protected FocusPackage focus;
+    protected ItemStack caster;
+    
+    public CastEvent(EntityLivingBase living, ItemStack casterStack, FocusPackage fPackage) {
+        super(living);
+        caster = casterStack;
+        focus = fPackage;
+    }
+    
+    public ItemStack getCasterStack() {
+        return caster;
+    }
+    
+    public FocusPackage getFocusPackage() {
+        return focus;
+    }
+    
 }

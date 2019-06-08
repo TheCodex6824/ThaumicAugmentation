@@ -36,9 +36,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
-import thecodex6824.thaumicaugmentation.api.augment.capability.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.event.AugmentEventHelper;
-import thecodex6824.thaumicaugmentation.api.event.LivingCastEvent;
+import thecodex6824.thaumicaugmentation.api.event.SuccessfulCastEvent;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
@@ -131,7 +131,7 @@ public final class AugmentEventHandler {
     }
     
     @SubscribeEvent
-    public static void onCast(LivingCastEvent event) {
+    public static void onCast(SuccessfulCastEvent event) {
         if (event.getCasterStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
             AugmentEventHelper.fireCastEvent(event.getCasterStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
                     event.getCasterStack(), event.getFocusPackage(), event.getEntityLiving());

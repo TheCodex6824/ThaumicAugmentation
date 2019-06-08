@@ -18,25 +18,27 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.block.prefab;
+package thecodex6824.thaumicaugmentation.api.event;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraftforge.client.model.ModelLoader;
-import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import thaumcraft.api.casters.FocusPackage;
 
-public class BlockTABase extends Block implements IModelProvider<Block> {
+public class CasterCooldownEvent extends CastEvent {
 
-    public BlockTABase(Material material) {
-        super(material);
+    private int cooldown;
+    
+    public CasterCooldownEvent(EntityLivingBase living, ItemStack casterStack, FocusPackage fPackage, int cooldown) {
+        super(living, casterStack, fPackage);
+        this.cooldown = cooldown;
     }
-
-    @Override
-    public void registerModels() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
-                getRegistryName().toString(), "inventory"));
+    
+    public int getCooldown() {
+        return cooldown;
     }
-
+    
+    public void setCooldown(int newCooldown) {
+        cooldown = newCooldown;
+    }
+    
 }

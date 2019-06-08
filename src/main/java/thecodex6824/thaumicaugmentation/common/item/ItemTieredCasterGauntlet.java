@@ -80,12 +80,12 @@ import thaumcraft.common.world.aura.AuraChunk;
 import thaumcraft.common.world.aura.AuraHandler;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.augment.capability.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.event.CasterCooldownEvent;
 import thecodex6824.thaumicaugmentation.api.event.CasterVisCostEvent;
-import thecodex6824.thaumicaugmentation.api.event.LivingCastEvent;
+import thecodex6824.thaumicaugmentation.api.event.SuccessfulCastEvent;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.item.ITieredCaster;
-import thecodex6824.thaumicaugmentation.common.capability.CapabilityAugmentableItemImpl;
 import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectExchangeCompat;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
@@ -125,16 +125,12 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new SimpleCapabilityProvider<>(new CapabilityAugmentableItemImpl.DefaultImpl(3), 
+        return new SimpleCapabilityProvider<>(CapabilityAugmentableItem.create(3), 
                 CapabilityAugmentableItem.AUGMENTABLE_ITEM);
     }
 
     @Override
     public boolean consumeVis(ItemStack stack, EntityPlayer user, float amount, boolean crafting, boolean simulate) {
-        amount *= getConsumptionModifier(stack, user, crafting);
-        CasterVisCostEvent event = new CasterVisCostEvent(user, amount);
-        MinecraftForge.EVENT_BUS.post(event);
-        amount = event.getVisCost();
         if (stack.getMetadata() == 0 || TAConfig.voidseerArea.getValue() <= 1) {
             if (amount <= AuraHelper.getVis(user.getEntityWorld(), user.getPosition())) {
                 amount -= AuraHelper.drainVis(user.getEntityWorld(), user.getPosition(), amount, simulate);
@@ -233,8 +229,8 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     public float getCasterCooldownModifier(ItemStack stack) {
         if (stack.getItem() == this) {
             switch (stack.getMetadata()) {
-            case 0: return (float) TAConfig.gauntletCooldownModifiers.getValue()[0];
-            case 1: return (float) TAConfig.gauntletCooldownModifiers.getValue()[1];
+                case 0: return (float) TAConfig.gauntletCooldownModifiers.getValue()[0];
+                case 1: return (float) TAConfig.gauntletCooldownModifiers.getValue()[1];
             }
         }
 
@@ -476,8 +472,12 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         ItemStack caster = player.getHeldItem(hand);
         if (isStoringFocus(caster) && !isCasterOnCooldown(player)) {
             ItemStack focus = getFocusStack(caster);
-            CasterManager.setCooldown(player, (int) (((ItemFocus) focus.getItem()).getActivationTime(focus) * getCasterCooldownModifier(caster)));
-            FocusPackage core = ItemFocus.getPackage(focus);
+            FocusPackage core = ItemFocus.getPackage(focus).copy(player);
+            
+            CasterCooldownEvent cooldownEvent = new CasterCooldownEvent(player, caster, core, (int) (((ItemFocus) focus.getItem()).getActivationTime(focus) * getCasterCooldownModifier(caster)));
+            MinecraftForge.EVENT_BUS.post(cooldownEvent);
+            CasterManager.setCooldown(player, cooldownEvent.getCooldown());
+            
             if (player.isSneaking()) {
                 for (IFocusElement element : core.nodes) {
                     if (element instanceof IFocusBlockPicker && player.isSneaking())
@@ -488,13 +488,15 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
             if (world.isRemote)
                 return new ActionResult<>(EnumActionResult.SUCCESS, caster);
 
-            if (consumeVis(caster, player, ((ItemFocus) focus.getItem()).getVisCost(focus), false, false)) {
-                FocusPackage copy = core.copy(player);
-                fixFoci(copy);
-                LivingCastEvent event = new LivingCastEvent(player, caster, copy);
+            float visCost = ((ItemFocus) focus.getItem()).getVisCost(focus) * getConsumptionModifier(caster, player, false);
+            CasterVisCostEvent costEvent = new CasterVisCostEvent(player, caster, core, visCost);
+            MinecraftForge.EVENT_BUS.post(costEvent);
+            if (consumeVis(caster, player, costEvent.getVisCost(), false, false)) {
+                fixFoci(core);
+                SuccessfulCastEvent event = new SuccessfulCastEvent(player, caster, core);
                 MinecraftForge.EVENT_BUS.post(event);
                 if (!event.isCanceled()) {
-                    FocusEngine.castFocusPackage(player, copy, true);
+                    FocusEngine.castFocusPackage(player, core, true);
                     player.swingArm(hand);
                     return new ActionResult<>(EnumActionResult.SUCCESS, caster);
                 }

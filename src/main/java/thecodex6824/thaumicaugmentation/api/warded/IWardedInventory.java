@@ -18,25 +18,25 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.block.prefab;
+package thecodex6824.thaumicaugmentation.api.warded;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraftforge.client.model.ModelLoader;
-import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.items.IItemHandler;
 
-public class BlockTABase extends Block implements IModelProvider<Block> {
-
-    public BlockTABase(Material material) {
-        super(material);
-    }
-
-    @Override
-    public void registerModels() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
-                getRegistryName().toString(), "inventory"));
-    }
-
+public interface IWardedInventory extends INBTSerializable<NBTTagCompound> {
+    
+    public ItemStack extractItem(int slot, int amount, boolean simulate);
+    
+    public int getSlotLimit(int slot);
+    
+    public int getSlots();
+    
+    public ItemStack getStackInSlot(int slot);
+    
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate);
+    
+    public IItemHandler getItemHandler();
+    
 }

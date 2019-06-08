@@ -18,25 +18,10 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.tile;
+package thecodex6824.thaumicaugmentation.common.util;
 
-import net.minecraftforge.items.IItemHandler;
+public interface IModelProvider<T> {
 
-/**
- * Interface for warded blocks that have a private internal inventory. The inventory is exposed
- * here instead of in a capability so that other things can't (inadvertently) bypass the ward
- * permission checks.
- * @author TheCodex6824
- *
- */
-public interface IWardedInventory {
-
-    /**
-     * Returns the inventory associated with this warded block. It is assumed that
-     * users of this method have done the proper permission checks to permit
-     * access.
-     * @return The inventory stored in this warded block
-     */
-    public IItemHandler getInventory();
+    public void registerModels();
 
 }

@@ -18,25 +18,21 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.block.prefab;
+package thecodex6824.thaumicaugmentation.api.augment;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraftforge.client.model.ModelLoader;
-import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
-public class BlockTABase extends Block implements IModelProvider<Block> {
+public final class CapabilityAugmentableItem {
 
-    public BlockTABase(Material material) {
-        super(material);
+    private CapabilityAugmentableItem() {}
+    
+    @CapabilityInject(IAugmentableItem.class)
+    public static final Capability<IAugmentableItem> AUGMENTABLE_ITEM = null;
+    
+    public static IAugmentableItem create(int slots) {
+        return TAInternals.createAugmentableItem(slots);
     }
-
-    @Override
-    public void registerModels() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
-                getRegistryName().toString(), "inventory"));
-    }
-
+    
 }

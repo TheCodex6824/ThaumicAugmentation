@@ -18,25 +18,23 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.block.prefab;
+package thecodex6824.thaumicaugmentation.api.energy;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraftforge.client.model.ModelLoader;
-import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 
-public class BlockTABase extends Block implements IModelProvider<Block> {
+public interface IAnarumStorage extends INBTSerializable<NBTTagCompound> {
 
-    public BlockTABase(Material material) {
-        super(material);
-    }
-
-    @Override
-    public void registerModels() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
-                getRegistryName().toString(), "inventory"));
-    }
-
+    long receiveEnergy(long maxEnergy, boolean simulate);
+    
+    long extractEnergy(long maxEnergy, boolean simulate);
+    
+    long getEnergyStored();
+    
+    long getMaxEnergyStored();
+    
+    boolean canReceive();
+    
+    boolean canExtract();
+    
 }

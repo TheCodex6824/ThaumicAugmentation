@@ -41,12 +41,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
-import thecodex6824.thaumicaugmentation.api.tile.IWardedInventory;
 import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
 import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
@@ -107,13 +107,15 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
 
     protected void dropContents(World world, BlockPos pos) {
         if (!world.isRemote) {
-            IWardedInventory chest = (IWardedInventory) world.getTileEntity(pos);
-            IItemHandler items = chest.getInventory();
-            for (int i = 0; i < items.getSlots(); ++i) {
-                ItemStack stack = items.getStackInSlot(i);
-                if (stack != null && !stack.isEmpty())
-                    world.spawnEntity(new EntityItem(world, pos.getX() + 0.5 + world.rand.nextGaussian() / 2, 
-                            pos.getY() + 0.5 + Math.abs(world.rand.nextGaussian() / 2), pos.getZ() + 0.5 + world.rand.nextGaussian() / 2, stack));
+            TileEntity te = world.getTileEntity(pos);
+            if (te.hasCapability(CapabilityWardedInventory.WARDED_INVENTORY, null)) {
+                IWardedInventory items = te.getCapability(CapabilityWardedInventory.WARDED_INVENTORY, null);
+                for (int i = 0; i < items.getSlots(); ++i) {
+                    ItemStack stack = items.getStackInSlot(i);
+                    if (stack != null && !stack.isEmpty())
+                        world.spawnEntity(new EntityItem(world, pos.getX() + 0.5 + world.rand.nextGaussian() / 2, 
+                                pos.getY() + 0.5 + Math.abs(world.rand.nextGaussian() / 2), pos.getZ() + 0.5 + world.rand.nextGaussian() / 2, stack));
+                }
             }
         }
     }

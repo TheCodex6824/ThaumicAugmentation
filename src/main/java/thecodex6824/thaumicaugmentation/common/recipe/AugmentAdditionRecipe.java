@@ -25,9 +25,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.capability.CapabilityAugmentableItem;
 
 public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 

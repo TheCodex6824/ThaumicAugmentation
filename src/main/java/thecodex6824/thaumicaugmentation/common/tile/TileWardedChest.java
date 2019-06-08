@@ -38,23 +38,22 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.tile.IWardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
-public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapabilityProvider, IWardedInventory {
+public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapabilityProvider {
 
-    protected ItemStackHandler inventory;
+    protected IWardedInventory inventory;
     protected IAnimationStateMachine asm;
     protected VariableValue openSpeed;
     protected VariableValue openTime;
 
     public TileWardedChest() {
         super();
-        inventory = new ItemStackHandler(27);
+        inventory = CapabilityWardedInventory.create(27);
         openSpeed = new VariableValue(0.5F);
         openTime = new VariableValue(Float.MIN_VALUE);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/warded_chest.json"), 
@@ -85,25 +84,20 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
     }
 
     @Override
+    public String getUniqueTypeID() {
+        return ThaumicAugmentationAPI.MODID + ":warded_chest";
+    }
+    
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setTag("inventory", inventory.serializeNBT());
         return super.writeToNBT(compound);
     }
-
+    
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         inventory.deserializeNBT(compound.getCompoundTag("inventory"));
         super.readFromNBT(compound);
-    }
-
-    @Override
-    public String getUniqueTypeID() {
-        return ThaumicAugmentationAPI.MODID + ":warded_chest";
-    }
-
-    @Override
-    public IItemHandler getInventory( ) {
-        return inventory;
     }
 
     @Override
@@ -118,7 +112,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+        if (capability == CapabilityAnimation.ANIMATION_CAPABILITY || capability == CapabilityWardedInventory.WARDED_INVENTORY)
             return true;
         else
             return super.hasCapability(capability, facing);
@@ -128,6 +122,8 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
+        else if (capability == CapabilityWardedInventory.WARDED_INVENTORY)
+            return CapabilityWardedInventory.WARDED_INVENTORY.cast(inventory);
         else
             return super.getCapability(capability, facing);
     }

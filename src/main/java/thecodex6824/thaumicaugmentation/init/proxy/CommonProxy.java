@@ -27,8 +27,10 @@ import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.internal.InternalMethodProvider;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperCommon;
 import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
@@ -60,6 +62,7 @@ public class CommonProxy implements ISidedProxy {
         CapabilityHandler.preInit();
         WorldHandler.preInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
+        TAInternals.setInternalMethodProvider(new InternalMethodProvider());
     }
 
     @Override

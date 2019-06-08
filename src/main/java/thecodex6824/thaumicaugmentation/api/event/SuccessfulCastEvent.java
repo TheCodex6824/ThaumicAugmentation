@@ -18,25 +18,18 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.block.prefab;
+package thecodex6824.thaumicaugmentation.api.event;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraftforge.client.model.ModelLoader;
-import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import thaumcraft.api.casters.FocusPackage;
 
-public class BlockTABase extends Block implements IModelProvider<Block> {
-
-    public BlockTABase(Material material) {
-        super(material);
+@Cancelable
+public class SuccessfulCastEvent extends CastEvent {
+    
+    public SuccessfulCastEvent(EntityLivingBase castingEntity, ItemStack casterStack, FocusPackage castPackage) {
+        super(castingEntity, casterStack, castPackage);
     }
-
-    @Override
-    public void registerModels() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
-                getRegistryName().toString(), "inventory"));
-    }
-
+    
 }

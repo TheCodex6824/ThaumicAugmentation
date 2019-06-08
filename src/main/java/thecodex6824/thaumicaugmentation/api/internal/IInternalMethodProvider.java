@@ -18,29 +18,25 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment.capability;
+package thecodex6824.thaumicaugmentation.api.internal;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.energy.IAnarumStorage;
+import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
 
-public final class CapabilityAugmentableItem {
+public interface IInternalMethodProvider {
 
-    private CapabilityAugmentableItem() {}
+    public IAugmentableItem createAugmentableItemImpl(int slots);
     
-    @CapabilityInject(IAugmentableItem.class)
-    public static final Capability<IAugmentableItem> AUGMENTABLE_ITEM = null;
+    public IAnarumStorage createAnarumStorageImpl(long energy);
+    public IAnarumStorage createAnarumStorageImpl(long energy, long maxTransfer);
+    public IAnarumStorage createAnarumStorageImpl(long energy, long maxReceive, long maxExtract);
+    public IAnarumStorage createAnarumStorageImpl(long energy, long maxReceive, long maxExtract, long initial);
     
-    @Nullable
-    public static IAugmentableItem getAugmentableItem(ItemStack stack, @Nullable EnumFacing facing) {
-        if (stack.hasCapability(AUGMENTABLE_ITEM, facing))
-            return stack.getCapability(AUGMENTABLE_ITEM, facing);
-        
-        return null;
-    }
+    public IWardedInventory createWardedInventoryImpl(int slots);
+    
+    public void addConfigListener(Runnable listener);
+    
+    public boolean removeConfigListener(Runnable listener);
     
 }

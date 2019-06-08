@@ -26,7 +26,7 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
-import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
 public final class TAConfig {
 
@@ -57,11 +57,11 @@ public final class TAConfig {
     public static ConfigOptionStringToIntMap fractureDimList;
     
     public static void addConfigListener(Runnable listener) {
-        TAConfigHolder.addListener(listener);
+        TAInternals.addConfigListener(listener);
     }
     
     public static boolean removeConfigListener(Runnable listener) {
-        return TAConfigHolder.removeListener(listener);
+        return TAInternals.removeConfigListener(listener);
     }
 
 }

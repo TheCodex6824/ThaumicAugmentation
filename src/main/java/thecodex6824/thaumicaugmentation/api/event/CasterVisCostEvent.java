@@ -21,14 +21,16 @@
 package thecodex6824.thaumicaugmentation.api.event;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraft.item.ItemStack;
+import thaumcraft.api.casters.FocusPackage;
 
-public class CasterVisCostEvent extends LivingEvent {
+public class CasterVisCostEvent extends CastEvent {
 
     private float cost;
     
-    public CasterVisCostEvent(EntityLivingBase caster, float visCost) {
-        super(caster);
+    public CasterVisCostEvent(EntityLivingBase caster, ItemStack casterStack, FocusPackage fPackage, float visCost) {
+        super(caster, casterStack, fPackage);
+        focus = fPackage;
         cost = visCost;
     }
     
