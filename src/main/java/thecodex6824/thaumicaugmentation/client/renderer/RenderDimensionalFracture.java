@@ -46,7 +46,6 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
 
     protected static final ResourceLocation TEXTURE_CLOSED = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
     protected static final ResourceLocation TEXTURE_OPEN = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
-    protected static final double OPEN_TIME = 100;
     protected static final Vec3d[] POINTS_CLOSED = new Vec3d[] {
             new Vec3d(0.85, 1.97, 0.39),
             new Vec3d(0.60, 1.77, 0.45),
@@ -74,14 +73,14 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
     
     protected static final double[] WIDTHS_CLOSED = new double[] {
             0,
-            0.0011,
-            0.0016,
-            0.004,
-            0.005,
-            0.005,
-            0.0034,
-            0.0016,
-            0.0001,
+            0.0051,
+            0.0056,
+            0.008,
+            0.009,
+            0.009,
+            0.0074,
+            0.0056,
+            0.0041,
             0
     };
     protected static final double[] WIDTHS_OPEN = new double[] {
@@ -119,8 +118,8 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
         return entity.isOpen() ? TEXTURE_OPEN : TEXTURE_CLOSED;
     }
 
-    protected double lerp(double initial, double last, double currentTime, double timeOpened) {
-        double factor = MathHelper.clamp((currentTime - timeOpened) / OPEN_TIME, 0, 1.0);
+    protected double lerp(double initial, double last, double currentTime, double timeOpened, double totalTime) {
+        double factor = MathHelper.clamp((currentTime - timeOpened) / totalTime, 0, 1.0);
         return (1.0 - factor) * initial + factor * last;
     }
     
@@ -132,7 +131,7 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
 
         GL11.glPushMatrix();
         bindTexture(entity.isOpen() ? TEXTURE_OPEN : TEXTURE_CLOSED);
-        TAShaderManager.enableShader(TAShaders.FRACTURE_SHADER, SHADER_CALLBACK);
+        TAShaderManager.enableShader(TAShaders.FRACTURE, SHADER_CALLBACK);
         GL11.glEnable(GL11.GL_BLEND);
         for (int layer = 0; layer < 4; ++layer) {
             if (layer != 3) {
@@ -156,17 +155,20 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
 
                 Vec3d rotatedClosed = POINTS_CLOSED[i].add(-0.5, 1.0, -0.5).rotateYaw(yaw);
                 Vec3d rotatedOpen = POINTS_OPEN[i].add(-0.5, 1.0, -0.5).rotateYaw(yaw);
-                pointBuffer[i][0] = lerp(rotatedClosed.x, rotatedOpen.x, world.getTotalWorldTime(), entity.getTimeOpened()) + x + Math.sin(time / 50) * 0.1;
-                pointBuffer[i][1] = lerp(rotatedClosed.y, rotatedOpen.y, world.getTotalWorldTime(), entity.getTimeOpened()) + y + Math.sin(time / 60) * 0.1;
-                pointBuffer[i][2] = lerp(rotatedClosed.z, rotatedOpen.z, world.getTotalWorldTime(), entity.getTimeOpened()) + z + Math.sin(time / 70) * 0.1;
+                long now = world.getTotalWorldTime();
+                long opened = entity.getTimeOpened();
+                long totalTime = entity.getOpeningDuration();
+                pointBuffer[i][0] = lerp(rotatedClosed.x, rotatedOpen.x, now, opened, totalTime) + x + Math.sin(time / 50) * 0.1;
+                pointBuffer[i][1] = lerp(rotatedClosed.y, rotatedOpen.y, now, opened, totalTime) + y + Math.sin(time / 60) * 0.1;
+                pointBuffer[i][2] = lerp(rotatedClosed.z, rotatedOpen.z, now, opened, totalTime) + z + Math.sin(time / 70) * 0.1;
                 
                 colorBuffer[i][0] = 1.0F;
                 colorBuffer[i][1] = 1.0F;
                 colorBuffer[i][2] = 1.0F;
-                colorBuffer[i][3] = (float) lerp(0.25F, 1.0F, world.getTotalWorldTime(), entity.getTimeOpened());
+                colorBuffer[i][3] = (float) lerp(0.25F, 1.0F, now, opened, totalTime);
 
                 double widthMultiplier = 1.0 - Math.sin(time / 8) * 0.1;
-                radiusBuffer[i] = lerp(WIDTHS_CLOSED[i], WIDTHS_OPEN[i], world.getTotalWorldTime(), entity.getTimeOpened()) * widthMultiplier * (layer != 3 ? 1.25 + 0.5 * layer : 1.0);
+                radiusBuffer[i] = lerp(WIDTHS_CLOSED[i], WIDTHS_OPEN[i], now, opened, totalTime) * widthMultiplier * (layer != 3 ? 1.25 + 0.5 * layer : 1.0);
             }
 
             gle.set_POLYCYL_TESS(CoreGLE.GLE_TEXTURE_NORMAL_SPH);

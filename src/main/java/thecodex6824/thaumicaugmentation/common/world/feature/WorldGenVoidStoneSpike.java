@@ -102,8 +102,8 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                         if (rand.nextBoolean()) {
                             if (x == -length || x == length) {
                                 int zDir = rand.nextBoolean() ? 1 : -1;
-                                int numBlocks = rand.nextInt(5) + 3;
-                                numBlocks = numBlocks > 5 ? 1 : numBlocks;
+                                int numBlocks = rand.nextInt(4) + 2;
+                                numBlocks = numBlocks > 4 ? 1 : numBlocks;
                                 int zOffset = 1;
                                 for (int i = 0; i < numBlocks; ++i) {
                                     if (world.isAirBlock(pos.add(0, 0, zOffset)))

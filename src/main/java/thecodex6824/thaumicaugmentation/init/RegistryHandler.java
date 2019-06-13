@@ -20,11 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
-import java.util.Collections;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -36,6 +33,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectEventProxy;
@@ -45,7 +43,6 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
@@ -55,6 +52,8 @@ import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.entity.EntityUtil;
+import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyGauntletAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemElementalAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
@@ -128,6 +127,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemVoidBoots(), "void_boots"));
         registry.register(setupItem(new ItemRiftSeed(), "rift_seed"));
         registry.register(setupItem(new ItemElementalAugment(), "augment_caster_elemental"));
+        registry.register(setupItem(new ItemRiftEnergyGauntletAugment(), "augment_caster_rift_energy_storage"));
     }
 
     @SubscribeEvent
@@ -156,6 +156,11 @@ public final class RegistryHandler {
     }
     
     @SubscribeEvent
+    public static void registerSerializers(RegistryEvent.Register<DataSerializerEntry> event) {
+        event.getRegistry().register(new DataSerializerEntry(EntityUtil.SERIALIZER_LONG).setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "long")));
+    }
+    
+    @SubscribeEvent
     public static void registerAspects(AspectRegistryEvent event) {
         AspectEventProxy proxy = event.register;
         proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 0), new AspectList().add(Aspect.PROTECT, 23));
@@ -181,12 +186,6 @@ public final class RegistryHandler {
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.WARDED_CHEST), new AspectList().add(Aspect.PROTECT, 7));
     
         AspectElementInteractionManager.init();
-        AugmentAPI.addAugmentItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
-            if (entity instanceof EntityLivingBase)
-                return ((EntityLivingBase) entity).getEquipmentAndArmor();
-            
-            return Collections.<ItemStack>emptyList();
-        });
     }
 
 }

@@ -29,22 +29,26 @@ import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 
 public class GenLayerEmptiness extends GenLayer {
 
-    // multiple entries for easy weighting
     protected static final Biome[] ALLOWED_BIOMES = new Biome[] {TABiomes.EMPTINESS, TABiomes.TAINTED_LANDS,
-            TABiomes.EMPTINESS, TABiomes.EMPTINESS, TABiomes.EMPTINESS_HIGHLANDS};
+            TABiomes.EMPTINESS_HIGHLANDS};
     
     public GenLayerEmptiness(long seed) {
         super(seed);
     }
     
+    public GenLayerEmptiness(long seed, GenLayer layer) {
+        super(seed);
+        parent = layer;
+    }
+    
     @Override
-    public int[] getInts(int areaX, int areaY, int areaWidth, int areaHeight) {
+    public int[] getInts(int areaX, int areaZ, int areaWidth, int areaHeight) {
         int[] ret = IntCache.getIntCache(areaWidth * areaHeight);
         
-        for (int y = 0; y < areaHeight; ++y) {
+        for (int z = 0; z < areaHeight; ++z) {
             for (int x = 0; x < areaWidth; ++x) {
-                initChunkSeed(areaX + x, areaY + y);
-                ret[x + y * areaWidth] = Biome.getIdForBiome(ALLOWED_BIOMES[nextInt(ALLOWED_BIOMES.length)]);
+                initChunkSeed(areaX + x, areaZ + z);
+                ret[x + z * areaWidth] = Biome.getIdForBiome(ALLOWED_BIOMES[nextInt(ALLOWED_BIOMES.length)]);
             }
         }
         
@@ -59,9 +63,6 @@ public class GenLayerEmptiness extends GenLayer {
         biome = new GenLayerZoom(10002, biome);
         biome = new GenLayerZoom(10003, biome);
         biome = new GenLayerZoom(10004, biome);
-        biome = new GenLayerZoom(10005, biome);
-        biome = new GenLayerZoom(10006, biome);
-        biome = new GenLayerZoom(10007, biome);
         
         GenLayer voronoiZoom = new GenLayerVoronoiZoom(10, biome);
         biome.initWorldGenSeed(seed);

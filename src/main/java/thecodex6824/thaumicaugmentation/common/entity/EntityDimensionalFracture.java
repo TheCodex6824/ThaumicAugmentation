@@ -41,12 +41,13 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import thaumcraft.common.entities.monster.EntityEldritchGuardian;
 import thaumcraft.common.entities.projectile.EntityFocusCloud;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.world.DimensionalFractureTeleporter;
 
 public class EntityDimensionalFracture extends Entity implements IDimensionalFracture {
 
-    protected static final int OPEN_TIME = 100;
+    protected static final int OPEN_TIME = 500;
     
     protected static final DataParameter<Boolean> open = EntityDataManager.createKey(EntityDimensionalFracture.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Long> timeOpened = EntityDataManager.createKey(EntityDimensionalFracture.class, EntityUtil.SERIALIZER_LONG);
@@ -63,11 +64,11 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     
     protected void verifyChunk(World world, BlockPos pos) {
         IChunkProvider provider = world.getChunkProvider();
-        if (!provider.isChunkGeneratedAt(pos.getX() >> 4, pos.getZ() >> 4)) {
+        if (!world.isChunkGeneratedAt(pos.getX() >> 4, pos.getZ() >> 4)) {
             world.getChunk(pos.add(16, 0, 0));
             world.getChunk(pos.add(0, 0, 16));
             world.getChunk(pos.add(16, 0, 16));
-            provider.provideChunk(pos.getX() >> 4, pos.getZ() >> 4);
+            world.getChunk(pos);
         }
         else if (provider.getLoadedChunk(pos.getX() >> 4, pos.getZ() >> 4) == null)
             world.getChunk(pos);
@@ -80,9 +81,14 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
             return entity.getPortalCooldown() > 500 ? entity.getPortalCooldown() : 500;
     }
     
+    @Override
+    public boolean canBeCollidedWith() {
+        return true;
+    }
+    
     protected void onCollide(Entity entity) {
         if (!world.isRemote && entity.timeUntilPortal == 0 && !entity.isRiding() && !entity.isBeingRidden() && entity.isNonBoss()) {
-            if (true) {//tile.isOpen()) {
+            if (isOpen()) {
                 if (linkInvalid) {
                     if (world.getTotalWorldTime() % 20 == 0 && entity instanceof EntityPlayer)
                         ((EntityPlayer) entity).sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.no_fracture_target"), true);
@@ -94,9 +100,9 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                         verifyChunk(targetWorld, toComplete);
                         for (int y = targetWorld.getActualHeight() - 1; y >= 0; --y) {
                             BlockPos check = toComplete.add(0, y, 0);
-                            for (EntityDimensionalFracture fracture : targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(check))) {
+                            for (EntityDimensionalFracture fracture : targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(check).grow(1.01))) {
                                 BlockPos yAdjusted = new BlockPos(fracture.getLinkedPosition().getX(), getPosition().getY(), fracture.getLinkedPosition().getZ());
-                                if (getEntityBoundingBox().intersects(new AxisAlignedBB(yAdjusted))) {
+                                if (getEntityBoundingBox().intersects(new AxisAlignedBB(yAdjusted).grow(1.01))) {
                                     fracture.open(true);
                                     linkedTo = check.down(2);
                                     linkLocated = true;
@@ -109,17 +115,25 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                         }
 
                         if (!linkLocated) {
+                            ThaumicAugmentation.getLogger().info("A fracture is invalid, due to the destination lacking a fracture. If this occurs AND there have been no additions/removals of linkable dimensions in your world, consider reporting this as a bug.");
+                            ThaumicAugmentation.getLogger().debug("Dest dim: " + targetWorld.provider.getDimension());
+                            ThaumicAugmentation.getLogger().debug("Dest pos (not including y): " + linkedTo);
+                            ThaumicAugmentation.getLogger().debug("Src pos: " + getPosition());
                             linkInvalid = true;
                             return;
                         }
                     }
 
-                    BlockPos target = linkedTo;
-                    verifyChunk(targetWorld, target);
-                    if (targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(target)).isEmpty())
+                    verifyChunk(targetWorld, linkedTo);
+                    if (targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(linkedTo).grow(1.01)).isEmpty()) {
+                        ThaumicAugmentation.getLogger().info("A fracture is invalid, due to the destination lacking a fracture. This fracture has passed verification before, suggesting that either the destination fracture was removed or new linkable dimensions were introduced to the world.");
+                        ThaumicAugmentation.getLogger().debug("Dest dim: " + targetWorld.provider.getDimension());
+                        ThaumicAugmentation.getLogger().debug("Dest pos (not including y): " + linkedTo);
+                        ThaumicAugmentation.getLogger().debug("Src pos: " + getPosition());
                         linkInvalid = true;
+                    }
                     else {
-                        entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(target));
+                        entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(linkedTo));
                         entity.timeUntilPortal = getPortalCooldownTime(entity);
                     }
                 }
@@ -157,7 +171,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     @Override
     protected void entityInit() {
         getDataManager().register(open, false);
-        getDataManager().register(timeOpened, -1L);
+        getDataManager().register(timeOpened, Long.MAX_VALUE);
     }
     
     @Override
@@ -202,9 +216,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
 
     @Override
     public void open() {
-        getDataManager().set(open, true);
-        getDataManager().set(timeOpened, world.getTotalWorldTime());
-        
+        open(false);
     }
     
     @Override
@@ -214,18 +226,23 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     }
     
     @Override
+    public int getOpeningDuration() {
+        return OPEN_TIME;
+    }
+    
+    @Override
     public void close() {
         getDataManager().set(open, false);
     }
 
     @Override
     public boolean isOpening() {
-        return getDataManager().get(open) && getDataManager().get(timeOpened) < world.getTotalWorldTime() + OPEN_TIME;
+        return getDataManager().get(open) && world.getTotalWorldTime() < getDataManager().get(timeOpened) + OPEN_TIME;
     }
     
     @Override
     public boolean isOpen() {
-        return getDataManager().get(open) && getDataManager().get(timeOpened) >= world.getTotalWorldTime() + OPEN_TIME;
+        return getDataManager().get(open) && world.getTotalWorldTime() >= getDataManager().get(timeOpened) + OPEN_TIME;
     }
     
     @Override

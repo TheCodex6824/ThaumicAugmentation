@@ -23,7 +23,7 @@ package thecodex6824.thaumicaugmentation.api.energy;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public interface IAnarumStorage extends INBTSerializable<NBTTagCompound> {
+public interface IRiftEnergyStorage extends INBTSerializable<NBTTagCompound> {
 
     long receiveEnergy(long maxEnergy, boolean simulate);
     

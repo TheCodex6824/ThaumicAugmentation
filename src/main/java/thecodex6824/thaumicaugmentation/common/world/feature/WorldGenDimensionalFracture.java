@@ -20,16 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.common.world.feature;
 
-import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import thaumcraft.api.ThaumcraftMaterials;
@@ -38,99 +35,19 @@ import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks.TerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
-import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
-import thecodex6824.thaumicaugmentation.common.world.WorldProviderCache;
+import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
+import thecodex6824.thaumicaugmentation.common.world.WorldDataCache.WorldData;
 
 public class WorldGenDimensionalFracture extends WorldGenerator {
 
     private static final int WORLD_BORDER_MAX = 29999984;
-
-    private static WeightedRandom<Integer> dimPicker;
-
-    private static void reloadDimensionCache() {
-        HashMap<Integer, Integer> map = new HashMap<>();
-        for (int dim : WorldProviderCache.listAllDimensions()) {
-            if (dim != TADimensions.EMPTINESS.getId() && TAConfig.fractureDimList.getValue().containsKey(Integer.valueOf(dim).toString()))
-                map.put(dim, TAConfig.fractureDimList.getValue().get(Integer.toString(dim)));
-        }
-        
-        dimPicker = new WeightedRandom<>(map.keySet(), map.values());
-    }
-    
-    private static void initDimensionCache() {
-        reloadDimensionCache();
-        TAConfig.addConfigListener(() -> {
-            reloadDimensionCache();
-        });
-    }
-
-    protected static WorldProvider pickRandomDimension(Random rand, double maxFactor) {
-        if (dimPicker == null)
-            initDimensionCache();
-
-        if (dimPicker.isEmpty())
-            return null;
-        
-        WeightedRandom<Integer> currentPicker = dimPicker;
-        do {
-            int dimID = currentPicker.get(rand);
-            WorldProvider dim = WorldProviderCache.getProvider(dimID);
-            if (dim != null && dim.getMovementFactor() <= maxFactor + 0.00001)
-                return dim;
-            else
-                currentPicker = dimPicker.removeChoice(dimID);
-        } while (!currentPicker.isEmpty());
-
-        return null;
-    }
-
-    protected double calcMaxSafeFactor(double moveFactor, int chunkX, int chunkZ) {
-        return Math.min(Math.abs(chunkX), Math.abs(chunkZ)) * moveFactor + moveFactor;
-    }
-
-    protected BlockPos scaleBlockPos(WorldProvider target, BlockPos pos) {
-        double factor = TAConfig.emptinessMoveFactor.getValue() / target.getMovementFactor();
-        int chunkX = MathHelper.floor((pos.getX() >> 4) * factor);
-        int chunkZ = MathHelper.floor((pos.getZ() >> 4) * factor);
-        Random rand = new Random(target.getSeed());
-        long xSeed = rand.nextLong() >> 2 + 1;
-        long zSeed = rand.nextLong() >> 2 + 1;
-        rand.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ target.getSeed());
-        return new BlockPos(chunkX * 16 + 8 + MathHelper.getInt(rand, -4, 4), 
-                0, chunkZ * 16 + 8 + MathHelper.getInt(rand, -4, 4));
-    }
-
-    protected BlockPos scaleBlockPosReverse(WorldProvider target, BlockPos pos) {
-        double factor = target.getMovementFactor() / TAConfig.emptinessMoveFactor.getValue();
-        int chunkX = MathHelper.floor((pos.getX() >> 4) * factor);
-        int chunkZ = MathHelper.floor((pos.getZ() >> 4) * factor);
-        Random rand = new Random(target.getSeed());
-        long xSeed = rand.nextLong() >> 2 + 1;
-        long zSeed = rand.nextLong() >> 2 + 1;
-        rand.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ target.getSeed());
-        rand.nextInt();
-        return new BlockPos(chunkX * 16 + 8 + MathHelper.getInt(rand, -4, 4), 
-                0, chunkZ * 16 + 8 + MathHelper.getInt(rand, -4, 4));
-    }
-
-    public boolean isDimAllowedForLinking(int dim) {
-        if (dimPicker == null)
-            initDimensionCache();
-
-        return dimPicker.hasChoice(dim);
-    }
-
-    public boolean wouldLinkToDim(World world, Random rand, int chunkX, int chunkZ, int targetDim) {
-        return targetDim == pickRandomDimension(rand, calcMaxSafeFactor(TAConfig.emptinessMoveFactor.getValue(), 
-                chunkX, chunkZ)).getDimension();
-    }
 
     @Override
     protected void setBlockAndNotifyAdequately(World world, BlockPos pos, IBlockState state) {
         world.setBlockState(pos, state, 2 | 16);
     }
 
-    protected boolean isMaterialReplaceable(Material mat) {
+    protected static boolean isMaterialReplaceable(Material mat) {
         return mat == Material.AIR || mat == Material.GRASS || mat == Material.GROUND || mat == Material.ROCK || 
                 mat == Material.SAND || mat == Material.SNOW ||mat == Material.CLAY || mat == ThaumcraftMaterials.MATERIAL_TAINT;
     }
@@ -163,15 +80,15 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
     @Override
     public boolean generate(World world, Random rand, BlockPos position) {
         if (world.provider.getDimension() == TADimensions.EMPTINESS.getId()) {
-            WorldProvider dim = pickRandomDimension(rand, calcMaxSafeFactor(TAConfig.emptinessMoveFactor.getValue(), position.getX() >> 4, position.getZ() >> 4));
+            WorldData dim = FractureUtils.pickRandomDimension(rand, FractureUtils.calcMaxSafeFactor(TAConfig.emptinessMoveFactor.getValue(), position.getX() >> 4, position.getZ() >> 4));
             if (dim != null) {
-                BlockPos scaled = scaleBlockPos(dim, position);
+                BlockPos scaled = FractureUtils.scaleBlockPosFromEmptiness(position, dim.getMovementFactor(), dim.getWorldSeed());
                 if (Math.abs(scaled.getX()) < WORLD_BORDER_MAX && Math.abs(scaled.getZ()) < WORLD_BORDER_MAX) {
                     Biome linkedBiome = dim.getBiomeProvider().getBiome(scaled);
                     generateBiomeTerrain(world, rand, position, BiomeTerrainBlocks.getTerrainBlocksForBiome(linkedBiome));
                     EntityDimensionalFracture fracture = new EntityDimensionalFracture(world);
                     fracture.setLocationAndAngles(position.getX() + 0.5, position.getY() - 1.0, position.getZ() + 0.5, rand.nextInt(360), 0.0F);
-                    fracture.setLinkedDimension(dim.getDimension());
+                    fracture.setLinkedDimension(dim.getDimensionID());
                     fracture.setLinkedPosition(scaled);
                     world.spawnEntity(fracture);
 
@@ -180,15 +97,15 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
             }
         }
         else {
-            BlockPos scaled = scaleBlockPosReverse(world.provider, position);
-            if (Math.abs(scaled.getX()) < WORLD_BORDER_MAX && Math.abs(scaled.getZ()) < WORLD_BORDER_MAX) {
-                WorldProvider dim = WorldProviderCache.getProvider(TADimensions.EMPTINESS.getId());
-                if (dim != null) {
+            WorldData dim = WorldDataCache.getData(TADimensions.EMPTINESS.getId());
+            if (dim != null) {
+                BlockPos scaled = FractureUtils.scaleBlockPosToEmptiness(position, world.provider.getMovementFactor(), dim.getWorldSeed());
+                if (Math.abs(scaled.getX()) < WORLD_BORDER_MAX && Math.abs(scaled.getZ()) < WORLD_BORDER_MAX) {
                     Biome linkedBiome = dim.getBiomeProvider().getBiome(scaled);
                     generateBiomeTerrain(world, rand, position, BiomeTerrainBlocks.getTerrainBlocksForBiome(linkedBiome));
                     EntityDimensionalFracture fracture = new EntityDimensionalFracture(world);
                     fracture.setLocationAndAngles(position.getX() + 0.5, position.getY() - 1.0, position.getZ() + 0.5, 0.0F, 0.0F);
-                    fracture.setLinkedDimension(TADimensions.EMPTINESS.getId());
+                    fracture.setLinkedDimension(dim.getDimensionID());
                     fracture.setLinkedPosition(scaled);
                     world.spawnEntity(fracture);
     

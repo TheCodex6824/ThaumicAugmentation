@@ -101,7 +101,7 @@ public final class TAShaderManager {
             ThaumicAugmentation.getLogger().error("OpenGL shader error: " + 
                     ARBShaderObjects.glGetInfoLogARB(id, ARBShaderObjects.glGetObjectParameteriARB(id, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB)));
             ARBShaderObjects.glDeleteObjectARB(id);
-            return -1;
+            return 0;
         }
         else
             return id;
@@ -111,7 +111,7 @@ public final class TAShaderManager {
         int vert = loadShader(path, ARBVertexShader.GL_VERTEX_SHADER_ARB);
         int frag = loadShader(path, ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
         
-        if (vert != -1 && frag != -1) {
+        if (vert != 0 && frag != 0) {
             int program = ARBShaderObjects.glCreateProgramObjectARB();
             ARBShaderObjects.glAttachObjectARB(program, vert);
             ARBShaderObjects.glAttachObjectARB(program, frag);
@@ -122,20 +122,20 @@ public final class TAShaderManager {
             if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == 0) {
                 ThaumicAugmentation.getLogger().error("OpenGL shader errror: " + 
                         ARBShaderObjects.glGetInfoLogARB(program, ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB)));
-                return -1;
+                return 0;
             }
             
             ARBShaderObjects.glValidateProgramARB(program);
             if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == 0) {
                 ThaumicAugmentation.getLogger().error("OpenGL shader errror: " + 
                         ARBShaderObjects.glGetInfoLogARB(program, ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB)));
-                return -1;
+                return 0;
             }
             
             return program;
         }
         
-        return -1;
+        return 0;
     }
     
     public static boolean shouldUseShaders() {
@@ -160,7 +160,7 @@ public final class TAShaderManager {
     }
     
     public static void enableShader(Shader shader, @Nullable Consumer<Shader> callback) {
-        if (shouldUseShaders() && shader.getID() != -1 && shader.getID() != 0) {
+        if (shouldUseShaders() && shader.getID() != 0) {
             ARBShaderObjects.glUseProgramObjectARB(shader.getID());
             int timeUniform = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "time");
             ARBShaderObjects.glUniform1iARB(timeUniform, Minecraft.getMinecraft().getRenderViewEntity().ticksExisted);

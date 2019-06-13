@@ -27,16 +27,18 @@ import java.util.function.Function;
 import com.google.common.collect.Lists;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.event.AugmentEventHelper;
 import thecodex6824.thaumicaugmentation.api.event.SuccessfulCastEvent;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
@@ -54,7 +56,7 @@ public final class AugmentEventHandler {
         if (!event.getEntityLiving().getEntityWorld().isRemote) {
             int totalIndex = 0;
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
-                ArrayList<ItemStack> stacks = Lists.newArrayList(func.apply(event.getEntityLiving()));
+                ArrayList<ItemStack> stacks = Lists.newArrayList(func.apply(event.getEntity()));
                 if (!oldItems.containsKey(event.getEntity()))
                     oldItems.put(event.getEntity(), new ArrayList<>(stacks));
                 
@@ -68,18 +70,17 @@ public final class AugmentEventHandler {
                     
                         if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                             AugmentEventHelper.fireEquipEvent(current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), event.getEntity());
-                            if (event.getEntityLiving() instanceof EntityPlayerMP) {
-                                TANetwork.INSTANCE.sendTo(new PacketAugmentableItemSync(totalIndex, current.getCapability(
-                                        CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT()), (EntityPlayerMP) event.getEntityLiving());
-                            }
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(event.getEntity().getEntityId(), totalIndex, current.getCapability(
+                                    CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT()), event.getEntity());
                         }
                     
                         oldList.set(i, current);
                     }
                     
                     if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                        AugmentEventHelper.fireTickEvent(current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                                event.getEntityLiving());
+                        IAugmentableItem cap = current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                        AugmentEventHelper.fireTickEvent(cap, event.getEntity());
+                        AugmentEventHelper.handleSync(cap, event.getEntity(), totalIndex);
                     }
                     
                     ++totalIndex;
@@ -90,19 +91,19 @@ public final class AugmentEventHandler {
     
     @SubscribeEvent
     public static void onHurt(LivingHurtEvent event) {
-        if (!event.getEntityLiving().getEntityWorld().isRemote) {
+        if (!event.getEntity().getEntityWorld().isRemote) {
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
                 for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
                     if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                         AugmentEventHelper.fireHurtEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                                event.getSource().getTrueSource(), event.getEntityLiving());
+                                event.getSource().getTrueSource(), event.getEntity());
                     }
                 }
                 
-                for (ItemStack stack : func.apply(event.getEntityLiving())) {
+                for (ItemStack stack : func.apply(event.getEntity())) {
                     if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                         AugmentEventHelper.fireHurtByEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                                event.getEntityLiving(), event.getSource().getTrueSource());
+                                event.getEntity(), event.getSource().getTrueSource());
                     }
                 }
             }
@@ -111,19 +112,19 @@ public final class AugmentEventHandler {
     
     @SubscribeEvent
     public static void onDamage(LivingDamageEvent event) {
-        if (!event.getEntityLiving().getEntityWorld().isRemote) {
+        if (!event.getEntity().getEntityWorld().isRemote) {
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
                 for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
                     if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                         AugmentEventHelper.fireDamageEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                                event.getSource().getTrueSource(), event.getEntityLiving());
+                                event.getSource().getTrueSource(), event.getEntity());
                     }
                 }
                 
-                for (ItemStack stack : func.apply(event.getEntityLiving())) {
+                for (ItemStack stack : func.apply(event.getEntity())) {
                     if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                         AugmentEventHelper.fireDamagedByEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                                event.getEntityLiving(), event.getSource().getTrueSource());
+                                event.getEntity(), event.getSource().getTrueSource());
                     }
                 }
             }
@@ -132,9 +133,41 @@ public final class AugmentEventHandler {
     
     @SubscribeEvent
     public static void onCast(SuccessfulCastEvent event) {
-        if (event.getCasterStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+        if (!event.getEntity().getEntityWorld().isRemote && event.getCasterStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
             AugmentEventHelper.fireCastEvent(event.getCasterStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
                     event.getCasterStack(), event.getFocusPackage(), event.getEntityLiving());
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onInteractEntity(PlayerInteractEvent.EntityInteract event) {
+        if (event.getItemStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+            AugmentEventHelper.fireInteractEntityEvent(event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                    event.getEntityPlayer(), event.getItemStack(), event.getTarget(), event.getHand());
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onInteractBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getItemStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+            AugmentEventHelper.fireInteractBlockEvent(event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                    event.getEntityPlayer(), event.getItemStack(), event.getPos(), event.getFace(), event.getHand());
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onInteractAir(PlayerInteractEvent.RightClickItem event) {
+        if (event.getItemStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+            AugmentEventHelper.fireInteractAirEvent(event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                    event.getEntityPlayer(), event.getItemStack(), event.getHand());
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onUseItem(LivingEntityUseItemEvent.Tick event) {
+        if (event.getItem().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+            AugmentEventHelper.fireUseItemEvent(event.getItem().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                    event.getEntity(), event.getItem());
         }
     }
     

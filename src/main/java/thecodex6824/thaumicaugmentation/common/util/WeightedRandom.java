@@ -61,6 +61,11 @@ public class WeightedRandom<T extends Comparable<T>> {
             weight[i] = i > 0 ? weight[i - 1] + weights.get(i) : weights.get(i);
     }
     
+    public WeightedRandom(WeightedRandom<T> toCopy) {
+        choice = new ImmutableList.Builder<T>().addAll(toCopy.choice).build();
+        weight = Arrays.copyOf(toCopy.weight, toCopy.weight.length);
+    }
+    
     private int binarySearch(double n) {
         int left = 0;
         int right = weight.length - 1;

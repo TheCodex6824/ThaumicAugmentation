@@ -21,11 +21,11 @@
 package thecodex6824.thaumicaugmentation.common.internal;
 
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.energy.IAnarumStorage;
+import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.internal.IInternalMethodProvider;
 import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
-import thecodex6824.thaumicaugmentation.common.capability.CapabilityAnarumStorageImpl;
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityRiftEnergyStorageImpl;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityAugmentableItemImpl;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityWardedInventoryImpl;
 
@@ -37,23 +37,23 @@ public class InternalMethodProvider implements IInternalMethodProvider {
     }
     
     @Override
-    public IAnarumStorage createAnarumStorageImpl(long energy) {
-        return new CapabilityAnarumStorageImpl.DefaultImpl(energy);
+    public IRiftEnergyStorage createRiftEnergyStorageImpl(long energy) {
+        return new CapabilityRiftEnergyStorageImpl.DefaultImpl(energy);
     }
     
     @Override
-    public IAnarumStorage createAnarumStorageImpl(long energy, long maxTransfer) {
-        return new CapabilityAnarumStorageImpl.DefaultImpl(energy, maxTransfer);
+    public IRiftEnergyStorage createRiftEnergyStorageImpl(long energy, long maxTransfer) {
+        return new CapabilityRiftEnergyStorageImpl.DefaultImpl(energy, maxTransfer);
     }
     
     @Override
-    public IAnarumStorage createAnarumStorageImpl(long energy, long maxReceive, long maxExtract) {
-        return new CapabilityAnarumStorageImpl.DefaultImpl(energy, maxReceive, maxExtract);
+    public IRiftEnergyStorage createRiftEnergyStorageImpl(long energy, long maxReceive, long maxExtract) {
+        return new CapabilityRiftEnergyStorageImpl.DefaultImpl(energy, maxReceive, maxExtract);
     }
     
     @Override
-    public IAnarumStorage createAnarumStorageImpl(long energy, long maxReceive, long maxExtract, long initial) {
-        return new CapabilityAnarumStorageImpl.DefaultImpl(energy, maxReceive, maxExtract, initial);
+    public IRiftEnergyStorage createRiftEnergyStorageImpl(long energy, long maxReceive, long maxExtract, long initial) {
+        return new CapabilityRiftEnergyStorageImpl.DefaultImpl(energy, maxReceive, maxExtract, initial);
     }
     
     @Override

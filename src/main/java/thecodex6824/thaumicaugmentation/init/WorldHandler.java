@@ -24,7 +24,7 @@ import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 import thecodex6824.thaumicaugmentation.common.world.TAWorldGenerator;
-import thecodex6824.thaumicaugmentation.common.world.WorldProviderCache;
+import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.WorldProviderEmptiness;
 
 /**
@@ -76,12 +76,6 @@ public final class WorldHandler {
             return findFreeDimensionID();
     }
 
-    @SubscribeEvent
-    public static void onWorldLoad(WorldEvent.Load event) {
-        if (!event.getWorld().isRemote)
-            WorldProviderCache.addOrReplaceProvider(event.getWorld().provider);
-    }
-
     public static void preInit() {
         int emptinessID = currentIDOrSubstitute(TAConfig.emptinessDimID.getValue());
         if (emptinessID != TAConfig.emptinessDimID.getValue()) {
@@ -119,6 +113,12 @@ public final class WorldHandler {
             if (biome instanceof IPurgeBiomeSpawns)
                 ((IPurgeBiomeSpawns) biome).purgeSpawns();
         }
+    }
+    
+    @SubscribeEvent
+    public static void onWorldLoad(WorldEvent.Load event) {
+        if (!event.getWorld().isRemote)
+            WorldDataCache.addOrUpdateData(event.getWorld());
     }
 
 }

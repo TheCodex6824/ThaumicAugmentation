@@ -83,7 +83,7 @@ public class ItemElementalAugment extends ItemTABase implements IAugment, IAssoc
     }
     
     @Override
-    public void onUserCast(ItemStack stack, ItemStack caster, FocusPackage focusPackage, Entity user) {
+    public void onCast(ItemStack stack, ItemStack caster, FocusPackage focusPackage, Entity user) {
         float totalMultiplier = 1.0F;
         for (IFocusElement node : focusPackage.nodes) {
             if (node instanceof FocusEffect && ((FocusEffect) node).getAspect() == getAspect(stack))

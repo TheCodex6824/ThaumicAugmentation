@@ -26,6 +26,9 @@ import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import thaumcraft.api.casters.FocusPackage;
 
 public interface IAugment {
@@ -34,17 +37,25 @@ public interface IAugment {
     
     public default void onUnequip(ItemStack stack, Entity user) {}
     
-    public default void onUserTick(ItemStack stack, Entity user) {}
+    public default void onTick(ItemStack stack, Entity user) {}
     
-    public default void onUserCast(ItemStack stack, ItemStack caster, FocusPackage focusPackage, Entity user) {}
+    public default void onCast(ItemStack stack, ItemStack caster, FocusPackage focusPackage, Entity user) {}
     
-    public default void onUserHurtEntity(ItemStack stack, Entity user, Entity attacked) {}
+    public default void onHurtEntity(ItemStack stack, Entity user, Entity attacked) {}
     
-    public default void onUserDamageEntity(ItemStack stack, Entity user, Entity attacked) {}
+    public default void onDamagedEntity(ItemStack stack, Entity user, Entity attacked) {}
     
-    public default void onUserHurt(ItemStack stack, Entity user, @Nullable Entity attacker) {}
+    public default void onHurt(ItemStack stack, Entity user, @Nullable Entity attacker) {}
     
-    public default void onUserDamaged(ItemStack stack, Entity user, @Nullable Entity attacker) {}
+    public default void onDamaged(ItemStack stack, Entity user, @Nullable Entity attacker) {}
+    
+    public default void onInteractEntity(ItemStack stack, Entity user, ItemStack used, Entity target, EnumHand hand) {}
+    
+    public default void onInteractBlock(ItemStack stack, Entity user, ItemStack used, BlockPos target, EnumFacing face, EnumHand hand) {}  
+    
+    public default void onInteractAir(ItemStack stack, Entity user, ItemStack used, EnumHand hand) {}
+    
+    public default void onUseItem(ItemStack stack, Entity user, ItemStack used) {}
     
     public default boolean isCompatible(ItemStack stack, ItemStack otherAugment) {
         return true;
@@ -59,5 +70,13 @@ public interface IAugment {
     }
     
     public default void appendAdditionalAugmentTooltip(ItemStack stack, List<String> tooltip) {}
+    
+    public default boolean shouldSync(ItemStack stack) {
+        return false;
+    }
+    
+    public default int getSyncInterval(ItemStack stack) {
+        return 20;
+    }
     
 }

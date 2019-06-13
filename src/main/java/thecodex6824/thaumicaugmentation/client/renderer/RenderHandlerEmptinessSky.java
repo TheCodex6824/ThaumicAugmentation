@@ -62,7 +62,7 @@ public class RenderHandlerEmptinessSky extends IRenderHandler {
         RenderHelper.disableStandardItemLighting();
         GlStateManager.depthMask(false);
         mc.getRenderManager().renderEngine.bindTexture(END_SKY_TEXTURE);
-        TAShaderManager.enableShader(TAShaders.FRACTURE_SHADER, SHADER_CALLBACK);
+        TAShaderManager.enableShader(TAShaders.EMPTINESS_SKY, SHADER_CALLBACK);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
 

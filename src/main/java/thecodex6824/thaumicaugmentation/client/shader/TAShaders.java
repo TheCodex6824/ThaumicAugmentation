@@ -24,6 +24,7 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager.Shader;
 
 public class TAShaders {
 
-    public static Shader FRACTURE_SHADER;
+    public static Shader FRACTURE;
+    public static Shader EMPTINESS_SKY;
     
 }

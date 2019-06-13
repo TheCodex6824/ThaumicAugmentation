@@ -21,7 +21,7 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.5.2824"
+    version = "1.12.2-14.23.5.2838"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -75,10 +75,13 @@ processResources {
     }
 }
 
-task javadocJar(type: Jar) {
+javadoc {
+    include 'thecodex6824/thaumicaugmentation/api/**'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
 	from 'build/docs/javadoc'
 	classifier = 'javadoc'
-	include 'thecodex6824/thaumicaugmentation/api/**'
 }
 
 task apiJar(type: Jar) {

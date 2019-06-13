@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation;
 
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -29,13 +30,16 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
+import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 import thecodex6824.thaumicaugmentation.init.proxy.ISidedProxy;
 
 @Mod(modid = ThaumicAugmentationAPI.MODID, name = ThaumicAugmentationAPI.NAME, version = ThaumicAugmentation.VERSION, useMetadata = true)
 public class ThaumicAugmentation {
-
+    
     public static final String VERSION = "@VERSION@";
 
     @Instance(ThaumicAugmentationAPI.MODID)
@@ -61,6 +65,15 @@ public class ThaumicAugmentation {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit();
+    }
+    
+    @EventHandler
+    public static void onServerStarting(FMLServerStartingEvent event) {
+        for (WorldServer world : event.getServer().worlds)
+            WorldDataCache.addOrUpdateData(world);
+        
+        FractureUtils.initDimensionCache();
+        WorldDataCache.setInitialized();
     }
 
     public static Logger getLogger() {

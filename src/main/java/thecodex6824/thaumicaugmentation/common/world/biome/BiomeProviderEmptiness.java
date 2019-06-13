@@ -20,7 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.world.biome;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -70,15 +69,12 @@ public class BiomeProviderEmptiness extends BiomeProvider {
     
     @Override
     public Biome getBiome(BlockPos pos, Biome defaultBiome) {
-        Biome biome = cache.getBiome(pos.getX(), pos.getZ(), defaultBiome);
-        if (biome == null)
-            return TABiomes.EMPTINESS;
-        
-        return biome;
+        return cache.getBiome(pos.getX(), pos.getZ(), defaultBiome);
     }
     
     @Override
     public Biome[] getBiomesForGeneration(Biome[] biomes, int x, int z, int width, int height) {
+        IntCache.resetIntCache();
         
         if (biomes == null || biomes.length < width * height)
             biomes = new Biome[width * height];
@@ -108,10 +104,11 @@ public class BiomeProviderEmptiness extends BiomeProvider {
         
         if (cacheFlag && width == 16 && height == 16 && (x & 15) == 0 && (z & 15) == 0) {
             Biome[] cached = cache.getCachedBiomes(x, z);
-            return Arrays.copyOf(cached, width * height);
+            System.arraycopy(cached, 0, biomes, 0, width * height);
+            return biomes;
         }
         else {
-            int[] ids = biomeGen.getInts(x, z, width, height);
+            int[] ids = indexGen.getInts(x, z, width, height);
             for (int i = 0; i < width * height; ++i) {
                 if (ids[i] >= 0 && ids[i] <= Biome.REGISTRY.getKeys().size())
                     biomes[i] = Biome.getBiome(ids[i]);

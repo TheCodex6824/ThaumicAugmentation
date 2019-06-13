@@ -25,7 +25,6 @@ import java.io.IOException;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
-import net.minecraft.network.datasync.DataSerializers;
 
 public class EntityUtil {
     
@@ -52,8 +51,4 @@ public class EntityUtil {
         }
         
     };
-    
-    static {
-        DataSerializers.registerSerializer(SERIALIZER_LONG);
-    }
 }

@@ -24,27 +24,27 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
-public final class CapabilityAnarumStorage {
+public final class CapabilityRiftEnergyStorage {
 
-    private CapabilityAnarumStorage() {}
+    private CapabilityRiftEnergyStorage() {}
     
-    @CapabilityInject(IAnarumStorage.class)
-    public static final Capability<IAnarumStorage> ANARUM_STORAGE = null;
+    @CapabilityInject(IRiftEnergyStorage.class)
+    public static final Capability<IRiftEnergyStorage> RIFT_ENERGY_STORAGE = null;
     
-    public static IAnarumStorage create(long capacity) {
-        return TAInternals.createAnarumStorage(capacity);
+    public static IRiftEnergyStorage create(long capacity) {
+        return TAInternals.createRiftEnergyStorage(capacity);
     }
     
-    public static IAnarumStorage create(long capacity, long maxTransfer) {
-        return TAInternals.createAnarumStorage(capacity, maxTransfer);
+    public static IRiftEnergyStorage create(long capacity, long maxTransfer) {
+        return TAInternals.createRiftEnergyStorage(capacity, maxTransfer);
     }
     
-    public static IAnarumStorage create(long capacity, long maxReceive, long maxExtract) {
-        return TAInternals.createAnarumStorage(capacity, maxReceive, maxExtract);
+    public static IRiftEnergyStorage create(long capacity, long maxReceive, long maxExtract) {
+        return TAInternals.createRiftEnergyStorage(capacity, maxReceive, maxExtract);
     }
     
-    public static IAnarumStorage create(long capacity, long maxReceive, long maxExtract, long initial) {
-        return TAInternals.createAnarumStorage(capacity, maxReceive, maxExtract, initial);
+    public static IRiftEnergyStorage create(long capacity, long maxReceive, long maxExtract, long initial) {
+        return TAInternals.createRiftEnergyStorage(capacity, maxReceive, maxExtract, initial);
     }
     
 }

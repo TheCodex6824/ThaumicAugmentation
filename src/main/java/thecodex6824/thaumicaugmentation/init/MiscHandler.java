@@ -20,10 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import java.util.Collections;
+
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.FocusEngine;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectLight;
 
 public final class MiscHandler {
@@ -33,6 +38,13 @@ public final class MiscHandler {
     public static void init() {
         FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 
                 Aspect.LIGHT.getColor());
+        
+        AugmentAPI.addAugmentItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
+            if (entity instanceof EntityLivingBase)
+                return ((EntityLivingBase) entity).getEquipmentAndArmor();
+            
+            return Collections.<ItemStack>emptyList();
+        });
     }
 
 }

@@ -25,31 +25,31 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import thecodex6824.thaumicaugmentation.api.energy.IAnarumStorage;
+import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
 
-public final class CapabilityAnarumStorageImpl {
+public final class CapabilityRiftEnergyStorageImpl {
 
-    private CapabilityAnarumStorageImpl() {}
+    private CapabilityRiftEnergyStorageImpl() {}
     
     public static void init() {
-        CapabilityManager.INSTANCE.register(IAnarumStorage.class, new Capability.IStorage<IAnarumStorage>() {
+        CapabilityManager.INSTANCE.register(IRiftEnergyStorage.class, new Capability.IStorage<IRiftEnergyStorage>() {
             
             @Override
-            public void readNBT(Capability<IAnarumStorage> capability, IAnarumStorage instance, EnumFacing side,
+            public void readNBT(Capability<IRiftEnergyStorage> capability, IRiftEnergyStorage instance, EnumFacing side,
                     NBTBase nbt) {
                 
                 instance.deserializeNBT((NBTTagCompound) nbt);
             }
             
             @Override
-            public NBTBase writeNBT(Capability<IAnarumStorage> capability, IAnarumStorage instance, EnumFacing side) {
+            public NBTBase writeNBT(Capability<IRiftEnergyStorage> capability, IRiftEnergyStorage instance, EnumFacing side) {
                 return instance.serializeNBT();
             }
             
         }, () -> new DefaultImpl(1000));
     }
     
-    public static class DefaultImpl implements IAnarumStorage {
+    public static class DefaultImpl implements IRiftEnergyStorage {
         
         private long energy;
         private long maxEnergy;
@@ -86,9 +86,9 @@ public final class CapabilityAnarumStorageImpl {
         }
         
         @Override
-        public long extractEnergy(long maxEnergy, boolean simulate) {
+        public long extractEnergy(long maxToExtract, boolean simulate) {
             if (canExtract()) {
-                long amount = Math.min(energy, Math.max(maxExtract, maxEnergy));
+                long amount = Math.min(energy, Math.max(maxExtract, maxToExtract));
                 if (!simulate)
                     energy -= amount;
                 
@@ -99,9 +99,9 @@ public final class CapabilityAnarumStorageImpl {
         }
         
         @Override
-        public long receiveEnergy(long maxEnergy, boolean simulate) {
+        public long receiveEnergy(long maxToReceive, boolean simulate) {
             if (canReceive()) {
-                long amount = Math.min(Math.min(maxReceive, maxEnergy), maxEnergy - energy);
+                long amount = Math.min(Math.min(maxReceive, maxToReceive), maxEnergy - energy);
                 if (!simulate)
                     energy += amount;
                 

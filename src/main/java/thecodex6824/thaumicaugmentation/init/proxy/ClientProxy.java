@@ -89,8 +89,10 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void postInit() {
         super.postInit();
-        if (TAShaderManager.shouldUseShaders())
-            TAShaders.FRACTURE_SHADER = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture"));
+        if (TAShaderManager.shouldUseShaders()) {
+            TAShaders.FRACTURE = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture"));
+            TAShaders.EMPTINESS_SKY = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_sky"));
+        }
     }
 
     private static void registerItemColorHandlers() {

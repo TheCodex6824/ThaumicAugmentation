@@ -42,7 +42,14 @@ thaumicaugmentation.text.rift_too_close=Another rift is nearby. A new rift canno
 thaumicaugmentation.text.no_fracture_target=This fracture does not lead anywhere...
 thaumicaugmentation.text.augmented=§cAugmented§r (%d/%d)
 thaumicaugmentation.text.elemental_aspect=Aspect: %s
-thaumicaugmentation.text.stored_energy=Anarum: %d/%d
+thaumicaugmentation.text.stored_energy=Energy Level: %s
+thaumicaugmentation.text.energy_none=None
+thaumicaugmentation.text.energy_minimal=Minimal
+thaumicaugmentation.text.energy_very_weak=Very Weak
+thaumicaugmentation.text.energy_weak=Weak
+thaumicaugmentation.text.energy_medium=Medium
+thaumicaugmentation.text.energy_strong=Strong
+thaumicaugmentation.text.energy_max=Maximum
 
 focus.thaumicaugmentation.light.name=Light
 focus.thaumicaugmentation.light.text=Creates light at the target location. This light source will last forever, until it is broken.

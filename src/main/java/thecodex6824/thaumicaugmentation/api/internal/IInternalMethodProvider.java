@@ -21,17 +21,17 @@
 package thecodex6824.thaumicaugmentation.api.internal;
 
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.energy.IAnarumStorage;
+import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
 
 public interface IInternalMethodProvider {
 
     public IAugmentableItem createAugmentableItemImpl(int slots);
     
-    public IAnarumStorage createAnarumStorageImpl(long energy);
-    public IAnarumStorage createAnarumStorageImpl(long energy, long maxTransfer);
-    public IAnarumStorage createAnarumStorageImpl(long energy, long maxReceive, long maxExtract);
-    public IAnarumStorage createAnarumStorageImpl(long energy, long maxReceive, long maxExtract, long initial);
+    public IRiftEnergyStorage createRiftEnergyStorageImpl(long energy);
+    public IRiftEnergyStorage createRiftEnergyStorageImpl(long energy, long maxTransfer);
+    public IRiftEnergyStorage createRiftEnergyStorageImpl(long energy, long maxReceive, long maxExtract);
+    public IRiftEnergyStorage createRiftEnergyStorageImpl(long energy, long maxReceive, long maxExtract, long initial);
     
     public IWardedInventory createWardedInventoryImpl(int slots);
     

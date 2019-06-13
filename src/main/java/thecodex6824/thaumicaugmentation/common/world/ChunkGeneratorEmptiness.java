@@ -78,7 +78,7 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         biomeWeights = new double[25];
         for (int x = -2; x <= 2; ++x) {
             for (int z = -2; z <= 2; ++z)
-                biomeWeights[z + 2 + (x + 2) * 5] = 10.0F / MathHelper.sqrt((float)(x * x + z * z) + 0.2F);
+                biomeWeights[x + 2 + (z + 2) * 5] = 10.0F / MathHelper.sqrt(x * x + z * z + 0.2F);
         }
         
         InitNoiseGensEvent.Context ctx = new InitNoiseGensEvent.Context(min, max, main, scale, depth);
@@ -90,17 +90,18 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         depth = ctx.getDepth();
     }
 
-    protected double[] generateHeights(int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ) {
-        Biome[] biomes = world.getBiomeProvider().getBiomes(null, posX * 4 - 2, posZ * 4 - 2, 10, 10);
+    protected double[] generateHeights(int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ, Biome[] biomes) {
         double[] output = new double[sizeX * sizeY * sizeZ];
         InitNoiseField noiseEvent = new InitNoiseField(this, output, posX, posY, posZ, sizeX, sizeY, sizeZ);
         MinecraftForge.EVENT_BUS.post(noiseEvent);
         if (noiseEvent.getResult() == Result.DENY)
             return noiseEvent.getNoisefield();
         
+        double depthScaleX = 200.0;
+        double depthScaleZ = 200.0;
         double coordScale = 684.412;
         double heightScale = 684.412;
-        double[] depthNoise = depth.generateNoiseOctaves(null, posX, posZ, sizeX, sizeZ, coordScale, coordScale, 0.5);
+        double[] depthNoise = depth.generateNoiseOctaves(null, posX, posZ, sizeX, sizeZ, depthScaleX, depthScaleZ, 0.5);
         double[] mainNoise = main.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, coordScale / 80.0, heightScale / 160.0, coordScale / 80.0);
         double[] minNoise = min.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, coordScale, heightScale, coordScale);
         double[] maxNoise = max.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, coordScale, heightScale, coordScale);
@@ -114,17 +115,13 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
                 float f4 = 0.0F;
                 Biome biome = biomes[x + 2 + (z + 2) * 10];
 
-                for (int bX = -2; bX <= 2; ++bX)
-                {
-                    for (int bZ = -2; bZ <= 2; ++bZ)
-                    {
-                        Biome biome1 = biomes[z + bZ + 2 + (x + bX + 2) * 10];
-                        float f7 = (float) biomeWeights[bZ + 2 + (bX + 2) * 5] / (biome1.getBaseHeight() + 2.0F);
+                for (int bX = -2; bX <= 2; ++bX) {
+                    for (int bZ = -2; bZ <= 2; ++bZ) {
+                        Biome biome1 = biomes[x + bX + 2 + (z + bZ + 2) * 10];
+                        float f7 = (float) biomeWeights[bX + 2 + (bZ + 2) * 5] / (biome1.getBaseHeight() + 2.0F);
 
                         if (biome1.getBaseHeight() > biome.getBaseHeight())
-                        {
                             f7 /= 2.0F;
-                        }
 
                         f2 += biome1.getHeightVariation() * f7;
                         f3 += biome1.getBaseHeight() * f7;
@@ -134,7 +131,7 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
 
                 f2 /= f4;
                 f3 /= f4;
-                f2 *= 0.9F + 0.1F;
+                f2 = f2 * 0.9F + 0.1F;
                 f3 = (f3 * 4.0F - 1.0F) / 8.0F;
                 double d7 = depthNoise[depthIndex++] / 8000.0;
 
@@ -144,24 +141,25 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
                 d7 = d7 * 3.0 - 2.0;
 
                 if (d7 < 0.0D) {
-                    d7 = d7 / 2.0;
+                    d7 /= 2.0;
 
                     if (d7 < -1.0)
                         d7 = -1.0;
 
-                    d7 = d7 / 1.4;
-                    d7 = d7 / 2.0;
+                    d7 /= 1.4;
+                    d7 /= 2.0;
                 }
                 else {
                     if (d7 > 1.0)
                         d7 = 1.0;
 
-                    d7 = d7 / 8.0;
+                    d7 /= 8.0;
                 }
 
-                double d8 = (f3 + d7 * 0.2) * 0.0125;
+                double depthBase = 0.5;
+                double d8 = (f3 + d7 * 0.2) * (depthBase / 8.0);
                 double d9 = f2;
-                double d0 = 0.1 + d8 * 4.0;
+                double d0 = depthBase + d8 * 4.0;
 
                 for (int l1 = 0; l1 < 33; ++l1) {
                     double d1 = (l1 - d0) * 12.0 * 128.0 / 256.0 / d9;
@@ -169,14 +167,13 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
                     if (d1 < 0.0D)
                         d1 *= 4.0D;
 
-                    double d2 = minNoise[noiseIndex] / 4096.0;
+                    double d2 = minNoise[noiseIndex] / 512.0;
                     double d3 = maxNoise[noiseIndex] / 512.0;
                     double d4 = (mainNoise[noiseIndex] / 10.0 + 1.0) / 2.0;
                     double d5 = MathHelper.clampedLerp(d2, d3, d4) - d1;
 
-                    if (l1 > 29)
-                    {
-                        double d6 = (double)((float)(l1 - 29) / 3.0F);
+                    if (l1 > 29) {
+                        double d6 = (l1 - 29) / 3.0F;
                         d5 = d5 * (1.0 - d6) - 10.0 * d6;
                     }
 
@@ -188,10 +185,10 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         return output;
     }
 
-    protected void setBlocksInChunk(int xPos, int zPos, ChunkPrimer primer) {
+    protected void setBlocksInChunk(int xPos, int zPos, ChunkPrimer primer, Biome[] biomes) {
         IBlockState filler = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
         int scaleX = 5, scaleY = 33, scaleZ = 5;
-        double[] heights = generateHeights(xPos * 4, 0, zPos * 4, scaleX, scaleY, scaleZ);
+        double[] heights = generateHeights(xPos * 4, 0, zPos * 4, scaleX, scaleY, scaleZ, biomes);
         for (int i = 0; i < 4; ++i) {
             int j = i * 5;
             int k = (i + 1) * 5;
@@ -245,20 +242,22 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         if (!ForgeEventFactory.onReplaceBiomeBlocks(this, x, z, primer, world))
             return;
         
-        double[] noise = gen4.getRegion(null, x * 16, z * 16, 16, 16, 0.03125 * 2, 0.03125 * 2, 1);
-        for (int cZ = 0; cZ < 16; ++cZ) {
-            for (int cX = 0; cX < 16; ++cX) {
-                Biome biome = biomes[cX + cZ * 16];
-                biome.genTerrainBlocks(world, rand, primer, x * 16 + cX, z * 16 + cZ, noise[cX + cZ * 16]);
+        double[] noise = gen4.getRegion(null, x * 16, z * 16, 16, 16, 0.0625, 0.0625, 1.0);
+        for (int cX = 0; cX < 16; ++cX) {
+            for (int cZ = 0; cZ < 16; ++cZ) {
+                Biome biome = biomes[cZ + cX * 16];
+                biome.genTerrainBlocks(world, rand, primer, x * 16 + cX, z * 16 + cZ, noise[cZ + cX * 16]);
             }
         }
     }
     
     @Override
     public Chunk generateChunk(int x, int z) {
+        rand.setSeed(x * 341873128712L + z * 132897987541L);
         ChunkPrimer primer = new ChunkPrimer();
-        setBlocksInChunk(x, z, primer);
-        Biome[] biomes = world.getBiomeProvider().getBiomes(null, x * 16, z * 16, 16, 16);
+        Biome[] biomes = world.getBiomeProvider().getBiomesForGeneration(null, x * 4 - 2, z * 4 - 2, 10, 10);
+        setBlocksInChunk(x, z, primer, biomes);
+        biomes = world.getBiomeProvider().getBiomes(biomes, x * 16, z * 16, 16, 16);
         replaceBlocksForBiome(x, z, primer, biomes);
         Chunk chunk = new Chunk(world, primer, x, z);
         for (int i = 0; i < chunk.getBiomeArray().length; ++i)
@@ -270,18 +269,23 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
 
     @Override
     public void populate(int x, int z) {
-        ForgeEventFactory.onChunkPopulate(true, this, world, rand, x, z, false);
         BlockFalling.fallInstantly = true;
 
         BlockPos pos = new BlockPos(x * 16, 0, z * 16);
         Biome biome = world.getBiome(pos.add(16, 0, 16));
+        rand.setSeed(world.getSeed());
+        long xSeed = rand.nextLong() + 1;
+        long zSeed = rand.nextLong() + 1;
+        rand.setSeed(x * xSeed + z * zSeed ^ world.getSeed());
+        
+        ForgeEventFactory.onChunkPopulate(true, this, world, rand, x, z, false);
         biome.decorate(world, rand, pos);
         
         if (rand.nextBoolean())
-            spikeGen.generate(world, rand, world.getHeight(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16))));
+            spikeGen.generate(world, rand, world.getHeight(pos.add(8 + rand.nextInt(8), 0, 8 + rand.nextInt(8))));
 
-        BlockFalling.fallInstantly = false;
         ForgeEventFactory.onChunkPopulate(false, this, world, rand, x, z, false);
+        BlockFalling.fallInstantly = false;
     }
 
     @Override

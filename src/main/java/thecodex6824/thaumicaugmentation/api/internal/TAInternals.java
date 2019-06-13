@@ -21,7 +21,7 @@
 package thecodex6824.thaumicaugmentation.api.internal;
 
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.energy.IAnarumStorage;
+import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
 
 public final class TAInternals {
@@ -38,20 +38,20 @@ public final class TAInternals {
         return provider.createAugmentableItemImpl(slots);
     }
     
-    public static IAnarumStorage createAnarumStorage(long capacity) {
-        return provider.createAnarumStorageImpl(capacity);
+    public static IRiftEnergyStorage createRiftEnergyStorage(long capacity) {
+        return provider.createRiftEnergyStorageImpl(capacity);
     }
     
-    public static IAnarumStorage createAnarumStorage(long capacity, long maxTransfer) {
-        return provider.createAnarumStorageImpl(capacity, maxTransfer);
+    public static IRiftEnergyStorage createRiftEnergyStorage(long capacity, long maxTransfer) {
+        return provider.createRiftEnergyStorageImpl(capacity, maxTransfer);
     }
     
-    public static IAnarumStorage createAnarumStorage(long capacity, long maxReceive, long maxExtract) {
-        return provider.createAnarumStorageImpl(capacity, maxReceive, maxExtract);
+    public static IRiftEnergyStorage createRiftEnergyStorage(long capacity, long maxReceive, long maxExtract) {
+        return provider.createRiftEnergyStorageImpl(capacity, maxReceive, maxExtract);
     }
     
-    public static IAnarumStorage createAnarumStorage(long capacity, long maxReceive, long maxExtract, long initial) {
-        return provider.createAnarumStorageImpl(capacity, maxReceive, maxExtract, initial);
+    public static IRiftEnergyStorage createRiftEnergyStorage(long capacity, long maxReceive, long maxExtract, long initial) {
+        return provider.createRiftEnergyStorageImpl(capacity, maxReceive, maxExtract, initial);
     }
     
     public static IWardedInventory createWardedInventory(int slots) {

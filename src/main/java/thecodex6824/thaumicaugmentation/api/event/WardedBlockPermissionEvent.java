@@ -29,8 +29,9 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
- * Event fired whenever a player attempts to interact with a warded block. Intended for mods that
- * have "teams" or other situtations where players should be able to access each other's things.
+ * Event fired whenever a player attempts to interact with a "complex" warded block. For performance reasons, this event 
+ * will NOT be fired for blocks affected by the warding focus. This is intended for mods that have "teams" or other 
+ * situtations where players should be able to access each other's things.
  * @author TheCodex6824
  *
  */

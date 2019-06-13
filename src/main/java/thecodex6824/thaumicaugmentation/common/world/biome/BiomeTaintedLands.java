@@ -90,9 +90,9 @@ public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFlux
         int cX = x & 15;
         int cZ = z & 15;
         for (int y = world.getActualHeight(); y >= 0; --y) {
-            IBlockState current = primer.getBlockState(cX, y, cZ);
+            IBlockState current = primer.getBlockState(cZ, y, cX);
             if (!current.getBlock().isAir(current, world, new BlockPos(x, y, z)))
-                primer.setBlockState(cX, y, cZ, primer.getBlockState(cX, y + 1, cZ).isNormalCube() ? fillerBlock : topBlock);
+                primer.setBlockState(cZ, y, cX, primer.getBlockState(cZ, y + 1, cX).isNormalCube() ? fillerBlock : topBlock);
         }
     }
     

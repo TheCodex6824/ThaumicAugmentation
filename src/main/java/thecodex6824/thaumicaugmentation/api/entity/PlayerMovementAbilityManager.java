@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api;
+package thecodex6824.thaumicaugmentation.api.entity;
 
 import java.util.HashMap;
 import java.util.Iterator;

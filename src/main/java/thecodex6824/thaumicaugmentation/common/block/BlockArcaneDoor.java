@@ -149,16 +149,29 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
 
         if (!world.isRemote) {
             BlockPos blockpos = state.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.LOWER ? pos : pos.down();
-            IBlockState iblockstate = pos.equals(blockpos) ? state : world.getBlockState(blockpos);
+            IBlockState lower = pos.equals(blockpos) ? state : world.getBlockState(blockpos);
+            IBlockState upper = pos.equals(blockpos.up()) ? state : world.getBlockState(blockpos.up());
 
-            if (iblockstate.getBlock() != this)
+            if (lower.getBlock() != this)
                 return false;
             else if (world.getTileEntity(blockpos) instanceof IWardedTile && ((IWardedTile) world.getTileEntity(blockpos)).hasPermission(player)) {
-                state = iblockstate.cycleProperty(IArcaneDoorOpen.DOOR_OPEN);
+                state = lower.cycleProperty(IArcaneDoorOpen.DOOR_OPEN);
                 world.setBlockState(blockpos, state, 10);
                 world.markBlockRangeForRenderUpdate(blockpos, pos);
                 world.playSound(null, blockpos, state.getValue(IArcaneDoorOpen.DOOR_OPEN) ? getOpenSound(state) : getCloseSound(state),
                         SoundCategory.BLOCKS, 1.0F, 1.0F);
+                
+                EnumFacing doorFacing = upper.getValue(IHorizontallyDirectionalBlock.DIRECTION);
+                EnumFacing offset = state.getValue(IArcaneDoorHinge.HINGE_SIDE) == EnumHingePosition.LEFT ? 
+                        doorFacing.rotateY() : doorFacing.rotateYCCW();
+                IBlockState otherDoorLower = world.getBlockState(blockpos.offset(offset));
+                if (otherDoorLower.getBlock() == this && otherDoorLower.getValue(IArcaneDoorOpen.DOOR_OPEN) == lower.getValue(IArcaneDoorOpen.DOOR_OPEN) && 
+                        otherDoorLower.getValue(IArcaneDoorHinge.HINGE_SIDE) != lower.getValue(IArcaneDoorHinge.HINGE_SIDE)) {
+                    
+                    otherDoorLower.getBlock().onBlockActivated(world, blockpos.offset(offset), otherDoorLower, player, 
+                            hand, facing, hitX, hitY, hitZ);
+                }
+                
                 return true;
             }
         }

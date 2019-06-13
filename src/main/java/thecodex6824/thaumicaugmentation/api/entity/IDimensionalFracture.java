@@ -44,6 +44,8 @@ public interface IDimensionalFracture {
     
     public void open(boolean skipTransition);
     
+    public int getOpeningDuration();
+    
     public void close();
 
     public boolean isOpening();

@@ -40,18 +40,21 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 
 public class PacketAugmentableItemSync implements IMessage {
     
+    private int id;
     private int index;
     private NBTTagCompound nbt;
     
     public PacketAugmentableItemSync() {}
     
-    public PacketAugmentableItemSync(int i, NBTTagCompound sync) {
+    public PacketAugmentableItemSync(int entityID, int i, NBTTagCompound sync) {
+        id = entityID;
         index = i;
         nbt = sync;
     }
     
     @Override
     public void fromBytes(ByteBuf buf) {
+        id = buf.readInt();
         index = buf.readInt();
         try {
             byte[] buffer = new byte[buf.readInt()];
@@ -66,6 +69,7 @@ public class PacketAugmentableItemSync implements IMessage {
     
     @Override
     public void toBytes(ByteBuf buf) {
+        buf.writeInt(id);
         buf.writeInt(index);
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -87,21 +91,32 @@ public class PacketAugmentableItemSync implements IMessage {
         return index;
     }
     
+    public int getEntityID() {
+        return id;
+    }
+    
     public static class Handler implements IMessageHandler<PacketAugmentableItemSync, IMessage> {
         
         @Override
         public IMessage onMessage(PacketAugmentableItemSync message, MessageContext ctx) {
-            int i = 0;
-            for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
-                for (ItemStack stack : func.apply(Minecraft.getMinecraft().player)) {
-                    if (i == message.getItemIndex()) {
-                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
-                            stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).deserializeNBT(message.getTagCompound());
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
+                if (entity != null) {
+                    int i = 0;
+                    for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
+                        for (ItemStack stack : func.apply(entity)) {
+                            if (i == message.getItemIndex()) {
+                                if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+                                    stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).deserializeNBT(message.getTagCompound());
+                                    return;
+                                }
+                            }
+                            
+                            ++i;
+                        }
                     }
-                    
-                    ++i;
                 }
-            }
+            });
             
             return null;
         }

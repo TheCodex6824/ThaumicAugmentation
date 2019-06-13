@@ -20,18 +20,37 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
-import thecodex6824.thaumicaugmentation.common.capability.CapabilityAnarumStorageImpl;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import thaumcraft.common.entities.EntityFluxRift;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.energy.CapabilityRiftEnergyStorage;
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityRiftEnergyStorageImpl;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityAugmentableItemImpl;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityWardedInventoryImpl;
+import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
+import thecodex6824.thaumicaugmentation.common.entity.RiftEnergyStorageFluxRiftImpl;
 
+@EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class CapabilityHandler {
 
     private CapabilityHandler() {}
     
     public static void preInit() {
         CapabilityAugmentableItemImpl.init();
-        CapabilityAnarumStorageImpl.init();
+        CapabilityRiftEnergyStorageImpl.init();
         CapabilityWardedInventoryImpl.init();
+    }
+    
+    @SubscribeEvent
+    public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        if (event.getObject() instanceof EntityFluxRift) {
+            event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_energy_storage"), new SimpleCapabilityProvider<>(
+                    new RiftEnergyStorageFluxRiftImpl((EntityFluxRift) event.getObject()), CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE));
+        }
     }
     
 }
