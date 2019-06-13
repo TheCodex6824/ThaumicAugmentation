@@ -46,6 +46,7 @@ import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFractur
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
+import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
@@ -81,6 +82,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init() {
         super.init();
+        ClientSoundHandler.init();
         ClientRegistry.bindTileEntitySpecialRenderer(TileVisRegenerator.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileWardedChest.class, new ListeningAnimatedTESR<>());
         registerItemColorHandlers();

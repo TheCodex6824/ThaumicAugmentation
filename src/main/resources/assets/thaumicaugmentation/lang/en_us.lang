@@ -51,6 +51,9 @@ thaumicaugmentation.text.energy_medium=Medium
 thaumicaugmentation.text.energy_strong=Strong
 thaumicaugmentation.text.energy_max=Maximum
 
+thaumicaugmentation.subtitle.spooky=Spooky noises
+thaumicaugmentation.subtitle.spooky_wind=Wind howls
+
 focus.thaumicaugmentation.light.name=Light
 focus.thaumicaugmentation.light.text=Creates light at the target location. This light source will last forever, until it is broken.
 focus.thaumicaugmentation.light.intensity=Intensity

@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.world;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.client.audio.MusicTicker.MusicType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -30,10 +33,12 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderHandlerEmptinessSky;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderHandlerNoop;
+import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeProviderEmptiness;
 
 public class WorldProviderEmptiness extends WorldProvider {
@@ -90,31 +95,37 @@ public class WorldProviderEmptiness extends WorldProvider {
     }
 
     @Override
+    @Nullable
+    @SideOnly(Side.CLIENT)
     public float[] calcSunriseSunsetColors(float celestialAngle, float partialTicks) {
         return null;
     }
 
     @Override
     public float calculateCelestialAngle(long worldTime, float partialTicks) {
-        return 0.0F;
+        return 0.25F;
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean doesXZShowFog(int x, int z) {
         return false;
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public Vec3d getFogColor(float x, float z) {
         return new Vec3d(0, 0, 0);
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public float getSunBrightness(float par1) {
         return 0.0F;
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public float getStarBrightness(float par1) {
         return 0.0F;
     }
@@ -137,6 +148,12 @@ public class WorldProviderEmptiness extends WorldProvider {
     @Override
     public boolean shouldMapSpin(String entity, double x, double z, double rotation) {
         return true;
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public MusicType getMusicType() {
+        return ClientSoundHandler.EMPTINESS_MUSIC_NOOP;
     }
 
 }

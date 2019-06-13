@@ -47,6 +47,7 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
     protected static final ResourceLocation TEXTURE_CLOSED = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
     protected static final ResourceLocation TEXTURE_OPEN = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
     protected static final Vec3d[] POINTS_CLOSED = new Vec3d[] {
+            new Vec3d(0.91, 1.99, 0.41),
             new Vec3d(0.85, 1.97, 0.39),
             new Vec3d(0.60, 1.77, 0.45),
             new Vec3d(0.48, 1.35, 0.53),
@@ -56,23 +57,27 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
             new Vec3d(0.45, 0.10, 0.52),
             new Vec3d(0.65, -0.25, 0.38),
             new Vec3d(0.60, -0.55, 0.25),
-            new Vec3d(0.50, -0.85, 0.20)
+            new Vec3d(0.50, -0.85, 0.20),
+            new Vec3d(0.55, -0.90, 0.23)
     };
     protected static final Vec3d[] POINTS_OPEN = new Vec3d[] {
-            new Vec3d(0.85, 1.97, 0.39),
+            new Vec3d(0.80, 1.99, 0.65),
+            new Vec3d(0.75, 1.97, 0.49),
             new Vec3d(0.60, 1.77, 0.50),
-            new Vec3d(0.54, 1.35, 0.45),
-            new Vec3d(0.36, 1.10, 0.60),
+            new Vec3d(0.54, 1.35, 0.55),
+            new Vec3d(0.56, 1.10, 0.60),
             new Vec3d(0.50, 0.80, 0.50),
             new Vec3d(0.50, 0.15, 0.50),
-            new Vec3d(0.39, -0.10, 0.58),
-            new Vec3d(0.58, -0.45, 0.42),
+            new Vec3d(0.59, -0.10, 0.58),
+            new Vec3d(0.58, -0.45, 0.52),
             new Vec3d(0.60, -0.75, 0.50),
-            new Vec3d(0.50, -0.95, 0.20)
+            new Vec3d(0.50, -0.95, 0.20),
+            new Vec3d(0.27, -0.98, 0.16)
     };
     
     protected static final double[] WIDTHS_CLOSED = new double[] {
             0,
+            0.00052,
             0.0051,
             0.0056,
             0.008,
@@ -81,18 +86,21 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
             0.0074,
             0.0056,
             0.0041,
+            0.00042,
             0
     };
     protected static final double[] WIDTHS_OPEN = new double[] {
             0,
-            0.052,
-            0.179,
-            0.216,
-            0.250,
-            0.250,
-            0.228,
-            0.172,
-            0.052,
+            0.00052,
+            0.152,
+            0.279,
+            0.316,
+            0.350,
+            0.350,
+            0.328,
+            0.272,
+            0.152,
+            0.00052,
             0
     };
     
@@ -111,6 +119,7 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
     public RenderDimensionalFracture(RenderManager manager) {
         super(manager);
         gle = new CoreGLE();
+        shadowSize = 0.0F;
     }
 
     @Override
@@ -148,10 +157,13 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
             double[] radiusBuffer = new double[POINTS_CLOSED.length];
             for (int i = 0; i < POINTS_CLOSED.length; ++i) {
                 double time = world.getTotalWorldTime() + partialTicks;
-                if (time > POINTS_CLOSED.length / 2)
+                if (i > POINTS_CLOSED.length / 2)
                     time -= i * 10;
-                else if (time < POINTS_CLOSED.length / 2)
+                else if (i < POINTS_CLOSED.length / 2)
                     time += i * 10;
+                
+                if (entity.isOpen())
+                    time /= 2;
 
                 Vec3d rotatedClosed = POINTS_CLOSED[i].add(-0.5, 1.0, -0.5).rotateYaw(yaw);
                 Vec3d rotatedOpen = POINTS_OPEN[i].add(-0.5, 1.0, -0.5).rotateYaw(yaw);
@@ -171,7 +183,7 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
                 radiusBuffer[i] = lerp(WIDTHS_CLOSED[i], WIDTHS_OPEN[i], now, opened, totalTime) * widthMultiplier * (layer != 3 ? 1.25 + 0.5 * layer : 1.0);
             }
 
-            gle.set_POLYCYL_TESS(CoreGLE.GLE_TEXTURE_NORMAL_SPH);
+            gle.set_POLYCYL_TESS(6);
             gle.gleSetJoinStyle(CoreGLE.TUBE_JN_ANGLE);
             gle.glePolyCone(pointBuffer.length, pointBuffer, colorBuffer, radiusBuffer, 1.0F, 0.0F);
 

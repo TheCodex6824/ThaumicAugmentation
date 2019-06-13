@@ -56,7 +56,7 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase implements IAugmen
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new SimpleCapabilityProvider<>(CapabilityRiftEnergyStorage.create(1000, 10, 10, 1000), 
+        return new SimpleCapabilityProvider<>(CapabilityRiftEnergyStorage.create(1000, 10), 
                 CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE);
     }
     
