@@ -47,7 +47,7 @@ import thecodex6824.thaumicaugmentation.common.world.DimensionalFractureTeleport
 
 public class EntityDimensionalFracture extends Entity implements IDimensionalFracture {
 
-    protected static final int OPEN_TIME = 500;
+    protected static final int OPEN_TIME = 360;
     
     protected static final DataParameter<Boolean> open = EntityDataManager.createKey(EntityDimensionalFracture.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Long> timeOpened = EntityDataManager.createKey(EntityDimensionalFracture.class, EntityUtil.SERIALIZER_LONG);
@@ -62,23 +62,23 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
         setSize(1.0F, 3.0F);
     }
     
-    protected void verifyChunk(World world, BlockPos pos) {
-        IChunkProvider provider = world.getChunkProvider();
-        if (!world.isChunkGeneratedAt(pos.getX() >> 4, pos.getZ() >> 4)) {
-            world.getChunk(pos.add(16, 0, 0));
-            world.getChunk(pos.add(0, 0, 16));
-            world.getChunk(pos.add(16, 0, 16));
-            world.getChunk(pos);
+    protected void verifyChunk(World worldToVerify, BlockPos pos) {
+        IChunkProvider provider = worldToVerify.getChunkProvider();
+        if (!worldToVerify.isChunkGeneratedAt(pos.getX() >> 4, pos.getZ() >> 4)) {
+            worldToVerify.getChunk(pos.add(16, 0, 0));
+            worldToVerify.getChunk(pos.add(0, 0, 16));
+            worldToVerify.getChunk(pos.add(16, 0, 16));
+            worldToVerify.getChunk(pos);
         }
         else if (provider.getLoadedChunk(pos.getX() >> 4, pos.getZ() >> 4) == null)
-            world.getChunk(pos);
+            worldToVerify.getChunk(pos);
     }
     
     protected int getPortalCooldownTime(Entity entity) {
         if (entity instanceof EntityPlayer)
-            return 200;
+            return 100;
         else
-            return entity.getPortalCooldown() > 500 ? entity.getPortalCooldown() : 500;
+            return entity.getPortalCooldown() > 600 ? entity.getPortalCooldown() : 600;
     }
     
     @Override
@@ -100,9 +100,9 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                         verifyChunk(targetWorld, toComplete);
                         for (int y = targetWorld.getActualHeight() - 1; y >= 0; --y) {
                             BlockPos check = toComplete.add(0, y, 0);
-                            for (EntityDimensionalFracture fracture : targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(check).grow(1.01))) {
+                            for (EntityDimensionalFracture fracture : targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(check))) {
                                 BlockPos yAdjusted = new BlockPos(fracture.getLinkedPosition().getX(), getPosition().getY(), fracture.getLinkedPosition().getZ());
-                                if (getEntityBoundingBox().intersects(new AxisAlignedBB(yAdjusted).grow(1.01))) {
+                                if (getEntityBoundingBox().intersects(new AxisAlignedBB(yAdjusted))) {
                                     fracture.open(true);
                                     linkedTo = check.down(2);
                                     linkLocated = true;
@@ -125,7 +125,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                     }
 
                     verifyChunk(targetWorld, linkedTo);
-                    if (targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(linkedTo).grow(1.01)).isEmpty()) {
+                    if (targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(linkedTo)).isEmpty()) {
                         ThaumicAugmentation.getLogger().info("A fracture is invalid, due to the destination lacking a fracture. This fracture has passed verification before, suggesting that either the destination fracture was removed or new linkable dimensions were introduced to the world.");
                         ThaumicAugmentation.getLogger().debug("Dest dim: " + targetWorld.provider.getDimension());
                         ThaumicAugmentation.getLogger().debug("Dest pos (not including y): " + linkedTo);
@@ -133,7 +133,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                         linkInvalid = true;
                     }
                     else {
-                        entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(linkedTo));
+                        entity = entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(linkedTo));
                         entity.timeUntilPortal = getPortalCooldownTime(entity);
                     }
                 }

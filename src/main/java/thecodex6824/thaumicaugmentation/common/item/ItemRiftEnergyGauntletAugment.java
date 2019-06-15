@@ -56,7 +56,7 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase implements IAugmen
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new SimpleCapabilityProvider<>(CapabilityRiftEnergyStorage.create(1000, 10), 
+        return new SimpleCapabilityProvider<>(CapabilityRiftEnergyStorage.create(600, 10), 
                 CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE);
     }
     
@@ -107,10 +107,10 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase implements IAugmen
             IDimensionalFracture fracture = (IDimensionalFracture) target;
             if (!fracture.isOpening() && !fracture.isOpen()) {
                 IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
-                if (stackStorage.canExtract() && stackStorage.extractEnergy(100, true) == 100) {
-                    stackStorage.extractEnergy(100, false);
+                if (stackStorage.canExtract() && stackStorage.extractEnergy(75, true) == 75) {
+                    stackStorage.extractEnergy(75, false);
                     fracture.open();
-                    for (int i = 0; i < 10; ++i) {
+                    for (int i = 0; i < 7; ++i) {
                         TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
                                 user.posX, user.posY + user.height / 2, user.posZ, target.posX, target.posY + target.height / 2, target.posZ, 0.04F), 
                                 new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));

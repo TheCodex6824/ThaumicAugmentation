@@ -101,7 +101,8 @@ public final class FractureUtils {
             return coord * integralFactor;
         }
         else {
-            int integralFactor = (int) Math.floor(1.0 / factor);
+            // try to remove the fraction for common cases where one scale factor is 1
+            int integralFactor = (int) Math.round(1.0 / factor);
             return coord / integralFactor;
         }
     }

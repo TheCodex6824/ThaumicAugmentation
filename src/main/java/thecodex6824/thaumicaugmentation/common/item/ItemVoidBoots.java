@@ -50,6 +50,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.items.IRechargable;
 import thaumcraft.api.items.IVisDiscountGear;
 import thaumcraft.api.items.IWarpingGear;
@@ -279,8 +281,8 @@ IVisDiscountGear, ISpecialArmor, IWarpingGear {
 
             stack.getTagCompound().setInteger("energyRemaining", current);
         }
-        else if (world.isRemote) {
-            boolean apply = !player.capabilities.isFlying && RechargeHelper.getCharge(stack) > 0;
+        if (world.isRemote || FMLCommonHandler.instance().getSide() == Side.SERVER) {
+            boolean apply = !player.capabilities.isFlying && !player.isElytraFlying() && RechargeHelper.getCharge(stack) > 0;
             if (apply && !PlayerMovementAbilityManager.playerHasAbility(player, MOVEMENT_FUNC, CONTINUE_FUNC))
                 PlayerMovementAbilityManager.put(player, MOVEMENT_FUNC, CONTINUE_FUNC);
             else if (!apply && PlayerMovementAbilityManager.playerHasAbility(player, MOVEMENT_FUNC, CONTINUE_FUNC))

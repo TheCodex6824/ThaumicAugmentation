@@ -169,8 +169,9 @@ public final class TAShaderManager {
         }
     }
     
-    public static void disableShaders() {
-        ARBShaderObjects.glUseProgramObjectARB(0);
+    public static void disableShader() {
+        if (shouldUseShaders())
+            ARBShaderObjects.glUseProgramObjectARB(0);
     }
     
     public static void destroyShaders() {

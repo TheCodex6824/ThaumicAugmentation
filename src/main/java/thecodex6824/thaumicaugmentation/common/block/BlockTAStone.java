@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import net.minecraft.block.SoundType;
@@ -51,6 +52,7 @@ public class BlockTAStone extends BlockTABase implements ITAStoneType, IItemBloc
         setResistance(10.0F);
         setSoundType(SoundType.STONE);
         setHarvestLevel("pickaxe", 0);
+        setTickRandomly(true);
     }
     
     @Override
@@ -87,6 +89,11 @@ public class BlockTAStone extends BlockTABase implements ITAStoneType, IItemBloc
     @Override
     public int damageDropped(IBlockState state) {
         return state.getValue(ITAStoneType.STONE_TYPE).getMeta();
+    }
+    
+    @Override
+    public void randomTick(World world, BlockPos pos, IBlockState state, Random random) {
+        state.getValue(ITAStoneType.STONE_TYPE).randomTick(world, pos, state, random);
     }
     
     @Override

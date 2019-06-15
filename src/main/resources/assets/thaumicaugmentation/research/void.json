@@ -122,7 +122,7 @@
             "key": "HARNESSING_VOID",
             "name": "thaumicaugmentation.research.harnessing_void.title",
             "icons": [
-                "thaumcraft:textures/research/r_fluxrift.png"
+                "thaumcraft:textures/research/fracture_research.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [

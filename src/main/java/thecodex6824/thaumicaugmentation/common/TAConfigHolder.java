@@ -93,7 +93,7 @@ public final class TAConfigHolder {
         "This is added to the base movement of the player per tick."
     })
     @RangeDouble(min = 0.0F, max = 10.0F)
-    public static double voidBootsLandSpeedBoost = 0.1;
+    public static double voidBootsLandSpeedBoost = 0.09;
 
     @Name("VoidBootsWaterSpeedBoost")
     @Comment({
@@ -101,7 +101,7 @@ public final class TAConfigHolder {
         "This is added to the base movement of the player per tick."
     })
     @RangeDouble(min = 0.0F, max = 10.0F)
-    public static double voidBootsWaterSpeedBoost = 0.05;
+    public static double voidBootsWaterSpeedBoost = 0.045;
 
     @Name("VoidBootsJumpBoost")
     @Comment({
@@ -191,7 +191,9 @@ public final class TAConfigHolder {
         "Higher weights (compared to lower weights) will be more likely to spawn.",
         "This WILL affect worldgen, so use with caution on existing worlds.",
         "The config GUI does not seem to support the addition or removal of entries, edit this",
-        "value in a text editor outside Minecraft instead."
+        "value in a text editor outside Minecraft instead.",
+        "Default dimensions: 0 = Overworld, -1 = Nether, 1 = End, 7 = Twilight Forest, 17 = Atum 2,",
+        "20 = Betweenlands, 111 = Lost Cities, 66 = Erebus, 33 = Wizardry (Underworld), 34 = Wizardry (Trickery)"
     })
     @RequiresWorldRestart
     public static HashMap<String, Integer> fractureDimList = new HashMap<>();

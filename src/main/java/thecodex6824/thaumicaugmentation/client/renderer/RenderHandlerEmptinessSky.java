@@ -35,8 +35,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IRenderHandler;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
-import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager.Shader;
+import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 
 public class RenderHandlerEmptinessSky extends IRenderHandler {
 
@@ -54,14 +54,13 @@ public class RenderHandlerEmptinessSky extends IRenderHandler {
     
     @Override
     public void render(float partialTicks, WorldClient world, Minecraft mc) {
-        GlStateManager.pushMatrix();
         GlStateManager.disableFog();
         GlStateManager.disableAlpha();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.depthMask(false);
-        mc.getRenderManager().renderEngine.bindTexture(END_SKY_TEXTURE);
+        mc.getTextureManager().bindTexture(END_SKY_TEXTURE);
         TAShaderManager.enableShader(TAShaders.EMPTINESS_SKY, SHADER_CALLBACK);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -105,11 +104,11 @@ public class RenderHandlerEmptinessSky extends IRenderHandler {
             GlStateManager.popMatrix();
         }
 
-        TAShaderManager.disableShaders();
+        TAShaderManager.disableShader();
         GlStateManager.depthMask(true);
         GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
-        GlStateManager.popMatrix();
     }
 
 }
