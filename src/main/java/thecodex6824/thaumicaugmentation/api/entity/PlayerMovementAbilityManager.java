@@ -20,8 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.api.entity;
 
-import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.WeakHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
@@ -151,7 +151,7 @@ public final class PlayerMovementAbilityManager {
             OldMovementData data = oldMovementValues.get(player);
             float stepHeight = data.stepHeight;
             float jumpMovementFactor = data.jumpMovementFactor;
-            Iterator<PlayerFunctions> it = players.get(player).iterator();
+            ListIterator<PlayerFunctions> it = players.get(player).listIterator();
             while (it.hasNext()) {
                 PlayerFunctions func = it.next();
                 if (!func.continueFunction.test(player)) {

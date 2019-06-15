@@ -127,7 +127,9 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                     }
                     else {
                         entity = entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(linkedTo));
-                        entity.timeUntilPortal = entity.getPortalCooldown();
+                        // we don't prevent people from teleporting without leaving the fracture area first, so we need a longer
+                        // cooldown to allow people to casually leave it
+                        entity.timeUntilPortal = Math.max(entity.getPortalCooldown(), 100);
                     }
                 }
             }
