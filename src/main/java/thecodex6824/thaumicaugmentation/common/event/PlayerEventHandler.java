@@ -54,13 +54,13 @@ public final class PlayerEventHandler {
 
     @SubscribeEvent
     public static void onJump(LivingEvent.LivingJumpEvent event) {
-        if (event.getEntity() instanceof EntityPlayer)
+        if (event.getEntity() instanceof EntityPlayer && PlayerMovementAbilityManager.isValidSideForMovement((EntityPlayer) event.getEntity()))
             PlayerMovementAbilityManager.onJump((EntityPlayer) event.getEntity());
     }
 
     @SubscribeEvent
     public static void onTick(LivingEvent.LivingUpdateEvent event) {
-        if (event.getEntity() instanceof EntityPlayer)
+        if (event.getEntity() instanceof EntityPlayer && PlayerMovementAbilityManager.isValidSideForMovement((EntityPlayer) event.getEntity()))
             PlayerMovementAbilityManager.tick((EntityPlayer) event.getEntity());
     }
 

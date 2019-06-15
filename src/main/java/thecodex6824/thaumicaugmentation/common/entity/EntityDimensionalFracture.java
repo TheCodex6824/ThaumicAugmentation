@@ -74,13 +74,6 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
             worldToVerify.getChunk(pos);
     }
     
-    protected int getPortalCooldownTime(Entity entity) {
-        if (entity instanceof EntityPlayer)
-            return 100;
-        else
-            return entity.getPortalCooldown() > 600 ? entity.getPortalCooldown() : 600;
-    }
-    
     @Override
     public boolean canBeCollidedWith() {
         return true;
@@ -134,7 +127,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                     }
                     else {
                         entity = entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(linkedTo));
-                        entity.timeUntilPortal = getPortalCooldownTime(entity);
+                        entity.timeUntilPortal = entity.getPortalCooldown();
                     }
                 }
             }
@@ -150,7 +143,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                 guardian.setLocationAndAngles(posX, posY, posZ, world.rand.nextInt(360), 0);
                 guardian.setAbsorptionAmount(guardian.getAbsorptionAmount() + 
                         (float) guardian.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue() / 2);
-                guardian.timeUntilPortal = guardian.getPortalCooldown() < 300 ? 300 : guardian.getPortalCooldown();
+                guardian.timeUntilPortal = guardian.getPortalCooldown();
                 world.spawnEntity(guardian);
             }
         }

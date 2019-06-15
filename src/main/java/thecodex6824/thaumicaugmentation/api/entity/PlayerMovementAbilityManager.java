@@ -27,6 +27,8 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 public final class PlayerMovementAbilityManager {
 
@@ -86,6 +88,14 @@ public final class PlayerMovementAbilityManager {
     private static WeakHashMap<EntityPlayer, LinkedList<PlayerFunctions>> players = 
             new WeakHashMap<>();
 
+    public static boolean isValidSideForMovement(EntityPlayer player) {
+        // we want to update if:
+        // 1. we are the client (to move differently at all)
+        // 2. we are the DEDICATED server (to update network vars)
+        // In SP this is shared between client and server so picking client is fine
+        return player.getEntityWorld().isRemote || FMLCommonHandler.instance().getSide() == Side.SERVER;
+    }
+    
     public static void put(EntityPlayer player, BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> continueApplying) {
         if (!oldMovementValues.containsKey(player))
             oldMovementValues.put(player, new OldMovementData(player.stepHeight, player.jumpMovementFactor));
@@ -138,41 +148,39 @@ public final class PlayerMovementAbilityManager {
 
     public static void tick(EntityPlayer player) {
         if (players.containsKey(player)) {
-            //if (player.getEntityWorld().isRemote) {
-                OldMovementData data = oldMovementValues.get(player);
-                float stepHeight = data.stepHeight;
-                float jumpMovementFactor = data.jumpMovementFactor;
-                Iterator<PlayerFunctions> it = players.get(player).iterator();
-                while (it.hasNext()) {
-                    PlayerFunctions func = it.next();
-                    if (!func.continueFunction.test(player)) {
-                        it.remove();
-                        if (players.containsKey(player) && players.get(player).size() == 0 &&
-                                oldMovementValues.containsKey(player)) {
-    
-                            player.stepHeight -= player.stepHeight - data.stepHeight;
-                            player.jumpMovementFactor -= player.jumpMovementFactor - data.jumpMovementFactor;
-                            players.remove(player);
-                            oldMovementValues.remove(player);
-                        }
-    
-                        return;
+            OldMovementData data = oldMovementValues.get(player);
+            float stepHeight = data.stepHeight;
+            float jumpMovementFactor = data.jumpMovementFactor;
+            Iterator<PlayerFunctions> it = players.get(player).iterator();
+            while (it.hasNext()) {
+                PlayerFunctions func = it.next();
+                if (!func.continueFunction.test(player)) {
+                    it.remove();
+                    if (players.containsKey(player) && players.get(player).size() == 0 &&
+                            oldMovementValues.containsKey(player)) {
+
+                        player.stepHeight -= player.stepHeight - data.stepHeight;
+                        player.jumpMovementFactor -= player.jumpMovementFactor - data.jumpMovementFactor;
+                        players.remove(player);
+                        oldMovementValues.remove(player);
                     }
-    
-                    stepHeight += func.tickFunction.apply(player, MovementType.STEP_HEIGHT);
-                    if (player.onGround && isPlayerMovingNotVertically(player))
-                        movePlayer(player, func.tickFunction.apply(player, player.isInWater() ? MovementType.WATER_GROUND : MovementType.DRY_GROUND));
-                    else {
-                        if (player.moveForward > 0.0F && player.isInWater())
-                            movePlayer(player, func.tickFunction.apply(player, MovementType.WATER_SWIM));
-    
-                        jumpMovementFactor += func.tickFunction.apply(player, MovementType.JUMP_FACTOR);
-                    }
+
+                    return;
                 }
-    
-                player.stepHeight = stepHeight;
-                player.jumpMovementFactor = jumpMovementFactor;
-            //}
+
+                stepHeight += func.tickFunction.apply(player, MovementType.STEP_HEIGHT);
+                if (player.onGround && isPlayerMovingNotVertically(player))
+                    movePlayer(player, func.tickFunction.apply(player, player.isInWater() ? MovementType.WATER_GROUND : MovementType.DRY_GROUND));
+                else {
+                    if (player.moveForward > 0.0F && player.isInWater())
+                        movePlayer(player, func.tickFunction.apply(player, MovementType.WATER_SWIM));
+
+                    jumpMovementFactor += func.tickFunction.apply(player, MovementType.JUMP_FACTOR);
+                }
+            }
+
+            player.stepHeight = stepHeight;
+            player.jumpMovementFactor = jumpMovementFactor;
         }
         
     }
