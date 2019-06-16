@@ -161,18 +161,15 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
                     time -= i * 10;
                 else if (i < POINTS_CLOSED.length / 2)
                     time += i * 10;
-                
-                if (entity.isOpen())
-                    time /= 2;
 
                 Vec3d rotatedClosed = POINTS_CLOSED[i].add(-0.5, 1.0, -0.5).rotateYaw(yaw);
                 Vec3d rotatedOpen = POINTS_OPEN[i].add(-0.5, 1.0, -0.5).rotateYaw(yaw);
                 long now = world.getTotalWorldTime();
                 long opened = entity.getTimeOpened();
                 long totalTime = entity.getOpeningDuration();
-                pointBuffer[i][0] = lerp(rotatedClosed.x, rotatedOpen.x, now, opened, totalTime) + x + Math.sin(time / 50) * 0.1;
-                pointBuffer[i][1] = lerp(rotatedClosed.y, rotatedOpen.y, now, opened, totalTime) + y + Math.sin(time / 60) * 0.1;
-                pointBuffer[i][2] = lerp(rotatedClosed.z, rotatedOpen.z, now, opened, totalTime) + z + Math.sin(time / 70) * 0.1;
+                pointBuffer[i][0] = lerp(rotatedClosed.x, rotatedOpen.x, now, opened, totalTime) + x + Math.sin(time / 50) * lerp(0.1, 0.01, now, opened, totalTime);
+                pointBuffer[i][1] = lerp(rotatedClosed.y, rotatedOpen.y, now, opened, totalTime) + y + Math.sin(time / 60) * lerp(0.1, 0.01, now, opened, totalTime);
+                pointBuffer[i][2] = lerp(rotatedClosed.z, rotatedOpen.z, now, opened, totalTime) + z + Math.sin(time / 70) * lerp(0.1, 0.01, now, opened, totalTime);
                 
                 colorBuffer[i][0] = 1.0F;
                 colorBuffer[i][1] = 1.0F;
