@@ -49,9 +49,9 @@ thaumicaugmentation.text.energy_none=§4None
 thaumicaugmentation.text.energy_minimal=§cMinimal
 thaumicaugmentation.text.energy_very_weak=§6Very Weak
 thaumicaugmentation.text.energy_weak=§eWeak
-thaumicaugmentation.text.energy_medium=§2Medium
-thaumicaugmentation.text.energy_strong=§aStrong
-thaumicaugmentation.text.energy_max=§aMaximum
+thaumicaugmentation.text.energy_medium=§aMedium
+thaumicaugmentation.text.energy_strong=§2Strong
+thaumicaugmentation.text.energy_max=§2Maximum
 
 thaumicaugmentation.subtitle.spooky=Spooky noises
 thaumicaugmentation.subtitle.spooky_wind=Wind howls

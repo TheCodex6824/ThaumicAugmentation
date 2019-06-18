@@ -43,8 +43,8 @@ public class CapabilityProviderAugmentRiftEnergyStorage implements ICapabilitySe
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        CapabilityAugment.AUGMENT.readNBT(augment, null, nbt);
-        CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE.readNBT(energy, null, nbt);
+        CapabilityAugment.AUGMENT.readNBT(augment, null, nbt.getCompoundTag("augment"));
+        CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE.readNBT(energy, null, nbt.getCompoundTag("energy"));
     }
     
     @Override
