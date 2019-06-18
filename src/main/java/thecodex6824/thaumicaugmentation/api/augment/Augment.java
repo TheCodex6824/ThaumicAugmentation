@@ -18,16 +18,25 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.energy;
+package thecodex6824.thaumicaugmentation.api.augment;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
-public final class CapabilityRiftEnergyStorage {
+public class Augment implements IAugment {
 
-    private CapabilityRiftEnergyStorage() {}
+    protected ItemStack stack;
     
-    @CapabilityInject(IRiftEnergyStorage.class)
-    public static final Capability<IRiftEnergyStorage> RIFT_ENERGY_STORAGE = null;
+    public Augment(ItemStack stack) {
+        this.stack = stack;
+    }
+    
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {}
+    
+    @Override
+    public NBTTagCompound serializeNBT() {
+        return new NBTTagCompound();
+    }
     
 }

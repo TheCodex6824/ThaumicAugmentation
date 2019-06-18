@@ -35,19 +35,20 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.ICaster;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
+import thecodex6824.thaumicaugmentation.api.augment.Augment;
 import thecodex6824.thaumicaugmentation.api.energy.CapabilityRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.energy.RiftEnergyHelper;
+import thecodex6824.thaumicaugmentation.api.energy.RiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.api.util.AugmentUtils;
-import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderAugmentRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-public class ItemRiftEnergyGauntletAugment extends ItemTABase implements IAugment {
+public class ItemRiftEnergyGauntletAugment extends ItemTABase {
 
     public ItemRiftEnergyGauntletAugment() {
         super();
@@ -56,92 +57,94 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase implements IAugmen
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new SimpleCapabilityProvider<>(CapabilityRiftEnergyStorage.create(600, 10), 
-                CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE);
-    }
-    
-    @Override
-    public boolean canBeAppliedToItem(ItemStack stack, ItemStack augmentable) {
-        return augmentable.getItem() instanceof ICaster;
-    }
-    
-    @Override
-    public boolean isCompatible(ItemStack stack, ItemStack otherAugment) {
-        return stack.getItem() != otherAugment.getItem();
-    }
-    
-    @Override
-    public void onCast(ItemStack stack, ItemStack caster, FocusPackage focusPackage, Entity user) {
-        if (stack.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
-            IRiftEnergyStorage energy = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
-            if (energy.extractEnergy(10, true) == 10) {
-                energy.extractEnergy(10, false);
-                AugmentUtils.setPackagePower(focusPackage, focusPackage.getPower() * 1.1F);
+        return new CapabilityProviderAugmentRiftEnergyStorage(new Augment(stack) {
+            
+            private boolean syncNeeded;
+            
+            @Override
+            public boolean canBeAppliedToItem(ItemStack augmentable) {
+                return augmentable.getItem() instanceof ICaster;
             }
-        }
-    }
-    
-    @Override
-    public void onTick(ItemStack stack, Entity user) {
-        if (user.getEntityWorld().getTotalWorldTime() % 20 == 0) {
-            IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
-            if (stackStorage.canReceive() && stackStorage.getEnergyStored() < stackStorage.getMaxEnergyStored()) {
-                for (Entity entity : user.getEntityWorld().getEntitiesWithinAABBExcludingEntity(user, user.getEntityBoundingBox().grow(1.0))) {
-                    if (entity.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
-                        IRiftEnergyStorage entityStorage = entity.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
-                        long maxToExtract = stackStorage.getMaxEnergyStored() - stackStorage.getEnergyStored();
-                        long extracted = entityStorage.extractEnergy(maxToExtract, false);
-                        stackStorage.receiveEnergy(extracted, false);
-                        TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                                entity.posX, entity.posY, entity.posZ, user.posX, user.posY + user.height / 2, user.posZ, 0.04F), 
-                                new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));
+            
+            @Override
+            public boolean isCompatible(ItemStack otherAugment) {
+                return stack.getItem() != otherAugment.getItem();
+            }
+            
+            @Override
+            public void onCast(ItemStack caster, FocusPackage focusPackage, Entity user) {
+                if (stack.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
+                    IRiftEnergyStorage energy = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+                    // not actually removing energy is intentional
+                    if (energy.extractEnergy(10, true) == 10)
+                        AugmentUtils.setPackagePower(focusPackage, focusPackage.getPower() * 1.1F);
+                }
+            }
+            
+            @Override
+            public void onTick(Entity user) {
+                if (user.getEntityWorld().getTotalWorldTime() % 20 == 0) {
+                    IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+                    if (stackStorage.canReceive() && stackStorage.getEnergyStored() < stackStorage.getMaxEnergyStored()) {
+                        for (Entity entity : user.getEntityWorld().getEntitiesWithinAABBExcludingEntity(user, user.getEntityBoundingBox().grow(1.0))) {
+                            if (entity.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
+                                IRiftEnergyStorage entityStorage = entity.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+                                long maxToExtract = stackStorage.getMaxEnergyStored() - stackStorage.getEnergyStored();
+                                long extracted = entityStorage.extractEnergy(maxToExtract, false);
+                                stackStorage.receiveEnergy(extracted, false);
+                                TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
+                                        entity.posX, entity.posY, entity.posZ, user.posX, user.posY + user.height / 2, user.posZ, 0.04F), 
+                                        new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));
+                                syncNeeded = true;
+                            }
+                        }
                     }
                 }
             }
-        }
-    }
-    
-    @Override
-    public void onInteractEntity(ItemStack stack, Entity user, ItemStack used, Entity target, EnumHand hand) {
-        if (target instanceof IDimensionalFracture) {
-            IDimensionalFracture fracture = (IDimensionalFracture) target;
-            if (!fracture.isOpening() && !fracture.isOpen()) {
-                IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
-                if (stackStorage.canExtract() && stackStorage.extractEnergy(75, true) == 75) {
-                    stackStorage.extractEnergy(75, false);
-                    fracture.open();
-                    for (int i = 0; i < 7; ++i) {
-                        TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                                user.posX, user.posY + user.height / 2, user.posZ, target.posX, target.posY + target.height / 2, target.posZ, 0.04F), 
-                                new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));
+            
+            @Override
+            public void onInteractEntity(Entity user, ItemStack used, Entity target, EnumHand hand) {
+                if (target instanceof IDimensionalFracture) {
+                    IDimensionalFracture fracture = (IDimensionalFracture) target;
+                    if (!fracture.isOpening() && !fracture.isOpen()) {
+                        IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+                        if (stackStorage.canExtract() && stackStorage.extractEnergy(75, true) == 75) {
+                            stackStorage.extractEnergy(75, false);
+                            fracture.open();
+                            for (int i = 0; i < 7; ++i) {
+                                TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
+                                        user.posX, user.posY + user.height / 2, user.posZ, target.posX, target.posY + target.height / 2, target.posZ, 0.04F), 
+                                        new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));
+                            }
+                            
+                            syncNeeded = true;
+                        }
                     }
                 }
             }
-        }
-    }
-    
-    @Override
-    public boolean shouldSync(ItemStack stack) {
-        return true;
-    }
-    
-    @Override
-    public int getSyncInterval(ItemStack stack) {
-        return 10;
-    }
-    
-    @Override
-    public boolean hasAdditionalAugmentTooltip(ItemStack stack) {
-        return true;
-    }
-    
-    @Override
-    public void appendAdditionalAugmentTooltip(ItemStack stack, List<String> tooltip) {
-        if (stack.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
-            IRiftEnergyStorage energy = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
-            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy", new TextComponentTranslation(
-                    RiftEnergyHelper.getEnergyAmountDescriptor(energy))).getFormattedText());
-        }
+            
+            @Override
+            public boolean shouldSync() {
+                boolean sync = syncNeeded;
+                syncNeeded = false;
+                return sync;
+            }
+            
+            @Override
+            public boolean hasAdditionalAugmentTooltip() {
+                return true;
+            }
+            
+            @Override
+            public void appendAdditionalAugmentTooltip(List<String> tooltip) {
+                if (stack.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
+                    IRiftEnergyStorage energy = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy", new TextComponentTranslation(
+                            RiftEnergyHelper.getEnergyAmountDescriptor(energy))).getFormattedText());
+                }
+            }
+            
+        }, new RiftEnergyStorage(600, 10));
     }
     
     @Override

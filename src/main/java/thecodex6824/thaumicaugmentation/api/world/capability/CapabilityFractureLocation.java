@@ -18,16 +18,16 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.energy;
+package thecodex6824.thaumicaugmentation.api.world.capability;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
-public final class CapabilityRiftEnergyStorage {
+public final class CapabilityFractureLocation {
 
-    private CapabilityRiftEnergyStorage() {}
+    private CapabilityFractureLocation() {}
     
-    @CapabilityInject(IRiftEnergyStorage.class)
-    public static final Capability<IRiftEnergyStorage> RIFT_ENERGY_STORAGE = null;
+    @CapabilityInject(IFractureLocation.class)
+    public static final Capability<IFractureLocation> FRACTURE_LOCATION = null;
     
 }

@@ -99,7 +99,8 @@
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
                 "GAUNTLET_THAUMIUM",
-                "MORE_AUROMANCY"
+                "MORE_AUROMANCY",
+                "~VOIDSIPHON"
             ],
             "location": [
                 4.5,
@@ -114,7 +115,8 @@
                     ],
                     "required_knowledge": [
                         "OBSERVATION;AUROMANCY;1",
-                        "THEORY;AUROMANCY;1"
+                        "THEORY;AUROMANCY;1",
+                        "THEORY;ARTIFICE;1"
                     ]
                 },
                 {

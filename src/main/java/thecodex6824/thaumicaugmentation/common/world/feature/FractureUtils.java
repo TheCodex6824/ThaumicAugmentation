@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.common.world.feature;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 import com.google.common.math.DoubleMath;
@@ -39,7 +40,19 @@ public final class FractureUtils {
 
     private FractureUtils() {}
     
+    private static HashSet<Integer> possibleDims;
     private static WeightedRandom<Integer> dimPicker;
+    
+    static {
+        possibleDims = new HashSet<>(TAConfig.fractureDimList.getValue().size() + 1);
+        possibleDims.add(TAConfig.emptinessDimID.getValue());
+        for (String s : TAConfig.fractureDimList.getValue().keySet()) {
+            try {
+                possibleDims.add(Integer.parseInt(s));
+            }
+            catch (NumberFormatException ex) {}
+        }
+    }
     
     private static void reloadDimensionCache() {
         HashMap<Integer, Integer> map = new HashMap<>();
@@ -48,6 +61,7 @@ public final class FractureUtils {
                 map.put(dim, TAConfig.fractureDimList.getValue().get(Integer.toString(dim)));
         }
         
+        possibleDims = new HashSet<>(map.keySet());
         dimPicker = new WeightedRandom<>(map.keySet(), map.values());
     }
     
@@ -56,6 +70,10 @@ public final class FractureUtils {
         TAConfig.addConfigListener(() -> {
             reloadDimensionCache();
         });
+    }
+    
+    public static boolean canWorldHaveFracture(int id) {
+        return id == TADimensions.EMPTINESS.getId() || possibleDims.contains(id);
     }
 
     public static double movementRatio(World world) {

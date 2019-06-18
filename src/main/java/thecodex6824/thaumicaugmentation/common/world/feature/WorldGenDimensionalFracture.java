@@ -34,6 +34,8 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks.TerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
+import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocation;
+import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocation;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache.WorldData;
@@ -86,12 +88,19 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                 if (Math.abs(scaled.getX()) < WORLD_BORDER_MAX && Math.abs(scaled.getZ()) < WORLD_BORDER_MAX) {
                     Biome linkedBiome = dim.getBiomeProvider().getBiome(scaled);
                     generateBiomeTerrain(world, rand, position, BiomeTerrainBlocks.getTerrainBlocksForBiome(linkedBiome));
+                    BlockPos placeAt = new BlockPos(position.getX(), position.getY() - 1, position.getZ());
                     EntityDimensionalFracture fracture = new EntityDimensionalFracture(world);
-                    fracture.setLocationAndAngles(position.getX() + 0.5, position.getY() - 1.0, position.getZ() + 0.5, rand.nextInt(360), 0.0F);
+                    fracture.setLocationAndAngles(placeAt.getX() + 0.5, placeAt.getY(), placeAt.getZ() + 0.5, rand.nextInt(360), 0.0F);
                     fracture.setLinkedDimension(dim.getDimensionID());
                     fracture.setLinkedPosition(scaled);
                     world.spawnEntity(fracture);
 
+                    if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null)) {
+                        IFractureLocation loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null);
+                        loc.setHasFracture(true);
+                        loc.setFractureLocation(placeAt);
+                    }
+                    
                     return true;
                 }
             }
@@ -103,12 +112,19 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                 if (Math.abs(scaled.getX()) < WORLD_BORDER_MAX && Math.abs(scaled.getZ()) < WORLD_BORDER_MAX) {
                     Biome linkedBiome = dim.getBiomeProvider().getBiome(scaled);
                     generateBiomeTerrain(world, rand, position, BiomeTerrainBlocks.getTerrainBlocksForBiome(linkedBiome));
+                    BlockPos placeAt = new BlockPos(position.getX(), position.getY() - 1, position.getZ());
                     EntityDimensionalFracture fracture = new EntityDimensionalFracture(world);
-                    fracture.setLocationAndAngles(position.getX() + 0.5, position.getY() - 1.0, position.getZ() + 0.5, 0.0F, 0.0F);
+                    fracture.setLocationAndAngles(placeAt.getX() + 0.5, placeAt.getY(), placeAt.getZ() + 0.5, rand.nextInt(360), 0.0F);
                     fracture.setLinkedDimension(dim.getDimensionID());
                     fracture.setLinkedPosition(scaled);
                     world.spawnEntity(fracture);
-    
+
+                    if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null)) {
+                        IFractureLocation loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null);
+                        loc.setHasFracture(true);
+                        loc.setFractureLocation(placeAt);
+                    }
+                    
                     return true;
                 }
             }

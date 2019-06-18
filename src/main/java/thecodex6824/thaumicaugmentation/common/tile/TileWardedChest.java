@@ -42,6 +42,7 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.WardedInventory;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
 public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapabilityProvider {
@@ -53,7 +54,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
 
     public TileWardedChest() {
         super();
-        inventory = CapabilityWardedInventory.create(27);
+        inventory = new WardedInventory(27);
         openSpeed = new VariableValue(0.5F);
         openTime = new VariableValue(Float.MIN_VALUE);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/warded_chest.json"), 

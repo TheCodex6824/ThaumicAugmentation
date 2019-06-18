@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.entity;
+package thecodex6824.thaumicaugmentation.common.capability;
 
 import java.lang.ref.WeakReference;
 

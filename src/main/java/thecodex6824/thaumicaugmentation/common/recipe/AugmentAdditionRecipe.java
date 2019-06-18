@@ -25,8 +25,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 
 public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
@@ -43,7 +43,7 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof IAugment) {
+                if (stack.hasCapability(CapabilityAugment.AUGMENT, null)) {
                     if (augment.isEmpty())
                         augment = stack;
                     else
@@ -61,7 +61,7 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         }
 
         return !augmentable.isEmpty() && !augment.isEmpty() && augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getNextAvailableSlot() != -1 &&
-                ((IAugment) augment.getItem()).canBeAppliedToItem(augment, augmentable) &&
+                augment.getCapability(CapabilityAugment.AUGMENT, null).canBeAppliedToItem(augmentable) &&
                 augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).isAugmentAcceptable(
                 augment, augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getNextAvailableSlot());
     }
@@ -73,7 +73,7 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof IAugment) {
+                if (stack.hasCapability(CapabilityAugment.AUGMENT, null)) {
                     if (augment.isEmpty())
                         augment = stack;
                     else

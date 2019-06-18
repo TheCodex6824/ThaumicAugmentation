@@ -18,21 +18,19 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.capability;
+package thecodex6824.thaumicaugmentation.common.capability.init;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.WardedInventory;
 
-public final class CapabilityWardedInventoryImpl {
+public final class CapabilityWardedInventoryInit {
 
-    private CapabilityWardedInventoryImpl() {}
+    private CapabilityWardedInventoryInit() {}
     
     public static void init() {
         CapabilityManager.INSTANCE.register(IWardedInventory.class, new Capability.IStorage<IWardedInventory>() {
@@ -47,57 +45,7 @@ public final class CapabilityWardedInventoryImpl {
                 return instance.serializeNBT();
             }
             
-        }, () -> new DefaultImpl(1));
-    }
-    
-    public static class DefaultImpl implements IWardedInventory {
-        
-        private ItemStackHandler wrapped;
-        
-        public DefaultImpl(int slots) {
-            wrapped = new ItemStackHandler(slots);
-        }
-        
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return wrapped.extractItem(slot, amount, simulate);
-        }
-        
-        @Override
-        public int getSlotLimit(int slot) {
-            return wrapped.getSlotLimit(slot);
-        }
-        
-        @Override
-        public int getSlots() {
-            return wrapped.getSlots();
-        }
-        
-        @Override
-        public ItemStack getStackInSlot(int slot) {
-            return wrapped.getStackInSlot(slot);
-        }
-        
-        @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            return wrapped.insertItem(slot, stack, simulate);
-        }
-        
-        @Override
-        public IItemHandler getItemHandler() {
-            return wrapped;
-        }
-        
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            wrapped.deserializeNBT(nbt);
-        }
-        
-        @Override
-        public NBTTagCompound serializeNBT() {
-            return wrapped.serializeNBT();
-        }
-        
+        }, () -> new WardedInventory(1));
     }
     
 }

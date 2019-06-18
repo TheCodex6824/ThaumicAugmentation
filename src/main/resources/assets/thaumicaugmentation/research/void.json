@@ -29,8 +29,7 @@
                     "required_knowledge": [
                         "OBSERVATION;ELDRITCH;1",
                         "THEORY;ELDRITCH;1"
-                    ],
-                    "warp": 1
+                    ]
                 },
                 {
                     "text": "thaumicaugmentation.research.rift_studies.1",
@@ -119,10 +118,10 @@
             ]
         },
         {
-            "key": "HARNESSING_VOID",
-            "name": "thaumicaugmentation.research.harnessing_void.title",
+            "key": "RIFT_POWER",
+            "name": "thaumicaugmentation.research.rift_power.title",
             "icons": [
-                "thaumicaugmentation:textures/research/fracture.png"
+                "thaumcraft:textures/research/r_fluxrift.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
@@ -134,12 +133,85 @@
                 -3
             ],
             "meta": [
-                "SPIKY",
-                "HIDDEN"
+                "ROUND"
             ],
             "stages": [
                 {
-                    "text": "thaumicaugmentation.research.harnessing_void.0"
+                    "text": "thaumicaugmentation.research.rift_power.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ELDRITCH;1",
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.rift_power.1",
+                    "required_knowledge": [
+                        "THEORY;ARTIFICE;1"
+                    ],
+                    "required_craft": [
+                        "thaumicaugmentation:augment_caster_rift_energy_storage"
+                    ],
+                    "recipes": [
+                        "thaumicaugmentation:RiftEnergyCell",
+                        "thaumicaugmentation:AugmentGauntletRiftEnergyStorage"
+                    ],
+                    "warp": 2
+                },
+                {
+                    "text": "thaumicaugmentation.research.rift_power.2",
+                    "recipes": [
+                        "thaumicaugmentation:RiftEnergyCell",
+                        "thaumicaugmentation:AugmentGauntletRiftEnergyStorage"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ENTERING_FRACTURE",
+            "name": "thaumicaugmentation.research.entering_fracture.title",
+            "icons": [
+                "thaumicaugmentation:textures/research/fracture.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "RIFT_POWER"
+            ],
+            "location": [
+                7.5,
+                -3
+            ],
+            "meta": [
+                "SPIKY"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.entering_fracture.0",
+                    "required_research": [
+                        "!DIMENSIONALFRACTURE"
+                    ],
+                    "recipes": [
+                        "thaumicaugmentation:FractureLocator"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.entering_fracture.1",
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;ELDRITCH;1"
+                    ],
+                    "required_research": [
+                        "!ENTERVOID"
+                    ],
+                    "recipes": [
+                        "thaumicaugmentation:FractureLocator"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.entering_fracture.2",
+                    "recipes": [
+                        "thaumicaugmentation:FractureLocator"
+                    ]
                 }
             ]
         }

@@ -75,7 +75,7 @@
             "key": "SEAL_COPIER",
             "name": "thaumicaugmentation.research.seal_copier.title",
             "icons": [
-                "thaumicaugmentation:seal_copier"
+                "thaumicaugmentation:seal_copier;1;0;{seal:{}}"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [

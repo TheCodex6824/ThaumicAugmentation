@@ -18,16 +18,23 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.energy;
+package thecodex6824.thaumicaugmentation.api.world.capability;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.util.INBTSerializable;
 
-public final class CapabilityRiftEnergyStorage {
+public interface IFractureLocation extends INBTSerializable<NBTTagCompound> {
 
-    private CapabilityRiftEnergyStorage() {}
+    public void setChunk(Chunk c);
     
-    @CapabilityInject(IRiftEnergyStorage.class)
-    public static final Capability<IRiftEnergyStorage> RIFT_ENERGY_STORAGE = null;
+    public void setHasFracture(boolean fracture);
+    
+    public boolean hasFracture();
+    
+    public void setFractureLocation(BlockPos pos);
+    
+    public BlockPos getFractureLocation();
     
 }

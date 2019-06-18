@@ -165,7 +165,8 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
                 EnumFacing offset = state.getValue(IArcaneDoorHinge.HINGE_SIDE) == EnumHingePosition.LEFT ? 
                         doorFacing.rotateY() : doorFacing.rotateYCCW();
                 IBlockState otherDoorLower = world.getBlockState(blockpos.offset(offset));
-                if (otherDoorLower.getBlock() == this && otherDoorLower.getValue(IArcaneDoorOpen.DOOR_OPEN) == lower.getValue(IArcaneDoorOpen.DOOR_OPEN) && 
+                if (otherDoorLower.getBlock() == this && otherDoorLower.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.LOWER && 
+                        otherDoorLower.getValue(IArcaneDoorOpen.DOOR_OPEN) == lower.getValue(IArcaneDoorOpen.DOOR_OPEN) && 
                         otherDoorLower.getValue(IArcaneDoorHinge.HINGE_SIDE) != lower.getValue(IArcaneDoorHinge.HINGE_SIDE)) {
                     
                     otherDoorLower.getBlock().onBlockActivated(world, blockpos.offset(offset), otherDoorLower, player, 

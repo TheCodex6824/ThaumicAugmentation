@@ -22,7 +22,6 @@ package thecodex6824.thaumicaugmentation.api.augment;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
 public final class CapabilityAugmentableItem {
 
@@ -30,9 +29,5 @@ public final class CapabilityAugmentableItem {
     
     @CapabilityInject(IAugmentableItem.class)
     public static final Capability<IAugmentableItem> AUGMENTABLE_ITEM = null;
-    
-    public static IAugmentableItem create(int slots) {
-        return TAInternals.createAugmentableItem(slots);
-    }
     
 }

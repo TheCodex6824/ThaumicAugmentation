@@ -30,7 +30,6 @@ import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.IEssentiaContainerItem;
 import thaumcraft.api.items.ItemsTC;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
 
 public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
@@ -47,7 +46,7 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof IAugment && stack.getItem() instanceof IAssociatedAspect) {
+                if (stack.getItem() instanceof IAssociatedAspect) {
                     if (augment.isEmpty())
                         augment = stack;
                     else
@@ -74,7 +73,7 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof IAugment && stack.getItem() instanceof IAssociatedAspect) {
+                if (stack.getItem() instanceof IAssociatedAspect) {
                     if (augment.isEmpty())
                         augment = stack;
                     else
@@ -104,7 +103,7 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof IAugment && stack.getItem() instanceof IAssociatedAspect)
+                if (stack.getItem() instanceof IAssociatedAspect)
                     augment = stack;
                 else if (stack.getItem() == ItemsTC.crystalEssence)
                     crystalIndex = i;

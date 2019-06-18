@@ -80,6 +80,7 @@ import thaumcraft.common.world.aura.AuraChunk;
 import thaumcraft.common.world.aura.AuraHandler;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.event.CasterCooldownEvent;
 import thecodex6824.thaumicaugmentation.api.event.CasterVisCostEvent;
@@ -125,7 +126,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new SimpleCapabilityProvider<>(CapabilityAugmentableItem.create(3), 
+        return new SimpleCapabilityProvider<>(new AugmentableItem(3), 
                 CapabilityAugmentableItem.AUGMENTABLE_ITEM);
     }
 

@@ -14,6 +14,7 @@ item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet
 item.thaumicaugmentation.material.lattice.name=Vis Regeneration Lattice
 item.thaumicaugmentation.material.warding_sigil.name=Warding Sigil
 item.thaumicaugmentation.material.amalgamated_gear.name=Amalgamated Gear
+item.thaumicaugmentation.material.rift_energy_cell.name=Impetus Cell
 item.thaumicaugmentation.seal_copier.name=Seal Copier
 item.thaumicaugmentation.arcane_door.wood.name=Wooden Arcane Door
 item.thaumicaugmentation.arcane_door.metal.name=Thaumium Arcane Door
@@ -24,6 +25,7 @@ item.thaumicaugmentation.void_boots.name=Boots of the Riftstrider
 item.thaumicaugmentation.rift_seed.flux.name=Flux Rift Seed
 item.thaumicaugmentation.rift_seed.flux_aura.name=Flux Seed
 item.thaumicaugmentation.augment_caster_elemental.name=Elemental Resonator
+item.thaumicaugmentation.augment_caster_rift_energy_storage.name=Impetus Extractor
 
 entity.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
 
@@ -43,13 +45,13 @@ thaumicaugmentation.text.no_fracture_target=This fracture does not lead anywhere
 thaumicaugmentation.text.augmented=§cAugmented§r (%d/%d)
 thaumicaugmentation.text.elemental_aspect=Aspect: %s
 thaumicaugmentation.text.stored_energy=Energy Level: %s
-thaumicaugmentation.text.energy_none=None
-thaumicaugmentation.text.energy_minimal=Minimal
-thaumicaugmentation.text.energy_very_weak=Very Weak
-thaumicaugmentation.text.energy_weak=Weak
-thaumicaugmentation.text.energy_medium=Medium
-thaumicaugmentation.text.energy_strong=Strong
-thaumicaugmentation.text.energy_max=Maximum
+thaumicaugmentation.text.energy_none=§4None
+thaumicaugmentation.text.energy_minimal=§cMinimal
+thaumicaugmentation.text.energy_very_weak=§6Very Weak
+thaumicaugmentation.text.energy_weak=§eWeak
+thaumicaugmentation.text.energy_medium=§2Medium
+thaumicaugmentation.text.energy_strong=§aStrong
+thaumicaugmentation.text.energy_max=§aMaximum
 
 thaumicaugmentation.subtitle.spooky=Spooky noises
 thaumicaugmentation.subtitle.spooky_wind=Wind howls
@@ -81,7 +83,7 @@ thaumicaugmentation.research.seal_copier.0=Configuring golem seals by hand is fi
 thaumicaugmentation.research.seal_copier.1=I have created plans for a basic seal copying device. I just need to configure one seal with the settings I need, then right click it with the copier. I then only need to right click every other seal I want to apply the settings to. If I want to clear the memory of the copier, I need to right click while sneaking. I can then copy new settings and continue.<BR>It seems that the seal copier is unable to interact with seals that were not placed by the owner. I should keep this in mind if I am working with other Thaumaturges.
 
 thaumicaugmentation.research.more_auromancy.title=More Auromancy
-thaumicaugmentation.research.more_auromancy.0=I have already discovered some foci effects, but I feel there is still much more to discover. There are so many aspects of essentia I have not experimented with, that I am bound to find something useful.
+thaumicaugmentation.research.more_auromancy.0=I have already discovered some foci effects, but I feel there is still much more to discover. There are so many aspects of essentia I have not experimented with that I am bound to find something useful.
 
 thaumicaugmentation.research.focus_light.title=Focus Effect: Light
 thaumicaugmentation.research.focus_light.0=While fire does give off light, it can be a bit... destructive. It should be somewhat simple to create an effect completely dedicated to giving off light. To begin, I should examine some light sources I already have access to.
@@ -94,15 +96,15 @@ thaumicaugmentation.research.warded_arcana.2=By taking a mundane chest and apply
 
 thaumicaugmentation.research.arcane_door.title=Arcane Door
 thaumicaugmentation.research.arcane_door.0=Now that I have the basics of warding objects down, I think I can move on to something a bit more advanced. The original manuscripts I read described an indestructable door, which sounds like something worth researching. After all, replacing doors broken down by zombies does get annoying after a while...
-thaumicaugmentation.research.arcane_door.1=I have managed to create the warded door described in the manuscript, which I am calling the Arcane Door. Just like the Warded Chest, the doors will only open for their owner, and are extremely difficult to remove by normal means. I have also made two different styles - wood and thaumium. They both are functionally the same, but it is nice to have options for decoration purposes.<BR>If I want to remove the door, I need to sneak and then use the bottom half of it with any casting gauntlet.<BR>I have also created trapdoor forms of these doors. They work in the same way as the normal doors, just in a smaller profile.
+thaumicaugmentation.research.arcane_door.1=I have managed to create the warded door described in the manuscript, which I am calling the Arcane Door. Just like the Warded Chest, the doors will only open for their owner, and are extremely difficult to remove by normal means. I have also made two different styles - wood and thaumium. They both are functionally the same, but it is nice to have options for decoration purposes.<BR>If I want to remove the door, I need to sneak and then use the bottom half of it with any casting gauntlet.<BR>It seems that these doors are "smart" in the sense that two doors placed next to each other such that they are double doors will open and close together. How convenient.<BR>I have also created trapdoor forms of these doors. They work in the same way as the normal doors, just in a smaller profile.
 
 thaumicaugmentation.research.ward_keys.title=Access Control
 thaumicaugmentation.research.ward_keys.0=Being able to have private objects is nice and all, but sometimes I need to share my belongings with fellow Thaumaturges. I should devise a way to selectively grant access to those I want to permit.
 thaumicaugmentation.research.ward_keys.1=I have created objects to allow others to access arbitrary warded objects - keys. But these are not any ordinary keys, as they will learn to emulate the person they are bound to. This seems sufficient to bypass the protections of the wards, provided the bound person matches with the object. Each key works slightly differently - I have written instructions for each type of key on the following pages, should I need to reference them.<PAGE>Iron Key<DIV><IMG>thaumicaugmentation:textures/items/key_iron.png:0:0:255:255:0.125</IMG>These are the simplest of the three types of keys. To bind one to my warded objects, I need to use it on empty space (it does not need to be used on any block). It will then allow anyone possessing the key access. To unbind the key, I should use the key while sneaking.<PAGE>Brass Key<DIV><IMG>thaumicaugmentation:textures/items/key_brass.png:0:0:255:255:0.125</IMG>This key functions in a similar way to the iron key - use to bind, sneak while using to unbind. However, the brass key has the ability to copy its binding to an iron key. To do this, one needs to place both the brass key and an unbound iron key in a mundane crafting grid. The brass key will not be consumed by this process. Copying thaumium keys will be described in the following section. <PAGE>Thaumium Key<DIV><IMG>thaumicaugmentation:textures/items/key_thaumium.png:0:0:255:255:0.125</IMG>The thaumium key is interesting in that it does not only bind to beings - it also binds to the object and its location. In other words, this key will permit to access to a single warded object at a location. To bind this key, I need to use it on the warded object I want to bind it to. This binding will still be valid even if I remove and replace the object at a location, but only if it still matches the type of object the key was originally bound to. Sneaking while using the key will unbind it, like the others. To copy a Thaumium key, I need to combine it in a mundane crafting grid with an empty Thaumium key and a brass key bound to the same person as the thaumium key.
 
 thaumicaugmentation.research.boots_void.title=Boots of the Riftstrider
-thaumicaugmentation.research.boots_void.0=With void metal allowing me to upgrade most of my existing armor to take advantage of its superior capabilities, it only makes sense for me to try to apply this material to the Boots of the Traveler as well.
-thaumicaugmentation.research.boots_void.1=I have succeeded in upgrading the Boots of the Traveler into a superior form I am calling the Boots of the Riftstrider. These boots have the expected boosts to speed and jump height over the original (at the cost of slightly increased vis consumption), as well as the auto-repair capabilities of all void metal items. Most notably, fall damage is greatly reduced beyond the jump height of these boots - I can practically fall into a ravine and walk away unharmed.<BR>These boots are also now dyeable. I simply need to craft them with the dye(s) I want to color them, or use them on a filled cauldron to wash away the dye.
+thaumicaugmentation.research.boots_void.0=With void metal allowing me to upgrade most of my existing armor to take advantage of its superior capabilities, it only makes sense for me to try to apply this material to the Boots of the Traveller as well.
+thaumicaugmentation.research.boots_void.1=I have succeeded in upgrading the Boots of the Traveller into a superior form I am calling the Boots of the Riftstrider. These boots have the expected boosts to speed and jump height over the original (at the cost of slightly increased vis consumption), as well as the auto-repair capabilities of all void metal items. Most notably, fall damage is greatly reduced beyond the jump height of these boots - I can practically fall into a ravine and walk away unharmed.<BR>These boots are also now dyeable. I simply need to craft them with the dye(s) I want to color them, or use them on a filled cauldron to wash away the dye.
 
 thaumicaugmentation.research.rift_studies.title=Rift Studies
 thaumicaugmentation.research.rift_studies.0=I think that flux rifts are much more important to my studies than they may seem. When they are created from an excess of flux, they open and connect to the void. I'm sure that they contain the secret to opening rifts into places that are more... hospitable.<BR>However, studying flux rifts currently requires me to saturate the aura with flux. It might be beneficial to contain all the flux I need into a small "seed" that can then be released into the target area, rather than having to resort to more messy alternatives. I should look into ways to compress a large amount of flux into a small space.
@@ -121,3 +123,8 @@ thaumicaugmentation.research.void_stone.2=<IMG>thaumicaugmentation:textures/bloc
 thaumicaugmentation.research.void_stone_usage.title=Manufacturing Eldritch Stone
 thaumicaugmentation.research.void_stone_usage.0=One thing I haven't managed to confirm yet was the mention of a special type of stone in the Crimson Rites - one that was extremely durable and had magical properties that resemble those of Arcane Stone. Although it is lacking in details on its creation, it does mention infusing a purple stone with eldritch energy. This sounds eerily similar to the Void Stone I recently discovered - I need to investigate this for myself.
 thaumicaugmentation.research.void_stone_usage.1=For better or for worse, the Crimson Cult was right once again. I was able to transform a small piece of Void Stone into the stone described, which I will call Eldritch Stone. Just as the Rites described, this stone is able to withstand almost any explosion, and takes longer than usual to remove with pickaxes and other tools. Although I am confident that it is possible to create usable amounts of Eldritch Stone through Infusion, it does seem to be an extremely unstable process - I should be prepared for things to go wrong.
+
+thaumicaugmentation.research.rift_power.title=Rift Power
+thaumicaugmentation.research.rift_power.0=Drawing power from rifts to make void seeds is useful in itself, but I feel like I've barely scratched the surface of the potential of rift energy. However, before I can find uses for this energy, I need to find a way to extract it into a usable form. 
+thaumicaugmentation.research.rift_power.1=Thanks to some research, I have determined that it should be possible to hold energy from rifts in a custom storage cell. This cell will need to have a heavilly modified void seed core, which acts as the receptor for the energy.<BR>I suppose I should give this energy a name. Because rift energy seems to be much more volatile than the Vis I've worked with before, I think a suitable name would be "Impetus" - force.<BR>Now all I need is a tool to extract the energy with. Instead of making a dedicated tool for this purpose, I'm confident that I can use my augment system to attach some sort of energy extractor to a casting gauntlet.
+thaumicaugmentation.research.rift_power.2=I have finally finished creating all I need to begin delving into the uses of Impetus. To get started, I should attach the Impetus Extractor to a gauntlet. Then, I only need to stand close to a flux rift and it will slowly drain energy from the rift into the augment.<BR>As with the Void Siphon, drawing energy from the rift will cause it become more unstable, in addition to rapidly shrinking - eventually into nothing. If I don't want to constantly make new flux rifts, I should ensure the rift stays stable and has a healthy size.<BR>While I don't have any other devices that make use of Impetus at the moment, I have noticed a peculiar effect on the casting gauntlet itself. The presence of Impetus seems to slightly increase the power of any focus, without consuming any Impetus to do so. This seems to continue for as long as the attached Impetus Extractor contains at least some energy - the amount does not seem to matter.

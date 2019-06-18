@@ -40,6 +40,7 @@ import thaumcraft.api.crafting.IDustTrigger;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.crafting.Part;
 import thaumcraft.api.crafting.ShapedArcaneRecipe;
+import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.blocks.basic.BlockPillar;
 import thaumcraft.common.lib.crafting.DustTriggerMultiblock;
@@ -116,6 +117,14 @@ public final class RecipeHandler {
                     new InfusionRecipe("VOID_STONE", new ItemStack(BlocksTC.stoneEldritchTile), 12, new AspectList().add(Aspect.ELDRITCH, 35), 
                     new ItemStack(TABlocks.STONE, 1, 0), new Object[] {
                             ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH), ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH)
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftEnergyCell"),
+                    new InfusionRecipe("RIFT_POWER@2", new ItemStack(TAItems.MATERIAL, 1, 3), 7, new AspectList().add(Aspect.ELDRITCH, 25).add(Aspect.VOID, 50).add(Aspect.ENERGY, 100),
+                    new ItemStack(ItemsTC.voidSeed), new Object[] {
+                            new ItemStack(ItemsTC.plate, 1, 3), new ItemStack(ItemsTC.primordialPearl), new ItemStack(ItemsTC.plate, 1, 3), ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH),
+                            new ItemStack(ItemsTC.plate, 1, 3), new ItemStack(Items.REDSTONE), new ItemStack(ItemsTC.plate, 1, 3), new ItemStack(ItemsTC.amber)
                     }
             ));
     }
@@ -262,7 +271,18 @@ public final class RecipeHandler {
                         'T', new ItemStack(ItemsTC.plate, 1, 2), 'I', new ItemStack(ItemsTC.plate, 1, 1), 'S', new ItemStack(TAItems.MATERIAL, 1, 1)
                 }
         ));
-        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentationGauntletElemental"), new ElementalAugmentCraftingRecipe());
+        
+        /*
+         * Misc Augments
+         */
+        
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentGauntletElemental"), new ElementalAugmentCraftingRecipe());
+        
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentGauntletRiftEnergyStorage"), new ShapelessArcaneRecipe(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentGauntletRiftEnergyStorage"), "RIFT_POWER@2", 25, 
+                new AspectList().add(Aspect.AIR, 1).add(Aspect.ENTROPY, 1).add(Aspect.FIRE, 1), new ItemStack(TAItems.AUGMENT_CASTER_RIFT_ENERGY_STORAGE), new Object[] {
+                        new ItemStack(ItemsTC.plate, 1, 2), new ItemStack(TAItems.MATERIAL, 1, 3)
+                }));
     }
     
     private static String getDustTriggerResearch(DustTriggerMultiblock trigger) {

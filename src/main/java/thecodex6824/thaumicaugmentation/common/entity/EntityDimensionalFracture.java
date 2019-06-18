@@ -117,19 +117,25 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                         }
                     }
 
-                    verifyChunk(targetWorld, linkedTo);
-                    if (targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(linkedTo)).isEmpty()) {
-                        ThaumicAugmentation.getLogger().info("A fracture is invalid, due to the destination lacking a fracture. This fracture has passed verification before, suggesting that either the destination fracture was removed or new linkable dimensions were introduced to the world.");
-                        ThaumicAugmentation.getLogger().debug("Dest dim: " + targetWorld.provider.getDimension());
-                        ThaumicAugmentation.getLogger().debug("Dest pos (not including y): " + linkedTo);
-                        ThaumicAugmentation.getLogger().debug("Src pos: " + getPosition());
-                        linkInvalid = true;
+                    if (!targetWorld.getWorldBorder().contains(linkedTo)) {
+                        if (world.getTotalWorldTime() % 20 == 0 && entity instanceof EntityPlayer)
+                            ((EntityPlayer) entity).sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.no_fracture_target"), true);
                     }
                     else {
-                        entity = entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(linkedTo));
-                        // we don't prevent people from teleporting without leaving the fracture area first, so we need a longer
-                        // cooldown to allow people to casually leave it
-                        entity.timeUntilPortal = Math.max(entity.getPortalCooldown(), 100);
+                        verifyChunk(targetWorld, linkedTo);
+                        if (targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(linkedTo)).isEmpty()) {
+                            ThaumicAugmentation.getLogger().info("A fracture is invalid, due to the destination lacking a fracture. This fracture has passed verification before, suggesting that either the destination fracture was removed or new linkable dimensions were introduced to the world.");
+                            ThaumicAugmentation.getLogger().debug("Dest dim: " + targetWorld.provider.getDimension());
+                            ThaumicAugmentation.getLogger().debug("Dest pos (not including y): " + linkedTo);
+                            ThaumicAugmentation.getLogger().debug("Src pos: " + getPosition());
+                            linkInvalid = true;
+                        }
+                        else {
+                            entity = entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(linkedTo));
+                            // we don't prevent people from teleporting without leaving the fracture area first, so we need a longer
+                            // cooldown to allow people to casually leave it
+                            entity.timeUntilPortal = Math.max(entity.getPortalCooldown(), 100);
+                        }
                     }
                 }
             }

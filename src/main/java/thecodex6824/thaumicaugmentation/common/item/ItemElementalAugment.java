@@ -32,6 +32,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.aspects.Aspect;
@@ -42,12 +43,14 @@ import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IFocusElement;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectUtil;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
+import thecodex6824.thaumicaugmentation.api.augment.Augment;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
 import thecodex6824.thaumicaugmentation.api.util.AugmentUtils;
+import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
-public class ItemElementalAugment extends ItemTABase implements IAugment, IAssociatedAspect {
+public class ItemElementalAugment extends ItemTABase implements IAssociatedAspect {
 
     private static final HashSet<TextFormatting> DISALLOWED_COLORS = Sets.newHashSet(TextFormatting.BLACK);
     
@@ -55,6 +58,49 @@ public class ItemElementalAugment extends ItemTABase implements IAugment, IAssoc
         super();
         setMaxStackSize(1);
     }
+    
+    @Override
+        public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+            return new SimpleCapabilityProvider<>(new Augment(stack) {
+                
+                @Override
+                public boolean canBeAppliedToItem(ItemStack augmentable) {
+                    return augmentable.getItem() instanceof ICaster;
+                }
+                
+                @Override
+                public boolean isCompatible(ItemStack otherAugment) {
+                    return stack.getItem() != otherAugment.getItem();
+                }
+                
+                @Override
+                public void onCast(ItemStack caster, FocusPackage focusPackage, Entity user) {
+                    float totalMultiplier = 1.0F;
+                    for (IFocusElement node : focusPackage.nodes) {
+                        if (node instanceof FocusEffect && ((FocusEffect) node).getAspect() == getAspect(stack))
+                            totalMultiplier *= 1.5F;
+                        else if (node instanceof FocusNode && AspectElementInteractionManager.getNegativeAspects(getAspect(stack)).contains(
+                                ((FocusNode) node).getAspect())) {
+                            totalMultiplier *= 0.5F;
+                        }
+                    }
+                    
+                    AugmentUtils.setPackagePower(focusPackage, focusPackage.getPower() * totalMultiplier);
+                }
+                
+                @Override
+                public boolean hasAdditionalAugmentTooltip() {
+                    return true;
+                }
+                
+                @Override
+                public void appendAdditionalAugmentTooltip(List<String> tooltip) {
+                    Aspect aspect = getAspect(stack);
+                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.elemental_aspect", AspectUtil.getChatColorForAspect(aspect, DISALLOWED_COLORS) + aspect.getName()).getFormattedText());
+                }
+                
+            }, CapabilityAugment.AUGMENT);
+        }
     
     @Override
     public void setAspect(ItemStack stack, Aspect newAspect) {
@@ -70,42 +116,6 @@ public class ItemElementalAugment extends ItemTABase implements IAugment, IAssoc
             return Aspect.ORDER;
         
         return Aspect.getAspect(stack.getTagCompound().getString("aspect"));
-    }
-    
-    @Override
-    public boolean canBeAppliedToItem(ItemStack stack, ItemStack augmentable) {
-        return augmentable.getItem() instanceof ICaster;
-    }
-    
-    @Override
-    public boolean isCompatible(ItemStack stack, ItemStack otherAugment) {
-        return stack.getItem() != otherAugment.getItem();
-    }
-    
-    @Override
-    public void onCast(ItemStack stack, ItemStack caster, FocusPackage focusPackage, Entity user) {
-        float totalMultiplier = 1.0F;
-        for (IFocusElement node : focusPackage.nodes) {
-            if (node instanceof FocusEffect && ((FocusEffect) node).getAspect() == getAspect(stack))
-                totalMultiplier *= 1.5F;
-            else if (node instanceof FocusNode && AspectElementInteractionManager.getNegativeAspects(getAspect(stack)).contains(
-                    ((FocusNode) node).getAspect())) {
-                totalMultiplier *= 0.5F;
-            }
-        }
-        
-        AugmentUtils.setPackagePower(focusPackage, focusPackage.getPower() * totalMultiplier);
-    }
-    
-    @Override
-    public boolean hasAdditionalAugmentTooltip(ItemStack stack) {
-        return true;
-    }
-    
-    @Override
-    public void appendAdditionalAugmentTooltip(ItemStack stack, List<String> tooltip) {
-        Aspect aspect = getAspect(stack);
-        tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.elemental_aspect", AspectUtil.getChatColorForAspect(aspect, DISALLOWED_COLORS) + aspect.getName()).getFormattedText());
     }
     
     @Override

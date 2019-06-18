@@ -27,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import thaumcraft.api.casters.FocusPackage;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
@@ -38,94 +39,94 @@ public final class AugmentEventHelper {
     
     public static void fireEquipEvent(IAugmentableItem cap, Entity entity) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onEquip(a, entity);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onEquip(entity);
         }
     }
     
     public static void fireUnequipEvent(IAugmentableItem cap, Entity entity) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onUnequip(a, entity);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onUnequip(entity);
         }
     }
     
     public static void fireCastEvent(IAugmentableItem cap, ItemStack caster, FocusPackage focusPackage, Entity entity) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onCast(a, caster, focusPackage, entity);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onCast(caster, focusPackage, entity);
         }
     }
     
     public static void fireHurtEntityEvent(IAugmentableItem cap, Entity attacker, Entity attacked) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onHurtEntity(a, attacker, attacked);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onHurtEntity(attacker, attacked);
         }
     }
     
     public static void fireHurtByEntityEvent(IAugmentableItem cap, Entity attacked, Entity attacker) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onHurt(a, attacked, attacker);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onHurt(attacked, attacker);
         }
     }
     
     public static void fireDamageEntityEvent(IAugmentableItem cap, Entity attacker, Entity attacked) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onDamagedEntity(a, attacker, attacked);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onDamagedEntity(attacker, attacked);
         }
     }
     
     public static void fireDamagedByEntityEvent(IAugmentableItem cap, Entity attacked, Entity attacker) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onDamaged(a, attacked, attacker);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onDamaged(attacked, attacker);
         }
     }
     
     public static void fireInteractEntityEvent(IAugmentableItem cap, Entity user, ItemStack used, Entity target, EnumHand hand) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onInteractEntity(a, user, used, target, hand);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onInteractEntity(user, used, target, hand);
         }
     }
     
     public static void fireInteractBlockEvent(IAugmentableItem cap, Entity user, ItemStack used, BlockPos target, EnumFacing face, EnumHand hand) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onInteractBlock(a, user, used, target, face, hand);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onInteractBlock(user, used, target, face, hand);
         }
     }
     
     public static void fireInteractAirEvent(IAugmentableItem cap, Entity user, ItemStack used, EnumHand hand) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onInteractAir(a, user, used, hand);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onInteractAir(user, used, hand);
         }
     }
     
     public static void fireUseItemEvent(IAugmentableItem cap, Entity user, ItemStack used) {
         for (ItemStack a : cap.getAllAugments()) {
-            if (a.getItem() instanceof IAugment)
-                ((IAugment) a.getItem()).onUseItem(a, user, used);
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onUseItem(user, used);
         }
     }
     
     public static void fireTickEvent(IAugmentableItem cap, Entity entity) {
-        for (ItemStack stack : cap.getAllAugments()) {
-            if (stack.getItem() instanceof IAugment)
-                ((IAugment) stack.getItem()).onTick(stack, entity);
+        for (ItemStack a : cap.getAllAugments()) {
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onTick(entity);
         }
     }
     
     public static void handleSync(IAugmentableItem cap, Entity entity, int index) {
         boolean sync = false;
-        for (ItemStack stack : cap.getAllAugments()) {
-            if (stack.getItem() instanceof IAugment) {
-                IAugment aug = (IAugment) stack.getItem();
-                if (aug.shouldSync(stack) && entity.getEntityWorld().getTotalWorldTime() % aug.getSyncInterval(stack) == 0) {
+        for (ItemStack a : cap.getAllAugments()) {
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null)) {
+                IAugment aug = a.getCapability(CapabilityAugment.AUGMENT, null);
+                if (aug.shouldSync()) {
                     sync = true;
                     break;
                 }

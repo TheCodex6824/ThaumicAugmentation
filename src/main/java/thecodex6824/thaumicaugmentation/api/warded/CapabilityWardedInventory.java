@@ -22,7 +22,6 @@ package thecodex6824.thaumicaugmentation.api.warded;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
 public final class CapabilityWardedInventory {
 
@@ -30,9 +29,5 @@ public final class CapabilityWardedInventory {
     
     @CapabilityInject(IWardedInventory.class)
     public static Capability<IWardedInventory> WARDED_INVENTORY = null;
-    
-    public static IWardedInventory create(int slots) {
-        return TAInternals.createWardedInventory(slots);
-    }
     
 }

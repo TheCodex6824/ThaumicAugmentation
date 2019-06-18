@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.api.internal;
 
-import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
-
 public final class TAInternals {
 
     private static IInternalMethodProvider provider;
@@ -32,30 +28,6 @@ public final class TAInternals {
     
     public static void setInternalMethodProvider(IInternalMethodProvider provider) {
         TAInternals.provider = provider;
-    }
-    
-    public static IAugmentableItem createAugmentableItem(int slots) {
-        return provider.createAugmentableItemImpl(slots);
-    }
-    
-    public static IRiftEnergyStorage createRiftEnergyStorage(long capacity) {
-        return provider.createRiftEnergyStorageImpl(capacity);
-    }
-    
-    public static IRiftEnergyStorage createRiftEnergyStorage(long capacity, long maxTransfer) {
-        return provider.createRiftEnergyStorageImpl(capacity, maxTransfer);
-    }
-    
-    public static IRiftEnergyStorage createRiftEnergyStorage(long capacity, long maxReceive, long maxExtract) {
-        return provider.createRiftEnergyStorageImpl(capacity, maxReceive, maxExtract);
-    }
-    
-    public static IRiftEnergyStorage createRiftEnergyStorage(long capacity, long maxReceive, long maxExtract, long initial) {
-        return provider.createRiftEnergyStorageImpl(capacity, maxReceive, maxExtract, initial);
-    }
-    
-    public static IWardedInventory createWardedInventory(int slots) {
-        return provider.createWardedInventoryImpl(slots);
     }
     
     public static void addConfigListener(Runnable listener) {

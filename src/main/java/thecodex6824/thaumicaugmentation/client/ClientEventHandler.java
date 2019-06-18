@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
@@ -41,12 +42,12 @@ public final class ClientEventHandler {
     private static void handleAugmentTooltips(ItemTooltipEvent event, IAugmentableItem cap) {
         LinkedList<LinkedList<String>> tooltip = new LinkedList<>();
         for (ItemStack augment : cap.getAllAugments()) {
-            if (augment.getItem() instanceof IAugment) {
+            if (augment.hasCapability(CapabilityAugment.AUGMENT, null)) {
                 LinkedList<String> thisTooltip = new LinkedList<>();
                 thisTooltip.add(new TextComponentTranslation(augment.getItem().getTranslationKey(augment) + ".name").getFormattedText());
-                IAugment aug = (IAugment) augment.getItem();
-                if (aug.hasAdditionalAugmentTooltip(augment))
-                    aug.appendAdditionalAugmentTooltip(augment, thisTooltip);
+                IAugment aug = augment.getCapability(CapabilityAugment.AUGMENT, null);
+                if (aug.hasAdditionalAugmentTooltip())
+                    aug.appendAdditionalAugmentTooltip(thisTooltip);
                 
                 tooltip.add(thisTooltip);
             }
