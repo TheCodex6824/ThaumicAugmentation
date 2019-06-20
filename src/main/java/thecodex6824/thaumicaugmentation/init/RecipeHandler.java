@@ -69,7 +69,7 @@ public final class RecipeHandler {
         TRIGGER_RESEARCH = f;
     }
     
-    private static void initInfusionRecipes() {
+    public static void initInfusionRecipes() {
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "GauntletVoid"), 
                 new InfusionRecipe("GAUNTLET_VOID", new ItemStack(TAItems.GAUNTLET, 1, 1), 6, 
                         new AspectList().add(Aspect.ENERGY, 50).add(Aspect.ELDRITCH, 75).add(Aspect.VOID, 75), 
@@ -129,7 +129,7 @@ public final class RecipeHandler {
             ));
     }
     
-    private static void initCrucibleRecipes() {
+    public static void initCrucibleRecipes() {
         ItemStack fluxSeedStack = new ItemStack(TAItems.RIFT_SEED, 1, 1);
         fluxSeedStack.setTagCompound(new NBTTagCompound());
         fluxSeedStack.getTagCompound().setInteger("flux", 100);
@@ -138,7 +138,7 @@ public final class RecipeHandler {
                         new AspectList().add(Aspect.FLUX, 50)));
     }
     
-    private static void initArcaneCraftingRecipes() {
+    public static void initArcaneCraftingRecipes() {
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "GauntletThaumium"), new ShapedArcaneRecipe(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "GAUNTLET_THAUMIUM"), "GAUNTLET_THAUMIUM", 250, 
                 new AspectList().add(Aspect.AIR, 2).add(Aspect.EARTH, 2).add(Aspect.ENTROPY, 2).add(Aspect.FIRE, 2).add(
@@ -285,7 +285,7 @@ public final class RecipeHandler {
                 }));
     }
     
-    private static String getDustTriggerResearch(DustTriggerMultiblock trigger) {
+    public static String getDustTriggerResearch(DustTriggerMultiblock trigger) {
         try {
             return (String) TRIGGER_RESEARCH.get(trigger);
         }
@@ -302,7 +302,7 @@ public final class RecipeHandler {
      * Removing the metadata requirement fixes the multiblocks. This was probably an oversight in
      * the last few betas (since the stablizier mechanics were reworked).
      */
-    private static void fixInfusionAltarMultiblocks() {
+    public static void fixInfusionAltarMultiblocks() {
         Part matrix = new Part(BlocksTC.infusionMatrix, null);
         
         Part ancientStone = new Part(BlocksTC.stoneAncient, "AIR");
@@ -384,13 +384,6 @@ public final class RecipeHandler {
                 new ItemStack(BlocksTC.pedestalEldritch),
                 new ItemStack(BlocksTC.infusionMatrix)
         }));
-    }
-    
-    public static void init() {
-        initInfusionRecipes();
-        initCrucibleRecipes();
-        initArcaneCraftingRecipes();
-        fixInfusionAltarMultiblocks();
     }
 
 }

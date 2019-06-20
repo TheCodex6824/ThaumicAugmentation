@@ -53,10 +53,13 @@ public final class ClientEventHandler {
             }
         }
         
+        int num = 1;
         for (LinkedList<String> list : tooltip) {
-            event.getToolTip().add("    " + list.remove(0));
+            event.getToolTip().add(" " + num + ". " + list.remove(0));
             for (String str : list)
-                event.getToolTip().add("        " + str);
+                event.getToolTip().add("   " + str);
+            
+            ++num;
         }
     }
     

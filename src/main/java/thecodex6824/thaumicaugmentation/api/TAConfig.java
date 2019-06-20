@@ -55,6 +55,7 @@ public final class TAConfig {
     public static ConfigOptionDouble emptinessMoveFactor;
     public static ConfigOptionInt fractureGenChance;
     public static ConfigOptionStringToIntMap fractureDimList;
+    public static ConfigOptionInt fractureLocatorUpdateInterval;
     
     public static void addConfigListener(Runnable listener) {
         TAInternals.addConfigListener(listener);

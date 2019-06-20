@@ -36,7 +36,6 @@ import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperCommon;
 import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
 import thecodex6824.thaumicaugmentation.init.MiscHandler;
-import thecodex6824.thaumicaugmentation.init.RecipeHandler;
 import thecodex6824.thaumicaugmentation.init.ResearchHandler;
 import thecodex6824.thaumicaugmentation.init.WorldHandler;
 
@@ -70,7 +69,6 @@ public class CommonProxy implements ISidedProxy {
     @Override
     public void init() {
         WorldHandler.init();
-        RecipeHandler.init();
         ResearchHandler.init();
         MiscHandler.init();
         IntegrationHandler.init();

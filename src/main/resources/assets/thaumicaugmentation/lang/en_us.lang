@@ -44,7 +44,7 @@ thaumicaugmentation.text.rift_too_close=Another rift is nearby. A new rift canno
 thaumicaugmentation.text.no_fracture_target=This fracture does not lead anywhere...
 thaumicaugmentation.text.augmented=§cAugmented§r (%d/%d)
 thaumicaugmentation.text.elemental_aspect=Aspect: %s
-thaumicaugmentation.text.stored_energy=Energy Level: %s
+thaumicaugmentation.text.stored_energy=Impetus Level: %s
 thaumicaugmentation.text.energy_none=§4None
 thaumicaugmentation.text.energy_minimal=§cMinimal
 thaumicaugmentation.text.energy_very_weak=§6Very Weak
@@ -96,7 +96,7 @@ thaumicaugmentation.research.warded_arcana.2=By taking a mundane chest and apply
 
 thaumicaugmentation.research.arcane_door.title=Arcane Door
 thaumicaugmentation.research.arcane_door.0=Now that I have the basics of warding objects down, I think I can move on to something a bit more advanced. The original manuscripts I read described an indestructable door, which sounds like something worth researching. After all, replacing doors broken down by zombies does get annoying after a while...
-thaumicaugmentation.research.arcane_door.1=I have managed to create the warded door described in the manuscript, which I am calling the Arcane Door. Just like the Warded Chest, the doors will only open for their owner, and are extremely difficult to remove by normal means. I have also made two different styles - wood and thaumium. They both are functionally the same, but it is nice to have options for decoration purposes.<BR>If I want to remove the door, I need to sneak and then use the bottom half of it with any casting gauntlet.<BR>It seems that these doors are "smart" in the sense that two doors placed next to each other such that they are double doors will open and close together. How convenient.<BR>I have also created trapdoor forms of these doors. They work in the same way as the normal doors, just in a smaller profile.
+thaumicaugmentation.research.arcane_door.1=I have managed to create the warded door described in the manuscript, which I am calling the Arcane Door. Just like the Warded Chest, the doors will only open for their owner, and are extremely difficult to remove by normal means. I have also made two different styles - wood and thaumium. They both are functionally the same, but it is nice to have options for decoration purposes.<BR>If I want to remove the door, I need to sneak and then use the bottom half of it with any casting gauntlet.<BR>It seems that these doors are "smart" in the sense that two doors placed next to each other act as double doors and will open and close together. How convenient.<BR>I have also created trapdoor forms of these doors. They work in the same way as the normal doors, just in a smaller profile.
 
 thaumicaugmentation.research.ward_keys.title=Access Control
 thaumicaugmentation.research.ward_keys.0=Being able to have private objects is nice and all, but sometimes I need to share my belongings with fellow Thaumaturges. I should devise a way to selectively grant access to those I want to permit.

@@ -57,6 +57,7 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityUtil;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemElementalAugment;
+import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyGauntletAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
@@ -130,10 +131,16 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemRiftSeed(), "rift_seed"));
         registry.register(setupItem(new ItemElementalAugment(), "augment_caster_elemental"));
         registry.register(setupItem(new ItemRiftEnergyGauntletAugment(), "augment_caster_rift_energy_storage"));
+        registry.register(setupItem(new ItemFractureLocator(), "fracture_locator"));
     }
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+        RecipeHandler.initInfusionRecipes();
+        RecipeHandler.initCrucibleRecipes();
+        RecipeHandler.initArcaneCraftingRecipes();
+        RecipeHandler.fixInfusionAltarMultiblocks();
+        
         event.getRegistry().register(new DyeableItemRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "dyeable_item")));
         event.getRegistry().register(new AuthorizedKeyCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "bound_key_creation")));
         event.getRegistry().register(new ThaumiumKeyCopyRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_key_copy")));

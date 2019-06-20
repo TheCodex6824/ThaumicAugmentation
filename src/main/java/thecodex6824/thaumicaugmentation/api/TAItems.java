@@ -45,6 +45,7 @@ public final class TAItems {
     public static final Item RIFT_SEED = null;
     public static final Item AUGMENT_CASTER_ELEMENTAL = null;
     public static final Item AUGMENT_CASTER_RIFT_ENERGY_STORAGE = null;
+    public static final Item FRACTURE_LOCATOR = null;
 
     public static CreativeTabs CREATIVE_TAB = new CreativeTabs(ThaumicAugmentationAPI.MODID) {
         @Override
@@ -55,7 +56,7 @@ public final class TAItems {
 
     public static Item[] getAllItems() {
         return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR, KEY, VOID_BOOTS, RIFT_SEED, AUGMENT_CASTER_ELEMENTAL,
-                AUGMENT_CASTER_RIFT_ENERGY_STORAGE};
+                AUGMENT_CASTER_RIFT_ENERGY_STORAGE, FRACTURE_LOCATOR};
     }
 
 }

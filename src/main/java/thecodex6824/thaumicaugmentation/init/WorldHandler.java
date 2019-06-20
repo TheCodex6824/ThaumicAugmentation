@@ -10,6 +10,7 @@ import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.BiomeManager.BiomeEntry;
 import net.minecraftforge.common.BiomeManager.BiomeType;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -22,10 +23,13 @@ import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
+import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocation;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.util.FractureLocatorSearchManager;
 import thecodex6824.thaumicaugmentation.common.world.TAWorldGenerator;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.WorldProviderEmptiness;
+import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 
 /**
  *  Thaumic Augmentation
@@ -119,6 +123,26 @@ public final class WorldHandler {
     public static void onWorldLoad(WorldEvent.Load event) {
         if (!event.getWorld().isRemote)
             WorldDataCache.addOrUpdateData(event.getWorld());
+    }
+    
+    @SubscribeEvent
+    public static void onChunkLoad(ChunkEvent.Load event) {
+        if (!event.getWorld().isRemote && FractureUtils.canWorldHaveFracture(event.getWorld().provider.getDimension())) {
+            if (event.getChunk().hasCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null)) {
+                FractureLocatorSearchManager.addFractureLocation(event.getWorld(), event.getChunk().getCapability(
+                        CapabilityFractureLocation.FRACTURE_LOCATION, null).getFractureLocation());
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onChunkUnload(ChunkEvent.Unload event) {
+        if (!event.getWorld().isRemote && FractureUtils.canWorldHaveFracture(event.getWorld().provider.getDimension())) {
+            if (event.getChunk().hasCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null)) {
+                FractureLocatorSearchManager.removeFractureLocation(event.getWorld(), event.getChunk().getCapability(
+                        CapabilityFractureLocation.FRACTURE_LOCATION, null).getFractureLocation());
+            }
+        }
     }
 
 }

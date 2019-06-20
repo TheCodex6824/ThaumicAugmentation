@@ -59,7 +59,9 @@ public class EmptinessSoundTicker implements ITickable {
     }
     
     private void playSound() {
-        mc.getSoundHandler().playSound(AMBIENCE);
+        if (!mc.getSoundHandler().isSoundPlaying(AMBIENCE))
+            mc.getSoundHandler().playSound(AMBIENCE);
+        
         ticksLeftToPlaySound = MathHelper.getInt(rand, MIN_TICKS, MAX_TICKS);
     }
     

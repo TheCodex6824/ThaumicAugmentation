@@ -37,6 +37,7 @@ import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocation;
 import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocation;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.util.FractureLocatorSearchManager;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache.WorldData;
 
@@ -99,6 +100,9 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                         IFractureLocation loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null);
                         loc.setHasFracture(true);
                         loc.setFractureLocation(placeAt);
+                        
+                        // onLoad in Chunk is called before populate, so this catches new fractures
+                        FractureLocatorSearchManager.addFractureLocation(world, placeAt);
                     }
                     
                     return true;
@@ -123,6 +127,7 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                         IFractureLocation loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null);
                         loc.setHasFracture(true);
                         loc.setFractureLocation(placeAt);
+                        FractureLocatorSearchManager.addFractureLocation(world, placeAt);
                     }
                     
                     return true;

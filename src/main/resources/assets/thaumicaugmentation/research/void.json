@@ -121,7 +121,7 @@
             "key": "RIFT_POWER",
             "name": "thaumicaugmentation.research.rift_power.title",
             "icons": [
-                "thaumcraft:textures/research/r_fluxrift.png"
+                "thaumicaugmentation:textures/research/rift_power.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [

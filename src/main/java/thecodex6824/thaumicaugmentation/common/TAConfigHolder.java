@@ -191,13 +191,21 @@ public final class TAConfigHolder {
         "Higher weights (compared to lower weights) will be more likely to spawn.",
         "This WILL affect worldgen, so use with caution on existing worlds.",
         "The config GUI does not seem to support the addition or removal of entries, edit this",
-        "value in a text editor outside Minecraft instead.",
-        "Default dimensions: 0 = Overworld, -1 = Nether, 1 = End, 7 = Twilight Forest, 17 = Atum 2,",
-        "20 = Betweenlands, 111 = Lost Cities, 66 = Erebus, 33 = Wizardry (Underworld), 34 = Wizardry (Trickery)"
+        "value in a text editor outside Minecraft instead."//,
+        //"Default dimensions: 0 = Overworld, -1 = Nether, 1 = End, 7 = Twilight Forest, 17 = Atum 2,",
+        //"20 = Betweenlands, 111 = Lost Cities, 66 = Erebus, 33 = Wizardry (Underworld)", 34 = Wizardry (Torikki)"
     })
     @RequiresWorldRestart
     public static HashMap<String, Integer> fractureDimList = new HashMap<>();
     
+    @Name("FractureLocatorUpdateInterval")
+    @Comment({
+        "How often the location pointed to by the Fracture Locator should be updated, in milliseconds.",
+        "This is a server-side setting."
+    })
+    public static int fractureLocatorUpdateInterval = 2000;
+    
+    // if your mod is here and you don't like it, let me know and it will be removed from the default config
     static {
         // vanilla
         fractureDimList.put("0", 35);
@@ -205,23 +213,23 @@ public final class TAConfigHolder {
         fractureDimList.put("1", 10);
         
         // twilight forest
-        fractureDimList.put("7", 7);
+        //fractureDimList.put("7", 7);
         
         // atum 2
-        fractureDimList.put("17", 7);
+        //fractureDimList.put("17", 7);
         
         // betweenlands
-        fractureDimList.put("20", 7);
+        //fractureDimList.put("20", 7);
         
         // lost cities
-        fractureDimList.put("111", 7);
+        //fractureDimList.put("111", 7);
         
         // erebus
-        fractureDimList.put("66", 7);
+        //fractureDimList.put("66", 7);
         
         // wizardry (slightly less because 2 dims)
-        fractureDimList.put("33", 4);
-        fractureDimList.put("34", 4);
+        //fractureDimList.put("33", 4);
+        //fractureDimList.put("34", 4);
     }
     
     private static ArrayList<Runnable> listeners = new ArrayList<>();
@@ -277,6 +285,7 @@ public final class TAConfigHolder {
         TAConfig.fractureGenChance.setValue(fractureGenChance, side);
         
         TAConfig.fractureDimList.setValue(fractureDimList, side);
+        TAConfig.fractureLocatorUpdateInterval.setValue(fractureLocatorUpdateInterval, side);
     }
 
     public static void syncLocally() {
@@ -328,6 +337,7 @@ public final class TAConfigHolder {
         TAConfig.fractureGenChance = TAConfigManager.addOption(new ConfigOptionInt(false, fractureGenChance));
         
         TAConfig.fractureDimList = TAConfigManager.addOption(new ConfigOptionStringToIntMap(false, fractureDimList));
+        TAConfig.fractureLocatorUpdateInterval = TAConfigManager.addOption(new ConfigOptionInt(false, fractureLocatorUpdateInterval));
     }
 
 }

@@ -37,7 +37,7 @@ import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 public class BiomeEmptinessHighlands extends Biome implements IPurgeBiomeSpawns, IFluxBiome, IBiomeSpecificSpikeBlockProvider {
 
     public BiomeEmptinessHighlands() {
-        super(new BiomeProperties("Emptiness Highlands").setBaseHeight(0.55F).setHeightVariation(0.3F).setRainDisabled().setTemperature(
+        super(new BiomeProperties("Emptiness Highlands").setBaseHeight(0.75F).setHeightVariation(0.3F).setRainDisabled().setTemperature(
                 0xAA00AA).setWaterColor(0xAA00AA));
 
         purgeSpawns();
