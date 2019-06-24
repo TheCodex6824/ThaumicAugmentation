@@ -25,6 +25,9 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
+import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public interface ISidedProxy {
@@ -32,6 +35,12 @@ public interface ISidedProxy {
     public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params);
 
     public ITARenderHelper getRenderHelper();
+    
+    public void handleParticlePacket(PacketParticleEffect message);
+    
+    public void handleFullWardSyncPacket(PacketFullWardSync message);
+    
+    public void handleWardUpdatePacket(PacketWardUpdate message);
 
     public void preInit();
 

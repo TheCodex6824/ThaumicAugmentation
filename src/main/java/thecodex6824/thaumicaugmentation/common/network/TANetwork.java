@@ -39,6 +39,8 @@ public final class TANetwork {
         INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(PacketAugmentableItemSync.Handler.class, PacketAugmentableItemSync.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(PacketFractureLocatorUpdate.Handler.class, PacketFractureLocatorUpdate.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketFullWardSync.Handler.class, PacketFullWardSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketWardUpdate.Handler.class, PacketWardUpdate.class, id++, Side.CLIENT);
     }
 
 }

@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
+import java.util.Random;
+
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.client.Minecraft;
@@ -28,19 +30,29 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.ICaster;
+import thaumcraft.client.fx.FXDispatcher;
+import thaumcraft.client.fx.other.FXBlockWard;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
+import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
@@ -49,6 +61,9 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
+import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
@@ -66,6 +81,81 @@ public class ClientProxy extends CommonProxy {
             renderHelper = new TARenderHelperClient();
 
         return renderHelper;
+    }
+    
+    @Override
+    public void handleParticlePacket(PacketParticleEffect message) {
+        Random rand = Minecraft.getMinecraft().world.rand;
+        switch (message.getEffect()) {
+            case VIS_REGENERATOR: {
+                double[] d = message.getData();
+                if (d.length == 3) {
+                    for (int i = 0; i < rand.nextInt(3) + 3; ++i) {
+                        double x = d[0] + rand.nextGaussian() / 4, y = d[1] + rand.nextDouble() / 2, z = d[2] + rand.nextGaussian() / 4;
+                        double vX = rand.nextGaussian() / 4, vY = rand.nextDouble() / 2, vZ = rand.nextGaussian() / 4;
+                        FXDispatcher.INSTANCE.drawVentParticles(x, y, z, vX, vY, vZ, Aspect.AURA.getColor());
+                    }
+                }
+            }
+            case VOID_STREAKS: {
+                double[] d = message.getData();
+                if (d.length == 7) {
+                    double x1 = d[0], y1 = d[1], z1 = d[2];
+                    double x2 = d[3], y2 = d[4], z2 = d[5];
+                    float scale = (float) d[6];
+                    FXDispatcher.INSTANCE.voidStreak(x1, y1, z1, x2, y2, z2, rand.nextInt(), scale);
+                }
+            }
+            case WARD: {
+                double[] d = message.getData();
+                if (d.length == 7) {
+                    double x = d[0], y = d[1], z = d[2];
+                    int index = (int) d[3];
+                    double hitX = d[4], hitY = d[5], hitZ = d[6];
+                    FXBlockWard ward = new FXBlockWard(FXDispatcher.INSTANCE.getWorld(), x + 0.5, y + 0.5, z + 0.5, 
+                            EnumFacing.byIndex(index), (float) hitX, (float) hitY, (float) hitZ);
+                    ward.onUpdate();
+                    ward.onUpdate();
+                    FMLClientHandler.instance().getClient().effectRenderer.addEffect(ward);
+                }
+            }
+            case POOF: {
+                double[] d = message.getData();
+                if (d.length == 4) {
+                    double x = d[0], y = d[1], z = d[2];
+                    int index = (int) d[3];
+                    FXDispatcher.INSTANCE.drawBamf(new BlockPos(x, y, z), Aspect.PROTECT.getColor(), true, true,
+                            EnumFacing.byIndex(index));
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void handleFullWardSyncPacket(PacketFullWardSync message) {
+        NBTTagCompound tag = message.getTag();
+        if (tag.getBoolean("o")) {
+            World world = FMLClientHandler.instance().getClient().world;
+            int chunkX = tag.getInteger("x"), chunkZ = tag.getInteger("z");
+            if (world.isBlockLoaded(new BlockPos(chunkX << 4, 0, chunkZ << 4)) && world.getChunk(chunkX, chunkZ).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+                if (world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageClient) {
+                    IWardStorageClient storage = (IWardStorageClient) world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                    storage.deserializeNBT(tag);
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void handleWardUpdatePacket(PacketWardUpdate message) {
+        BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
+        World world = FMLClientHandler.instance().getClient().world;
+        if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageClient) {
+                IWardStorageClient storage = (IWardStorageClient) world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                storage.setWard(pos, message.getStatus());
+            }
+        }
     }
 
     @Override

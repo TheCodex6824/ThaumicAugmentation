@@ -30,6 +30,7 @@ import thaumcraft.api.casters.FocusEngine;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectLight;
+import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWard;
 
 public final class MiscHandler {
 
@@ -38,6 +39,8 @@ public final class MiscHandler {
     public static void init() {
         FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 
                 Aspect.LIGHT.getColor());
+        FocusEngine.registerElement(FocusEffectWard.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/ward.png"),
+                Aspect.PROTECT.getColor());
         
         AugmentAPI.addAugmentItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
             if (entity instanceof EntityLivingBase)

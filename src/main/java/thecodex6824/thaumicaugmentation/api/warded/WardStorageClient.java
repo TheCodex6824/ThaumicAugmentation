@@ -1,0 +1,75 @@
+/**
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
+ *
+ *  This file is part of Thaumic Augmentation.
+ *
+ *  Thaumic Augmentation is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Thaumic Augmentation is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package thecodex6824.thaumicaugmentation.api.warded;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+
+public class WardStorageClient implements IWardStorageClient {
+
+    protected static final int CHUNK_DATA_SIZE = 16 * 256 * 16;
+    protected byte[] data;
+    
+    public WardStorageClient() {
+        data = new byte[CHUNK_DATA_SIZE / 4];
+    }
+    
+    @Override
+    public void setWard(BlockPos pos, byte id) {
+        int index = (pos.getX() & 15) + (pos.getY() & 255) * 16 + (pos.getZ() & 15) * 16 * 256;
+        
+        data[index / 4] = (id & 1) != 0 ? (byte) (data[index / 4] | (1 << (index % 4 * 2))) : 
+            (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
+        data[index / 4] = (id & 2) != 0 ? (byte) (data[index / 4] | (2 << (index % 4 * 2))) : 
+            (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+    }
+    
+    @Override
+    public byte getWard(BlockPos pos) {
+        int index = (pos.getX() & 15) + (pos.getY() & 255) * 16 + (pos.getZ() & 15) * 16 * 256;
+        return (byte) (((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2));
+    }
+    
+    @Override
+    public void clearWard(BlockPos pos) {
+        setWard(pos, (byte) 0);
+    }
+    
+    @Override
+    public boolean hasWard(BlockPos pos) {
+        return getWard(pos) != 0;
+    }
+    
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        if (nbt.getBoolean("o"))
+            data = nbt.getByteArray("d");
+        
+        if (data.length != CHUNK_DATA_SIZE / 4)
+            throw new RuntimeException("Invalid received ward storage size");
+    }
+    
+    @Override
+    public NBTTagCompound serializeNBT() {
+        return new NBTTagCompound();
+    }
+    
+}

@@ -32,6 +32,9 @@ import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.internal.InternalMethodProvider;
+import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperCommon;
 import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
@@ -55,6 +58,15 @@ public class CommonProxy implements ISidedProxy {
 
         return renderHelper;
     }
+    
+    @Override
+    public void handleParticlePacket(PacketParticleEffect message) {}
+    
+    @Override
+    public void handleFullWardSyncPacket(PacketFullWardSync message) {}
+    
+    @Override
+    public void handleWardUpdatePacket(PacketWardUpdate message) {}
 
     @Override
     public void preInit() {

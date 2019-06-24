@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.network;
 
-import java.util.Random;
-
 import javax.annotation.Nullable;
 
 import io.netty.buffer.ByteBuf;
@@ -29,8 +27,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.client.fx.FXDispatcher;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
 public class PacketParticleEffect implements IMessage {
 
@@ -39,7 +36,9 @@ public class PacketParticleEffect implements IMessage {
     
     public static enum ParticleEffect {
         VIS_REGENERATOR(0),
-        VOID_STREAKS(1);
+        VOID_STREAKS(1),
+        WARD(2),
+        POOF(3);
         
         private int id;
         
@@ -102,28 +101,7 @@ public class PacketParticleEffect implements IMessage {
         @Override
         public IMessage onMessage(PacketParticleEffect message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
-                Random rand = Minecraft.getMinecraft().world.rand;
-                switch (message.effect) {
-                    case VIS_REGENERATOR: {
-                        double[] d = message.getData();
-                        if (d.length == 3) {
-                            for (int i = 0; i < rand.nextInt(3) + 3; ++i) {
-                                double x = d[0] + rand.nextGaussian() / 4, y = d[1] + rand.nextDouble() / 2, z = d[2] + rand.nextGaussian() / 4;
-                                double vX = rand.nextGaussian() / 4, vY = rand.nextDouble() / 2, vZ = rand.nextGaussian() / 4;
-                                FXDispatcher.INSTANCE.drawVentParticles(x, y, z, vX, vY, vZ, Aspect.AURA.getColor());
-                            }
-                        }
-                    }
-                    case VOID_STREAKS: {
-                        double[] d = message.getData();
-                        if (d.length == 7) {
-                            double x1 = d[0], y1 = d[1], z1 = d[2];
-                            double x2 = d[3], y2 = d[4], z2 = d[5];
-                            float scale = (float) d[6];
-                            FXDispatcher.INSTANCE.voidStreak(x1, y1, z1, x2, y2, z2, rand.nextInt(), scale);
-                        }
-                    }
-                }
+                ThaumicAugmentation.proxy.handleParticlePacket(message);
             });
 
             return null;

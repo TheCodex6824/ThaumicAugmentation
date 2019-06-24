@@ -139,7 +139,14 @@ public final class TAConfigHolder {
         "Allow server operators to always be able to interact with any warded block.",
         "Note that if this is set to true, other mods will NOT be able to stop them from interacting with the block."
     })
-    public static boolean opWardOverride = true;
+    public static boolean opWardOverride = false;
+    
+    @Name("DisableWardFocus")
+    @Comment({
+        "Disables the ward focus. This will remove the research entry, disable existing wards, and make exisiting foci do nothing.",
+        "This is a server-side setting, although the ward research may not sync properly if the value is not the same on both sides."
+    })
+    public static boolean disableWardFocus = false;
 
     @Name("SimpleCastedLightRendering")
     @Comment({
@@ -205,7 +212,6 @@ public final class TAConfigHolder {
     })
     public static int fractureLocatorUpdateInterval = 2000;
     
-    // if your mod is here and you don't like it, let me know and it will be removed from the default config
     static {
         // vanilla
         fractureDimList.put("0", 35);
@@ -274,6 +280,7 @@ public final class TAConfigHolder {
         TAConfig.voidBootsSneakReduction.setValue(voidBootsSneakReduction, side);
 
         TAConfig.opWardOverride.setValue(opWardOverride, side);
+        TAConfig.disableWardFocus.setValue(disableWardFocus, side);
 
         TAConfig.castedLightSimpleRenderer.setValue(castedLightSimpleRenderer, side);
 
@@ -326,7 +333,8 @@ public final class TAConfigHolder {
         TAConfig.voidBootsSneakReduction = TAConfigManager.addOption(new ConfigOptionDouble(true, voidBootsSneakReduction));
 
         TAConfig.opWardOverride = TAConfigManager.addOption(new ConfigOptionBoolean(false, opWardOverride));
-
+        TAConfig.disableWardFocus = TAConfigManager.addOption(new ConfigOptionBoolean(true, disableWardFocus));
+        
         TAConfig.castedLightSimpleRenderer = TAConfigManager.addOption(new ConfigOptionBoolean(false, castedLightSimpleRenderer));
 
         TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, defaultGauntletColors));

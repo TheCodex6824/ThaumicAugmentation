@@ -27,8 +27,12 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import thaumcraft.common.entities.EntityFluxRift;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.energy.CapabilityRiftEnergyStorage;
+import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageClient;
 import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocation;
 import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocation;
 import thecodex6824.thaumicaugmentation.common.capability.RiftEnergyStorageFluxRiftImpl;
@@ -37,6 +41,7 @@ import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityAugment
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityAugmentableItemInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityFractureLocationInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityRiftEnergyStorageInit;
+import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityWardStorageInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityWardedInventoryInit;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 
@@ -51,6 +56,7 @@ public final class CapabilityHandler {
         CapabilityRiftEnergyStorageInit.init();
         CapabilityWardedInventoryInit.init();
         CapabilityFractureLocationInit.init();
+        CapabilityWardStorageInit.init();
     }
     
     @SubscribeEvent
@@ -66,6 +72,11 @@ public final class CapabilityHandler {
         if (FractureUtils.canWorldHaveFracture(event.getObject().getWorld().provider.getDimension())) {
             event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture_location"), new SimpleCapabilityProvider<>(
                     new FractureLocation(event.getObject()), CapabilityFractureLocation.FRACTURE_LOCATION));
+        }
+        
+        if (!TAConfig.disableWardFocus.getValue()) {
+            event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ward_storage"), new SimpleCapabilityProvider<>(
+                    event.getObject().getWorld().isRemote ? new WardStorageClient() : new WardStorageServer(), CapabilityWardStorage.WARD_STORAGE));
         }
     }
     

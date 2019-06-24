@@ -59,6 +59,8 @@ thaumicaugmentation.subtitle.spooky_wind=Wind howls
 focus.thaumicaugmentation.light.name=Light
 focus.thaumicaugmentation.light.text=Creates light at the target location. This light source will last forever, until it is broken.
 focus.thaumicaugmentation.light.intensity=Intensity
+focus.thaumicaugmentation.ward.name=Ward
+focus.thaumicaugmentation.ward.text=Makes most blocks extremely durable and virtually immune to mining, explosions, and fire. 
 
 tc.research_category.THAUMIC_AUGMENTATION=Augmentation
 thaumicaugmentation.research.thaumic_augmentation_base.title=Thaumic Augmentation

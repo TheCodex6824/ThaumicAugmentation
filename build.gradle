@@ -10,7 +10,6 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-
 version = "${mcversion}-${version}"
 group = "thecodex6824.thaumicaugmentation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ThaumicAugmentation"
@@ -50,6 +49,9 @@ dependencies {
     deobfCompile "thaumcraft:Thaumcraft:1.12.2:6.1.BETA26"
     deobfCompile "librarianlib:librarianlib-1.12.2:4.19.1:release"
     deobfCompile "wizardry-mod:wizardry:0.10.7"
+    
+    testCompile "junit:junit:4.12"
+    testCompile "org.hamcrest:hamcrest:2.1"
     
     runtime "baubles:Baubles:1.12:1.5.2"
     runtime "shadowfacts-forgelin:Forgelin:1.8.2"
@@ -97,4 +99,13 @@ task apiJar(type: Jar) {
 artifacts {
 	archives apiJar
 	archives javadocJar
+}
+
+test {
+    useJUnit()
+    maxHeapSize = '1G'
+    testLogging {
+        outputs.upToDateWhen {false}
+        showStandardStreams = true
+    }
 }
