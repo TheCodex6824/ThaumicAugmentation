@@ -96,6 +96,8 @@ public class ClientProxy extends CommonProxy {
                         FXDispatcher.INSTANCE.drawVentParticles(x, y, z, vX, vY, vZ, Aspect.AURA.getColor());
                     }
                 }
+                
+                break;
             }
             case VOID_STREAKS: {
                 double[] d = message.getData();
@@ -105,6 +107,8 @@ public class ClientProxy extends CommonProxy {
                     float scale = (float) d[6];
                     FXDispatcher.INSTANCE.voidStreak(x1, y1, z1, x2, y2, z2, rand.nextInt(), scale);
                 }
+                
+                break;
             }
             case WARD: {
                 double[] d = message.getData();
@@ -118,6 +122,8 @@ public class ClientProxy extends CommonProxy {
                     ward.onUpdate();
                     FMLClientHandler.instance().getClient().effectRenderer.addEffect(ward);
                 }
+                
+                break;
             }
             case POOF: {
                 double[] d = message.getData();
@@ -127,6 +133,8 @@ public class ClientProxy extends CommonProxy {
                     FXDispatcher.INSTANCE.drawBamf(new BlockPos(x, y, z), Aspect.PROTECT.getColor(), true, true,
                             EnumFacing.byIndex(index));
                 }
+                
+                break;
             }
         }
     }

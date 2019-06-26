@@ -29,6 +29,7 @@ import it.unimi.dsi.fastutil.objects.Object2ShortOpenHashMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import scala.actors.threadpool.Arrays;
 
@@ -787,7 +788,14 @@ public class WardStorageServer implements IWardStorageServer {
     
     @Override
     public void clearWard(BlockPos pos) {
+        clearWard(null, pos);
+    }
+    
+    @Override
+    public void clearWard(World syncTo, BlockPos pos) {
         manager.setOwner(pos, EMPTY_UUID);
+        if (syncTo != null)
+            WardSyncManager.markPosForClear(syncTo, pos);
     }
     
     protected StorageManagers.IWardStorageManager createIncreasedSizeManager() {
@@ -816,6 +824,11 @@ public class WardStorageServer implements IWardStorageServer {
     
     @Override
     public void setWard(BlockPos pos, UUID owner) {
+        setWard(null, pos, owner);
+    }
+    
+    @Override
+    public void setWard(World syncTo, BlockPos pos, UUID owner) {
         if (!manager.isOwner(owner)) {
             if (manager.getNumCurrentOwners() == manager.getMaxAllowedOwners())
                 manager = createIncreasedSizeManager();
@@ -824,6 +837,8 @@ public class WardStorageServer implements IWardStorageServer {
         }
         
         manager.setOwner(pos, owner);
+        if (syncTo != null)
+            WardSyncManager.markPosForNewOwner(syncTo, pos, owner);
     }
     
     @Override

@@ -49,11 +49,6 @@ public class WardStorageClient implements IWardStorageClient {
     }
     
     @Override
-    public void clearWard(BlockPos pos) {
-        setWard(pos, (byte) 0);
-    }
-    
-    @Override
     public boolean hasWard(BlockPos pos) {
         return getWard(pos) != 0;
     }

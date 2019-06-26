@@ -146,6 +146,7 @@ public final class TAConfigHolder {
         "Disables the ward focus. This will remove the research entry, disable existing wards, and make exisiting foci do nothing.",
         "This is a server-side setting, although the ward research may not sync properly if the value is not the same on both sides."
     })
+    @RequiresMcRestart
     public static boolean disableWardFocus = false;
 
     @Name("SimpleCastedLightRendering")

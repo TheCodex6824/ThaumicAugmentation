@@ -18,14 +18,22 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded;
+package thecodex6824.thaumicaugmentation.common.event;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import thaumcraft.common.entities.EntityFluxRift;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 
-public interface IWardStorage extends INBTSerializable<NBTTagCompound> {
-    
-    public boolean hasWard(BlockPos pos);
+@EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
+public class EntityEventHandler {
+
+    @SubscribeEvent
+    public static void onEntitySpawn(EntityJoinWorldEvent event) {
+        if (event.getWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && event.getEntity().getClass() == EntityFluxRift.class)
+            event.setCanceled(true);
+    }
     
 }

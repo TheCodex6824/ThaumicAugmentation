@@ -4,7 +4,7 @@
             "key": "MORE_AUROMANCY",
             "name": "thaumicaugmentation.research.more_auromancy.title",
             "icons": [
-                "focus:focus.thaumicaugmentation.light"
+                "thaumicaugmentation:textures/research/further_auromancy.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [

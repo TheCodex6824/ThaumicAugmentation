@@ -23,10 +23,12 @@ package thecodex6824.thaumicaugmentation.common.item;
 import java.util.List;
 
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -35,6 +37,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.ICaster;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
 import thecodex6824.thaumicaugmentation.api.energy.CapabilityRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
@@ -86,18 +89,9 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
                 if (user.getEntityWorld().getTotalWorldTime() % 20 == 0) {
                     IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
                     if (stackStorage.canReceive() && stackStorage.getEnergyStored() < stackStorage.getMaxEnergyStored()) {
-                        for (Entity entity : user.getEntityWorld().getEntitiesWithinAABBExcludingEntity(user, user.getEntityBoundingBox().grow(1.0))) {
-                            if (entity.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
-                                IRiftEnergyStorage entityStorage = entity.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
-                                long maxToExtract = stackStorage.getMaxEnergyStored() - stackStorage.getEnergyStored();
-                                long extracted = entityStorage.extractEnergy(maxToExtract, false);
-                                stackStorage.receiveEnergy(extracted, false);
-                                TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                                        entity.posX, entity.posY, entity.posZ, user.posX, user.posY + user.height / 2, user.posZ, 0.04F), 
-                                        new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));
-                                syncNeeded = true;
-                            }
-                        }
+                        syncNeeded = RiftEnergyHelper.drainNearbyEnergyIntoStorage(user.getEntityWorld(), stackStorage, 
+                                user.getEntityBoundingBox().grow(user.width / 2, user.height / 2, user.width / 2), 
+                                user.getPositionVector().add(0, user.height / 2, 0));
                     }
                 }
             }
@@ -145,6 +139,20 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
             }
             
         }, new RiftEnergyStorage(600, 10));
+    }
+    
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
+            ItemStack empty = new ItemStack(this);
+            items.add(empty);
+            
+            ItemStack full = new ItemStack(this);
+            IRiftEnergyStorage energy = full.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+            while (energy.getEnergyStored() < energy.getMaxEnergyStored())
+                energy.receiveEnergy(energy.getMaxEnergyStored(), false);
+            items.add(full);
+        }
     }
     
     @Override

@@ -46,6 +46,7 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -109,7 +110,7 @@ public class WardEventHandler {
         }
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
         if (!TAConfig.disableWardFocus.getValue()) {
             BlockPos pos = event.getPos();
@@ -128,37 +129,50 @@ public class WardEventHandler {
         }
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         if (!TAConfig.disableWardFocus.getValue()) {
             BlockPos pos = event.getPos();
             Chunk chunk = event.getWorld().getChunk(pos);
             if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !event.getPlayer().isCreative()) {
+                if (storage.hasWard(pos) && !event.getPlayer().isCreative())
                     event.setCanceled(true);
-                    event.setResult(Result.DENY);
-                }
-                else if (event.getPlayer().isCreative())
-                    storage.clearWard(pos);
+                else if (storage instanceof IWardStorageServer && event.getPlayer().isCreative())
+                    ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
             }
         }
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onBlockPunch(PlayerInteractEvent.LeftClickBlock event) {
+        if (!TAConfig.disableWardFocus.getValue()) {
+            BlockPos pos = event.getPos();
+            Chunk chunk = event.getWorld().getChunk(pos);
+            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                if (storage.hasWard(pos) && !event.getEntityPlayer().isCreative()) {
+                    event.setCanceled(true);
+                    event.setUseBlock(Result.DENY);
+                }
+            }
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBlockInteract(PlayerInteractEvent.RightClickBlock event) {
         if (!TAConfig.disableWardFocus.getValue()) {
             BlockPos pos = event.getPos();
             Chunk chunk = event.getWorld().getChunk(pos);
             if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos))
-                    event.setCanceled(true);
+                if (storage.hasWard(pos) && !event.getEntityPlayer().isCreative())
+                    event.setUseBlock(Result.DENY);
             }
         }
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
         if (!TAConfig.disableWardFocus.getValue()) {
             if (event.getState().getMaterial() == Material.FIRE) {
@@ -182,27 +196,27 @@ public class WardEventHandler {
                 Chunk chunk = event.getWorld().getChunk(event.getPos());
                 if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                     IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                    if (storage.hasWard(event.getPos()))
-                        storage.clearWard(event.getPos());
+                    if (storage instanceof IWardStorageServer && storage.hasWard(event.getPos()))
+                        ((IWardStorageServer) storage).clearWard(event.getWorld(), event.getPos());
                 }
             }
         }
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         if (!TAConfig.disableWardFocus.getValue()) {
             BlockPos pos = event.getPos();
             Chunk chunk = event.getWorld().getChunk(pos);
             if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos))
-                    storage.clearWard(pos);
+                if (storage instanceof IWardStorageServer && storage.hasWard(event.getPos()))
+                    ((IWardStorageServer) storage).clearWard(event.getWorld(), event.getPos());
             }
         }
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBlockPlaceMulti(BlockEvent.EntityMultiPlaceEvent event) {
         if (!TAConfig.disableWardFocus.getValue()) {
             for (BlockSnapshot b : event.getReplacedBlockSnapshots()) {
@@ -212,14 +226,15 @@ public class WardEventHandler {
                     IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                     if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !((EntityPlayer) event.getEntity()).isCreative()))
                         event.setCanceled(true);
-                    else if (event.getEntity() instanceof EntityPlayer && ((EntityPlayer) event.getEntity()).isCreative())
-                        storage.clearWard(pos);
+                    else if (storage instanceof IWardStorageServer && event.getEntity() instanceof EntityPlayer && 
+                            ((EntityPlayer) event.getEntity()).isCreative())
+                        ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
                 }
             }
         }
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onDestruction(LivingDestroyBlockEvent event) {
         if (!TAConfig.disableWardFocus.getValue()) {
             BlockPos pos = event.getPos();
@@ -228,13 +243,14 @@ public class WardEventHandler {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                 if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !((EntityPlayer) event.getEntity()).isCreative()))
                     event.setCanceled(true);
-                else if (event.getEntity() instanceof EntityPlayer && ((EntityPlayer) event.getEntity()).isCreative())
-                    storage.clearWard(pos);
+                else if (storage instanceof IWardStorageServer && event.getEntity() instanceof EntityPlayer && 
+                        ((EntityPlayer) event.getEntity()).isCreative())
+                    ((IWardStorageServer) storage).clearWard(event.getEntity().getEntityWorld(), pos);
             }
         }
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onExplosion(ExplosionEvent.Detonate event) {
         if (!TAConfig.disableWardFocus.getValue()) {
             HashSet<BlockPos> blockers = new HashSet<>();
@@ -262,11 +278,11 @@ public class WardEventHandler {
                 Entity entity = entityIterator.next();
                 RayTraceResult ray = event.getWorld().rayTraceBlocks(event.getExplosion().getPosition(), entity.getPositionVector());
                 if (ray != null && ray.typeOfHit == Type.BLOCK && blockers.contains(ray.getBlockPos()))
-                    iterator.remove();
+                    entityIterator.remove();
                 else {
                     ray = event.getWorld().rayTraceBlocks(event.getExplosion().getPosition(), entity.getPositionEyes(1.0F));
                     if (ray != null && ray.typeOfHit == Type.BLOCK && blockers.contains(ray.getBlockPos()))
-                        iterator.remove();
+                        entityIterator.remove();
                 }
             }
         }

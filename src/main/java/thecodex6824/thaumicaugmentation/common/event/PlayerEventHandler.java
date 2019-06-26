@@ -31,6 +31,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import thaumcraft.api.capabilities.IPlayerKnowledge.EnumResearchFlag;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
@@ -45,10 +46,12 @@ public final class PlayerEventHandler {
     @SubscribeEvent
     public static void onJoin(PlayerLoggedInEvent event) {
         TAConfigHolder.loadOrSyncConfig(event.player);
-        if (ThaumcraftCapabilities.knowsResearchStrict(event.player, "FIRSTSTEPS") && 
-                !ThaumcraftCapabilities.knowsResearchStrict(event.player, "THAUMIC_AUGMENTATION_BASE")) {
-            
+        if (!ThaumcraftCapabilities.knowsResearchStrict(event.player, "THAUMIC_AUGMENTATION_BASE@1") &&
+                (ThaumcraftCapabilities.knowsResearchStrict(event.player, "FIRSTSTEPS") || ThaumcraftCapabilities.knowsResearchStrict(event.player, "~FIRSTSTEPS"))) {
+    
             ThaumcraftCapabilities.getKnowledge(event.player).addResearch("THAUMIC_AUGMENTATION_BASE");
+            ThaumcraftCapabilities.getKnowledge(event.player).setResearchFlag("THAUMIC_AUGMENTATION_BASE", EnumResearchFlag.RESEARCH);
+            ThaumcraftCapabilities.getKnowledge(event.player).setResearchStage("THAUMIC_AUGMENTATION_BASE", 2);
         }
     }
 

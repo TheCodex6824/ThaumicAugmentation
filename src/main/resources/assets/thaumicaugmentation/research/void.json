@@ -188,7 +188,7 @@
                 {
                     "text": "thaumicaugmentation.research.entering_fracture.0",
                     "required_research": [
-                        "!DIMENSIONALFRACTURE"
+                        "m_DIMENSIONALFRACTURE"
                     ],
                     "recipes": [
                         "thaumicaugmentation:FractureLocator"
@@ -201,7 +201,7 @@
                         "OBSERVATION;ELDRITCH;1"
                     ],
                     "required_research": [
-                        "!ENTERVOID"
+                        "m_ENTERVOID"
                     ],
                     "recipes": [
                         "thaumicaugmentation:FractureLocator"

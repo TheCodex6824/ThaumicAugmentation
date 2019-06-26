@@ -28,6 +28,9 @@
                     "required_knowledge": [
                         "OBSERVATION;ARTIFICE;1",
                         "OBSERVATION;AUROMANCY;1"
+                    ],
+                    "required_research": [
+                        "!praemunio"
                     ]
                 },
                 {
@@ -46,6 +49,7 @@
                 {
                     "text": "thaumicaugmentation.research.warded_arcana.2",
                     "recipes": [
+                        "thaumicaugmentation:WardingSigil",
                         "thaumicaugmentation:WardedChest"
                     ]
                 }

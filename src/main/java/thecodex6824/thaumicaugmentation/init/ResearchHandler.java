@@ -21,6 +21,8 @@
 package thecodex6824.thaumicaugmentation.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import thaumcraft.api.ThaumcraftApi;
@@ -33,10 +35,13 @@ import thaumcraft.api.research.ScanEntity;
 import thaumcraft.api.research.ScanItem;
 import thaumcraft.api.research.ScanningManager;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.research.ScanEntityWithPeacefulFallback;
+import thecodex6824.thaumicaugmentation.common.research.ScanTool;
 
 public final class ResearchHandler {
 
@@ -52,10 +57,13 @@ public final class ResearchHandler {
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/gauntlets.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/warded.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/void.json"));
+        if (!TAConfig.disableWardFocus.getValue())
+            ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/ward_foci.json"));
         
         ScanningManager.addScannableThing(new ScanBlock("f_LEAFSILVERWOOD", new Block[] {BlocksTC.leafSilverwood}));
         ScanningManager.addScannableThing(new ScanItem("f_LEAFSILVERWOOD", new ItemStack(BlocksTC.leafSilverwood)));
-        ScanningManager.addScannableThing(new ScanEntity("!DIMENSIONALFRACTURE", EntityDimensionalFracture.class, false));
+        
+        ScanningManager.addScannableThing(new ScanEntity("m_DIMENSIONALFRACTURE", EntityDimensionalFracture.class, false));
         ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONE", TABlocks.STONE.getDefaultState().withProperty(
                 ITAStoneType.STONE_TYPE, StoneType.STONE_VOID)));
         ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONETAINTED", TABlocks.STONE.getDefaultState().withProperty(
@@ -63,6 +71,11 @@ public final class ResearchHandler {
         ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONETAINTEDSOIL", TABlocks.STONE.getDefaultState().withProperty(
                 ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY)));
         ScanningManager.addScannableThing(new ScanItem("!VOIDSTONE", new ItemStack(TABlocks.STONE)));
+        
+        ScanningManager.addScannableThing(new ScanTool("f_STRONGPICKAXE", "pickaxe", 3));
+        ScanningManager.addScannableThing(new ScanItem("f_FLINTANDSTEEL", new ItemStack(Items.FLINT_AND_STEEL)));
+        ScanningManager.addScannableThing(new ScanEntityWithPeacefulFallback("m_CREEPER", new ScanEntity("m_CREEPER", EntityCreeper.class, true),
+                new ScanItem("m_CREEPER", new ItemStack(Items.GUNPOWDER))));
     }
 
 }
