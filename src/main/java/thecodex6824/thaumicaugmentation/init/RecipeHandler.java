@@ -58,9 +58,9 @@ public class RecipeHandler {
 		ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "BootsVoid"),
 				new InfusionRecipe("BOOTS_VOID", new ItemStack(TAItems.VOID_BOOTS), 6,
 				new AspectList().add(Aspect.VOID, 50).add(Aspect.ELDRITCH, 50).add(Aspect.MOTION, 150).add(Aspect.FLIGHT, 150), 
-				new ItemStack(ItemsTC.travellerBoots), new Object[] {
+				ItemsTC.travellerBoots, new Object[] {
 						new ItemStack(ItemsTC.fabric), new ItemStack(ItemsTC.fabric), "plateVoid", "plateVoid", new ItemStack(Items.FEATHER),
-						new ItemStack(Items.FISH), new ItemStack(ItemsTC.primordialPearl), new ItemStack(ItemsTC.quicksilver)
+						new ItemStack(Items.FISH), ItemsTC.primordialPearl, new ItemStack(ItemsTC.quicksilver)
 				}
 		));
 		
