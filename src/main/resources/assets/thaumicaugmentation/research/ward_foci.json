@@ -31,6 +31,20 @@
                 {
                     "text": "thaumicaugmentation.research.focus_ward.1"
                 }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.focus_ward.2",
+                    "required_research": [
+                        "MINDCLOCKWORK"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_ward.3",
+                    "required_research": [
+                        "ARCANEBORE"
+                    ]
+                }
             ]
         }
     ]

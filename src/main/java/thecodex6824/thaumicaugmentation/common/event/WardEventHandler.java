@@ -20,9 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.common.event;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -37,6 +39,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -51,6 +54,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import thaumcraft.api.golems.tasks.Task;
+import thaumcraft.common.entities.construct.EntityArcaneBore;
+import thaumcraft.common.golems.tasks.TaskHandler;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
@@ -68,6 +74,32 @@ import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class WardEventHandler {
 
+    private static final Field BORE_DIG_TARGET;
+    
+    static {
+        Field dig = null;
+        try {
+            dig = EntityArcaneBore.class.getDeclaredField("digTarget");
+            dig.setAccessible(true);
+        }
+        catch (Exception ex) {
+            FMLCommonHandler.instance().raiseException(ex, "Failed to access Thaumcraft's EntityArcaneBore#digTarget", true);
+        }
+
+        BORE_DIG_TARGET = dig;
+    }
+    
+    private static void handleBoreNotCaringAboutCanceledEvents(FakePlayer borePlayer) {
+        for (EntityArcaneBore bore : borePlayer.getEntityWorld().getEntitiesWithinAABB(EntityArcaneBore.class, borePlayer.getEntityBoundingBox())) {
+            try {
+                BORE_DIG_TARGET.set(bore, bore.getPosition());
+            }
+            catch (Exception ex) {
+                FMLCommonHandler.instance().raiseException(ex, "Failed to set Thaumcraft's EntityArcaneBore#digTarget", true);
+            }
+        }
+    }
+    
     private static void sendWardParticles(World world, BlockPos pos, EnumFacing facing) {
         if (!world.isRemote) {
             TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.WARD, pos.getX(), pos.getY(), pos.getZ(), facing.getIndex(),
@@ -110,6 +142,28 @@ public class WardEventHandler {
         }
     }
     
+    @SubscribeEvent
+    public static void onWorldTick(TickEvent.WorldTickEvent event) {
+        if (!TAConfig.disableWardFocus.getValue() && !event.world.isRemote && event.phase == Phase.END) {
+            ConcurrentHashMap<Integer, Task> tasks = TaskHandler.tasks.get(event.world.provider.getDimension());
+            for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
+                Task task = entry.getValue();
+                if (task.getType() == 0 && event.world.isBlockLoaded(task.getPos())) {
+                    Chunk chunk = event.world.getChunk(task.getPos());
+                    if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+                        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                        if (storage.hasWard(task.getPos())) {
+                            task.setPriority(Byte.MIN_VALUE);
+                            task.setReserved(true);
+                            task.setCompletion(true);
+                            tasks.remove(entry.getKey());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
         if (!TAConfig.disableWardFocus.getValue()) {
@@ -136,8 +190,13 @@ public class WardEventHandler {
             Chunk chunk = event.getWorld().getChunk(pos);
             if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !event.getPlayer().isCreative())
+                if (storage.hasWard(pos) && !event.getPlayer().isCreative()) {
                     event.setCanceled(true);
+                    if (event.getPlayer() instanceof FakePlayer) {
+                        if (event.getPlayer().getName().equals("FakeThaumcraftBore"))
+                            handleBoreNotCaringAboutCanceledEvents((FakePlayer) event.getPlayer());
+                    }
+                }
                 else if (storage instanceof IWardStorageServer && event.getPlayer().isCreative())
                     ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
             }
