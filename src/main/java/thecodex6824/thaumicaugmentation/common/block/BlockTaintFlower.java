@@ -49,7 +49,7 @@ import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 
 public class BlockTaintFlower extends BlockTABase implements ITaintBlock, IPlantable, IShearable, IItemBlockProvider {
 
-    protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.05, 0, 0.05, 0.95, 1.0, 0.95);;
+    protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.05, 0, 0.05, 0.95, 1.0, 0.95);
     
     public BlockTaintFlower() {
         super(ThaumcraftMaterials.MATERIAL_TAINT);

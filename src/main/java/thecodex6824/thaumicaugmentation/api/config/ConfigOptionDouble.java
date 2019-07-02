@@ -39,7 +39,7 @@ public class ConfigOptionDouble extends ConfigOption<Double> {
     @Override
     public void deserialize(ByteBuf buf) {
         value = buf.readDouble();
-    };
+    }
 
     @Override
     public Double getValue() {

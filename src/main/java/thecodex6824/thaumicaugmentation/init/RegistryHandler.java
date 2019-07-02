@@ -207,12 +207,17 @@ public final class RegistryHandler {
         proxy.registerObjectTag(new ItemStack(TAItems.KEY, 1, 2), new AspectList().add(Aspect.PROTECT, 5).add(Aspect.MIND, 10).add(Aspect.METAL, 3));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.MATERIAL, 1, 0), new AspectList().add(Aspect.AURA, 7).add(Aspect.PLANT, 6));
         proxy.registerObjectTag(new ItemStack(TAItems.MATERIAL, 1, 1), new AspectList().add(Aspect.PROTECT, 15).add(Aspect.MIND, 10));
+        proxy.registerObjectTag(new ItemStack(TAItems.MATERIAL, 1, 3), new AspectList().add(Aspect.ELDRITCH, 10).add(Aspect.VOID, 15).add(Aspect.MECHANISM, 5));
         proxy.registerObjectTag(new ItemStack(TAItems.RIFT_SEED), new AspectList());
         proxy.registerObjectTag(new ItemStack(TAItems.SEAL_COPIER), new AspectList().add(Aspect.MIND, 15).add(Aspect.TOOL, 5));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.VOID_BOOTS), new AspectList().add(Aspect.ELDRITCH, 43).add(Aspect.VOID, 23));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.FRACTURE_LOCATOR), new AspectList().add(Aspect.VOID, 3).add(Aspect.TOOL, 5));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.AUGMENT_CASTER_ELEMENTAL), new AspectList().add(Aspect.AVERSION, 3).add(Aspect.TOOL, 5).add(Aspect.MECHANISM, 2));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.AUGMENT_CASTER_RIFT_ENERGY_STORAGE), new AspectList().add(Aspect.AVERSION, 3).add(Aspect.TOOL, 5).add(Aspect.MECHANISM, 5).add(Aspect.VOID, 5));
         
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.ARCANE_TRAPDOOR_METAL), new AspectList().add(Aspect.PROTECT, 7));
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.ARCANE_TRAPDOOR_WOOD), new AspectList().add(Aspect.PROTECT, 7));
+        proxy.registerComplexObjectTag(new ItemStack(TABlocks.ARCANE_TRAPDOOR_SILVERWOOD), new AspectList().add(Aspect.PROTECT, 7));
         proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 0), new AspectList().add(Aspect.EARTH, 5).add(Aspect.VOID, 5).add(Aspect.DARKNESS, 3));
         proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 1), new AspectList().add(Aspect.EARTH, 3).add(Aspect.VOID, 3).add(Aspect.DARKNESS, 3).add(Aspect.FLUX, 3));
         proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 2), new AspectList().add(Aspect.EARTH, 3).add(Aspect.VOID, 3).add(Aspect.DARKNESS, 3).add(Aspect.FLUX, 3));

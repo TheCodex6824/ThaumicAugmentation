@@ -39,7 +39,7 @@ public class ConfigOptionBoolean extends ConfigOption<Boolean> {
     @Override
     public void deserialize(ByteBuf buf) {
         value = buf.readBoolean();
-    };
+    }
 
     @Override
     public Boolean getValue() {

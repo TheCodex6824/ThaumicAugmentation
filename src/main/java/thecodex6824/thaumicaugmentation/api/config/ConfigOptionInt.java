@@ -39,7 +39,7 @@ public class ConfigOptionInt extends ConfigOption<Integer> {
     @Override
     public void deserialize(ByteBuf buf) {
         value = buf.readInt();
-    };
+    }
 
     @Override
     public Integer getValue() {

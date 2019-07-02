@@ -218,8 +218,9 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     public float getCasterVisDiscount(ItemStack stack) {
         if (stack.getItem() == this) {
             switch (stack.getMetadata()) {
-            case 0: return (float) TAConfig.gauntletVisDiscounts.getValue()[0];
-            case 1: return (float) TAConfig.gauntletVisDiscounts.getValue()[1];
+                case 0: return (float) TAConfig.gauntletVisDiscounts.getValue()[0];
+                case 1: return (float) TAConfig.gauntletVisDiscounts.getValue()[1];
+                default: return 0.0F;
             }
         }
 
@@ -232,6 +233,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
             switch (stack.getMetadata()) {
                 case 0: return (float) TAConfig.gauntletCooldownModifiers.getValue()[0];
                 case 1: return (float) TAConfig.gauntletCooldownModifiers.getValue()[1];
+                default: return 0.0F;
             }
         }
 
@@ -257,8 +259,8 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     public RayTraceResult getArchitectMOP(ItemStack stack, World world, EntityLivingBase user) {
         if (isStoringFocus(stack)) {
             FocusPackage fPackage = ItemFocus.getPackage(getFocusStack(stack));
-            if (fPackage != null && FocusEngine.doesPackageContainElement(fPackage, "thaumcraft.PLAN"));
-            return ((IArchitect) FocusEngine.getElement("thaumcraft.PLAN")).getArchitectMOP(stack, world, user);
+            if (fPackage != null && FocusEngine.doesPackageContainElement(fPackage, "thaumcraft.PLAN"))
+                return ((IArchitect) FocusEngine.getElement("thaumcraft.PLAN")).getArchitectMOP(stack, world, user);
         }
 
         return null;

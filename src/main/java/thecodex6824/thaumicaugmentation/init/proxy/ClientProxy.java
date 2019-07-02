@@ -138,6 +138,7 @@ public class ClientProxy extends CommonProxy {
                 
                 break;
             }
+            default: {break;}
         }
     }
     
