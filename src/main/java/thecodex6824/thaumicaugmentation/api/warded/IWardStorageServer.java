@@ -22,8 +22,6 @@ package thecodex6824.thaumicaugmentation.api.warded;
 
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -37,13 +35,9 @@ public interface IWardStorageServer extends IWardStorage {
     
     public boolean isWardOwner(UUID id);
     
-    public void setWard(BlockPos pos, UUID owner);
+    public void setWard(World syncTo, BlockPos pos, UUID owner);
     
-    public void setWard(@Nullable World syncTo, BlockPos pos, UUID owner);
-    
-    public void clearWard(BlockPos pos);
-    
-    public void clearWard(@Nullable World syncTo, BlockPos pos);
+    public void clearWard(World syncTo, BlockPos pos);
     
     public UUID getWard(BlockPos pos);
     

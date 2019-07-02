@@ -87,9 +87,9 @@ public final class RecipeHandler {
             ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "BootsVoid"),
                 new InfusionRecipe("BOOTS_VOID", new ItemStack(TAItems.VOID_BOOTS), 6,
                         new AspectList().add(Aspect.VOID, 50).add(Aspect.ELDRITCH, 50).add(Aspect.MOTION, 150).add(Aspect.FLIGHT, 150), 
-                        new ItemStack(ItemsTC.travellerBoots), new Object[] {
+                        ItemsTC.travellerBoots, new Object[] {
                                 new ItemStack(ItemsTC.fabric), new ItemStack(ItemsTC.fabric), "plateVoid", "plateVoid", new ItemStack(Items.FEATHER),
-                                new ItemStack(Items.FISH), new ItemStack(ItemsTC.primordialPearl), new ItemStack(ItemsTC.quicksilver)
+                                new ItemStack(Items.FISH), ItemsTC.primordialPearl, new ItemStack(ItemsTC.quicksilver)
                         }
             ));
 
@@ -113,17 +113,10 @@ public final class RecipeHandler {
             ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "FluxSeedGrowth"), 
                     new FluxSeedGrowthRecipe());
             
-            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "EldritchStoneInfusion"), 
-                    new InfusionRecipe("VOID_STONE", new ItemStack(BlocksTC.stoneEldritchTile), 12, new AspectList().add(Aspect.ELDRITCH, 35), 
-                    new ItemStack(TABlocks.STONE, 1, 0), new Object[] {
-                            ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH), ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH)
-                    }
-            ));
-            
             ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "RiftEnergyCell"),
                     new InfusionRecipe("RIFT_POWER@2", new ItemStack(TAItems.MATERIAL, 1, 3), 7, new AspectList().add(Aspect.ELDRITCH, 25).add(Aspect.VOID, 50).add(Aspect.ENERGY, 100),
                     new ItemStack(ItemsTC.voidSeed), new Object[] {
-                            new ItemStack(ItemsTC.plate, 1, 3), new ItemStack(ItemsTC.primordialPearl), new ItemStack(ItemsTC.plate, 1, 3), ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH),
+                            new ItemStack(ItemsTC.plate, 1, 3), ItemsTC.primordialPearl, new ItemStack(ItemsTC.plate, 1, 3), ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH),
                             new ItemStack(ItemsTC.plate, 1, 3), new ItemStack(Items.REDSTONE), new ItemStack(ItemsTC.plate, 1, 3), new ItemStack(ItemsTC.amber)
                     }
             ));
@@ -139,8 +132,11 @@ public final class RecipeHandler {
     }
     
     public static void initArcaneCraftingRecipes() {
+        // so the "group" is just a recipe book thing, which we don't have to care about
+        ResourceLocation defaultGroup = new ResourceLocation("");
+        
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "GauntletThaumium"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "GAUNTLET_THAUMIUM"), "GAUNTLET_THAUMIUM", 250, 
+                defaultGroup, "GAUNTLET_THAUMIUM", 250, 
                 new AspectList().add(Aspect.AIR, 2).add(Aspect.EARTH, 2).add(Aspect.ENTROPY, 2).add(Aspect.FIRE, 2).add(
                         Aspect.ORDER, 2).add(Aspect.WATER, 2), new ItemStack(TAItems.GAUNTLET, 1, 0), new Object[] {
                                 "PPP",
@@ -150,8 +146,13 @@ public final class RecipeHandler {
                                 'T', new ItemStack(ItemsTC.thaumometer)
                         }
         ));
+        
+        /**
+         * Materials
+         */
+        
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "Lattice"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "LATTICE"), "VIS_REGENERATOR", 25, 
+                defaultGroup, "VIS_REGENERATOR", 25, 
                 new AspectList().add(Aspect.AIR, 1).add(Aspect.WATER, 1), 
                 new ItemStack(TAItems.MATERIAL, 1, 0), new Object[] {
                         "SLS",
@@ -161,7 +162,7 @@ public final class RecipeHandler {
                 }
         ));
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "VisRegenerator"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "VIS_REGENERATOR"), "VIS_REGENERATOR", 100, 
+                defaultGroup, "VIS_REGENERATOR", 100, 
                 new AspectList().add(Aspect.AIR, 2), 
                 new ItemStack(TABlocks.VIS_REGENERATOR, 1, 0), new Object[] {
                         "GIG",
@@ -177,7 +178,7 @@ public final class RecipeHandler {
          */
 
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardingSigil"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardingSigil"), "WARDED_ARCANA@2", 10, 
+                defaultGroup, "WARDED_ARCANA@2", 10, 
                 new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
                 new ItemStack(TAItems.MATERIAL, 1, 1), new Object[] {
                         " T ",
@@ -187,7 +188,7 @@ public final class RecipeHandler {
                 }
         ));
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardedChest"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "WardedChest"), "WARDED_ARCANA", 75, 
+                defaultGroup, "WARDED_ARCANA", 75, 
                 new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1),  
                 new ItemStack(TABlocks.WARDED_CHEST), new Object[] {
                         " S ",
@@ -196,8 +197,13 @@ public final class RecipeHandler {
                         'T', new ItemStack(ItemsTC.plate, 1, 2), 'S', new ItemStack(TAItems.MATERIAL, 1, 1), 'C', "chestWood"
                 }
         ));
-        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorWood"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorWood"), "ARCANE_DOOR", 100, 
+        
+        /*
+         * Arcane Doors
+         */
+        
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorGreatwood"), new ShapedArcaneRecipe(
+                defaultGroup, "ARCANE_DOOR", 100, 
                 new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
                 new ItemStack(TAItems.ARCANE_DOOR, 1, 0), new Object[] {
                         "GBG",
@@ -206,8 +212,8 @@ public final class RecipeHandler {
                         'G', new ItemStack(BlocksTC.plankGreatwood), 'B', new ItemStack(ItemsTC.plate, 1, 0), 'S', new ItemStack(TAItems.MATERIAL, 1, 1)
                 }
         ));
-        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorMetal"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorMetal"), "ARCANE_DOOR", 100, 
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorThaumium"), new ShapedArcaneRecipe(
+                defaultGroup, "ARCANE_DOOR", 100, 
                 new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1),  
                 new ItemStack(TAItems.ARCANE_DOOR, 1, 1), new Object[] {
                         "TIT",
@@ -216,13 +222,23 @@ public final class RecipeHandler {
                         'T', new ItemStack(ItemsTC.plate, 1, 2), 'I', new ItemStack(ItemsTC.plate, 1, 1), 'S', new ItemStack(TAItems.MATERIAL, 1, 1)
                 }
         ));
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneDoorSilverwood"), new ShapedArcaneRecipe(
+                defaultGroup, "ARCANE_DOOR", 100, 
+                new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1),  
+                new ItemStack(TAItems.ARCANE_DOOR, 1, 2), new Object[] {
+                        "PIP",
+                        "PSP",
+                        "PIP",
+                        'P', new ItemStack(BlocksTC.plankSilverwood), 'I', new ItemStack(ItemsTC.plate, 1, 1), 'S', new ItemStack(TAItems.MATERIAL, 1, 1)
+                }
+        ));
 
         /**
          * Keys
          */
 
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyIron"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyIron"), "WARD_KEYS", 15, 
+                defaultGroup, "WARD_KEYS", 15, 
                 new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
                 new ItemStack(TAItems.KEY, 1, 0), new Object[] {
                         "  B",
@@ -232,7 +248,7 @@ public final class RecipeHandler {
                 }
         ));
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyBrass"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyBrass"), "WARD_KEYS", 15, 
+                defaultGroup, "WARD_KEYS", 15, 
                 new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
                 new ItemStack(TAItems.KEY, 1, 1), new Object[] {
                         "  B",
@@ -242,7 +258,7 @@ public final class RecipeHandler {
                 }
         ));
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyThaumium"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "KeyThaumium"), "WARD_KEYS", 15, 
+                defaultGroup, "WARD_KEYS", 15, 
                 new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1), 
                 new ItemStack(TAItems.KEY, 1, 2), new Object[] {
                         "  B",
@@ -251,8 +267,13 @@ public final class RecipeHandler {
                         'B', new ItemStack(ItemsTC.brain), 'N', new ItemStack(ItemsTC.nuggets, 1, 6)
                 }
         ));
-        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneTrapdoorWood"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneTrapdoorWood"), "ARCANE_DOOR", 100, 
+        
+        /*
+         * Trapdoors
+         */
+        
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneTrapdoorGreatwood"), new ShapedArcaneRecipe(
+                defaultGroup, "ARCANE_DOOR", 100, 
                 new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1),
                 new ItemStack(TABlocks.ARCANE_TRAPDOOR_WOOD, 2), new Object[] {
                         "WWW",
@@ -261,8 +282,8 @@ public final class RecipeHandler {
                         'W', new ItemStack(BlocksTC.plankGreatwood), 'B', new ItemStack(ItemsTC.plate, 1, 0), 'S', new ItemStack(TAItems.MATERIAL, 1, 1)
                 }
         ));
-        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneTrapdoorMetal"), new ShapedArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneTrapdoorMetal"), "ARCANE_DOOR", 100, 
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneTrapdoorThaumium"), new ShapedArcaneRecipe(
+                defaultGroup, "ARCANE_DOOR", 100, 
                 new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1),
                 new ItemStack(TABlocks.ARCANE_TRAPDOOR_METAL, 2), new Object[] {
                         "TTT",
@@ -271,18 +292,43 @@ public final class RecipeHandler {
                         'T', new ItemStack(ItemsTC.plate, 1, 2), 'I', new ItemStack(ItemsTC.plate, 1, 1), 'S', new ItemStack(TAItems.MATERIAL, 1, 1)
                 }
         ));
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ArcaneTrapdoorSilverwood"), new ShapedArcaneRecipe(
+                defaultGroup, "ARCANE_DOOR", 100, 
+                new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.EARTH, 1).add(Aspect.ENTROPY, 1),
+                new ItemStack(TABlocks.ARCANE_TRAPDOOR_SILVERWOOD, 2), new Object[] {
+                        "WWW",
+                        "BSB",
+                        "WWW",
+                        'W', new ItemStack(BlocksTC.plankSilverwood), 'B', new ItemStack(ItemsTC.plate, 1, 1), 'S', new ItemStack(TAItems.MATERIAL, 1, 1)
+                }
+        ));
         
         /*
-         * Misc Augments
+         * Augments
          */
         
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentGauntletElemental"), new ElementalAugmentCraftingRecipe());
         
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentGauntletRiftEnergyStorage"), new ShapelessArcaneRecipe(
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentGauntletRiftEnergyStorage"), "RIFT_POWER@2", 25, 
+                defaultGroup, "RIFT_POWER@2", 25, 
                 new AspectList().add(Aspect.AIR, 1).add(Aspect.ENTROPY, 1).add(Aspect.FIRE, 1), new ItemStack(TAItems.AUGMENT_CASTER_RIFT_ENERGY_STORAGE), new Object[] {
                         new ItemStack(ItemsTC.plate, 1, 2), new ItemStack(TAItems.MATERIAL, 1, 3)
-                }));
+                }
+        ));
+        
+        /*
+         * Misc stuff
+         */
+        
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "FractureLocator"), new ShapedArcaneRecipe(
+                defaultGroup, "ENTERING_FRACTURE@1", 65, new AspectList().add(Aspect.AIR, 1).add(Aspect.ENTROPY, 1),
+                new ItemStack(TAItems.FRACTURE_LOCATOR), new Object[] {
+                        "BCB",
+                        "CEC",
+                        "BCB",
+                        'B', new ItemStack(ItemsTC.plate, 1, 0), 'C', ThaumcraftApiHelper.makeCrystal(Aspect.VOID), 'E', new ItemStack(ItemsTC.nuggets, 1, 10)
+                }
+        ));
     }
     
     public static String getDustTriggerResearch(DustTriggerMultiblock trigger) {
@@ -385,5 +431,4 @@ public final class RecipeHandler {
                 new ItemStack(BlocksTC.infusionMatrix)
         }));
     }
-
 }

@@ -46,6 +46,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
@@ -54,11 +55,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.golems.tasks.Task;
 import thaumcraft.common.entities.construct.EntityArcaneBore;
 import thaumcraft.common.golems.tasks.TaskHandler;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
@@ -87,6 +90,22 @@ public class WardEventHandler {
         }
 
         BORE_DIG_TARGET = dig;
+    }
+    
+    private static boolean checkForSpecialCase(EntityPlayer player) {
+        if (TAConfig.opWardOverride.getValue() && FMLCommonHandler.instance().getSide() == Side.SERVER) {
+            if (FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers().
+                    getEntry(player.getGameProfile()) != null) {
+                
+                return true;
+            }
+        }
+        else if (TAConfig.opWardOverride.getValue() && FMLCommonHandler.instance().getSide() == Side.CLIENT &&
+                FMLClientHandler.instance().getClient().isSingleplayer()) {
+            return true;
+        }
+        
+        return false;
     }
     
     private static void handleBoreNotCaringAboutCanceledEvents(FakePlayer borePlayer) {
@@ -172,7 +191,7 @@ public class WardEventHandler {
             Chunk chunk = player.getEntityWorld().getChunk(pos);
             if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !event.getEntityPlayer().isCreative()) {
+                if (storage.hasWard(pos) && !checkForSpecialCase(player)) {
                     RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
                             player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()).add(new Vec3d(pos)), false, false, true);
                     sendWardParticles(event.getEntityPlayer().getEntityWorld(), pos, ray.sideHit);
@@ -190,14 +209,14 @@ public class WardEventHandler {
             Chunk chunk = event.getWorld().getChunk(pos);
             if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !event.getPlayer().isCreative()) {
+                if (storage.hasWard(pos) && !checkForSpecialCase(event.getPlayer())) {
                     event.setCanceled(true);
                     if (event.getPlayer() instanceof FakePlayer) {
                         if (event.getPlayer().getName().equals("FakeThaumcraftBore"))
                             handleBoreNotCaringAboutCanceledEvents((FakePlayer) event.getPlayer());
                     }
                 }
-                else if (storage instanceof IWardStorageServer && event.getPlayer().isCreative())
+                else if (storage instanceof IWardStorageServer)
                     ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
             }
         }
@@ -210,10 +229,8 @@ public class WardEventHandler {
             Chunk chunk = event.getWorld().getChunk(pos);
             if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !event.getEntityPlayer().isCreative()) {
-                    event.setCanceled(true);
+                if (storage.hasWard(pos) && !checkForSpecialCase(event.getEntityPlayer()))
                     event.setUseBlock(Result.DENY);
-                }
             }
         }
     }
@@ -225,7 +242,7 @@ public class WardEventHandler {
             Chunk chunk = event.getWorld().getChunk(pos);
             if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !event.getEntityPlayer().isCreative())
+                if (storage.hasWard(pos) && !checkForSpecialCase(event.getEntityPlayer()))
                     event.setUseBlock(Result.DENY);
             }
         }
@@ -283,10 +300,9 @@ public class WardEventHandler {
                 Chunk chunk = event.getWorld().getChunk(pos);
                 if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                     IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                    if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !((EntityPlayer) event.getEntity()).isCreative()))
+                    if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !checkForSpecialCase((EntityPlayer) event.getEntity())))
                         event.setCanceled(true);
-                    else if (storage instanceof IWardStorageServer && event.getEntity() instanceof EntityPlayer && 
-                            ((EntityPlayer) event.getEntity()).isCreative())
+                    else if (storage instanceof IWardStorageServer)
                         ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
                 }
             }
@@ -300,10 +316,9 @@ public class WardEventHandler {
             Chunk chunk = event.getEntity().getEntityWorld().getChunk(pos);
             if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !((EntityPlayer) event.getEntity()).isCreative()))
+                if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !checkForSpecialCase((EntityPlayer) event.getEntity())))
                     event.setCanceled(true);
-                else if (storage instanceof IWardStorageServer && event.getEntity() instanceof EntityPlayer && 
-                        ((EntityPlayer) event.getEntity()).isCreative())
+                else if (storage instanceof IWardStorageServer)
                     ((IWardStorageServer) storage).clearWard(event.getEntity().getEntityWorld(), pos);
             }
         }
@@ -344,6 +359,16 @@ public class WardEventHandler {
                         entityIterator.remove();
                 }
             }
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onWardBlock(BlockWardEvent.WardedServer event) {
+        BlockPos warded = event.getPos();
+        for (EnumFacing facing : EnumFacing.values()) {
+            BlockPos pos = warded.offset(facing);
+            if (event.getWorld().getBlockState(pos).getMaterial() == Material.FIRE)
+                event.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState(), 2);
         }
     }
     

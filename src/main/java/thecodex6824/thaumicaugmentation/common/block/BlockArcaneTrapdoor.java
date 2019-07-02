@@ -49,7 +49,7 @@ import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHalf;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorOpen;
-import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
@@ -110,22 +110,17 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
     }
 
     protected SoundEvent getOpenSound(IBlockState state) {
-        return material == Material.IRON ? SoundEvents.BLOCK_IRON_DOOR_OPEN : 
-            SoundEvents.BLOCK_WOODEN_DOOR_OPEN;
+        return material == Material.IRON ? SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN : 
+            SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN;
     }
 
     protected SoundEvent getCloseSound(IBlockState state) {
-        return material == Material.IRON ? SoundEvents.BLOCK_IRON_DOOR_CLOSE : 
-            SoundEvents.BLOCK_WOODEN_DOOR_CLOSE;
+        return material == Material.IRON ? SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE : 
+            SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE;
     }
     
     @Override
     public SoundType getSoundType() {
-        return SoundType.WOOD;
-    }
-
-    @Override
-    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, Entity entity) {
         return material == Material.IRON ? SoundType.METAL : SoundType.WOOD;
     }
     
@@ -133,8 +128,8 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
             EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-        if (!world.isRemote && world.getTileEntity(pos) instanceof IWardedTile) {
-            if (((IWardedTile) world.getTileEntity(pos)).hasPermission(player)) {
+        if (!world.isRemote && world.getTileEntity(pos).hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
+            if (world.getTileEntity(pos).getCapability(CapabilityWardedTile.WARDED_TILE, null).hasPermission(player)) {
                 state = state.cycleProperty(IArcaneDoorOpen.DOOR_OPEN);
                 world.setBlockState(pos, state, 10);
                 world.markBlockRangeForRenderUpdate(pos, pos);
@@ -204,8 +199,8 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
             ItemStack stack) {
 
-        if (!world.isRemote && world.getTileEntity(pos) instanceof IWardedTile) {
-            ((IWardedTile) world.getTileEntity(pos)).setOwner(placer instanceof EntityPlayer ? 
+        if (!world.isRemote && world.getTileEntity(pos).hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
+            world.getTileEntity(pos).getCapability(CapabilityWardedTile.WARDED_TILE, null).setOwner(placer instanceof EntityPlayer ? 
                     ((EntityPlayer) placer).getUniqueID().toString() : placer.getName());
         }
 

@@ -36,11 +36,11 @@ import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageMana
 import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManager2Bits;
 import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManager4Bits;
 import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManagerByte;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManagerShort;
 import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManagerNull;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManagerShort;
 
 public class TestWardStorage {
-
+    
     private HashMap<BlockPos, UUID> data;
     private IWardStorageManager manager;
     

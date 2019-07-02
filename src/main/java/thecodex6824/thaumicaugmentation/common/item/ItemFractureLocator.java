@@ -21,11 +21,17 @@
 package thecodex6824.thaumicaugmentation.common.item;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketFractureLocatorUpdate;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -51,15 +57,55 @@ public class ItemFractureLocator extends ItemTABase {
                 FractureLocatorSearchManager.resetPlayerLocationTime((EntityPlayer) entity);
             }
         }
-        else if (world.isRemote && world.getTotalWorldTime() % 20 == 0) {
-            if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("found")) {
-                int[] pos = stack.getTagCompound().getIntArray("pos");
-                if (pos.length == 3)
-                    System.out.printf("%d, %d, %d%n", pos[0], pos[1], pos[2]);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    private double getLookYaw(Entity entity) {
+        double yaw = 0;
+        if (entity instanceof EntityLivingBase)
+            yaw = ((EntityLivingBase) entity).rotationYawHead;
+        else
+            yaw = entity.rotationYaw;
+        
+        return Math.floorMod((long) yaw + 90, 360);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    private double normalize(double input) {
+        input = (input + Math.PI) % (Math.PI * 2);
+        if (input < 0)
+            input += Math.PI * 2;
+        
+        return input - Math.PI;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    private double angleDifference(double a1, double a2) {
+        return normalize(a2 - a1);
+    }
+    
+    @SideOnly(Side.CLIENT)
+    private double calcError(double value, double expected) {
+        return Math.abs(angleDifference(expected, value)) / Math.PI;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public int getTintColor(ItemStack stack) {
+        if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("found")) {
+            int[] pos = stack.getTagCompound().getIntArray("pos");
+            if (pos.length == 3) {
+                Vec3d fracture = new Vec3d(pos[0], pos[1], pos[2]);
+                Entity entity = stack.getItemFrame() != null ? stack.getItemFrame() : FMLClientHandler.instance().getClientPlayerEntity();
+                float partialTicks = FMLClientHandler.instance().getClient().getRenderPartialTicks();
+                Vec3d playerPos = entity.getPositionEyes(partialTicks);
+                double optimalAngle = normalize(Math.atan2(fracture.z + 0.5 - playerPos.z, fracture.x + 0.5 - playerPos.x));
+                double currentYaw = getLookYaw(entity) * Math.PI / 180.0;
+                int factor = (int) ((1.0 - MathHelper.clamp(calcError(currentYaw, optimalAngle), 0.0, 1.0)) * 255);
+                return factor | (factor << 8) | (factor << 16);
             }
-            else
-                System.out.println("Not found");
         }
+        
+        return 0;
     }
     
 }

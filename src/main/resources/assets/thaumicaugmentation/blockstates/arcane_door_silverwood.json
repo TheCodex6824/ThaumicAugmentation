@@ -1,0 +1,41 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:arcane_door_lower",
+        "textures": {"bottom": "thaumicaugmentation:blocks/arcane_door_lower_silverwood","top": "thaumicaugmentation:blocks/arcane_door_upper_silverwood","side": "thaumicaugmentation:blocks/arcane_door_side_silverwood"}
+    },
+    "variants": {
+        "ta_direction_h=south,ta_door_half=lower,ta_door_open=false,ta_hinge_side=left": {"y": 90, "model": "thaumicaugmentation:arcane_door_lower" },
+        "ta_direction_h=south,ta_door_half=lower,ta_door_open=true,ta_hinge_side=left": {"y": 180, "model": "thaumicaugmentation:arcane_door_lower_rh" },
+        "ta_direction_h=west,ta_door_half=lower,ta_door_open=false,ta_hinge_side=left": {"y": 180, "model": "thaumicaugmentation:arcane_door_lower" },
+        "ta_direction_h=west,ta_door_half=lower,ta_door_open=true,ta_hinge_side=left": {"y": 270, "model": "thaumicaugmentation:arcane_door_lower_rh" },
+        "ta_direction_h=north,ta_door_half=lower,ta_door_open=false,ta_hinge_side=left": {"y": 270, "model": "thaumicaugmentation:arcane_door_lower" },
+        "ta_direction_h=north,ta_door_half=lower,ta_door_open=true,ta_hinge_side=left": {"y": 0, "model": "thaumicaugmentation:arcane_door_lower_rh" },
+        "ta_direction_h=east,ta_door_half=lower,ta_door_open=false,ta_hinge_side=left": {"y": 0, "model": "thaumicaugmentation:arcane_door_lower" },
+        "ta_direction_h=east,ta_door_half=lower,ta_door_open=true,ta_hinge_side=left": {"y": 90, "model": "thaumicaugmentation:arcane_door_lower_rh" },
+        "ta_direction_h=south,ta_door_half=lower,ta_door_open=false,ta_hinge_side=right": {"y": 90, "model": "thaumicaugmentation:arcane_door_lower_rh" },
+        "ta_direction_h=south,ta_door_half=lower,ta_door_open=true,ta_hinge_side=right": {"y": 0, "model": "thaumicaugmentation:arcane_door_lower" },
+        "ta_direction_h=west,ta_door_half=lower,ta_door_open=false,ta_hinge_side=right": {"y": 180, "model": "thaumicaugmentation:arcane_door_lower_rh" },
+        "ta_direction_h=west,ta_door_half=lower,ta_door_open=true,ta_hinge_side=right": {"y": 90, "model": "thaumicaugmentation:arcane_door_lower" },
+        "ta_direction_h=north,ta_door_half=lower,ta_door_open=false,ta_hinge_side=right": {"y": 270, "model": "thaumicaugmentation:arcane_door_lower_rh" },
+        "ta_direction_h=north,ta_door_half=lower,ta_door_open=true,ta_hinge_side=right": {"y": 180, "model": "thaumicaugmentation:arcane_door_lower" },
+        "ta_direction_h=east,ta_door_half=lower,ta_door_open=false,ta_hinge_side=right": {"y": 0, "model": "thaumicaugmentation:arcane_door_lower_rh" },
+        "ta_direction_h=east,ta_door_half=lower,ta_door_open=true,ta_hinge_side=right": {"y": 270, "model": "thaumicaugmentation:arcane_door_lower" },
+        "ta_direction_h=south,ta_door_half=upper,ta_door_open=false,ta_hinge_side=left": {"y": 90, "model": "thaumicaugmentation:arcane_door_upper" },
+        "ta_direction_h=south,ta_door_half=upper,ta_door_open=true,ta_hinge_side=left": {"y": 180, "model": "thaumicaugmentation:arcane_door_upper_rh" },
+        "ta_direction_h=west,ta_door_half=upper,ta_door_open=false,ta_hinge_side=left": {"y": 180, "model": "thaumicaugmentation:arcane_door_upper" },
+        "ta_direction_h=west,ta_door_half=upper,ta_door_open=true,ta_hinge_side=left": {"y": 270, "model": "thaumicaugmentation:arcane_door_upper_rh" },
+        "ta_direction_h=north,ta_door_half=upper,ta_door_open=false,ta_hinge_side=left": {"y": 270, "model": "thaumicaugmentation:arcane_door_upper" },
+        "ta_direction_h=north,ta_door_half=upper,ta_door_open=true,ta_hinge_side=left": {"y": 0, "model": "thaumicaugmentation:arcane_door_upper_rh" },
+        "ta_direction_h=east,ta_door_half=upper,ta_door_open=false,ta_hinge_side=left": {"y": 0, "model": "thaumicaugmentation:arcane_door_upper" },
+        "ta_direction_h=east,ta_door_half=upper,ta_door_open=true,ta_hinge_side=left": {"y": 90, "model": "thaumicaugmentation:arcane_door_upper_rh" },
+        "ta_direction_h=south,ta_door_half=upper,ta_door_open=false,ta_hinge_side=right": {"y": 90, "model": "thaumicaugmentation:arcane_door_upper_rh" },
+        "ta_direction_h=south,ta_door_half=upper,ta_door_open=true,ta_hinge_side=right": {"y": 0, "model": "thaumicaugmentation:arcane_door_upper" },
+        "ta_direction_h=west,ta_door_half=upper,ta_door_open=false,ta_hinge_side=right": {"y": 180, "model": "thaumicaugmentation:arcane_door_upper_rh" },
+        "ta_direction_h=west,ta_door_half=upper,ta_door_open=true,ta_hinge_side=right": {"y": 90, "model": "thaumicaugmentation:arcane_door_upper" },
+        "ta_direction_h=north,ta_door_half=upper,ta_door_open=false,ta_hinge_side=right": {"y": 270, "model": "thaumicaugmentation:arcane_door_upper_rh" },
+        "ta_direction_h=north,ta_door_half=upper,ta_door_open=true,ta_hinge_side=right": {"y": 180, "model": "thaumicaugmentation:arcane_door_upper" },
+        "ta_direction_h=east,ta_door_half=upper,ta_door_open=false,ta_hinge_side=right": {"y": 0, "model": "thaumicaugmentation:arcane_door_upper_rh" },
+        "ta_direction_h=east,ta_door_half=upper,ta_door_open=true,ta_hinge_side=right": {"y": 270, "model": "thaumicaugmentation:arcane_door_upper" }
+    }
+}

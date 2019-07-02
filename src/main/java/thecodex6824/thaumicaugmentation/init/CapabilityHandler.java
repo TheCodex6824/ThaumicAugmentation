@@ -31,8 +31,8 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.energy.CapabilityRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
 import thecodex6824.thaumicaugmentation.api.warded.WardStorageClient;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
 import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocation;
 import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocation;
 import thecodex6824.thaumicaugmentation.common.capability.RiftEnergyStorageFluxRiftImpl;
@@ -43,6 +43,7 @@ import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityFractur
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityRiftEnergyStorageInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityWardStorageInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityWardedInventoryInit;
+import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityWardedTileInit;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
@@ -57,6 +58,7 @@ public final class CapabilityHandler {
         CapabilityWardedInventoryInit.init();
         CapabilityFractureLocationInit.init();
         CapabilityWardStorageInit.init();
+        CapabilityWardedTileInit.init();
     }
     
     @SubscribeEvent

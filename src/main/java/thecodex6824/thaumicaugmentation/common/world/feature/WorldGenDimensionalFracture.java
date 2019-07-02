@@ -66,10 +66,10 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                         if (!state.getBlock().isAir(state, world, pos) && state.getBlockHardness(world, pos) >= 0.0F)
                             setBlockAndNotifyAdequately(world, pos, Blocks.AIR.getDefaultState());
                     }
-                    else {
+                    else if (Math.abs(x) + Math.abs(y) + Math.abs(z) < 9) {
                         if (((!world.isAirBlock(pos) && isMaterialReplaceable(state.getMaterial())) || y < -1) && !state.getMaterial().isLiquid() && state.getBlockHardness(world, pos) >= 0.0F) {
-                            int chanceFactor = Math.abs(x) + Math.abs(y) + Math.abs(z);
-                            if (chanceFactor < 5 || rand.nextInt((chanceFactor - 4) * 2) == 0) {
+                            int chanceFactor = Math.abs(x * x) + Math.abs(y) + Math.abs(z * z);
+                            if (chanceFactor < 5 || rand.nextInt(chanceFactor - 4) == 0) {
                                 IBlockState up = world.getBlockState(pos.up());
                                 setBlockAndNotifyAdequately(world, pos, up.getBlock().isAir(up, world, pos.up()) ? blocks.getTopState() : blocks.getFillerState());
                             }

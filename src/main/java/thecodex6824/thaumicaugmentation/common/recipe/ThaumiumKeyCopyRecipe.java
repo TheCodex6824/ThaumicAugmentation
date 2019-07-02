@@ -47,7 +47,7 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         boolean hasEmptyThaumiumKey = false;
         ItemStack thaumiumKey = null;
         ItemStack brassKey = null;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof ItemKey) {
@@ -79,7 +79,7 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         ItemStack emptyThaumiumKey = null;
         ItemStack thaumiumKey = null;
         ItemStack brassKey = null;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof ItemKey) {

@@ -37,22 +37,22 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
  */
 @HasResult
 @Cancelable
-public class WardedBlockPermissionEvent extends Event {
+public class WardedTilePermissionEvent extends Event {
 
     protected Result result;
     protected World world;
     protected EntityPlayer player;
     protected BlockPos position;
     protected IBlockState state;
-    protected boolean informative;
+    protected boolean allowed;
 
-    public WardedBlockPermissionEvent(World w, BlockPos pos, IBlockState s, EntityPlayer p, boolean info) {
+    public WardedTilePermissionEvent(World w, BlockPos pos, IBlockState s, EntityPlayer p, boolean info) {
         result = Result.DEFAULT;
         world = w;
         player = p;
         position = pos;
         state = s;
-        informative = info;
+        allowed = info;
     }
 
     /**
@@ -88,14 +88,11 @@ public class WardedBlockPermissionEvent extends Event {
     }
 
     /**
-     * Returns if this event is informative, or otherwise is solely for other mods
-     * to know when a warded block is used. If this is true, then any permission
-     * returned in this event is ignored, and the interaction will still take place
-     * if the event is cancelled.
-     * @return If this event is informative
+     * Returns if the player would normally be allowed to access this warded tile.
+     * @return If the player would normally be allowed
      */
-    public boolean isInformative() {
-        return informative;
+    public boolean isAllowed() {
+        return allowed;
     }
 
     /**
@@ -103,8 +100,7 @@ public class WardedBlockPermissionEvent extends Event {
      * the player interact with the warded block, even if they would normally
      * not have permission to do so. A result of DENY will always disallow players
      * from interacting with the warded block, even if they normally would be able to.
-     * A result of DEFAULT will fall back to the normal permission behavior. All results
-     * will be ignored if {@link WardedBlockPermissionEvent#isInformative isInformative} is true.
+     * A result of DEFAULT will fall back to the normal permission behavior.
      * @param value The result this event should use
      */
     @Override
@@ -115,7 +111,7 @@ public class WardedBlockPermissionEvent extends Event {
     /**
      * Returns the result of this event (DEFAULT by default).
      * @return The result of this event
-     * @see WardedBlockPermissionEvent#setResult(Result) setResult
+     * @see WardedTilePermissionEvent#setResult(Result) setResult
      */
     @Override
     public Result getResult() {

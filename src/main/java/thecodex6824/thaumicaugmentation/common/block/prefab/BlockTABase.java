@@ -25,6 +25,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
+import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
 public class BlockTABase extends Block implements IModelProvider<Block> {
@@ -35,8 +36,10 @@ public class BlockTABase extends Block implements IModelProvider<Block> {
 
     @Override
     public void registerModels() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
-                getRegistryName().toString(), "inventory"));
+        if (this instanceof IItemBlockProvider) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
+                    getRegistryName().toString(), "inventory"));
+        }
     }
 
 }

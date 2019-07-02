@@ -38,14 +38,12 @@ import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHalf;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHalf.ArcaneDoorHalf;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHinge;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorOpen;
-import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorType;
-import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorType.ArcaneDoorType;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemArcaneDoor extends ItemTABase {
 
     public ItemArcaneDoor() {
-        super(new String[] {"wood", "metal"});
+        super(new String[] {"greatwood", "thaumium", "silverwood"});
     }
 
     @Override
@@ -63,7 +61,15 @@ public class ItemArcaneDoor extends ItemTABase {
             int i = enumfacing.getXOffset();
             int j = enumfacing.getZOffset();
             boolean flag = i < 0 && hitZ < 0.5F || i > 0 && hitZ > 0.5F || j < 0 && hitX > 0.5F || j > 0 && hitX < 0.5F;
-            placeDoor(player, itemstack, world, pos, enumfacing, TABlocks.ARCANE_DOOR, flag);
+            Block toPlace = null;
+            if (itemstack.getMetadata() == 0)
+                toPlace = TABlocks.ARCANE_DOOR_GREATWOOD;
+            else if (itemstack.getMetadata() == 1)
+                toPlace = TABlocks.ARCANE_DOOR_THAUMIUM;
+            else
+                toPlace = TABlocks.ARCANE_DOOR_SILVERWOOD;
+  
+            placeDoor(player, itemstack, world, pos, enumfacing, toPlace, flag);
             SoundType soundtype = world.getBlockState(pos).getBlock().getSoundType(world.getBlockState(pos), world, pos, player);
             world.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
             itemstack.shrink(1);
@@ -89,7 +95,7 @@ public class ItemArcaneDoor extends ItemTABase {
             isRightHinge = true;
 
         BlockPos blockpos2 = pos.up();
-        worldIn.setBlockState(pos, door.getDefaultState().withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.LOWER).withProperty(IArcaneDoorHinge.HINGE_SIDE, isRightHinge ? BlockDoor.EnumHingePosition.RIGHT : BlockDoor.EnumHingePosition.LEFT).withProperty(IArcaneDoorType.TYPE, stack.getMetadata() == 1 ? ArcaneDoorType.METAL : ArcaneDoorType.WOOD).withProperty(IArcaneDoorOpen.DOOR_OPEN, false), 2);
+        worldIn.setBlockState(pos, door.getDefaultState().withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.LOWER).withProperty(IArcaneDoorHinge.HINGE_SIDE, isRightHinge ? BlockDoor.EnumHingePosition.RIGHT : BlockDoor.EnumHingePosition.LEFT).withProperty(IArcaneDoorOpen.DOOR_OPEN, false), 2);
         worldIn.setBlockState(blockpos2, door.getDefaultState().withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.UPPER).withProperty(IHorizontallyDirectionalBlock.DIRECTION, facing), 2);
         worldIn.getBlockState(pos).getBlock().onBlockPlacedBy(worldIn, pos, worldIn.getBlockState(pos), player, stack);
         worldIn.notifyNeighborsOfStateChange(pos, door, false);

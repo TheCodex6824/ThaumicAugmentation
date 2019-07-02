@@ -44,8 +44,8 @@ import net.minecraftforge.common.property.Properties;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
-import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
 import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
@@ -130,8 +130,8 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
             EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-        if (!world.isRemote && world.getTileEntity(pos) instanceof IWardedTile) {
-            if (((IWardedTile) world.getTileEntity(pos)).hasPermission(player)) {
+        if (!world.isRemote && world.getTileEntity(pos).hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
+            if (world.getTileEntity(pos).getCapability(CapabilityWardedTile.WARDED_TILE, null).hasPermission(player)) {
                 if (player.getHeldItem(hand).getItem() instanceof ICaster && !player.isSneaking())
                     world.setBlockState(pos, state.withRotation(Rotation.CLOCKWISE_90));
                 else 
@@ -151,9 +151,9 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
             ItemStack stack) {
 
-        if (!world.isRemote && world.getTileEntity(pos) instanceof IWardedTile) {
-                ((IWardedTile) world.getTileEntity(pos)).setOwner(placer instanceof EntityPlayer ? 
-                ((EntityPlayer) placer).getUniqueID().toString() : placer.getName());
+        if (!world.isRemote && world.getTileEntity(pos).hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
+            world.getTileEntity(pos).getCapability(CapabilityWardedTile.WARDED_TILE, null).setOwner(placer instanceof EntityPlayer ? 
+                    ((EntityPlayer) placer).getUniqueID().toString() : placer.getName());
         }
 
         super.onBlockPlacedBy(world, pos, state, placer, stack);

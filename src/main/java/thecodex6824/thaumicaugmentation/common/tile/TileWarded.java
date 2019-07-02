@@ -20,7 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,96 +28,28 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IInteractWithCaster;
-import thecodex6824.thaumicaugmentation.api.TAConfig;
-import thecodex6824.thaumicaugmentation.api.event.WardedBlockPermissionEvent;
-import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
-import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.WardedTile;
 
-public abstract class TileWarded extends TileEntity implements IInteractWithCaster, IWardedTile {
+public abstract class TileWarded extends TileEntity implements IInteractWithCaster, ICapabilityProvider {
 
-    protected String owner;
+    protected IWardedTile ward;
 
     public TileWarded() {
         super();
-        owner = "";
-    }
-
-    @Override
-    public void setOwner(String uuid) {
-        owner = uuid;
-        markDirty();
-    }
-
-    @Override
-    public String getOwner() {
-        return owner;
-    }
-
-    @Override
-    public BlockPos getPosition() {
-        return pos;
-    }
-
-    protected boolean checkPermission(EntityPlayer player) {
-        if (player == null)
-            return false;
-        else if (owner.equals(player.getUniqueID().toString()))
-            return true;
-        else {
-            ItemStack stack = null;
-            for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
-                stack = player.inventory.getStackInSlot(i);
-                if (stack.getItem() instanceof IWardAuthenticator && 
-                        ((IWardAuthenticator) stack.getItem()).permitsUsage(this, stack, player)) {
-
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    protected boolean playerHasSpecialPermission(EntityPlayer player) {
-        if (player == null)
-            return false;
-        else if (!player.world.isRemote && TAConfig.opWardOverride.getValue() && FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers().
-                getEntry(player.getGameProfile()) != null)
-            return true;
-        else if (FMLCommonHandler.instance().getSide() == Side.CLIENT && Minecraft.getMinecraft().isSingleplayer())
-            return true;
-        else
-            return false;
-    }
-
-    @Override
-    public boolean hasPermission(EntityPlayer player) {
-        boolean specialPermission = playerHasSpecialPermission(player);
-        WardedBlockPermissionEvent event = new WardedBlockPermissionEvent(world, pos, world.getBlockState(pos), player, specialPermission);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (specialPermission)
-            return true;
-        else if (!event.isCanceled()) {
-            switch (event.getResult()) {
-                case ALLOW: return true;
-                case DENY: return false;
-                default: return checkPermission(player);
-            }
-        }
-        else
-            return false;
+        ward = new WardedTile(this);
     }
 
     @Override
     public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, EnumFacing facing,
             EnumHand hand) {
         if (!world.isRemote) {
-            if (hasPermission(player)) {
+            if (ward.hasPermission(player)) {
                 if (stack.getItem() instanceof ICaster && player.isSneaking())
                     world.destroyBlock(pos, !player.isCreative());
 
@@ -130,16 +61,29 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 
         return true;
     }
+    
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return capability == CapabilityWardedTile.WARDED_TILE ? true : super.hasCapability(capability, facing);
+    }
+    
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityWardedTile.WARDED_TILE)
+            return CapabilityWardedTile.WARDED_TILE.cast(ward);
+        else
+            return super.getCapability(capability, facing);
+    }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setString("owner", owner);
+        compound.setString("owner", ward.getOwner());
         return super.writeToNBT(compound);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
-        owner = compound.getString("owner");
+        ward.setOwner(compound.getString("owner"));
         super.readFromNBT(compound);
     }
 

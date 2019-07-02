@@ -24,6 +24,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -36,6 +37,7 @@ import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.item.IArmorReduceFallDamage;
+import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
@@ -65,6 +67,16 @@ public final class PlayerEventHandler {
     public static void onTick(LivingEvent.LivingUpdateEvent event) {
         if (event.getEntity() instanceof EntityPlayer && PlayerMovementAbilityManager.isValidSideForMovement((EntityPlayer) event.getEntity()))
             PlayerMovementAbilityManager.tick((EntityPlayer) event.getEntity());
+        
+        if (!event.getEntity().getEntityWorld().isRemote && event.getEntity().getEntityWorld().getTotalWorldTime() % 40 == 0 &&
+                event.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getEntity();
+            if (player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && 
+                    !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
+                ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERVOID");
+                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void"), true);
+            }
+        }
     }
 
     @SubscribeEvent

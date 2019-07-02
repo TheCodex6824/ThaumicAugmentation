@@ -52,6 +52,7 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
@@ -114,11 +115,11 @@ public final class ClientEventHandler {
                 for (int offsetY = -1; offsetY <= 1; ++offsetY) {
                     for (int offsetZ = -1; offsetZ <= 1; ++offsetZ) {
                         BlockPos pos = p.add(offsetX, offsetY, offsetZ);
-                        byte value = ((IWardStorageClient) world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null)).getWard(pos);
-                        if (value != 0) {
+                        ClientWardStorageValue value = ((IWardStorageClient) world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null)).getWard(pos);
+                        if (value != ClientWardStorageValue.EMPTY) {
                             float red = 1.0F;
                             float green = 0.0F;
-                            if ((value & 3) == 1) {
+                            if (value == ClientWardStorageValue.OWNED_SELF) {
                                 red = 0.0F;
                                 green = 1.0F;
                             }

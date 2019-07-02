@@ -77,22 +77,22 @@ IVisDiscountGear, ISpecialArmor, IWarpingGear {
         @Override
         public Float apply(EntityPlayer player, MovementType type) {
             switch (type) {
-            case DRY_GROUND: {
-                float boost = TAConfig.voidBootsLandSpeedBoost.getValue().floatValue();
-                return player.isSneaking() ? boost / TAConfig.voidBootsSneakReduction.getValue().floatValue() : boost;
-            }
-            case JUMP_BEGIN: return TAConfig.voidBootsJumpBoost.getValue().floatValue();
-            case JUMP_FACTOR: return TAConfig.voidBootsJumpFactor.getValue().floatValue();
-            case STEP_HEIGHT: return !player.isSneaking() ? TAConfig.voidBootsStepHeight.getValue().floatValue() : 0.0F;
-            case WATER_GROUND: {
-                float boost = Math.max(TAConfig.voidBootsLandSpeedBoost.getValue().floatValue() / 4.0F, TAConfig.voidBootsWaterSpeedBoost.getValue().floatValue());
-                return player.isSneaking() ? boost / TAConfig.voidBootsSneakReduction.getValue().floatValue() : boost;
-            }
-            case WATER_SWIM: {
-                float boost = TAConfig.voidBootsWaterSpeedBoost.getValue().floatValue();
-                return player.isSneaking() ? boost / TAConfig.voidBootsSneakReduction.getValue().floatValue() : boost;
-            }
-            default: return 0.0F;
+                case DRY_GROUND: {
+                    float boost = TAConfig.voidBootsLandSpeedBoost.getValue().floatValue();
+                    return player.isSneaking() ? boost / TAConfig.voidBootsSneakReduction.getValue().floatValue() : boost;
+                }
+                case JUMP_BEGIN: return TAConfig.voidBootsJumpBoost.getValue().floatValue();
+                case JUMP_FACTOR: return TAConfig.voidBootsJumpFactor.getValue().floatValue();
+                case STEP_HEIGHT: return !player.isSneaking() ? TAConfig.voidBootsStepHeight.getValue().floatValue() : 0.0F;
+                case WATER_GROUND: {
+                    float boost = Math.max(TAConfig.voidBootsLandSpeedBoost.getValue().floatValue() / 4.0F, TAConfig.voidBootsWaterSpeedBoost.getValue().floatValue());
+                    return player.isSneaking() ? boost / TAConfig.voidBootsSneakReduction.getValue().floatValue() : boost;
+                }
+                case WATER_SWIM: {
+                    float boost = TAConfig.voidBootsWaterSpeedBoost.getValue().floatValue();
+                    return player.isSneaking() ? boost / TAConfig.voidBootsSneakReduction.getValue().floatValue() : boost;
+                }
+                default: return 0.0F;
             }
         }
     };
@@ -269,8 +269,8 @@ IVisDiscountGear, ISpecialArmor, IWarpingGear {
                 stack.damageItem(-1, player);
 
             int current = 0;
-            if (stack.hasTagCompound() && stack.getTagCompound().hasKey("energyRemaining", NBT.TAG_INT));
-            current = stack.getTagCompound().getInteger("energyRemaining");
+            if (stack.hasTagCompound() && stack.getTagCompound().hasKey("energyRemaining", NBT.TAG_INT))
+                current = stack.getTagCompound().getInteger("energyRemaining");
 
             if (current > 0)
                 --current;

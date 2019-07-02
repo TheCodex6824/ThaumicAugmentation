@@ -24,8 +24,10 @@ import net.minecraft.util.math.BlockPos;
 
 public interface IWardStorageClient extends IWardStorage {
 
-    public void setWard(BlockPos pos, byte id);
+    public void clearWard(BlockPos pos);
     
-    public byte getWard(BlockPos pos);
+    public void setWard(BlockPos pos, ClientWardStorageValue id);
+    
+    public ClientWardStorageValue getWard(BlockPos pos);
     
 }

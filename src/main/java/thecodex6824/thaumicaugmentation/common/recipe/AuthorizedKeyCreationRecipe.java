@@ -39,7 +39,7 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
     public boolean matches(InventoryCrafting inv, World worldIn) {
         boolean hasIronKey = false;
         boolean hasBrassKey = false;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof ItemKey) {
@@ -63,7 +63,7 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         ItemStack ironKey = null;
         ItemStack brassKey = null;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof ItemKey) {

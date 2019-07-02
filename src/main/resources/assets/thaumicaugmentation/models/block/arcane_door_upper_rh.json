@@ -1,8 +1,7 @@
 {
     "textures": {
-        "bottom": "thaumicaugmentation:blocks/arcane_door_lower_wood",
-        "top": "thaumicaugmentation:blocks/arcane_door_upper_wood",
-        "side": "thaumicaugmentation:blocks/arcane_door_side_wood",
+        "top": "thaumicaugmentation:blocks/arcane_door_upper_greatwood",
+        "side": "thaumicaugmentation:blocks/arcane_door_side_greatwood",
         "particle": "#top"
     },
     "ambientocclusion": false,

@@ -29,14 +29,13 @@ import thaumcraft.api.aspects.IEssentiaContainerItem;
 import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
 
 public class ElementalAugmentCraftingRecipe extends ShapelessArcaneRecipe {
 
     public ElementalAugmentCraftingRecipe() {
-        super(new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentGauntletElemental"), "GAUNTLET_AUGMENTATION@2",
-                50, new AspectList().add(Aspect.AIR, 1).add(Aspect.EARTH, 1).add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 1).add(
+        super(new ResourceLocation(""), "GAUNTLET_AUGMENTATION@2", 50,
+                new AspectList().add(Aspect.AIR, 1).add(Aspect.EARTH, 1).add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 1).add(
                 Aspect.ORDER, 1).add(Aspect.WATER, 1), new ItemStack(TAItems.AUGMENT_CASTER_ELEMENTAL), new Object[] {
                         new ItemStack(ItemsTC.plate, 1, 2), new ItemStack(ItemsTC.crystalEssence), new ItemStack(ItemsTC.visResonator)
                 }
@@ -46,7 +45,7 @@ public class ElementalAugmentCraftingRecipe extends ShapelessArcaneRecipe {
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         ItemStack crystal = ItemStack.EMPTY;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.getItem() == ItemsTC.crystalEssence) {
                 crystal = stack;

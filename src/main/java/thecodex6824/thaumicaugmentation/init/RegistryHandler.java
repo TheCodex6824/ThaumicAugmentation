@@ -34,18 +34,24 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectEventProxy;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.AspectRegistryEvent;
+import thaumcraft.api.blocks.BlocksTC;
+import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
+import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoor;
+import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoorLegacy;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
@@ -80,6 +86,7 @@ import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessHighlands;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeTaintedLands;
 
+@SuppressWarnings("deprecation")
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class RegistryHandler {
 
@@ -100,11 +107,15 @@ public final class RegistryHandler {
         IForgeRegistry<Block> registry = event.getRegistry();
         registry.register(setupBlock(new BlockVisRegenerator(), "vis_regenerator"));
         registry.register(setupBlock(new BlockWardedChest(), "warded_chest"));
-        registry.register(setupBlock(new BlockArcaneDoor(), "arcane_door"));
+        registry.register(setupBlock(new BlockArcaneDoorLegacy(), "arcane_door"));
+        registry.register(setupBlock(new BlockArcaneDoor(Material.WOOD, 0), "arcane_door_greatwood"));
+        registry.register(setupBlock(new BlockArcaneDoor(Material.IRON, 1), "arcane_door_thaumium"));
+        registry.register(setupBlock(new BlockArcaneDoor(Material.WOOD, 2), "arcane_door_silverwood"));
         registry.register(setupBlock(new BlockCastedLight(), "temporary_light"));
         registry.register(setupBlock(new BlockTAStone(), "stone"));
         registry.register(setupBlock(new BlockArcaneTrapdoor(Material.WOOD), "arcane_trapdoor_wood"));
         registry.register(setupBlock(new BlockArcaneTrapdoor(Material.IRON), "arcane_trapdoor_metal"));
+        registry.register(setupBlock(new BlockArcaneTrapdoor(Material.WOOD), "arcane_trapdoor_silverwood"));
         registry.register(setupBlock(new BlockTaintFlower(), "taint_flower"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
@@ -136,6 +147,8 @@ public final class RegistryHandler {
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+        OreDictionary.registerOre("stoneVoid", new ItemStack(TABlocks.STONE, 1, StoneType.STONE_VOID.getMeta()));
+        
         RecipeHandler.initInfusionRecipes();
         RecipeHandler.initCrucibleRecipes();
         RecipeHandler.initArcaneCraftingRecipes();
@@ -147,6 +160,13 @@ public final class RegistryHandler {
         event.getRegistry().register(new AugmentAdditionRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "augment_addition")));
         event.getRegistry().register(new AugmentRemovalRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "augment_removal")));
         event.getRegistry().register(new ElementChangeRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "element_swap")));
+        event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(""), new ItemStack(BlocksTC.stoneEldritchTile, 9), new Object[] {
+                "SSS",
+                "SCS",
+                "SSS",
+                'S', "stoneVoid", 'C', ItemsTC.crystalEssence
+            }
+        ).setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "EldritchStone")));
     }
 
     @SubscribeEvent
@@ -177,8 +197,9 @@ public final class RegistryHandler {
     @SubscribeEvent
     public static void registerAspects(AspectRegistryEvent event) {
         AspectEventProxy proxy = event.register;
-        proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 0), new AspectList().add(Aspect.PROTECT, 23));
-        proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 1), new AspectList().add(Aspect.PROTECT, 19));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 0), new AspectList().add(Aspect.PROTECT, 19));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 1), new AspectList().add(Aspect.PROTECT, 23));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 2), new AspectList().add(Aspect.PROTECT, 19));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.GAUNTLET, 1, 0), new AspectList().add(Aspect.MAGIC, 8));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.GAUNTLET, 1, 1), new AspectList().add(Aspect.ELDRITCH, 27).add(Aspect.VOID, 23));
         proxy.registerObjectTag(new ItemStack(TAItems.KEY, 1, 0), new AspectList().add(Aspect.PROTECT, 5).add(Aspect.MIND, 10).add(Aspect.METAL, 3));

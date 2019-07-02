@@ -28,6 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 
 public class ContainerWardedChest extends Container {
@@ -61,7 +62,7 @@ public class ContainerWardedChest extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
-        return chest.hasPermission(player);
+        return chest.getCapability(CapabilityWardedTile.WARDED_TILE, null).hasPermission(player);
     }
 
     @Override

@@ -38,7 +38,8 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
-import thecodex6824.thaumicaugmentation.api.tile.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.IWardedTile;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemKey extends ItemTABase implements IWardAuthenticator {
@@ -119,14 +120,14 @@ public class ItemKey extends ItemTABase implements IWardAuthenticator {
 
         if (!world.isRemote && player.getHeldItem(hand).getMetadata() == 2) {
             ItemStack stack = player.getHeldItem(hand);
-            if (!player.isSneaking() && !stack.hasTagCompound() && world.getTileEntity(pos) instanceof IWardedTile) {
+            if (!player.isSneaking() && !stack.hasTagCompound() && world.getTileEntity(pos).hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
                 stack.setTagCompound(new NBTTagCompound());
                 stack.getTagCompound().setString("boundTo", player.getUniqueID().toString());
                 stack.getTagCompound().setString("boundToDisplay", player.getName());
                 stack.getTagCompound().setInteger("boundToColor", generateKeyColor(player.getUniqueID().toString()));
 
                 stack.getTagCompound().setIntArray("boundBlockPos", new int[] {pos.getX(), pos.getY(), pos.getZ()});
-                stack.getTagCompound().setString("boundType", ((IWardedTile) world.getTileEntity(pos)).getUniqueTypeID());
+                stack.getTagCompound().setString("boundType", world.getTileEntity(pos).getCapability(CapabilityWardedTile.WARDED_TILE, null).getUniqueTypeID());
                 stack.getTagCompound().setString("boundTypeDisplay", world.getBlockState(pos).getBlock().getTranslationKey() + ".name");
 
                 player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_bound_object", 

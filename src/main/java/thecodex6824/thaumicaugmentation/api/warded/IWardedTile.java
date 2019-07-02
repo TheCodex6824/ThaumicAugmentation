@@ -18,17 +18,19 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.tile;
+package thecodex6824.thaumicaugmentation.api.warded;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Interface for warded tile entities.
  * @author TheCodex6824
  *
  */
-public interface IWardedTile {
+public interface IWardedTile extends INBTSerializable<NBTTagCompound> {
 
     /**
      * Returns the block position of this warded tile. If for some reason it would
@@ -61,7 +63,7 @@ public interface IWardedTile {
 
     /**
      * Method called when a player tries to interact with a warded tile. This should fire
-     * a {@link thecodex6824.thaumicaugmentation.api.event.WardedBlockPermissionEvent WardedBlockPermissionEvent}, 
+     * a {@link thecodex6824.thaumicaugmentation.api.event.WardedTilePermissionEvent WardedBlockPermissionEvent}, 
      * and should react to its result and/or cancellation, unless the player is a server operator and 
      * {@link thecodex6824.thaumicaugmentation.api.TAConfig#opWardOverride opWardOverride} is true, 
      * in which case they should be granted access without firing an event. The default check can be defined by 

@@ -22,6 +22,9 @@ package thecodex6824.thaumicaugmentation.api.warded;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 
 public class WardStorageClient implements IWardStorageClient {
 
@@ -33,24 +36,41 @@ public class WardStorageClient implements IWardStorageClient {
     }
     
     @Override
-    public void setWard(BlockPos pos, byte id) {
-        int index = (pos.getX() & 15) + (pos.getY() & 255) * 16 + (pos.getZ() & 15) * 16 * 256;
-        
-        data[index / 4] = (id & 1) != 0 ? (byte) (data[index / 4] | (1 << (index % 4 * 2))) : 
-            (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
-        data[index / 4] = (id & 2) != 0 ? (byte) (data[index / 4] | (2 << (index % 4 * 2))) : 
-            (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+    public void setWard(BlockPos pos, ClientWardStorageValue val) {
+        BlockWardEvent.WardedClient event = new BlockWardEvent.WardedClient(FMLClientHandler.instance().getClient().world, pos, val);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (!event.isCanceled()) {
+            byte id = val.getID();
+            int index = (pos.getX() & 15) + (pos.getY() & 255) * 16 + (pos.getZ() & 15) * 16 * 256;
+            
+            data[index / 4] = (id & 1) != 0 ? (byte) (data[index / 4] | (1 << (index % 4 * 2))) : 
+                (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
+            data[index / 4] = (id & 2) != 0 ? (byte) (data[index / 4] | (2 << (index % 4 * 2))) : 
+                (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+        }
     }
     
     @Override
-    public byte getWard(BlockPos pos) {
+    public void clearWard(BlockPos pos) {
+        BlockWardEvent.DewardedClient event = new BlockWardEvent.DewardedClient(FMLClientHandler.instance().getClient().world, pos);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (!event.isCanceled()) {
+            int index = (pos.getX() & 15) + (pos.getY() & 255) * 16 + (pos.getZ() & 15) * 16 * 256;
+            
+            data[index / 4] = (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
+            data[index / 4] = (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+        }
+    }
+    
+    @Override
+    public ClientWardStorageValue getWard(BlockPos pos) {
         int index = (pos.getX() & 15) + (pos.getY() & 255) * 16 + (pos.getZ() & 15) * 16 * 256;
-        return (byte) (((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2));
+        return ClientWardStorageValue.fromID((byte) (((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2)));
     }
     
     @Override
     public boolean hasWard(BlockPos pos) {
-        return getWard(pos) != 0;
+        return getWard(pos) != ClientWardStorageValue.EMPTY;
     }
     
     @Override

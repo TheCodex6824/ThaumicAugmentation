@@ -52,6 +52,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
@@ -60,6 +61,7 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
@@ -161,7 +163,7 @@ public class ClientProxy extends CommonProxy {
         if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageClient) {
                 IWardStorageClient storage = (IWardStorageClient) world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                storage.setWard(pos, message.getStatus());
+                storage.setWard(pos, ClientWardStorageValue.fromID(message.getStatus()));
             }
         }
     }
@@ -242,6 +244,17 @@ public class ClientProxy extends CommonProxy {
             }
         };
         registerTo.registerItemColorHandler(elementalResonatorColor, TAItems.AUGMENT_CASTER_ELEMENTAL);
+        
+        IItemColor fractureLocatorColor = new IItemColor() {
+            @Override
+            public int colorMultiplier(ItemStack stack, int tintIndex) {
+                if (tintIndex == 1 && stack.getItem() instanceof ItemFractureLocator)
+                    return ((ItemFractureLocator) stack.getItem()).getTintColor(stack);
+                
+                return -1;
+            }
+        };
+        registerTo.registerItemColorHandler(fractureLocatorColor, TAItems.FRACTURE_LOCATOR);
     }
 
 }

@@ -35,7 +35,7 @@ public class DyeableItemRecipe extends RecipesArmorDyes {
     public boolean matches(InventoryCrafting inv, World worldIn) {
         boolean hasDyedItem = false;
         boolean hasDye = false;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof IDyeableItem) {
@@ -58,7 +58,7 @@ public class DyeableItemRecipe extends RecipesArmorDyes {
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         ItemStack toDye = null;
         ArrayList<ItemStack> dyes = new ArrayList<>();
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof IDyeableItem) {

@@ -108,7 +108,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                         }
 
                         if (!linkLocated) {
-                            ThaumicAugmentation.getLogger().info("A fracture is invalid, due to the destination lacking a fracture. If this occurs AND there have been no additions/removals of linkable dimensions in your world, consider reporting this as a bug.");
+                            ThaumicAugmentation.getLogger().warn("A fracture is invalid, due to the destination lacking a fracture. If this occurs AND there have been no additions/removals of linkable dimensions in your world, consider reporting this as a bug.");
                             ThaumicAugmentation.getLogger().debug("Dest dim: " + targetWorld.provider.getDimension());
                             ThaumicAugmentation.getLogger().debug("Dest pos (not including y): " + linkedTo);
                             ThaumicAugmentation.getLogger().debug("Src pos: " + getPosition());
@@ -124,7 +124,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                     else {
                         verifyChunk(targetWorld, linkedTo);
                         if (targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(linkedTo)).isEmpty()) {
-                            ThaumicAugmentation.getLogger().info("A fracture is invalid, due to the destination lacking a fracture. This fracture has passed verification before, suggesting that either the destination fracture was removed or new linkable dimensions were introduced to the world.");
+                            ThaumicAugmentation.getLogger().warn("A fracture is invalid, due to the destination lacking a fracture. This fracture has passed verification before, suggesting that either the destination fracture was removed or new linkable dimensions were introduced to the world.");
                             ThaumicAugmentation.getLogger().debug("Dest dim: " + targetWorld.provider.getDimension());
                             ThaumicAugmentation.getLogger().debug("Dest pos (not including y): " + linkedTo);
                             ThaumicAugmentation.getLogger().debug("Src pos: " + getPosition());

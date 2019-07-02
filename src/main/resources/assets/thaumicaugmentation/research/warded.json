@@ -60,7 +60,8 @@
             "name": "thaumicaugmentation.research.arcane_door.title",
             "icons": [
                 "thaumicaugmentation:arcane_door;1;0",
-                "thaumicaugmentation:arcane_door;1;1"
+                "thaumicaugmentation:arcane_door;1;1",
+                "thaumicaugmentation:arcane_door;1;2"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
@@ -85,10 +86,12 @@
                 {
                     "text": "thaumicaugmentation.research.arcane_door.1",
                     "recipes": [
-                        "thaumicaugmentation:ArcaneDoorWood",
-                        "thaumicaugmentation:ArcaneDoorMetal",
-                        "thaumicaugmentation:ArcaneTrapdoorWood",
-                        "thaumicaugmentation:ArcaneTrapdoorMetal"
+                        "thaumicaugmentation:ArcaneDoorGreatwood",
+                        "thaumicaugmentation:ArcaneDoorThaumium",
+                        "thaumicaugmentation:ArcaneDoorSilverwood",
+                        "thaumicaugmentation:ArcaneTrapdoorGreatwood",
+                        "thaumicaugmentation:ArcaneTrapdoorThaumium",
+                        "thaumicaugmentation:ArcaneTrapdoorSilverwood"
                     ]
                 }
             ]

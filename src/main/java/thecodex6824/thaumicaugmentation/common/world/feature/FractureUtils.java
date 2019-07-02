@@ -150,7 +150,7 @@ public final class FractureUtils {
         long zSeed = rand.nextLong() >> 2 + 1;
         rand.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ seed);
         if (rand.nextInt(TAConfig.fractureGenChance.getValue()) != 0) {
-            ThaumicAugmentation.getLogger().info("A fracture is generating, but its destination fracture will not? This is probably a bug.");
+            ThaumicAugmentation.getLogger().warn("A fracture is generating, but its destination fracture will not? This is probably a bug.");
             ThaumicAugmentation.getLogger().debug("Dest dim: emptiness");
             ThaumicAugmentation.getLogger().debug("Src pos: " + pos);
         }

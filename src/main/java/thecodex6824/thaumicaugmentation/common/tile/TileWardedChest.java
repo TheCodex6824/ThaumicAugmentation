@@ -83,11 +83,6 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
             asm.transition("closing");
         }
     }
-
-    @Override
-    public String getUniqueTypeID() {
-        return ThaumicAugmentationAPI.MODID + ":warded_chest";
-    }
     
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {

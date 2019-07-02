@@ -43,7 +43,7 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
     public boolean matches(InventoryCrafting inv, World worldIn) {
         ItemStack crystal = ItemStack.EMPTY;
         ItemStack augment = ItemStack.EMPTY;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof IAssociatedAspect) {
@@ -70,7 +70,7 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         ItemStack crystal = ItemStack.EMPTY;
         ItemStack augment = ItemStack.EMPTY;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof IAssociatedAspect) {
@@ -102,7 +102,7 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         NonNullList<ItemStack> ret = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (stack != null && !stack.isEmpty()) {
+            if (i < 9 && stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof IAssociatedAspect)
                     augment = stack;
                 else if (stack.getItem() == ItemsTC.crystalEssence)

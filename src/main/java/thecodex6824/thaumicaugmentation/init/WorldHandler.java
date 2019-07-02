@@ -24,6 +24,7 @@ import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocation;
+import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocation;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 import thecodex6824.thaumicaugmentation.common.util.FractureLocatorSearchManager;
 import thecodex6824.thaumicaugmentation.common.world.TAWorldGenerator;
@@ -129,8 +130,9 @@ public final class WorldHandler {
     public static void onChunkLoad(ChunkEvent.Load event) {
         if (!event.getWorld().isRemote && FractureUtils.canWorldHaveFracture(event.getWorld().provider.getDimension())) {
             if (event.getChunk().hasCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null)) {
-                FractureLocatorSearchManager.addFractureLocation(event.getWorld(), event.getChunk().getCapability(
-                        CapabilityFractureLocation.FRACTURE_LOCATION, null).getFractureLocation());
+                IFractureLocation loc = event.getChunk().getCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null);
+                if (loc.hasFracture())
+                    FractureLocatorSearchManager.addFractureLocation(event.getWorld(), loc.getFractureLocation());
             }
         }
     }
@@ -139,8 +141,9 @@ public final class WorldHandler {
     public static void onChunkUnload(ChunkEvent.Unload event) {
         if (!event.getWorld().isRemote && FractureUtils.canWorldHaveFracture(event.getWorld().provider.getDimension())) {
             if (event.getChunk().hasCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null)) {
-                FractureLocatorSearchManager.removeFractureLocation(event.getWorld(), event.getChunk().getCapability(
-                        CapabilityFractureLocation.FRACTURE_LOCATION, null).getFractureLocation());
+                IFractureLocation loc = event.getChunk().getCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null);
+                if (loc.hasFracture())
+                    FractureLocatorSearchManager.removeFractureLocation(event.getWorld(), loc.getFractureLocation());
             }
         }
     }

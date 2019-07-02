@@ -31,7 +31,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.MinecraftForge;
 import scala.actors.threadpool.Arrays;
+import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 
 public class WardStorageServer implements IWardStorageServer {
 
@@ -786,16 +788,19 @@ public class WardStorageServer implements IWardStorageServer {
         return !getWard(pos).equals(EMPTY_UUID);
     }
     
-    @Override
-    public void clearWard(BlockPos pos) {
-        clearWard(null, pos);
+    @VisibleForTesting
+    void clearWard(BlockPos pos) {
+        manager.setOwner(pos, EMPTY_UUID);
     }
     
     @Override
     public void clearWard(World syncTo, BlockPos pos) {
-        manager.setOwner(pos, EMPTY_UUID);
-        if (syncTo != null)
+        BlockWardEvent.DewardedServer event = new BlockWardEvent.DewardedServer(syncTo, pos);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (!event.isCanceled()) {
+            manager.setOwner(pos, EMPTY_UUID);
             WardSyncManager.markPosForClear(syncTo, pos);
+        }
     }
     
     protected StorageManagers.IWardStorageManager createIncreasedSizeManager() {
@@ -822,13 +827,8 @@ public class WardStorageServer implements IWardStorageServer {
             manager = new StorageManagers.StorageManagerByte(manager);
     }
     
-    @Override
-    public void setWard(BlockPos pos, UUID owner) {
-        setWard(null, pos, owner);
-    }
-    
-    @Override
-    public void setWard(World syncTo, BlockPos pos, UUID owner) {
+    @VisibleForTesting
+    void setWard(BlockPos pos, UUID owner) {
         if (!manager.isOwner(owner)) {
             if (manager.getNumCurrentOwners() == manager.getMaxAllowedOwners())
                 manager = createIncreasedSizeManager();
@@ -837,8 +837,23 @@ public class WardStorageServer implements IWardStorageServer {
         }
         
         manager.setOwner(pos, owner);
-        if (syncTo != null)
+    }
+    
+    @Override
+    public void setWard(World syncTo, BlockPos pos, UUID owner) {
+        BlockWardEvent.WardedServer event = new BlockWardEvent.WardedServer(syncTo, pos, owner);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (!event.isCanceled()) {
+            if (!manager.isOwner(owner)) {
+                if (manager.getNumCurrentOwners() == manager.getMaxAllowedOwners())
+                    manager = createIncreasedSizeManager();
+                
+                manager.addOwner(owner);
+            }
+            
+            manager.setOwner(pos, owner);
             WardSyncManager.markPosForNewOwner(syncTo, pos, owner);
+        }
     }
     
     @Override

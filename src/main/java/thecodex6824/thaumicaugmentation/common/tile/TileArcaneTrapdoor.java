@@ -23,7 +23,6 @@ package thecodex6824.thaumicaugmentation.common.tile;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
 public class TileArcaneTrapdoor extends TileWarded {
 
@@ -34,11 +33,6 @@ public class TileArcaneTrapdoor extends TileWarded {
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return oldState.getBlock() != newState.getBlock();
-    }
-
-    @Override
-    public String getUniqueTypeID() {
-        return ThaumicAugmentationAPI.MODID + ":warded_trapdoor";
     }
     
 }

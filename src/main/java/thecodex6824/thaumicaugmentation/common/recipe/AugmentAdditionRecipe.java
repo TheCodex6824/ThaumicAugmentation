@@ -40,7 +40,7 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
     public boolean matches(InventoryCrafting inv, World worldIn) {
         ItemStack augmentable = ItemStack.EMPTY;
         ItemStack augment = ItemStack.EMPTY;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.hasCapability(CapabilityAugment.AUGMENT, null)) {
@@ -70,7 +70,7 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         ItemStack augmentable = ItemStack.EMPTY;
         ItemStack augment = ItemStack.EMPTY;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.hasCapability(CapabilityAugment.AUGMENT, null)) {

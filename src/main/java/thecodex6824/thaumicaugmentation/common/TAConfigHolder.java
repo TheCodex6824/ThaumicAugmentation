@@ -125,7 +125,7 @@ public final class TAConfigHolder {
         "This is added to the vanilla default value of 0.6."
     })
     @RangeDouble(min = 0.0F, max = 10.0F)
-    public static double voidBootsStepHeight = 0.41;
+    public static double voidBootsStepHeight = 0.47;
 
     @Name("VoidBootsSneakReduction")
     @Comment({
@@ -136,14 +136,13 @@ public final class TAConfigHolder {
 
     @Name("AllowOPWardOverride")
     @Comment({
-        "Allow server operators to always be able to interact with any warded block.",
-        "Note that if this is set to true, other mods will NOT be able to stop them from interacting with the block."
+        "Allow server operators to always be able to interact with any warded block / tile."
     })
     public static boolean opWardOverride = false;
     
     @Name("DisableWardFocus")
     @Comment({
-        "Disables the ward focus. This will remove the research entry, disable existing wards, and make exisiting foci do nothing.",
+        "Disables the ward focus. This will remove the research entry, disable existing wards, and make existing foci do nothing.",
         "This is a server-side setting, although the ward research may not sync properly if the value is not the same on both sides."
     })
     @RequiresMcRestart
@@ -182,7 +181,9 @@ public final class TAConfigHolder {
     @Name("EmptinessMoveFactor")
     @Comment({
         "The scaling factor applied to distances in the Void dimension.",
-        "For example, the nether has a value of 8 since it multiplies coords by 8."
+        "For example, the nether has a value of 8 since it multiplies coords by 8.",
+        "Note that move factors for the Void are calculated based on chunk rather than position, so final values",
+        "may be slightly different than expected."
     })
     public static double emptinessMoveFactor = 16.0;
 
@@ -199,9 +200,9 @@ public final class TAConfigHolder {
         "Higher weights (compared to lower weights) will be more likely to spawn.",
         "This WILL affect worldgen, so use with caution on existing worlds.",
         "The config GUI does not seem to support the addition or removal of entries, edit this",
-        "value in a text editor outside Minecraft instead."//,
-        //"Default dimensions: 0 = Overworld, -1 = Nether, 1 = End, 7 = Twilight Forest, 17 = Atum 2,",
-        //"20 = Betweenlands, 111 = Lost Cities, 66 = Erebus, 33 = Wizardry (Underworld)", 34 = Wizardry (Torikki)"
+        "value in a text editor outside Minecraft instead.",
+        "Default dimensions: 0 = Overworld, -1 = Nether, 1 = End, 7 = Twilight Forest, 17 = Atum 2,",
+        "20 = Betweenlands, 111 = Lost Cities, 66 = Erebus, 33 = Wizardry (Underworld)"
     })
     @RequiresWorldRestart
     public static HashMap<String, Integer> fractureDimList = new HashMap<>();
@@ -220,23 +221,23 @@ public final class TAConfigHolder {
         fractureDimList.put("1", 10);
         
         // twilight forest
-        //fractureDimList.put("7", 7);
+        fractureDimList.put("7", 5);
         
         // atum 2
-        //fractureDimList.put("17", 7);
+        fractureDimList.put("17", 5);
         
         // betweenlands
-        //fractureDimList.put("20", 7);
+        fractureDimList.put("20", 5);
         
         // lost cities
-        //fractureDimList.put("111", 7);
+        fractureDimList.put("111", 5);
         
         // erebus
-        //fractureDimList.put("66", 7);
+        fractureDimList.put("66", 5);
         
         // wizardry (slightly less because 2 dims)
-        //fractureDimList.put("33", 4);
-        //fractureDimList.put("34", 4);
+        fractureDimList.put("33", 5);
+        //fractureDimList.put("34", 4); dimension currently crashes due to unfinished biome
     }
     
     private static ArrayList<Runnable> listeners = new ArrayList<>();

@@ -39,7 +39,7 @@ public class AugmentRemovalRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
         ItemStack augmentable = ItemStack.EMPTY;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
@@ -59,7 +59,7 @@ public class AugmentRemovalRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         ItemStack augmentable = ItemStack.EMPTY;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
@@ -83,7 +83,7 @@ public class AugmentRemovalRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
         NonNullList<ItemStack> ret = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         for (int i = 0; i < ret.size(); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (!stack.isEmpty() && stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+            if (i < 9 && !stack.isEmpty() && stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                 ItemStack copy = stack.copy();
                 IAugmentableItem cap = copy.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
                 cap.removeAugment(cap.getNextAvailableSlot() == -1 ? cap.getTotalAugmentSlots() - 1 : cap.getNextAvailableSlot() - 1);
