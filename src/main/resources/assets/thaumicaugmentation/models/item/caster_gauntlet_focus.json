@@ -1,227 +1,110 @@
 {
-    "ambientocclusion": false,
-    "textures": {
-        "skin": "thaumicaugmentation:items/gauntlet_thaumium"
-    },
-    "elements": [
-        {
-            "name": "metal_base",
-            "from": [6, 1.5, 6],
-            "to": [10, 7, 10],
-            "faces": {
-                "north": {"uv": [4, 0, 8, 5.5], "texture": "#skin"},
-                "east": {"uv": [4, 8, 8, 13.5], "texture": "#skin"},
-                "south": {"uv": [0, 1, 4, 6.5], "texture": "#skin"},
-                "west": {"uv": [0, 8, 4, 13.5], "texture": "#skin"},
-                "up": {"uv": [12, 4, 16, 8], "texture": "#skin"}
-            }
-        },
-        {
-            "name": "cloth_lower",
-            "from": [6.2499, 0.02, 6.255],
-            "to": [9.7498, 6.01, 9.745],
-            "faces": {
-                "north": {"uv": [8, 10, 12, 16], "texture": "#skin", "tintindex": 2},
-                "east": {"uv": [12, 10, 16, 16], "texture": "#skin", "tintindex": 2},
-                "south": {"uv": [8, 16, 12, 10], "texture": "#skin", "tintindex": 2},
-                "west": {"uv": [16, 10, 12, 16], "texture": "#skin", "tintindex": 2},
-                "down": {"uv": [8, 0, 12, 4], "texture": "#skin", "tintindex": 2}
-            }
-        },
-        {
-            "name": "focus_area",
-            "from": [6.5, 3, 9.001],
-            "to": [9.5, 6, 10.001],
-            "faces": {
-                "south": {"uv": [8.5, 4.5, 11.5, 7.5], "texture": "#skin"}
-            }
-        },
-        {
-            "from": [7,3.5,9.75],
-            "to": [9,5.5,10.75],
-            "faces": {
-                "up": {"uv": [13,0,15,1], "texture": "#skin", "tintindex": 1},
-                "down": {"uv": [13,3,15,4], "texture": "#skin", "tintindex": 1},
-                "west": {"uv": [12,1,13,3], "texture": "#skin", "tintindex": 1},
-                "east": {"uv": [15,1,16,3], "texture": "#skin", "tintindex": 1},
-                "south": {"uv": [13,1,15,3], "texture": "#skin", "tintindex": 1}
-            }
-        },
-        {
-            "name": "metal_1",
-            "from": [6.25, 0, 8.85],
-            "to": [7.15, 1, 9.75],
-            "faces": {
-                "east": {"uv": [0, 0, 1, 1], "texture": "#skin"},
-                "south": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "west": {"uv": [14, 8.5, 15, 9.5], "texture": "#skin"},
-                "up": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "down": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"}
-            }
-        },
-        {
-            "name": "metal_2",
-            "from": [7.55, 0, 8.85],
-            "to": [8.45, 1, 9.75],
-            "faces": {
-                "south": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "up": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "down": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"}
-            }
-        },
-        {
-            "name": "metal_3",
-            "from": [8.85, 0, 8.85],
-            "to": [9.75, 1, 9.75],
-            "faces": {
-                "east": {"uv": [13, 8.5, 14, 9.5], "texture": "#skin"},
-                "south": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "up": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "down": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"}
-            }
-        },
-        {
-            "name": "metal_4",
-            "from": [8.85, 0, 6.25],
-            "to": [9.75, 1, 7.15],
-            "faces": {
-                "north": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "east": {"uv": [14, 8.5, 15, 9.5], "texture": "#skin"},
-                "up": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "down": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"}
-            }
-        },
-        {
-            "name": "metal_5",
-            "from": [6.25, 0, 6.25],
-            "to": [7.15, 1, 7.15],
-            "faces": {
-                "north": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "west": {"uv": [13, 8.5, 14, 9.5], "texture": "#skin"},
-                "up": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "down": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"}
-            }
-        },
-        {
-            "name": "metal_6",
-            "from": [7.55, 0, 6.25],
-            "to": [8.45, 1, 7.15],
-            "faces": {
-                "north": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "up": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "down": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"}
-            }
-        },
-        {
-            "name": "metal_7",
-            "from": [7.55, 1.5, 6.25],
-            "to": [8.45, 2.5, 7.15],
-            "faces": {
-                "north": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "down": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"}
-            }
-        },
-        {
-            "name": "metal_8",
-            "from": [6.25, 1.5, 6.25],
-            "to": [7.15, 2.5, 7.15],
-            "faces": {
-                "north": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "west": {"uv": [11, 8.5, 12, 9.5], "texture": "#skin"},
-                "down": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"}
-            }
-        },
-        {
-            "name": "metal_9",
-            "from": [8.85, 1.5, 6.25],
-            "to": [9.75, 2.5, 7.15],
-            "faces": {
-                "north": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"},
-                "east": {"uv": [15, 8.5, 16, 9.5], "texture": "#skin"},
-                "down": {"uv": [12, 8.5, 13, 9.5], "texture": "#skin"}
-            }
-        },
-        {
-            "name": "cloth_upper",
-            "from": [6.05, 2.5, 6.05],
-            "to": [9.95, 7, 9.95],
-            "faces": {
-                "north": {"uv": [12, 10, 14.5185, 13.4], "texture": "#skin", "tintindex": 2},
-                "east": {"uv": [12, 10, 14.5185, 13.4], "texture": "#skin", "tintindex": 2},
-                "south": {"uv": [12, 10, 14.5185, 13.4], "texture": "#skin", "tintindex": 2},
-                "west": {"uv": [12, 10, 14.5185, 13.4], "texture": "#skin", "tintindex": 2},
-                "down": {"uv": [12, 10, 14, 12], "texture": "#skin", "tintindex": 2}
-            }
-        },
-        {
-            "name": "top_outline_1",
-            "from": [6, 6.95, 6],
-            "to": [10, 7.95, 6.15],
-            "faces": {
-                "north": {"uv": [12, 12, 16, 13], "texture": "#skin", "tintindex": 2},
-                "south": {"uv": [12, 12, 16, 13], "texture": "#skin", "tintindex": 2},
-                "up": {"uv": [12, 13, 16, 13.15], "texture": "#skin", "tintindex": 2},
-                "down": {"uv": [12, 13, 16, 13.15], "texture": "#skin", "tintindex": 2}
-            }
-        },
-        {
-            "name": "top_outline_2",
-            "from": [6, 6.95, 9.86],
-            "to": [10, 7.95, 10.01],
-            "faces": {
-                "north": {"uv": [12, 12, 16, 13], "texture": "#skin", "tintindex": 2},
-                "south": {"uv": [12, 12, 16, 13], "texture": "#skin", "tintindex": 2},
-                "up": {"uv": [12, 12, 16, 12.15], "texture": "#skin", "tintindex": 2},
-                "down": {"uv": [11, 12, 15, 12.15], "texture": "#skin", "tintindex": 2}
-            }
-        },
-        {
-            "name": "top_outline_3",
-            "from": [5.99, 6.95, 6],
-            "to": [6.14, 7.95, 10],
-            "faces": {
-                "north": {"uv": [0, 0, 0.15, 1], "texture": "#skin", "tintindex": 2},
-                "east": {"uv": [11, 12, 15, 13], "texture": "#skin", "tintindex": 2},
-                "south": {"uv": [0, 0, 0.15, 1], "texture": "#skin", "tintindex": 2},
-                "west": {"uv": [12, 12, 16, 13], "texture": "#skin", "tintindex": 2},
-                "up": {"uv": [12, 10, 12.15, 14], "texture": "#skin", "tintindex": 2},
-                "down": {"uv": [12, 10, 12.15, 14], "texture": "#skin", "tintindex": 2}
-            }
-        },
-        {
-            "name": "top_outline_4",
-            "from": [9.86, 6.95, 6],
-            "to": [10.01, 7.95, 10],
-            "faces": {
-                "east": {"uv": [12, 12, 16, 13], "texture": "#skin", "tintindex": 2},
-                "west": {"uv": [12, 12, 16, 13], "texture": "#skin", "tintindex": 2},
-                "up": {"uv": [13, 10, 13.15, 14], "texture": "#skin", "tintindex": 2},
-                "down": {"uv": [13, 10, 13.15, 14], "texture": "#skin", "tintindex": 2}
-            }
-        }
-    ],
-    "display": {
-        "thirdperson_righthand": {
-            "rotation": [90, 90, 0],
-            "translation": [0, -2, 8],
-            "scale": [1.2, 1.1, 1.2]
-        },
-        "firstperson_righthand": {
-            "rotation": [130, -230, 25],
-            "translation": [2, -2, 1]
-        },
-        "ground": {
-            "rotation": [0, 0, 180]
-        },
-        "gui": {
-            "rotation": [-45, -45, 90],
-            "translation": [-4.5, -3.5, 0],
-            "scale": [1.8, 1.8, 1.8]
-        },
-        "fixed": {
-            "rotation": [0, 0, 180],
-            "translation": [0, -8, 0],
-            "scale": [2, 2, 2]
-        }
-    }
+	"ambientocclusion": false,
+	"textures": {
+		"1": "thaumicaugmentation:items/gauntlet_thaumium",
+		"skin": "thaumicaugmentation:items/gauntlet_base"
+	},
+	"elements": [
+		{
+			"from": [6, 1.5, 6],
+			"to": [10, 7, 10],
+			"faces": {
+				"north": {"uv": [4, 1, 8, 6.5], "texture": "#skin", "tintindex": 2},
+				"east": {"uv": [4, 9, 8, 14.5], "texture": "#skin", "tintindex": 2},
+				"south": {"uv": [0, 1, 4, 6.5], "texture": "#skin", "tintindex": 2},
+				"west": {"uv": [0, 9, 4, 14.5], "texture": "#skin", "tintindex": 2}
+			}
+		},
+		{
+			"from": [6.25, 0, 6.25],
+			"to": [9.75, 6, 9.75],
+			"faces": {
+				"north": {"uv": [8, 10, 12, 16], "texture": "#skin", "tintindex": 2},
+				"east": {"uv": [12, 10, 16, 16], "texture": "#skin", "tintindex": 2},
+				"south": {"uv": [8, 16, 12, 10], "texture": "#skin", "tintindex": 2},
+				"west": {"uv": [16, 10, 12, 16], "texture": "#skin", "tintindex": 2},
+				"down": {"uv": [8, 0, 12, 4], "texture": "#skin", "tintindex": 2}
+			}
+		},
+		{
+			"from": [6, 3, 6],
+			"to": [10, 6, 10],
+			"faces": {
+				"up": {"uv": [12, 4, 16, 8], "texture": "#skin", "tintindex": 2}
+			}
+		},
+		{
+			"from": [6, 1.5, 6],
+			"to": [10, 7, 10],
+			"faces": {
+				"north": {"uv": [4, 1, 8, 6.5], "texture": "#1", "tintindex": 0},
+				"east": {"uv": [4, 9, 8, 14.5], "texture": "#1", "tintindex": 0},
+				"south": {"uv": [0, 1, 4, 6.5], "texture": "#1", "tintindex": 0},
+				"west": {"uv": [0, 9, 4, 14.5], "texture": "#1", "tintindex": 0}
+			}
+		},
+		{
+			"from": [6.25, 0, 6.25],
+			"to": [9.75, 6, 9.75],
+			"faces": {
+				"north": {"uv": [8, 10, 12, 16], "texture": "#1", "tintindex": 0},
+				"east": {"uv": [12, 10, 16, 16], "texture": "#1", "tintindex": 0},
+				"south": {"uv": [8, 16, 12, 10], "texture": "#1", "tintindex": 0},
+				"west": {"uv": [16, 10, 12, 16], "texture": "#1", "tintindex": 0},
+				"down": {"uv": [8, 0, 12, 4], "texture": "#1", "tintindex": 0}
+			}
+		},
+		{
+			"from": [6, 3, 6],
+			"to": [10, 6, 10],
+			"faces": {
+				"up": {"uv": [12, 4, 16, 8], "texture": "#1", "tintindex": 0}
+			}
+		},
+		{
+			"from": [7, 3.5, 9.75],
+			"to": [9, 5.5, 10.75],
+			"faces": {
+				"east": {"uv": [15, 1, 16, 3], "texture": "#1", "tintindex": 1},
+				"south": {"uv": [13, 1, 15, 3], "texture": "#1", "tintindex": 1},
+				"west": {"uv": [12, 1, 13, 3], "texture": "#1", "tintindex": 1},
+				"up": {"uv": [13, 0, 15, 1], "texture": "#1", "tintindex": 1},
+				"down": {"uv": [13, 3, 15, 4], "texture": "#1", "tintindex": 1}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [90, 90, 0],
+			"translation": [0, -2, 8],
+			"scale": [1.2, 1.1, 1.2]
+		},
+		"firstperson_righthand": {
+			"rotation": [130, -230, 25],
+			"translation": [2, -2, 1]
+		},
+		"ground": {
+			"rotation": [0, 0, 180]
+		},
+		"gui": {
+			"rotation": [-45, -45, 90],
+			"translation": [-6, -5, 0],
+			"scale": [2, 2, 2]
+		},
+		"fixed": {
+			"rotation": [0, 0, 180],
+			"translation": [0, -8, 0],
+			"scale": [2, 2, 2]
+		}
+	},
+	"groups": [
+		{
+			"name": "Colourable",
+			"children": [0, 1, 2]
+		},
+		{
+			"name": "Metal",
+			"children": [3, 4, 5, 6]
+		}
+	]
 }

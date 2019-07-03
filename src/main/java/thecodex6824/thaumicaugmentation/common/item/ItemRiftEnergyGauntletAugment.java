@@ -86,7 +86,7 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
             
             @Override
             public void onTick(Entity user) {
-                if (user.getEntityWorld().getTotalWorldTime() % 20 == 0) {
+                if (!user.getEntityWorld().isRemote && user.getEntityWorld().getTotalWorldTime() % 20 == 0) {
                     IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
                     if (stackStorage.canReceive() && stackStorage.getEnergyStored() < stackStorage.getMaxEnergyStored()) {
                         syncNeeded = RiftEnergyHelper.drainNearbyEnergyIntoStorage(user.getEntityWorld(), stackStorage, 
@@ -98,19 +98,16 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
             
             @Override
             public void onInteractEntity(Entity user, ItemStack used, Entity target, EnumHand hand) {
-                if (target instanceof IDimensionalFracture) {
+                if (!user.getEntityWorld().isRemote && target instanceof IDimensionalFracture) {
                     IDimensionalFracture fracture = (IDimensionalFracture) target;
                     if (!fracture.isOpening() && !fracture.isOpen()) {
                         IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
                         if (stackStorage.canExtract() && stackStorage.extractEnergy(75, true) == 75) {
                             stackStorage.extractEnergy(75, false);
                             fracture.open();
-                            for (int i = 0; i < 7; ++i) {
-                                TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                                        user.posX, user.posY + user.height / 2, user.posZ, target.posX, target.posY + target.height / 2, target.posZ, 0.04F), 
-                                        new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));
-                            }
-                            
+                            TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
+                                    user.posX, user.posY + user.height / 2, user.posZ, target.posX, target.posY + target.height / 2, target.posZ, 0.32F), 
+                                    new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));
                             syncNeeded = true;
                         }
                     }

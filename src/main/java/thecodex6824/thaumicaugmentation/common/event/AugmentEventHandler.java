@@ -53,38 +53,36 @@ public final class AugmentEventHandler {
     
     @SubscribeEvent
     public static void onTick(LivingUpdateEvent event) {
-        if (!event.getEntityLiving().getEntityWorld().isRemote) {
-            int totalIndex = 0;
-            for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
-                ArrayList<ItemStack> stacks = Lists.newArrayList(func.apply(event.getEntity()));
-                if (!oldItems.containsKey(event.getEntity()))
-                    oldItems.put(event.getEntity(), new ArrayList<>(stacks));
+        int totalIndex = 0;
+        for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
+            ArrayList<ItemStack> stacks = Lists.newArrayList(func.apply(event.getEntity()));
+            if (!oldItems.containsKey(event.getEntity()))
+                oldItems.put(event.getEntity(), new ArrayList<>(stacks));
+            
+            for (int i = 0; i < stacks.size(); ++i) {
+                ItemStack current = stacks.get(i);
+                ArrayList<ItemStack> oldList = oldItems.get(event.getEntity());
+                ItemStack old = oldList.size() > i ? oldList.get(i) : ItemStack.EMPTY;
+                if (!ItemStack.areItemStacksEqual(current, old)) {
+                    if (old.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
+                        AugmentEventHelper.fireUnequipEvent(old.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), event.getEntity());
                 
-                for (int i = 0; i < stacks.size(); ++i) {
-                    ItemStack current = stacks.get(i);
-                    ArrayList<ItemStack> oldList = oldItems.get(event.getEntity());
-                    ItemStack old = oldList.size() > i ? oldList.get(i) : ItemStack.EMPTY;
-                    if (!ItemStack.areItemStacksEqual(current, old)) {
-                        if (old.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
-                            AugmentEventHelper.fireUnequipEvent(old.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), event.getEntity());
-                    
-                        if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                            AugmentEventHelper.fireEquipEvent(current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), event.getEntity());
-                            TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(event.getEntity().getEntityId(), totalIndex, current.getCapability(
-                                    CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT()), event.getEntity());
-                        }
-                    
-                        oldList.set(i, current);
-                    }
-                    
                     if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                        IAugmentableItem cap = current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                        AugmentEventHelper.fireTickEvent(cap, event.getEntity());
-                        AugmentEventHelper.handleSync(cap, event.getEntity(), totalIndex);
+                        AugmentEventHelper.fireEquipEvent(current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), event.getEntity());
+                        TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(event.getEntity().getEntityId(), totalIndex, current.getCapability(
+                                CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT()), event.getEntity());
                     }
-                    
-                    ++totalIndex;
+                
+                    oldList.set(i, current);
                 }
+                
+                if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+                    IAugmentableItem cap = current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                    AugmentEventHelper.fireTickEvent(cap, event.getEntity());
+                    AugmentEventHelper.handleSync(cap, event.getEntity(), totalIndex);
+                }
+                
+                ++totalIndex;
             }
         }
     }
