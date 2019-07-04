@@ -32,12 +32,15 @@ import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
+import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache.WorldData;
 
 public final class FractureUtils {
 
+    private static final int WORLD_BORDER_MAX = 29999984;
+    
     private FractureUtils() {}
     
     private static HashSet<Integer> possibleDims;
@@ -158,6 +161,56 @@ public final class FractureUtils {
         int offsetX = 8 + MathHelper.getInt(rand, -2, 2);
         int offsetZ = 8 + MathHelper.getInt(rand, -2, 2);
         return new BlockPos(chunkX * 16 + offsetX, 0, chunkZ * 16 + offsetZ);
+    }
+    
+    private static void doRedo(Random rand, EntityDimensionalFracture fracture) {
+        if (fracture.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId()) {
+            WorldData dim = pickRandomDimension(rand, calcMaxSafeFactor(TAConfig.emptinessMoveFactor.getValue(), fracture.chunkCoordX, fracture.chunkCoordZ));
+            if (dim != null) {
+                BlockPos scaled = scaleBlockPosFromEmptiness(fracture.getPosition(), dim.getMovementFactor(), dim.getWorldSeed());
+                if (Math.abs(scaled.getX()) < WORLD_BORDER_MAX && Math.abs(scaled.getZ()) < WORLD_BORDER_MAX) {
+                    fracture.setLinkLocated(false);
+                    fracture.setLinkedDimension(dim.getDimensionID());
+                    fracture.setLinkedPosition(scaled);
+                }
+            }
+        }
+        else {
+            WorldData dim = WorldDataCache.getData(TADimensions.EMPTINESS.getId());
+            if (dim != null) {
+                BlockPos scaled = scaleBlockPosToEmptiness(fracture.getPosition(), fracture.getEntityWorld().provider.getMovementFactor(), dim.getWorldSeed());
+                if (Math.abs(scaled.getX()) < WORLD_BORDER_MAX && Math.abs(scaled.getZ()) < WORLD_BORDER_MAX) {
+                    fracture.setLinkLocated(false);
+                    fracture.setLinkedDimension(dim.getDimensionID());
+                    fracture.setLinkedPosition(scaled);
+                }
+            }
+        }
+    }
+    
+    public static void redoFractureLinkage(EntityDimensionalFracture fracture) {
+        Random rand = new Random(fracture.getEntityWorld().getSeed());
+        long xSeed = rand.nextLong() >> 2 + 1;
+        long zSeed = rand.nextLong() >> 2 + 1;
+        rand.setSeed((xSeed * fracture.chunkCoordX + zSeed * fracture.chunkCoordZ) ^ fracture.getEntityWorld().getSeed());
+        if (fracture.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId()) {
+            if (rand.nextInt(TAConfig.fractureGenChance.getValue()) == 0) {
+                if (Math.abs(fracture.posX) < WORLD_BORDER_MAX && Math.abs(fracture.posZ) < WORLD_BORDER_MAX) {
+                    MathHelper.getInt(rand, -2, 2);
+                    MathHelper.getInt(rand, -2, 2);
+                    doRedo(rand, fracture);
+                }
+            }
+            else
+                ThaumicAugmentation.getLogger().warn("A fracture failed to generate when redoing its link. This is probably a bad thing.");
+        }
+        else if (isDimAllowedForLinking(fracture.getEntityWorld().provider.getDimension()) && 
+                wouldLinkToDim(rand, fracture.chunkCoordX, fracture.chunkCoordZ, fracture.getEntityWorld().provider.getDimension())) {
+            
+            MathHelper.getInt(rand, -2, 2);
+            MathHelper.getInt(rand, -2, 2);
+            doRedo(rand, fracture);
+        }
     }
     
 }

@@ -44,6 +44,7 @@ import thaumcraft.common.entities.projectile.EntityFocusCloud;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.world.DimensionalFractureTeleporter;
+import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 
 public class EntityDimensionalFracture extends Entity implements IDimensionalFracture {
 
@@ -87,36 +88,66 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                         ((EntityPlayer) entity).sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.no_fracture_target"), true);
                 }
                 else if (linkedTo != null) {
-                    World targetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(linkedDim);
-                    if (!linkLocated) {
-                        BlockPos toComplete = linkedTo;
-                        verifyChunk(targetWorld, toComplete);
-                        for (int y = targetWorld.getActualHeight() - 1; y >= 0; --y) {
-                            BlockPos check = toComplete.add(0, y, 0);
-                            for (EntityDimensionalFracture fracture : targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(check))) {
-                                BlockPos yAdjusted = new BlockPos(fracture.getLinkedPosition().getX(), getPosition().getY(), fracture.getLinkedPosition().getZ());
-                                if (getEntityBoundingBox().intersects(new AxisAlignedBB(yAdjusted))) {
-                                    fracture.open(true);
-                                    linkedTo = check.down(2);
-                                    linkLocated = true;
-                                    break;
+                    World targetWorld = null;
+                    try {
+                        targetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(linkedDim);
+                    }
+                    catch (IllegalArgumentException ex) {}
+                    if (!linkLocated || targetWorld == null) {
+                        if (targetWorld != null) {
+                            BlockPos toComplete = linkedTo;
+                            verifyChunk(targetWorld, toComplete);
+                            for (int y = targetWorld.getActualHeight() - 1; y >= 0; --y) {
+                                BlockPos check = toComplete.add(0, y, 0);
+                                for (EntityDimensionalFracture fracture : targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(check))) {
+                                    BlockPos yAdjusted = new BlockPos(fracture.getLinkedPosition().getX(), getPosition().getY(), fracture.getLinkedPosition().getZ());
+                                    if (getEntityBoundingBox().intersects(new AxisAlignedBB(yAdjusted))) {
+                                        fracture.open(true);
+                                        linkedTo = check.down(2);
+                                        linkLocated = true;
+                                        break;
+                                    }
                                 }
+                                
+                                if (linkLocated)
+                                    break;
                             }
-                            
-                            if (linkLocated)
-                                break;
                         }
 
-                        if (!linkLocated) {
-                            ThaumicAugmentation.getLogger().warn("A fracture is invalid, due to the destination lacking a fracture. If this occurs AND there have been no additions/removals of linkable dimensions in your world, consider reporting this as a bug.");
-                            ThaumicAugmentation.getLogger().debug("Dest dim: " + targetWorld.provider.getDimension());
+                        if (!linkLocated || targetWorld == null) {
+                            ThaumicAugmentation.getLogger().warn("A fracture is invalid, due to the destination lacking a fracture. This is probably a result of adding/removing dimensions. Recalculating fracture...");
+                            ThaumicAugmentation.getLogger().debug("Dest dim: " + (targetWorld != null ? targetWorld.provider.getDimension() : "null"));
                             ThaumicAugmentation.getLogger().debug("Dest pos (not including y): " + linkedTo);
                             ThaumicAugmentation.getLogger().debug("Src pos: " + getPosition());
-                            linkInvalid = true;
-                            return;
+                            
+                            FractureUtils.redoFractureLinkage(this);
+                            targetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(linkedDim);
+                            BlockPos toComplete = linkedTo;
+                            verifyChunk(targetWorld, toComplete);
+                            for (int y = targetWorld.getActualHeight() - 1; y >= 0; --y) {
+                                BlockPos check = toComplete.add(0, y, 0);
+                                for (EntityDimensionalFracture fracture : targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(check))) {
+                                    BlockPos yAdjusted = new BlockPos(fracture.getLinkedPosition().getX(), getPosition().getY(), fracture.getLinkedPosition().getZ());
+                                    if (getEntityBoundingBox().intersects(new AxisAlignedBB(yAdjusted))) {
+                                        fracture.open(true);
+                                        linkedTo = check.down(2);
+                                        linkLocated = true;
+                                        break;
+                                    }
+                                }
+                                
+                                if (linkLocated)
+                                    break;
+                            }
+                            
+                            if (!linkLocated) {
+                                ThaumicAugmentation.getLogger().warn("Fracture relink failed. This is probably due the fracture in the void pointing to a new dimension.");
+                                linkInvalid = true;
+                                return;
+                            }
                         }
                     }
-
+                    
                     if (!targetWorld.getWorldBorder().contains(linkedTo)) {
                         if (world.getTotalWorldTime() % 20 == 0 && entity instanceof EntityPlayer)
                             ((EntityPlayer) entity).sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.no_fracture_target"), true);
@@ -197,7 +228,12 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
 
     @Override
     public void setLinkLocated() {
-        linkLocated = true;
+        setLinkLocated(true);
+    }
+    
+    @Override
+    public void setLinkLocated(boolean located) {
+        linkLocated = located;
     }
 
     @Override
@@ -207,9 +243,14 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
 
     @Override
     public void setLinkInvalid() {
-        linkInvalid = true;
+        setLinkInvalid(true);
     }
 
+    @Override
+    public void setLinkInvalid(boolean invalid) {
+        linkInvalid = invalid;
+    }
+    
     @Override
     public boolean isLinkInvalid() {
         return linkInvalid;

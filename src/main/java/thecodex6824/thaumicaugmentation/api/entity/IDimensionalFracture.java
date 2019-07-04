@@ -31,12 +31,16 @@ public interface IDimensionalFracture {
     public void setLinkedDimension(int dim);
 
     public int getLinkedDimension();
-
+    
     public void setLinkLocated();
+    
+    public void setLinkLocated(boolean located);
 
     public boolean wasLinkLocated();
 
     public void setLinkInvalid();
+    
+    public void setLinkInvalid(boolean invalid);
 
     public boolean isLinkInvalid();
 
