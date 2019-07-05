@@ -54,7 +54,7 @@ public final class AugmentEventHandler {
     @SubscribeEvent
     public static void onTick(LivingUpdateEvent event) {
         int totalIndex = 0;
-        for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
+        for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
             ArrayList<ItemStack> stacks = Lists.newArrayList(func.apply(event.getEntity()));
             if (!oldItems.containsKey(event.getEntity()))
                 oldItems.put(event.getEntity(), new ArrayList<>(stacks));
@@ -90,7 +90,7 @@ public final class AugmentEventHandler {
     @SubscribeEvent
     public static void onHurt(LivingHurtEvent event) {
         if (!event.getEntity().getEntityWorld().isRemote) {
-            for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
+            for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
                 for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
                     if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                         AugmentEventHelper.fireHurtEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
@@ -111,7 +111,7 @@ public final class AugmentEventHandler {
     @SubscribeEvent
     public static void onDamage(LivingDamageEvent event) {
         if (!event.getEntity().getEntityWorld().isRemote) {
-            for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
+            for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
                 for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
                     if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                         AugmentEventHelper.fireDamageEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 

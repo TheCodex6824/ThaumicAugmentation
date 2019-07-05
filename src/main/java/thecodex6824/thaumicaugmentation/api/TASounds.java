@@ -23,6 +23,10 @@ package thecodex6824.thaumicaugmentation.api;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 
+/**
+ * Holds all of the sounds for Thaumic Augmentation.
+ * @author TheCodex6824
+ */
 public final class TASounds {
 
     private TASounds() {}
@@ -35,6 +39,10 @@ public final class TASounds {
     public static final SoundEvent EMPTINESS_AMBIENCE = create("e_ambience");
     public static final SoundEvent EMPTINESS_MUSIC = create("e_music");
     
+    /**
+     * Returns all of the sounds in the mod.
+     * @return All the sounds
+     */
     public static SoundEvent[] getAllSounds() {
         return new SoundEvent[] {EMPTINESS_AMBIENCE, EMPTINESS_MUSIC};
     }

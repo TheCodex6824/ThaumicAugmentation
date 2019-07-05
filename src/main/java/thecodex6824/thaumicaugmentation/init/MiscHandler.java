@@ -42,7 +42,7 @@ public final class MiscHandler {
         FocusEngine.registerElement(FocusEffectWard.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/ward.png"),
                 Aspect.PROTECT.getColor());
         
-        AugmentAPI.addAugmentItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
+        AugmentAPI.addAugmentableItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
             if (entity instanceof EntityLivingBase)
                 return ((EntityLivingBase) entity).getEquipmentAndArmor();
             

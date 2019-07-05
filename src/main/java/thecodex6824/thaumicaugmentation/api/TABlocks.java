@@ -25,9 +25,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 /**
  * Holds all of Thaumic Augmentation's blocks. The fields will be populated
- * after preInit.
+ * after preInit (during the block registry event).
  * @author TheCodex6824
- * 
  */
 @ObjectHolder(ThaumicAugmentationAPI.MODID)
 public final class TABlocks {
@@ -47,6 +46,10 @@ public final class TABlocks {
     public static final Block ARCANE_TRAPDOOR_SILVERWOOD = null;
     public static final Block TAINT_FLOWER = null;
 
+    /**
+     * Returns all blocks in the mod.
+     * @return All the blocks
+     */
     public static Block[] getAllBlocks() {
         return new Block[] {VIS_REGENERATOR, WARDED_CHEST, ARCANE_DOOR, ARCANE_DOOR_GREATWOOD, ARCANE_DOOR_THAUMIUM,
                ARCANE_DOOR_SILVERWOOD, TEMPORARY_LIGHT, STONE, ARCANE_TRAPDOOR_WOOD, ARCANE_TRAPDOOR_METAL, 

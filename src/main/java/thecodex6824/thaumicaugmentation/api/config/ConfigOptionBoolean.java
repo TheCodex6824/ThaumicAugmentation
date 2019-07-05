@@ -22,6 +22,10 @@ package thecodex6824.thaumicaugmentation.api.config;
 
 import io.netty.buffer.ByteBuf;
 
+/**
+ * Config option class for Boolean values.
+ * @author TheCodex6824
+ */
 public class ConfigOptionBoolean extends ConfigOption<Boolean> {
 
     protected boolean value;

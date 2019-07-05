@@ -23,6 +23,12 @@ package thecodex6824.thaumicaugmentation.api.augment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * Default implementation of the Augment capability.
+ * @author TheCodex6824
+ * 
+ * @see thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment
+ */
 public class Augment implements IAugment {
 
     protected ItemStack stack;

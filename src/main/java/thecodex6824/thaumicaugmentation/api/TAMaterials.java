@@ -24,6 +24,10 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraftforge.common.util.EnumHelper;
 
+/**
+ * Holds materials for Thaumic Augmentation. Materials are used for things like blocks and armor.
+ * @author TheCodex6824
+ */
 public final class TAMaterials {
 
     private TAMaterials() {}

@@ -34,6 +34,10 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
+/**
+ * Utility methods for dealing with rift energy.
+ * @author TheCodex6824
+ */
 public class RiftEnergyHelper {
 
     private RiftEnergyHelper() {}
@@ -46,6 +50,11 @@ public class RiftEnergyHelper {
     public static final String ENERGY_STRONG = "thaumicaugmentation.text.energy_strong";
     public static final String ENERGY_MAX = "thaumicaugmentation.text.energy_max";
     
+    /**
+     * Returns an unlocalized description string for the proportion of energy in the object.
+     * @param storage The object to get the descriptor of
+     * @return An unlocalized String describing the ratio of stored energy to max energy
+     */
     public static String getEnergyAmountDescriptor(IRiftEnergyStorage storage) {
         if (storage.getEnergyStored() <= 0)
             return ENERGY_NONE;
@@ -63,10 +72,26 @@ public class RiftEnergyHelper {
             return ENERGY_MAX;
     }
     
+    /**
+     * Searches for IRiftEnergyStorage instances in the world, and drains energy from them into the passed storage.
+     * @param world The world to look in
+     * @param dest The IRiftEnergyStorage to put the energy in
+     * @param range The bounding box to check for energy storage in
+     * @return If any energy was received at all
+     */
     public static boolean drainNearbyEnergyIntoStorage(World world, IRiftEnergyStorage dest, AxisAlignedBB range) {
         return drainNearbyEnergyIntoStorage(world, dest, range, null);
     }
     
+    /**
+     * Searches for IRiftEnergyStorage instances in the world, and drains energy from them into the passed storage. This will
+     * also create energy transfer particles on the client, if effectOrigin is not null.
+     * @param world The world to look in
+     * @param dest The IRiftEnergyStorage to put the energy in
+     * @param range The bounding box to check for energy storage in
+     * @param effectOrigin The position that the energy particles should originate from, or null to not send particles
+     * @return If any energy was received at all
+     */
     public static boolean drainNearbyEnergyIntoStorage(World world, IRiftEnergyStorage dest, AxisAlignedBB range, @Nullable Vec3d effectOrigin) {
         boolean receivedEnergy = false;
         MutableBlockPos pos = new MutableBlockPos(0, 0, 0);

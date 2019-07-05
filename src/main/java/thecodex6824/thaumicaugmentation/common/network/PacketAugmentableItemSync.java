@@ -103,7 +103,7 @@ public class PacketAugmentableItemSync implements IMessage {
                 Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
                 if (entity != null) {
                     int i = 0;
-                    for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentItemSources()) {
+                    for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
                         for (ItemStack stack : func.apply(entity)) {
                             if (i == message.getItemIndex()) {
                                 if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {

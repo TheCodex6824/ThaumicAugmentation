@@ -26,9 +26,10 @@ import thecodex6824.thaumicaugmentation.api.warded.IWardedTile;
 
 /**
  * Interface for items that can allow players to access warded blocks
- * that belong to someone else.
+ * that belong to someone else. This isn't a capability as there would be
+ * no sane default implementation, and it only makes sense for items - which completely kills
+ * the advantages of capabilities.
  * @author TheCodex6824
- *
  */
 public interface IWardAuthenticator {
 

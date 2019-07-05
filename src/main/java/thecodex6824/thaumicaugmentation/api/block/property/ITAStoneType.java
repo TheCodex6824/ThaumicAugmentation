@@ -36,6 +36,12 @@ import thaumcraft.api.ThaumcraftMaterials;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.common.util.QuadConsumer;
 
+/**
+ * Property interface for the type of stone in Thaumic Augmentation's stone.
+ * @author TheCodex6824
+ * 
+ * @see thecodex6824.thaumicaugmentation.api.TABlocks#STONE
+ */
 public interface ITAStoneType {
 
     public enum StoneType implements IStringSerializable {

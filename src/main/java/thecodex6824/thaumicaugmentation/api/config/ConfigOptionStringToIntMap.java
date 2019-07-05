@@ -25,6 +25,10 @@ import java.util.Map;
 
 import io.netty.buffer.ByteBuf;
 
+/**
+ * Config option class for Map<String, Integer> values.
+ * @author TheCodex6824
+ */
 public class ConfigOptionStringToIntMap extends ConfigOption<Map<String, Integer>>{
 
     private Map<String, Integer> value;

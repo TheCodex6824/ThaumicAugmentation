@@ -24,6 +24,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import thaumcraft.api.casters.FocusPackage;
 
+/**
+ * Event fired when the vis cost of a complete focus effect is being calculated. This may not be fired for all casters - 
+ * it is only guaranteed for Thaumic Augmentation casters.
+ * @author TheCodex6824
+ */
 public class CasterVisCostEvent extends CastEvent {
 
     private float cost;

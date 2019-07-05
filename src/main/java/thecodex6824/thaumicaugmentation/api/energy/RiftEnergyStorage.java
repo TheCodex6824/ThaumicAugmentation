@@ -22,6 +22,10 @@ package thecodex6824.thaumicaugmentation.api.energy;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * Default implementation of the RiftEnergyStorage capability.
+ * @author TheCodex6824
+ */
 public class RiftEnergyStorage implements IRiftEnergyStorage {
 
     private long energy;

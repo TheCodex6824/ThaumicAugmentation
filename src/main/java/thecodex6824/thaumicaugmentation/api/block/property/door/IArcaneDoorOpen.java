@@ -25,7 +25,6 @@ import net.minecraft.block.properties.PropertyBool;
 /**
  * Property interface marking if the Arcane Door is open or not.
  * @author TheCodex6824
- *
  */
 public interface IArcaneDoorOpen {
 

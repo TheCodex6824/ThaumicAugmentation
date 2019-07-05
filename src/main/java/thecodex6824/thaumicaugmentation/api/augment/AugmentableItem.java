@@ -20,12 +20,19 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants.NBT;
 
+/**
+* Default implementation of the Augmentable Item capability.
+* @author TheCodex6824
+* 
+* @see thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem
+*/
 public class AugmentableItem implements IAugmentableItem {
 
     private ItemStack[] augments;
@@ -56,7 +63,13 @@ public class AugmentableItem implements IAugmentableItem {
     
     @Override
     public ItemStack[] getAllAugments() {
-        return augments;
+        ArrayList<ItemStack> stacks = new ArrayList<>(augments.length);
+        for (ItemStack stack : augments) {
+            if (!stack.isEmpty())
+                stacks.add(stack);
+        }
+        
+        return stacks.toArray(new ItemStack[stacks.size()]);
     }
     
     @Override

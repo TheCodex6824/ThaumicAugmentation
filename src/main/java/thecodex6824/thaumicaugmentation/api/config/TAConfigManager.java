@@ -26,6 +26,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.relauncher.Side;
 
+/**
+ * Manages syncing config values. Options must be added here to be automatically synced.
+ * @author TheCodex6824
+ */
 public final class TAConfigManager {
 
     private TAConfigManager() {}

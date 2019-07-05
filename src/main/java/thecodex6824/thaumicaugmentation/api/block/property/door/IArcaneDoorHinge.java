@@ -26,7 +26,6 @@ import net.minecraft.block.properties.PropertyEnum;
 /**
  * Property interface marking the side the Arcane Door's hinge is on.
  * @author TheCodex6824
- *
  */
 public interface IArcaneDoorHinge {
 

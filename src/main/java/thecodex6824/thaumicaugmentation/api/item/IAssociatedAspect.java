@@ -23,6 +23,10 @@ package thecodex6824.thaumicaugmentation.api.item;
 import net.minecraft.item.ItemStack;
 import thaumcraft.api.aspects.Aspect;
 
+/**
+ * Interface for items that should have an aspect associated with them in some way.
+ * @author TheCodex6824
+ */
 public interface IAssociatedAspect {
 
     public void setAspect(ItemStack stack, Aspect aspect);

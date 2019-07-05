@@ -27,7 +27,6 @@ import thaumcraft.api.casters.ICaster;
  * Interface for custom casting gauntlets that support a vis discount
  * and cooldown modifier.
  * @author TheCodex6824
- *
  */
 public interface ITieredCaster extends ICaster {
 

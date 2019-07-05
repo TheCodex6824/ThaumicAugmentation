@@ -26,7 +26,6 @@ import net.minecraft.block.properties.PropertyBool;
  * Property interface for block that can enabled and disabled,
  * such as the Vis Regenerator.
  * @author TheCodex6824
- * 
  */
 public interface IEnabledBlock {
 

@@ -46,7 +46,7 @@ import thecodex6824.thaumicaugmentation.api.aspect.AspectUtil;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
-import thecodex6824.thaumicaugmentation.api.util.AugmentUtils;
+import thecodex6824.thaumicaugmentation.api.util.FocusUtils;
 import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
@@ -85,7 +85,7 @@ public class ItemElementalAugment extends ItemTABase implements IAssociatedAspec
                         }
                     }
                     
-                    AugmentUtils.setPackagePower(focusPackage, focusPackage.getPower() * totalMultiplier);
+                    FocusUtils.setPackagePower(focusPackage, focusPackage.getPower() * totalMultiplier);
                 }
                 
                 @Override

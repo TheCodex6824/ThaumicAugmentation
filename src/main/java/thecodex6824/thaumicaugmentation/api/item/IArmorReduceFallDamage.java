@@ -22,6 +22,10 @@ package thecodex6824.thaumicaugmentation.api.item;
 
 import net.minecraft.item.ItemStack;
 
+/**
+ * Interface for items that should reduce fall damage when worn as equipment.
+ * @author TheCodex6824
+ */
 public interface IArmorReduceFallDamage {
 
     public float getNewFallDamage(ItemStack stack, float origDamage, float distance);

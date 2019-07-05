@@ -44,7 +44,7 @@ import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.energy.RiftEnergyHelper;
 import thecodex6824.thaumicaugmentation.api.energy.RiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
-import thecodex6824.thaumicaugmentation.api.util.AugmentUtils;
+import thecodex6824.thaumicaugmentation.api.util.FocusUtils;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderAugmentRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
@@ -80,7 +80,7 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
                     IRiftEnergyStorage energy = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
                     // not actually removing energy is intentional
                     if (energy.extractEnergy(10, true) == 10)
-                        AugmentUtils.setPackagePower(focusPackage, focusPackage.getPower() * 1.1F);
+                        FocusUtils.setPackagePower(focusPackage, focusPackage.getPower() * 1.1F);
                 }
             }
             

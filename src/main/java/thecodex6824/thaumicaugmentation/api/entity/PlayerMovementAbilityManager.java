@@ -30,6 +30,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
+/**
+ * Class that manages non-attribute movement changes.
+ * @author TheCodex6824
+ */
 public final class PlayerMovementAbilityManager {
 
     private PlayerMovementAbilityManager() {}

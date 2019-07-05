@@ -33,6 +33,10 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
+/**
+ * Utility class for firing augment-related events.
+ * @author TheCodex6824
+ */
 public final class AugmentEventHelper {
     
     private AugmentEventHelper() {}

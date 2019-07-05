@@ -33,7 +33,6 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
  * will NOT be fired for blocks affected by the warding focus. This is intended for mods that have "teams" or other 
  * situtations where players should be able to access each other's things.
  * @author TheCodex6824
- *
  */
 @HasResult
 @Cancelable

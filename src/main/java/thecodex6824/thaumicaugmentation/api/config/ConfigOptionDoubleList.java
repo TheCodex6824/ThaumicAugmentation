@@ -22,6 +22,10 @@ package thecodex6824.thaumicaugmentation.api.config;
 
 import io.netty.buffer.ByteBuf;
 
+/**
+ * Config option class for double[] values.
+ * @author TheCodex6824
+ */
 public class ConfigOptionDoubleList extends ConfigOption<double[]> {
 
     protected double[] value;

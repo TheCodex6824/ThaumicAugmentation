@@ -25,6 +25,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import thaumcraft.api.casters.FocusPackage;
 
+/**
+ * Event superclass for all cast-related events. Subscribing to this event will notify the
+ * callback for all subclasses of this class.
+ * @author TheCodex6824
+ */
 public abstract class CastEvent extends LivingEvent {
 
     protected FocusPackage focus;

@@ -29,7 +29,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  * Holds all of Thaumic Augmentation's items and the creative tab. The fields will be populated
  * after preInit.
  * @author TheCodex6824
- * 
  */
 @ObjectHolder(ThaumicAugmentationAPI.MODID)
 public final class TAItems {
@@ -54,6 +53,10 @@ public final class TAItems {
         }
     };
 
+    /**
+     * Returns all the items in the mod.
+     * @return All the items
+     */
     public static Item[] getAllItems() {
         return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR, KEY, VOID_BOOTS, RIFT_SEED, AUGMENT_CASTER_ELEMENTAL,
                 AUGMENT_CASTER_RIFT_ENERGY_STORAGE, FRACTURE_LOCATOR};

@@ -26,8 +26,10 @@ import net.minecraft.util.IStringSerializable;
 /**
  * Property interface marking the type/meta of the Arcane Door.
  * @author TheCodex6824
- *
+ * @deprecated This was used in the old implementation of Arcane Doors, where they all shared a single block type.
+ * Now that each door type is its own block, this should no longer be used.
  */
+@Deprecated
 public interface IArcaneDoorType {
 
     public enum ArcaneDoorType implements IStringSerializable {

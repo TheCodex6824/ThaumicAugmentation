@@ -25,7 +25,6 @@ import net.minecraft.item.ItemStack;
 /**
  * Interface for items that can be dyed with a crafting recipe.
  * @author TheCodex6824
- *
  */
 public interface IDyeableItem {
 

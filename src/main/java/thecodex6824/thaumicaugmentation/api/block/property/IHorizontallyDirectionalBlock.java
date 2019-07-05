@@ -29,7 +29,6 @@ import net.minecraft.util.EnumFacing;
  * Property interface for blocks that can be oriented in a horizontal direction,
  * such as chests and doors.
  * @author TheCodex6824
- *
  */
 public interface IHorizontallyDirectionalBlock {
 

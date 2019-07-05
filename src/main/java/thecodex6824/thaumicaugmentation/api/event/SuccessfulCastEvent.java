@@ -25,6 +25,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import thaumcraft.api.casters.FocusPackage;
 
+/**
+ * Event fired when a cast is successfully executed. This may not be fired for all casters - 
+ * it is only guaranteed for Thaumic Augmentation casters.
+ * @author TheCodex6824
+ */
 @Cancelable
 public class SuccessfulCastEvent extends CastEvent {
     

@@ -24,7 +24,6 @@ package thecodex6824.thaumicaugmentation.api;
  * Holds the mod ID and API version. API utility methods may be
  * added here in the future.
  * @author TheCodex6824
- * 
  */
 public final class ThaumicAugmentationAPI {
 

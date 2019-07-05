@@ -26,7 +26,6 @@ import net.minecraft.util.IStringSerializable;
 /**
  * Property interface marking the upper and lower half of the Arcane Door.
  * @author TheCodex6824
- *
  */
 public interface IArcaneDoorHalf {
 

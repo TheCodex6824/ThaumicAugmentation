@@ -32,6 +32,11 @@ import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
 
+/**
+ * Event fired for all ward-focus related things. Subscribing to this will notify the callback
+ * for all subclasses of this event.
+ * @author TheCodex6824
+ */
 @Cancelable
 public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent {
 
@@ -47,6 +52,10 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
         return storage;
     }
     
+    /**
+     * Event fired when a block is warded for the client.
+     * @author TheCodex6824
+     */
     public static class WardedClient extends BlockWardEvent<IWardStorageClient> {
         
         protected ClientWardStorageValue val;
@@ -62,6 +71,10 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
         
     }
     
+    /**
+     * Event fired when a block is warded for the server.
+     * @author TheCodex6824
+     */
     public static class WardedServer extends BlockWardEvent<IWardStorageServer> {
         
         protected UUID val;
@@ -77,6 +90,10 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
         
     }
     
+    /**
+     * Event fired when a block is dewarded for the client.
+     * @author TheCodex6824
+     */
     public static class DewardedClient extends BlockWardEvent<IWardStorageClient> {
         
         public DewardedClient(World world, BlockPos pos) {
@@ -85,6 +102,10 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
         
     }
     
+    /**
+     * Event fired when a block is dewarded for the server.
+     * @author TheCodex6824
+     */
     public static class DewardedServer extends BlockWardEvent<IWardStorageServer> {
         
         public DewardedServer(World world, BlockPos pos) {

@@ -28,6 +28,13 @@ import java.util.Set;
 
 import thaumcraft.api.aspects.Aspect;
 
+/**
+ * Handles a registry of aspect "interactions", to use for mechanics where
+ * aspects interact with each other.
+ * @author TheCodex6824
+ * 
+ * @see thecodex6824.thaumicaugmentation.common.item.ItemElementalAugment
+ */
 public final class AspectElementInteractionManager {
 
     private AspectElementInteractionManager() {}
@@ -76,10 +83,21 @@ public final class AspectElementInteractionManager {
         addNegativeInteraction(Aspect.WATER, Aspect.FIRE, Aspect.EARTH, Aspect.AIR);
     }
     
+    /**
+     * Adds a negative interaction, where the presence of one or more aspects has a
+     * negative effect on another aspect.
+     * @param aspect The aspect that will be affected
+     * @param negatives The aspects that cause the effect
+     */
     public static void addNegativeInteraction(Aspect aspect, Aspect... negatives) {
         negativeInteractions.put(aspect, new HashSet<>(Arrays.asList(negatives)));
     }
     
+    /**
+     * Returns all aspects that cause a negative effect in the passed aspect.
+     * @param target The aspect to get negative interactions for
+     * @return A set of all aspects that cause a negative interaction
+     */
     public static Set<Aspect> getNegativeAspects(Aspect target) {
         return negativeInteractions.getOrDefault(target, Collections.<Aspect>emptySet());
     }

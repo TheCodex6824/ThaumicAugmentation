@@ -25,7 +25,10 @@ import java.lang.reflect.Field;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import thaumcraft.api.casters.FocusPackage;
 
-public final class AugmentUtils {
+/**
+ * Utility methods for working with Thaumcraft foci.
+ */
+public final class FocusUtils {
 
     private static final Field PACKAGE_POWER;
     
@@ -42,7 +45,7 @@ public final class AugmentUtils {
         PACKAGE_POWER = f;
     }
     
-    private AugmentUtils() {}
+    private FocusUtils() {}
     
     public static void setPackagePower(FocusPackage fPackage, float newPower) {
         try {

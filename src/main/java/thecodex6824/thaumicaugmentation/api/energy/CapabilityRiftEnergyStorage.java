@@ -23,6 +23,10 @@ package thecodex6824.thaumicaugmentation.api.energy;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
+/**
+ * Holds an instance of the capability for {@link IRiftEnergyStorage}.
+ * @author TheCodex6824
+ */
 public final class CapabilityRiftEnergyStorage {
 
     private CapabilityRiftEnergyStorage() {}

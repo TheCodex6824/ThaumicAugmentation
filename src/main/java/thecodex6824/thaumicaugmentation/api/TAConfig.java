@@ -28,6 +28,11 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
+/**
+ * Holds all of the configuration variables for Thaumic Augmentation. They will be
+ * synced across sides when needed.
+ * @author TheCodex6824
+ */
 public final class TAConfig {
 
     private TAConfig() {}
@@ -60,10 +65,19 @@ public final class TAConfig {
     public static ConfigOptionInt fractureLocatorUpdateInterval;
     public static ConfigOptionBoolean fracturesAlwaysTeleport;
     
+    /**
+     * Registers a callback to be notified when the config is synced or updated.
+     * @param listener The callback
+     */
     public static void addConfigListener(Runnable listener) {
         TAInternals.addConfigListener(listener);
     }
     
+    /**
+     * Removes a callback previously registered with {@link TAConfig#addConfigListener(Runnable)}
+     * @param listener The callback
+     * @return If the provided callback existed and was removed
+     */
     public static boolean removeConfigListener(Runnable listener) {
         return TAInternals.removeConfigListener(listener);
     }

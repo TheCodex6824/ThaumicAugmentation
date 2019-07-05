@@ -28,6 +28,10 @@ import java.util.Set;
 import net.minecraft.util.text.TextFormatting;
 import thaumcraft.api.aspects.Aspect;
 
+/**
+ * Contains random utilities for working with Thaumcraft's aspects.
+ * @author TheCodex6824
+ */
 public final class AspectUtil {
 
     private AspectUtil() {}
@@ -54,10 +58,25 @@ public final class AspectUtil {
         CHAT_COLORS.put(TextFormatting.WHITE, 0xFFFFFF);
     }
     
+    /**
+     * Returns the closest chat color for the given aspect. This will check if the aspect already has
+     * an associated chat color, and return that color if it does. Otherwise, it will compute the closest chat color
+     * based on the aspect's normal color.
+     * @param aspect The aspect to get the color of
+     * @return The closest chat color of the aspect
+     */
     public static String getChatColorForAspect(Aspect aspect) {
         return getChatColorForAspect(aspect, Collections.emptySet());
     }
     
+    /**
+     * Returns the closest chat color for the given aspect, not including any colors passed. This will check if the aspect
+     * already has an associated chat color, and return that color if it does. Otherwise, it will compute the closest chat color
+     * based on the aspect's normal color.
+     * @param aspect The aspect to get the color of
+     * @param forbiddenColors The colors that are not allowed to be returned
+     * @return The closest chat color of the aspect, not including any aspect passed in forbiddenColors
+     */
     public static String getChatColorForAspect(Aspect aspect, Set<TextFormatting> forbiddenColors) {
         if (aspect.getChatcolor() != null)
             return '\u00a7' + aspect.getChatcolor();

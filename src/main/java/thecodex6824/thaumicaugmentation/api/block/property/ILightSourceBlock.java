@@ -29,7 +29,6 @@ import net.minecraft.world.IBlockAccess;
  * Property interface for blocks that should give off a variable amount of light,
  * depending on the value of this property.
  * @author TheCodex6824
- *
  */
 public interface ILightSourceBlock {
 

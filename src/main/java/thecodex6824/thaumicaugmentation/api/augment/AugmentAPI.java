@@ -28,21 +28,39 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * Contains utility methods for working with augments.
+ * @author TheCodex6824
+ */
 public final class AugmentAPI {
 
     private AugmentAPI() {}
     
     private static HashMap<String, Function<Entity, Iterable<ItemStack>>> additionalItemSources = new HashMap<>();
     
-    public static void addAugmentItemSource(ResourceLocation key, Function<Entity, Iterable<ItemStack>> source) {
+    /**
+     * Registers a callback that returns a source of ItemStacks to check for augmentable items on an entity.
+     * @param key A unique identifier for this source
+     * @param source The callback that returns the ItemStack instances to check for augmentable items
+     */
+    public static void addAugmentableItemSource(ResourceLocation key, Function<Entity, Iterable<ItemStack>> source) {
         additionalItemSources.put(key.toString(), source);
     }
     
-    public static boolean removeAugmentItemSource(ResourceLocation key) {
+    /**
+     * Removes a previously registered augmentable item source.
+     * @param key The unique identifier of the callback to remove
+     * @return If a callback matching the key existed and was removed
+     */
+    public static boolean removeAugmentableItemSource(ResourceLocation key) {
         return additionalItemSources.remove(key.toString()) != null;
     }
     
-    public static Collection<Function<Entity, Iterable<ItemStack>>> getAugmentItemSources() {
+    /**
+     * Returns a collection of all augmentable item sources.
+     * @return All augmentable item sources
+     */
+    public static Collection<Function<Entity, Iterable<ItemStack>>> getAugmentableItemSources() {
         return additionalItemSources.values();
     }
     
