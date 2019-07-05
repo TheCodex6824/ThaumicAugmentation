@@ -121,7 +121,7 @@ public final class TAWorldGenerator implements IWorldGenerator {
             AuraHelper.polluteAura(world, pos, flux, false);
         }
         
-        if (!ModConfig.CONFIG_MISC.wussMode) {
+        if (!TAConfig.disableEmptiness.getValue() && !ModConfig.CONFIG_MISC.wussMode) {
             if (WorldDataCache.isInitialized())
                 generateFractures(random, chunkX, chunkZ, world);
             else {

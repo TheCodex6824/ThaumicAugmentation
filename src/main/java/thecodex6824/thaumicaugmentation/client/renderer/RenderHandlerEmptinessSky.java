@@ -44,12 +44,16 @@ public class RenderHandlerEmptinessSky extends IRenderHandler {
     
     protected static final Consumer<Shader> SHADER_CALLBACK = shader -> {
         Minecraft mc = Minecraft.getMinecraft();
+        float yaw = mc.getRenderViewEntity().rotationYaw;
+        float pitch = -mc.getRenderViewEntity().rotationPitch;
+        if (mc.gameSettings.thirdPersonView == 2)
+            pitch *= -1;
         
         int x = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "yaw");
-        ARBShaderObjects.glUniform1fARB(x, (float) (mc.player.rotationYaw * 2.0F * Math.PI / 360.0));
+        ARBShaderObjects.glUniform1fARB(x, (float) (yaw * 2.0F * Math.PI / 360.0));
         
         int z = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "pitch");
-        ARBShaderObjects.glUniform1fARB(z, (float) (-mc.player.rotationPitch * 2.0F * Math.PI / 360.0));
+        ARBShaderObjects.glUniform1fARB(z, (float) (pitch * 2.0F * Math.PI / 360.0));
     };
     
     @Override

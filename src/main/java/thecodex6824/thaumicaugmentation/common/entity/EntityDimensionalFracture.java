@@ -42,6 +42,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import thaumcraft.common.entities.monster.EntityEldritchGuardian;
 import thaumcraft.common.entities.projectile.EntityFocusCloud;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.world.DimensionalFractureTeleporter;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
@@ -154,7 +155,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                     }
                     else {
                         verifyChunk(targetWorld, linkedTo);
-                        if (targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(linkedTo)).isEmpty()) {
+                        if (!TAConfig.fracturesAlwaysTeleport.getValue() && targetWorld.getEntitiesWithinAABB(EntityDimensionalFracture.class, new AxisAlignedBB(linkedTo)).isEmpty()) {
                             ThaumicAugmentation.getLogger().warn("A fracture is invalid, due to the destination lacking a fracture. This fracture has passed verification before, suggesting that either the destination fracture was removed or new linkable dimensions were introduced to the world.");
                             ThaumicAugmentation.getLogger().debug("Dest dim: " + targetWorld.provider.getDimension());
                             ThaumicAugmentation.getLogger().debug("Dest pos (not including y): " + linkedTo);

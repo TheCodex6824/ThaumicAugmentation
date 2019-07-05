@@ -32,6 +32,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.common.lib.events.ServerEvents;
 import thaumcraft.common.world.aura.AuraHandler;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 
@@ -70,8 +71,8 @@ public class WorldEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onWorldTick(WorldTickEvent event) {
-        if (event.side == Side.SERVER && event.phase == Phase.END && event.world.provider.getDimension() == TADimensions.EMPTINESS.getId() &&
-                getTCEventHandlerServerTicks() % 20 == 0)
+        if (!TAConfig.disableEmptiness.getValue() && event.side == Side.SERVER && event.phase == Phase.END && 
+                event.world.provider.getDimension() == TADimensions.EMPTINESS.getId() && getTCEventHandlerServerTicks() % 20 == 0)
             AuraHandler.riftTrigger.remove(TADimensions.EMPTINESS.getId());
     }
     

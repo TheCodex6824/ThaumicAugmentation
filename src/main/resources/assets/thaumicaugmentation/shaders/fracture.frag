@@ -73,10 +73,10 @@ void main() {
 		vec4 tcol = texture2D(texture, tex);
 		
 		// set the alpha, blending out at the bunched ends
-		float a = tcol.r * (0.05 + (1.0/mult) * 0.65) * (1-smoothstep(0.15, 0.48, abs(v-0.5)));
+		float a = (tcol.r * 4) * (0.05 + (1.0/mult) * 0.65) * (1-smoothstep(0.15, 0.48, abs(v-0.5)));
 		
 		// mix the colours
-		col = col*(a) + vec4(tcol.r,tcol.g,tcol.b,1)*(1-a);
+		col = col*(1-a) + vec4(tcol.r,tcol.g,tcol.b,1)*a;
 	}
     
     gl_FragColor = col;

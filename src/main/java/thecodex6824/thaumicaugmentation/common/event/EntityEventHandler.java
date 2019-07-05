@@ -24,6 +24,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import thaumcraft.common.entities.EntityFluxRift;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 
@@ -32,7 +33,7 @@ public class EntityEventHandler {
 
     @SubscribeEvent
     public static void onEntitySpawn(EntityJoinWorldEvent event) {
-        if (event.getWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && event.getEntity().getClass() == EntityFluxRift.class)
+        if (!TAConfig.disableEmptiness.getValue() && event.getWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && event.getEntity().getClass() == EntityFluxRift.class)
             event.setCanceled(true);
     }
     

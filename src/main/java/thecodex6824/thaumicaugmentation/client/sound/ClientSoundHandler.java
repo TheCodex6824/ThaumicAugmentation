@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
@@ -39,13 +40,15 @@ public class ClientSoundHandler {
     private static EmptinessSoundTicker emptinessSound = null;
     
     public static void init() {
-        EMPTINESS_MUSIC_NOOP = EnumHelperClient.addMusicType(ThaumicAugmentationAPI.MODID + ":emptiness_music_noop", 
-                TASounds.EMPTINESS_AMBIENCE, Integer.MAX_VALUE - 1, Integer.MAX_VALUE);
+        if (!TAConfig.disableEmptiness.getValue()) {
+            EMPTINESS_MUSIC_NOOP = EnumHelperClient.addMusicType(ThaumicAugmentationAPI.MODID + ":emptiness_music_noop", 
+                    TASounds.EMPTINESS_AMBIENCE, Integer.MAX_VALUE - 1, Integer.MAX_VALUE);
+        }
     }
     
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent event) {
-        if (event.phase == Phase.START) {
+        if (!TAConfig.disableEmptiness.getValue() && event.phase == Phase.START) {
             if (emptinessSound == null)
                 emptinessSound = new EmptinessSoundTicker(Minecraft.getMinecraft());
             

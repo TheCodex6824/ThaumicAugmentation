@@ -53,10 +53,12 @@ public final class TAConfig {
     public static ConfigOptionInt defaultVoidBootsColor;
 
     public static ConfigOptionInt emptinessDimID;
+    public static ConfigOptionBoolean disableEmptiness;
     public static ConfigOptionDouble emptinessMoveFactor;
     public static ConfigOptionInt fractureGenChance;
     public static ConfigOptionStringToIntMap fractureDimList;
     public static ConfigOptionInt fractureLocatorUpdateInterval;
+    public static ConfigOptionBoolean fracturesAlwaysTeleport;
     
     public static void addConfigListener(Runnable listener) {
         TAInternals.addConfigListener(listener);

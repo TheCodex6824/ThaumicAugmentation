@@ -82,18 +82,20 @@ public final class WorldHandler {
     }
 
     public static void preInit() {
-        int emptinessID = currentIDOrSubstitute(TAConfig.emptinessDimID.getValue());
-        if (emptinessID != TAConfig.emptinessDimID.getValue()) {
-            ThaumicAugmentation.getLogger().warn("The dimension ID {} was already taken. Assigning {} instead and updating the config...",
-                    TAConfig.emptinessDimID.getValue(), emptinessID);
-            TAConfigHolder.emptinessDimID = emptinessID;
-            TAConfigHolder.syncLocally();
-            TAConfigHolder.syncConfig();
+        if (!TAConfig.disableEmptiness.getValue()) {
+            int emptinessID = currentIDOrSubstitute(TAConfig.emptinessDimID.getValue());
+            if (emptinessID != TAConfig.emptinessDimID.getValue()) {
+                ThaumicAugmentation.getLogger().warn("The dimension ID {} was already taken. Assigning {} instead and updating the config...",
+                        TAConfig.emptinessDimID.getValue(), emptinessID);
+                TAConfigHolder.emptinessDimID = emptinessID;
+                TAConfigHolder.syncLocally();
+                TAConfigHolder.syncConfig();
+            }
+    
+            TADimensions.EMPTINESS = DimensionType.register("emptiness", "_emptiness", emptinessID, WorldProviderEmptiness.class, false);
+            DimensionManager.registerDimension(emptinessID, TADimensions.EMPTINESS);
+            BiomeHandler.addDimBlacklist(emptinessID, 0);
         }
-
-        TADimensions.EMPTINESS = DimensionType.register("emptiness", "_emptiness", emptinessID, WorldProviderEmptiness.class, false);
-        DimensionManager.registerDimension(emptinessID, TADimensions.EMPTINESS);
-        BiomeHandler.addDimBlacklist(emptinessID, 0);
     }
 
     public static void init() {
@@ -122,13 +124,13 @@ public final class WorldHandler {
     
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
-        if (!event.getWorld().isRemote)
+        if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue())
             WorldDataCache.addOrUpdateData(event.getWorld());
     }
     
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
-        if (!event.getWorld().isRemote && FractureUtils.canWorldHaveFracture(event.getWorld().provider.getDimension())) {
+        if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue() && FractureUtils.canWorldHaveFracture(event.getWorld().provider.getDimension())) {
             if (event.getChunk().hasCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null)) {
                 IFractureLocation loc = event.getChunk().getCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null);
                 if (loc.hasFracture())
@@ -139,7 +141,7 @@ public final class WorldHandler {
     
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event) {
-        if (!event.getWorld().isRemote && FractureUtils.canWorldHaveFracture(event.getWorld().provider.getDimension())) {
+        if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue() && FractureUtils.canWorldHaveFracture(event.getWorld().provider.getDimension())) {
             if (event.getChunk().hasCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null)) {
                 IFractureLocation loc = event.getChunk().getCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null);
                 if (loc.hasFracture())

@@ -1,19 +1,25 @@
-Thaumic Augmentation
+![Thaumic Augmentation](banner.png)
 ======
-**WARNING:** This is the *experimental* branch, which is where I keep the things I am currently working on. While you are welcome to try it out, I cannot guarantee that the experimental branch won't break worlds or be incompatible with future versions without notice. *Please* only use experimental versions if you understand the risks, **AND** ensure you are either using a disposable world or have backups.
-
-Thaumic Augmentation is a Thaumcraft addon for Minecraft 1.12 that tries to add new content that would fit in with the base mod. There's not *tons* of stuff yet, but more content is planned.
+Thaumic Augmentation is a Thaumcraft addon for Minecraft 1.12 that tries to add new content that would fit in with the base mod.
 
 For downloads, visit the [project's page on CurseForge](https://minecraft.curseforge.com/projects/thaumic-augmentation).
 
 Features
 ------
-* Upgraded casting gauntlets
+* Upgraded casting gauntlets (Thaumium and Void)
 * A machine to (slowly) add vis back to the aura
 * A tool that can copy and paste golem seal settings
-* Warded (personal) chests and doors with keys to allow access to others
-* Focus effect that creates light
+* Boots of the Riftstrider, an upgraded version of the Boots of the Traveller
+* Warded (personal) chests, doors, and trapdoors with keys to allow access to others
+* A focus effect that creates light
+* A reimplementation of the ward focus from older versions of Thaumcraft
+* An augment system to add additional components to casting gauntlets and other items
+* Find dimensional fractures to enter a brand new dimension - the Void.
 
 License
----
+-----
 Thaumic Augmentation is licensed under the GNU Lesser Public License v3 (or later). So that means if you want to include this mod in a modpack, go right ahead!
+
+Contributing
+-----
+For information on contributing to the project (and thank you for considering helping out), see [CONTRIBUTING.md](CONTRIBUTING.md).

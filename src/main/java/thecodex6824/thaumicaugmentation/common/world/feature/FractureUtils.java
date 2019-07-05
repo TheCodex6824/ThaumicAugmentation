@@ -69,10 +69,12 @@ public final class FractureUtils {
     }
     
     public static void initDimensionCache() {
-        reloadDimensionCache();
-        TAConfig.addConfigListener(() -> {
+        if (!TAConfig.disableEmptiness.getValue()) {
             reloadDimensionCache();
-        });
+            TAConfig.addConfigListener(() -> {
+                reloadDimensionCache();
+            });
+        }
     }
     
     public static boolean canWorldHaveFracture(int id) {

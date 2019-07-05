@@ -32,7 +32,6 @@ import net.minecraftforge.common.config.Config.Name;
 import net.minecraftforge.common.config.Config.RangeDouble;
 import net.minecraftforge.common.config.Config.RangeInt;
 import net.minecraftforge.common.config.Config.RequiresMcRestart;
-import net.minecraftforge.common.config.Config.RequiresWorldRestart;
 import net.minecraftforge.common.config.Config.Type;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -170,15 +169,15 @@ public final class TAConfigHolder {
     })
     public static int defaultVoidBootsColor = 0x6A3880;
 
-    @Name("EmptinessDimensionID")
+    @Name("VoidDimensionID")
     @Comment({
-        "The dimension ID to use for the Emptiness dimension.",
+        "The dimension ID to use for the Void dimension.",
         "If this ID is already taken, a new one will automatically be assigned."
     })
     @RequiresMcRestart
     public static int emptinessDimID = 14676;
 
-    @Name("EmptinessMoveFactor")
+    @Name("VoidMoveFactor")
     @Comment({
         "The scaling factor applied to distances in the Void dimension.",
         "For example, the nether has a value of 8 since it multiplies coords by 8.",
@@ -196,7 +195,7 @@ public final class TAConfigHolder {
     
     @Name("FractureDimList")
     @Comment({
-        "Lists the whitelisted dimensions for fractures (not including this mod's dim), and their associated weights.",
+        "Lists the whitelisted dimensions for fractures (not including the Void dim), and their associated weights.",
         "Higher weights (compared to lower weights) will be more likely to spawn.",
         "This WILL affect worldgen, so use with caution on existing worlds.",
         "The config GUI does not seem to support the addition or removal of entries, edit this",
@@ -204,7 +203,7 @@ public final class TAConfigHolder {
         "Default dimensions: 0 = Overworld, -1 = Nether, 1 = End, 7 = Twilight Forest, 17 = Atum 2,",
         "20 = Betweenlands, 111 = Lost Cities, 66 = Erebus, 33 = Wizardry (Underworld)"
     })
-    @RequiresWorldRestart
+    @RequiresMcRestart
     public static HashMap<String, Integer> fractureDimList = new HashMap<>();
     
     @Name("FractureLocatorUpdateInterval")
@@ -213,6 +212,23 @@ public final class TAConfigHolder {
         "This is a server-side setting."
     })
     public static int fractureLocatorUpdateInterval = 2000;
+    
+    @Name("ValidFracturesAlwaysTeleport")
+    @Comment({
+        "If this is set, fractures that previously found a valid location will always teleport the player, even if it is now invalid.",
+        "Normally, fractures check if there is a fracture at the destination to make sure players can get back.",
+        "This is a server-side setting."
+    })
+    public static boolean fracturesAlwaysTeleport = false;
+    
+    @Name("DisableVoidDimension")
+    @Comment({
+        "Completely disables the Void dimension, including all fracture generation.",
+        "This is not the intended way to experience the mod but is included here for modpack authors.",
+        "This is a server-side setting, but will probably cause problems if the client does not have the same value."
+    })
+    @RequiresMcRestart
+    public static boolean disableEmptiness = false;
     
     static {
         // vanilla
@@ -282,19 +298,20 @@ public final class TAConfigHolder {
         TAConfig.voidBootsSneakReduction.setValue(voidBootsSneakReduction, side);
 
         TAConfig.opWardOverride.setValue(opWardOverride, side);
-        TAConfig.disableWardFocus.setValue(disableWardFocus, side);
+        //TAConfig.disableWardFocus.setValue(disableWardFocus, side);
 
         TAConfig.castedLightSimpleRenderer.setValue(castedLightSimpleRenderer, side);
 
         TAConfig.defaultGauntletColors.setValue(defaultGauntletColors, side);
         TAConfig.defaultVoidBootsColor.setValue(defaultVoidBootsColor, side);
 
-        TAConfig.emptinessDimID.setValue(emptinessDimID, side);
+        //TAConfig.emptinessDimID.setValue(emptinessDimID, side);
         TAConfig.emptinessMoveFactor.setValue(emptinessMoveFactor, side);
         TAConfig.fractureGenChance.setValue(fractureGenChance, side);
-        
-        TAConfig.fractureDimList.setValue(fractureDimList, side);
+        //TAConfig.fractureDimList.setValue(fractureDimList, side);
         TAConfig.fractureLocatorUpdateInterval.setValue(fractureLocatorUpdateInterval, side);
+        TAConfig.fracturesAlwaysTeleport.setValue(fracturesAlwaysTeleport, side);
+        //TAConfig.disableEmptiness.setValue(disableEmptiness, side);
     }
 
     public static void syncLocally() {
@@ -345,9 +362,10 @@ public final class TAConfigHolder {
         TAConfig.emptinessDimID = TAConfigManager.addOption(new ConfigOptionInt(true, emptinessDimID));
         TAConfig.emptinessMoveFactor = TAConfigManager.addOption(new ConfigOptionDouble(true, emptinessMoveFactor));
         TAConfig.fractureGenChance = TAConfigManager.addOption(new ConfigOptionInt(false, fractureGenChance));
-        
         TAConfig.fractureDimList = TAConfigManager.addOption(new ConfigOptionStringToIntMap(false, fractureDimList));
         TAConfig.fractureLocatorUpdateInterval = TAConfigManager.addOption(new ConfigOptionInt(false, fractureLocatorUpdateInterval));
+        TAConfig.fracturesAlwaysTeleport = TAConfigManager.addOption(new ConfigOptionBoolean(false, fracturesAlwaysTeleport));
+        TAConfig.disableEmptiness = TAConfigManager.addOption(new ConfigOptionBoolean(false, disableEmptiness));
     }
 
 }

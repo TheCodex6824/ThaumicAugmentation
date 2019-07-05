@@ -71,7 +71,7 @@ public final class CapabilityHandler {
     
     @SubscribeEvent
     public static void onAttachCapabilitiesChunk(AttachCapabilitiesEvent<Chunk> event) {
-        if (FractureUtils.canWorldHaveFracture(event.getObject().getWorld().provider.getDimension())) {
+        if (!TAConfig.disableEmptiness.getValue() && FractureUtils.canWorldHaveFracture(event.getObject().getWorld().provider.getDimension())) {
             event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture_location"), new SimpleCapabilityProvider<>(
                     new FractureLocation(event.getObject()), CapabilityFractureLocation.FRACTURE_LOCATION));
         }

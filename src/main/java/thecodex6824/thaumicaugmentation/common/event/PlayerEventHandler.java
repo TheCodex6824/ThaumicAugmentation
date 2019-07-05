@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import thaumcraft.api.capabilities.IPlayerKnowledge.EnumResearchFlag;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.item.IArmorReduceFallDamage;
@@ -71,7 +72,7 @@ public final class PlayerEventHandler {
         if (!event.getEntity().getEntityWorld().isRemote && event.getEntity().getEntityWorld().getTotalWorldTime() % 40 == 0 &&
                 event.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getEntity();
-            if (player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && 
+            if (!TAConfig.disableEmptiness.getValue() && player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && 
                     !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
                 ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERVOID");
                 player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void"), true);
