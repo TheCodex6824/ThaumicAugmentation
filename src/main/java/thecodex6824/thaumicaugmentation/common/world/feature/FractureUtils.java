@@ -76,10 +76,6 @@ public final class FractureUtils {
             });
         }
     }
-    
-    public static boolean canWorldHaveFracture(int id) {
-        return id == TADimensions.EMPTINESS.getId() || possibleDims.contains(id);
-    }
 
     public static double movementRatio(World world) {
         return world.provider.getMovementFactor() / TAConfig.emptinessMoveFactor.getValue();

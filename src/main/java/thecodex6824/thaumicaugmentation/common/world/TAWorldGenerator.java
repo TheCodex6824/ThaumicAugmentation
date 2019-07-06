@@ -75,7 +75,7 @@ public final class TAWorldGenerator implements IWorldGenerator {
 
     private static BlockPos getTopValidSpot(World world, int x, int z, boolean allowVoid) {
         BlockPos pos = new BlockPos(x, 0, z);
-        for (int y = world.getActualHeight() - 1; y >= 0; --y) {
+        for (int y = Math.max(world.getActualHeight() - 1, 0); y >= 0; --y) {
             BlockPos check = pos.add(0, y, 0);
             IBlockState state = world.getBlockState(check);
             if (state.getMaterial().blocksMovement() && !state.getBlock().isLeaves(state, world, check) &&
@@ -84,7 +84,7 @@ public final class TAWorldGenerator implements IWorldGenerator {
                 return pos.add(0, y + 2, 0);
         }
 
-        return allowVoid ? new BlockPos(x, world.provider.getAverageGroundLevel(), z) : null;
+        return allowVoid ? new BlockPos(x, Math.min(world.provider.getAverageGroundLevel(), Math.max(world.getActualHeight() - 1, 0)), z) : null;
     }
 
     public static void generateFractures(Random random, int chunkX, int chunkZ, World world) {

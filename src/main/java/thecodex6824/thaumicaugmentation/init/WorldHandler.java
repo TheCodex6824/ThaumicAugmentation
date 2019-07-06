@@ -130,7 +130,7 @@ public final class WorldHandler {
     
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
-        if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue() && FractureUtils.canWorldHaveFracture(event.getWorld().provider.getDimension())) {
+        if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue() && FractureUtils.isDimAllowedForLinking(event.getWorld().provider.getDimension())) {
             if (event.getChunk().hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
                 IFractureLocations loc = event.getChunk().getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
                 if (loc.hasFracture())
@@ -141,7 +141,7 @@ public final class WorldHandler {
     
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event) {
-        if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue() && FractureUtils.canWorldHaveFracture(event.getWorld().provider.getDimension())) {
+        if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue() && FractureUtils.isDimAllowedForLinking(event.getWorld().provider.getDimension())) {
             if (event.getChunk().hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
                 IFractureLocations loc = event.getChunk().getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
                 if (loc.hasFracture())
