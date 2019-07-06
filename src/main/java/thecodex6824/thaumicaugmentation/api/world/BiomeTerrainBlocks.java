@@ -29,6 +29,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
 
+/**
+ * Stores blocks that are associated with the surfaces of biomes. Used by dimensional
+ * fractures to generate an area around them corresponding to the area they lead to.
+ * @author TheCodex6824
+ */
 public final class BiomeTerrainBlocks {
 
     private BiomeTerrainBlocks() {}

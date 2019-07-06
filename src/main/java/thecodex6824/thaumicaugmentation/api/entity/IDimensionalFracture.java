@@ -50,7 +50,7 @@ public interface IDimensionalFracture {
     /**
      * Returns this fracture's linked dimension. This may not be a valid dimension, as
      * the fracture will not attempt to validate the dimension until it attempts to teleport something.
-     * @return
+     * @return The dimension ID of the linked dimension
      */
     public int getLinkedDimension();
     

@@ -48,7 +48,7 @@ public class TestWardStorage {
         WardStorageServer storage = new WardStorageServer(manager);
         
         UUID[] players = new UUID[numPlayers + 1];
-        players[0] = IWardStorageServer.EMPTY_UUID;
+        players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
             players[i] = UUID.randomUUID();
         
@@ -62,7 +62,7 @@ public class TestWardStorage {
         }
         
         for (Map.Entry<BlockPos, UUID> entry : data.entrySet()) {
-            if (!entry.getValue().equals(IWardStorageServer.EMPTY_UUID))
+            if (!entry.getValue().equals(IWardStorageServer.NIL_UUID))
                 storage.setWard(entry.getKey(), entry.getValue());
             else
                 storage.clearWard(entry.getKey());
@@ -119,7 +119,7 @@ public class TestWardStorage {
         WardStorageServer storage = new WardStorageServer(new StorageManager2Bits());
         
         UUID[] players = new UUID[123];
-        players[0] = IWardStorageServer.EMPTY_UUID;
+        players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
             players[i] = UUID.randomUUID();
         
@@ -133,7 +133,7 @@ public class TestWardStorage {
         }
         
         for (Map.Entry<BlockPos, UUID> entry : data.entrySet()) {
-            if (!entry.getValue().equals(IWardStorageServer.EMPTY_UUID))
+            if (!entry.getValue().equals(IWardStorageServer.NIL_UUID))
                 storage.setWard(entry.getKey(), entry.getValue());
             else
                 storage.clearWard(entry.getKey());
@@ -156,7 +156,7 @@ public class TestWardStorage {
         WardStorageServer storage = new WardStorageServer(new StorageManagerByte());
         
         UUID[] players = new UUID[13];
-        players[0] = IWardStorageServer.EMPTY_UUID;
+        players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
             players[i] = UUID.randomUUID();
         
@@ -170,7 +170,7 @@ public class TestWardStorage {
         }
         
         for (Map.Entry<BlockPos, UUID> entry : data.entrySet()) {
-            if (!entry.getValue().equals(IWardStorageServer.EMPTY_UUID))
+            if (!entry.getValue().equals(IWardStorageServer.NIL_UUID))
                 storage.setWard(entry.getKey(), entry.getValue());
             else
                 storage.clearWard(entry.getKey());

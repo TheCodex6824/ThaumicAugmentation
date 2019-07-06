@@ -21,24 +21,29 @@
 package thecodex6824.thaumicaugmentation.api.world.capability;
 
 import java.lang.ref.WeakReference;
+import java.util.Collection;
+import java.util.HashSet;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.util.Constants.NBT;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
-public class FractureLocation implements IFractureLocation {
+/**
+ * Default implementation for {@link IFractureLocations}.
+ * @author TheCodex6824
+ */
+public class FractureLocations implements IFractureLocations {
 
-    private boolean hasFracture;
-    private BlockPos position;
+    private HashSet<BlockPos> positions;
     private WeakReference<Chunk> chunk;
     
-    public FractureLocation() {
-        hasFracture = false;
-        position = new BlockPos(0, 0, 0);
+    public FractureLocations() {
+        positions = new HashSet<>();
     }
     
-    public FractureLocation(Chunk c) {
+    public FractureLocations(Chunk c) {
         this();
         chunk = new WeakReference<>(c);
     }
@@ -50,47 +55,55 @@ public class FractureLocation implements IFractureLocation {
     
     @Override
     public boolean hasFracture() {
-        return hasFracture;
+        return !positions.isEmpty();
     }
     
     @Override
-    public void setHasFracture(boolean fracture) {
-        hasFracture = fracture;
+    public Collection<BlockPos> getFractureLocations() {
+        return positions;
+    }
+    
+    @Override
+    public void addFractureLocation(BlockPos pos) {
+        positions.add(pos.toImmutable());
         if (chunk != null && chunk.get() != null)
             chunk.get().markDirty();
     }
     
     @Override
-    public BlockPos getFractureLocation() {
-        return position;
-    }
-    
-    @Override
-    public void setFractureLocation(BlockPos pos) {
-        position = pos.toImmutable();
+    public void removeFractureLocation(BlockPos pos) {
+        positions.remove(pos.toImmutable());
         if (chunk != null && chunk.get() != null)
             chunk.get().markDirty();
     }
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        hasFracture = nbt.getBoolean("hasFracture");
-        if (hasFracture) {
-            int[] coord = nbt.getIntArray("fracturePos");
-            if (coord.length == 3)
-                position = new BlockPos(coord[0], coord[1], coord[2]);
+        for (int i = 0; i < Integer.MAX_VALUE; ++i) {
+            String str = Integer.toString(i);
+            if (nbt.hasKey(str, NBT.TAG_COMPOUND)) {
+                int[] coord = nbt.getCompoundTag(str).getIntArray("pos");
+                if (coord.length == 3)
+                    positions.add(new BlockPos(coord[0], coord[1], coord[2]));
+                else {
+                    ThaumicAugmentation.getLogger().warn("A CapabilityFractureLocation instance contained invalid position data!");
+                    break;
+                }
+            }
             else
-                ThaumicAugmentation.getLogger().warn("A CapabilityFractureLocation instance contained invalid position data!");
+                break;
         }
-        
     }
     
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setBoolean("hasFracture", hasFracture);
-        if (hasFracture)
-            tag.setIntArray("fracturePos", new int[] {position.getX(), position.getY(), position.getZ()});
+        BlockPos[] arr = positions.toArray(new BlockPos[positions.size()]);
+        for (int i = 0; i < arr.length; ++i) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setIntArray("pos", new int[] {arr[i].getX(), arr[i].getY(), arr[i].getZ()});
+            tag.setTag(Integer.toString(i), nbt);
+        }
         
         return tag;
     }

@@ -27,6 +27,7 @@ import thaumcraft.api.casters.FocusPackage;
 
 /**
  * Utility methods for working with Thaumcraft foci.
+ * @author TheCodex6824
  */
 public final class FocusUtils {
 

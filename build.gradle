@@ -91,9 +91,15 @@ task apiJar(type: Jar) {
 	include 'thecodex6824/thaumicaugmentation/api/**'
 }
 
+task sourcesJar(type: Jar) {
+    from sourceSets.main.java
+    classifier = 'sources'
+}
+
 artifacts {
 	archives apiJar
 	archives javadocJar
+	archives sourcesJar
 }
 
 test {

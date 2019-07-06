@@ -20,6 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.api.world;
 
+/**
+ * Interface for biomes that should have their spawn lists purged during postInit.
+ * This will remove spwans added in by other mods.
+ * @author TheCodex6824
+ */
 public interface IPurgeBiomeSpawns {
 
     public void purgeSpawns();

@@ -25,6 +25,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+/**
+ * Default implementation of {@link IWardedInventory}.
+ * @author TheCodex6824
+ */
 public class WardedInventory implements IWardedInventory {
 
     private ItemStackHandler wrapped;

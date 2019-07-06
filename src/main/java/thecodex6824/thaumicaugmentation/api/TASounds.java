@@ -38,13 +38,14 @@ public final class TASounds {
     
     public static final SoundEvent EMPTINESS_AMBIENCE = create("e_ambience");
     public static final SoundEvent EMPTINESS_MUSIC = create("e_music");
+    public static final SoundEvent RIFT_ENERGY_ZAP = create("rift_energy_zap");
     
     /**
      * Returns all of the sounds in the mod.
      * @return All the sounds
      */
     public static SoundEvent[] getAllSounds() {
-        return new SoundEvent[] {EMPTINESS_AMBIENCE, EMPTINESS_MUSIC};
+        return new SoundEvent[] {EMPTINESS_AMBIENCE, EMPTINESS_MUSIC, RIFT_ENERGY_ZAP};
     }
     
 }

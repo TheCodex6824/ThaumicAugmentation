@@ -33,8 +33,8 @@ import thecodex6824.thaumicaugmentation.api.energy.CapabilityRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.WardStorageClient;
 import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
-import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocation;
-import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocation;
+import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocations;
+import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
 import thecodex6824.thaumicaugmentation.common.capability.RiftEnergyStorageFluxRiftImpl;
 import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityAugmentInit;
@@ -73,7 +73,7 @@ public final class CapabilityHandler {
     public static void onAttachCapabilitiesChunk(AttachCapabilitiesEvent<Chunk> event) {
         if (!TAConfig.disableEmptiness.getValue() && FractureUtils.canWorldHaveFracture(event.getObject().getWorld().provider.getDimension())) {
             event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture_location"), new SimpleCapabilityProvider<>(
-                    new FractureLocation(event.getObject()), CapabilityFractureLocation.FRACTURE_LOCATION));
+                    new FractureLocations(event.getObject()), CapabilityFractureLocations.FRACTURE_LOCATIONS));
         }
         
         if (!TAConfig.disableWardFocus.getValue()) {

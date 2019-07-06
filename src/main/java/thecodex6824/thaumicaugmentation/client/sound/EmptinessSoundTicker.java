@@ -34,7 +34,7 @@ import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 
 public class EmptinessSoundTicker implements ITickable {
 
-    private static ISound MUSIC = new PositionedSoundRecord(TASounds.EMPTINESS_MUSIC.getSoundName(), SoundCategory.MUSIC, 1.0F, 1.0F,
+    private static ISound LOOP = new PositionedSoundRecord(TASounds.EMPTINESS_MUSIC.getSoundName(), SoundCategory.WEATHER, 1.0F, 1.0F,
             true, 0, AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
     private static ISound AMBIENCE = new PositionedSoundRecord(TASounds.EMPTINESS_AMBIENCE.getSoundName(), SoundCategory.AMBIENT, 1.0F, 1.0F,
             false, 0, AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
@@ -54,7 +54,7 @@ public class EmptinessSoundTicker implements ITickable {
     }
 
     private void playMusic() {
-        mc.getSoundHandler().playSound(MUSIC);
+        mc.getSoundHandler().playSound(LOOP);
         playingMusic = true;
     }
     
@@ -68,12 +68,12 @@ public class EmptinessSoundTicker implements ITickable {
     @Override
     public void update() {
         if (mc.world == null && playingMusic) {
-            mc.getSoundHandler().stopSound(MUSIC);
+            mc.getSoundHandler().stopSound(LOOP);
             playingMusic = false;
         }
         else if (mc.world != null) {
             if (mc.world.provider.getDimension() != TADimensions.EMPTINESS.getId() && playingMusic) {
-                mc.getSoundHandler().stopSound(MUSIC);
+                mc.getSoundHandler().stopSound(LOOP);
                 playingMusic = false;
             }
             else if (mc.world.provider.getDimension() == TADimensions.EMPTINESS.getId()) {

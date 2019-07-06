@@ -41,6 +41,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import thaumcraft.common.entities.monster.EntityEldritchGuardian;
 import thaumcraft.common.entities.projectile.EntityFocusCloud;
+import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
@@ -198,6 +199,9 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                 if (!entity.isDead && !(entity instanceof EntityFocusCloud) && !(entity instanceof EntityAreaEffectCloud))
                     onCollide(entity);
             }
+            
+            if (!isDead && ticksExisted % 300 == 0)
+                playSound(SoundsTC.evilportal, 0.1F + rand.nextFloat() / 5.0F, 0.75F + rand.nextFloat() / 2.0F);
         }
     }
     

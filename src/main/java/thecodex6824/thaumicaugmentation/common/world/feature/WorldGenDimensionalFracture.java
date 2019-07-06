@@ -34,8 +34,8 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks.TerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
-import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocation;
-import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocation;
+import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocations;
+import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.util.FractureLocatorSearchManager;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
@@ -96,10 +96,9 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                     fracture.setLinkedPosition(scaled);
                     world.spawnEntity(fracture);
 
-                    if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null)) {
-                        IFractureLocation loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null);
-                        loc.setHasFracture(true);
-                        loc.setFractureLocation(placeAt);
+                    if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
+                        IFractureLocations loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
+                        loc.addFractureLocation(placeAt);
                         
                         // onLoad in Chunk is called before populate, so this catches new fractures
                         FractureLocatorSearchManager.addFractureLocation(world, placeAt);
@@ -123,10 +122,9 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                     fracture.setLinkedPosition(scaled);
                     world.spawnEntity(fracture);
 
-                    if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null)) {
-                        IFractureLocation loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocation.FRACTURE_LOCATION, null);
-                        loc.setHasFracture(true);
-                        loc.setFractureLocation(placeAt);
+                    if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
+                        IFractureLocations loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
+                        loc.addFractureLocation(placeAt);
                         FractureLocatorSearchManager.addFractureLocation(world, placeAt);
                     }
                     

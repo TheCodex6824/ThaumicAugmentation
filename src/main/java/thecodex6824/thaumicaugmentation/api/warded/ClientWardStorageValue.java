@@ -22,6 +22,12 @@ package thecodex6824.thaumicaugmentation.api.warded;
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 
+/**
+ * Holds the possible values for a block's ward state for the client side.
+ * An enum instead of UUID is used because the client should not know who exactly
+ * owns a ward if it's not them - just that it is warded.
+ * @author TheCodex6824
+ */
 public enum ClientWardStorageValue {
     
     EMPTY((byte) 0),

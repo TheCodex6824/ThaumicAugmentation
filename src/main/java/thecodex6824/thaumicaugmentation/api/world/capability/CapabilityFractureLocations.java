@@ -23,11 +23,15 @@ package thecodex6824.thaumicaugmentation.api.world.capability;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
-public final class CapabilityFractureLocation {
+/**
+ * Holds an instance of the capability for {@link IFractureLocations}.
+ * @author TheCodex6824
+ */
+public final class CapabilityFractureLocations {
 
-    private CapabilityFractureLocation() {}
+    private CapabilityFractureLocations() {}
     
-    @CapabilityInject(IFractureLocation.class)
-    public static final Capability<IFractureLocation> FRACTURE_LOCATION = null;
+    @CapabilityInject(IFractureLocations.class)
+    public static final Capability<IFractureLocations> FRACTURE_LOCATIONS = null;
     
 }

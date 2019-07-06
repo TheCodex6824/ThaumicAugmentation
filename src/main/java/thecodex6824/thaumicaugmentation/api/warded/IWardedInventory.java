@@ -25,6 +25,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 
+/**
+ * Inventory manager for warded inventories. The API is very similar to IItemHandler,
+ * but it's a separate interface so that other things that are accessing IItemHandler capabilities
+ * don't access warded inventories.
+ * @author TheCodex6824
+ */
 public interface IWardedInventory extends INBTSerializable<NBTTagCompound> {
     
     public ItemStack extractItem(int slot, int amount, boolean simulate);

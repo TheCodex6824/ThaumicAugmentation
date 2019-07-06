@@ -62,6 +62,7 @@ thaumicaugmentation.text.entered_void=§5You have visited the Void.
 
 thaumicaugmentation.subtitle.spooky=Spooky noises
 thaumicaugmentation.subtitle.spooky_wind=Wind howls
+thaumicaugmentation.subtitle.rift_energy_zap=Impetus zaps
 
 focus.thaumicaugmentation.light.name=Light
 focus.thaumicaugmentation.light.text=Creates light at the target location. This light source will last forever, until it is broken.

@@ -24,6 +24,10 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
+/**
+ * Holds all of the Biomes for Thaumic Augmentation.
+ * @author TheCodex6824
+ */
 @ObjectHolder(value = ThaumicAugmentationAPI.MODID)
 public final class TABiomes {
 

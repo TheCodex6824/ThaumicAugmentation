@@ -20,21 +20,49 @@
 
 package thecodex6824.thaumicaugmentation.api.world.capability;
 
+import java.util.Collection;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public interface IFractureLocation extends INBTSerializable<NBTTagCompound> {
+/**
+ * Interface that marks an area as having a fracture in it.
+ * @author TheCodex6824
+ */
+public interface IFractureLocations extends INBTSerializable<NBTTagCompound> {
 
+    /**
+     * Sets the chunk the fracture(s) are located in.
+     * @param c The new chunk
+     */
     public void setChunk(Chunk c);
     
-    public void setHasFracture(boolean fracture);
-    
+    /**
+     * Returns if this chunk has a fracture in it.
+     * @return If this chunk has a fracture in it
+     */
     public boolean hasFracture();
     
-    public void setFractureLocation(BlockPos pos);
+    /**
+     * Adds a stored location for a fracture in this chunk. This
+     * does not actually move any fractures, it only stores the location.
+     * @param pos The position of the fracture in this chunk
+     */
+    public void addFractureLocation(BlockPos pos);
     
-    public BlockPos getFractureLocation();
+    /**
+     * Removes a stored location of a fracture in this chunk. This
+     * does not actually move any fractures, it only stores the location.
+     * @param pos The position of the fracture in this chunk
+     */
+    public void removeFractureLocation(BlockPos pos);
+    
+    /**
+     * Returns the locations of the fracture(s) in this chunk.
+     * @return The location of the fractures
+     */
+    public Collection<BlockPos> getFractureLocations();
     
 }

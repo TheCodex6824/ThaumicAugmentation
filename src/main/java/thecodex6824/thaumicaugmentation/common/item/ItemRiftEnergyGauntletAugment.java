@@ -38,6 +38,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
 import thecodex6824.thaumicaugmentation.api.energy.CapabilityRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
@@ -105,6 +106,8 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
                         if (stackStorage.canExtract() && stackStorage.extractEnergy(75, true) == 75) {
                             stackStorage.extractEnergy(75, false);
                             fracture.open();
+                            target.playSound(TASounds.RIFT_ENERGY_ZAP, 0.5F + target.getEntityWorld().rand.nextFloat() / 5.0F,
+                                    0.75F + target.getEntityWorld().rand.nextFloat() / 2.0F);
                             TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
                                     user.posX, user.posY + user.height / 2, user.posZ, target.posX, target.posY + target.height / 2, target.posZ, 0.32F), 
                                     new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));

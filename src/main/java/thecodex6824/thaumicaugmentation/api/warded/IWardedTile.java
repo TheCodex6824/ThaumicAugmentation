@@ -28,7 +28,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 /**
  * Interface for warded tile entities.
  * @author TheCodex6824
- *
  */
 public interface IWardedTile extends INBTSerializable<NBTTagCompound> {
 

@@ -35,6 +35,10 @@ import net.minecraftforge.common.MinecraftForge;
 import scala.actors.threadpool.Arrays;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 
+/**
+ * Default implementation of {@link IWardStorage} for servers.
+ * @author TheCodex6824
+ */
 public class WardStorageServer implements IWardStorageServer {
 
     @VisibleForTesting
@@ -109,7 +113,7 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                return EMPTY_UUID;
+                return NIL_UUID;
             }
             
             @Override
@@ -137,7 +141,7 @@ public class WardStorageServer implements IWardStorageServer {
             
             public StorageManager1Bit() {
                 data = new byte[CHUNK_DATA_SIZE / 8];
-                owner = EMPTY_UUID;
+                owner = NIL_UUID;
             }
             
             public StorageManager1Bit(IWardStorageManager other) {
@@ -169,7 +173,7 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void addOwner(UUID owner) {
-                if (this.owner.equals(EMPTY_UUID))
+                if (this.owner.equals(NIL_UUID))
                     this.owner = owner;
                 else
                     throw new IndexOutOfBoundsException("Attempted to exceed owner storage capacity");
@@ -183,7 +187,7 @@ public class WardStorageServer implements IWardStorageServer {
             @Override
             public void removeOwner(UUID owner) {
                 if (this.owner.equals(owner))
-                    this.owner = EMPTY_UUID;
+                    this.owner = NIL_UUID;
                 
                 Arrays.fill(data, (byte) 0);
             }
@@ -196,13 +200,13 @@ public class WardStorageServer implements IWardStorageServer {
             @Override
             public UUID getOwner(BlockPos pos) {
                 int index = (pos.getX() & 15) + pos.getY() * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
-                return (data[index / 8] & (1 << (index % 8))) != 0 ? owner : EMPTY_UUID;
+                return (data[index / 8] & (1 << (index % 8))) != 0 ? owner : NIL_UUID;
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
                 int index = (pos.getX() & 15) + pos.getY() * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
-                data[index / 8] = owner.equals(this.owner) && !owner.equals(EMPTY_UUID) ? (byte) (data[index / 8] | (1 << (index % 8))) : 
+                data[index / 8] = owner.equals(this.owner) && !owner.equals(NIL_UUID) ? (byte) (data[index / 8] | (1 << (index % 8))) : 
                     (byte) (data[index / 8] & ~(1 << (index % 8)));
             }
             
@@ -240,7 +244,7 @@ public class WardStorageServer implements IWardStorageServer {
                 owners = new UUID[getMaxAllowedOwners()];
                 reverseMap = new Object2ByteOpenHashMap<>();
                 for (int i = 0; i < owners.length; ++i)
-                    owners[i] = EMPTY_UUID;
+                    owners[i] = NIL_UUID;
             }
             
             public StorageManager2Bits(IWardStorageManager other) {
@@ -277,7 +281,7 @@ public class WardStorageServer implements IWardStorageServer {
             @Override
             public void addOwner(UUID owner) {
                 for (int i = 0; i < owners.length; ++i) {
-                    if (owners[i].equals(EMPTY_UUID)) {
+                    if (owners[i].equals(NIL_UUID)) {
                         owners[i] = owner;
                         reverseMap.put(owner, (byte) i);
                         return;
@@ -294,7 +298,7 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void removeOwner(UUID owner) {
-                owners[reverseMap.getByte(owner)] = EMPTY_UUID;
+                owners[reverseMap.getByte(owner)] = NIL_UUID;
                 reverseMap.removeByte(owner);
             }
             
@@ -307,13 +311,13 @@ public class WardStorageServer implements IWardStorageServer {
             public UUID getOwner(BlockPos pos) {
                 int index = (pos.getX() & 15) + pos.getY() * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = ((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2);
-                return result == 0 ? EMPTY_UUID : owners[result - 1];
+                return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
                 int index = (pos.getX() & 15) + pos.getY() * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
-                int toSet = !owner.equals(EMPTY_UUID) ? reverseMap.getByte(owner) + 1 : 0;
+                int toSet = !owner.equals(NIL_UUID) ? reverseMap.getByte(owner) + 1 : 0;
                 
                 data[index / 4] = (toSet & 1) != 0 ? (byte) (data[index / 4] | (1 << (index % 4 * 2))) : 
                     (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
@@ -331,7 +335,7 @@ public class WardStorageServer implements IWardStorageServer {
                 NBTTagCompound tag = new NBTTagCompound();
                 int ownerCount = 0;
                 for (int i = 0; i < owners.length; ++i) {
-                    if (!owners[i].equals(EMPTY_UUID)) {
+                    if (!owners[i].equals(NIL_UUID)) {
                         tag.setUniqueId(Integer.toString(i), owners[i]);
                         ++ownerCount;
                     }
@@ -369,7 +373,7 @@ public class WardStorageServer implements IWardStorageServer {
                 owners = new UUID[getMaxAllowedOwners()];
                 reverseMap = new Object2ByteOpenHashMap<>();
                 for (int i = 0; i < owners.length; ++i)
-                    owners[i] = EMPTY_UUID;
+                    owners[i] = NIL_UUID;
             }
             
             public StorageManager4Bits(IWardStorageManager other) {
@@ -406,7 +410,7 @@ public class WardStorageServer implements IWardStorageServer {
             @Override
             public void addOwner(UUID owner) {
                 for (int i = 0; i < owners.length; ++i) {
-                    if (owners[i].equals(EMPTY_UUID)) {
+                    if (owners[i].equals(NIL_UUID)) {
                         owners[i] = owner;
                         reverseMap.put(owner, (byte) i);
                         return;
@@ -423,7 +427,7 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void removeOwner(UUID owner) {
-                owners[reverseMap.getByte(owner)] = EMPTY_UUID;
+                owners[reverseMap.getByte(owner)] = NIL_UUID;
                 reverseMap.removeByte(owner);
             }
             
@@ -436,13 +440,13 @@ public class WardStorageServer implements IWardStorageServer {
             public UUID getOwner(BlockPos pos) {
                 int index = (pos.getX() & 15) + pos.getY() * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = ((data[index / 2] & (15 << (index % 2 * 4)))) >>> (index % 2 * 4);
-                return result == 0 ? EMPTY_UUID : owners[result - 1];
+                return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
                 int index = (pos.getX() & 15) + pos.getY() * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
-                int toSet = !owner.equals(EMPTY_UUID) ? reverseMap.getByte(owner) + 1 : 0;
+                int toSet = !owner.equals(NIL_UUID) ? reverseMap.getByte(owner) + 1 : 0;
                 
                 data[index / 2] = (toSet & 1) != 0 ? (byte) (data[index / 2] | (1 << (index % 2 * 4))) : 
                     (byte) (data[index / 2] & ~(1 << (index % 2 * 4)));
@@ -464,7 +468,7 @@ public class WardStorageServer implements IWardStorageServer {
                 NBTTagCompound tag = new NBTTagCompound();
                 int ownerCount = 0;
                 for (int i = 0; i < owners.length; ++i) {
-                    if (!owners[i].equals(EMPTY_UUID)) {
+                    if (!owners[i].equals(NIL_UUID)) {
                         tag.setUniqueId(Integer.toString(i), owners[i]);
                         ++ownerCount;
                     }
@@ -502,7 +506,7 @@ public class WardStorageServer implements IWardStorageServer {
                 owners = new UUID[getMaxAllowedOwners()];
                 reverseMap = new Object2ByteOpenHashMap<>();
                 for (int i = 0; i < owners.length; ++i)
-                    owners[i] = EMPTY_UUID;
+                    owners[i] = NIL_UUID;
             }
             
             public StorageManagerByte(IWardStorageManager other) {
@@ -539,7 +543,7 @@ public class WardStorageServer implements IWardStorageServer {
             @Override
             public void addOwner(UUID owner) {
                 for (int i = 0; i < owners.length; ++i) {
-                    if (owners[i].equals(EMPTY_UUID)) {
+                    if (owners[i].equals(NIL_UUID)) {
                         owners[i] = owner;
                         reverseMap.put(owner, (byte) i);
                         return;
@@ -556,7 +560,7 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void removeOwner(UUID owner) {
-                owners[reverseMap.getByte(owner)] = EMPTY_UUID;
+                owners[reverseMap.getByte(owner)] = NIL_UUID;
                 reverseMap.removeByte(owner);
             }
             
@@ -569,13 +573,13 @@ public class WardStorageServer implements IWardStorageServer {
             public UUID getOwner(BlockPos pos) {
                 int index = (pos.getX() & 15) + pos.getY() * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = data[index] + 128;
-                return result == 0 ? EMPTY_UUID : owners[result - 1];
+                return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
                 int index = (pos.getX() & 15) + pos.getY() * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
-                data[index] = (byte) ((!owner.equals(EMPTY_UUID) ? (byte) (reverseMap.getByte(owner) + 1) : 0) - 128);
+                data[index] = (byte) ((!owner.equals(NIL_UUID) ? (byte) (reverseMap.getByte(owner) + 1) : 0) - 128);
             }
             
             @Override
@@ -588,7 +592,7 @@ public class WardStorageServer implements IWardStorageServer {
                 NBTTagCompound tag = new NBTTagCompound();
                 int ownerCount = 0;
                 for (int i = 0; i < owners.length; ++i) {
-                    if (!owners[i].equals(EMPTY_UUID)) {
+                    if (!owners[i].equals(NIL_UUID)) {
                         tag.setUniqueId(Integer.toString(i), owners[i]);
                         ++ownerCount;
                     }
@@ -626,7 +630,7 @@ public class WardStorageServer implements IWardStorageServer {
                 owners = new UUID[getMaxAllowedOwners()];
                 reverseMap = new Object2ShortOpenHashMap<>();
                 for (int i = 0; i < owners.length; ++i)
-                    owners[i] = EMPTY_UUID;
+                    owners[i] = NIL_UUID;
             }
             
             public StorageManagerShort(IWardStorageManager other) {
@@ -663,7 +667,7 @@ public class WardStorageServer implements IWardStorageServer {
             @Override
             public void addOwner(UUID owner) {
                 for (int i = 0; i < owners.length; ++i) {
-                    if (owners[i].equals(EMPTY_UUID)) {
+                    if (owners[i].equals(NIL_UUID)) {
                         owners[i] = owner;
                         reverseMap.put(owner, (short) i);
                         return;
@@ -680,7 +684,7 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void removeOwner(UUID owner) {
-                owners[reverseMap.getShort(owner)] = EMPTY_UUID;
+                owners[reverseMap.getShort(owner)] = NIL_UUID;
                 reverseMap.removeShort(owner);
             }
             
@@ -693,13 +697,13 @@ public class WardStorageServer implements IWardStorageServer {
             public UUID getOwner(BlockPos pos) {
                 int index = (pos.getX() & 15) + pos.getY() * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = data[index] + 32768;
-                return result == 0 ? EMPTY_UUID : owners[result - 1];
+                return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
                 int index = (pos.getX() & 15) + pos.getY() * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
-                data[index] = (short) ((!owner.equals(EMPTY_UUID) ? (reverseMap.getShort(owner) + 1) : 0) - 32768);
+                data[index] = (short) ((!owner.equals(NIL_UUID) ? (reverseMap.getShort(owner) + 1) : 0) - 32768);
             }
             
             @Override
@@ -722,7 +726,7 @@ public class WardStorageServer implements IWardStorageServer {
                 NBTTagCompound tag = new NBTTagCompound();
                 int ownerCount = 0;
                 for (int i = 0; i < owners.length; ++i) {
-                    if (!owners[i].equals(EMPTY_UUID)) {
+                    if (!owners[i].equals(NIL_UUID)) {
                         tag.setUniqueId(Integer.toString(i), owners[i]);
                         ++ownerCount;
                     }
@@ -785,12 +789,12 @@ public class WardStorageServer implements IWardStorageServer {
     
     @Override
     public boolean hasWard(BlockPos pos) {
-        return !getWard(pos).equals(EMPTY_UUID);
+        return !getWard(pos).equals(NIL_UUID);
     }
     
     @VisibleForTesting
     void clearWard(BlockPos pos) {
-        manager.setOwner(pos, EMPTY_UUID);
+        manager.setOwner(pos, NIL_UUID);
     }
     
     @Override
@@ -798,7 +802,7 @@ public class WardStorageServer implements IWardStorageServer {
         BlockWardEvent.DewardedServer event = new BlockWardEvent.DewardedServer(syncTo, pos);
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.isCanceled()) {
-            manager.setOwner(pos, EMPTY_UUID);
+            manager.setOwner(pos, NIL_UUID);
             WardSyncManager.markPosForClear(syncTo, pos);
         }
     }
@@ -873,7 +877,7 @@ public class WardStorageServer implements IWardStorageServer {
                         UUID owner = manager.getOwner(pos);
                         if (owner.equals(player))
                             toSet = 1;
-                        else if (!owner.equals(IWardStorageServer.EMPTY_UUID))
+                        else if (!owner.equals(IWardStorageServer.NIL_UUID))
                             toSet = 2;
                         
                         int index = (pos.getX() & 15) + pos.getY() * StorageManagers.CHUNK_X_SIZE + (pos.getZ() & 15) * 

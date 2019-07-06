@@ -25,27 +25,27 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocation;
-import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocation;
+import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
+import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
 
 public final class CapabilityFractureLocationInit {
 
     private CapabilityFractureLocationInit() {}
     
     public static void init() {
-        CapabilityManager.INSTANCE.register(IFractureLocation.class, new Capability.IStorage<IFractureLocation>() {
+        CapabilityManager.INSTANCE.register(IFractureLocations.class, new Capability.IStorage<IFractureLocations>() {
             
             @Override
-            public void readNBT(Capability<IFractureLocation> capability, IFractureLocation instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<IFractureLocations> capability, IFractureLocations instance, EnumFacing side, NBTBase nbt) {
                 instance.deserializeNBT((NBTTagCompound) nbt);
             }
             
             @Override
-            public NBTBase writeNBT(Capability<IFractureLocation> capability, IFractureLocation instance, EnumFacing side) {
+            public NBTBase writeNBT(Capability<IFractureLocations> capability, IFractureLocations instance, EnumFacing side) {
                 return instance.serializeNBT();
             }
             
-        }, () -> new FractureLocation());
+        }, () -> new FractureLocations());
     }
     
 }

@@ -28,7 +28,7 @@ import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
 
 public class RiftEnergyStorageFluxRiftImpl implements IRiftEnergyStorage {
 
-    protected static final long MAX_ENERGY = 2000;
+    protected static final long MAX_ENERGY = 1000;
     
     private WeakReference<EntityFluxRift> rift;
     
@@ -50,7 +50,7 @@ public class RiftEnergyStorageFluxRiftImpl implements IRiftEnergyStorage {
     public long getEnergyStored() {
         EntityFluxRift r = rift.get();
         if (r != null)
-            return r.getRiftSize() * 10;
+            return r.getRiftSize() * 5;
         
         return 0;
     }
@@ -68,9 +68,9 @@ public class RiftEnergyStorageFluxRiftImpl implements IRiftEnergyStorage {
     public long extractEnergy(long maxToExtract, boolean simulate) {
         EntityFluxRift r = rift.get();
         if (r != null) {
-            long toExtract = Math.min(r.getRiftSize() * 10, Math.min(10, maxToExtract));
+            long toExtract = Math.min(r.getRiftSize() * 5, Math.min(5, maxToExtract));
             if (!simulate) {
-                r.setRiftSize((int) (r.getRiftSize() - toExtract / 10));
+                r.setRiftSize((int) (r.getRiftSize() - toExtract / 5));
                 r.setRiftStability(r.getRiftStability() - 1.0F);
             }
             
@@ -84,9 +84,9 @@ public class RiftEnergyStorageFluxRiftImpl implements IRiftEnergyStorage {
     public long receiveEnergy(long maxToReceive, boolean simulate) {
         EntityFluxRift r = rift.get();
         if (r != null) {
-            long toReceive = Math.min(Math.min(10, maxToReceive), MAX_ENERGY - r.getRiftSize() * 10);
+            long toReceive = Math.min(Math.min(5, maxToReceive), MAX_ENERGY - r.getRiftSize() * 5);
             if (!simulate)
-                r.setRiftSize((int) (r.getRiftSize() + toReceive / 10));
+                r.setRiftSize((int) (r.getRiftSize() + toReceive / 5));
             
             return toReceive;
         }

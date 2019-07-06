@@ -100,7 +100,7 @@ public class ItemFractureLocator extends ItemTABase {
                 Vec3d playerPos = entity.getPositionEyes(partialTicks);
                 double optimalAngle = normalize(Math.atan2(fracture.z + 0.5 - playerPos.z, fracture.x + 0.5 - playerPos.x));
                 double currentYaw = getLookYaw(entity) * Math.PI / 180.0;
-                int factor = (int) ((1.0 - MathHelper.clamp(calcError(currentYaw, optimalAngle), 0.0, 1.0)) * 255);
+                int factor = (int) ((1.0 - MathHelper.clamp(calcError(currentYaw, optimalAngle), 0.0, 0.85)) * 255);
                 return factor | (factor << 8) | (factor << 16);
             }
         }

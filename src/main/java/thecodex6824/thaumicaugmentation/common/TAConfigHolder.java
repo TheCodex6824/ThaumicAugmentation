@@ -159,7 +159,7 @@ public final class TAConfigHolder {
         "The dyed color is multiplied with the color of the texture.",
         "This is a server-side setting."
     })
-    public static int[] defaultGauntletColors = new int[] {0xC881D4, 0x6A3880};
+    public static int[] defaultGauntletColors = new int[] {0x7A68C0, 0x262157};
 
     @Name("DefaultVoidBootsColor")
     @Comment({

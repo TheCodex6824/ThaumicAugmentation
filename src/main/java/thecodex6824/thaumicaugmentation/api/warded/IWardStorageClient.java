@@ -22,12 +22,32 @@ package thecodex6824.thaumicaugmentation.api.warded;
 
 import net.minecraft.util.math.BlockPos;
 
+/**
+ * The ward storage interface for the client side. Clients should not be able
+ * to tell what exact players own wards, so they get limited information from the
+ * server.
+ * @author TheCodex6824
+ */
 public interface IWardStorageClient extends IWardStorage {
 
+    /**
+     * Removes the ward at the given position.
+     * @param pos The position of the block
+     */
     public void clearWard(BlockPos pos);
     
+    /**
+     * Sets the ward at the given position to the given logical ward owner.
+     * @param pos The position of the block
+     * @param id The effective client side owner of the ward
+     */
     public void setWard(BlockPos pos, ClientWardStorageValue id);
     
+    /**
+     * Returns the client side owner of the ward.
+     * @param pos The position of the block
+     * @return The effective client side owner of the ward
+     */
     public ClientWardStorageValue getWard(BlockPos pos);
     
 }

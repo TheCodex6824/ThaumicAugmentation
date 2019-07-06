@@ -30,6 +30,10 @@ import com.google.common.collect.MultimapBuilder;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+/**
+ * Handles syncing ward changes to clients.
+ * @author TheCodex6824
+ */
 public final class WardSyncManager {
 
     private WardSyncManager() {}
@@ -63,7 +67,7 @@ public final class WardSyncManager {
     private static Multimap<DimensionalChunkPos, WardUpdateEntry> entries = MultimapBuilder.hashKeys().arrayListValues(16).build();
     
     public static void markPosForClear(World world, BlockPos pos) {
-        markPosForNewOwner(world, pos, IWardStorageServer.EMPTY_UUID);
+        markPosForNewOwner(world, pos, IWardStorageServer.NIL_UUID);
     }
     
     public static void markPosForNewOwner(World world, BlockPos pos, UUID newOwner) {

@@ -140,7 +140,7 @@ public class WardEventHandler {
                         byte send = 0;
                         if (entry.getValue().update.equals(player.getUniqueID()))
                             send = 1;
-                        else if (!entry.getValue().update.equals(IWardStorageServer.EMPTY_UUID))
+                        else if (!entry.getValue().update.equals(IWardStorageServer.NIL_UUID))
                             send = 2;
                         
                         TANetwork.INSTANCE.sendTo(new PacketWardUpdate(entry.getValue().pos, send), player);

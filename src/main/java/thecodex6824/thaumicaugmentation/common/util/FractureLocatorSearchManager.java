@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.util;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.WeakHashMap;
@@ -78,12 +79,24 @@ public final class FractureLocatorSearchManager {
         if (!locations.containsKey(world.provider.getDimension()))
             locations.put(world.provider.getDimension(), new HashSet<>());
         
-        locations.get(world.provider.getDimension()).add(pos.toImmutable());
+        locations.get(world.provider.getDimension()).add(pos);
     }
     
-    public static void removeFractureLocation(World world, BlockPos pos) {
+    public static void addFractureLocations(World world, Collection<BlockPos> pos) {
+        if (!locations.containsKey(world.provider.getDimension()))
+            locations.put(world.provider.getDimension(), new HashSet<>());
+        
+        locations.get(world.provider.getDimension()).addAll(pos);
+    }
+    
+    public static void removeFractureLocations(World world, BlockPos pos) {
         if (locations.containsKey(world.provider.getDimension()))
             locations.get(world.provider.getDimension()).remove(pos);
+    }
+    
+    public static void removeFractureLocations(World world, Collection<BlockPos> pos) {
+        if (locations.containsKey(world.provider.getDimension()))
+            locations.get(world.provider.getDimension()).removeAll(pos);
     }
     
 }

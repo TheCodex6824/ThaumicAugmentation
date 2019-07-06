@@ -22,6 +22,10 @@ package thecodex6824.thaumicaugmentation.api.world;
 
 import net.minecraft.world.DimensionType;
 
+/**
+ * Holds all of the dimensions for Thaumic Augmentation.
+ * @author TheCodex6824
+ */
 public final class TADimensions {
 
     private TADimensions() {}

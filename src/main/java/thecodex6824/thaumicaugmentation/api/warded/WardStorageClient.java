@@ -26,6 +26,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 
+/**
+ * Default implementation of {@link IWardStorage} for clients.
+ * @author TheCodex6824
+ */
 public class WardStorageClient implements IWardStorageClient {
 
     protected static final int CHUNK_DATA_SIZE = 16 * 256 * 16;
