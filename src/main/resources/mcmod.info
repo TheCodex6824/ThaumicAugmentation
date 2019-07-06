@@ -9,7 +9,7 @@
   "updateUrl": "",
   "authorList": ["TheCodex6824"],
   "credits": "Azanor for all of his work on Thaumcraft, as well as KingLemming and others for maintaining the mod in the future. See contributors.txt for everyone that has contributed to this mod directly.",
-  "logoFile": "assets/thaumicaugmentation/textures/gui/icon.png",
+  "logoFile": "assets/thaumicaugmentation/textures/gui/logo.png",
   "screenshots": [],
   "useDependencyInformation": true,
   "requiredMods": ["thaumcraft"],

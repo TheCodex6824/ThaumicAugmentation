@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -27,45 +27,69 @@ import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
+import thecodex6824.thaumicaugmentation.common.internal.InternalMethodProvider;
+import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperCommon;
+import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
 import thecodex6824.thaumicaugmentation.init.MiscHandler;
-import thecodex6824.thaumicaugmentation.init.RecipeHandler;
 import thecodex6824.thaumicaugmentation.init.ResearchHandler;
+import thecodex6824.thaumicaugmentation.init.WorldHandler;
 
 public class CommonProxy implements ISidedProxy {
 
-	protected static ITARenderHelper renderHelper;
-	
-	@Override
-	public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params) {
-		return null;
-	}
-	
-	@Override
-	public ITARenderHelper getRenderHelper() {
-		if (renderHelper == null)
-			renderHelper = new TARenderHelperCommon();
-		
-		return renderHelper;
-	}
-	
-	@Override
-	public void preInit() {
-		TAConfigHolder.preInit();
-		NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
-	}
-	
-	@Override
-	public void init() {
-		RecipeHandler.init();
-		ResearchHandler.init();
-		MiscHandler.init();
-	}
-	
-	@Override
-	public void postInit() {}
-	
+    protected static ITARenderHelper renderHelper;
+
+    @Override
+    public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params) {
+        return null;
+    }
+
+    @Override
+    public ITARenderHelper getRenderHelper() {
+        if (renderHelper == null)
+            renderHelper = new TARenderHelperCommon();
+
+        return renderHelper;
+    }
+    
+    @Override
+    public void handleParticlePacket(PacketParticleEffect message) {}
+    
+    @Override
+    public void handleFullWardSyncPacket(PacketFullWardSync message) {}
+    
+    @Override
+    public void handleWardUpdatePacket(PacketWardUpdate message) {}
+
+    @Override
+    public void preInit() {
+        TAConfigHolder.preInit();
+        CapabilityHandler.preInit();
+        WorldHandler.preInit();
+        NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
+        TAInternals.setInternalMethodProvider(new InternalMethodProvider());
+        IntegrationHandler.preInit();
+    }
+
+    @Override
+    public void init() {
+        WorldHandler.init();
+        ResearchHandler.init();
+        MiscHandler.init();
+        IntegrationHandler.init();
+    }
+
+    @Override
+    public void postInit() {
+        WorldHandler.postInit();
+        IntegrationHandler.postInit();
+    }
+
 }

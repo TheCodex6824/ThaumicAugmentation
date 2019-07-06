@@ -1,0 +1,67 @@
+{
+    "e_ambience": {
+        "category": "music",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:ambient/e_amb1",
+                "subtitle": "thaumicaugmentation.subtitle.spooky",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:ambient/e_amb2",
+                "subtitle": "thaumicaugmentation.subtitle.spooky",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:ambient/e_amb3",
+                "subtitle": "thaumicaugmentation.subtitle.spooky",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:ambient/e_amb4",
+                "subtitle": "thaumicaugmentation.subtitle.spooky",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:ambient/e_amb5",
+                "subtitle": "thaumicaugmentation.subtitle.spooky",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:ambient/e_amb6",
+                "subtitle": "thaumicaugmentation.subtitle.spooky",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:ambient/e_amb7",
+                "subtitle": "thaumicaugmentation.subtitle.spooky",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:ambient/e_amb8",
+                "subtitle": "thaumicaugmentation.subtitle.spooky",
+                "stream": false
+            }
+        ]
+    },
+    "e_music": {
+        "category": "weather",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:ambient/e_loop",
+                "subtitle": "thaumicaugmentation.subtitle.spooky_wind",
+                "stream": false
+            }
+        ]
+    },
+    "rift_energy_zap": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumcraft:runicshieldcharge",
+                "subtitle": "thaumicaugmentation.subtitle.rift_energy_zap",
+                "stream": false
+            }
+        ]
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "normal": {
+            "model": "thaumicaugmentation:taint_flower"
+        },
+        "inventory": {
+            "model": "thaumicaugmentation:taint_flower",
+            "transform": "forge:default-block"
+        }
+    }
+}

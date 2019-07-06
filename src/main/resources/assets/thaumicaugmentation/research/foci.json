@@ -4,7 +4,7 @@
             "key": "MORE_AUROMANCY",
             "name": "thaumicaugmentation.research.more_auromancy.title",
             "icons": [
-                "focus:focus.thaumicaugmentation.light"
+                "thaumicaugmentation:textures/research/further_auromancy.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
@@ -16,7 +16,7 @@
                 1.5
             ],
             "meta": [
-            	"ROUND"
+                "ROUND"
             ],
             "stages": [
                 {
@@ -50,7 +50,7 @@
                         "THEORY;AUROMANCY;1"
                     ],
                     "required_research": [
-                    	"!lux"
+                        "!lux"
                     ]
                 },
                 {

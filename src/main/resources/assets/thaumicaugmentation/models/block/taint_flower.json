@@ -1,0 +1,6 @@
+{
+    "parent": "thaumcraft:block/taint_growth_2",
+    "textures": {
+        "particle": "thaumcraft:blocks/taint_soil_0"
+    }
+}

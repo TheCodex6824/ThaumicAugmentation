@@ -1,0 +1,99 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "top": "thaumicaugmentation:blocks/void_stone_soil_taint_top_0",
+            "side": "thaumicaugmentation:blocks/void_stone_soil_taint_side_0",
+            "bottom": "thaumicaugmentation:blocks/void_stone_soil_taint_bottom"
+        }
+    },
+    "variants": {
+        "normal": [
+            {
+                "model": "cube_bottom_top",
+                "textures": {
+                    "top": "thaumicaugmentation:blocks/void_stone_soil_taint_top_0",
+                    "side": "thaumicaugmentation:blocks/void_stone_soil_taint_side_0",
+                    "bottom": "thaumicaugmentation:blocks/void_stone_soil_taint_bottom"
+                },
+                "weight": 16
+            },
+            {
+                "model": "cube_bottom_top",
+                "textures": {
+                    "top": "thaumicaugmentation:blocks/void_stone_soil_taint_top_0",
+                    "side": "thaumicaugmentation:blocks/void_stone_soil_taint_side_0",
+                    "bottom": "thaumicaugmentation:blocks/void_stone_soil_taint_bottom"
+                },
+                "weight": 16,
+                "y": 90
+            },
+            {
+                "model": "cube_bottom_top",
+                "textures": {
+                    "top": "thaumicaugmentation:blocks/void_stone_soil_taint_top_0",
+                    "side": "thaumicaugmentation:blocks/void_stone_soil_taint_side_0",
+                    "bottom": "thaumicaugmentation:blocks/void_stone_soil_taint_bottom"
+                },
+                "weight": 16,
+                "y": 90
+            },
+            {
+                "model": "cube_bottom_top",
+                "textures": {
+                    "top": "thaumicaugmentation:blocks/void_stone_soil_taint_top_1",
+                    "side": "thaumicaugmentation:blocks/void_stone_soil_taint_side_1",
+                    "bottom": "thaumicaugmentation:blocks/void_stone_soil_taint_bottom"
+                }
+            },
+            {
+                "model": "cube_bottom_top",
+                "textures": {
+                    "top": "thaumicaugmentation:blocks/void_stone_soil_taint_top_1",
+                    "side": "thaumicaugmentation:blocks/void_stone_soil_taint_side_1",
+                    "bottom": "thaumicaugmentation:blocks/void_stone_soil_taint_bottom"
+                },
+                "y": 90
+            },
+            {
+                "model": "cube_bottom_top",
+                "textures": {
+                    "top": "thaumicaugmentation:blocks/void_stone_soil_taint_top_1",
+                    "side": "thaumicaugmentation:blocks/void_stone_soil_taint_side_1",
+                    "bottom": "thaumicaugmentation:blocks/void_stone_soil_taint_bottom"
+                },
+                "y": 90
+            },
+            {
+                "model": "cube_bottom_top",
+                "textures": {
+                    "top": "thaumicaugmentation:blocks/void_stone_soil_taint_top_2",
+                    "side": "thaumicaugmentation:blocks/void_stone_soil_taint_side_2",
+                    "bottom": "thaumicaugmentation:blocks/void_stone_soil_taint_bottom"
+                }
+            },
+            {
+                "model": "cube_bottom_top",
+                "textures": {
+                    "top": "thaumicaugmentation:blocks/void_stone_soil_taint_top_2",
+                    "side": "thaumicaugmentation:blocks/void_stone_soil_taint_side_2",
+                    "bottom": "thaumicaugmentation:blocks/void_stone_soil_taint_bottom"
+                },
+                "y": 90
+            },
+            {
+                "model": "cube_bottom_top",
+                "textures": {
+                    "top": "thaumicaugmentation:blocks/void_stone_soil_taint_top_2",
+                    "side": "thaumicaugmentation:blocks/void_stone_soil_taint_side_2",
+                    "bottom": "thaumicaugmentation:blocks/void_stone_soil_taint_bottom"
+                },
+                "y": 90
+            }
+        ],
+        "inventory": {
+            "model": "cube_bottom_top",
+            "transform": "forge:default-block"
+        }
+    }
+}

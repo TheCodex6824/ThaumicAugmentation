@@ -1,0 +1,45 @@
+{
+    "parent": "item/generated",
+    "overrides": [
+        {
+            "predicate": {"size": 0.1},
+            "model": "thaumicaugmentation:item/rift_seed_flux_aura_1"
+        },
+        {
+            "predicate": {"size": 0.2},
+            "model": "thaumicaugmentation:item/rift_seed_flux_aura_2"
+        },
+        {
+            "predicate": {"size": 0.3},
+            "model": "thaumicaugmentation:item/rift_seed_flux_aura_3"
+        },
+        {
+            "predicate": {"size": 0.4},
+            "model": "thaumicaugmentation:item/rift_seed_flux_aura_4"
+        },
+        {
+            "predicate": {"size": 0.5},
+            "model": "thaumicaugmentation:item/rift_seed_flux_aura_5"
+        },
+        {
+            "predicate": {"size": 0.6},
+            "model": "thaumicaugmentation:item/rift_seed_flux_aura_6"
+        },
+        {
+            "predicate": {"size": 0.7},
+            "model": "thaumicaugmentation:item/rift_seed_flux_aura_7"
+        },
+        {
+            "predicate": {"size": 0.8},
+            "model": "thaumicaugmentation:item/rift_seed_flux_aura_8"
+        },
+        {
+            "predicate": {"size": 0.9},
+            "model": "thaumicaugmentation:item/rift_seed_flux_aura_9"
+        },
+        {
+            "predicate": {"size": 1.0},
+            "model": "thaumicaugmentation:item/rift_seed_flux_aura_10"
+        }
+    ]
+}

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -27,9 +27,9 @@ import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
 public class ListeningAnimatedTESR<TE extends TileEntity & IAnimatedTile> extends AnimationTESR<TE>{
 
-	@Override
-	public void handleEvents(TE te, float time, Iterable<Event> pastEvents) {
-		te.handleEvents(time, pastEvents);
-	}
-	
+    @Override
+    public void handleEvents(TE te, float time, Iterable<Event> pastEvents) {
+        te.handleEvents(time, pastEvents);
+    }
+
 }

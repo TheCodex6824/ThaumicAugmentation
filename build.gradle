@@ -2,14 +2,15 @@ buildscript {
     repositories {
         jcenter()
         maven { url = "https://files.minecraftforge.net/maven" }
+        maven { url = "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.wynprice.cursemaven:CurseMaven:1.1.0'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
-//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-
+apply plugin: 'com.wynprice.cursemaven'
 
 version = "${mcversion}-${version}"
 group = "thecodex6824.thaumicaugmentation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -21,7 +22,7 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.5.2824"
+    version = "1.12.2-14.23.5.2838"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -39,20 +40,19 @@ minecraft {
     replaceIn 'ThaumicAugmentation.java'
 }
 
-repositories {
-	maven {
-    	name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-}
-
 dependencies {
-    deobfCompile "thaumcraft:Thaumcraft:1.12.2:6.1.BETA26"
+    deobfCompile curse.resolve("thaumcraft", "2629023")
+    deobfCompile curse.resolve("librarianlib", "2725449")
+    deobfCompile curse.resolve("wizardry-mod", "2726334")
     
-    runtime "baubles:Baubles:1.12:1.5.2"
-    runtime "jei:jei_1.12.2:4.15.0.271"
-    runtime "thaumic-jei:ThaumicJEI-1.12.2:1.5.5:23"
-    runtime "hwyla:Hwyla:1.8.26:B41_1.12.2"
+    testCompile "junit:junit:4.12"
+    testCompile "org.hamcrest:hamcrest:2.1"
+    
+    runtime curse.resolve("baubles", "2518667")
+    runtime curse.resolve("shadowfacts-forgelin", "2727070")
+    runtime curse.resolve("jei", "2733488")
+    runtime curse.resolve("thaumic-jei", "2705304")
+    runtime curse.resolve("the-one-probe", "2667280")
 }
 
 processResources {
@@ -75,10 +75,13 @@ processResources {
     }
 }
 
-task javadocJar(type: Jar) {
+javadoc {
+    include 'thecodex6824/thaumicaugmentation/api/**'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
 	from 'build/docs/javadoc'
 	classifier = 'javadoc'
-	include 'thecodex6824/thaumicaugmentation/api/**'
 }
 
 task apiJar(type: Jar) {
@@ -88,7 +91,18 @@ task apiJar(type: Jar) {
 	include 'thecodex6824/thaumicaugmentation/api/**'
 }
 
+task sourcesJar(type: Jar) {
+    from sourceSets.main.java
+    classifier = 'sources'
+}
+
 artifacts {
 	archives apiJar
 	archives javadocJar
+	archives sourcesJar
+}
+
+test {
+    useJUnit()
+    maxHeapSize = '1G'
 }

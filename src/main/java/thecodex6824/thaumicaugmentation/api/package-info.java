@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -27,5 +27,6 @@
  * @author TheCodex6824
  */
 @net.minecraftforge.fml.common.API(owner = ThaumicAugmentationAPI.MODID, provides = ThaumicAugmentationAPI.PROVIDES, 
-	apiVersion = ThaumicAugmentationAPI.API_VERSION)
+    apiVersion = ThaumicAugmentationAPI.API_VERSION)
+@javax.annotation.ParametersAreNonnullByDefault
 package thecodex6824.thaumicaugmentation.api;

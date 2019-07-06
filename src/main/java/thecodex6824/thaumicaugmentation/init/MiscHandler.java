@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,18 +20,34 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import java.util.Collections;
+
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.FocusEngine;
-
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectLight;
+import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWard;
 
-public class MiscHandler {
+public final class MiscHandler {
 
-	public static void init() {
-		FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 
-				Aspect.LIGHT.getColor());
-	}
-	
+    private MiscHandler() {}
+    
+    public static void init() {
+        FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 
+                Aspect.LIGHT.getColor());
+        FocusEngine.registerElement(FocusEffectWard.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/ward.png"),
+                Aspect.PROTECT.getColor());
+        
+        AugmentAPI.addAugmentableItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
+            if (entity instanceof EntityLivingBase)
+                return ((EntityLivingBase) entity).getEquipmentAndArmor();
+            
+            return Collections.<ItemStack>emptyList();
+        });
+    }
+
 }

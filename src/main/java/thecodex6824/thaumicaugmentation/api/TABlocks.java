@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,20 +25,35 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 /**
  * Holds all of Thaumic Augmentation's blocks. The fields will be populated
- * after preInit.
+ * after preInit (during the block registry event).
  * @author TheCodex6824
- * 
  */
 @ObjectHolder(ThaumicAugmentationAPI.MODID)
-public class TABlocks {
-	
-	public static final Block VIS_REGENERATOR = null;
-	public static final Block WARDED_CHEST = null;
-	public static final Block ARCANE_DOOR = null;
-	public static final Block TEMPORARY_LIGHT = null;
-	
-	public static Block[] getAllBlocks() {
-		return new Block[] {VIS_REGENERATOR, WARDED_CHEST, ARCANE_DOOR, TEMPORARY_LIGHT};
-	}
-	
+public final class TABlocks {
+
+    private TABlocks() {}
+    
+    public static final Block VIS_REGENERATOR = null;
+    public static final Block WARDED_CHEST = null;
+    public static final Block ARCANE_DOOR = null;
+    public static final Block ARCANE_DOOR_GREATWOOD = null;
+    public static final Block ARCANE_DOOR_THAUMIUM = null;
+    public static final Block ARCANE_DOOR_SILVERWOOD = null;
+    public static final Block TEMPORARY_LIGHT = null;
+    public static final Block STONE = null;
+    public static final Block ARCANE_TRAPDOOR_WOOD = null;
+    public static final Block ARCANE_TRAPDOOR_METAL = null;
+    public static final Block ARCANE_TRAPDOOR_SILVERWOOD = null;
+    public static final Block TAINT_FLOWER = null;
+
+    /**
+     * Returns all blocks in the mod.
+     * @return All the blocks
+     */
+    public static Block[] getAllBlocks() {
+        return new Block[] {VIS_REGENERATOR, WARDED_CHEST, ARCANE_DOOR, ARCANE_DOOR_GREATWOOD, ARCANE_DOOR_THAUMIUM,
+               ARCANE_DOOR_SILVERWOOD, TEMPORARY_LIGHT, STONE, ARCANE_TRAPDOOR_WOOD, ARCANE_TRAPDOOR_METAL, 
+               ARCANE_TRAPDOOR_SILVERWOOD, TAINT_FLOWER};
+    }
+
 }

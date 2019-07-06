@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -22,33 +22,37 @@ package thecodex6824.thaumicaugmentation.api.config;
 
 import io.netty.buffer.ByteBuf;
 
+/**
+ * Config option class for Integer values.
+ * @author TheCodex6824
+ */
 public class ConfigOptionInt extends ConfigOption<Integer> {
 
-	protected int value;
-	
-	public ConfigOptionInt(boolean enforceServer, Integer defaultValue) {
-		super(enforceServer);
-		value = defaultValue;
-	}
-	
-	@Override
-	public void serialize(ByteBuf buf) {
-		buf.writeInt(value);
-	}
-	
-	@Override
-	public void deserialize(ByteBuf buf) {
-		value = buf.readInt();
-	};
-	
-	@Override
-	public Integer getValue() {
-		return value;
-	}
-	
-	@Override
-	public void setValue(Integer value) {
-		this.value = value;
-	}
-	
+    protected int value;
+
+    public ConfigOptionInt(boolean enforceServer, Integer defaultValue) {
+        super(enforceServer);
+        value = defaultValue;
+    }
+
+    @Override
+    public void serialize(ByteBuf buf) {
+        buf.writeInt(value);
+    }
+
+    @Override
+    public void deserialize(ByteBuf buf) {
+        value = buf.readInt();
+    }
+
+    @Override
+    public Integer getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(Integer value) {
+        this.value = value;
+    }
+
 }

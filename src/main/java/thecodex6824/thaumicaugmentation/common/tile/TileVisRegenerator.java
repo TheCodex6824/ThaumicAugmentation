@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -26,7 +26,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -44,94 +43,95 @@ import thaumcraft.api.aura.AuraHelper;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
-import thecodex6824.thaumicaugmentation.common.network.PacketSpawnParticle;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
 public class TileVisRegenerator extends TileEntity implements ITickable, IAnimatedTile, ICapabilityProvider {
-	
-	private static final int DELAY = 100;
-	
-	protected IAnimationStateMachine asm;
-	protected VariableValue cycleLength;
-	protected VariableValue actionTime;
-	protected boolean lastState = false;
-	
-	public TileVisRegenerator() {
-		super();
-		cycleLength = new VariableValue(1);
-		actionTime = new VariableValue(Float.MIN_VALUE);
-		asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/vis_regenerator.json"), 
-				ImmutableMap.<String, ITimeValue>of("cycle_length", cycleLength, "act_time", actionTime));
-	}
-	
-	private float getAuraOffset() {
-		return Math.max(Math.min((float) Math.pow(2, (-1.0F / 96) * AuraHelper.getAuraBase(world, pos)),
-				AuraHelper.getAuraBase(world, pos) - AuraHelper.getVis(world, pos)) - AuraHelper.getFlux(world, pos), 0);
-	}
-	
-	@Override
-	public void update() {
-		if (!world.isRemote && world.getTotalWorldTime() % DELAY == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) &&
-				AuraHelper.getVis(world, pos) + AuraHelper.getFlux(world, pos) < AuraHelper.getAuraBase(world, pos)) { 
-			
-			if (AuraHelper.getFlux(world, pos) > AuraHelper.getVis(world, pos)) {
-				AuraHelper.polluteAura(world, pos, getAuraOffset(), true);
-			}
-			else {
-				AuraHelper.addVis(world, pos, getAuraOffset());
-			
-				TANetwork.INSTANCE.sendToAllAround(new PacketSpawnParticle(EnumParticleTypes.VILLAGER_HAPPY, 
-						pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, world.rand.nextGaussian(), Math.abs(world.rand.nextGaussian()), world.rand.nextGaussian(), 
-						0), new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 48));
-			}
-		}
-		else if (world.isRemote && world.getTotalWorldTime() % 5 == 0) {
-			float aura = getAuraOffset();
-			cycleLength.setValue(Math.min(1.0F / Math.max(aura, Float.MIN_VALUE), 15));
-			boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
-			if (enabled != lastState) {
-				lastState = enabled;
-				actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
-				asm.transition(lastState ? "starting" : "stopping");
-			}
-		}
-	}
-	
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-		return oldState.getBlock() != newState.getBlock();
-	}
-	
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		return super.writeToNBT(compound);
-	}
-	
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		super.readFromNBT(compound);
-	}
-	
-	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		return capability == CapabilityAnimation.ANIMATION_CAPABILITY || super.hasCapability(capability, facing);
-	}
-	
-	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		return capability == CapabilityAnimation.ANIMATION_CAPABILITY ? CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm) : 
-			super.getCapability(capability, facing);
-	}
-	
-	@Override
-	public void handleEvents(float time, Iterable<Event> pastEvents) {
-		// don't need to worry about these atm
-	}
-	
-	@Override
-	public boolean hasFastRenderer() {
-		return true;
-	}
-	
+
+    private static final int DELAY = 100;
+
+    protected IAnimationStateMachine asm;
+    protected VariableValue cycleLength;
+    protected VariableValue actionTime;
+    protected boolean lastState = false;
+
+    public TileVisRegenerator() {
+        super();
+        cycleLength = new VariableValue(1);
+        actionTime = new VariableValue(Float.MIN_VALUE);
+        asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/vis_regenerator.json"), 
+                ImmutableMap.<String, ITimeValue>of("cycle_length", cycleLength, "act_time", actionTime));
+    }
+
+    private float getAuraOffset() {
+        return Math.max(Math.min((float) Math.pow(2, (-1.0F / 96) * AuraHelper.getAuraBase(world, pos)),
+                AuraHelper.getAuraBase(world, pos) - AuraHelper.getVis(world, pos)) - AuraHelper.getFlux(world, pos), 0);
+    }
+
+    @Override
+    public void update() {
+        if (!world.isRemote && world.getTotalWorldTime() % DELAY == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) &&
+                AuraHelper.getVis(world, pos) + AuraHelper.getFlux(world, pos) < AuraHelper.getAuraBase(world, pos)) { 
+
+            if (AuraHelper.getFlux(world, pos) > AuraHelper.getVis(world, pos)) {
+                AuraHelper.polluteAura(world, pos, getAuraOffset(), true);
+            }
+            else {
+                AuraHelper.addVis(world, pos, getAuraOffset());
+
+                TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VIS_REGENERATOR, 
+                        pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), new TargetPoint(world.provider.getDimension(), 
+                        pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 48));
+            }
+        }
+        else if (world.isRemote && world.getTotalWorldTime() % 5 == 0) {
+            float aura = getAuraOffset();
+            cycleLength.setValue(Math.min(1.0F / Math.max(aura, Float.MIN_VALUE), 15));
+            boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
+            if (enabled != lastState) {
+                lastState = enabled;
+                actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
+                asm.transition(lastState ? "starting" : "stopping");
+            }
+        }
+    }
+
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock();
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        return super.writeToNBT(compound);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return capability == CapabilityAnimation.ANIMATION_CAPABILITY || super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        return capability == CapabilityAnimation.ANIMATION_CAPABILITY ? CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm) : 
+            super.getCapability(capability, facing);
+    }
+
+    @Override
+    public void handleEvents(float time, Iterable<Event> pastEvents) {
+        // don't need to worry about these atm
+    }
+
+    @Override
+    public boolean hasFastRenderer() {
+        return true;
+    }
+
 }

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -22,33 +22,37 @@ package thecodex6824.thaumicaugmentation.api.config;
 
 import io.netty.buffer.ByteBuf;
 
+/**
+ * Config option class for Boolean values.
+ * @author TheCodex6824
+ */
 public class ConfigOptionBoolean extends ConfigOption<Boolean> {
 
-	protected boolean value;
-	
-	public ConfigOptionBoolean(boolean enforceServer, boolean defaultValue) {
-		super(enforceServer);
-		value = defaultValue;
-	}
-	
-	@Override
-	public void serialize(ByteBuf buf) {
-		buf.writeBoolean(value);
-	}
-	
-	@Override
-	public void deserialize(ByteBuf buf) {
-		value = buf.readBoolean();
-	};
-	
-	@Override
-	public Boolean getValue() {
-		return value;
-	}
-	
-	@Override
-	public void setValue(Boolean value) {
-		this.value = value;
-	}
-	
+    protected boolean value;
+
+    public ConfigOptionBoolean(boolean enforceServer, boolean defaultValue) {
+        super(enforceServer);
+        value = defaultValue;
+    }
+
+    @Override
+    public void serialize(ByteBuf buf) {
+        buf.writeBoolean(value);
+    }
+
+    @Override
+    public void deserialize(ByteBuf buf) {
+        value = buf.readBoolean();
+    }
+
+    @Override
+    public Boolean getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(Boolean value) {
+        this.value = value;
+    }
+
 }

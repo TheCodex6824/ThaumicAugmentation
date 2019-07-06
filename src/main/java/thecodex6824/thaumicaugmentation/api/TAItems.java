@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -29,28 +29,37 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  * Holds all of Thaumic Augmentation's items and the creative tab. The fields will be populated
  * after preInit.
  * @author TheCodex6824
- * 
  */
 @ObjectHolder(ThaumicAugmentationAPI.MODID)
-public class TAItems {
-	
-	public static final Item GAUNTLET = null;
-	public static final Item MATERIAL = null;
-	public static final Item SEAL_COPIER = null;
-	public static final Item ARCANE_DOOR = null;
-	public static final Item KEY = null;
-	public static final Item VOID_BOOTS = null;
-	public static final Item RIFT_SEED = null;
-	
-	public static CreativeTabs CREATIVE_TAB = new CreativeTabs(ThaumicAugmentationAPI.MODID) {
-		@Override
-		public ItemStack createIcon() {
-			return new ItemStack(MATERIAL, 1, 2);
-		}
-	};
-	
-	public static Item[] getAllItems() {
-		return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR, KEY, VOID_BOOTS, RIFT_SEED};
-	}
-	
+public final class TAItems {
+
+    private TAItems() {}
+    
+    public static final Item GAUNTLET = null;
+    public static final Item MATERIAL = null;
+    public static final Item SEAL_COPIER = null;
+    public static final Item ARCANE_DOOR = null;
+    public static final Item KEY = null;
+    public static final Item VOID_BOOTS = null;
+    public static final Item RIFT_SEED = null;
+    public static final Item AUGMENT_CASTER_ELEMENTAL = null;
+    public static final Item AUGMENT_CASTER_RIFT_ENERGY_STORAGE = null;
+    public static final Item FRACTURE_LOCATOR = null;
+
+    public static CreativeTabs CREATIVE_TAB = new CreativeTabs(ThaumicAugmentationAPI.MODID) {
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(MATERIAL, 1, 2);
+        }
+    };
+
+    /**
+     * Returns all the items in the mod.
+     * @return All the items
+     */
+    public static Item[] getAllItems() {
+        return new Item[] {GAUNTLET, MATERIAL, SEAL_COPIER, ARCANE_DOOR, KEY, VOID_BOOTS, RIFT_SEED, AUGMENT_CASTER_ELEMENTAL,
+                AUGMENT_CASTER_RIFT_ENERGY_STORAGE, FRACTURE_LOCATOR};
+    }
+
 }

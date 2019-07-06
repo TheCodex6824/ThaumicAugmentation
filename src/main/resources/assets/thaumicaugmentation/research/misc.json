@@ -4,18 +4,18 @@
             "key": "THAUMIC_AUGMENTATION_BASE",
             "name": "thaumicaugmentation.research.thaumic_augmentation_base.title",
             "icons": [
-            	"thaumicaugmentation:textures/gui/base_research_icon.png"
+                "thaumicaugmentation:textures/gui/base_research_icon.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-            	"~FIRSTSTEPS"
+                "~FIRSTSTEPS"
             ],
             "siblings": [
-            	"~FIRSTSTEPS"
+                "~FIRSTSTEPS"
             ],
             "meta": [
-            	"ROUND",
-            	"HIDDEN"
+                "ROUND",
+                "HIDDEN"
             ],
             "location": [
                 0,
@@ -39,14 +39,14 @@
                 "METALLURGY@2"
             ],
             "location": [
-                1.5,
+                -1.5,
                 -1.5
             ],
             "stages": [
                 {
                     "text": "thaumicaugmentation.research.vis_regenerator.0",
-                    "required_research": [
-                        "f_LEAFSILVERWOOD"
+                    "required_item": [
+                        "thaumcraft:leaves_silverwood"
                     ],
                     "required_knowledge": [
                         "OBSERVATION;ARTIFICE;1",
@@ -57,35 +57,35 @@
                 {
                     "text": "thaumicaugmentation.research.vis_regenerator.1",
                     "recipes": [
-                    	"thaumicaugmentation:Lattice",
+                        "thaumicaugmentation:Lattice",
                         "thaumicaugmentation:VisRegenerator"
                     ]
                 }
             ],
             "addenda": [
-            	{
-            		"text": "thaumicaugmentation.research.vis_regenerator.2",
-            		"required_research": [
-            			"FLUX"
-            		]
-            	}
+                {
+                    "text": "thaumicaugmentation.research.vis_regenerator.2",
+                    "required_research": [
+                        "FLUX"
+                    ]
+                }
             ]
         },
         {
-        	"key": "SEAL_COPIER",
+            "key": "SEAL_COPIER",
             "name": "thaumicaugmentation.research.seal_copier.title",
             "icons": [
-            	"thaumicaugmentation:seal_copier"
+                "thaumicaugmentation:seal_copier;1;0;{seal:{}}"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-            	"THAUMIC_AUGMENTATION_BASE",
-            	"~BASEGOLEMANCY",
-            	"~BASEINFUSION"
+                "THAUMIC_AUGMENTATION_BASE",
+                "~BASEGOLEMANCY",
+                "~BASEINFUSION"
             ],
             "location": [
-                0,
-                -3
+                -3,
+                -0
             ],
             "stages": [
                 {
@@ -115,7 +115,7 @@
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-            	"THAUMIC_AUGMENTATION_BASE",
+                "THAUMIC_AUGMENTATION_BASE",
                 "~BOOTSTRAVELLER",
                 "~BASEELDRITCH"
             ],
@@ -124,7 +124,7 @@
             ],
             "location": [
                 -1.5,
-                -1.5
+                1.5
             ],
             "stages": [
                 {

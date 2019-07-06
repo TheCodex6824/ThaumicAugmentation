@@ -1,0 +1,227 @@
+{
+    "entries": [
+        {
+            "key": "RIFT_STUDIES",
+            "name": "thaumicaugmentation.research.rift_studies.title",
+            "icons": [
+                "thaumcraft:textures/research/r_fluxrift.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "THAUMIC_AUGMENTATION_BASE",
+                "~UNLOCKELDRITCH",
+                "~BASEINFUSION"
+            ],
+            "location": [
+                0,
+                -4
+            ],
+            "meta": [
+                "ROUND",
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.rift_studies.0",
+                    "required_item": [
+                        "thaumcraft:void_seed"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.rift_studies.1",
+                    "recipes": [
+                        "thaumicaugmentation:FluxSeed",
+                        "thaumicaugmentation:FluxSeedGrowthFake200",
+                        "thaumicaugmentation:FluxSeedGrowthFake300",
+                        "thaumicaugmentation:FluxSeedGrowthFake1000"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "!VOIDSTONE",
+            "name": "thaumicaugmentation.research.void_stone.title",
+            "icons": [
+                "thaumicaugmentation:stone;1;0"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [],
+            "location": [
+                -4,
+                -3
+            ],
+            "meta": [
+                "ROUND",
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.void_stone.0"
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.void_stone.1",
+                    "required_research": [
+                        "!VOIDSTONETAINTED"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.void_stone.2",
+                    "required_research": [
+                        "!VOIDSTONETAINTEDSOIL"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "VOID_STONE_USAGE",
+            "name": "thaumicaugmentation.research.void_stone_usage.title",
+            "icons": [
+                "thaumicaugmentation:stone;1;0",
+                "thaumcraft:stone_eldritch_tile"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "!VOIDSTONE"
+            ],
+            "location": [
+                -2.5,
+                -3
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.void_stone_usage.0",
+                    "required_item": [
+                        "thaumicaugmentation:stone;1;0",
+                        "thaumcraft:phial;1;1;{Aspects:[{amount:10,key:'alienis'}]}"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ELDRITCH;1"
+                    ],
+                    "warp": 1
+                },
+                {
+                    "text": "thaumicaugmentation.research.void_stone_usage.1",
+                    "recipes": [
+                        "thaumicaugmentation:EldritchStone"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "RIFT_POWER",
+            "name": "thaumicaugmentation.research.rift_power.title",
+            "icons": [
+                "thaumicaugmentation:textures/research/rift_power.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "RIFT_STUDIES",
+                "GAUNTLET_AUGMENTATION"
+            ],
+            "location": [
+                4.5,
+                -3
+            ],
+            "meta": [
+                "ROUND"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.rift_power.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ELDRITCH;1",
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.rift_power.1",
+                    "required_knowledge": [
+                        "THEORY;ARTIFICE;1"
+                    ],
+                    "required_craft": [
+                        "thaumicaugmentation:augment_caster_rift_energy_storage"
+                    ],
+                    "recipes": [
+                        "thaumicaugmentation:RiftEnergyCell",
+                        "thaumicaugmentation:AugmentGauntletRiftEnergyStorage"
+                    ],
+                    "warp": 2
+                },
+                {
+                    "text": "thaumicaugmentation.research.rift_power.2",
+                    "recipes": [
+                        "thaumicaugmentation:RiftEnergyCell",
+                        "thaumicaugmentation:AugmentGauntletRiftEnergyStorage"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ENTERING_FRACTURE",
+            "name": "thaumicaugmentation.research.entering_fracture.title",
+            "icons": [
+                "thaumicaugmentation:textures/research/fracture.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "RIFT_POWER"
+            ],
+            "location": [
+                7.5,
+                -3
+            ],
+            "meta": [
+                "SPIKY"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.entering_fracture.0",
+                    "required_research": [
+                        "m_DIMENSIONALFRACTURE"
+                    ],
+                    "recipes": [
+                        "thaumicaugmentation:FractureLocator"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.entering_fracture.1",
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;ELDRITCH;1"
+                    ],
+                    "required_research": [
+                        "m_ENTERVOID"
+                    ],
+                    "recipes": [
+                        "thaumicaugmentation:FractureLocator"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.entering_fracture.2",
+                    "recipes": [
+                        "thaumicaugmentation:FractureLocator"
+                    ]
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.entering_fracture.3",
+                    "required_research": [
+                        "!EldritchGuardian"
+                    ]
+                }
+            ]
+        }
+    ]
+}

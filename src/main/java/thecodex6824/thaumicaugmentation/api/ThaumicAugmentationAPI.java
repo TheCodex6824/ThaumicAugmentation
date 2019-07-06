@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,13 +24,14 @@ package thecodex6824.thaumicaugmentation.api;
  * Holds the mod ID and API version. API utility methods may be
  * added here in the future.
  * @author TheCodex6824
- * 
  */
-public class ThaumicAugmentationAPI {
+public final class ThaumicAugmentationAPI {
 
-	public static final String MODID = "thaumicaugmentation";
+    private ThaumicAugmentationAPI() {}
+    
+    public static final String MODID = "thaumicaugmentation";
     public static final String NAME = "Thaumic Augmentation";
     public static final String PROVIDES = MODID + "api";
     public static final String API_VERSION = "@APIVERSION@";
-	
+
 }

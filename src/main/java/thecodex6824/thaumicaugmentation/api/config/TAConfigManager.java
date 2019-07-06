@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -26,30 +26,36 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class TAConfigManager {
+/**
+ * Manages syncing config values. Options must be added here to be automatically synced.
+ * @author TheCodex6824
+ */
+public final class TAConfigManager {
 
-	private static ArrayList<ConfigOption<?>> config = new ArrayList<>();
-	
-	public static <T extends ConfigOption<?>> T addOption(T option) {
-		config.add(option);
-		return option;
-	}
-	
-	public static void sync(Side logicalSide, ByteBuf buf) {
-		for (ConfigOption<?> option : config) {
-			if (option.shouldSyncValue(logicalSide))
-				option.deserialize(buf);
-		}
-	}
-	
-	public static ByteBuf createSyncBuffer(Side targetSide) {
-		ByteBuf buf = Unpooled.buffer();
-		for (ConfigOption<?> option : config) {
-			if (option.shouldSyncValue(targetSide))
-				option.serialize(buf);
-		}
-		
-		return buf;
-	}
-	
+    private TAConfigManager() {}
+    
+    private static ArrayList<ConfigOption<?>> config = new ArrayList<>();
+
+    public static <T extends ConfigOption<?>> T addOption(T option) {
+        config.add(option);
+        return option;
+    }
+
+    public static void sync(Side logicalSide, ByteBuf buf) {
+        for (ConfigOption<?> option : config) {
+            if (option.shouldSyncValue(logicalSide))
+                option.deserialize(buf);
+        }
+    }
+
+    public static ByteBuf createSyncBuffer(Side targetSide) {
+        ByteBuf buf = Unpooled.buffer();
+        for (ConfigOption<?> option : config) {
+            if (option.shouldSyncValue(targetSide))
+                option.serialize(buf);
+        }
+
+        return buf;
+    }
+
 }

@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,26 +25,61 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
-public class TAConfig {
-	
-	public static ConfigOptionDoubleList gauntletVisDiscounts;
-	public static ConfigOptionDoubleList gauntletCooldownModifiers;
-	
-	public static ConfigOptionInt voidseerArea;
-	
-	public static ConfigOptionDouble voidBootsLandSpeedBoost;
-	public static ConfigOptionDouble voidBootsWaterSpeedBoost;
-	public static ConfigOptionDouble voidBootsJumpBoost;
-	public static ConfigOptionDouble voidBootsJumpFactor;
-	public static ConfigOptionDouble voidBootsStepHeight;
-	public static ConfigOptionDouble voidBootsSneakReduction;
-	
-	public static ConfigOptionBoolean opWardOverride;
-	
-	public static ConfigOptionBoolean castedLightSimpleRenderer;
-	
-	public static ConfigOptionIntList defaultGauntletColors;
-	public static ConfigOptionInt defaultVoidBootsColor;
-	
+/**
+ * Holds all of the configuration variables for Thaumic Augmentation. They will be
+ * synced across sides when needed.
+ * @author TheCodex6824
+ */
+public final class TAConfig {
+
+    private TAConfig() {}
+    
+    public static ConfigOptionDoubleList gauntletVisDiscounts;
+    public static ConfigOptionDoubleList gauntletCooldownModifiers;
+
+    public static ConfigOptionInt voidseerArea;
+
+    public static ConfigOptionDouble voidBootsLandSpeedBoost;
+    public static ConfigOptionDouble voidBootsWaterSpeedBoost;
+    public static ConfigOptionDouble voidBootsJumpBoost;
+    public static ConfigOptionDouble voidBootsJumpFactor;
+    public static ConfigOptionDouble voidBootsStepHeight;
+    public static ConfigOptionDouble voidBootsSneakReduction;
+
+    public static ConfigOptionBoolean opWardOverride;
+    public static ConfigOptionBoolean disableWardFocus;
+
+    public static ConfigOptionBoolean castedLightSimpleRenderer;
+
+    public static ConfigOptionIntList defaultGauntletColors;
+    public static ConfigOptionInt defaultVoidBootsColor;
+
+    public static ConfigOptionInt emptinessDimID;
+    public static ConfigOptionBoolean disableEmptiness;
+    public static ConfigOptionDouble emptinessMoveFactor;
+    public static ConfigOptionInt fractureGenChance;
+    public static ConfigOptionStringToIntMap fractureDimList;
+    public static ConfigOptionInt fractureLocatorUpdateInterval;
+    public static ConfigOptionBoolean fracturesAlwaysTeleport;
+    
+    /**
+     * Registers a callback to be notified when the config is synced or updated.
+     * @param listener The callback
+     */
+    public static void addConfigListener(Runnable listener) {
+        TAInternals.addConfigListener(listener);
+    }
+    
+    /**
+     * Removes a callback previously registered with {@link TAConfig#addConfigListener(Runnable)}
+     * @param listener The callback
+     * @return If the provided callback existed and was removed
+     */
+    public static boolean removeConfigListener(Runnable listener) {
+        return TAInternals.removeConfigListener(listener);
+    }
+
 }

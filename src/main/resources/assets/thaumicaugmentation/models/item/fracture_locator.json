@@ -1,0 +1,8 @@
+{
+    "ambientocclusion": false,
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "thaumicaugmentation:items/fracture_locator_base",
+        "layer1": "thaumicaugmentation:items/fracture_locator_glow"
+    }
+}

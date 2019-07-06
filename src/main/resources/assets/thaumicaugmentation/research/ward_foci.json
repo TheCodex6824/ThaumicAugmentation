@@ -1,0 +1,51 @@
+{
+    "entries": [
+        {
+            "key": "FOCUS_WARD",
+            "name": "thaumicaugmentation.research.focus_ward.title",
+            "icons": [
+                "focus:focus.thaumicaugmentation.ward"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "WARDED_ARCANA",
+                "MORE_AUROMANCY"
+            ],
+            "location": [
+                1.5,
+                2.5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.focus_ward.0",
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;AUROMANCY;1"
+                    ],
+                    "required_research": [
+                        "f_STRONGPICKAXE",
+                        "f_FLINTANDSTEEL",
+                        "m_CREEPER"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_ward.1"
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.focus_ward.2",
+                    "required_research": [
+                        "MINDCLOCKWORK"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_ward.3",
+                    "required_research": [
+                        "ARCANEBORE"
+                    ]
+                }
+            ]
+        }
+    ]
+}

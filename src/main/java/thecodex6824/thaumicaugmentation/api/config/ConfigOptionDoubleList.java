@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -22,38 +22,42 @@ package thecodex6824.thaumicaugmentation.api.config;
 
 import io.netty.buffer.ByteBuf;
 
+/**
+ * Config option class for double[] values.
+ * @author TheCodex6824
+ */
 public class ConfigOptionDoubleList extends ConfigOption<double[]> {
 
-	protected double[] value;
-	
-	public ConfigOptionDoubleList(boolean enforceServer, double[] defaultValue) {
-		super(enforceServer);
-		value = defaultValue;
-	}
-	
-	@Override
-	public void serialize(ByteBuf buf) {
-		buf.writeInt(value.length);
-		for (double d : value)
-			buf.writeDouble(d);
-	}
-	
-	@Override
-	public void deserialize(ByteBuf buf) {
-		int size = buf.readInt();
-		value = new double[size <= 256 ? size : 256];
-		for (int i = 0; i < value.length; ++i)
-			value[i] = buf.readDouble();
-	}
-	
-	@Override
-	public double[] getValue() {
-		return value;
-	}
-	
-	@Override
-	public void setValue(double[] value) {
-		this.value = value;
-	}
-	
+    protected double[] value;
+
+    public ConfigOptionDoubleList(boolean enforceServer, double[] defaultValue) {
+        super(enforceServer);
+        value = defaultValue;
+    }
+
+    @Override
+    public void serialize(ByteBuf buf) {
+        buf.writeInt(value.length);
+        for (double d : value)
+            buf.writeDouble(d);
+    }
+
+    @Override
+    public void deserialize(ByteBuf buf) {
+        int size = buf.readInt();
+        value = new double[size <= 256 ? size : 256];
+        for (int i = 0; i < value.length; ++i)
+            value[i] = buf.readDouble();
+    }
+
+    @Override
+    public double[] getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(double[] value) {
+        this.value = value;
+    }
+
 }

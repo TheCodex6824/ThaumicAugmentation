@@ -1,0 +1,6 @@
+These are assets taken from websites / other places, for assets made specifically for this see the related changelogs and commit messages.
+
+Light focus icon - Lorc, CC BY 3.0, https://game-icons.net/1x1/lorc/candle-flame.html
+Ward focus icon - Lorc, CC BY 3.0, https://game-icons.net/1x1/lorc/shieldcomb.html
+Further Auromancy icon - Lorc, CC BY 3.0, https://game-icons.net/1x1/lorc/glowing-hands.html
+Research tab background (nebula texture) - Additional Design: Terminal 26 - http://www.terminal26.de

@@ -1,0 +1,53 @@
+/**
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
+ *
+ *  This file is part of Thaumic Augmentation.
+ *
+ *  Thaumic Augmentation is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Thaumic Augmentation is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package thecodex6824.thaumicaugmentation.api.warded;
+
+import net.minecraft.util.math.BlockPos;
+
+/**
+ * The ward storage interface for the client side. Clients should not be able
+ * to tell what exact players own wards, so they get limited information from the
+ * server.
+ * @author TheCodex6824
+ */
+public interface IWardStorageClient extends IWardStorage {
+
+    /**
+     * Removes the ward at the given position.
+     * @param pos The position of the block
+     */
+    public void clearWard(BlockPos pos);
+    
+    /**
+     * Sets the ward at the given position to the given logical ward owner.
+     * @param pos The position of the block
+     * @param id The effective client side owner of the ward
+     */
+    public void setWard(BlockPos pos, ClientWardStorageValue id);
+    
+    /**
+     * Returns the client side owner of the ward.
+     * @param pos The position of the block
+     * @return The effective client side owner of the ward
+     */
+    public ClientWardStorageValue getWard(BlockPos pos);
+    
+}

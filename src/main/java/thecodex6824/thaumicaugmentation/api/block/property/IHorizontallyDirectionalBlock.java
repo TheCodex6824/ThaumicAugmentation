@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -29,11 +29,10 @@ import net.minecraft.util.EnumFacing;
  * Property interface for blocks that can be oriented in a horizontal direction,
  * such as chests and doors.
  * @author TheCodex6824
- *
  */
 public interface IHorizontallyDirectionalBlock {
 
-	public static final PropertyDirection DIRECTION = PropertyDirection.create("ta_direction_h", 
-			Arrays.asList(EnumFacing.HORIZONTALS));
-	
+    public static final PropertyDirection DIRECTION = PropertyDirection.create("ta_direction_h", 
+            Arrays.asList(EnumFacing.HORIZONTALS));
+
 }

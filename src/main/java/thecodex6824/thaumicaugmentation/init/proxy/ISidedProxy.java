@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,18 +25,27 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
+import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public interface ISidedProxy {
-	
-	public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params);
-	
-	public ITARenderHelper getRenderHelper();
-	
-	public void preInit();
-	
-	public void init();
-	
-	public void postInit();
-	
+
+    public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params);
+
+    public ITARenderHelper getRenderHelper();
+    
+    public void handleParticlePacket(PacketParticleEffect message);
+    
+    public void handleFullWardSyncPacket(PacketFullWardSync message);
+    
+    public void handleWardUpdatePacket(PacketWardUpdate message);
+
+    public void preInit();
+
+    public void init();
+
+    public void postInit();
+
 }

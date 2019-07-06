@@ -1,6 +1,6 @@
 {
-	"parent": "thaumicaugmentation:item/caster_gauntlet",
-	"textures": {
-		"skin": "thaumicaugmentation:items/gauntlet_void"
-	}
+    "parent": "thaumicaugmentation:item/caster_gauntlet",
+    "textures": {
+        "1": "thaumicaugmentation:items/gauntlet_void"
+    }
 }

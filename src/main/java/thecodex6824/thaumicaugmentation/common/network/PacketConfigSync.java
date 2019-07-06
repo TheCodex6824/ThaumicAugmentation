@@ -1,6 +1,6 @@
 /**
- *	Thaumic Augmentation
- *	Copyright (c) 2019 TheCodex6824.
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -30,40 +30,40 @@ import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
 
 public class PacketConfigSync implements IMessage {
 
-	private ByteBuf buffer;
-	
-	public PacketConfigSync() {
-		buffer = Unpooled.buffer();
-	}
-	
-	public PacketConfigSync(ByteBuf buf) {
-		buffer = Unpooled.copiedBuffer(buf);
-	}
-	
-	@Override
-	public void toBytes(ByteBuf buf) {
-		buf.writeBytes(buffer);
-	}
-	
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		buffer.writeBytes(buf);
-	}
-	
-	public ByteBuf getBuffer() {
-		return buffer;
-	}
-	
-	public static class Handler implements IMessageHandler<PacketConfigSync, IMessage> {
-		
-		@Override
-		public IMessage onMessage(PacketConfigSync message, MessageContext ctx) {
-			Minecraft.getMinecraft().addScheduledTask(() -> {
-				TAConfigManager.sync(ctx.side, message.getBuffer());
-			});
-			return null;
-		}
-		
-	}
-	
+    private ByteBuf buffer;
+
+    public PacketConfigSync() {
+        buffer = Unpooled.buffer();
+    }
+
+    public PacketConfigSync(ByteBuf buf) {
+        buffer = Unpooled.copiedBuffer(buf);
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeBytes(buffer);
+    }
+
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        buffer.writeBytes(buf);
+    }
+
+    public ByteBuf getBuffer() {
+        return buffer;
+    }
+
+    public static class Handler implements IMessageHandler<PacketConfigSync, IMessage> {
+
+        @Override
+        public IMessage onMessage(PacketConfigSync message, MessageContext ctx) {
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                TAConfigManager.sync(ctx.side, message.getBuffer());
+            });
+            return null;
+        }
+
+    }
+
 }
