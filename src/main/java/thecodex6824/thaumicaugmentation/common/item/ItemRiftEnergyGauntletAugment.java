@@ -37,6 +37,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.ICaster;
+import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
@@ -93,6 +94,10 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
                         syncNeeded = RiftEnergyHelper.drainNearbyEnergyIntoStorage(user.getEntityWorld(), stackStorage, 
                                 user.getEntityBoundingBox().grow(user.width / 2, user.height / 2, user.width / 2), 
                                 user.getPositionVector().add(0, user.height / 2, 0));
+                        if (stackStorage.getEnergyStored() == stackStorage.getMaxEnergyStored()) {
+                            user.playSound(SoundsTC.runicShieldEffect, 0.5F + user.getEntityWorld().rand.nextFloat() / 5.0F,
+                                    0.75F + user.getEntityWorld().rand.nextFloat() / 2.0F);
+                        }
                     }
                 }
             }
@@ -108,10 +113,13 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
                             fracture.open();
                             target.playSound(TASounds.RIFT_ENERGY_ZAP, 0.5F + target.getEntityWorld().rand.nextFloat() / 5.0F,
                                     0.75F + target.getEntityWorld().rand.nextFloat() / 2.0F);
-                            TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                                    user.posX, user.posY + user.height / 2, user.posZ, target.posX, target.posY + target.height / 2, target.posZ, 0.32F), 
-                                    new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));
+                            for (int i = 0; i < 3; ++i) {
+                                TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
+                                        user.posX, user.posY + user.height / 2, user.posZ, target.posX, target.posY + target.height / 2, target.posZ, 0.08F), 
+                                        new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));
+                            }
                             syncNeeded = true;
+                            System.out.println(stackStorage.getEnergyStored());
                         }
                     }
                 }
@@ -138,7 +146,7 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
                 }
             }
             
-        }, new RiftEnergyStorage(600, 10));
+        }, new RiftEnergyStorage(300, 10));
     }
     
     @Override

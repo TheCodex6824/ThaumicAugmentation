@@ -67,13 +67,13 @@
                 {
                     "text": "thaumicaugmentation.research.void_stone.1",
                     "required_research": [
-                        "!VOIDSTONETAINTED"
+                        "!VOIDSTONETAINTEDSOIL"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.void_stone.2",
                     "required_research": [
-                        "!VOIDSTONETAINTEDSOIL"
+                        "!VOIDSTONETAINTED"
                     ]
                 }
             ]
@@ -168,10 +168,10 @@
             ]
         },
         {
-            "key": "ENTERING_FRACTURE",
-            "name": "thaumicaugmentation.research.entering_fracture.title",
+            "key": "FRACTURE_THEORY",
+            "name": "thaumicaugmentation.research.fracture_theory.title",
             "icons": [
-                "thaumicaugmentation:textures/research/fracture.png"
+                "thaumicaugmentation:fracture_locator"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
@@ -182,6 +182,39 @@
                 -3
             ],
             "meta": [
+                "ROUND"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.fracture_theory.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.fracture_theory.1",
+                    "recipes": [
+                        "thaumicaugmentation:FractureLocator"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ENTERING_FRACTURE",
+            "name": "thaumicaugmentation.research.entering_fracture.title",
+            "icons": [
+                "thaumicaugmentation:textures/research/fracture.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "FRACTURE_THEORY"
+            ],
+            "location": [
+                9,
+                -3
+            ],
+            "meta": [
                 "SPIKY"
             ],
             "stages": [
@@ -189,29 +222,20 @@
                     "text": "thaumicaugmentation.research.entering_fracture.0",
                     "required_research": [
                         "m_DIMENSIONALFRACTURE"
-                    ],
-                    "recipes": [
-                        "thaumicaugmentation:FractureLocator"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.entering_fracture.1",
                     "required_knowledge": [
                         "OBSERVATION;AUROMANCY;1",
-                        "OBSERVATION;ELDRITCH;1"
+                        "THEORY;ELDRITCH;1"
                     ],
                     "required_research": [
                         "m_ENTERVOID"
-                    ],
-                    "recipes": [
-                        "thaumicaugmentation:FractureLocator"
                     ]
                 },
                 {
-                    "text": "thaumicaugmentation.research.entering_fracture.2",
-                    "recipes": [
-                        "thaumicaugmentation:FractureLocator"
-                    ]
+                    "text": "thaumicaugmentation.research.entering_fracture.2"
                 }
             ],
             "addenda": [

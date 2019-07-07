@@ -98,7 +98,7 @@ public class RenderHandlerEmptinessSky extends IRenderHandler {
                 GlStateManager.rotate(-90.0F, 0.0F, 0.0F, 1.0F);
             }
 
-            int intensity = 60;
+            int intensity = 90;
             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
             bufferbuilder.pos(-100.0D, -100.0D, -100.0D).tex(0.0D, 0.0D).color(intensity, intensity, intensity, 255).endVertex();
             bufferbuilder.pos(-100.0D, -100.0D, 100.0D).tex(0.0D, 16.0D).color(intensity, intensity, intensity, 255).endVertex();

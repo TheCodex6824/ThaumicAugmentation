@@ -138,6 +138,17 @@ public class ClientProxy extends CommonProxy {
                 
                 break;
             }
+            case SMOKE_SPIRAL: {
+                double[] d = message.getData();
+                if (d.length == 7) {
+                    double x = d[0], y = d[1], z = d[2];
+                    float radius = (float) d[3];
+                    int start = (int) d[4], minY = (int) d[5], color = (int) d[6];
+                    FXDispatcher.INSTANCE.smokeSpiral(x, y, z, radius, start, minY, color);
+                }
+                
+                break;
+            }
             default: {break;}
         }
     }

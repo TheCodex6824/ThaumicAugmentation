@@ -38,7 +38,8 @@ public class PacketParticleEffect implements IMessage {
         VIS_REGENERATOR(0),
         VOID_STREAKS(1),
         WARD(2),
-        POOF(3);
+        POOF(3),
+        SMOKE_SPIRAL(4);
         
         private int id;
         

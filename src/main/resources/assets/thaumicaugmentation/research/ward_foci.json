@@ -44,6 +44,12 @@
                     "required_research": [
                         "ARCANEBORE"
                     ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_ward.4",
+                    "required_research": [
+                        "FOCUSRIFT"
+                    ]
                 }
             ]
         }

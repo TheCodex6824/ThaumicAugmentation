@@ -14,7 +14,7 @@ Features
 * A focus effect that creates light
 * A reimplementation of the ward focus from older versions of Thaumcraft
 * An augment system to add additional components to casting gauntlets and other items
-* Find dimensional fractures to enter a brand new dimension - the Void.
+* Find dimensional fractures to enter a brand new dimension - the Emptiness.
 
 License
 -----
