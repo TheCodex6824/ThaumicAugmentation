@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -92,11 +93,11 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
                     IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
                     if (stackStorage.canReceive() && stackStorage.getEnergyStored() < stackStorage.getMaxEnergyStored()) {
                         syncNeeded = RiftEnergyHelper.drainNearbyEnergyIntoStorage(user.getEntityWorld(), stackStorage, 
-                                user.getEntityBoundingBox().grow(user.width / 2, user.height / 2, user.width / 2), 
+                                user.getEntityBoundingBox().grow(user.width * 2, user.height, user.width * 2), 
                                 user.getPositionVector().add(0, user.height / 2, 0));
                         if (stackStorage.getEnergyStored() == stackStorage.getMaxEnergyStored()) {
-                            user.playSound(SoundsTC.runicShieldEffect, 0.5F + user.getEntityWorld().rand.nextFloat() / 5.0F,
-                                    0.75F + user.getEntityWorld().rand.nextFloat() / 2.0F);
+                            user.getEntityWorld().playSound(null, user.getPosition(), SoundsTC.runicShieldEffect, SoundCategory.PLAYERS,
+                                    0.5F + user.getEntityWorld().rand.nextFloat() / 5.0F, 0.75F + user.getEntityWorld().rand.nextFloat() / 2.0F);
                         }
                     }
                 }
@@ -119,7 +120,6 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
                                         new TargetPoint(user.getEntityWorld().provider.getDimension(), user.posX, user.posY, user.posZ, 64.0F));
                             }
                             syncNeeded = true;
-                            System.out.println(stackStorage.getEnergyStored());
                         }
                     }
                 }
