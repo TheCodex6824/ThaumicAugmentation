@@ -34,7 +34,7 @@ public class Augment implements IAugment {
     protected ItemStack stack;
     
     public Augment(ItemStack stack) {
-        this.stack = stack;
+        this.stack = stack != null ? stack : ItemStack.EMPTY;
     }
     
     @Override

@@ -89,10 +89,10 @@ public class RiftEnergyHelper {
      * @param world The world to look in
      * @param dest The IRiftEnergyStorage to put the energy in
      * @param range The bounding box to check for energy storage in
-     * @param effectOrigin The position that the energy particles should originate from, or null to not send particles
+     * @param effectDest The position that the energy particles should go to, or null to not send particles
      * @return If any energy was received at all
      */
-    public static boolean drainNearbyEnergyIntoStorage(World world, IRiftEnergyStorage dest, AxisAlignedBB range, @Nullable Vec3d effectOrigin) {
+    public static boolean drainNearbyEnergyIntoStorage(World world, IRiftEnergyStorage dest, AxisAlignedBB range, @Nullable Vec3d effectDest) {
         boolean receivedEnergy = false;
         MutableBlockPos pos = new MutableBlockPos(0, 0, 0);
         for (int x = (int) Math.floor(range.minX); x < Math.ceil(range.maxX); ++x) {
@@ -106,10 +106,10 @@ public class RiftEnergyHelper {
                             long extracted = tile.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null).extractEnergy(maxToExtract, false);
                             if (extracted > 0) {
                                 dest.receiveEnergy(extracted, false);
-                                if (effectOrigin != null) {
+                                if (effectDest != null) {
                                     TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                                            x + 0.5, y + 0.5, z + 0.5, effectOrigin.x, effectOrigin.y, effectOrigin.z, 0.04F), 
-                                            new TargetPoint(world.provider.getDimension(), effectOrigin.x, effectOrigin.y, effectOrigin.z, 64.0F));
+                                            x + 0.5, y + 0.5, z + 0.5, effectDest.x, effectDest.y, effectDest.z, 0.04F), 
+                                            new TargetPoint(world.provider.getDimension(), effectDest.x, effectDest.y, effectDest.z, 64.0F));
                                 }
                                 receivedEnergy = true;
                             }
@@ -128,10 +128,10 @@ public class RiftEnergyHelper {
                 long extracted = entity.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null).extractEnergy(maxToExtract, false);
                 if (extracted > 0) {
                     dest.receiveEnergy(extracted, false);
-                    if (effectOrigin != null) {
+                    if (effectDest != null) {
                         TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                                entity.posX, entity.posY + entity.height / 2, entity.posZ, effectOrigin.x, effectOrigin.y, effectOrigin.z, 0.04F), 
-                                new TargetPoint(world.provider.getDimension(), effectOrigin.x, effectOrigin.y, effectOrigin.z, 64.0F));
+                                entity.posX, entity.posY, entity.posZ, effectDest.x, effectDest.y, effectDest.z, 0.04F), 
+                                new TargetPoint(world.provider.getDimension(), effectDest.x, effectDest.y, effectDest.z, 64.0F));
                     }
                     receivedEnergy = true;
                 }

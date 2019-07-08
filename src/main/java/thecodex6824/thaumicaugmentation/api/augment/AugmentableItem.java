@@ -44,19 +44,23 @@ public class AugmentableItem implements IAugmentableItem {
     
     public AugmentableItem(ItemStack[] augs) {
         augments = Arrays.copyOf(augs, augs.length);
+        for (int i = 0; i < augments.length; ++i) {
+            if (augments[i] == null)
+                augments[i] = ItemStack.EMPTY;
+        }
     }
     
     @Override
     public void setAugment(ItemStack augment, int slot) {
         if (slot > -1 && slot < augments.length)
-            augments[slot] = augment;
+            augments[slot] = augment != null ? augment : ItemStack.EMPTY;
     }
     
     @Override
     public ItemStack[] setAllAugments(ItemStack[] augs) {
         ItemStack[] old = Arrays.copyOf(augments, augments.length);
         for (int i = 0; i < Math.min(augments.length, augs.length); ++i)
-            augments[i] = augs[i];
+            augments[i] = augs[i] != null ? augs[i] : ItemStack.EMPTY;
         
         return old;
     }
@@ -142,7 +146,7 @@ public class AugmentableItem implements IAugmentableItem {
         data.setInteger("slots", augments.length);
         for (int i = 0; i < augments.length; ++i) {
             ItemStack stack = augments[i];
-            if (!stack.isEmpty())
+            if (stack != null && !stack.isEmpty())
                 data.setTag("slot" + i, stack.serializeNBT());
         }
         
@@ -151,17 +155,15 @@ public class AugmentableItem implements IAugmentableItem {
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        if (nbt instanceof NBTTagCompound) {
-            NBTTagCompound data = (NBTTagCompound) nbt;
-            int slots = data.getInteger("slots");
-            if (slots < 256) {
-                augments = new ItemStack[slots];
-                for (int i = 0; i < slots; ++i) {
-                    if (data.hasKey("slot" + i, NBT.TAG_COMPOUND))
-                        augments[i] = new ItemStack(data.getCompoundTag("slot" + i));
-                    else
-                        augments[i] = ItemStack.EMPTY;
-                }
+        NBTTagCompound data = (NBTTagCompound) nbt;
+        int slots = data.getInteger("slots");
+        if (slots < 256) {
+            augments = new ItemStack[slots];
+            for (int i = 0; i < augments.length; ++i) {
+                if (data.hasKey("slot" + i, NBT.TAG_COMPOUND))
+                    augments[i] = new ItemStack(data.getCompoundTag("slot" + i));
+                else
+                    augments[i] = ItemStack.EMPTY;
             }
         }
     }
