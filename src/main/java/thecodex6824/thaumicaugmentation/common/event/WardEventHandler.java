@@ -250,12 +250,12 @@ public class WardEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
-        if (!TAConfig.disableWardFocus.getValue()) {
+        if (!TAConfig.disableWardFocus.getValue() && event.getWorld().isBlockLoaded(event.getPos())) {
             if (event.getState().getMaterial() == Material.FIRE) {
                 BlockPos notifier = event.getPos();
                 for (EnumFacing facing : event.getNotifiedSides()) {
                     BlockPos pos = notifier.offset(facing);
-                    if (!event.getWorld().isAirBlock(pos)) {
+                    if (!event.getWorld().isAirBlock(pos) && event.getWorld().isBlockLoaded(pos)) {
                         Chunk chunk = event.getWorld().getChunk(pos);
                         if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                             IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
