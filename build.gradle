@@ -22,7 +22,7 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.5.2838"
+    version = "${mcversion}-${forgeversion}"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -66,7 +66,7 @@ processResources {
         include 'mcmod.info'
                 
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version':project.version, 'mcversion':project.minecraft.version, 'forgeversion':project.forgeversion
     }
         
     // copy everything else except the mcmod.info

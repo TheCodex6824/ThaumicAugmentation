@@ -199,13 +199,13 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                int index = (pos.getX() & 15) + (pos.getY() & 15) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 return (data[index / 8] & (1 << (index % 8))) != 0 ? owner : NIL_UUID;
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
-                int index = (pos.getX() & 15) + (pos.getY() & 15) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 data[index / 8] = owner.equals(this.owner) && !owner.equals(NIL_UUID) ? (byte) (data[index / 8] | (1 << (index % 8))) : 
                     (byte) (data[index / 8] & ~(1 << (index % 8)));
             }
@@ -309,14 +309,14 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                int index = (pos.getX() & 15) + (pos.getY() & 15) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = ((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2);
                 return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
-                int index = (pos.getX() & 15) + (pos.getY() & 15) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int toSet = !owner.equals(NIL_UUID) ? reverseMap.getByte(owner) + 1 : 0;
                 
                 data[index / 4] = (toSet & 1) != 0 ? (byte) (data[index / 4] | (1 << (index % 4 * 2))) : 
@@ -438,14 +438,14 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                int index = (pos.getX() & 15) + (pos.getY() & 15) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = ((data[index / 2] & (15 << (index % 2 * 4)))) >>> (index % 2 * 4);
                 return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
-                int index = (pos.getX() & 15) + (pos.getY() & 15) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int toSet = !owner.equals(NIL_UUID) ? reverseMap.getByte(owner) + 1 : 0;
                 
                 data[index / 2] = (toSet & 1) != 0 ? (byte) (data[index / 2] | (1 << (index % 2 * 4))) : 
@@ -571,14 +571,14 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                int index = (pos.getX() & 15) + (pos.getY() & 15) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = data[index] + 128;
                 return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
-                int index = (pos.getX() & 15) + (pos.getY() & 15) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 data[index] = (byte) ((!owner.equals(NIL_UUID) ? (byte) (reverseMap.getByte(owner) + 1) : 0) - 128);
             }
             
@@ -695,14 +695,14 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                int index = (pos.getX() & 15) + (pos.getY() & 15) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = data[index] + 32768;
                 return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
-                int index = (pos.getX() & 15) + (pos.getY() & 15) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 data[index] = (short) ((!owner.equals(NIL_UUID) ? (reverseMap.getShort(owner) + 1) : 0) - 32768);
             }
             
@@ -880,7 +880,7 @@ public class WardStorageServer implements IWardStorageServer {
                         else if (!owner.equals(IWardStorageServer.NIL_UUID))
                             toSet = 2;
                         
-                        int index = (pos.getX() & 15) + pos.getY() * StorageManagers.CHUNK_X_SIZE + (pos.getZ() & 15) * 
+                        int index = (pos.getX() & 15) + (pos.getY() & 255) * StorageManagers.CHUNK_X_SIZE + (pos.getZ() & 15) * 
                                 StorageManagers.CHUNK_X_SIZE * StorageManagers.CHUNK_Y_SIZE;
                         data[index / 4] = (toSet & 1) != 0 ? (byte) (data[index / 4] | (1 << (index % 4 * 2))) : 
                             (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
