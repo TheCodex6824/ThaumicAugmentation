@@ -30,6 +30,8 @@ import thaumcraft.common.entities.EntityFluxRift;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.energy.CapabilityRiftEnergyStorage;
+import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
+import thecodex6824.thaumicaugmentation.api.entity.PortalState;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.WardStorageClient;
 import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
@@ -40,6 +42,7 @@ import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvid
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityAugmentInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityAugmentableItemInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityFractureLocationInit;
+import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityPortalStateInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityRiftEnergyStorageInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityWardStorageInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityWardedInventoryInit;
@@ -59,6 +62,7 @@ public final class CapabilityHandler {
         CapabilityFractureLocationInit.init();
         CapabilityWardStorageInit.init();
         CapabilityWardedTileInit.init();
+        CapabilityPortalStateInit.init();
     }
     
     @SubscribeEvent
@@ -67,6 +71,9 @@ public final class CapabilityHandler {
             event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_energy_storage"), new SimpleCapabilityProvider<>(
                     new RiftEnergyStorageFluxRiftImpl((EntityFluxRift) event.getObject()), CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE));
         }
+        
+        event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "portal_state"), new SimpleCapabilityProvider<>(
+                new PortalState(), CapabilityPortalState.PORTAL_STATE));
     }
     
     @SubscribeEvent

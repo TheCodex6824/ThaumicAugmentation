@@ -99,7 +99,7 @@ public class RiftEnergyHelper {
             for (int z = (int) Math.floor(range.minZ); z < Math.ceil(range.maxZ); ++z) {
                 pos.setPos(x, 0, z);
                 for (int y = (int) Math.floor(range.minY); y < Math.ceil(range.maxY); ++y) {  
-                    if (world.getChunk(pos).getTileEntity(pos, EnumCreateEntityType.CHECK) != null) {
+                    if (world.isBlockLoaded(pos) && world.getChunk(pos).getTileEntity(pos, EnumCreateEntityType.CHECK) != null) {
                         TileEntity tile = world.getTileEntity(pos);
                         if (tile.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
                             long maxToExtract = dest.getMaxEnergyStored() - dest.getEnergyStored();
