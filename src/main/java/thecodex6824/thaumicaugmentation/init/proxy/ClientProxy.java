@@ -87,69 +87,81 @@ public class ClientProxy extends CommonProxy {
     
     @Override
     public void handleParticlePacket(PacketParticleEffect message) {
-        Random rand = Minecraft.getMinecraft().world.rand;
-        switch (message.getEffect()) {
-            case VIS_REGENERATOR: {
-                double[] d = message.getData();
-                if (d.length == 3) {
-                    for (int i = 0; i < rand.nextInt(3) + 3; ++i) {
-                        double x = d[0] + rand.nextGaussian() / 4, y = d[1] + rand.nextDouble() / 2, z = d[2] + rand.nextGaussian() / 4;
-                        double vX = rand.nextGaussian() / 4, vY = rand.nextDouble() / 2, vZ = rand.nextGaussian() / 4;
-                        FXDispatcher.INSTANCE.drawVentParticles(x, y, z, vX, vY, vZ, Aspect.AURA.getColor());
+        if (FMLClientHandler.instance().getClient().world != null) {
+            Random rand = FMLClientHandler.instance().getClient().world.rand;
+            switch (message.getEffect()) {
+                case VIS_REGENERATOR: {
+                    double[] d = message.getData();
+                    if (d.length == 3) {
+                        for (int i = 0; i < rand.nextInt(3) + 3; ++i) {
+                            double x = d[0] + rand.nextGaussian() / 4, y = d[1] + rand.nextDouble() / 2, z = d[2] + rand.nextGaussian() / 4;
+                            double vX = rand.nextGaussian() / 4, vY = rand.nextDouble() / 2, vZ = rand.nextGaussian() / 4;
+                            FXDispatcher.INSTANCE.drawVentParticles(x, y, z, vX, vY, vZ, Aspect.AURA.getColor());
+                        }
                     }
+                    
+                    break;
                 }
-                
-                break;
-            }
-            case VOID_STREAKS: {
-                double[] d = message.getData();
-                if (d.length == 7) {
-                    double x1 = d[0], y1 = d[1], z1 = d[2];
-                    double x2 = d[3], y2 = d[4], z2 = d[5];
-                    float scale = (float) d[6];
-                    FXDispatcher.INSTANCE.voidStreak(x1, y1, z1, x2, y2, z2, rand.nextInt(), scale);
+                case VOID_STREAKS: {
+                    double[] d = message.getData();
+                    if (d.length == 7) {
+                        double x1 = d[0], y1 = d[1], z1 = d[2];
+                        double x2 = d[3], y2 = d[4], z2 = d[5];
+                        float scale = (float) d[6];
+                        FXDispatcher.INSTANCE.voidStreak(x1, y1, z1, x2, y2, z2, rand.nextInt(), scale);
+                    }
+                    
+                    break;
                 }
-                
-                break;
-            }
-            case WARD: {
-                double[] d = message.getData();
-                if (d.length == 7) {
-                    double x = d[0], y = d[1], z = d[2];
-                    int index = (int) d[3];
-                    double hitX = d[4], hitY = d[5], hitZ = d[6];
-                    FXBlockWard ward = new FXBlockWard(FXDispatcher.INSTANCE.getWorld(), x + 0.5, y + 0.5, z + 0.5, 
-                            EnumFacing.byIndex(index), (float) hitX, (float) hitY, (float) hitZ);
-                    ward.onUpdate();
-                    ward.onUpdate();
-                    FMLClientHandler.instance().getClient().effectRenderer.addEffect(ward);
+                case WARD: {
+                    double[] d = message.getData();
+                    if (d.length == 7) {
+                        double x = d[0], y = d[1], z = d[2];
+                        int index = (int) d[3];
+                        double hitX = d[4], hitY = d[5], hitZ = d[6];
+                        FXBlockWard ward = new FXBlockWard(FXDispatcher.INSTANCE.getWorld(), x + 0.5, y + 0.5, z + 0.5, 
+                                EnumFacing.byIndex(index), (float) hitX, (float) hitY, (float) hitZ);
+                        ward.onUpdate();
+                        ward.onUpdate();
+                        FMLClientHandler.instance().getClient().effectRenderer.addEffect(ward);
+                    }
+                    
+                    break;
                 }
-                
-                break;
-            }
-            case POOF: {
-                double[] d = message.getData();
-                if (d.length == 4) {
-                    double x = d[0], y = d[1], z = d[2];
-                    int index = (int) d[3];
-                    FXDispatcher.INSTANCE.drawBamf(new BlockPos(x, y, z), Aspect.PROTECT.getColor(), true, true,
-                            EnumFacing.byIndex(index));
+                case POOF: {
+                    double[] d = message.getData();
+                    if (d.length == 4) {
+                        double x = d[0], y = d[1], z = d[2];
+                        int index = (int) d[3];
+                        FXDispatcher.INSTANCE.drawBamf(new BlockPos(x, y, z), Aspect.PROTECT.getColor(), true, true,
+                                EnumFacing.byIndex(index));
+                    }
+                    
+                    break;
                 }
-                
-                break;
-            }
-            case SMOKE_SPIRAL: {
-                double[] d = message.getData();
-                if (d.length == 7) {
-                    double x = d[0], y = d[1], z = d[2];
-                    float radius = (float) d[3];
-                    int start = (int) d[4], minY = (int) d[5], color = (int) d[6];
-                    FXDispatcher.INSTANCE.smokeSpiral(x, y, z, radius, start, minY, color);
+                case SMOKE_SPIRAL: {
+                    double[] d = message.getData();
+                    if (d.length == 7) {
+                        double x = d[0], y = d[1], z = d[2];
+                        float radius = (float) d[3];
+                        int start = (int) d[4], minY = (int) d[5], color = (int) d[6];
+                        FXDispatcher.INSTANCE.smokeSpiral(x, y, z, radius, start, minY, color);
+                    }
+                    
+                    break;
                 }
-                
-                break;
+                case CURLY_WISP: {
+                    double[] d = message.getData();
+                    if (d.length == 3) {
+                        double x = d[0], y = d[1], z = d[2];
+                        FXDispatcher.INSTANCE.drawCurlyWisp(x, y, z, 0.0, 0.0, 0.0, rand.nextFloat() + 0.1F, 1.0F, 1.0F, 
+                                1.0F, 0.45F, null, 1, 0, 0);
+                    }
+                    
+                    break;
+                }
+                default: {break;}
             }
-            default: {break;}
         }
     }
     

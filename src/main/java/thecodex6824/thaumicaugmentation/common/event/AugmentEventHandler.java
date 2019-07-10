@@ -62,7 +62,7 @@ public final class AugmentEventHandler {
             for (int i = 0; i < stacks.size(); ++i) {
                 ItemStack current = stacks.get(i);
                 ArrayList<ItemStack> oldList = oldItems.get(event.getEntity());
-                ItemStack old = oldList.size() > i ? oldList.get(i) : ItemStack.EMPTY;
+                ItemStack old = oldList != null && oldList.size() > i ? oldList.get(i) : ItemStack.EMPTY;
                 if (!ItemStack.areItemStacksEqual(current, old)) {
                     if (old.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
                         AugmentEventHelper.fireUnequipEvent(old.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), event.getEntity());
@@ -73,7 +73,8 @@ public final class AugmentEventHandler {
                                 CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT()), event.getEntity());
                     }
                 
-                    oldList.set(i, current);
+                    if (oldList != null)
+                        oldList.set(i, current);
                 }
                 
                 if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
