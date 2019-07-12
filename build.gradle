@@ -44,7 +44,7 @@ minecraft {
         replaceIn 'ThaumicAugmentation.java'
     }
     else {
-        replace '@FINGERPRINT', ""
+        replace '@FINGERPRINT@', ""
         replaceIn 'ThaumicAugmentation.java'
     }
 }
