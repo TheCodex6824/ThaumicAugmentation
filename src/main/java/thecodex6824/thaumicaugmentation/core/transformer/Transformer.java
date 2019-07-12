@@ -18,30 +18,15 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api;
+package thecodex6824.thaumicaugmentation.core.transformer;
 
-/**
- * Holds the mod ID and API version. API utility methods may be
- * added here in the future.
- * @author TheCodex6824
- */
-public final class ThaumicAugmentationAPI {
+public abstract class Transformer implements ITransformer {
 
-    private static boolean coremodReady;
+    protected RuntimeException error = null;
     
-    private ThaumicAugmentationAPI() {}
-    
-    public static final String MODID = "thaumicaugmentation";
-    public static final String NAME = "Thaumic Augmentation";
-    public static final String PROVIDES = MODID + "api";
-    public static final String API_VERSION = "@APIVERSION@";
-    
-    public static void setCoremodAvailable() {
-        coremodReady = true;
+    @Override
+    public RuntimeException getRaisedException() {
+        return error;
     }
     
-    public static boolean isCoremodAvailable() {
-        return coremodReady;
-    }
-
 }

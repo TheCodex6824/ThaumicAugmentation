@@ -65,6 +65,8 @@ public final class TAConfig {
     public static ConfigOptionInt fractureLocatorUpdateInterval;
     public static ConfigOptionBoolean fracturesAlwaysTeleport;
     
+    public static ConfigOptionBoolean disableCoremod;
+    
     /**
      * Registers a callback to be notified when the config is synced or updated.
      * @param listener The callback

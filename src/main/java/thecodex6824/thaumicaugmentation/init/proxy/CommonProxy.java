@@ -23,13 +23,17 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.event.WardEventHandler;
+import thecodex6824.thaumicaugmentation.common.event.WardEventHandlerNoCoremodFallback;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.internal.InternalMethodProvider;
 import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
@@ -76,6 +80,11 @@ public class CommonProxy implements ISidedProxy {
         NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
         TAInternals.setInternalMethodProvider(new InternalMethodProvider());
         IntegrationHandler.preInit();
+        
+        if (ThaumicAugmentationAPI.isCoremodAvailable())
+            MinecraftForge.EVENT_BUS.register(new WardEventHandler());
+        else
+            MinecraftForge.EVENT_BUS.register(new WardEventHandlerNoCoremodFallback());
     }
 
     @Override

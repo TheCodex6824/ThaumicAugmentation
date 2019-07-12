@@ -37,7 +37,6 @@ import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
  * for all subclasses of this event.
  * @author TheCodex6824
  */
-@Cancelable
 public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent {
 
     protected T storage;
@@ -56,7 +55,7 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
      * Event fired when a block is warded for the client.
      * @author TheCodex6824
      */
-    public static class WardedClient extends BlockWardEvent<IWardStorageClient> {
+    public static abstract class WardedClient extends BlockWardEvent<IWardStorageClient> {
         
         protected ClientWardStorageValue val;
         
@@ -69,13 +68,30 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
             return val;
         }
         
+        @Cancelable
+        public static class Pre extends WardedClient {
+            
+            public Pre(World world, BlockPos pos, ClientWardStorageValue newVal) {
+                super(world, pos, newVal);
+            }
+            
+        }
+        
+        public static class Post extends WardedClient {
+            
+            public Post(World world, BlockPos pos, ClientWardStorageValue newVal) {
+                super(world, pos, newVal);
+            }
+            
+        }
+        
     }
     
     /**
      * Event fired when a block is warded for the server.
      * @author TheCodex6824
      */
-    public static class WardedServer extends BlockWardEvent<IWardStorageServer> {
+    public static abstract class WardedServer extends BlockWardEvent<IWardStorageServer> {
         
         protected UUID val;
         
@@ -88,16 +104,50 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
             return val;
         }
         
+        @Cancelable
+        public static class Pre extends WardedServer {
+            
+            public Pre(World world, BlockPos pos, UUID newVal) {
+                super(world, pos, newVal);
+            }
+            
+        }
+        
+        public static class Post extends WardedServer {
+            
+            public Post(World world, BlockPos pos, UUID newVal) {
+                super(world, pos, newVal);
+            }
+            
+        }
+        
     }
     
     /**
      * Event fired when a block is dewarded for the client.
      * @author TheCodex6824
      */
-    public static class DewardedClient extends BlockWardEvent<IWardStorageClient> {
+    public static abstract class DewardedClient extends BlockWardEvent<IWardStorageClient> {
         
         public DewardedClient(World world, BlockPos pos) {
             super(world, pos);
+        }
+        
+        @Cancelable
+        public static class Pre extends DewardedClient {
+            
+            public Pre(World world, BlockPos pos) {
+                super(world, pos);
+            }
+            
+        }
+        
+        public static class Post extends DewardedClient {
+            
+            public Post(World world, BlockPos pos) {
+                super(world, pos);
+            }
+            
         }
         
     }
@@ -106,10 +156,27 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
      * Event fired when a block is dewarded for the server.
      * @author TheCodex6824
      */
-    public static class DewardedServer extends BlockWardEvent<IWardStorageServer> {
+    public static abstract class DewardedServer extends BlockWardEvent<IWardStorageServer> {
         
         public DewardedServer(World world, BlockPos pos) {
             super(world, pos);
+        }
+        
+        @Cancelable
+        public static class Pre extends DewardedServer {
+            
+            public Pre(World world, BlockPos pos) {
+                super(world, pos);
+            }
+            
+        }
+        
+        public static class Post extends DewardedServer {
+            
+            public Post(World world, BlockPos pos) {
+                super(world, pos);
+            }
+            
         }
         
     }

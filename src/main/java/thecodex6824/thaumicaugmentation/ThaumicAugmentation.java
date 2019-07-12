@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.world.WorldServer;
@@ -27,6 +28,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -37,7 +39,8 @@ import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 import thecodex6824.thaumicaugmentation.init.proxy.ISidedProxy;
 
-@Mod(modid = ThaumicAugmentationAPI.MODID, name = ThaumicAugmentationAPI.NAME, version = ThaumicAugmentation.VERSION, useMetadata = true)
+@Mod(modid = ThaumicAugmentationAPI.MODID, name = ThaumicAugmentationAPI.NAME, version = ThaumicAugmentation.VERSION, useMetadata = true,
+        certificateFingerprint = "@FINGERPRINT@")
 public class ThaumicAugmentation {
     
     public static final String VERSION = "@VERSION@";
@@ -74,6 +77,16 @@ public class ThaumicAugmentation {
         
         FractureUtils.initDimensionCache();
         WorldDataCache.setInitialized();
+    }
+    
+    @EventHandler
+    public static void onFingerPrintViolation(FMLFingerprintViolationEvent event) {
+        if (!event.isDirectory()) {
+            Logger tempLogger = LogManager.getLogger(ThaumicAugmentationAPI.MODID);
+            tempLogger.warn("A file failed to match with the signing key.");
+            tempLogger.warn("If you *know* this is a homebrew/custom build then this is expected, carry on.");
+            tempLogger.warn("Otherwise, you might want to redownload this mod from the *official* CurseForge page.");
+        }
     }
 
     public static Logger getLogger() {

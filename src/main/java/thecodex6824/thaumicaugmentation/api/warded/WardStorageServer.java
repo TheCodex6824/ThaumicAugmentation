@@ -799,11 +799,12 @@ public class WardStorageServer implements IWardStorageServer {
     
     @Override
     public void clearWard(World syncTo, BlockPos pos) {
-        BlockWardEvent.DewardedServer event = new BlockWardEvent.DewardedServer(syncTo, pos);
+        BlockWardEvent.DewardedServer event = new BlockWardEvent.DewardedServer.Pre(syncTo, pos);
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.isCanceled()) {
             manager.setOwner(pos, NIL_UUID);
             WardSyncManager.markPosForClear(syncTo, pos);
+            MinecraftForge.EVENT_BUS.post(new BlockWardEvent.DewardedServer.Post(syncTo, pos));
         }
     }
     
@@ -845,7 +846,7 @@ public class WardStorageServer implements IWardStorageServer {
     
     @Override
     public void setWard(World syncTo, BlockPos pos, UUID owner) {
-        BlockWardEvent.WardedServer event = new BlockWardEvent.WardedServer(syncTo, pos, owner);
+        BlockWardEvent.WardedServer event = new BlockWardEvent.WardedServer.Pre(syncTo, pos, owner);
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.isCanceled()) {
             if (!manager.isOwner(owner)) {
@@ -857,6 +858,7 @@ public class WardStorageServer implements IWardStorageServer {
             
             manager.setOwner(pos, owner);
             WardSyncManager.markPosForNewOwner(syncTo, pos, owner);
+            MinecraftForge.EVENT_BUS.post(new BlockWardEvent.WardedServer.Post(syncTo, pos, owner));
         }
     }
     

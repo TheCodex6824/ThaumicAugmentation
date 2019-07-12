@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.entity;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -79,16 +80,19 @@ public final class PortalStateManager {
     }
     
     public static void tick() {
+        ArrayList<Entity> toGetRidOf = new ArrayList<>();
         for (Entity entity : TRACKED) {
             if (!findPortalBlock(entity)) {
                 if (!findPortalEntity(entity)) {
                     if (entity.hasCapability(CapabilityPortalState.PORTAL_STATE, null))
                         entity.getCapability(CapabilityPortalState.PORTAL_STATE, null).setInPortal(false);
                     
-                    TRACKED.remove(entity);
+                    toGetRidOf.add(entity);
                 }
             }
         }
+        
+        TRACKED.removeAll(toGetRidOf);
     }
     
 }

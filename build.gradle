@@ -38,6 +38,15 @@ minecraft {
     
     replace '@VERSION@', project.version
     replaceIn 'ThaumicAugmentation.java'
+    
+    if (project.hasProperty('keyStore')) {
+        replace '@FINGERPRINT@', project.certFingerprint
+        replaceIn 'ThaumicAugmentation.java'
+    }
+    else {
+        replace '@FINGERPRINT', ""
+        replaceIn 'ThaumicAugmentation.java'
+    }
 }
 
 dependencies {
@@ -77,6 +86,29 @@ processResources {
 
 javadoc {
     include 'thecodex6824/thaumicaugmentation/api/**'
+}
+
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf { project.hasProperty('keyStore') }
+    
+    if (project.hasProperty('keyStore')) { // needed to skip gradle trying to find vars
+        keyStore = project.keyStore
+        alias = project.alias
+        storePass = project.storePass
+        keyPass = project.keyPass
+        
+        inputFile = jar.archivePath
+        outputFile = jar.archivePath
+    }
+}
+
+build.dependsOn signJar
+
+jar {
+    manifest {
+        attributes 'FMLCorePlugin': 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
+    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {

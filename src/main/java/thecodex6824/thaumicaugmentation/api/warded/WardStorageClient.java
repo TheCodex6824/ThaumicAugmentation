@@ -41,7 +41,7 @@ public class WardStorageClient implements IWardStorageClient {
     
     @Override
     public void setWard(BlockPos pos, ClientWardStorageValue val) {
-        BlockWardEvent.WardedClient event = new BlockWardEvent.WardedClient(FMLClientHandler.instance().getClient().world, pos, val);
+        BlockWardEvent.WardedClient event = new BlockWardEvent.WardedClient.Pre(FMLClientHandler.instance().getClient().world, pos, val);
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.isCanceled()) {
             byte id = val.getID();
@@ -51,18 +51,22 @@ public class WardStorageClient implements IWardStorageClient {
                 (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
             data[index / 4] = (id & 2) != 0 ? (byte) (data[index / 4] | (2 << (index % 4 * 2))) : 
                 (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+            
+            MinecraftForge.EVENT_BUS.post(new BlockWardEvent.WardedClient.Post(FMLClientHandler.instance().getClient().world, pos, val));
         }
     }
     
     @Override
     public void clearWard(BlockPos pos) {
-        BlockWardEvent.DewardedClient event = new BlockWardEvent.DewardedClient(FMLClientHandler.instance().getClient().world, pos);
+        BlockWardEvent.DewardedClient event = new BlockWardEvent.DewardedClient.Pre(FMLClientHandler.instance().getClient().world, pos);
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.isCanceled()) {
             int index = (pos.getX() & 15) + (pos.getY() & 255) * 16 + (pos.getZ() & 15) * 16 * 256;
             
             data[index / 4] = (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
             data[index / 4] = (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+            
+            MinecraftForge.EVENT_BUS.post(new BlockWardEvent.DewardedClient.Post(FMLClientHandler.instance().getClient().world, pos));
         }
     }
     

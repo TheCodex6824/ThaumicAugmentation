@@ -230,6 +230,13 @@ public final class TAConfigHolder {
     @RequiresMcRestart
     public static boolean disableEmptiness = false;
     
+    @Name("DisableCoremod")
+    @Comment({
+        
+    })
+    @RequiresMcRestart
+    public static boolean disableCoremod = false;
+    
     static {
         // vanilla
         fractureDimList.put("0", 35);
@@ -298,20 +305,16 @@ public final class TAConfigHolder {
         TAConfig.voidBootsSneakReduction.setValue(voidBootsSneakReduction, side);
 
         TAConfig.opWardOverride.setValue(opWardOverride, side);
-        //TAConfig.disableWardFocus.setValue(disableWardFocus, side);
 
         TAConfig.castedLightSimpleRenderer.setValue(castedLightSimpleRenderer, side);
 
         TAConfig.defaultGauntletColors.setValue(defaultGauntletColors, side);
         TAConfig.defaultVoidBootsColor.setValue(defaultVoidBootsColor, side);
 
-        //TAConfig.emptinessDimID.setValue(emptinessDimID, side);
         TAConfig.emptinessMoveFactor.setValue(emptinessMoveFactor, side);
         TAConfig.fractureGenChance.setValue(fractureGenChance, side);
-        //TAConfig.fractureDimList.setValue(fractureDimList, side);
         TAConfig.fractureLocatorUpdateInterval.setValue(fractureLocatorUpdateInterval, side);
         TAConfig.fracturesAlwaysTeleport.setValue(fracturesAlwaysTeleport, side);
-        //TAConfig.disableEmptiness.setValue(disableEmptiness, side);
     }
 
     public static void syncLocally() {
@@ -366,6 +369,8 @@ public final class TAConfigHolder {
         TAConfig.fractureLocatorUpdateInterval = TAConfigManager.addOption(new ConfigOptionInt(false, fractureLocatorUpdateInterval));
         TAConfig.fracturesAlwaysTeleport = TAConfigManager.addOption(new ConfigOptionBoolean(false, fracturesAlwaysTeleport));
         TAConfig.disableEmptiness = TAConfigManager.addOption(new ConfigOptionBoolean(false, disableEmptiness));
+    
+        TAConfig.disableCoremod = TAConfigManager.addOption(new ConfigOptionBoolean(false, disableCoremod));
     }
 
 }
