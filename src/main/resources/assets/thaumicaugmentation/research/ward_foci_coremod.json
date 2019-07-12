@@ -1,0 +1,63 @@
+{
+    "entries": [
+        {
+            "key": "FOCUS_WARD",
+            "name": "thaumicaugmentation.research.focus_ward_coremod.title",
+            "icons": [
+                "focus:focus.thaumicaugmentation.ward"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "WARDED_ARCANA",
+                "MORE_AUROMANCY"
+            ],
+            "location": [
+                1.5,
+                2.5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.focus_ward_coremod.0",
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;AUROMANCY;1"
+                    ],
+                    "required_research": [
+                        "f_STRONGPICKAXE",
+                        "f_FLINTANDSTEEL",
+                        "m_CREEPER"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_ward_coremod.1"
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.focus_ward_coremod.2",
+                    "required_research": [
+                        "MINDCLOCKWORK"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_ward_coremod.3",
+                    "required_research": [
+                        "ARCANEBORE"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_ward_coremod.4",
+                    "required_research": [
+                        "FOCUSRIFT"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_ward_coremod.5",
+                    "required_research": [
+                        "FOCUSEXCHANGE"
+                    ]
+                }
+            ]
+        }
+    ]
+}

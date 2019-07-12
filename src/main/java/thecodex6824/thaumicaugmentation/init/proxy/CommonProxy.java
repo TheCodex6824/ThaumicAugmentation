@@ -28,6 +28,7 @@ import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
@@ -81,10 +82,12 @@ public class CommonProxy implements ISidedProxy {
         TAInternals.setInternalMethodProvider(new InternalMethodProvider());
         IntegrationHandler.preInit();
         
-        if (ThaumicAugmentationAPI.isCoremodAvailable())
-            MinecraftForge.EVENT_BUS.register(new WardEventHandler());
-        else
-            MinecraftForge.EVENT_BUS.register(new WardEventHandlerNoCoremodFallback());
+        if (!TAConfig.disableWardFocus.getValue()) {
+            if (ThaumicAugmentationAPI.isCoremodAvailable())
+                MinecraftForge.EVENT_BUS.register(new WardEventHandler());
+            else
+                MinecraftForge.EVENT_BUS.register(new WardEventHandlerNoCoremodFallback());
+        }
     }
 
     @Override

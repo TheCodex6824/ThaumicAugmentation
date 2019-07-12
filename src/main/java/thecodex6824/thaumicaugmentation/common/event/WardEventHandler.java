@@ -34,9 +34,14 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
+import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.CropGrowEvent;
+import net.minecraftforge.event.world.BlockEvent.FarmlandTrampleEvent;
+import net.minecraftforge.event.world.BlockEvent.FluidPlaceBlockEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -92,7 +97,7 @@ public class WardEventHandler {
     
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
-        if (!TAConfig.disableWardFocus.getValue() && event.phase == Phase.END) {
+        if (event.phase == Phase.END) {
             for (Map.Entry<DimensionalChunkPos, WardUpdateEntry> entry : WardSyncManager.getEntries()) {
                 DimensionalChunkPos pos = entry.getKey();
                 for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) {
@@ -114,7 +119,7 @@ public class WardEventHandler {
     
     @SubscribeEvent
     public void onTrackChunk(ChunkWatchEvent event) {
-        if (!TAConfig.disableWardFocus.getValue() && event.getChunkInstance().hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && 
+        if (event.getChunkInstance().hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && 
                 event.getChunkInstance().getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageServer) {
             IWardStorageServer storage = (IWardStorageServer) event.getChunkInstance().getCapability(CapabilityWardStorage.WARD_STORAGE, null);
             TANetwork.INSTANCE.sendTo(new PacketFullWardSync(storage.fullSyncToClient(event.getChunkInstance(), event.getPlayer().getUniqueID())), event.getPlayer());
@@ -123,61 +128,53 @@ public class WardEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onBreakSpeed(PlayerEvent.BreakSpeed event) {
-        if (!TAConfig.disableWardFocus.getValue()) {
-            BlockPos pos = event.getPos();
-            EntityPlayer player = event.getEntityPlayer();
-            Chunk chunk = player.getEntityWorld().getChunk(pos);
-            if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !checkForSpecialCase(player)) {
-                    RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
-                            player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()).add(new Vec3d(pos)), false, false, true);
-                    sendWardParticles(event.getEntityPlayer().getEntityWorld(), pos, ray.sideHit);
-                    event.setCanceled(true);
-                    event.setNewSpeed(0.0F);
-                }
+        BlockPos pos = event.getPos();
+        EntityPlayer player = event.getEntityPlayer();
+        Chunk chunk = player.getEntityWorld().getChunk(pos);
+        if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos) && !checkForSpecialCase(player)) {
+                RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
+                        player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()).add(new Vec3d(pos)), false, false, true);
+                sendWardParticles(event.getEntityPlayer().getEntityWorld(), pos, ray.sideHit);
+                event.setCanceled(true);
+                event.setNewSpeed(0.0F);
             }
         }
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (!TAConfig.disableWardFocus.getValue()) {
-            BlockPos pos = event.getPos();
-            Chunk chunk = event.getWorld().getChunk(pos);
-            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !checkForSpecialCase(event.getPlayer()))
-                    event.setCanceled(true);
-                else if (storage instanceof IWardStorageServer)
-                    ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
-            }
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos) && !checkForSpecialCase(event.getPlayer()))
+                event.setCanceled(true);
+            else if (storage instanceof IWardStorageServer)
+                ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
         }
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onBlockPunch(PlayerInteractEvent.LeftClickBlock event) {
-        if (!TAConfig.disableWardFocus.getValue()) {
-            BlockPos pos = event.getPos();
-            Chunk chunk = event.getWorld().getChunk(pos);
-            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !checkForSpecialCase(event.getEntityPlayer()))
-                    event.setUseBlock(Result.DENY);
-            }
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos) && !checkForSpecialCase(event.getEntityPlayer()))
+                event.setUseBlock(Result.DENY);
         }
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onBlockInteract(PlayerInteractEvent.RightClickBlock event) {
-        if (!TAConfig.disableWardFocus.getValue()) {
-            BlockPos pos = event.getPos();
-            Chunk chunk = event.getWorld().getChunk(pos);
-            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !checkForSpecialCase(event.getEntityPlayer()))
-                    event.setUseBlock(Result.DENY);
-            }
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos) && !checkForSpecialCase(event.getEntityPlayer()))
+                event.setUseBlock(Result.DENY);
         }
     }
     
@@ -188,7 +185,7 @@ public class WardEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
-        if (!TAConfig.disableWardFocus.getValue() && event.getWorld().isBlockLoaded(event.getPos())) {
+        if (event.getWorld().isBlockLoaded(event.getPos())) {
             BlockPos notifier = event.getPos();
             EnumSet<EnumFacing> sidesToRemove = EnumSet.noneOf(EnumFacing.class);
             for (EnumFacing facing : event.getNotifiedSides()) {
@@ -220,53 +217,102 @@ public class WardEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
-        if (!TAConfig.disableWardFocus.getValue()) {
-            BlockPos pos = event.getPos();
-            Chunk chunk = event.getWorld().getChunk(pos);
-            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage instanceof IWardStorageServer && storage.hasWard(event.getPos()))
-                    ((IWardStorageServer) storage).clearWard(event.getWorld(), event.getPos());
-            }
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage instanceof IWardStorageServer && storage.hasWard(event.getPos()))
+                ((IWardStorageServer) storage).clearWard(event.getWorld(), event.getPos());
         }
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onBlockPlaceMulti(BlockEvent.EntityMultiPlaceEvent event) {
-        if (!TAConfig.disableWardFocus.getValue()) {
-            for (BlockSnapshot b : event.getReplacedBlockSnapshots()) {
-                BlockPos pos = b.getPos();
-                Chunk chunk = event.getWorld().getChunk(pos);
-                if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                    IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                    if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !checkForSpecialCase((EntityPlayer) event.getEntity())))
-                        event.setCanceled(true);
-                    else if (storage instanceof IWardStorageServer)
-                        ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
-                }
+        for (BlockSnapshot b : event.getReplacedBlockSnapshots()) {
+            BlockPos pos = b.getPos();
+            Chunk chunk = event.getWorld().getChunk(pos);
+            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !checkForSpecialCase((EntityPlayer) event.getEntity())))
+                    event.setCanceled(true);
+                else if (storage instanceof IWardStorageServer)
+                    ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
             }
         }
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onDestruction(LivingDestroyBlockEvent event) {
-        if (!TAConfig.disableWardFocus.getValue()) {
-            BlockPos pos = event.getPos();
-            Chunk chunk = event.getEntity().getEntityWorld().getChunk(pos);
-            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !checkForSpecialCase((EntityPlayer) event.getEntity())))
-                    event.setCanceled(true);
-                else if (storage instanceof IWardStorageServer)
-                    ((IWardStorageServer) storage).clearWard(event.getEntity().getEntityWorld(), pos);
-            }
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getEntity().getEntityWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !checkForSpecialCase((EntityPlayer) event.getEntity())))
+                event.setCanceled(true);
+            else if (storage instanceof IWardStorageServer)
+                ((IWardStorageServer) storage).clearWard(event.getEntity().getEntityWorld(), pos);
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onBonemeal(BonemealEvent event) {
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos) && !checkForSpecialCase(event.getEntityPlayer()))
+                event.setCanceled(true);
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onHoe(UseHoeEvent event) {
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos) && !checkForSpecialCase(event.getEntityPlayer()))
+                event.setCanceled(true);
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onGrow(CropGrowEvent.Pre event) {
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos))
+                event.setResult(Result.DENY);
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onTrample(FarmlandTrampleEvent event) {
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !checkForSpecialCase((EntityPlayer) event.getEntity())))
+                event.setCanceled(true);
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onFluidPlaceBlock(FluidPlaceBlockEvent event) {
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos))
+                event.setCanceled(true);
         }
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onDewardBlock(BlockWardEvent.DewardedServer.Post event) {
-        event.getWorld().scheduleUpdate(event.getPos(), event.getState().getBlock(), 
-                event.getState().getBlock().tickRate(event.getWorld()));
+        event.getWorld().neighborChanged(event.getPos(), event.getWorld().getBlockState(event.getPos().up()).getBlock(),
+                event.getPos().up());
     }
     
 }

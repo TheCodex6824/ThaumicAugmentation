@@ -57,8 +57,12 @@ public final class ResearchHandler {
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/gauntlets.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/warded.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/void.json"));
-        if (!TAConfig.disableWardFocus.getValue())
-            ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/ward_foci.json"));
+        if (!TAConfig.disableWardFocus.getValue()) {
+            if (ThaumicAugmentationAPI.isCoremodAvailable())
+                ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/ward_foci_coremod.json"));
+            else
+                ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/ward_foci_no_coremod.json"));
+        }
         
         ScanningManager.addScannableThing(new ScanBlock("f_LEAFSILVERWOOD", new Block[] {BlocksTC.leafSilverwood}));
         ScanningManager.addScannableThing(new ScanItem("f_LEAFSILVERWOOD", new ItemStack(BlocksTC.leafSilverwood)));

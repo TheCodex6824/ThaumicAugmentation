@@ -2,7 +2,7 @@
     "entries": [
         {
             "key": "FOCUS_WARD",
-            "name": "thaumicaugmentation.research.focus_ward.title",
+            "name": "thaumicaugmentation.research.focus_ward_no_coremod.title",
             "icons": [
                 "focus:focus.thaumicaugmentation.ward"
             ],
@@ -17,7 +17,7 @@
             ],
             "stages": [
                 {
-                    "text": "thaumicaugmentation.research.focus_ward.0",
+                    "text": "thaumicaugmentation.research.focus_ward_no_coremod.0",
                     "required_knowledge": [
                         "OBSERVATION;AUROMANCY;1",
                         "THEORY;AUROMANCY;1"
@@ -29,26 +29,32 @@
                     ]
                 },
                 {
-                    "text": "thaumicaugmentation.research.focus_ward.1"
+                    "text": "thaumicaugmentation.research.focus_ward_no_coremod.1"
                 }
             ],
             "addenda": [
                 {
-                    "text": "thaumicaugmentation.research.focus_ward.2",
+                    "text": "thaumicaugmentation.research.focus_ward_no_coremod.2",
                     "required_research": [
                         "MINDCLOCKWORK"
                     ]
                 },
                 {
-                    "text": "thaumicaugmentation.research.focus_ward.3",
+                    "text": "thaumicaugmentation.research.focus_ward_no_coremod.3",
                     "required_research": [
                         "ARCANEBORE"
                     ]
                 },
                 {
-                    "text": "thaumicaugmentation.research.focus_ward.4",
+                    "text": "thaumicaugmentation.research.focus_ward_no_coremod.4",
                     "required_research": [
                         "FOCUSRIFT"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_ward_no_coremod.5",
+                    "required_research": [
+                        "FOCUSEXCHANGE"
                     ]
                 }
             ]

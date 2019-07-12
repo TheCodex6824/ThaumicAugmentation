@@ -46,7 +46,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import thaumcraft.api.golems.tasks.Task;
 import thaumcraft.common.entities.construct.EntityArcaneBore;
 import thaumcraft.common.golems.tasks.TaskHandler;
-import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
@@ -82,7 +81,7 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
     
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (!TAConfig.disableWardFocus.getValue() && !event.world.isRemote && event.phase == Phase.END) {
+        if (!event.world.isRemote && event.phase == Phase.END) {
             ConcurrentHashMap<Integer, Task> tasks = TaskHandler.tasks.get(event.world.provider.getDimension());
             for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
                 Task task = entry.getValue();
@@ -105,21 +104,19 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
     @Override
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (!TAConfig.disableWardFocus.getValue()) {
-            BlockPos pos = event.getPos();
-            Chunk chunk = event.getWorld().getChunk(pos);
-            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos) && !checkForSpecialCase(event.getPlayer())) {
-                    event.setCanceled(true);
-                    if (event.getPlayer() instanceof FakePlayer) {
-                        if (event.getPlayer().getName().equals("FakeThaumcraftBore"))
-                            handleBoreNotCaringAboutCanceledEvents((FakePlayer) event.getPlayer());
-                    }
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos) && !checkForSpecialCase(event.getPlayer())) {
+                event.setCanceled(true);
+                if (event.getPlayer() instanceof FakePlayer) {
+                    if (event.getPlayer().getName().equals("FakeThaumcraftBore"))
+                        handleBoreNotCaringAboutCanceledEvents((FakePlayer) event.getPlayer());
                 }
-                else if (storage instanceof IWardStorageServer)
-                    ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
             }
+            else if (storage instanceof IWardStorageServer)
+                ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
         }
     }
     
@@ -127,7 +124,7 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
         super.onNeighborNotify(event);
-        if (!TAConfig.disableWardFocus.getValue() && event.getWorld().isBlockLoaded(event.getPos())) {
+        if (event.getWorld().isBlockLoaded(event.getPos())) {
             BlockPos notifier = event.getPos();
             for (EnumFacing facing : event.getNotifiedSides()) {
                 BlockPos pos = notifier.offset(facing);
@@ -151,38 +148,36 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onExplosion(ExplosionEvent.Detonate event) {
-        if (!TAConfig.disableWardFocus.getValue()) {
-            HashSet<BlockPos> blockers = new HashSet<>();
-            ListIterator<BlockPos> iterator = event.getAffectedBlocks().listIterator();
-            while (iterator.hasNext()) {
-                BlockPos pos = iterator.next();
-                Chunk chunk = event.getWorld().getChunk(pos);
-                if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && 
-                        chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos)) {
-                    blockers.add(pos);
-                    iterator.remove();
-                }
+        HashSet<BlockPos> blockers = new HashSet<>();
+        ListIterator<BlockPos> iterator = event.getAffectedBlocks().listIterator();
+        while (iterator.hasNext()) {
+            BlockPos pos = iterator.next();
+            Chunk chunk = event.getWorld().getChunk(pos);
+            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && 
+                    chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos)) {
+                blockers.add(pos);
+                iterator.remove();
             }
-            
-            iterator = event.getAffectedBlocks().listIterator();
-            while (iterator.hasNext()) {
-                BlockPos pos = iterator.next();
-                RayTraceResult ray = event.getWorld().rayTraceBlocks(event.getExplosion().getPosition(), new Vec3d(pos));
-                if (ray != null && ray.typeOfHit == Type.BLOCK && blockers.contains(ray.getBlockPos()))
-                    iterator.remove();
-            }
-            
-            ListIterator<Entity> entityIterator = event.getAffectedEntities().listIterator();
-            while (entityIterator.hasNext()) {
-                Entity entity = entityIterator.next();
-                RayTraceResult ray = event.getWorld().rayTraceBlocks(event.getExplosion().getPosition(), entity.getPositionVector());
+        }
+        
+        iterator = event.getAffectedBlocks().listIterator();
+        while (iterator.hasNext()) {
+            BlockPos pos = iterator.next();
+            RayTraceResult ray = event.getWorld().rayTraceBlocks(event.getExplosion().getPosition(), new Vec3d(pos));
+            if (ray != null && ray.typeOfHit == Type.BLOCK && blockers.contains(ray.getBlockPos()))
+                iterator.remove();
+        }
+        
+        ListIterator<Entity> entityIterator = event.getAffectedEntities().listIterator();
+        while (entityIterator.hasNext()) {
+            Entity entity = entityIterator.next();
+            RayTraceResult ray = event.getWorld().rayTraceBlocks(event.getExplosion().getPosition(), entity.getPositionVector());
+            if (ray != null && ray.typeOfHit == Type.BLOCK && blockers.contains(ray.getBlockPos()))
+                entityIterator.remove();
+            else {
+                ray = event.getWorld().rayTraceBlocks(event.getExplosion().getPosition(), entity.getPositionEyes(1.0F));
                 if (ray != null && ray.typeOfHit == Type.BLOCK && blockers.contains(ray.getBlockPos()))
                     entityIterator.remove();
-                else {
-                    ray = event.getWorld().rayTraceBlocks(event.getExplosion().getPosition(), entity.getPositionEyes(1.0F));
-                    if (ray != null && ray.typeOfHit == Type.BLOCK && blockers.contains(ray.getBlockPos()))
-                        entityIterator.remove();
-                }
             }
         }
     }
