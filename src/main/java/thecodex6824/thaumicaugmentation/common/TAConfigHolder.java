@@ -232,7 +232,10 @@ public final class TAConfigHolder {
     
     @Name("DisableCoremod")
     @Comment({
-        
+        "Completely disables the Thaumic Augmentation coremod.",
+        "It will still appear in the list of loaded coremods, but won't do anything.",
+        "The coremod is a neccessary evil to get warded blocks to behave properly with other mods,",
+        "disabling it may make warded blocks less durable than intended."
     })
     @RequiresMcRestart
     public static boolean disableCoremod = false;

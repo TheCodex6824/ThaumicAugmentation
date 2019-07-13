@@ -51,6 +51,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHalf;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHinge;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorOpen;
@@ -62,7 +63,7 @@ import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 @Deprecated
 public class BlockArcaneDoorLegacy extends BlockTABase implements IHorizontallyDirectionalBlock, IArcaneDoorHalf, 
-    IArcaneDoorHinge, IArcaneDoorOpen, IArcaneDoorType {
+    IArcaneDoorHinge, IArcaneDoorOpen, IArcaneDoorType, IUnwardableBlock {
 
     protected static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 0.1875D);
     protected static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.8125D, 1.0D, 1.0D, 1.0D);

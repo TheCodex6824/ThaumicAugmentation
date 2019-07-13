@@ -20,12 +20,21 @@
 
 package thecodex6824.thaumicaugmentation.core.transformer;
 
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
 public final class TransformUtil {
 
     private TransformUtil() {}
+    
+    public static String correctNameForRuntime(String deobf, String obf) {
+        // "runtime deobf" refers to the srg names being used, not the dev ones
+        return ThaumicAugmentationCore.isRuntimeDeobfEnabled() ? obf : deobf;
+    }
     
     public static MethodNode findMethod(ClassNode classNode, String deobf, String obf) {
         for (MethodNode m : classNode.methods) {
@@ -49,6 +58,36 @@ public final class TransformUtil {
         for (int i = startIndex; i < node.instructions.size(); ++i) {
             if (node.instructions.get(i).getOpcode() == opcode)
                 return i;
+        }
+        
+        return -1;
+    }
+    
+    public static int findFirstInstanceOfMethodCall(MethodNode node, int startIndex, String deobf, String obf, String desc,
+            String owningClass) {
+        for (int i = startIndex; i < node.instructions.size(); ++i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn instanceof MethodInsnNode) {
+                MethodInsnNode method = (MethodInsnNode) insn;
+                if ((method.name.equals(obf) || method.name.equals(deobf)) && method.desc.equals(desc) && 
+                        method.owner.equals(owningClass))
+                    return i;
+            }
+        }
+        
+        return -1;
+    }
+    
+    public static int findLastInstanceOfMethodCall(MethodNode node, int endIndex, String deobf, String obf, String desc,
+            String owningClass) {
+        for (int i = endIndex - 1; i >= 0; --i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn instanceof MethodInsnNode) {
+                MethodInsnNode method = (MethodInsnNode) insn;
+                if ((method.name.equals(obf) || method.name.equals(deobf)) && method.desc.equals(desc) && 
+                        method.owner.equals(owningClass))
+                    return i;
+            }
         }
         
         return -1;

@@ -24,6 +24,7 @@ compileJava {
 minecraft {
     version = "${mcversion}-${forgeversion}"
     runDir = "run"
+    useDepAts = true
     
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
@@ -47,6 +48,14 @@ minecraft {
         replace '@FINGERPRINT@', ""
         replaceIn 'ThaumicAugmentation.java'
     }
+}
+
+runClient {
+    jvmArgs '-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
+}
+
+runServer {
+    jvmArgs '-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
 }
 
 dependencies {
@@ -106,6 +115,7 @@ build.dependsOn signJar
 
 jar {
     manifest {
+        attributes 'FMLAT': 'thaumicaugmentation_at.cfg'
         attributes 'FMLCorePlugin': 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }

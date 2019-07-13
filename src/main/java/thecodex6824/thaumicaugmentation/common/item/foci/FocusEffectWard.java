@@ -40,6 +40,7 @@ import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
@@ -76,7 +77,7 @@ public class FocusEffectWard extends FocusEffect {
             World world = getPackage().getCaster().getEntityWorld();
             if (!world.isRemote && result.typeOfHit == Type.BLOCK && getPackage().getCaster() instanceof EntityPlayer && 
                     world.isBlockModifiable((EntityPlayer) getPackage().getCaster(), result.getBlockPos()) &&
-                    !world.isAirBlock(result.getBlockPos())) {
+                    !world.isAirBlock(result.getBlockPos()) && !(world.getBlockState(result.getBlockPos()).getBlock() instanceof IUnwardableBlock)) {
                 BlockPos pos = result.getBlockPos();
                 Chunk chunk = getPackage().getCaster().getEntityWorld().getChunk(pos);
                 if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && chunk.getTileEntity(pos, EnumCreateEntityType.CHECK) == null) {

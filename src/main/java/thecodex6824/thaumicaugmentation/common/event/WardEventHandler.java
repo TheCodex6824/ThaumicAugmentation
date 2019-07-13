@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.common.event;
 
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,17 +30,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.BlockEvent.CropGrowEvent;
 import net.minecraftforge.event.world.BlockEvent.FarmlandTrampleEvent;
 import net.minecraftforge.event.world.BlockEvent.FluidPlaceBlockEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
@@ -127,18 +128,20 @@ public class WardEventHandler {
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onBreakSpeed(PlayerEvent.BreakSpeed event) {
-        BlockPos pos = event.getPos();
-        EntityPlayer player = event.getEntityPlayer();
-        Chunk chunk = player.getEntityWorld().getChunk(pos);
-        if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && !checkForSpecialCase(player)) {
-                RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
-                        player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()).add(new Vec3d(pos)), false, false, true);
-                sendWardParticles(event.getEntityPlayer().getEntityWorld(), pos, ray.sideHit);
-                event.setCanceled(true);
-                event.setNewSpeed(0.0F);
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
+        if (!event.world.isRemote && event.phase == Phase.START && event.world instanceof WorldServer) {
+            WorldServer world = (WorldServer) event.world;
+            Iterator<NextTickListEntry> iterator = world.pendingTickListEntriesHashSet.iterator();
+            while (iterator.hasNext()) {
+                NextTickListEntry entry = iterator.next();
+                Chunk chunk = world.getChunk(entry.position);
+                if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+                    IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                    if (storage.hasWard(entry.position)) {
+                        iterator.remove();
+                        world.pendingTickListEntriesTreeSet.remove(entry);
+                    }
+                }
             }
         }
     }
@@ -162,8 +165,13 @@ public class WardEventHandler {
         Chunk chunk = event.getWorld().getChunk(pos);
         if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && !checkForSpecialCase(event.getEntityPlayer()))
-                event.setUseBlock(Result.DENY);
+            if (storage.hasWard(pos) && !checkForSpecialCase(event.getEntityPlayer())) {
+                EntityPlayer player = event.getEntityPlayer();
+                RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
+                        player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()).add(new Vec3d(pos)), false, false, true);
+                sendWardParticles(event.getEntityPlayer().getEntityWorld(), pos, ray.sideHit);
+                event.setCanceled(true);
+            }
         }
     }
     
@@ -277,17 +285,6 @@ public class WardEventHandler {
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onGrow(CropGrowEvent.Pre event) {
-        BlockPos pos = event.getPos();
-        Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos))
-                event.setResult(Result.DENY);
-        }
-    }
-    
-    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onTrample(FarmlandTrampleEvent event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getWorld().getChunk(pos);
@@ -309,7 +306,7 @@ public class WardEventHandler {
         }
     }
     
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onDewardBlock(BlockWardEvent.DewardedServer.Post event) {
         event.getWorld().neighborChanged(event.getPos(), event.getWorld().getBlockState(event.getPos().up()).getBlock(),
                 event.getPos().up());

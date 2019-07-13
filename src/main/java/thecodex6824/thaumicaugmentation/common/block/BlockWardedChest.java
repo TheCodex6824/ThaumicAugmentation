@@ -44,6 +44,7 @@ import net.minecraftforge.common.property.Properties;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
@@ -53,7 +54,7 @@ import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
-public class BlockWardedChest extends BlockTABase implements IHorizontallyDirectionalBlock, IItemBlockProvider {
+public class BlockWardedChest extends BlockTABase implements IHorizontallyDirectionalBlock, IItemBlockProvider, IUnwardableBlock {
 
     protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375);
 

@@ -20,9 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.common.internal;
 
+import java.util.Random;
+
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 
 public class TAHooks {
@@ -55,6 +59,15 @@ public class TAHooks {
         }
         
         return oldFlammability;
+    }
+    
+    public static boolean checkWardRandomTick(WorldServer world, BlockPos pos, IBlockState state, Random rand) {
+        if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos))
+                return false;
+        }
+        
+        return true;
     }
     
 }

@@ -30,7 +30,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
-@IFMLLoadingPlugin.Name(ThaumicAugmentationAPI.MODID + "core")
+@IFMLLoadingPlugin.Name("Thaumic Augmentation Core Plugin")
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 @IFMLLoadingPlugin.SortingIndex(1005)
 @IFMLLoadingPlugin.TransformerExclusions("thecodex6824.thaumicaugmentation.core")
@@ -40,6 +40,7 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
     private static Configuration config;
     private static boolean enabled;
+    private static boolean deobf;
     
     public ThaumicAugmentationCore() {
         if (config != null)
@@ -58,6 +59,10 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
     public static Configuration getConfig() {
         return config;
+    }
+    
+    public static boolean isRuntimeDeobfEnabled() {
+        return deobf;
     }
     
     @Override
@@ -82,6 +87,7 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
     @Override
     public void injectData(Map<String, Object> data) {
+        deobf = (Boolean) data.get("runtimeDeobfuscationEnabled");
         enabled = !config.getBoolean("DisableCoremod", "general", false, "");
         if (enabled)
             ThaumicAugmentationAPI.setCoremodAvailable();

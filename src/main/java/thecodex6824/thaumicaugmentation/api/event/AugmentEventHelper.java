@@ -126,23 +126,25 @@ public final class AugmentEventHelper {
     }
     
     public static void handleSync(IAugmentableItem cap, Entity entity, int index) {
-        boolean sync = false;
-        for (ItemStack a : cap.getAllAugments()) {
-            if (a.hasCapability(CapabilityAugment.AUGMENT, null)) {
-                IAugment aug = a.getCapability(CapabilityAugment.AUGMENT, null);
-                if (aug.shouldSync()) {
-                    sync = true;
-                    break;
+        if (!entity.getEntityWorld().isRemote) {
+            boolean sync = false;
+            for (ItemStack a : cap.getAllAugments()) {
+                if (a.hasCapability(CapabilityAugment.AUGMENT, null)) {
+                    IAugment aug = a.getCapability(CapabilityAugment.AUGMENT, null);
+                    if (aug.shouldSync()) {
+                        sync = true;
+                        break;
+                    }
                 }
             }
-        }
-        
-        if (sync) {
-            PacketAugmentableItemSync syncPacket = new PacketAugmentableItemSync(entity.getEntityId(), index, cap.serializeNBT());
-            if (entity instanceof EntityPlayerMP)
-                TANetwork.INSTANCE.sendTo(syncPacket, (EntityPlayerMP) entity);
-          
-            TANetwork.INSTANCE.sendToAllTracking(syncPacket, entity);
+            
+            if (sync) {
+                PacketAugmentableItemSync syncPacket = new PacketAugmentableItemSync(entity.getEntityId(), index, cap.serializeNBT());
+                if (entity instanceof EntityPlayerMP)
+                    TANetwork.INSTANCE.sendTo(syncPacket, (EntityPlayerMP) entity);
+              
+                TANetwork.INSTANCE.sendToAllTracking(syncPacket, entity);
+            }
         }
     }
     

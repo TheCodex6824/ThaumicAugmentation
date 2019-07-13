@@ -69,8 +69,10 @@ public final class AugmentEventHandler {
                 
                     if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                         AugmentEventHelper.fireEquipEvent(current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), event.getEntity());
-                        TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(event.getEntity().getEntityId(), totalIndex, current.getCapability(
-                                CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT()), event.getEntity());
+                        if (!event.getEntity().getEntityWorld().isRemote) {
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(event.getEntity().getEntityId(), totalIndex, current.getCapability(
+                                    CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT()), event.getEntity());
+                        }
                     }
                 
                     if (oldList != null)

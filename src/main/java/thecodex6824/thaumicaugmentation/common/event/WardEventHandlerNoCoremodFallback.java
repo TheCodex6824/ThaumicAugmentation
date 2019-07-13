@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -36,11 +37,14 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.event.world.BlockEvent.CropGrowEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import thaumcraft.api.golems.tasks.Task;
@@ -79,8 +83,10 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
         }
     }
     
-    @SubscribeEvent
+    @Override
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onWorldTick(TickEvent.WorldTickEvent event) {
+        super.onWorldTick(event);
         if (!event.world.isRemote && event.phase == Phase.END) {
             ConcurrentHashMap<Integer, Task> tasks = TaskHandler.tasks.get(event.world.provider.getDimension());
             for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
@@ -117,6 +123,23 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
             }
             else if (storage instanceof IWardStorageServer)
                 ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onBreakSpeed(PlayerEvent.BreakSpeed event) {
+        BlockPos pos = event.getPos();
+        EntityPlayer player = event.getEntityPlayer();
+        Chunk chunk = player.getEntityWorld().getChunk(pos);
+        if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos) && !checkForSpecialCase(player)) {
+                RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
+                        player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()).add(new Vec3d(pos)), false, false, true);
+                sendWardParticles(event.getEntityPlayer().getEntityWorld(), pos, ray.sideHit);
+                event.setCanceled(true);
+                event.setNewSpeed(0.0F);
+            }
         }
     }
     
@@ -179,6 +202,17 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
                 if (ray != null && ray.typeOfHit == Type.BLOCK && blockers.contains(ray.getBlockPos()))
                     entityIterator.remove();
             }
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onGrow(CropGrowEvent.Pre event) {
+        BlockPos pos = event.getPos();
+        Chunk chunk = event.getWorld().getChunk(pos);
+        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage.hasWard(pos))
+                event.setResult(Result.DENY);
         }
     }
     

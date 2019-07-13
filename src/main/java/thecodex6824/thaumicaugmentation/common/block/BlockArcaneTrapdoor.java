@@ -47,6 +47,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHalf;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorOpen;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
@@ -56,7 +57,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDirectionalBlock, IArcaneDoorHalf,
-    IArcaneDoorOpen, IItemBlockProvider {
+    IArcaneDoorOpen, IItemBlockProvider, IUnwardableBlock {
 
     protected static final AxisAlignedBB EAST_OPEN_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.1875D, 1.0D, 1.0D);
     protected static final AxisAlignedBB WEST_OPEN_AABB = new AxisAlignedBB(0.8125D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
