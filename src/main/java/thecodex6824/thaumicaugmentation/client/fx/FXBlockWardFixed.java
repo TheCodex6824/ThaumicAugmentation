@@ -52,7 +52,6 @@ public class FXBlockWardFixed extends Particle {
         motionZ = 0.0;
         particleGravity = 0.0F;
         particleMaxAge = 12 + rand.nextInt(5);
-        particleAge = 2;
       
         setSize(0.01F, 0.01F);
         prevPosX = posX;
@@ -81,8 +80,8 @@ public class FXBlockWardFixed extends Particle {
         Tessellator.getInstance().draw();
         GL11.glPushMatrix();
         float fade = (particleAge + partialTicks) / particleMaxAge;
-        int frame = (int) Math.min(textures.length, textures.length * fade);
-        Minecraft.getMinecraft().renderEngine.bindTexture(textures[frame - 1]);
+        int frame = (int) Math.min(textures.length - 1, Math.max(0, (textures.length - 1) * fade));
+        Minecraft.getMinecraft().renderEngine.bindTexture(textures[frame]);
       
         GL11.glDepthMask(false);
         GL11.glEnable(GL11.GL_BLEND);
@@ -133,7 +132,7 @@ public class FXBlockWardFixed extends Particle {
         if (particleAge <= threshold)
             particleAlpha = particleAge / threshold;
         else
-            particleAlpha = (particleMaxAge - particleAge) / particleMaxAge;
+            particleAlpha = (float) (particleMaxAge - particleAge) / particleMaxAge;
           
         if (particleAge++ >= particleMaxAge)
             setExpired();
