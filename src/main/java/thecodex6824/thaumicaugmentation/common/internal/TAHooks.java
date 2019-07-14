@@ -32,7 +32,7 @@ import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 public class TAHooks {
 
     public static float checkWardHardness(float oldHardness, World world, BlockPos pos) {
-        if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+        if (world != null && pos != null && world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos))
                 return -1.0F; // bedrock value
         }
@@ -41,7 +41,7 @@ public class TAHooks {
     }
     
     public static float checkWardResistance(float oldResistance, World world, BlockPos pos) {
-        if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+        if (world != null && pos != null && world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos))
                 return 6000000.0F; // bedrock value
         }
@@ -50,7 +50,7 @@ public class TAHooks {
     }
     
     public static int checkWardFlammability(int oldFlammability, IBlockAccess access, BlockPos pos) {
-        if (access instanceof World) {
+        if (access instanceof World && pos != null) {
             World world = (World) access;
             if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos))
