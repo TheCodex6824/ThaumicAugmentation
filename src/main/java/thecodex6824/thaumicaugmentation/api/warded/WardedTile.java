@@ -28,10 +28,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.event.WardedTilePermissionEvent;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 
@@ -68,25 +64,12 @@ public class WardedTile implements IWardedTile {
         return tile.get() != null ? tile.get().getPos() : BlockPos.ORIGIN;
     }
     
-    protected boolean playerHasSpecialPermission(EntityPlayer player) {
-        if (player == null)
-            return false;
-        else if (!player.world.isRemote && TAConfig.opWardOverride.getValue() && FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers().
-                getEntry(player.getGameProfile()) != null)
-            return true;
-        else if (FMLCommonHandler.instance().getSide() == Side.CLIENT && FMLClientHandler.instance().getClient().isSingleplayer() &&
-                TAConfig.opWardOverride.getValue())
-            return true;
-        else
-            return false;
-    }
-    
     protected boolean checkPermission(EntityPlayer player) {
         if (player == null)
             return false;
         else if (owner.equals(player.getUniqueID().toString()))
             return true;
-        else if (playerHasSpecialPermission(player))
+        else if (WardHelper.doesPlayerHaveSpecialPermission(player))
             return true;
         else {
             ItemStack stack = null;

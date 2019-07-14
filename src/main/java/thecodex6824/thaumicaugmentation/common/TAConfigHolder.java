@@ -135,9 +135,17 @@ public final class TAConfigHolder {
 
     @Name("AllowOPWardOverride")
     @Comment({
-        "Allow server operators to always be able to interact with any warded block / tile."
+        "Allow server operators to always be able to interact with or destroy any warded block/tile.",
+        "For singleplayer see AllowSingleplayerWardOverride."
     })
     public static boolean opWardOverride = false;
+    
+    @Name("AllowSingleplayerWardOverride")
+    @Comment({
+        "Allows you to always be able to interact with or destroy any warded block/tile while in singleplayer.",
+        "For multiplayer see AllowOPWardOverride."
+    })
+    public static boolean singlePlayerWardOverride = false;
     
     @Name("DisableWardFocus")
     @Comment({
@@ -171,7 +179,7 @@ public final class TAConfigHolder {
 
     @Name("VoidDimensionID")
     @Comment({
-        "The dimension ID to use for the Void dimension.",
+        "The dimension ID to use for the Emptiness dimension.",
         "If this ID is already taken, a new one will automatically be assigned."
     })
     @RequiresMcRestart
@@ -179,9 +187,9 @@ public final class TAConfigHolder {
 
     @Name("VoidMoveFactor")
     @Comment({
-        "The scaling factor applied to distances in the Void dimension.",
+        "The scaling factor applied to distances in the Emptiness dimension.",
         "For example, the nether has a value of 8 since it multiplies coords by 8.",
-        "Note that move factors for the Void are calculated based on chunk rather than position, so final values",
+        "Note that move factors for the Emptiness are calculated based on chunk rather than position, so final values",
         "may be slightly different than expected."
     })
     public static double emptinessMoveFactor = 16.0;
@@ -195,7 +203,7 @@ public final class TAConfigHolder {
     
     @Name("FractureDimList")
     @Comment({
-        "Lists the whitelisted dimensions for fractures (not including the Void dim), and their associated weights.",
+        "Lists the whitelisted dimensions for fractures (not including the Emptiness dim), and their associated weights.",
         "Higher weights (compared to lower weights) will be more likely to spawn.",
         "This WILL affect worldgen, so use with caution on existing worlds.",
         "The config GUI does not seem to support the addition or removal of entries, edit this",
@@ -223,7 +231,7 @@ public final class TAConfigHolder {
     
     @Name("DisableVoidDimension")
     @Comment({
-        "Completely disables the Void dimension, including all fracture generation.",
+        "Completely disables the Emptiness dimension, including all fracture generation.",
         "This is not the intended way to experience the mod but is included here for modpack authors.",
         "This is a server-side setting, but will probably cause problems if the client does not have the same value."
     })
@@ -308,6 +316,7 @@ public final class TAConfigHolder {
         TAConfig.voidBootsSneakReduction.setValue(voidBootsSneakReduction, side);
 
         TAConfig.opWardOverride.setValue(opWardOverride, side);
+        TAConfig.singlePlayerWardOverride.setValue(singlePlayerWardOverride, side);
 
         TAConfig.castedLightSimpleRenderer.setValue(castedLightSimpleRenderer, side);
 
@@ -358,6 +367,7 @@ public final class TAConfigHolder {
         TAConfig.voidBootsSneakReduction = TAConfigManager.addOption(new ConfigOptionDouble(true, voidBootsSneakReduction));
 
         TAConfig.opWardOverride = TAConfigManager.addOption(new ConfigOptionBoolean(false, opWardOverride));
+        TAConfig.singlePlayerWardOverride = TAConfigManager.addOption(new ConfigOptionBoolean(false, singlePlayerWardOverride));
         TAConfig.disableWardFocus = TAConfigManager.addOption(new ConfigOptionBoolean(true, disableWardFocus));
         
         TAConfig.castedLightSimpleRenderer = TAConfigManager.addOption(new ConfigOptionBoolean(false, castedLightSimpleRenderer));

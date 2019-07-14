@@ -45,7 +45,6 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.client.fx.FXDispatcher;
-import thaumcraft.client.fx.other.FXBlockWard;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -54,6 +53,7 @@ import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
+import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
@@ -119,10 +119,8 @@ public class ClientProxy extends CommonProxy {
                         double x = d[0], y = d[1], z = d[2];
                         int index = (int) d[3];
                         double hitX = d[4], hitY = d[5], hitZ = d[6];
-                        FXBlockWard ward = new FXBlockWard(FXDispatcher.INSTANCE.getWorld(), x + 0.5, y + 0.5, z + 0.5, 
+                        FXBlockWardFixed ward = new FXBlockWardFixed(FXDispatcher.INSTANCE.getWorld(), x + 0.5, y + 0.5, z + 0.5, 
                                 EnumFacing.byIndex(index), (float) hitX, (float) hitY, (float) hitZ);
-                        ward.onUpdate();
-                        ward.onUpdate();
                         FMLClientHandler.instance().getClient().effectRenderer.addEffect(ward);
                     }
                     

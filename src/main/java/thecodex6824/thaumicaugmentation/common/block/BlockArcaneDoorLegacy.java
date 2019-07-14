@@ -52,18 +52,20 @@ import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IWardParticles;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHalf;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHinge;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorOpen;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorType;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 @Deprecated
 public class BlockArcaneDoorLegacy extends BlockTABase implements IHorizontallyDirectionalBlock, IArcaneDoorHalf, 
-    IArcaneDoorHinge, IArcaneDoorOpen, IArcaneDoorType, IUnwardableBlock {
+    IArcaneDoorHinge, IArcaneDoorOpen, IArcaneDoorType, IUnwardableBlock, IWardParticles {
 
     protected static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 0.1875D);
     protected static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.8125D, 1.0D, 1.0D, 1.0D);
@@ -293,12 +295,12 @@ public class BlockArcaneDoorLegacy extends BlockTABase implements IHorizontallyD
     @Override
     public IBlockState withRotation(IBlockState state, Rotation rot) {
         return state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, 
-                rot.rotate((EnumFacing)state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
+                rot.rotate(state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
     }
 
     @Override
     public IBlockState withMirror(IBlockState state, Mirror mirror) {
-        return state.withRotation(mirror.toRotation((EnumFacing)state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
+        return state.withRotation(mirror.toRotation(state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
     }
 
     @Override
@@ -388,6 +390,16 @@ public class BlockArcaneDoorLegacy extends BlockTABase implements IHorizontallyD
         return EnumBlockRenderType.MODEL;
     }
 
+    @Override
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
+            boolean willHarvest) {
+        
+        if (WardHelper.doesPlayerHaveSpecialPermission(player))
+            return super.removedByPlayer(state, world, pos, player, willHarvest);
+        else
+            return false;
+    }
+    
     @Override
     public boolean hasTileEntity() {
         return true;

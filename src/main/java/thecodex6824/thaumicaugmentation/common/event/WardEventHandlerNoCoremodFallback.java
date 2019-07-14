@@ -54,6 +54,7 @@ import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
+import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
 
 public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
 
@@ -114,7 +115,7 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
         Chunk chunk = event.getWorld().getChunk(pos);
         if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && !checkForSpecialCase(event.getPlayer())) {
+            if (storage.hasWard(pos) && !WardHelper.doesPlayerHaveSpecialPermission(event.getPlayer())) {
                 event.setCanceled(true);
                 if (event.getPlayer() instanceof FakePlayer) {
                     if (event.getPlayer().getName().equals("FakeThaumcraftBore"))
@@ -133,7 +134,7 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
         Chunk chunk = player.getEntityWorld().getChunk(pos);
         if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && !checkForSpecialCase(player)) {
+            if (storage.hasWard(pos) && !WardHelper.doesPlayerHaveSpecialPermission(player)) {
                 RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
                         player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()).add(new Vec3d(pos)), false, false, true);
                 sendWardParticles(event.getEntityPlayer().getEntityWorld(), pos, ray.sideHit);

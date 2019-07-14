@@ -20,16 +20,18 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public interface IUnwardableBlock {
+public interface IWardParticles {
+
+    public default boolean shouldAddWardParticles(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+        return true;
+    }
     
-    public default boolean shouldBeUnwardable(World world, BlockPos pos, IBlockState state, @Nullable Entity warder) {
+    public default boolean shouldCancelEventAndContinueParticles(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
         return true;
     }
     

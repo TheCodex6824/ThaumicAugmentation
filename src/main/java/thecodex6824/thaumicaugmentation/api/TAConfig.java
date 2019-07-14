@@ -50,6 +50,7 @@ public final class TAConfig {
     public static ConfigOptionDouble voidBootsSneakReduction;
 
     public static ConfigOptionBoolean opWardOverride;
+    public static ConfigOptionBoolean singlePlayerWardOverride;
     public static ConfigOptionBoolean disableWardFocus;
 
     public static ConfigOptionBoolean castedLightSimpleRenderer;

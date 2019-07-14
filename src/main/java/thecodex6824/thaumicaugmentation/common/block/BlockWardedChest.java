@@ -35,6 +35,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -45,16 +46,19 @@ import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IWardParticles;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
 import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
-public class BlockWardedChest extends BlockTABase implements IHorizontallyDirectionalBlock, IItemBlockProvider, IUnwardableBlock {
+public class BlockWardedChest extends BlockTABase implements IHorizontallyDirectionalBlock, IItemBlockProvider,
+    IUnwardableBlock, IWardParticles {
 
     protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375);
 
@@ -133,9 +137,7 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
 
         if (!world.isRemote && world.getTileEntity(pos).hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
             if (world.getTileEntity(pos).getCapability(CapabilityWardedTile.WARDED_TILE, null).hasPermission(player)) {
-                if (player.getHeldItem(hand).getItem() instanceof ICaster && !player.isSneaking())
-                    world.setBlockState(pos, state.withRotation(Rotation.CLOCKWISE_90));
-                else 
+                if (!(player.getHeldItem(hand).getItem() instanceof ICaster) || !player.isSneaking())
                     player.openGui(ThaumicAugmentation.instance, GUIHandler.TAInventory.WARDED_CHEST.getID(), world, 
                             pos.getX(), pos.getY(), pos.getZ());
 
@@ -158,6 +160,17 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
         }
 
         super.onBlockPlacedBy(world, pos, state, placer, stack);
+    }
+    
+    @Override
+    public IBlockState withRotation(IBlockState state, Rotation rot) {
+        return state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, 
+                rot.rotate(state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
+    }
+
+    @Override
+    public IBlockState withMirror(IBlockState state, Mirror mirror) {
+        return state.withRotation(mirror.toRotation(state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
     }
 
     @Override
@@ -213,6 +226,16 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     @Override
     public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
         return false;
+    }
+    
+    @Override
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
+            boolean willHarvest) {
+        
+        if (WardHelper.doesPlayerHaveSpecialPermission(player))
+            return super.removedByPlayer(state, world, pos, player, willHarvest);
+        else
+            return false;
     }
 
     @Override

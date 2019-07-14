@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.item.foci;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -77,8 +78,15 @@ public class FocusEffectWard extends FocusEffect {
             World world = getPackage().getCaster().getEntityWorld();
             if (!world.isRemote && result.typeOfHit == Type.BLOCK && getPackage().getCaster() instanceof EntityPlayer && 
                     world.isBlockModifiable((EntityPlayer) getPackage().getCaster(), result.getBlockPos()) &&
-                    !world.isAirBlock(result.getBlockPos()) && !(world.getBlockState(result.getBlockPos()).getBlock() instanceof IUnwardableBlock)) {
+                    !world.isAirBlock(result.getBlockPos())) {
+                
                 BlockPos pos = result.getBlockPos();
+                IBlockState state = world.getBlockState(pos);
+                if (state.getBlock() instanceof IUnwardableBlock) {
+                    if (((IUnwardableBlock) state.getBlock()).shouldBeUnwardable(world, pos, state, getPackage().getCaster()))
+                        return false;
+                }
+                
                 Chunk chunk = getPackage().getCaster().getEntityWorld().getChunk(pos);
                 if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && chunk.getTileEntity(pos, EnumCreateEntityType.CHECK) == null) {
                     IWardStorage wardStorage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);

@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.event;
 
+import java.util.WeakHashMap;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -44,6 +47,8 @@ import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class PlayerEventHandler {
 
+    private static final WeakHashMap<Entity, Float> FALL_DAMAGE = new WeakHashMap<>();
+    
     private PlayerEventHandler() {}
     
     @SubscribeEvent
@@ -94,21 +99,16 @@ public final class PlayerEventHandler {
             damage = Math.max(0.0F, damage);
             if (damage < 1.0F) 
                 event.setCanceled(true);
+            else
+                FALL_DAMAGE.put(event.getEntity(), damage);
         }
     }
 
     @SubscribeEvent
     public static void onFallDamage(LivingHurtEvent event) {
         // this is needed to actually reduce damage if it's not 0
-        if (event.getSource() == DamageSource.FALL) {
-            float damage = event.getAmount();
-            for (ItemStack stack : event.getEntityLiving().getArmorInventoryList()) {
-                if (stack.getItem() instanceof IArmorReduceFallDamage) {
-                    damage = ((IArmorReduceFallDamage) stack.getItem()).getNewFallDamage(stack, damage, event.getEntityLiving().fallDistance);
-                }
-            }
-
-            damage = Math.max(0.0F, damage);
+        if (event.getSource() == DamageSource.FALL && FALL_DAMAGE.containsKey(event.getEntity())) {
+            float damage = FALL_DAMAGE.remove(event.getEntity());
             if (damage < 1.0F) {
                 event.setAmount(0.0F);
                 event.setCanceled(true);
