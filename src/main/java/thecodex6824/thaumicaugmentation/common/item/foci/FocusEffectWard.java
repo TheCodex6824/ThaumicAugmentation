@@ -59,7 +59,7 @@ public class FocusEffectWard extends FocusEffect {
     
     @Override
     public int getComplexity() {
-        return 13;
+        return 23;
     }
     
     @Override
