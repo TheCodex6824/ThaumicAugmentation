@@ -31,18 +31,18 @@ import org.junit.Test;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.IWardStorageManager;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManager1Bit;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManager2Bits;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManager4Bits;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManagerByte;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManagerNull;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagers.StorageManagerShort;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagersServer.IWardStorageManagerServer;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagersServer.StorageManager1Bit;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagersServer.StorageManager2Bits;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagersServer.StorageManager4Bits;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagersServer.StorageManagerByte;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagersServer.StorageManagerNull;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer.StorageManagersServer.StorageManagerShort;
 
 public class TestWardStorage {
     
     private HashMap<BlockPos, UUID> data;
-    private IWardStorageManager manager;
+    private IWardStorageManagerServer manager;
     
     private void sharedTest(int numPlayers) {
         WardStorageServer storage = new WardStorageServer(manager);

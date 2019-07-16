@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.core.transformer;
 
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -88,6 +89,15 @@ public final class TransformUtil {
                         method.owner.equals(owningClass))
                     return i;
             }
+        }
+        
+        return -1;
+    }
+    
+    public static int findLastInstanceOfIfEq(MethodNode node, int endIndex) {
+        for (int i = endIndex - 1; i >= 0; --i) {
+            if (node.instructions.get(i).getOpcode() == Opcodes.IFEQ)
+                return i;
         }
         
         return -1;

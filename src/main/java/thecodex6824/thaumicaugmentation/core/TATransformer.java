@@ -30,6 +30,7 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFlammability;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockHardness;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoEndermanPickup;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockRandomTick;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockResistance;
 
@@ -42,6 +43,7 @@ public class TATransformer implements IClassTransformer {
         TRANSFORMERS.add(new TransformerWardBlockFlammability());
         TRANSFORMERS.add(new TransformerWardBlockResistance());
         TRANSFORMERS.add(new TransformerWardBlockRandomTick());
+        TRANSFORMERS.add(new TransformerWardBlockNoEndermanPickup());
     }
     
     public TATransformer() {}

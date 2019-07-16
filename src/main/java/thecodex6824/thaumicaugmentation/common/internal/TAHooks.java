@@ -33,8 +33,8 @@ public class TAHooks {
 
     public static float checkWardHardness(float oldHardness, World world, BlockPos pos) {
         if (world != null && pos != null && world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos))
-                return -1.0F; // bedrock value
+            return world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos) ?
+                -1.0F : oldHardness;
         }
         
         return oldHardness;
@@ -42,8 +42,8 @@ public class TAHooks {
     
     public static float checkWardResistance(float oldResistance, World world, BlockPos pos) {
         if (world != null && pos != null && world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos))
-                return 6000000.0F; // bedrock value
+            return world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos) ?
+                6000000.0F : oldResistance;
         }
         
         return oldResistance;
@@ -53,8 +53,8 @@ public class TAHooks {
         if (access instanceof World && pos != null) {
             World world = (World) access;
             if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos))
-                    return 0;
+                return world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos) ?
+                    0 : oldFlammability;
             }
         }
         
@@ -62,10 +62,15 @@ public class TAHooks {
     }
     
     public static boolean checkWardRandomTick(WorldServer world, BlockPos pos, IBlockState state, Random rand) {
-        if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos))
-                return false;
-        }
+        if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null))
+            return !world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos);
+        
+        return true;
+    }
+    
+    public static boolean checkWardEndermanPickup(World world, BlockPos pos) {
+        if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null))
+            return !world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos);
         
         return true;
     }

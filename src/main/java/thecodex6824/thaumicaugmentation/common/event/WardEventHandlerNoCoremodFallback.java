@@ -115,15 +115,17 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
         Chunk chunk = event.getWorld().getChunk(pos);
         if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && !WardHelper.doesPlayerHaveSpecialPermission(event.getPlayer())) {
-                event.setCanceled(true);
-                if (event.getPlayer() instanceof FakePlayer) {
-                    if (event.getPlayer().getName().equals("FakeThaumcraftBore"))
-                        handleBoreNotCaringAboutCanceledEvents((FakePlayer) event.getPlayer());
+            if (storage.hasWard(pos)) {
+                if (!WardHelper.doesPlayerHaveSpecialPermission(event.getPlayer())) {
+                    event.setCanceled(true);
+                    if (event.getPlayer() instanceof FakePlayer) {
+                        if (event.getPlayer().getName().equals("FakeThaumcraftBore"))
+                            handleBoreNotCaringAboutCanceledEvents((FakePlayer) event.getPlayer());
+                    }
                 }
+                else if (storage instanceof IWardStorageServer)
+                    ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
             }
-            else if (storage instanceof IWardStorageServer)
-                ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
         }
     }
     

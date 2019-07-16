@@ -42,16 +42,16 @@ import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 public class WardStorageServer implements IWardStorageServer {
 
     @VisibleForTesting
-    static final class StorageManagers {
+    static final class StorageManagersServer {
         
         public static final int CHUNK_X_SIZE = 16;
         public static final int CHUNK_Y_SIZE = 256;
         public static final int CHUNK_Z_SIZE = 16;
         public static final int CHUNK_DATA_SIZE = CHUNK_X_SIZE * CHUNK_Y_SIZE * CHUNK_Z_SIZE;
         
-        private StorageManagers() {}
+        private StorageManagersServer() {}
         
-        public static interface IWardStorageManager {
+        public static interface IWardStorageManagerServer {
             
             public byte getStorageID();
             
@@ -77,11 +77,11 @@ public class WardStorageServer implements IWardStorageServer {
             
         }
         
-        public static class StorageManagerNull implements IWardStorageManager {
+        public static class StorageManagerNull implements IWardStorageManagerServer {
             
             public StorageManagerNull() {}
             
-            public StorageManagerNull(IWardStorageManager other) {}
+            public StorageManagerNull(IWardStorageManagerServer other) {}
             
             @Override
             public byte getStorageID() {
@@ -134,7 +134,7 @@ public class WardStorageServer implements IWardStorageServer {
             
         }
         
-        public static class StorageManager1Bit implements IWardStorageManager {
+        public static class StorageManager1Bit implements IWardStorageManagerServer {
             
             private byte[] data;
             private UUID owner;
@@ -144,7 +144,7 @@ public class WardStorageServer implements IWardStorageServer {
                 owner = NIL_UUID;
             }
             
-            public StorageManager1Bit(IWardStorageManager other) {
+            public StorageManager1Bit(IWardStorageManagerServer other) {
                 this();
                 if (other.getMaxAllowedOwners() > 0) {
                     owner = other.getOwners()[0];
@@ -233,7 +233,7 @@ public class WardStorageServer implements IWardStorageServer {
             
         }
         
-        public static class StorageManager2Bits implements IWardStorageManager {
+        public static class StorageManager2Bits implements IWardStorageManagerServer {
             
             private byte[] data;
             private UUID[] owners;
@@ -247,7 +247,7 @@ public class WardStorageServer implements IWardStorageServer {
                     owners[i] = NIL_UUID;
             }
             
-            public StorageManager2Bits(IWardStorageManager other) {
+            public StorageManager2Bits(IWardStorageManagerServer other) {
                 this();
                 if (other.getMaxAllowedOwners() > 0) {
                     for (int i = 0; i < Math.min(owners.length, other.getOwners().length); ++i) {
@@ -362,7 +362,7 @@ public class WardStorageServer implements IWardStorageServer {
             
         }
         
-        public static class StorageManager4Bits implements IWardStorageManager {
+        public static class StorageManager4Bits implements IWardStorageManagerServer {
             
             private byte[] data;
             private UUID[] owners;
@@ -376,7 +376,7 @@ public class WardStorageServer implements IWardStorageServer {
                     owners[i] = NIL_UUID;
             }
             
-            public StorageManager4Bits(IWardStorageManager other) {
+            public StorageManager4Bits(IWardStorageManagerServer other) {
                 this();
                 if (other.getMaxAllowedOwners() > 0) {
                     for (int i = 0; i < Math.min(owners.length, other.getOwners().length); ++i) {
@@ -495,7 +495,7 @@ public class WardStorageServer implements IWardStorageServer {
             
         }
         
-        public static class StorageManagerByte implements IWardStorageManager {
+        public static class StorageManagerByte implements IWardStorageManagerServer {
             
             private byte[] data;
             private UUID[] owners;
@@ -509,7 +509,7 @@ public class WardStorageServer implements IWardStorageServer {
                     owners[i] = NIL_UUID;
             }
             
-            public StorageManagerByte(IWardStorageManager other) {
+            public StorageManagerByte(IWardStorageManagerServer other) {
                 this();
                 if (other.getMaxAllowedOwners() > 0) {
                     for (int i = 0; i < Math.min(owners.length, other.getOwners().length); ++i) {
@@ -619,7 +619,7 @@ public class WardStorageServer implements IWardStorageServer {
             
         }
         
-        public static class StorageManagerShort implements IWardStorageManager {
+        public static class StorageManagerShort implements IWardStorageManagerServer {
             
             private short[] data;
             private UUID[] owners;
@@ -633,7 +633,7 @@ public class WardStorageServer implements IWardStorageServer {
                     owners[i] = NIL_UUID;
             }
             
-            public StorageManagerShort(IWardStorageManager other) {
+            public StorageManagerShort(IWardStorageManagerServer other) {
                 this();
                 if (other.getMaxAllowedOwners() > 0) {
                     for (int i = 0; i < Math.min(owners.length, other.getOwners().length); ++i) {
@@ -761,14 +761,14 @@ public class WardStorageServer implements IWardStorageServer {
         
     }
     
-    protected StorageManagers.IWardStorageManager manager;
+    protected StorageManagersServer.IWardStorageManagerServer manager;
     
     public WardStorageServer() {
-        manager = new StorageManagers.StorageManagerNull();
+        manager = new StorageManagersServer.StorageManagerNull();
     }
     
     @VisibleForTesting
-    WardStorageServer(StorageManagers.IWardStorageManager toSet) {
+    WardStorageServer(StorageManagersServer.IWardStorageManagerServer toSet) {
         manager = toSet;
     }
     
@@ -808,28 +808,28 @@ public class WardStorageServer implements IWardStorageServer {
         }
     }
     
-    protected StorageManagers.IWardStorageManager createIncreasedSizeManager() {
+    protected StorageManagersServer.IWardStorageManagerServer createIncreasedSizeManager() {
         switch (manager.getStorageID()) {
-            case 0: return new StorageManagers.StorageManager1Bit(manager);
-            case 1: return new StorageManagers.StorageManager2Bits(manager);
-            case 2: return new StorageManagers.StorageManager4Bits(manager);
-            case 3: return new StorageManagers.StorageManagerByte(manager);
-            case 4: return new StorageManagers.StorageManagerShort(manager);
+            case 0: return new StorageManagersServer.StorageManager1Bit(manager);
+            case 1: return new StorageManagersServer.StorageManager2Bits(manager);
+            case 2: return new StorageManagersServer.StorageManager4Bits(manager);
+            case 3: return new StorageManagersServer.StorageManagerByte(manager);
+            case 4: return new StorageManagersServer.StorageManagerShort(manager);
             default: throw new RuntimeException("Invalid ward storage manager growth (other mod interacting?)");
         }
     }
     
     protected void evaluateManagerSizeDecrease() {
         if (manager.getMaxAllowedOwners() != 0 && manager.getNumCurrentOwners() == 0)
-            manager = new StorageManagers.StorageManagerNull(manager);
+            manager = new StorageManagersServer.StorageManagerNull(manager);
         else if (manager.getMaxAllowedOwners() > 1 && manager.getNumCurrentOwners() <= 1)
-            manager = new StorageManagers.StorageManager1Bit(manager);
+            manager = new StorageManagersServer.StorageManager1Bit(manager);
         else if (manager.getMaxAllowedOwners() > 3 && manager.getNumCurrentOwners() <= 3)
-            manager = new StorageManagers.StorageManager2Bits(manager);
+            manager = new StorageManagersServer.StorageManager2Bits(manager);
         else if (manager.getMaxAllowedOwners() > 15 && manager.getNumCurrentOwners() <= 15)
-            manager = new StorageManagers.StorageManager4Bits(manager);
+            manager = new StorageManagersServer.StorageManager4Bits(manager);
         else if (manager.getMaxAllowedOwners() > 255 && manager.getNumCurrentOwners() <= 255)
-            manager = new StorageManagers.StorageManagerByte(manager);
+            manager = new StorageManagersServer.StorageManagerByte(manager);
     }
     
     @VisibleForTesting
@@ -868,12 +868,12 @@ public class WardStorageServer implements IWardStorageServer {
         boolean hasOwners = manager.getMaxAllowedOwners() != 0;
         tag.setBoolean("o", hasOwners);
         if (hasOwners) {
-            byte[] data = new byte[StorageManagers.CHUNK_DATA_SIZE / 4];
+            byte[] data = new byte[StorageManagersServer.CHUNK_DATA_SIZE / 4];
             MutableBlockPos pos = new MutableBlockPos(0, 0, 0);
-            for (int x = 0; x < StorageManagers.CHUNK_X_SIZE; ++x) {
-                for (int z = 0; z < StorageManagers.CHUNK_Z_SIZE; ++z) {
+            for (int x = 0; x < StorageManagersServer.CHUNK_X_SIZE; ++x) {
+                for (int z = 0; z < StorageManagersServer.CHUNK_Z_SIZE; ++z) {
                     pos.setPos(x, 0, z);
-                    for (int y = 0; y < StorageManagers.CHUNK_Y_SIZE; ++y) {
+                    for (int y = 0; y < StorageManagersServer.CHUNK_Y_SIZE; ++y) {
                         pos.setY(y);
                         byte toSet = 0;
                         UUID owner = manager.getOwner(pos);
@@ -882,8 +882,8 @@ public class WardStorageServer implements IWardStorageServer {
                         else if (!owner.equals(IWardStorageServer.NIL_UUID))
                             toSet = 2;
                         
-                        int index = (pos.getX() & 15) + (pos.getY() & 255) * StorageManagers.CHUNK_X_SIZE + (pos.getZ() & 15) * 
-                                StorageManagers.CHUNK_X_SIZE * StorageManagers.CHUNK_Y_SIZE;
+                        int index = (pos.getX() & 15) + (pos.getY() & 255) * StorageManagersServer.CHUNK_X_SIZE + (pos.getZ() & 15) * 
+                                StorageManagersServer.CHUNK_X_SIZE * StorageManagersServer.CHUNK_Y_SIZE;
                         data[index / 4] = (toSet & 1) != 0 ? (byte) (data[index / 4] | (1 << (index % 4 * 2))) : 
                             (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
                         data[index / 4] = (toSet & 2) != 0 ? (byte) (data[index / 4] | (2 << (index % 4 * 2))) : 
@@ -914,27 +914,27 @@ public class WardStorageServer implements IWardStorageServer {
         byte id = nbt.getByte("s");
         switch (id) {
             case 0: {
-                manager = new StorageManagers.StorageManagerNull();
+                manager = new StorageManagersServer.StorageManagerNull();
                 break;
             }
             case 1: {
-                manager = new StorageManagers.StorageManager1Bit();
+                manager = new StorageManagersServer.StorageManager1Bit();
                 break;
             }
             case 2: {
-                manager = new StorageManagers.StorageManager2Bits();
+                manager = new StorageManagersServer.StorageManager2Bits();
                 break;
             }
             case 3: {
-                manager = new StorageManagers.StorageManager4Bits();
+                manager = new StorageManagersServer.StorageManager4Bits();
                 break;
             }
             case 4: {
-                manager = new StorageManagers.StorageManagerByte();
+                manager = new StorageManagersServer.StorageManagerByte();
                 break;
             }
             case 5: {
-                manager = new StorageManagers.StorageManagerShort();
+                manager = new StorageManagersServer.StorageManagerShort();
                 break;
             }
             default: throw new RuntimeException("Invalid chunk ward storage manager ID");
