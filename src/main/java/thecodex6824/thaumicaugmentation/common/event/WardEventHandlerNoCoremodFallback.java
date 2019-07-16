@@ -90,17 +90,19 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
         super.onWorldTick(event);
         if (!event.world.isRemote && event.phase == Phase.END) {
             ConcurrentHashMap<Integer, Task> tasks = TaskHandler.tasks.get(event.world.provider.getDimension());
-            for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
-                Task task = entry.getValue();
-                if (task.getType() == 0 && event.world.isBlockLoaded(task.getPos())) {
-                    Chunk chunk = event.world.getChunk(task.getPos());
-                    if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                        if (storage.hasWard(task.getPos())) {
-                            task.setPriority(Byte.MIN_VALUE);
-                            task.setReserved(true);
-                            task.setCompletion(true);
-                            tasks.remove(entry.getKey());
+            if (tasks != null) {
+                for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
+                    Task task = entry.getValue();
+                    if (task.getType() == 0 && event.world.isBlockLoaded(task.getPos())) {
+                        Chunk chunk = event.world.getChunk(task.getPos());
+                        if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+                            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                            if (storage.hasWard(task.getPos())) {
+                                task.setPriority(Byte.MIN_VALUE);
+                                task.setReserved(true);
+                                task.setCompletion(true);
+                                tasks.remove(entry.getKey());
+                            }
                         }
                     }
                 }
