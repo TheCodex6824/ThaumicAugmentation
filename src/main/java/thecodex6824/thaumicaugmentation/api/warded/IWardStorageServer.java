@@ -26,6 +26,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * The ward storage interface for the server side. Servers have access to all information
@@ -33,7 +34,7 @@ import net.minecraft.world.chunk.Chunk;
  * Implementations should try to be efficient when it comes to server resources.
  * @author TheCodex6824
  */
-public interface IWardStorageServer extends IWardStorage {
+public interface IWardStorageServer extends IWardStorage, INBTSerializable<NBTTagCompound> {
 
     /**
      * A constant UUID that should be used for blocks with
@@ -86,10 +87,11 @@ public interface IWardStorageServer extends IWardStorage {
      * Creates a NBTTagCompound suitable for a full sync to the client. A full
      * sync means that it should include all blocks needed in a storage instance such that
      * the client will have an up-to-date view of the wards in this area, no matter
-     * what data they already have.
+     * what data they already have. If this storage has no meaningful data,
+     * null can be returned to not do a sync.
      * @param chunk The chunk the player is located in
      * @param player The player that needs to be synced to
-     * @return An NBTTagCompound to send to the client for sync purposes
+     * @return An NBTTagCompound to send to the client for sync purposes, or null if no sync is needed
      */
     public NBTTagCompound fullSyncToClient(Chunk chunk, UUID player);
     

@@ -25,8 +25,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
 
 public final class CapabilityWardStorageInit {
 
@@ -37,15 +37,21 @@ public final class CapabilityWardStorageInit {
             
             @Override
             public void readNBT(Capability<IWardStorage> capability, IWardStorage instance, EnumFacing side, NBTBase nbt) {
-                instance.deserializeNBT((NBTTagCompound) nbt);
+                if (instance instanceof IWardStorageServer)
+                    ((IWardStorageServer) instance).deserializeNBT((NBTTagCompound) nbt);
             }
             
             @Override
             public NBTBase writeNBT(Capability<IWardStorage> capability, IWardStorage instance, EnumFacing side) {
-                return instance.serializeNBT();
+                if (instance instanceof IWardStorageServer)
+                    return ((IWardStorageServer) instance).serializeNBT();
+                else
+                    return null;
             }
             
-        }, () -> new WardStorageServer());
+        }, () -> {
+            throw new RuntimeException("Cannot create a default ward storage impl (create one for client or server side instead)");
+        });
     }
     
 }

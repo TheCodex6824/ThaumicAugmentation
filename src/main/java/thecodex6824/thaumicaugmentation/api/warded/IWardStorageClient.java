@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.warded;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -49,5 +50,13 @@ public interface IWardStorageClient extends IWardStorage {
      * @return The effective client side owner of the ward
      */
     public ClientWardStorageValue getWard(BlockPos pos);
+    
+    /**
+     * Loads data sent from the server into the storage.
+     * Note that this is not from INBTSerializable because the
+     * client should never be saving ward data to disk.
+     * @param tag The NBTTagCompound containing the ward data
+     */
+    public void deserializeNBT(NBTTagCompound tag);
     
 }

@@ -141,7 +141,7 @@ thaumicaugmentation.research.rift_power.2=I have finally finished creating all I
 
 research.f_STRONGPICKAXE.text=Any powerful mining tool
 research.f_FLINTANDSTEEL.text=A tool that can create fire
-research.m_CREEPER.text=A creature that has an explosive personality
+research.m_CREEPER.text=A creature that has an explosive personality (or its remains if in a peaceful land)
 
 thaumicaugmentation.research.focus_ward_coremod.title=Focus Effect: Ward
 thaumicaugmentation.research.focus_ward_coremod.0=Now that I have successfully warded individual objects, I think I should look into applying warding thaumaturgy to arbitrary materials in the world. While I doubt that any given material will be able to match the strength of dedicated warded blocks, any extra protection is worth investigating. I should experiment with some common means of destruction to get an idea of how far I can go with this.

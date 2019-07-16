@@ -20,16 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.api.warded;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Base ward (focus) storage interface. There is only a single method for determining if
  * a block is warded, as the representation held by the client and server is different.
  * @author TheCodex6824
  */
-public interface IWardStorage extends INBTSerializable<NBTTagCompound> {
+public interface IWardStorage {
     
     /**
      * Returns if the block at the given position has a ward with any owner.

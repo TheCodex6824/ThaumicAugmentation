@@ -166,14 +166,12 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handleFullWardSyncPacket(PacketFullWardSync message) {
         NBTTagCompound tag = message.getTag();
-        if (tag.getBoolean("o")) {
-            World world = FMLClientHandler.instance().getClient().world;
-            int chunkX = tag.getInteger("x"), chunkZ = tag.getInteger("z");
-            if (world.isBlockLoaded(new BlockPos(chunkX << 4, 0, chunkZ << 4)) && world.getChunk(chunkX, chunkZ).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                if (world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageClient) {
-                    IWardStorageClient storage = (IWardStorageClient) world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                    storage.deserializeNBT(tag);
-                }
+        World world = FMLClientHandler.instance().getClient().world;
+        int chunkX = tag.getInteger("x"), chunkZ = tag.getInteger("z");
+        if (world.isBlockLoaded(new BlockPos(chunkX << 4, 0, chunkZ << 4)) && world.getChunk(chunkX, chunkZ).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+            if (world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageClient) {
+                IWardStorageClient storage = (IWardStorageClient) world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                storage.deserializeNBT(tag);
             }
         }
     }

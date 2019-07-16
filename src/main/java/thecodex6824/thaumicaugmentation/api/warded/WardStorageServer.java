@@ -864,10 +864,8 @@ public class WardStorageServer implements IWardStorageServer {
     
     @Override
     public NBTTagCompound fullSyncToClient(Chunk chunk, UUID player) {
-        NBTTagCompound tag = new NBTTagCompound();
-        boolean hasOwners = manager.getMaxAllowedOwners() != 0;
-        tag.setBoolean("o", hasOwners);
-        if (hasOwners) {
+        if (manager.getNumCurrentOwners() > 0) {
+            NBTTagCompound tag = new NBTTagCompound();
             byte[] data = new byte[StorageManagersServer.CHUNK_DATA_SIZE / 4];
             MutableBlockPos pos = new MutableBlockPos(0, 0, 0);
             for (int x = 0; x < StorageManagersServer.CHUNK_X_SIZE; ++x) {
@@ -895,9 +893,10 @@ public class WardStorageServer implements IWardStorageServer {
             tag.setByteArray("d", data);
             tag.setInteger("x", chunk.x);
             tag.setInteger("z", chunk.z);
+            return tag;
         }
         
-        return tag;
+        return null;
     }
     
     @Override

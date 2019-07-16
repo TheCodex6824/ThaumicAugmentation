@@ -28,6 +28,7 @@ import java.util.Map;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -108,7 +109,9 @@ public class WardEventHandler {
         if (event.getChunkInstance() != null && event.getChunkInstance().hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && 
                 event.getChunkInstance().getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageServer) {
             IWardStorageServer storage = (IWardStorageServer) event.getChunkInstance().getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            TANetwork.INSTANCE.sendTo(new PacketFullWardSync(storage.fullSyncToClient(event.getChunkInstance(), event.getPlayer().getUniqueID())), event.getPlayer());
+            NBTTagCompound sync = storage.fullSyncToClient(event.getChunkInstance(), event.getPlayer().getUniqueID());
+            if (sync != null)
+                TANetwork.INSTANCE.sendTo(new PacketFullWardSync(sync), event.getPlayer());
         }
     }
     

@@ -151,13 +151,7 @@ public class WardStorageClient implements IWardStorageClient {
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        if (nbt.getBoolean("o"))
-            manager = new StorageManagersClient.StorageManager2Bits(nbt.getByteArray("d"));
-    }
-    
-    @Override
-    public NBTTagCompound serializeNBT() {
-        return new NBTTagCompound();
+        manager = new StorageManagersClient.StorageManager2Bits(nbt.getByteArray("d"));
     }
     
 }

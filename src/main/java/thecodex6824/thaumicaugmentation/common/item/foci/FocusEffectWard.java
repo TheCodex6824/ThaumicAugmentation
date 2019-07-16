@@ -45,7 +45,6 @@ import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
-import thecodex6824.thaumicaugmentation.api.warded.WardSyncManager;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -94,13 +93,11 @@ public class FocusEffectWard extends FocusEffect {
                         IWardStorageServer storage = (IWardStorageServer) wardStorage;
                         if (!storage.hasWard(pos)) {
                             storage.setWard(world, pos, getPackage().getCasterUUID());
-                            WardSyncManager.markPosForNewOwner(world, pos, getPackage().getCasterUUID());
                             TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.POOF, pos.getX(), pos.getY(), pos.getZ(), result.sideHit.getIndex()),
                                     new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
                         }
                         else if (storage.getWard(pos).equals(getPackage().getCasterUUID())) {
                             storage.clearWard(world, pos);
-                            WardSyncManager.markPosForClear(world, pos);
                             TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.POOF, pos.getX(), pos.getY(), pos.getZ(), result.sideHit.getIndex()),
                                     new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
                         }
