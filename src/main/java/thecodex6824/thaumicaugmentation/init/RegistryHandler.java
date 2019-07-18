@@ -36,7 +36,6 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectEventProxy;
@@ -60,7 +59,6 @@ import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
-import thecodex6824.thaumicaugmentation.common.entity.EntityUtil;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemElementalAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
@@ -187,11 +185,6 @@ public final class RegistryHandler {
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
         event.getRegistry().registerAll(TASounds.getAllSounds());
-    }
-    
-    @SubscribeEvent
-    public static void registerSerializers(RegistryEvent.Register<DataSerializerEntry> event) {
-        event.getRegistry().register(new DataSerializerEntry(EntityUtil.SERIALIZER_LONG).setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "long")));
     }
     
     @SubscribeEvent

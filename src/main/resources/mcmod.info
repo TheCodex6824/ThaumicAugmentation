@@ -12,7 +12,7 @@
   "logoFile": "assets/thaumicaugmentation/textures/gui/logo.png",
   "screenshots": [],
   "useDependencyInformation": true,
-  "requiredMods": ["forge@[${forgeversion},)", "thaumcraft"],
+  "requiredMods": ["forge@[${forgeminversion},)", "thaumcraft"],
   "dependencies": ["thaumcraft"]
 }
 ]

@@ -20,6 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
+import java.util.UUID;
+
+import com.google.common.base.Optional;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAreaEffectCloud;
@@ -50,8 +54,8 @@ import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.api.entity.IPortalEntity;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.DimensionalFractureTeleporter;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 
@@ -60,7 +64,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     protected static final int OPEN_TIME = 360;
     
     protected static final DataParameter<Boolean> open = EntityDataManager.createKey(EntityDimensionalFracture.class, DataSerializers.BOOLEAN);
-    protected static final DataParameter<Long> timeOpened = EntityDataManager.createKey(EntityDimensionalFracture.class, EntityUtil.SERIALIZER_LONG);
+    protected static final DataParameter<Optional<UUID>> timeOpened = EntityDataManager.createKey(EntityDimensionalFracture.class, DataSerializers.OPTIONAL_UNIQUE_ID);
     
     protected int linkedDim;
     protected BlockPos linkedTo;
@@ -231,7 +235,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     @Override
     protected void entityInit() {
         getDataManager().register(open, false);
-        getDataManager().register(timeOpened, Long.MAX_VALUE);
+        getDataManager().register(timeOpened, Optional.of(new UUID(0, Long.MAX_VALUE)));
     }
     
     @Override
@@ -292,7 +296,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     @Override
     public void open(boolean skipTransition) {
         getDataManager().set(open, true);
-        getDataManager().set(timeOpened, world.getTotalWorldTime() - (skipTransition ? OPEN_TIME : 0));
+        getDataManager().set(timeOpened, Optional.of(new UUID(0, world.getTotalWorldTime() - (skipTransition ? OPEN_TIME : 0))));
     }
     
     @Override
@@ -307,17 +311,17 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
 
     @Override
     public boolean isOpening() {
-        return getDataManager().get(open) && world.getTotalWorldTime() < getDataManager().get(timeOpened) + OPEN_TIME;
+        return getDataManager().get(open) && world.getTotalWorldTime() < getDataManager().get(timeOpened).get().getLeastSignificantBits() + OPEN_TIME;
     }
     
     @Override
     public boolean isOpen() {
-        return getDataManager().get(open) && world.getTotalWorldTime() >= getDataManager().get(timeOpened) + OPEN_TIME;
+        return getDataManager().get(open) && world.getTotalWorldTime() >= getDataManager().get(timeOpened).get().getLeastSignificantBits() + OPEN_TIME;
     }
     
     @Override
     public long getTimeOpened() {
-        return getDataManager().get(timeOpened);
+        return getDataManager().get(timeOpened).get().getLeastSignificantBits();
     }
     
     @Override
@@ -329,7 +333,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
             linkLocated = compound.getBoolean("linkLocated");
             linkInvalid = compound.getBoolean("linkInvalid");
             getDataManager().set(open, compound.getBoolean("open"));
-            getDataManager().set(timeOpened, compound.getLong("timeOpened"));
+            getDataManager().set(timeOpened, Optional.of(new UUID(0, compound.getLong("timeOpened"))));
         }
     }
     
@@ -341,7 +345,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
             compound.setBoolean("linkLocated", linkLocated);
             compound.setBoolean("linkInvalid", linkInvalid);
             compound.setBoolean("open", getDataManager().get(open));
-            compound.setLong("timeOpened", getDataManager().get(timeOpened));
+            compound.setLong("timeOpened", getDataManager().get(timeOpened).get().getLeastSignificantBits());
         }
     }
     

@@ -85,7 +85,7 @@ processResources {
         include 'mcmod.info'
                 
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version, 'forgeversion':project.forgeversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version, 'forgeversion':project.forgeversion, 'forgeminversion':project.forgeminversion
     }
         
     // copy everything else except the mcmod.info

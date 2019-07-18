@@ -229,27 +229,32 @@ public class WardEventHandler {
         }
     }
     
+    @SuppressWarnings("deprecation") // used for compat with older forge
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
-        BlockPos pos = event.getPos();
-        Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage instanceof IWardStorageServer && storage.hasWard(event.getPos()))
-                ((IWardStorageServer) storage).clearWard(event.getWorld(), event.getPos());
+    public void onBlockPlace(BlockEvent.PlaceEvent event) {
+        if (!(event instanceof BlockEvent.MultiPlaceEvent)) {
+            BlockPos pos = event.getPos();
+            Chunk chunk = event.getWorld().getChunk(pos);
+            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                if (storage instanceof IWardStorageServer && storage.hasWard(event.getPos()))
+                    ((IWardStorageServer) storage).clearWard(event.getWorld(), event.getPos());
+            }
         }
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onBlockPlaceMulti(BlockEvent.EntityMultiPlaceEvent event) {
+    public void onBlockPlaceMulti(BlockEvent.MultiPlaceEvent event) {
         for (BlockSnapshot b : event.getReplacedBlockSnapshots()) {
             BlockPos pos = b.getPos();
             Chunk chunk = event.getWorld().getChunk(pos);
             if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                 if (storage.hasWard(pos)) {
-                    if (!(event.getEntity() instanceof EntityPlayer) || !WardHelper.doesPlayerHaveSpecialPermission((EntityPlayer) event.getEntity()))
+                    if (!(event.getEntity() instanceof EntityPlayer) || !WardHelper.doesPlayerHaveSpecialPermission((EntityPlayer) event.getEntity())) {
                         event.setCanceled(true);
+                        return;
+                    }
                     else if (storage instanceof IWardStorageServer)
                         ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
                 }

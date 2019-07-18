@@ -153,9 +153,9 @@ public final class ClientEventHandler {
                                 if (dir.getZOffset() == 0)
                                     z += world.rand.nextGaussian() * 0.5;
                                 
-                                x = MathHelper.clamp(x, (float) box.minX, (float) box.maxX);
-                                y = MathHelper.clamp(y, (float) box.minY, (float) box.maxY);
-                                z = MathHelper.clamp(z, (float) box.minZ, (float) box.maxZ);
+                                x = MathHelper.clamp(x, pos.getX() + (float) box.minX, pos.getX() + (float) box.maxX);
+                                y = MathHelper.clamp(y, pos.getY() + (float) box.minY, pos.getY() + (float) box.maxY);
+                                z = MathHelper.clamp(z, pos.getZ() + (float) box.minZ, pos.getZ() + (float) box.maxZ);
                                 for (int i = 0; i < 4; ++i) {
                                     FXDispatcher.INSTANCE.drawSimpleSparkle(world.rand, x, y, z, 0, 0, 0, 0.5F + (float) world.rand.nextGaussian() / 8, 
                                             red, green, 0.0F, 0, 1.0F, 0.0001F, 8);
