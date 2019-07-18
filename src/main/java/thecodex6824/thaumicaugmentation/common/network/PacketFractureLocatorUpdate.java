@@ -91,18 +91,20 @@ public class PacketFractureLocatorUpdate implements IMessage {
         
         @Override
         public IMessage onMessage(PacketFractureLocatorUpdate message, MessageContext ctx) {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
-            for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
-                ItemStack stack = player.inventory.getStackInSlot(i);
-                if (stack.getItem() instanceof ItemFractureLocator) {
-                    if (!stack.hasTagCompound())
-                        stack.setTagCompound(new NBTTagCompound());
-                    
-                    stack.getTagCompound().setBoolean("found", message.wasFractureFound());
-                    if (message.wasFractureFound())
-                        stack.getTagCompound().setIntArray("pos", new int[] {message.getX(), message.getY(), message.getZ()});
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                EntityPlayerSP player = Minecraft.getMinecraft().player;
+                for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
+                    ItemStack stack = player.inventory.getStackInSlot(i);
+                    if (stack.getItem() instanceof ItemFractureLocator) {
+                        if (!stack.hasTagCompound())
+                            stack.setTagCompound(new NBTTagCompound());
+                        
+                        stack.getTagCompound().setBoolean("found", message.wasFractureFound());
+                        if (message.wasFractureFound())
+                            stack.getTagCompound().setIntArray("pos", new int[] {message.getX(), message.getY(), message.getZ()});
+                    }
                 }
-            }
+            });
             
             return null;
         }

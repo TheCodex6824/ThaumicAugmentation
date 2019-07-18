@@ -21,18 +21,27 @@
 package thecodex6824.thaumicaugmentation.client.event;
 
 import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelBiped.ArmPose;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -58,7 +67,15 @@ import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public final class ClientEventHandler {
 
+    private static final Cache<Integer, Boolean> CAST_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterWrite(
+            3000, TimeUnit.MILLISECONDS).maximumSize(250).build();
+    
     private ClientEventHandler() {}
+    
+    public static void onEntityCast(int id) {
+        if (TAConfig.gauntletCastAnimation.getValue())
+            CAST_CACHE.put(id, true);
+    }
     
     private static void handleAugmentTooltips(ItemTooltipEvent event, IAugmentableItem cap) {
         LinkedList<LinkedList<String>> tooltip = new LinkedList<>();
@@ -124,6 +141,7 @@ public final class ClientEventHandler {
                                 green = 1.0F;
                             }
                             
+                            AxisAlignedBB box = world.getBlockState(pos).getBoundingBox(world, pos);
                             for (EnumFacing dir : EnumFacing.values()) {
                                 float x = pos.getX() + 0.5F + dir.getXOffset() * 0.5F;
                                 float y = pos.getY() + 0.5F + dir.getYOffset() * 0.5F;
@@ -135,9 +153,9 @@ public final class ClientEventHandler {
                                 if (dir.getZOffset() == 0)
                                     z += world.rand.nextGaussian() * 0.5;
                                 
-                                x = MathHelper.clamp(x, pos.getX(), pos.getX() + 1);
-                                y = MathHelper.clamp(y, pos.getY(), pos.getY() + 1);
-                                z = MathHelper.clamp(z, pos.getZ(), pos.getZ() + 1);
+                                x = MathHelper.clamp(x, (float) box.minX, (float) box.maxX);
+                                y = MathHelper.clamp(y, (float) box.minY, (float) box.maxY);
+                                z = MathHelper.clamp(z, (float) box.minZ, (float) box.maxZ);
                                 for (int i = 0; i < 4; ++i) {
                                     FXDispatcher.INSTANCE.drawSimpleSparkle(world.rand, x, y, z, 0, 0, 0, 0.5F + (float) world.rand.nextGaussian() / 8, 
                                             red, green, 0.0F, 0, 1.0F, 0.0001F, 8);
@@ -175,6 +193,20 @@ public final class ClientEventHandler {
                                 mc.getRenderPartialTicks()));
                     }
                 }
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onRenderLiving(RenderLivingEvent.Pre<EntityLivingBase> event) {
+        if (TAConfig.gauntletCastAnimation.getValue()) {
+            Boolean value = CAST_CACHE.getIfPresent(event.getEntity().getEntityId());
+            if (value != null && event.getRenderer().getMainModel() instanceof ModelBiped) {
+                ModelBiped biped = (ModelBiped) event.getRenderer().getMainModel();
+                if (event.getEntity().getActiveHand() == EnumHand.MAIN_HAND)
+                    biped.leftArmPose = ArmPose.BOW_AND_ARROW;
+                else
+                    biped.rightArmPose = ArmPose.BOW_AND_ARROW;
             }
         }
     }

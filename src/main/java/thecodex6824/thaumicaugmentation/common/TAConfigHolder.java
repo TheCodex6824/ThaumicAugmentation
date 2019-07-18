@@ -248,6 +248,13 @@ public final class TAConfigHolder {
     @RequiresMcRestart
     public static boolean disableCoremod = false;
     
+    @Name("GauntletCastAnimation")
+    @Comment({
+        "Enables a simple animation where an entity holds their arm out after casting.",
+        "This is a client-side setting."
+    })
+    public static boolean gauntletCastAnimation = true;
+    
     static {
         // vanilla
         fractureDimList.put("0", 35);
@@ -327,6 +334,8 @@ public final class TAConfigHolder {
         TAConfig.fractureGenChance.setValue(fractureGenChance, side);
         TAConfig.fractureLocatorUpdateInterval.setValue(fractureLocatorUpdateInterval, side);
         TAConfig.fracturesAlwaysTeleport.setValue(fracturesAlwaysTeleport, side);
+        
+        TAConfig.gauntletCastAnimation.setValue(gauntletCastAnimation, side);
     }
 
     public static void syncLocally() {
@@ -384,6 +393,8 @@ public final class TAConfigHolder {
         TAConfig.disableEmptiness = TAConfigManager.addOption(new ConfigOptionBoolean(false, disableEmptiness));
     
         TAConfig.disableCoremod = TAConfigManager.addOption(new ConfigOptionBoolean(false, disableCoremod));
+        
+        TAConfig.gauntletCastAnimation = TAConfigManager.addOption(new ConfigOptionBoolean(false, gauntletCastAnimation));
     }
 
 }

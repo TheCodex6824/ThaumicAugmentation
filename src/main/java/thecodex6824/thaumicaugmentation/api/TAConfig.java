@@ -68,6 +68,8 @@ public final class TAConfig {
     
     public static ConfigOptionBoolean disableCoremod;
     
+    public static ConfigOptionBoolean gauntletCastAnimation;
+    
     /**
      * Registers a callback to be notified when the config is synced or updated.
      * @param listener The callback
