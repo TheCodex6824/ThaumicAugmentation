@@ -20,7 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.core.transformer;
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -56,7 +55,22 @@ public final class TransformUtil {
     }
     
     public static int findFirstInstanceOfOpcode(MethodNode node, int startIndex, int opcode) {
+        if (startIndex < 0 || startIndex >= node.instructions.size())
+            return -1;
+        
         for (int i = startIndex; i < node.instructions.size(); ++i) {
+            if (node.instructions.get(i).getOpcode() == opcode)
+                return i;
+        }
+        
+        return -1;
+    }
+    
+    public static int findLastInstanceOfOpcode(MethodNode node, int endIndex, int opcode) {
+        if ((endIndex - 1) < 0 || (endIndex - 1) >= node.instructions.size())
+            return -1;
+        
+        for (int i = endIndex - 1; i >= 0; --i) {
             if (node.instructions.get(i).getOpcode() == opcode)
                 return i;
         }
@@ -66,6 +80,10 @@ public final class TransformUtil {
     
     public static int findFirstInstanceOfMethodCall(MethodNode node, int startIndex, String deobf, String obf, String desc,
             String owningClass) {
+        
+        if (startIndex < 0 || startIndex >= node.instructions.size())
+            return -1;
+        
         for (int i = startIndex; i < node.instructions.size(); ++i) {
             AbstractInsnNode insn = node.instructions.get(i);
             if (insn instanceof MethodInsnNode) {
@@ -81,6 +99,10 @@ public final class TransformUtil {
     
     public static int findLastInstanceOfMethodCall(MethodNode node, int endIndex, String deobf, String obf, String desc,
             String owningClass) {
+        
+        if ((endIndex - 1) < 0 || (endIndex - 1) >= node.instructions.size())
+            return -1;
+        
         for (int i = endIndex - 1; i >= 0; --i) {
             AbstractInsnNode insn = node.instructions.get(i);
             if (insn instanceof MethodInsnNode) {
@@ -89,15 +111,6 @@ public final class TransformUtil {
                         method.owner.equals(owningClass))
                     return i;
             }
-        }
-        
-        return -1;
-    }
-    
-    public static int findLastInstanceOfIfEq(MethodNode node, int endIndex) {
-        for (int i = endIndex - 1; i >= 0; --i) {
-            if (node.instructions.get(i).getOpcode() == Opcodes.IFEQ)
-                return i;
         }
         
         return -1;

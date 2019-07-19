@@ -50,6 +50,8 @@ public class TransformerWardBlockRandomTick extends Transformer {
             int ret = TransformUtil.findFirstInstanceOfMethodCall(update, 0, "randomTick", "func_180645_a", "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V",
                     "net/minecraft/block/Block");
             int blockpos = TransformUtil.findLastInstanceOfMethodCall(update, ret, "<init>", "<init>", "(III)V", "net/minecraft/util/math/BlockPos");
+            // this is complex enough that looping to find more places to insert calls placed by other ASM
+            // would be a really bad idea
             if (ret != -1 && blockpos != -1) {
                 AbstractInsnNode insertAfter = update.instructions.get(ret).getPrevious();
                 AbstractInsnNode blockPosInit = update.instructions.get(blockpos);

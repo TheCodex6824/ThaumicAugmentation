@@ -44,6 +44,7 @@ public class TransformerWardBlockResistance extends Transformer {
         try {
             MethodNode resistance = TransformUtil.findMethod(classNode, "getExplosionResistance", "getExplosionResistance",
                     "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/Entity;Lnet/minecraft/world/Explosion;)F");
+            boolean found = false;
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(resistance, ret, Opcodes.FRETURN)) != -1) {
                 AbstractInsnNode insertAfter = resistance.instructions.get(ret).getPrevious();
@@ -56,7 +57,11 @@ public class TransformerWardBlockResistance extends Transformer {
                 resistance.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
                 resistance.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 ret += 4;
+                found = true;
             }
+            
+            if (!found)
+                throw new TransformerException("Could not locate required instructions");
             
             return true;
         }

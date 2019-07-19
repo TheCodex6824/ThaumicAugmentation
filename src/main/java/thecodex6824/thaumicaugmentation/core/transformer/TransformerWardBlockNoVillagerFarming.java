@@ -30,9 +30,9 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
-public class TransformerWardBlockNoEndermanPickup extends Transformer {
+public class TransformerWardBlockNoVillagerFarming extends Transformer {
 
-    private static final String CLASS = "net.minecraft.entity.monster.EntityEnderman$AITakeBlock";
+    private static final String CLASS = "net.minecraft.entity.ai.EntityAIHarvestFarmland";
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -43,26 +43,34 @@ public class TransformerWardBlockNoEndermanPickup extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode pickup = TransformUtil.findMethod(classNode, "updateTask", "func_75246_d");
-            boolean found = false;
-            int ret = pickup.instructions.size();
-            while ((ret = TransformUtil.findLastInstanceOfOpcode(pickup, ret, Opcodes.IFEQ)) != -1) {
-                AbstractInsnNode insertAfter = pickup.instructions.get(ret);
-                pickup.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
-                pickup.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+            MethodNode farm = TransformUtil.findMethod(classNode, "shouldMoveTo", "func_179488_a");
+            int plant = TransformUtil.findLastInstanceOfOpcode(farm, farm.instructions.size(), Opcodes.IFGE);
+            int harvest = TransformUtil.findLastInstanceOfOpcode(farm, plant, Opcodes.IFGE);
+            if (plant != -1 && harvest != -1) {
+                AbstractInsnNode insertAfter = farm.instructions.get(plant);
+                farm.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
+                farm.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
                         "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false
                 ));
-                pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 6));
-                pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
-                ret -= 5;
-                found = true;
+                farm.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
+                farm.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
+                
+                insertAfter = farm.instructions.get(harvest);
+                farm.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
+                farm.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        "checkWardGeneric",
+                        "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                        false
+                ));
+                farm.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
+                farm.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
             }
-            
-            if (!found)
-                throw new TransformerException("Could not locate required instructions");
+            else
+                throw new TransformerException("Could not locate required instructions, locations: " + plant + ", " + harvest);
             
             return true;
         }

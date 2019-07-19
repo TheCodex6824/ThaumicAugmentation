@@ -23,16 +23,15 @@ package thecodex6824.thaumicaugmentation.core.transformer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
-public class TransformerWardBlockNoEndermanPickup extends Transformer {
+public class TransformerWardBlockFireEncouragement extends Transformer {
 
-    private static final String CLASS = "net.minecraft.entity.monster.EntityEnderman$AITakeBlock";
+    private static final String CLASS = "net.minecraft.block.Block";
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -43,21 +42,20 @@ public class TransformerWardBlockNoEndermanPickup extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode pickup = TransformUtil.findMethod(classNode, "updateTask", "func_75246_d");
+            MethodNode fire = TransformUtil.findMethod(classNode, "getFireSpreadSpeed", "getFireSpreadSpeed");
             boolean found = false;
-            int ret = pickup.instructions.size();
-            while ((ret = TransformUtil.findLastInstanceOfOpcode(pickup, ret, Opcodes.IFEQ)) != -1) {
-                AbstractInsnNode insertAfter = pickup.instructions.get(ret);
-                pickup.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
-                pickup.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+            int ret = 0;
+            while ((ret = TransformUtil.findFirstInstanceOfOpcode(fire, ret, Opcodes.IRETURN)) != -1) {
+                AbstractInsnNode insertAfter = fire.instructions.get(ret).getPrevious();
+                fire.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
                         "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
-                        "checkWardGeneric",
-                        "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                        "checkWardFireEncouragement",
+                        "(ILnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)I",
                         false
                 ));
-                pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 6));
-                pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
-                ret -= 5;
+                fire.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
+                fire.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
+                ret += 4;
                 found = true;
             }
             

@@ -43,6 +43,7 @@ public class TransformerWardBlockHardness extends Transformer {
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode hardness = TransformUtil.findMethod(classNode, "getBlockHardness", "func_185887_b");
+            boolean found = false;
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(hardness, ret, Opcodes.FRETURN)) != -1) {
                 AbstractInsnNode insertAfter = hardness.instructions.get(ret).getPrevious();
@@ -55,7 +56,11 @@ public class TransformerWardBlockHardness extends Transformer {
                 hardness.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
                 hardness.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 ret += 4;
+                found = true;
             }
+            
+            if (!found)
+                throw new TransformerException("Could not locate required instructions");
             
             return true;
         }

@@ -43,6 +43,7 @@ public class TransformerWardBlockFlammability extends Transformer {
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode fire = TransformUtil.findMethod(classNode, "getFlammability", "func_176532_c");
+            boolean found = false;
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(fire, ret, Opcodes.IRETURN)) != -1) {
                 AbstractInsnNode insertAfter = fire.instructions.get(ret).getPrevious();
@@ -55,7 +56,11 @@ public class TransformerWardBlockFlammability extends Transformer {
                 fire.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
                 fire.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 ret += 4;
+                found = true;
             }
+            
+            if (!found)
+                throw new TransformerException("Could not locate required instructions");
             
             return true;
         }

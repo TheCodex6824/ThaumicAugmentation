@@ -30,9 +30,9 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
-public class TransformerWardBlockNoEndermanPickup extends Transformer {
+public class TransformerWardBlockNoRabbitSnacking extends Transformer {
 
-    private static final String CLASS = "net.minecraft.entity.monster.EntityEnderman$AITakeBlock";
+    private static final String CLASS = "net.minecraft.entity.passive.EntityRabbit$AIRaidFarm";
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -43,20 +43,20 @@ public class TransformerWardBlockNoEndermanPickup extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode pickup = TransformUtil.findMethod(classNode, "updateTask", "func_75246_d");
+            MethodNode nom = TransformUtil.findMethod(classNode, "shouldMoveTo", "func_179488_a");
             boolean found = false;
-            int ret = pickup.instructions.size();
-            while ((ret = TransformUtil.findLastInstanceOfOpcode(pickup, ret, Opcodes.IFEQ)) != -1) {
-                AbstractInsnNode insertAfter = pickup.instructions.get(ret);
-                pickup.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
-                pickup.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+            int ret = nom.instructions.size();
+            while ((ret = TransformUtil.findLastInstanceOfOpcode(nom, ret, Opcodes.IFEQ)) != -1) {
+                AbstractInsnNode insertAfter = nom.instructions.get(ret);
+                nom.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
+                nom.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
                         "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false
                 ));
-                pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 6));
-                pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
+                nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
+                nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 ret -= 5;
                 found = true;
             }

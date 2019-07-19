@@ -50,7 +50,9 @@ public class TAHooks {
     }
     
     public static int checkWardFlammability(int oldFlammability, IBlockAccess access, BlockPos pos) {
-        if (access instanceof World && pos != null) {
+        if (oldFlammability == 0)
+            return 0;
+        else if (access instanceof World && pos != null) {
             World world = (World) access;
             if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                 return world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos) ?
@@ -61,6 +63,20 @@ public class TAHooks {
         return oldFlammability;
     }
     
+    public static int checkWardFireEncouragement(int oldEncouragement, IBlockAccess access, BlockPos pos) {
+        if (oldEncouragement == 0)
+            return 0;
+        else if (access instanceof World && pos != null) {
+            World world = (World) access;
+            if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+                return world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos) ?
+                    0 : oldEncouragement;
+            }
+        }
+        
+        return oldEncouragement;
+    }
+    
     public static boolean checkWardRandomTick(WorldServer world, BlockPos pos, IBlockState state, Random rand) {
         if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null))
             return !world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos);
@@ -68,7 +84,7 @@ public class TAHooks {
         return true;
     }
     
-    public static boolean checkWardEndermanPickup(World world, BlockPos pos) {
+    public static boolean checkWardGeneric(World world, BlockPos pos) {
         if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null))
             return !world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos);
         

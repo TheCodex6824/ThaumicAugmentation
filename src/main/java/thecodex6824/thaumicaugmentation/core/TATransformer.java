@@ -28,9 +28,13 @@ import org.objectweb.asm.tree.ClassNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFireEncouragement;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFlammability;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockHardness;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoEndermanPickup;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoRabbitSnacking;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoSheepGrazing;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoVillagerFarming;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockRandomTick;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockResistance;
 
@@ -40,10 +44,17 @@ public class TATransformer implements IClassTransformer {
     
     static {
         TRANSFORMERS.add(new TransformerWardBlockHardness());
-        TRANSFORMERS.add(new TransformerWardBlockFlammability());
         TRANSFORMERS.add(new TransformerWardBlockResistance());
+        TRANSFORMERS.add(new TransformerWardBlockFlammability());
+        TRANSFORMERS.add(new TransformerWardBlockFireEncouragement());
         TRANSFORMERS.add(new TransformerWardBlockRandomTick());
+        
+        // sadly EntityMobGriefingEvent does not provide a blockpos, so it can't be used
+        // the position is also not determined and put into the AI fields until the event has already passed
         TRANSFORMERS.add(new TransformerWardBlockNoEndermanPickup());
+        TRANSFORMERS.add(new TransformerWardBlockNoRabbitSnacking());
+        TRANSFORMERS.add(new TransformerWardBlockNoSheepGrazing());
+        TRANSFORMERS.add(new TransformerWardBlockNoVillagerFarming());
     }
     
     public TATransformer() {}
