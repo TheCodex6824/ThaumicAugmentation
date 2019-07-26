@@ -27,7 +27,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
  * Holds an instance of the capability for {@link IAugment}.
  * @author TheCodex6824
  */
-public class CapabilityAugment {
+public final class CapabilityAugment {
 
     private CapabilityAugment() {}
     

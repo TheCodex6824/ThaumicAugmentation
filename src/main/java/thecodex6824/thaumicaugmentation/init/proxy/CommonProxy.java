@@ -80,6 +80,7 @@ public class CommonProxy implements ISidedProxy {
         WorldHandler.preInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
         TAInternals.setInternalMethodProvider(new InternalMethodProvider());
+        MiscHandler.preInit();
         IntegrationHandler.preInit();
         
         if (!TAConfig.disableWardFocus.getValue()) {

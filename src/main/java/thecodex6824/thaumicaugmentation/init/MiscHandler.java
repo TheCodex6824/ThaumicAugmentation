@@ -27,14 +27,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.FocusEngine;
+import thaumcraft.common.golems.seals.SealHandler;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
+import thecodex6824.thaumicaugmentation.common.golem.SealAttack;
+import thecodex6824.thaumicaugmentation.common.golem.SealAttackAdvanced;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectLight;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWard;
 
 public final class MiscHandler {
 
     private MiscHandler() {}
+    
+    public static void preInit() {
+        SealHandler.registerSeal(new SealAttack());
+        SealHandler.registerSeal(new SealAttackAdvanced());
+    }
     
     public static void init() {
         FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 

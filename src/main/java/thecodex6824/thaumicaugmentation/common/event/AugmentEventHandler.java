@@ -39,12 +39,13 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.event.AugmentEventHelper;
-import thecodex6824.thaumicaugmentation.api.event.SuccessfulCastEvent;
+import thecodex6824.thaumicaugmentation.api.event.CastEvent;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -60,11 +61,10 @@ public final class AugmentEventHandler {
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         int totalIndex = 0;
-        hasAugments.remove(event.getEntity());
         for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
             ArrayList<ItemStack> stacks = Lists.newArrayList(func.apply(event.getEntity()));
             if (!oldItems.containsKey(event.getEntity()))
-                oldItems.put(event.getEntity(), new ArrayList<>(stacks));
+                oldItems.put(event.getEntity(), new ArrayList<>(Collections.nCopies(stacks.size(), ItemStack.EMPTY)));
             else {
                 for (int i = 0; i < stacks.size(); ++i) {
                     ItemStack current = stacks.get(i);
@@ -91,6 +91,9 @@ public final class AugmentEventHandler {
                 }
             }
         }
+        
+        if (totalIndex == 0)
+            hasAugments.remove(event.getEntity());
     }
     
     @SubscribeEvent
@@ -113,19 +116,23 @@ public final class AugmentEventHandler {
     
     @SubscribeEvent
     public static void onHurt(LivingHurtEvent event) {
-        if (!event.getEntity().getEntityWorld().isRemote && hasAugments.contains(event.getEntity())) {
+        if (!event.getEntity().getEntityWorld().isRemote) {
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
-                for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
-                    if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                        AugmentEventHelper.fireHurtEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                                event.getSource().getTrueSource(), event.getEntity());
+                if (hasAugments.contains(event.getSource().getTrueSource())) {
+                    for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
+                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+                            AugmentEventHelper.fireHurtEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                                    event.getSource().getTrueSource(), event.getEntity());
+                        }
                     }
                 }
                 
-                for (ItemStack stack : func.apply(event.getEntity())) {
-                    if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                        AugmentEventHelper.fireHurtByEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                                event.getEntity(), event.getSource().getTrueSource());
+                if (hasAugments.contains(event.getEntity())) {
+                    for (ItemStack stack : func.apply(event.getEntity())) {
+                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+                            AugmentEventHelper.fireHurtByEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                                    event.getEntity(), event.getSource().getTrueSource());
+                        }
                     }
                 }
             }
@@ -134,19 +141,23 @@ public final class AugmentEventHandler {
     
     @SubscribeEvent
     public static void onDamage(LivingDamageEvent event) {
-        if (!event.getEntity().getEntityWorld().isRemote && hasAugments.contains(event.getEntity())) {
+        if (!event.getEntity().getEntityWorld().isRemote) {
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
-                for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
-                    if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                        AugmentEventHelper.fireDamageEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                                event.getSource().getTrueSource(), event.getEntity());
+                if (hasAugments.contains(event.getSource().getTrueSource())) {
+                    for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
+                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+                            AugmentEventHelper.fireDamageEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                                    event.getSource().getTrueSource(), event.getEntity());
+                        }
                     }
                 }
                 
-                for (ItemStack stack : func.apply(event.getEntity())) {
-                    if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                        AugmentEventHelper.fireDamagedByEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                                event.getEntity(), event.getSource().getTrueSource());
+                if (hasAugments.contains(event.getEntity())) {
+                    for (ItemStack stack : func.apply(event.getEntity())) {
+                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+                            AugmentEventHelper.fireDamagedByEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                                    event.getEntity(), event.getSource().getTrueSource());
+                        }
                     }
                 }
             }
@@ -154,15 +165,25 @@ public final class AugmentEventHandler {
     }
     
     @SubscribeEvent
-    public static void onCast(SuccessfulCastEvent event) {
+    public static void onCastPre(CastEvent.Pre event) {
         if (!event.getEntity().getEntityWorld().isRemote && event.getCasterStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-            AugmentEventHelper.fireCastEvent(event.getCasterStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                    event.getCasterStack(), event.getFocusPackage(), event.getEntityLiving());
+            AugmentEventHelper.fireCastPreEvent(event.getCasterStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                    event.getCasterStack(), event.getFocus(), event.getEntityLiving());
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onCastPost(CastEvent.Post event) {
+        if (!event.getEntity().getEntityWorld().isRemote && event.getCasterStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+            AugmentEventHelper.fireCastPostEvent(event.getCasterStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                    event.getCasterStack(), event.getFocus(), event.getEntityLiving());
             
-            if (event.getEntity() instanceof EntityPlayerMP)
-                TANetwork.INSTANCE.sendTo(new PacketEntityCast(event.getEntity().getEntityId()), (EntityPlayerMP) event.getEntity());
-            
-            TANetwork.INSTANCE.sendToAllTracking(new PacketEntityCast(event.getEntity().getEntityId()), event.getEntity());
+            if (event.getCasterStack().getItem() == TAItems.GAUNTLET) {
+                if (event.getEntity() instanceof EntityPlayerMP)
+                    TANetwork.INSTANCE.sendTo(new PacketEntityCast(event.getEntity().getEntityId()), (EntityPlayerMP) event.getEntity());
+                
+                TANetwork.INSTANCE.sendToAllTracking(new PacketEntityCast(event.getEntity().getEntityId()), event.getEntity());
+            }
         }
     }
     

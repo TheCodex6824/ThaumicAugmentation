@@ -18,33 +18,19 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.event;
+package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import thaumcraft.api.casters.FocusPackage;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
-/**
- * Event fired when the vis cost of a complete focus effect is being calculated. This may not be fired for all casters - 
- * it is only guaranteed for Thaumic Augmentation casters.
- * @author TheCodex6824
- */
-public class CasterVisCostEvent extends CastEvent {
+public interface ICustomCasterAugment extends IAugment {
 
-    private float cost;
+    public void setStrengthProvider(ItemStack s);
     
-    public CasterVisCostEvent(EntityLivingBase caster, ItemStack casterStack, FocusPackage fPackage, float visCost) {
-        super(caster, casterStack, fPackage);
-        focus = fPackage;
-        cost = visCost;
-    }
+    public ItemStack getStrengthProvider();
     
-    public float getVisCost() {
-        return cost;
-    }
+    public void setEffectProvider(ItemStack e);
     
-    public void setVisCost(float newCost) {
-        cost = newCost;
-    }
-
+    public ItemStack getEffectProvider();
+    
 }

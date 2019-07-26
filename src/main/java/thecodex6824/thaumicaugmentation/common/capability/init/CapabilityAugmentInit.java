@@ -20,7 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.capability.init;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -46,7 +45,7 @@ public final class CapabilityAugmentInit {
                 return instance.serializeNBT();
             }
             
-        }, () -> new Augment(ItemStack.EMPTY));
+        }, () -> new Augment());
     }
     
 }

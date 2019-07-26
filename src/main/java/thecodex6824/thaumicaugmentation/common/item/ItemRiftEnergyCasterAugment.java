@@ -36,7 +36,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
@@ -47,23 +46,23 @@ import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.energy.RiftEnergyHelper;
 import thecodex6824.thaumicaugmentation.api.energy.RiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
-import thecodex6824.thaumicaugmentation.api.util.FocusUtils;
+import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderAugmentRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-public class ItemRiftEnergyGauntletAugment extends ItemTABase {
+public class ItemRiftEnergyCasterAugment extends ItemTABase {
 
-    public ItemRiftEnergyGauntletAugment() {
+    public ItemRiftEnergyCasterAugment() {
         super();
         setMaxStackSize(1);
     }
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new CapabilityProviderAugmentRiftEnergyStorage(new Augment(stack) {
+        return new CapabilityProviderAugmentRiftEnergyStorage(new Augment() {
             
             private boolean syncNeeded;
             
@@ -78,12 +77,12 @@ public class ItemRiftEnergyGauntletAugment extends ItemTABase {
             }
             
             @Override
-            public void onCast(ItemStack caster, FocusPackage focusPackage, Entity user) {
+            public void onCastPre(ItemStack caster, FocusWrapper focusPackage, Entity user) {
                 if (stack.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
                     IRiftEnergyStorage energy = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
                     // not actually removing energy is intentional
                     if (energy.extractEnergy(10, true) == 10)
-                        FocusUtils.setPackagePower(focusPackage, focusPackage.getPower() * 1.1F);
+                        focusPackage.setFocusPower(focusPackage.getFocusPower() * 1.1F);
                 }
             }
             

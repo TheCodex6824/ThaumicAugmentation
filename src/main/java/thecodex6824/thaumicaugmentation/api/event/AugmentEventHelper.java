@@ -26,10 +26,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import thaumcraft.api.casters.FocusPackage;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
@@ -55,10 +55,17 @@ public final class AugmentEventHelper {
         }
     }
     
-    public static void fireCastEvent(IAugmentableItem cap, ItemStack caster, FocusPackage focusPackage, Entity entity) {
+    public static void fireCastPreEvent(IAugmentableItem cap, ItemStack caster, FocusWrapper focusPackage, Entity entity) {
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onCast(caster, focusPackage, entity);
+                a.getCapability(CapabilityAugment.AUGMENT, null).onCastPre(caster, focusPackage, entity);
+        }
+    }
+    
+    public static void fireCastPostEvent(IAugmentableItem cap, ItemStack caster, FocusWrapper focusPackage, Entity entity) {
+        for (ItemStack a : cap.getAllAugments()) {
+            if (a.hasCapability(CapabilityAugment.AUGMENT, null))
+                a.getCapability(CapabilityAugment.AUGMENT, null).onCastPost(caster, focusPackage, entity);
         }
     }
     

@@ -18,32 +18,13 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.event;
+package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import thaumcraft.api.casters.FocusPackage;
+import net.minecraft.entity.Entity;
+import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
-/**
- * Event fired when the caster cooldown is being calculated. This may not be fired for all casters - 
- * it is only guaranteed for Thaumic Augmentation casters.
- * @author TheCodex6824
- */
-public class CasterCooldownEvent extends CastEvent {
+public interface IBuilderCasterStrengthProvider extends IBuilderCasterCallback {
 
-    private int cooldown;
-    
-    public CasterCooldownEvent(EntityLivingBase living, ItemStack casterStack, FocusPackage fPackage, int cooldown) {
-        super(living, casterStack, fPackage);
-        this.cooldown = cooldown;
-    }
-    
-    public int getCooldown() {
-        return cooldown;
-    }
-    
-    public void setCooldown(int newCooldown) {
-        cooldown = newCooldown;
-    }
+    public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity user);
     
 }

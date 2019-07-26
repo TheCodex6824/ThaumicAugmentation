@@ -28,15 +28,16 @@ import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.IEssentiaContainerItem;
 import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 import thaumcraft.api.items.ItemsTC;
-import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 
 public class ElementalAugmentCraftingRecipe extends ShapelessArcaneRecipe {
 
     public ElementalAugmentCraftingRecipe() {
         super(new ResourceLocation(""), "GAUNTLET_AUGMENTATION@2", 50,
                 new AspectList().add(Aspect.AIR, 1).add(Aspect.EARTH, 1).add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 1).add(
-                Aspect.ORDER, 1).add(Aspect.WATER, 1), new ItemStack(TAItems.AUGMENT_CASTER_ELEMENTAL), new Object[] {
+                Aspect.ORDER, 1).add(Aspect.WATER, 1), CasterAugmentBuilder.createStackForStrengthProvider(
+                        new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental")), new Object[] {
                         new ItemStack(ItemsTC.plate, 1, 2), new ItemStack(ItemsTC.crystalEssence), new ItemStack(ItemsTC.visResonator)
                 }
         );
@@ -54,9 +55,9 @@ public class ElementalAugmentCraftingRecipe extends ShapelessArcaneRecipe {
         }
         
         if (!crystal.isEmpty()) {
-            ItemStack output = new ItemStack(TAItems.AUGMENT_CASTER_ELEMENTAL);
-            ((IAssociatedAspect) output.getItem()).setAspect(output, 
-                    ((IEssentiaContainerItem) crystal.getItem()).getAspects(crystal).getAspects()[0]);
+            ItemStack output = CasterAugmentBuilder.createStackForStrengthProvider(
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental"));
+            output.getTagCompound().setString("aspect", ((IEssentiaContainerItem) crystal.getItem()).getAspects(crystal).getAspects()[0].getTag());
             return output;
         }
         

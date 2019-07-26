@@ -35,7 +35,6 @@ public final class TABlocks {
     
     public static final Block VIS_REGENERATOR = null;
     public static final Block WARDED_CHEST = null;
-    public static final Block ARCANE_DOOR = null;
     public static final Block ARCANE_DOOR_GREATWOOD = null;
     public static final Block ARCANE_DOOR_THAUMIUM = null;
     public static final Block ARCANE_DOOR_SILVERWOOD = null;
@@ -51,7 +50,7 @@ public final class TABlocks {
      * @return All the blocks
      */
     public static Block[] getAllBlocks() {
-        return new Block[] {VIS_REGENERATOR, WARDED_CHEST, ARCANE_DOOR, ARCANE_DOOR_GREATWOOD, ARCANE_DOOR_THAUMIUM,
+        return new Block[] {VIS_REGENERATOR, WARDED_CHEST, ARCANE_DOOR_GREATWOOD, ARCANE_DOOR_THAUMIUM,
                ARCANE_DOOR_SILVERWOOD, TEMPORARY_LIGHT, STONE, ARCANE_TRAPDOOR_WOOD, ARCANE_TRAPDOOR_METAL, 
                ARCANE_TRAPDOOR_SILVERWOOD, TAINT_FLOWER};
     }

@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import java.util.HashMap;
+import java.util.function.Supplier;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -29,6 +32,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -50,7 +54,6 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoor;
-import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoorLegacy;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
@@ -60,10 +63,12 @@ import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
-import thecodex6824.thaumicaugmentation.common.item.ItemElementalAugment;
+import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterAugment;
+import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
+import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
-import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyGauntletAugment;
+import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
@@ -72,6 +77,7 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.recipe.AugmentAdditionRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.AugmentRemovalRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.AuthorizedKeyCreationRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.CustomAugmentCreationRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.DyeableItemRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ElementChangeRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumKeyCopyRecipe;
@@ -84,11 +90,19 @@ import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessHighlands;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeTaintedLands;
 
-@SuppressWarnings("deprecation")
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class RegistryHandler {
 
     private RegistryHandler() {}
+    
+    private static final HashMap<ResourceLocation, Supplier<Item>> ITEM_REMAP = new HashMap<>();
+    private static final HashMap<ResourceLocation, Supplier<Block>> BLOCK_REMAP = new HashMap<>();
+    
+    static {
+        ITEM_REMAP.put(new ResourceLocation(ThaumicAugmentationAPI.MODID, "augment_caster_elemental"), () -> TAItems.AUGMENT_CUSTOM);
+    
+        BLOCK_REMAP.put(new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_door"), () -> TABlocks.ARCANE_DOOR_THAUMIUM);
+    }
     
     private static Block setupBlock(Block block, String name) {
         return block.setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, name)).setTranslationKey(
@@ -105,7 +119,6 @@ public final class RegistryHandler {
         IForgeRegistry<Block> registry = event.getRegistry();
         registry.register(setupBlock(new BlockVisRegenerator(), "vis_regenerator"));
         registry.register(setupBlock(new BlockWardedChest(), "warded_chest"));
-        registry.register(setupBlock(new BlockArcaneDoorLegacy(), "arcane_door"));
         registry.register(setupBlock(new BlockArcaneDoor(Material.WOOD, 0), "arcane_door_greatwood"));
         registry.register(setupBlock(new BlockArcaneDoor(Material.IRON, 1), "arcane_door_thaumium"));
         registry.register(setupBlock(new BlockArcaneDoor(Material.WOOD, 2), "arcane_door_silverwood"));
@@ -138,9 +151,13 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemKey(), "key"));
         registry.register(setupItem(new ItemVoidBoots(), "void_boots"));
         registry.register(setupItem(new ItemRiftSeed(), "rift_seed"));
-        registry.register(setupItem(new ItemElementalAugment(), "augment_caster_elemental"));
-        registry.register(setupItem(new ItemRiftEnergyGauntletAugment(), "augment_caster_rift_energy_storage"));
+        registry.register(setupItem(new ItemRiftEnergyCasterAugment(), "augment_caster_rift_energy_storage"));
         registry.register(setupItem(new ItemFractureLocator(), "fracture_locator"));
+        registry.register(setupItem(new ItemCustomCasterStrengthProvider(), "augment_builder_power"));
+        registry.register(setupItem(new ItemCustomCasterEffectProvider(), "augment_builder_effect"));
+        registry.register(setupItem(new ItemCustomCasterAugment(), "augment_custom"));
+        
+        AugmentHandler.registerAugmentBuilderComponents();
     }
 
     @SubscribeEvent
@@ -158,6 +175,7 @@ public final class RegistryHandler {
         event.getRegistry().register(new AugmentAdditionRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "augment_addition")));
         event.getRegistry().register(new AugmentRemovalRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "augment_removal")));
         event.getRegistry().register(new ElementChangeRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "element_swap")));
+        event.getRegistry().register(new CustomAugmentCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "custom_augment")));
         event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(""), new ItemStack(BlocksTC.stoneEldritchTile, 9), new Object[] {
                 "SSS",
                 "SCS",
@@ -205,7 +223,6 @@ public final class RegistryHandler {
         proxy.registerObjectTag(new ItemStack(TAItems.SEAL_COPIER), new AspectList().add(Aspect.MIND, 15).add(Aspect.TOOL, 5));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.VOID_BOOTS), new AspectList().add(Aspect.ELDRITCH, 43).add(Aspect.VOID, 23));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.FRACTURE_LOCATOR), new AspectList().add(Aspect.VOID, 3).add(Aspect.TOOL, 5));
-        proxy.registerComplexObjectTag(new ItemStack(TAItems.AUGMENT_CASTER_ELEMENTAL), new AspectList().add(Aspect.AVERSION, 3).add(Aspect.TOOL, 5).add(Aspect.MECHANISM, 2));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.AUGMENT_CASTER_RIFT_ENERGY_STORAGE), new AspectList().add(Aspect.AVERSION, 3).add(Aspect.TOOL, 5).add(Aspect.MECHANISM, 5).add(Aspect.VOID, 5));
         
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.ARCANE_TRAPDOOR_METAL), new AspectList().add(Aspect.PROTECT, 7));
@@ -219,6 +236,22 @@ public final class RegistryHandler {
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.WARDED_CHEST), new AspectList().add(Aspect.PROTECT, 7));
     
         AspectElementInteractionManager.init();
+    }
+    
+    @SubscribeEvent
+    public static void onMissingItemMapping(RegistryEvent.MissingMappings<Item> event) {
+        for (Mapping<Item> mapping : event.getMappings()) {
+            if (ITEM_REMAP.containsKey(mapping.key))
+                mapping.remap(ITEM_REMAP.get(mapping.key).get());
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onMissingBlockMapping(RegistryEvent.MissingMappings<Block> event) {
+        for (Mapping<Block> mapping : event.getMappings()) {
+            if (BLOCK_REMAP.containsKey(mapping.key))
+                mapping.remap(BLOCK_REMAP.get(mapping.key).get());
+        }
     }
 
 }

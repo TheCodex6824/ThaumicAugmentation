@@ -113,7 +113,7 @@ public class AugmentableItem implements IAugmentableItem {
     @Override
     public boolean isAugmentAcceptable(ItemStack augment, int slot) {
         for (ItemStack aug : augments) {
-            if (aug.isItemEqualIgnoreDurability(augment))
+            if (!aug.isEmpty() && !aug.getCapability(CapabilityAugment.AUGMENT, null).isCompatible(augment))
                 return false;
         }
         

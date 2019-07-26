@@ -32,6 +32,24 @@ item.thaumicaugmentation.rift_seed.flux_aura.name=Flux Seed
 item.thaumicaugmentation.augment_caster_elemental.name=Elemental Resonator
 item.thaumicaugmentation.augment_caster_rift_energy_storage.name=Impetus Conductor
 item.thaumicaugmentation.fracture_locator.name=Fracture Locator
+item.thaumicaugmentation.augment_custom.name=Custom Augment
+
+item.thaumicaugmentation.strength_experience.name=Modifier: Experience
+item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld
+item.thaumicaugmentation.strength_nether.name=Modifier: Nether
+item.thaumicaugmentation.strength_end.name=Modifier: The End
+item.thaumicaugmentation.strength_emptiness.name=Modifier: Emptiness
+item.thaumicaugmentation.strength_elemental.name=Modifier: Elemental
+item.thaumicaugmentation.strength_frenzy.name=Modifier: Frenzy
+
+item.thaumicaugmentation.effect_power.name=Effect: Focus Power
+item.thaumicaugmentation.effect_cost.name=Effect: Vis Discount
+item.thaumicaugmentation.effect_cast_speed.name=Effect: Cast Speed
+
+item.seal.attack.name=Control Seal: Secure
+item.seal.attack_advanced.name=Advanced Control Seal: Secure
+golem.prop.other=Target Others
+golem.prop.sight=Require Sight
 
 entity.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
 
@@ -166,7 +184,7 @@ thaumicaugmentation.research.fracture_theory.1=I have drawn up plans for a devic
 thaumicaugmentation.research.entering_fracture.title=Entering the Emptiness
 thaumicaugmentation.research.entering_fracture.0=Now that I am fairly certain dimensional fractures exist and lead somewhere, I should find and scan one of them to determine my next steps.
 research.m_DIMENSIONALFRACTURE.text=Find a dimensional fracture
-thaumicaugmentation.research.entering_fracture.1=My theory of natural fractures existing has proven to be correct. While it was a crucial step to entering the emptiness that lies beyond the fractures, there's one small problem. The fracture is not fully connected to the other side. Luckily, a burst of energy should be able to rip it open - which I now have the ability to create, in the form of Impetus.<BR>All I need to do use a casting gauntlet with an attached Impetus Conductor on the fracture, and it should shortly fully open. I have no idea what could be on the other side, although the ground around the fracture might give me some indication. Despite the possible danger, it's far too late for me to turn back now.
+thaumicaugmentation.research.entering_fracture.1=My theory of natural fractures existing has proven to be correct. While it was a crucial step to entering the emptiness that lies beyond the fractures, there's one small problem. The fracture is not fully connected to the other side. Luckily, a burst of energy should be able to rip it open - which I now have the ability to create, in the form of Impetus.<BR>All I need to do is use a casting gauntlet with an attached and charged Impetus Conductor on the fracture, and after a few moments it should fully open. I have no idea what could be on the other side, although the ground around the fracture might give me some indication. Despite the possible danger, it's far too late for me to turn back now.
 research.m_ENTERVOID.text=Find out what's on the other side
 thaumicaugmentation.research.entering_fracture.2=While I was hoping for something a bit more interesting than a dark wasteland, I still think this place can be useful to me. There are many more fractures that are close together - they must lead to areas far away from each other, as even finding a single fracture before was not so easy. It also seems that many different dimensions can lead here. I might want to see if having an alternate entrance into any of them might be useful to me.<BR>If I want to open any more fractures in the future, I only need to repeat what I first did to get here - use a casting gauntlet with an attached (and charged) Impetus Conductor on the fracture and wait a few seconds.<BR>While most of this place seems eerily quiet, I can see that the tainted areas are full of life. I should be careful when travelling through these areas, as taint can be incredibly dangerous.
 thaumicaugmentation.research.entering_fracture.3=Because Eldritch Guardians are tasked with guarding the places where the boundries between dimensions are weakest, I have a feeling that they may not appreciate me opening dimensional fractures. I should be prepared to deal with unwelcome visitors around any fracture that I open.

@@ -46,11 +46,11 @@ public final class CapabilityWardStorageInit {
                 if (instance instanceof IWardStorageServer)
                     return ((IWardStorageServer) instance).serializeNBT();
                 else
-                    return null;
+                    return new NBTTagCompound();
             }
             
         }, () -> {
-            throw new RuntimeException("Cannot create a default ward storage impl (create one for client or server side instead)");
+            throw new UnsupportedOperationException("Cannot create a default ward storage impl (create one for client or server side instead)");
         });
     }
     

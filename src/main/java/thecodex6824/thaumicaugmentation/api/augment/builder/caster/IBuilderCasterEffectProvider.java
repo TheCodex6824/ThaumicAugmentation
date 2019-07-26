@@ -18,23 +18,14 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.event;
+package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import thaumcraft.api.casters.FocusPackage;
+import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
-/**
- * Event fired when a cast is successfully executed. This may not be fired for all casters - 
- * it is only guaranteed for Thaumic Augmentation casters.
- * @author TheCodex6824
- */
-@Cancelable
-public class SuccessfulCastEvent extends CastEvent {
-    
-    public SuccessfulCastEvent(EntityLivingBase castingEntity, ItemStack casterStack, FocusPackage castPackage) {
-        super(castingEntity, casterStack, castPackage);
-    }
+public interface IBuilderCasterEffectProvider extends IBuilderCasterCallback {
+
+    public void apply(ICustomCasterAugment augment, Entity caster, ItemStack casterStack, FocusWrapper focus, double strength);
     
 }

@@ -225,9 +225,11 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                             new TargetPoint(world.provider.getDimension(), posX, posY, posZ, 64.0F));
                 }
                 
-                TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.CURLY_WISP, 
-                        posX + rand.nextGaussian() / 4, posY + rand.nextGaussian() / 2 + 1, posZ + rand.nextGaussian() / 4),
-                        new TargetPoint(world.provider.getDimension(), posX, posY, posZ, 64.0F));
+                if (ticksExisted % 5 == 0) {
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.CURLY_WISP, 
+                            posX + rand.nextGaussian() / 4, posY + rand.nextGaussian() / 2 + 1, posZ + rand.nextGaussian() / 4),
+                            new TargetPoint(world.provider.getDimension(), posX, posY, posZ, 64.0F));
+                }
             }
         }
     }

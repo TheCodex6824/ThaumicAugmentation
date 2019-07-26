@@ -30,12 +30,8 @@ import net.minecraft.nbt.NBTTagCompound;
  * @see thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment
  */
 public class Augment implements IAugment {
-
-    protected ItemStack stack;
     
-    public Augment(ItemStack stack) {
-        this.stack = stack != null ? stack : ItemStack.EMPTY;
-    }
+    public Augment() {}
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {}
@@ -43,6 +39,12 @@ public class Augment implements IAugment {
     @Override
     public NBTTagCompound serializeNBT() {
         return new NBTTagCompound();
+    }
+    
+    @Override
+    public boolean isCompatible(ItemStack otherAugment) {
+        return !otherAugment.hasCapability(CapabilityAugment.AUGMENT, null) || 
+                otherAugment.getCapability(CapabilityAugment.AUGMENT, null).getClass() != getClass();
     }
     
 }

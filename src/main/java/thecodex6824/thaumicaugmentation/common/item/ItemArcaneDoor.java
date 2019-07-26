@@ -56,19 +56,18 @@ public class ItemArcaneDoor extends ItemTABase {
             pos = pos.offset(facing);
 
         ItemStack itemstack = player.getHeldItem(hand);
-        if (player.canPlayerEdit(pos, facing, itemstack) && TABlocks.ARCANE_DOOR.canPlaceBlockAt(world, pos)) {
+        Block toPlace = null;
+        if (itemstack.getMetadata() == 0)
+            toPlace = TABlocks.ARCANE_DOOR_GREATWOOD;
+        else if (itemstack.getMetadata() == 1)
+            toPlace = TABlocks.ARCANE_DOOR_THAUMIUM;
+        else
+            toPlace = TABlocks.ARCANE_DOOR_SILVERWOOD;
+        if (player.canPlayerEdit(pos, facing, itemstack) && toPlace.canPlaceBlockAt(world, pos)) {
             EnumFacing enumfacing = player.getHorizontalFacing();
             int i = enumfacing.getXOffset();
             int j = enumfacing.getZOffset();
             boolean flag = i < 0 && hitZ < 0.5F || i > 0 && hitZ > 0.5F || j < 0 && hitX > 0.5F || j > 0 && hitX < 0.5F;
-            Block toPlace = null;
-            if (itemstack.getMetadata() == 0)
-                toPlace = TABlocks.ARCANE_DOOR_GREATWOOD;
-            else if (itemstack.getMetadata() == 1)
-                toPlace = TABlocks.ARCANE_DOOR_THAUMIUM;
-            else
-                toPlace = TABlocks.ARCANE_DOOR_SILVERWOOD;
-  
             placeDoor(player, itemstack, world, pos, enumfacing, toPlace, flag);
             SoundType soundtype = world.getBlockState(pos).getBlock().getSoundType(world.getBlockState(pos), world, pos, player);
             world.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);

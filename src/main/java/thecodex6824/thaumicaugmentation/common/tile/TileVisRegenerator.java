@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.block.state.IBlockState;
@@ -55,14 +57,17 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
     protected IAnimationStateMachine asm;
     protected VariableValue cycleLength;
     protected VariableValue actionTime;
+    protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
+    protected VariableValue delayTicks;
     protected boolean lastState = false;
 
     public TileVisRegenerator() {
         super();
         cycleLength = new VariableValue(1);
         actionTime = new VariableValue(Float.MIN_VALUE);
+        delayTicks = new VariableValue(delay);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/vis_regenerator.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", cycleLength, "act_time", actionTime));
+                ImmutableMap.<String, ITimeValue>of("cycle_length", cycleLength, "act_time", actionTime, "delay", delayTicks));
     }
 
     private float getAuraOffset() {
@@ -72,7 +77,7 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
 
     @Override
     public void update() {
-        if (!world.isRemote && world.getTotalWorldTime() % DELAY == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) &&
+        if (!world.isRemote && (world.getTotalWorldTime() + delay) % DELAY == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) &&
                 AuraHelper.getVis(world, pos) + AuraHelper.getFlux(world, pos) < AuraHelper.getAuraBase(world, pos)) { 
 
             if (AuraHelper.getFlux(world, pos) > AuraHelper.getVis(world, pos)) {
@@ -86,7 +91,7 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
                         pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 48));
             }
         }
-        else if (world.isRemote && world.getTotalWorldTime() % 5 == 0) {
+        else if (world.isRemote && (world.getTotalWorldTime() + delay) % 5 == 0) {
             float aura = getAuraOffset();
             cycleLength.setValue(Math.min(1.0F / Math.max(aura, Float.MIN_VALUE), 15));
             boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);

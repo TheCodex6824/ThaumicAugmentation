@@ -20,8 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.common.internal;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import thecodex6824.thaumicaugmentation.api.internal.IInternalMethodProvider;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
+import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 
 public class InternalMethodProvider implements IInternalMethodProvider {
     
@@ -33,6 +37,16 @@ public class InternalMethodProvider implements IInternalMethodProvider {
     @Override
     public boolean removeConfigListener(Runnable listener) {
         return TAConfigHolder.removeListener(listener);
+    }
+    
+    @Override
+    public ItemStack createCasterStrengthProviderStack(ResourceLocation id) {
+        return ItemCustomCasterStrengthProvider.create(id);
+    }
+    
+    @Override
+    public ItemStack createCasterEffectProviderStack(ResourceLocation id) {
+        return ItemCustomCasterEffectProvider.create(id);
     }
     
 }

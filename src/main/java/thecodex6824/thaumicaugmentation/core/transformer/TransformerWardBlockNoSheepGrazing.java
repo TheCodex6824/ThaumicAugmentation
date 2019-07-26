@@ -71,7 +71,7 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
                 ));
                 nom.instructions.insert(grassAfter, new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
                         "net/minecraft/util/math/BlockPos",
-                        "down",
+                        TransformUtil.correctNameForRuntime("down", "func_177977_b"),
                         "()Lnet/minecraft/util/math/BlockPos;",
                         false
                 ));

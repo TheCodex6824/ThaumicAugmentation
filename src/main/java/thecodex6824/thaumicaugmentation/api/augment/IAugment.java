@@ -31,7 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
-import thaumcraft.api.casters.FocusPackage;
+import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
 /**
  * Interface for the Augment capability. This interface allows arbitrary items to be added to
@@ -39,7 +39,7 @@ import thaumcraft.api.casters.FocusPackage;
  * @author TheCodex6824
  */
 public interface IAugment extends INBTSerializable<NBTTagCompound> {
-
+    
     /**
      * Called on both the client and server when the augment is equipped on the user. This includes when the
      * user is first loaded!
@@ -54,20 +54,31 @@ public interface IAugment extends INBTSerializable<NBTTagCompound> {
     public default void onUnequip(Entity user) {}
     
     /**
+     * Called when the owning entity attempts to use a focus using a Thaumcraft caster. Note that this requires support from
+     * the caster to work - Thaumic Augmentation casters all support this event, but both the default Thaumcraft
+     * caster and possibly third party casters will need to fire events themselves.
+     * @param caster The stack of the casting item
+     * @param focus The FocusWrapper that is being used by the caster
+     * @param user The entity that has this augment and is casting
+     */
+    public default void onCastPre(ItemStack caster, FocusWrapper focus, Entity user) {}
+    
+    /**
+     * Called when the owning entity successfully uses a focus using a Thaumcraft caster. Note that this requires support from
+     * the caster to work - Thaumic Augmentation casters all support this event, but both the default Thaumcraft
+     * caster and possibly third party casters will need to fire events themselves.
+     * @param caster The stack of the casting item
+     * @param focus The FocusWrapper that is being used by the caster - at this point any modifications
+     * to values here will have no effect
+     * @param user The entity that has this augment and is casting
+     */
+    public default void onCastPost(ItemStack caster, FocusWrapper focus, Entity user) {}
+    
+    /**
      * Called when the owning entity is ticked. This is called on both the client and server sides.
      * @param user The entity that has this augment
      */
     public default void onTick(Entity user) {}
-    
-    /**
-     * Called when the owning entity fires a spell using a Thaumcraft caster. Note that this requires support from
-     * the caster to work - Thaumic Augmentation casters all support this event, but both the default Thaumcraft
-     * caster and possibly third party casters will need to fire events themselves.
-     * @param caster The stack of the casting item
-     * @param focusPackage The FocusPackage that is being used by the caster
-     * @param user The entity that has this augment and is casting
-     */
-    public default void onCast(ItemStack caster, FocusPackage focusPackage, Entity user) {}
     
     /**
      * Called when the user hurts another entity.

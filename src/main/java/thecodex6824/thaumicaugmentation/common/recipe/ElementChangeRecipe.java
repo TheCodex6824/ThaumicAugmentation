@@ -24,13 +24,16 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.IEssentiaContainerItem;
 import thaumcraft.api.items.ItemsTC;
-import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
+import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 
 public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
@@ -46,11 +49,23 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof IAssociatedAspect) {
+                if (stack.hasTagCompound() && stack.getTagCompound().getString("id").equals(new ResourceLocation(
+                        ThaumicAugmentationAPI.MODID, "strength_elemental").toString())) {
                     if (augment.isEmpty())
                         augment = stack;
                     else
                         return false;
+                }
+                else if (stack.hasCapability(CapabilityAugment.AUGMENT, null) && 
+                        stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomCasterAugment) {
+                    ItemStack strength = ((ICustomCasterAugment) stack.getCapability(CapabilityAugment.AUGMENT, null)).getStrengthProvider();
+                    if (strength.getTagCompound().getString("id").equals(new ResourceLocation(
+                            ThaumicAugmentationAPI.MODID, "strength_elemental").toString())) {
+                        if (augment.isEmpty())
+                            augment = stack;
+                        else
+                            return false;
+                    }
                 }
                 else if (stack.getItem() == ItemsTC.crystalEssence) {
                     if (crystal.isEmpty())
@@ -73,11 +88,23 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof IAssociatedAspect) {
+                if (stack.hasTagCompound() && stack.getTagCompound().getString("id").equals(new ResourceLocation(
+                        ThaumicAugmentationAPI.MODID, "strength_elemental").toString())) {
                     if (augment.isEmpty())
                         augment = stack;
                     else
                         return ItemStack.EMPTY;
+                }
+                else if (stack.hasCapability(CapabilityAugment.AUGMENT, null) && 
+                        stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomCasterAugment) {
+                    ItemStack strength = ((ICustomCasterAugment) stack.getCapability(CapabilityAugment.AUGMENT, null)).getStrengthProvider();
+                    if (strength.getTagCompound().getString("id").equals(new ResourceLocation(
+                            ThaumicAugmentationAPI.MODID, "strength_elemental").toString())) {
+                        if (augment.isEmpty())
+                            augment = stack;
+                        else
+                            return ItemStack.EMPTY;
+                    }
                 }
                 else if (stack.getItem() == ItemsTC.crystalEssence) {
                     if (crystal.isEmpty())
@@ -91,7 +118,17 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         }
         
         ItemStack newAugment = augment.copy();
-        ((IAssociatedAspect) newAugment.getItem()).setAspect(newAugment, ((IEssentiaContainerItem) crystal.getItem()).getAspects(crystal).getAspects()[0]);
+        if (newAugment.hasCapability(CapabilityAugment.AUGMENT, null)) {
+            ICustomCasterAugment aug = (ICustomCasterAugment) newAugment.getCapability(CapabilityAugment.AUGMENT, null);
+            // the regular nbt tag is never actually copied by forge in the capability serializer
+            // nor the ItemStack constructor (which is used in the capability)
+            aug.getStrengthProvider().setTagCompound(aug.getStrengthProvider().getTagCompound().copy());
+            aug.getStrengthProvider().getTagCompound().setString("aspect", 
+                    ((IEssentiaContainerItem) crystal.getItem()).getAspects(crystal).getAspects()[0].getTag());
+        }
+        else
+            newAugment.getTagCompound().setString("aspect", ((IEssentiaContainerItem) crystal.getItem()).getAspects(crystal).getAspects()[0].getTag());
+        
         return newAugment;
     }
     
@@ -103,14 +140,24 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (i < 9 && stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof IAssociatedAspect)
+                if (stack.hasTagCompound() && stack.getTagCompound().getString("id").equals(new ResourceLocation(
+                        ThaumicAugmentationAPI.MODID, "strength_elemental").toString()))
                     augment = stack;
+                else if (stack.hasCapability(CapabilityAugment.AUGMENT, null) && 
+                        stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomCasterAugment) {
+                    ItemStack strength = ((ICustomCasterAugment) stack.getCapability(CapabilityAugment.AUGMENT, null)).getStrengthProvider();
+                    if (strength.getTagCompound().getString("id").equals(new ResourceLocation(
+                            ThaumicAugmentationAPI.MODID, "strength_elemental").toString())) {
+                        augment = strength;
+                    }
+                }
                 else if (stack.getItem() == ItemsTC.crystalEssence)
                     crystalIndex = i;
             }
         }
         
-        Aspect oldAspect = ((IAssociatedAspect) augment.getItem()).getAspect(augment);
+        Aspect oldAspect = Aspect.getAspect(augment.getTagCompound().getString("aspect"));
+                
         ret.set(crystalIndex, ThaumcraftApiHelper.makeCrystal(oldAspect));
         return ret;
     }

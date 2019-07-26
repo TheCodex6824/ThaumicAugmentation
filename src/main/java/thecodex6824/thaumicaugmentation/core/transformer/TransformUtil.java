@@ -31,23 +31,23 @@ public final class TransformUtil {
 
     private TransformUtil() {}
     
-    public static String correctNameForRuntime(String deobf, String obf) {
+    public static String correctNameForRuntime(String deobf, String srg) {
         // "runtime deobf" refers to the srg names being used, not the dev ones
-        return ThaumicAugmentationCore.isRuntimeDeobfEnabled() ? obf : deobf;
+        return ThaumicAugmentationCore.isRuntimeDeobfEnabled() ? srg : deobf;
     }
     
-    public static MethodNode findMethod(ClassNode classNode, String deobf, String obf) {
+    public static MethodNode findMethod(ClassNode classNode, String deobf, String srg) {
         for (MethodNode m : classNode.methods) {
-            if (m.name.equals(obf) || m.name.equals(deobf))
+            if (m.name.equals(srg) || m.name.equals(deobf))
                 return m;
         }
         
         return null;
     }
     
-    public static MethodNode findMethod(ClassNode classNode, String deobf, String obf, String desc) {
+    public static MethodNode findMethod(ClassNode classNode, String deobf, String srg, String desc) {
         for (MethodNode m : classNode.methods) {
-            if ((m.name.equals(obf) || m.name.equals(deobf)) && m.desc.equals(desc))
+            if ((m.name.equals(srg) || m.name.equals(deobf)) && m.desc.equals(desc))
                 return m;
         }
         
@@ -78,7 +78,7 @@ public final class TransformUtil {
         return -1;
     }
     
-    public static int findFirstInstanceOfMethodCall(MethodNode node, int startIndex, String deobf, String obf, String desc,
+    public static int findFirstInstanceOfMethodCall(MethodNode node, int startIndex, String deobf, String srg, String desc,
             String owningClass) {
         
         if (startIndex < 0 || startIndex >= node.instructions.size())
@@ -88,7 +88,7 @@ public final class TransformUtil {
             AbstractInsnNode insn = node.instructions.get(i);
             if (insn instanceof MethodInsnNode) {
                 MethodInsnNode method = (MethodInsnNode) insn;
-                if ((method.name.equals(obf) || method.name.equals(deobf)) && method.desc.equals(desc) && 
+                if ((method.name.equals(srg) || method.name.equals(deobf)) && method.desc.equals(desc) && 
                         method.owner.equals(owningClass))
                     return i;
             }
@@ -97,7 +97,7 @@ public final class TransformUtil {
         return -1;
     }
     
-    public static int findLastInstanceOfMethodCall(MethodNode node, int endIndex, String deobf, String obf, String desc,
+    public static int findLastInstanceOfMethodCall(MethodNode node, int endIndex, String deobf, String srg, String desc,
             String owningClass) {
         
         if ((endIndex - 1) < 0 || (endIndex - 1) >= node.instructions.size())
@@ -107,7 +107,7 @@ public final class TransformUtil {
             AbstractInsnNode insn = node.instructions.get(i);
             if (insn instanceof MethodInsnNode) {
                 MethodInsnNode method = (MethodInsnNode) insn;
-                if ((method.name.equals(obf) || method.name.equals(deobf)) && method.desc.equals(desc) && 
+                if ((method.name.equals(srg) || method.name.equals(deobf)) && method.desc.equals(desc) && 
                         method.owner.equals(owningClass))
                     return i;
             }

@@ -32,8 +32,6 @@ import thaumcraft.api.aspects.Aspect;
  * Handles a registry of aspect "interactions", to use for mechanics where
  * aspects interact with each other.
  * @author TheCodex6824
- * 
- * @see thecodex6824.thaumicaugmentation.common.item.ItemElementalAugment
  */
 public final class AspectElementInteractionManager {
 

@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.api.internal;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+
 public final class TAInternals {
 
     private static IInternalMethodProvider provider;
@@ -36,6 +39,14 @@ public final class TAInternals {
     
     public static boolean removeConfigListener(Runnable listener) {
         return provider.removeConfigListener(listener);
+    }
+    
+    public static ItemStack createCasterStrengthProviderStack(ResourceLocation id) {
+        return provider.createCasterStrengthProviderStack(id);
+    }
+    
+    public static ItemStack createCasterEffectProviderStack(ResourceLocation id) {
+        return provider.createCasterStrengthProviderStack(id);
     }
     
 }

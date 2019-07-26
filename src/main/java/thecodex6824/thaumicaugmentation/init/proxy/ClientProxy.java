@@ -48,12 +48,12 @@ import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.item.IAssociatedAspect;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
+import thecodex6824.thaumicaugmentation.client.model.CasterStrengthProviderModel;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
@@ -197,6 +197,8 @@ public class ClientProxy extends CommonProxy {
                 return new RenderDimensionalFracture(manager);
             }
         });
+        
+        ModelLoaderRegistry.registerLoader(new CasterStrengthProviderModel.Loader());
     }
 
     @Override
@@ -254,7 +256,7 @@ public class ClientProxy extends CommonProxy {
         };
         registerTo.registerItemColorHandler(dyeableMisc, TAItems.VOID_BOOTS);
         
-        IItemColor elementalResonatorColor = new IItemColor() {
+        /*IItemColor elementalResonatorColor = new IItemColor() {
             @Override
             public int colorMultiplier(ItemStack stack, int tintIndex) {
                 if (tintIndex == 1 && stack.getItem() instanceof IAssociatedAspect)
@@ -263,7 +265,7 @@ public class ClientProxy extends CommonProxy {
                 return -1;
             }
         };
-        registerTo.registerItemColorHandler(elementalResonatorColor, TAItems.AUGMENT_CASTER_ELEMENTAL);
+        registerTo.registerItemColorHandler(elementalResonatorColor, TAItems.AUGMENT_CASTER_ELEMENTAL);*/
         
         IItemColor fractureLocatorColor = new IItemColor() {
             @Override

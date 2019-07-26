@@ -23,7 +23,8 @@ package thecodex6824.thaumicaugmentation.api.event;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import thaumcraft.api.casters.FocusPackage;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
 /**
  * Event superclass for all cast-related events. Subscribing to this event will notify the
@@ -32,10 +33,10 @@ import thaumcraft.api.casters.FocusPackage;
  */
 public abstract class CastEvent extends LivingEvent {
 
-    protected FocusPackage focus;
+    protected FocusWrapper focus;
     protected ItemStack caster;
     
-    public CastEvent(EntityLivingBase living, ItemStack casterStack, FocusPackage fPackage) {
+    public CastEvent(EntityLivingBase living, ItemStack casterStack, FocusWrapper fPackage) {
         super(living);
         caster = casterStack;
         focus = fPackage;
@@ -45,8 +46,25 @@ public abstract class CastEvent extends LivingEvent {
         return caster;
     }
     
-    public FocusPackage getFocusPackage() {
+    public FocusWrapper getFocus() {
         return focus;
+    }
+    
+    @Cancelable
+    public static class Pre extends CastEvent {
+        
+        public Pre(EntityLivingBase living, ItemStack casterStack, FocusWrapper fPackage) {
+            super(living, casterStack, fPackage);
+        }
+        
+    }
+    
+    public static class Post extends CastEvent {
+        
+        public Post(EntityLivingBase living, ItemStack casterStack, FocusWrapper fPackage) {
+            super(living, casterStack, fPackage);
+        }
+        
     }
     
 }
