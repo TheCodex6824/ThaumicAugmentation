@@ -45,8 +45,18 @@ public class InternalMethodProvider implements IInternalMethodProvider {
     }
     
     @Override
+    public String getCasterStrengthProviderID(ItemStack stack) {
+        return ItemCustomCasterStrengthProvider.getProviderIDString(stack);
+    }
+    
+    @Override
     public ItemStack createCasterEffectProviderStack(ResourceLocation id) {
         return ItemCustomCasterEffectProvider.create(id);
+    }
+    
+    @Override
+    public String getCasterEffectProviderID(ItemStack stack) {
+        return ItemCustomCasterEffectProvider.getProviderIDString(stack);
     }
     
 }

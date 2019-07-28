@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -30,6 +31,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
@@ -85,6 +87,12 @@ public class ItemCustomCasterAugment extends ItemTABase {
             CasterAugmentBuilder.getEffectProvider(ItemCustomCasterEffectProvider.getProviderID(
                     aug.getEffectProvider())).appendAdditionalTooltip(aug.getEffectProvider(), tooltip);
         }
+    }
+    
+    @Override
+    public void registerModels() {
+        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(
+                "ta_special:custom_caster_augment", "inventory"));
     }
     
 }

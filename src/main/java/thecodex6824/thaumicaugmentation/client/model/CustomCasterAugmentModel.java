@@ -20,22 +20,24 @@
 
 package thecodex6824.thaumicaugmentation.client.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import javax.vecmath.Matrix4f;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -58,17 +60,12 @@ import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
-import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
+import thecodex6824.thaumicaugmentation.common.capability.AugmentCasterCustom;
 
-public class CasterStrengthProviderModel implements IModel {
+public class CustomCasterAugmentModel implements IModel {
 
-    protected ImmutableMap<ResourceLocation, ResourceLocation> models;
-    
-    protected CasterStrengthProviderModel(ImmutableMap<ResourceLocation, ResourceLocation> m) {
-        models = m;
-    }
-    
     @Override
     public IModelState getDefaultState() {
         return TRSRTransformation.identity();
@@ -76,7 +73,7 @@ public class CasterStrengthProviderModel implements IModel {
     
     @Override
     public Collection<ResourceLocation> getDependencies() {
-        return new ArrayList<>(models.values());
+        return Collections.emptyList();
     }
     
     @Override
@@ -93,31 +90,19 @@ public class CasterStrengthProviderModel implements IModel {
         IBakedModel missingModel = ModelLoaderRegistry.getMissingModel().bake(transformedState, DefaultVertexFormats.ITEM,
                 ModelLoader.defaultTextureGetter());
         
-        ImmutableMap.Builder<String, IBakedModel> builder = new ImmutableMap.Builder<>();
-        for (Map.Entry<ResourceLocation, ResourceLocation> entry : models.entrySet()) {
-            IModel model = ModelLoaderRegistry.getModelOrMissing(entry.getValue());
-            if (model != ModelLoaderRegistry.getMissingModel())
-                builder.put(entry.getKey().toString(), model.bake(transformedState, DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter()));
-        }
-        
-        return new BakedModel(missingModel, builder.build(), transforms);
+        return new BakedModel(missingModel, transforms);
     }
     
     public static class Loader implements ICustomModelLoader {
         
         @Override
         public boolean accepts(ResourceLocation loc) {
-            return loc.getNamespace().equals("ta_special") && loc.getPath().equals("models/item/strength_provider");
+            return loc.getNamespace().equals("ta_special") && loc.getPath().equals("custom_caster_augment");
         }
         
         @Override
         public IModel loadModel(ResourceLocation modelLocation) throws Exception {
-            ImmutableMap.Builder<ResourceLocation, ResourceLocation> builder = ImmutableMap.builder();
-            Set<ResourceLocation> providers = CasterAugmentBuilder.getAllStrengthProviders();
-            for (ResourceLocation l : providers)
-                builder.put(l, new ResourceLocation(l.getNamespace(), "item/" + l.getPath()));
-            
-            return new CasterStrengthProviderModel(builder.build());
+            return new CustomCasterAugmentModel();
         }
         
         @Override
@@ -127,27 +112,45 @@ public class CasterStrengthProviderModel implements IModel {
     
     public static class BakedModel implements IBakedModel {
         
+        private static int hashStack(AugmentCasterCustom aug) {
+            return 31 * CasterAugmentBuilder.getStrengthProviderIDString(aug.getStrengthProvider()).hashCode() +
+                    CasterAugmentBuilder.getEffectProviderIDString(aug.getEffectProvider()).hashCode();
+        }
+        
         protected IBakedModel wrappedFallback;
-        protected ImmutableMap<String, IBakedModel> baked;
         protected ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transform;
+        protected Cache<Integer, IBakedModel> cache;
         
         protected ItemOverrideList handler = new ItemOverrideList(ImmutableList.of()) {
             
             @Override
             public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world,
                     EntityLivingBase entity) {
-                
-                return baked.getOrDefault(ItemCustomCasterStrengthProvider.getProviderID(stack).toString(),
-                        wrappedFallback);
+                try {
+                    AugmentCasterCustom aug = (AugmentCasterCustom) stack.getCapability(CapabilityAugment.AUGMENT, null);
+                    return cache.get(hashStack(aug), () -> buildModel(aug, world, entity));
+                }
+                catch (ExecutionException ex) {
+                    return wrappedFallback;
+                }
             }
             
         };
         
-        protected BakedModel(IBakedModel wrappedModel, ImmutableMap<String, IBakedModel> bakedModels, 
+        private IBakedModel buildModel(AugmentCasterCustom aug, World world, EntityLivingBase entity) {
+            ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
+            quads.addAll(Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(aug.getStrengthProvider(),
+                    world, entity).getQuads(null, null, 0));
+            quads.addAll(Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(aug.getEffectProvider(),
+                    world, entity).getQuads(null, null, 0));
+            return new CustomBakedModel(quads.build(), transform);
+        }
+        
+        protected BakedModel(IBakedModel wrappedModel, 
                 ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> itemTransforms) {
             wrappedFallback = wrappedModel;
-            baked = bakedModels;
             transform = itemTransforms;
+            cache = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterAccess(300, TimeUnit.SECONDS).build();
         }
         
         @Override

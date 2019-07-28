@@ -48,12 +48,14 @@ import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
-import thecodex6824.thaumicaugmentation.client.model.CasterStrengthProviderModel;
+import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
+import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
@@ -61,6 +63,8 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
+import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
@@ -198,7 +202,11 @@ public class ClientProxy extends CommonProxy {
             }
         });
         
-        ModelLoaderRegistry.registerLoader(new CasterStrengthProviderModel.Loader());
+        ModelLoaderRegistry.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/strength_provider"),
+                () -> CasterAugmentBuilder.getAllStrengthProviders(), stack -> ItemCustomCasterStrengthProvider.getProviderID(stack)));
+        ModelLoaderRegistry.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/effect_provider"),
+                () -> CasterAugmentBuilder.getAllEffectProviders(), stack -> ItemCustomCasterEffectProvider.getProviderID(stack)));
+        ModelLoaderRegistry.registerLoader(new CustomCasterAugmentModel.Loader());
     }
 
     @Override

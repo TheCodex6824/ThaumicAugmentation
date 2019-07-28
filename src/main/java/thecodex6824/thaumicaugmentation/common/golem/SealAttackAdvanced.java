@@ -46,7 +46,7 @@ public class SealAttackAdvanced extends SealAttack implements ISealConfigToggles
     
     @Override
     public int[] getGuiCategories() {
-        return new int[] {2, 3, 0, 4};
+        return new int[] {3, 0, 4};
     }
     
     @Override

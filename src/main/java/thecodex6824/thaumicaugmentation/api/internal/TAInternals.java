@@ -45,8 +45,16 @@ public final class TAInternals {
         return provider.createCasterStrengthProviderStack(id);
     }
     
+    public static String getCasterStrengthProviderID(ItemStack stack) {
+        return provider.getCasterStrengthProviderID(stack);
+    }
+    
     public static ItemStack createCasterEffectProviderStack(ResourceLocation id) {
-        return provider.createCasterStrengthProviderStack(id);
+        return provider.createCasterEffectProviderStack(id);
+    }
+    
+    public static String getCasterEffectProviderID(ItemStack stack) {
+        return provider.getCasterEffectProviderID(stack);
     }
     
 }

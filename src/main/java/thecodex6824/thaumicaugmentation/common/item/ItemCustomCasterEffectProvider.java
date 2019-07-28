@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -29,6 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TAItems;
@@ -61,8 +63,10 @@ public class ItemCustomCasterEffectProvider extends ItemTABase {
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
-            for (ResourceLocation loc : CasterAugmentBuilder.getAllEffectProviders())
-                items.add(CasterAugmentBuilder.createStackForEffectProvider(loc));
+            for (ResourceLocation loc : CasterAugmentBuilder.getAllEffectProviders()) {
+                if (loc.getNamespace().equals(ThaumicAugmentationAPI.MODID))
+                    items.add(create(loc));
+            }
         }
     }
     
@@ -70,6 +74,12 @@ public class ItemCustomCasterEffectProvider extends ItemTABase {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flagIn) {
         CasterAugmentBuilder.getEffectProvider(getProviderID(stack)).appendAdditionalTooltip(stack, tooltip);
+    }
+    
+    @Override
+    public void registerModels() {
+        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(
+                "ta_special:effect_provider", "inventory"));
     }
     
     protected static String getID(ItemStack stack) {
@@ -91,6 +101,11 @@ public class ItemCustomCasterEffectProvider extends ItemTABase {
     public static ResourceLocation getProviderID(ItemStack stack) {
         String id = getID(stack);
         return id.isEmpty() ? new ResourceLocation(ThaumicAugmentationAPI.MODID, "null") : new ResourceLocation(id);
+    }
+    
+    public static String getProviderIDString(ItemStack stack) {
+        String id = getID(stack);
+        return id.isEmpty() ? ThaumicAugmentationAPI.MODID + ":null" : id;
     }
     
     public static ItemStack create(ResourceLocation id) {

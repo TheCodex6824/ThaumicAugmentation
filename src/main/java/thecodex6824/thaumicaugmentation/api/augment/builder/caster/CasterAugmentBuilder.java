@@ -21,7 +21,7 @@
 package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -48,8 +48,8 @@ public final class CasterAugmentBuilder {
         
     }
     
-    private static final HashMap<ResourceLocation, ProviderEntry<IBuilderCasterStrengthProvider>> STRENGTH = new HashMap<>();
-    private static final HashMap<ResourceLocation, ProviderEntry<IBuilderCasterEffectProvider>> EFFECT = new HashMap<>();
+    private static final LinkedHashMap<ResourceLocation, ProviderEntry<IBuilderCasterStrengthProvider>> STRENGTH = new LinkedHashMap<>();
+    private static final LinkedHashMap<ResourceLocation, ProviderEntry<IBuilderCasterEffectProvider>> EFFECT = new LinkedHashMap<>();
     
     public static final IBuilderCasterStrengthProvider NULL_STRENGTH = new IBuilderCasterStrengthProvider() {
         @Override
@@ -98,6 +98,14 @@ public final class CasterAugmentBuilder {
         return stack;
     }
     
+    public static ResourceLocation getStrengthProviderID(ItemStack stack) {
+        return new ResourceLocation(getStrengthProviderIDString(stack));
+    }
+    
+    public static String getStrengthProviderIDString(ItemStack stack) {
+        return TAInternals.getCasterStrengthProviderID(stack);
+    }
+    
     public static ItemStack createStackForEffectProvider(ResourceLocation id) {
         ItemStack stack = TAInternals.createCasterEffectProviderStack(id);
         ProviderEntry<IBuilderCasterEffectProvider> e = EFFECT.get(id);
@@ -105,6 +113,14 @@ public final class CasterAugmentBuilder {
             e.stack.accept(stack);
         
         return stack;
+    }
+    
+    public static ResourceLocation getEffectProviderID(ItemStack stack) {
+        return new ResourceLocation(getEffectProviderIDString(stack));
+    }
+    
+    public static String getEffectProviderIDString(ItemStack stack) {
+        return TAInternals.getCasterEffectProviderID(stack);
     }
     
     public static IBuilderCasterStrengthProvider getStrengthProvider(ResourceLocation id) {

@@ -1,7 +1,0 @@
-{
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "thaumicaugmentation:items/elemental_resonator_base",
-        "layer1": "thaumicaugmentation:items/elemental_resonator_crystal"
-    }
-}

@@ -31,6 +31,10 @@ public interface IInternalMethodProvider {
     
     public ItemStack createCasterStrengthProviderStack(ResourceLocation id);
     
+    public String getCasterStrengthProviderID(ItemStack stack);
+    
     public ItemStack createCasterEffectProviderStack(ResourceLocation id);
+    
+    public String getCasterEffectProviderID(ItemStack stack);
     
 }

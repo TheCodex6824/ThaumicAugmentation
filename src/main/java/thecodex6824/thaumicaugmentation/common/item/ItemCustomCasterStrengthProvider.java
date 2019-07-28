@@ -63,8 +63,10 @@ public class ItemCustomCasterStrengthProvider extends ItemTABase {
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
-            for (ResourceLocation loc : CasterAugmentBuilder.getAllStrengthProviders())
-                items.add(CasterAugmentBuilder.createStackForStrengthProvider(loc));
+            for (ResourceLocation loc : CasterAugmentBuilder.getAllStrengthProviders()) {
+                if (loc.getNamespace().equals(ThaumicAugmentationAPI.MODID))
+                    items.add(create(loc));
+            }
         }
     }
     
@@ -99,6 +101,11 @@ public class ItemCustomCasterStrengthProvider extends ItemTABase {
     public static ResourceLocation getProviderID(ItemStack stack) {
         String id = getID(stack);
         return id.isEmpty() ? new ResourceLocation(ThaumicAugmentationAPI.MODID, "null") : new ResourceLocation(id);
+    }
+    
+    public static String getProviderIDString(ItemStack stack) {
+        String id = getID(stack);
+        return id.isEmpty() ? ThaumicAugmentationAPI.MODID + ":null" : id;
     }
     
     public static ItemStack create(ResourceLocation id) {

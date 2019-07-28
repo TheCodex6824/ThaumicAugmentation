@@ -42,7 +42,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.golems.EnumGolemTrait;
 import thaumcraft.api.golems.IGolemAPI;
 import thaumcraft.api.golems.seals.ISeal;
-import thaumcraft.api.golems.seals.ISealConfigArea;
 import thaumcraft.api.golems.seals.ISealConfigToggles;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.api.golems.seals.ISealGui;
@@ -52,7 +51,7 @@ import thaumcraft.common.golems.client.gui.SealBaseGUI;
 import thaumcraft.common.golems.tasks.TaskHandler;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
-public class SealAttack implements ISeal, ISealGui, ISealConfigArea {
+public class SealAttack implements ISeal, ISealGui {
 
     private static final ResourceLocation ICON = new ResourceLocation(ThaumicAugmentationAPI.MODID, "items/seal/seal_attack");
     
@@ -147,7 +146,7 @@ public class SealAttack implements ISeal, ISealGui, ISealConfigArea {
     
     @Override
     public int[] getGuiCategories() {
-        return new int[] {2, 0, 4};
+        return new int[] {0, 4};
     }
     
     @Override
