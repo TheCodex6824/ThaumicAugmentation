@@ -94,13 +94,18 @@
             "key": "GAUNTLET_AUGMENTATION",
             "name": "thaumicaugmentation.research.gauntlet_augmentation.title",
             "icons": [
-                "thaumicaugmentation:augment_caster_elemental"
+                "thaumicaugmentation:augment_builder_power;1;0;{id:\"thaumicaugmentation:strength_elemental\"}",
+                "thaumicaugmentation:augment_builder_effect;1;0;{id:\"thaumicaugmentation:effect_power\"}",
+                "thaumicaugmentation:augment_builder_effect;1;0;{id:\"thaumicaugmentation:effect_cast_speed\"}",
+                "thaumicaugmentation:augment_builder_effect;1;0;{id:\"thaumicaugmentation:effect_cost\"}"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
                 "GAUNTLET_THAUMIUM",
-                "MORE_AUROMANCY",
-                "~VOIDSIPHON"
+                "MORE_AUROMANCY"
+            ],
+            "meta": [
+                "SPIKY"
             ],
             "location": [
                 4.5,
@@ -109,10 +114,6 @@
             "stages": [
                 {
                     "text": "thaumicaugmentation.research.gauntlet_augmentation.0",
-                    "required_item": [
-                        "thaumcraft:vis_resonator",
-                        "thaumcraft:crystal_essence;1;0;{Aspects:[{amount:1,key:'ordo'}]}"
-                    ],
                     "required_knowledge": [
                         "OBSERVATION;AUROMANCY;1",
                         "THEORY;AUROMANCY;1",
@@ -122,16 +123,124 @@
                 {
                     "text": "thaumicaugmentation.research.gauntlet_augmentation.1",
                     "required_craft": [
-                        "thaumicaugmentation:augment_caster_elemental"
+                        "thaumicaugmentation:custom_augment"
                     ],
                     "recipes": [
-                        "thaumicaugmentation:AugmentGauntletElemental"
+                        "thaumicaugmentation:StrengthProviderElemental",
+                        "thaumicaugmentation:EffectProviderPower",
+                        "thaumicaugmentation:EffectProviderCastSpeed",
+                        "thaumicaugmentation:EffectProviderCost"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.gauntlet_augmentation.2",
                     "recipes": [
-                        "thaumicaugmentation:AugmentGauntletElemental"
+                        "thaumicaugmentation:StrengthProviderElemental",
+                        "thaumicaugmentation:EffectProviderPower",
+                        "thaumicaugmentation:EffectProviderCastSpeed",
+                        "thaumicaugmentation:EffectProviderCost"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "DIMENSIONAL_MODIFIERS",
+            "name": "thaumicaugmentation.research.dimensional_modifiers.title",
+            "icons": [
+                "thaumicaugmentation:augment_builder_power;1;0;{id:\"thaumicaugmentation:strength_overworld\"}",
+                "thaumicaugmentation:augment_builder_power;1;0;{id:\"thaumicaugmentation:strength_nether\"}",
+                "thaumicaugmentation:augment_builder_power;1;0;{id:\"thaumicaugmentation:strength_end\"}"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "GAUNTLET_AUGMENTATION"
+            ],
+            "location": [
+                6,
+                -1.5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.dimensional_modifiers.0",
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;AUROMANCY;1"
+                    ],
+                    "required_item": [
+                        "oredict:dirt",
+                        "oredict:netherrack",
+                        "oredict:endstone"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.dimensional_modifiers.1",
+                    "recipes": [
+                        "thaumicaugmentation:StrengthProviderOverworld",
+                        "thaumicaugmentation:StrengthProviderNether",
+                        "thaumicaugmentation:StrengthProviderEnd"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "EMPTINESS_MODIFIER",
+            "name": "thaumicaugmentation.research.emptiness_modifier.title",
+            "icons": [
+                "thaumicaugmentation:augment_builder_power;1;0;{id:\"thaumicaugmentation:strength_emptiness\"}"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "DIMENSIONAL_MODIFIERS",
+                "ENTERING_FRACTURE"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "location": [
+                7.5,
+                -1.5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.emptiness_modifier.0",
+                    "required_item": [
+                        "oredict:stoneVoid"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.emptiness_modifier.1",
+                    "recipes": [
+                        "thaumicaugmentation:StrengthProviderEmptiness"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FRENZY_MODIFIER",
+            "name": "thaumicaugmentation.research.frenzy_modifier.title",
+            "icons": [
+                "thaumicaugmentation:augment_builder_power;1;0;{id:\"thaumicaugmentation:strength_frenzy\"}"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "GAUNTLET_AUGMENTATION",
+                "~SEALGUARD"
+            ],
+            "location": [
+                5.0,
+                1.5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.frenzy_modifier.0",
+                    "required_craft": [
+                        "thaumcraft:module;1;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.frenzy_modifier.1",
+                    "recipes": [
+                        "thaumicaugmentation:StrengthProviderFrenzy"
                     ]
                 }
             ]

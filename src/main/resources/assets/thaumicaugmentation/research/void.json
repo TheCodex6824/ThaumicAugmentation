@@ -100,8 +100,8 @@
                 {
                     "text": "thaumicaugmentation.research.void_stone_usage.0",
                     "required_item": [
-                        "thaumicaugmentation:stone;1;0",
-                        "thaumcraft:phial;1;1;{Aspects:[{amount:10,key:'alienis'}]}"
+                        "oredict:stoneVoid",
+                        "thaumcraft:crystal"
                     ],
                     "required_knowledge": [
                         "OBSERVATION;ELDRITCH;1",
@@ -126,14 +126,16 @@
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
                 "RIFT_STUDIES",
-                "GAUNTLET_AUGMENTATION"
+                "GAUNTLET_AUGMENTATION",
+                "~VOIDSIPHON"
             ],
             "location": [
                 4.5,
                 -3
             ],
             "meta": [
-                "ROUND"
+                "ROUND",
+                "HIDDEN"
             ],
             "stages": [
                 {

@@ -140,9 +140,9 @@ public class CustomCasterAugmentModel implements IModel {
         private IBakedModel buildModel(AugmentCasterCustom aug, World world, EntityLivingBase entity) {
             ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
             quads.addAll(Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(aug.getStrengthProvider(),
-                    world, entity).getQuads(null, null, 0));
+                    world, entity).getQuads(null, null, world != null ? world.rand.nextLong() : 0));
             quads.addAll(Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(aug.getEffectProvider(),
-                    world, entity).getQuads(null, null, 0));
+                    world, entity).getQuads(null, null, world != null ? world.rand.nextLong() : 0));
             return new CustomBakedModel(quads.build(), transform);
         }
         

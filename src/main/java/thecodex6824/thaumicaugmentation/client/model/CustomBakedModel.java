@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.client.model;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.vecmath.Matrix4f;
@@ -52,7 +53,10 @@ public class CustomBakedModel implements IBakedModel {
     
     @Override
     public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-        return quads;
+        if (side == null)
+            return quads;
+        else
+            return Collections.emptyList();
     }
     
     @Override
@@ -67,7 +71,7 @@ public class CustomBakedModel implements IBakedModel {
     
     @Override
     public boolean isAmbientOcclusion() {
-        return true;
+        return !quads.isEmpty() ? quads.get(0).shouldApplyDiffuseLighting() : false;
     }
     
     @Override
