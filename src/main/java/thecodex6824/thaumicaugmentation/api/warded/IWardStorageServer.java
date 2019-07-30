@@ -84,6 +84,17 @@ public interface IWardStorageServer extends IWardStorage, INBTSerializable<NBTTa
     public UUID getWard(BlockPos pos);
     
     /**
+     * Removes the provided owner from the list of ward owners, <strong>and removes
+     * all wards owned by this owner. This WILL NOT fire any events, as the amount of events to
+     * fire could be extreme.</strong> The caller should then send a full sync to
+     * the client(s) - they are not queued automatically as there can potentially be
+     * up to 65536 locations to sync. This method is almost never what a caller would actually want - 
+     * it is intended for purging a user's wards without knowing their locations.
+     * @param owner The owner that will be completely removed
+     */
+    public void removeOwner(UUID owner);
+    
+    /**
      * Creates a NBTTagCompound suitable for a full sync to the client. A full
      * sync means that it should include all blocks needed in a storage instance such that
      * the client will have an up-to-date view of the wards in this area, no matter

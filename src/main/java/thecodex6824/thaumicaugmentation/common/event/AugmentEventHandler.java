@@ -22,11 +22,12 @@ package thecodex6824.thaumicaugmentation.common.event;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.function.Function;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -62,12 +63,14 @@ public final class AugmentEventHandler {
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         int totalIndex = 0;
         for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
-            ArrayList<ItemStack> stacks = Lists.newArrayList(func.apply(event.getEntity()));
+            Iterable<ItemStack> stacks = func.apply(event.getEntity());
             if (!oldItems.containsKey(event.getEntity()))
-                oldItems.put(event.getEntity(), new ArrayList<>(Collections.nCopies(stacks.size(), ItemStack.EMPTY)));
+                oldItems.put(event.getEntity(), new ArrayList<>(Collections.nCopies(Iterables.size(stacks), ItemStack.EMPTY)));
             else {
-                for (int i = 0; i < stacks.size(); ++i) {
-                    ItemStack current = stacks.get(i);
+                int i = 0;
+                Iterator<ItemStack> iterator = stacks.iterator();
+                while (iterator.hasNext()) {
+                    ItemStack current = iterator.next();
                     ArrayList<ItemStack> oldList = oldItems.get(event.getEntity());
                     ItemStack old = oldList != null && oldList.size() > i ? oldList.get(i) : ItemStack.EMPTY;
                     if (!ItemStack.areItemStacksEqual(current, old)) {
@@ -87,6 +90,7 @@ public final class AugmentEventHandler {
                             oldList.set(i, current);
                     }
                     
+                    ++i;
                     ++totalIndex;
                 }
             }
@@ -101,9 +105,9 @@ public final class AugmentEventHandler {
         if (hasAugments.contains(event.getEntity())) {
             int totalIndex = 0;
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
-                ArrayList<ItemStack> stacks = Lists.newArrayList(func.apply(event.getEntity()));
-                for (int i = 0; i < stacks.size(); ++i) {
-                    ItemStack current = stacks.get(i);
+                Iterator<ItemStack> iterator = func.apply(event.getEntity()).iterator();
+                while (iterator.hasNext()) {
+                    ItemStack current = iterator.next();
                     if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                         IAugmentableItem cap = current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
                         AugmentEventHelper.fireTickEvent(cap, event.getEntity());

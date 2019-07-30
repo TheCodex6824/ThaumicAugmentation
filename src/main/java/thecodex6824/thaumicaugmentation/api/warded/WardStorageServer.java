@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.warded;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -32,7 +33,6 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
-import scala.actors.threadpool.Arrays;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 
 /**
@@ -62,6 +62,8 @@ public class WardStorageServer implements IWardStorageServer {
             public void addOwner(UUID owner);
             
             public void removeOwner(UUID owner);
+            
+            public void removeOwner(UUID owner, boolean clear);
             
             public boolean isOwner(UUID owner);
             
@@ -107,6 +109,9 @@ public class WardStorageServer implements IWardStorageServer {
             public void removeOwner(UUID owner) {}
             
             @Override
+            public void removeOwner(UUID owner, boolean clear) {}
+            
+            @Override
             public int getMaxAllowedOwners() {
                 return 0;
             }
@@ -136,12 +141,14 @@ public class WardStorageServer implements IWardStorageServer {
         
         public static class StorageManager1Bit implements IWardStorageManagerServer {
             
-            private byte[] data;
-            private UUID owner;
+            protected byte[] data;
+            protected UUID owner;
+            protected char count;
             
             public StorageManager1Bit() {
                 data = new byte[CHUNK_DATA_SIZE / 8];
                 owner = NIL_UUID;
+                count = 0;
             }
             
             public StorageManager1Bit(IWardStorageManagerServer other) {
@@ -168,13 +175,15 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public int getNumCurrentOwners() {
-                return owner != null ? 1 : 0;
+                return owner != NIL_UUID ? 1 : 0;
             }
             
             @Override
             public void addOwner(UUID owner) {
-                if (this.owner.equals(NIL_UUID))
+                if (this.owner.equals(NIL_UUID)) {
                     this.owner = owner;
+                    count = 0;
+                }
                 else
                     throw new IndexOutOfBoundsException("Attempted to exceed owner storage capacity");
             }
@@ -186,10 +195,17 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void removeOwner(UUID owner) {
-                if (this.owner.equals(owner))
+                if (this.owner.equals(owner)) {
                     this.owner = NIL_UUID;
-                
-                Arrays.fill(data, (byte) 0);
+                    count = 0;
+                }
+            }
+            
+            @Override
+            public void removeOwner(UUID owner, boolean clear) {
+                removeOwner(owner);
+                if (clear)
+                    Arrays.fill(data, (byte) 0);
             }
             
             @Override
@@ -206,8 +222,18 @@ public class WardStorageServer implements IWardStorageServer {
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
                 int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
-                data[index / 8] = owner.equals(this.owner) && !owner.equals(NIL_UUID) ? (byte) (data[index / 8] | (1 << (index % 8))) : 
-                    (byte) (data[index / 8] & ~(1 << (index % 8)));
+                if (owner.equals(this.owner) && !owner.equals(NIL_UUID) && (data[index / 8] & (1 << (index % 8))) >>> (index % 8) == 0) {
+                    if ((data[index / 8] & (1 << (index % 8))) == 0) {
+                        ++count;
+                        data[index / 8] = (byte) (data[index / 8] | (1 << (index % 8)));
+                    }
+                }
+                else if (owner.equals(NIL_UUID) && (data[index / 8] & (1 << (index % 8))) >>> (index % 8) == 1){
+                    --count;
+                    data[index / 8] = (byte) (data[index / 8] & ~(1 << (index % 8)));
+                    if (count == 0)
+                        removeOwner(this.owner, false);
+                }
             }
             
             @Override
@@ -229,22 +255,29 @@ public class WardStorageServer implements IWardStorageServer {
                 data = tag.getByteArray("d");
                 if (data.length != CHUNK_DATA_SIZE / 8)
                     throw new RuntimeException("Invalid ward data length");
+                else {
+                    for (int i = 0; i < CHUNK_DATA_SIZE; ++i) {
+                        if ((data[i / 8] & (1 << (i % 8))) != 0)
+                            ++count;
+                    }
+                }
             }
             
         }
         
         public static class StorageManager2Bits implements IWardStorageManagerServer {
             
-            private byte[] data;
-            private UUID[] owners;
-            private Object2ByteOpenHashMap<UUID> reverseMap;
+            protected byte[] data;
+            protected UUID[] owners;
+            protected Object2ByteOpenHashMap<UUID> reverseMap;
+            protected char[] counts;
             
             public StorageManager2Bits() {
                 data = new byte[CHUNK_DATA_SIZE / 4];
                 owners = new UUID[getMaxAllowedOwners()];
+                Arrays.fill(owners, NIL_UUID);
                 reverseMap = new Object2ByteOpenHashMap<>();
-                for (int i = 0; i < owners.length; ++i)
-                    owners[i] = NIL_UUID;
+                counts = new char[getMaxAllowedOwners()];
             }
             
             public StorageManager2Bits(IWardStorageManagerServer other) {
@@ -284,6 +317,7 @@ public class WardStorageServer implements IWardStorageServer {
                     if (owners[i].equals(NIL_UUID)) {
                         owners[i] = owner;
                         reverseMap.put(owner, (byte) i);
+                        counts[i] = 0;
                         return;
                     }
                 }
@@ -298,8 +332,25 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void removeOwner(UUID owner) {
-                owners[reverseMap.getByte(owner)] = NIL_UUID;
-                reverseMap.removeByte(owner);
+                byte id = reverseMap.removeByte(owner);
+                counts[id] = 0;
+                owners[id] = NIL_UUID;
+            }
+            
+            @Override
+            public void removeOwner(UUID owner, boolean clear) {
+                if (clear) {
+                    byte id = reverseMap.getByte(owner);
+                    removeOwner(owner);
+                    for (int index = 0; index < CHUNK_DATA_SIZE; ++index) {
+                        if (((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2) == id + 1) {
+                            data[index / 4] = (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
+                            data[index / 4] = (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+                        }
+                    }
+                }
+                else
+                    removeOwner(owner);
             }
             
             @Override
@@ -319,10 +370,21 @@ public class WardStorageServer implements IWardStorageServer {
                 int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int toSet = !owner.equals(NIL_UUID) ? reverseMap.getByte(owner) + 1 : 0;
                 
-                data[index / 4] = (toSet & 1) != 0 ? (byte) (data[index / 4] | (1 << (index % 4 * 2))) : 
-                    (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
-                data[index / 4] = (toSet & 2) != 0 ? (byte) (data[index / 4] | (2 << (index % 4 * 2))) : 
-                    (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+                if (toSet != 0 && toSet != ((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2)) {
+                    ++counts[toSet - 1];
+                    data[index / 4] = (toSet & 1) != 0 ? (byte) (data[index / 4] | (1 << (index % 4 * 2))) : 
+                        (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
+                    data[index / 4] = (toSet & 2) != 0 ? (byte) (data[index / 4] | (2 << (index % 4 * 2))) : 
+                        (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+                }
+                else if (toSet == 0 && ((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2) != 0) {
+                    byte oldOwner = (byte) ((((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2)) - 1);
+                    --counts[oldOwner];
+                    data[index / 4] = (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
+                    data[index / 4] = (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+                    if (counts[oldOwner] == 0)
+                        removeOwner(owners[oldOwner], false);
+                }
             }
             
             @Override
@@ -358,22 +420,30 @@ public class WardStorageServer implements IWardStorageServer {
                 data = tag.getByteArray("d");
                 if (data.length != CHUNK_DATA_SIZE / 4)
                     throw new RuntimeException("Invalid ward data length");
+                else {
+                    for (int index = 0; index < CHUNK_DATA_SIZE; ++index) {
+                        int id = ((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2);
+                        if (id > 0)
+                            ++counts[id - 1];
+                    }
+                }
             }
             
         }
         
         public static class StorageManager4Bits implements IWardStorageManagerServer {
             
-            private byte[] data;
-            private UUID[] owners;
-            private Object2ByteOpenHashMap<UUID> reverseMap;
+            protected byte[] data;
+            protected UUID[] owners;
+            protected Object2ByteOpenHashMap<UUID> reverseMap;
+            protected char[] counts;
             
             public StorageManager4Bits() {
                 data = new byte[CHUNK_DATA_SIZE / 2];
                 owners = new UUID[getMaxAllowedOwners()];
+                Arrays.fill(owners, NIL_UUID);
                 reverseMap = new Object2ByteOpenHashMap<>();
-                for (int i = 0; i < owners.length; ++i)
-                    owners[i] = NIL_UUID;
+                counts = new char[getMaxAllowedOwners()];
             }
             
             public StorageManager4Bits(IWardStorageManagerServer other) {
@@ -413,6 +483,7 @@ public class WardStorageServer implements IWardStorageServer {
                     if (owners[i].equals(NIL_UUID)) {
                         owners[i] = owner;
                         reverseMap.put(owner, (byte) i);
+                        counts[i] = 0;
                         return;
                     }
                 }
@@ -427,8 +498,27 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void removeOwner(UUID owner) {
-                owners[reverseMap.getByte(owner)] = NIL_UUID;
-                reverseMap.removeByte(owner);
+                byte id = reverseMap.removeByte(owner);
+                owners[id] = NIL_UUID;
+                counts[id] = 0;
+            }
+            
+            @Override
+            public void removeOwner(UUID owner, boolean clear) {
+                if (clear) {
+                    byte id = reverseMap.getByte(owner);
+                    removeOwner(owner);
+                    for (int index = 0; index < CHUNK_DATA_SIZE; ++index) {
+                        if (((data[index / 2] & (15 << (index % 2 * 4)))) >>> (index % 2 * 4) == id + 1) {
+                            data[index / 2] = (byte) (data[index / 2] & ~(1 << (index % 2 * 4)));
+                            data[index / 2] = (byte) (data[index / 2] & ~(2 << (index % 2 * 4)));
+                            data[index / 2] = (byte) (data[index / 2] & ~(4 << (index % 2 * 4)));
+                            data[index / 2] = (byte) (data[index / 2] & ~(8 << (index % 2 * 4)));
+                        }
+                    }
+                }
+                else
+                    removeOwner(owner);
             }
             
             @Override
@@ -448,14 +538,27 @@ public class WardStorageServer implements IWardStorageServer {
                 int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int toSet = !owner.equals(NIL_UUID) ? reverseMap.getByte(owner) + 1 : 0;
                 
-                data[index / 2] = (toSet & 1) != 0 ? (byte) (data[index / 2] | (1 << (index % 2 * 4))) : 
-                    (byte) (data[index / 2] & ~(1 << (index % 2 * 4)));
-                data[index / 2] = (toSet & 2) != 0 ? (byte) (data[index / 2] | (2 << (index % 2 * 4))) : 
-                    (byte) (data[index / 2] & ~(2 << (index % 2 * 4)));
-                data[index / 2] = (toSet & 4) != 0 ? (byte) (data[index / 2] | (4 << (index % 2 * 4))) : 
-                    (byte) (data[index / 2] & ~(4 << (index % 2 * 4)));
-                data[index / 2] = (toSet & 8) != 0 ? (byte) (data[index / 2] | (8 << (index % 2 * 4))) : 
-                    (byte) (data[index / 2] & ~(8 << (index % 2 * 4)));
+                if (toSet != 0 && toSet != ((data[index / 2] & (15 << (index % 2 * 4)))) >>> (index % 2 * 4)) {
+                    ++counts[toSet - 1];
+                    data[index / 2] = (toSet & 1) != 0 ? (byte) (data[index / 2] | (1 << (index % 2 * 4))) : 
+                        (byte) (data[index / 2] & ~(1 << (index % 2 * 4)));
+                    data[index / 2] = (toSet & 2) != 0 ? (byte) (data[index / 2] | (2 << (index % 2 * 4))) : 
+                        (byte) (data[index / 2] & ~(2 << (index % 2 * 4)));
+                    data[index / 2] = (toSet & 4) != 0 ? (byte) (data[index / 2] | (4 << (index % 2 * 4))) : 
+                        (byte) (data[index / 2] & ~(4 << (index % 2 * 4)));
+                    data[index / 2] = (toSet & 8) != 0 ? (byte) (data[index / 2] | (8 << (index % 2 * 4))) : 
+                        (byte) (data[index / 2] & ~(8 << (index % 2 * 4)));
+                }
+                else if (toSet == 0 && ((data[index / 2] & (15 << (index % 2 * 4)))) >>> (index % 2 * 4) != 0) {
+                    byte oldOwner = (byte) ((((data[index / 2] & (15 << (index % 2 * 4)))) >>> (index % 2 * 4)) - 1);
+                    --counts[oldOwner];
+                    data[index / 2] = (byte) (data[index / 2] & ~(1 << (index % 2 * 4)));
+                    data[index / 2] = (byte) (data[index / 2] & ~(2 << (index % 2 * 4)));
+                    data[index / 2] = (byte) (data[index / 2] & ~(4 << (index % 2 * 4)));
+                    data[index / 2] = (byte) (data[index / 2] & ~(8 << (index % 2 * 4)));
+                    if (counts[oldOwner] == 0)
+                        removeOwner(owners[oldOwner], false);
+                }
             }
             
             @Override
@@ -491,22 +594,31 @@ public class WardStorageServer implements IWardStorageServer {
                 data = tag.getByteArray("d");
                 if (data.length != CHUNK_DATA_SIZE / 2)
                     throw new RuntimeException("Invalid ward data length");
+                else {
+                    for (int index = 0; index < CHUNK_DATA_SIZE; ++index) {
+                        int id = ((data[index / 2] & (15 << (index % 2 * 4)))) >>> (index % 2 * 4);
+                        if (id > 0)
+                            ++counts[id - 1];
+                    }
+                }
             }
             
         }
         
         public static class StorageManagerByte implements IWardStorageManagerServer {
             
-            private byte[] data;
-            private UUID[] owners;
-            private Object2ByteOpenHashMap<UUID> reverseMap;
+            protected byte[] data;
+            protected UUID[] owners;
+            protected Object2ByteOpenHashMap<UUID> reverseMap;
+            protected char[] counts;
             
             public StorageManagerByte() {
                 data = new byte[CHUNK_DATA_SIZE];
+                Arrays.fill(data, Byte.MIN_VALUE);
                 owners = new UUID[getMaxAllowedOwners()];
+                Arrays.fill(owners, NIL_UUID);
                 reverseMap = new Object2ByteOpenHashMap<>();
-                for (int i = 0; i < owners.length; ++i)
-                    owners[i] = NIL_UUID;
+                counts = new char[getMaxAllowedOwners()];
             }
             
             public StorageManagerByte(IWardStorageManagerServer other) {
@@ -514,7 +626,7 @@ public class WardStorageServer implements IWardStorageServer {
                 if (other.getMaxAllowedOwners() > 0) {
                     for (int i = 0; i < Math.min(owners.length, other.getOwners().length); ++i) {
                         owners[i] = other.getOwners()[i];
-                        reverseMap.put(owners[i], (byte) i);
+                        reverseMap.put(owners[i], (byte) (i - 128));
                     }
                     
                     MutableBlockPos pos = new MutableBlockPos(0, 0, 0);
@@ -545,7 +657,8 @@ public class WardStorageServer implements IWardStorageServer {
                 for (int i = 0; i < owners.length; ++i) {
                     if (owners[i].equals(NIL_UUID)) {
                         owners[i] = owner;
-                        reverseMap.put(owner, (byte) i);
+                        reverseMap.put(owner, (byte) (i - 128));
+                        counts[i] = 0;
                         return;
                     }
                 }
@@ -560,8 +673,23 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void removeOwner(UUID owner) {
-                owners[reverseMap.getByte(owner)] = NIL_UUID;
-                reverseMap.removeByte(owner);
+                byte id = reverseMap.removeByte(owner);
+                owners[id + 128] = NIL_UUID;
+                counts[id + 128] = 0;
+            }
+            
+            @Override
+            public void removeOwner(UUID owner, boolean clear) {
+                if (clear) {
+                    byte id = reverseMap.getByte(owner);
+                    removeOwner(owner);
+                    for (int index = 0; index < CHUNK_DATA_SIZE; ++index) {
+                        if (data[index] == id + 1)
+                            data[index] = -128;
+                    }
+                }
+                else
+                    removeOwner(owner);
             }
             
             @Override
@@ -579,7 +707,18 @@ public class WardStorageServer implements IWardStorageServer {
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
                 int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
-                data[index] = (byte) ((!owner.equals(NIL_UUID) ? (byte) (reverseMap.getByte(owner) + 1) : 0) - 128);
+                int toSet = !owner.equals(NIL_UUID) ? reverseMap.getByte(owner) + 1 : -128;
+                if (toSet != -128 && toSet != data[index]) {
+                    ++counts[toSet + 127];
+                    data[index] = (byte) toSet;
+                }
+                else if (toSet == -128 && data[index] != -128) {
+                    int oldOwner = data[index] + 127;
+                    --counts[oldOwner];
+                    data[index] = -128;
+                    if (counts[oldOwner] == 0)
+                        removeOwner(owners[oldOwner]);
+                }
             }
             
             @Override
@@ -609,28 +748,37 @@ public class WardStorageServer implements IWardStorageServer {
             public void deserialize(NBTTagCompound tag) {
                 for (int i = 0; i < tag.getInteger("o"); ++i) {
                     owners[i] = tag.getUniqueId(Integer.toString(i));
-                    reverseMap.put(owners[i], (byte) i);
+                    reverseMap.put(owners[i], (byte) (i - 128));
                 }
                 
                 data = tag.getByteArray("d");
                 if (data.length != CHUNK_DATA_SIZE)
                     throw new RuntimeException("Invalid ward data length");
+                else {
+                    for (int index = 0; index < CHUNK_DATA_SIZE; ++index) {
+                        int id = data[index] + 128;
+                        if (id > 0)
+                            ++counts[id - 1];
+                    }
+                }
             }
             
         }
         
         public static class StorageManagerShort implements IWardStorageManagerServer {
             
-            private short[] data;
-            private UUID[] owners;
-            private Object2ShortOpenHashMap<UUID> reverseMap;
+            protected short[] data;
+            protected UUID[] owners;
+            protected Object2ShortOpenHashMap<UUID> reverseMap;
+            protected char[] counts;
             
             public StorageManagerShort() {
                 data = new short[CHUNK_DATA_SIZE];
+                Arrays.fill(data, Short.MIN_VALUE);
                 owners = new UUID[getMaxAllowedOwners()];
+                Arrays.fill(owners, NIL_UUID);
                 reverseMap = new Object2ShortOpenHashMap<>();
-                for (int i = 0; i < owners.length; ++i)
-                    owners[i] = NIL_UUID;
+                counts = new char[getMaxAllowedOwners()];
             }
             
             public StorageManagerShort(IWardStorageManagerServer other) {
@@ -638,7 +786,7 @@ public class WardStorageServer implements IWardStorageServer {
                 if (other.getMaxAllowedOwners() > 0) {
                     for (int i = 0; i < Math.min(owners.length, other.getOwners().length); ++i) {
                         owners[i] = other.getOwners()[i];
-                        reverseMap.put(owners[i], (short) i);
+                        reverseMap.put(owners[i], (short) (i - 32768));
                     }
                     
                     MutableBlockPos pos = new MutableBlockPos(0, 0, 0);
@@ -669,7 +817,8 @@ public class WardStorageServer implements IWardStorageServer {
                 for (int i = 0; i < owners.length; ++i) {
                     if (owners[i].equals(NIL_UUID)) {
                         owners[i] = owner;
-                        reverseMap.put(owner, (short) i);
+                        reverseMap.put(owner, (short) (i - 32768));
+                        counts[i] = 0;
                         return;
                     }
                 }
@@ -684,8 +833,23 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void removeOwner(UUID owner) {
-                owners[reverseMap.getShort(owner)] = NIL_UUID;
-                reverseMap.removeShort(owner);
+                short id = reverseMap.removeShort(owner);
+                owners[id + 32768] = NIL_UUID;
+                counts[id + 32768] = 0;
+            }
+            
+            @Override
+            public void removeOwner(UUID owner, boolean clear) {
+                if (clear) {
+                    short id = reverseMap.getShort(owner);
+                    removeOwner(owner);
+                    for (int index = 0; index < CHUNK_DATA_SIZE; ++index) {
+                        if (data[index] == id + 1)
+                            data[index] = -32768;
+                    }
+                }
+                else
+                    removeOwner(owner);
             }
             
             @Override
@@ -703,7 +867,18 @@ public class WardStorageServer implements IWardStorageServer {
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
                 int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
-                data[index] = (short) ((!owner.equals(NIL_UUID) ? (reverseMap.getShort(owner) + 1) : 0) - 32768);
+                int toSet = !owner.equals(NIL_UUID) ? reverseMap.getShort(owner) + 1 : -32768;
+                if (toSet != -32768 && toSet != data[index]) {
+                    ++counts[toSet + 32767];
+                    data[index] = (short) toSet;
+                }
+                else if (toSet == -32768 && data[index] != -32768) {
+                    int oldOwner = data[index] + 32767;
+                    --counts[oldOwner];
+                    data[index] = -32768;
+                    if (counts[oldOwner] == 0)
+                        removeOwner(owners[oldOwner]);
+                }
             }
             
             @Override
@@ -739,7 +914,7 @@ public class WardStorageServer implements IWardStorageServer {
                 return tag;
             }
             
-            private void loadCharArray(byte[] src) {
+            private void loadByteArray(byte[] src) {
                 data = new short[CHUNK_DATA_SIZE];
                 for (int i = 0; i < data.length; ++i)
                     data[i] = (short) ((src[i * 2] << 8) + (src[i * 2 + 1] & 0xFF));
@@ -749,12 +924,19 @@ public class WardStorageServer implements IWardStorageServer {
             public void deserialize(NBTTagCompound tag) {
                 for (int i = 0; i < tag.getInteger("o"); ++i) {
                     owners[i] = tag.getUniqueId(Integer.toString(i));
-                    reverseMap.put(owners[i], (short) i);
+                    reverseMap.put(owners[i], (short) (i - 32768));
                 }
                 
-                loadCharArray(tag.getByteArray("d"));
+                loadByteArray(tag.getByteArray("d"));
                 if (data.length != CHUNK_DATA_SIZE)
                     throw new RuntimeException("Invalid ward data length");
+                else {
+                    for (int index = 0; index < CHUNK_DATA_SIZE; ++index) {
+                        int id = data[index] + 32768;
+                        if (id > 0)
+                            ++counts[id - 1];
+                    }
+                }
             }
             
         }
@@ -860,6 +1042,12 @@ public class WardStorageServer implements IWardStorageServer {
             WardSyncManager.markPosForNewOwner(syncTo, pos, owner);
             MinecraftForge.EVENT_BUS.post(new BlockWardEvent.WardedServer.Post(syncTo, pos, owner));
         }
+    }
+    
+    @Override
+    public void removeOwner(UUID owner) {
+        if (manager.isOwner(owner))
+            manager.removeOwner(owner, true);
     }
     
     @Override

@@ -128,9 +128,9 @@ public final class ClientEventHandler {
         World world = mc.world;
         if (result.typeOfHit == Type.BLOCK) {
             BlockPos p = result.getBlockPos();
-            for (int offsetX = -1; offsetX <= 1; ++offsetX) { 
-                for (int offsetY = -1; offsetY <= 1; ++offsetY) {
-                    for (int offsetZ = -1; offsetZ <= 1; ++offsetZ) {
+            for (int offsetX = -2; offsetX <= 2; ++offsetX) { 
+                for (int offsetY = -2; offsetY <= 2; ++offsetY) {
+                    for (int offsetZ = -2; offsetZ <= 2; ++offsetZ) {
                         BlockPos pos = p.add(offsetX, offsetY, offsetZ);
                         ClientWardStorageValue value = ((IWardStorageClient) world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null)).getWard(pos);
                         if (value != ClientWardStorageValue.EMPTY) {
@@ -156,7 +156,7 @@ public final class ClientEventHandler {
                                 x = MathHelper.clamp(x, pos.getX() + (float) box.minX, pos.getX() + (float) box.maxX);
                                 y = MathHelper.clamp(y, pos.getY() + (float) box.minY, pos.getY() + (float) box.maxY);
                                 z = MathHelper.clamp(z, pos.getZ() + (float) box.minZ, pos.getZ() + (float) box.maxZ);
-                                for (int i = 0; i < 4; ++i) {
+                                if ((mc.gameSettings.particleSetting == 0 && world.getTotalWorldTime() % 2 == 0) || world.getTotalWorldTime() % 4 == 0) {
                                     FXDispatcher.INSTANCE.drawSimpleSparkle(world.rand, x, y, z, 0, 0, 0, 0.5F + (float) world.rand.nextGaussian() / 8, 
                                             red, green, 0.0F, 0, 1.0F, 0.0001F, 8);
                                 }
@@ -178,7 +178,7 @@ public final class ClientEventHandler {
                     if (((ICaster) stack.getItem()).getFocus(stack) instanceof ItemFocus && 
                             focusContainsWardFocus(((ICaster) stack.getItem()).getFocusStack(stack))) {
                         
-                        handleWardOverlay(mc.player.rayTrace(mc.player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue(),
+                        handleWardOverlay(mc.player.rayTrace(Math.min(mc.player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() * 2, 32),
                                 mc.getRenderPartialTicks()));
                         return;
                     }
@@ -189,7 +189,7 @@ public final class ClientEventHandler {
                     if (((ICaster) stack.getItem()).getFocus(stack) instanceof ItemFocus && 
                             focusContainsWardFocus(((ICaster) stack.getItem()).getFocusStack(stack))) {
                         
-                        handleWardOverlay(mc.player.rayTrace(mc.player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue(),
+                        handleWardOverlay(mc.player.rayTrace(Math.min(mc.player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() * 2, 32),
                                 mc.getRenderPartialTicks()));
                     }
                 }
