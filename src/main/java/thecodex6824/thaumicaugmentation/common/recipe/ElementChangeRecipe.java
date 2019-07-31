@@ -157,7 +157,8 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         }
         
         Aspect oldAspect = Aspect.getAspect(augment.getTagCompound().getString("aspect"));
-                
+        oldAspect = oldAspect != null ? oldAspect : Aspect.ORDER;
+        
         ret.set(crystalIndex, ThaumcraftApiHelper.makeCrystal(oldAspect));
         return ret;
     }

@@ -78,6 +78,11 @@ public class AugmentHandler {
             }
             
             @Override
+            public int calculateTintColor(ICustomCasterAugment augment) {
+                return getAspect(augment.getStrengthProvider()).getColor();
+            }
+            
+            @Override
             public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
                 double totalMultiplier = 1.0;
                 ArrayDeque<IFocusElement> nodes = new ArrayDeque<>(focus.getFocus().nodes);
@@ -168,7 +173,7 @@ public class AugmentHandler {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
-                return 1.0 + stack.getTagCompound().getInteger("frenzy") / 10.0;
+                return 1.0 + stack.getTagCompound().getInteger("frenzy") / 15.0;
             }
         });
         
@@ -181,13 +186,13 @@ public class AugmentHandler {
         CasterAugmentBuilder.registerEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cast_speed"), new IBuilderCasterEffectProvider() {
             @Override
             public void apply(ICustomCasterAugment augment, Entity entity, ItemStack caster, FocusWrapper focus, double strength) {
-                focus.setCooldown((int) Math.ceil(focus.getCooldown() - (focus.getOriginalCooldown() - focus.getOriginalCooldown() * (1.0 / strength))));
+                focus.setCooldown((int) Math.ceil(focus.getCooldown() * (1.0 / strength)));
             }
         });
         CasterAugmentBuilder.registerEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cost"), new IBuilderCasterEffectProvider() {
             @Override
             public void apply(ICustomCasterAugment augment, Entity entity, ItemStack caster, FocusWrapper focus, double strength) {
-                focus.setVisCost(focus.getVisCost() - (focus.getOriginalVisCost() - focus.getOriginalVisCost() * (float) (1.0 / strength)));
+                focus.setVisCost(focus.getVisCost() * (float) (1.0 / strength));
             }
         });
     }

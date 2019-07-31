@@ -27,4 +27,8 @@ public interface IBuilderCasterStrengthProvider extends IBuilderCasterCallback {
 
     public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity user);
     
+    public default int calculateTintColor(ICustomCasterAugment augment) {
+        return 0xFFFFFFFF;
+    }
+    
 }

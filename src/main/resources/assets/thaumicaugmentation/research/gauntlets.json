@@ -123,7 +123,7 @@
                 {
                     "text": "thaumicaugmentation.research.gauntlet_augmentation.1",
                     "required_craft": [
-                        "thaumicaugmentation:custom_augment"
+                        "thaumicaugmentation:augment_custom"
                     ],
                     "recipes": [
                         "thaumicaugmentation:StrengthProviderElemental",
@@ -197,7 +197,7 @@
                 "HIDDEN"
             ],
             "location": [
-                7.5,
+                9,
                 -1.5
             ],
             "stages": [
@@ -233,6 +233,10 @@
             "stages": [
                 {
                     "text": "thaumicaugmentation.research.frenzy_modifier.0",
+                    "required_knowledge": [
+                        "OBSERVATION;GOLEMANCY;1",
+                        "THEORY;AUROMANCY;1"
+                    ],
                     "required_craft": [
                         "thaumcraft:module;1;1"
                     ]

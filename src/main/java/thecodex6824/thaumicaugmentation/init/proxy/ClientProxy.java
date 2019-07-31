@@ -48,7 +48,9 @@ import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
+import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
@@ -264,16 +266,17 @@ public class ClientProxy extends CommonProxy {
         };
         registerTo.registerItemColorHandler(dyeableMisc, TAItems.VOID_BOOTS);
         
-        /*IItemColor elementalResonatorColor = new IItemColor() {
+        IItemColor augmentCrystal = new IItemColor() {
             @Override
             public int colorMultiplier(ItemStack stack, int tintIndex) {
-                if (tintIndex == 1 && stack.getItem() instanceof IAssociatedAspect)
-                    return ((IAssociatedAspect) stack.getItem()).getAspect(stack).getColor();
-                
+                if (tintIndex == 1 && stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomCasterAugment) {
+                    ICustomCasterAugment augment = (ICustomCasterAugment) stack.getCapability(CapabilityAugment.AUGMENT, null);
+                    return CasterAugmentBuilder.getStrengthProvider(CasterAugmentBuilder.getStrengthProviderID(augment.getStrengthProvider())).calculateTintColor(augment);
+                }
                 return -1;
             }
         };
-        registerTo.registerItemColorHandler(elementalResonatorColor, TAItems.AUGMENT_CASTER_ELEMENTAL);*/
+        registerTo.registerItemColorHandler(augmentCrystal, TAItems.AUGMENT_CUSTOM);
         
         IItemColor fractureLocatorColor = new IItemColor() {
             @Override

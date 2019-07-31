@@ -57,6 +57,12 @@ public final class CasterAugmentBuilder {
             ThaumicAugmentation.getLogger().warn("A null strength provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
             return 1.0;
         }
+        
+        @Override
+        public int calculateTintColor(ICustomCasterAugment augment) {
+            ThaumicAugmentation.getLogger().warn("A null strength provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
+            return 0xFFFFFFFF;
+        }
     };
     public static final IBuilderCasterEffectProvider NULL_EFFECT = new IBuilderCasterEffectProvider() {
         @Override

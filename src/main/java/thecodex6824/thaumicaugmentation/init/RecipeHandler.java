@@ -47,6 +47,8 @@ import thaumcraft.common.lib.crafting.DustTriggerMultiblock;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
+import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.recipe.ElementalAugmentCraftingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.FluxSeedGrowthRecipe;
 
@@ -129,6 +131,19 @@ public final class RecipeHandler {
         ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "FluxSeed"), 
                 new CrucibleRecipe("RIFT_STUDIES", fluxSeedStack, ItemsTC.voidSeed, 
                         new AspectList().add(Aspect.FLUX, 50)));
+        
+        ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "EffectProviderPower"),
+                new CrucibleRecipe("GAUNTLET_AUGMENTATION@2", CasterAugmentBuilder.createStackForEffectProvider(
+                        new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_power")),
+                        ThaumcraftApiHelper.makeCrystal(Aspect.ORDER), new AspectList().add(Aspect.AVERSION, 15).add(Aspect.CRYSTAL, 10).add(Aspect.MAGIC, 5)));
+        ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "EffectProviderCost"),
+                new CrucibleRecipe("GAUNTLET_AUGMENTATION@2", CasterAugmentBuilder.createStackForEffectProvider(
+                        new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cost")),
+                        ThaumcraftApiHelper.makeCrystal(Aspect.ORDER), new AspectList().add(Aspect.AURA, 15).add(Aspect.CRYSTAL, 10).add(Aspect.MAGIC, 5)));
+        ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "EffectProviderCastSpeed"),
+                new CrucibleRecipe("GAUNTLET_AUGMENTATION@2", CasterAugmentBuilder.createStackForEffectProvider(
+                        new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cast_speed")),
+                        ThaumcraftApiHelper.makeCrystal(Aspect.ORDER), new AspectList().add(Aspect.ENERGY, 15).add(Aspect.CRYSTAL, 10).add(Aspect.MAGIC, 5)));
     }
     
     public static void initArcaneCraftingRecipes() {
@@ -307,7 +322,46 @@ public final class RecipeHandler {
          * Augments
          */
         
-        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentGauntletElemental"), new ElementalAugmentCraftingRecipe());
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "StrengthProviderElemental"), new ElementalAugmentCraftingRecipe());
+        
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "StrengthProviderOverworld"), new ShapelessArcaneRecipe(
+                defaultGroup, "DIMENSIONAL_MODIFIERS", 25, new AspectList().add(Aspect.WATER, 1).add(Aspect.EARTH, 1),
+                CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_overworld")),
+                new Object[] {
+                        new ItemStack(ItemsTC.visResonator), "dirt", "stone"
+                }
+        ));
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "StrengthProviderNether"), new ShapelessArcaneRecipe(
+                defaultGroup, "DIMENSIONAL_MODIFIERS", 25, new AspectList().add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 1),
+                CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_nether")),
+                new Object[] {
+                        new ItemStack(ItemsTC.visResonator), "netherrack", "glowstone"
+                }
+        ));
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "StrengthProviderEnd"), new ShapelessArcaneRecipe(
+                defaultGroup, "DIMENSIONAL_MODIFIERS", 25, new AspectList().add(Aspect.AIR, 1).add(Aspect.ORDER, 1),
+                CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_end")),
+                new Object[] {
+                        new ItemStack(ItemsTC.visResonator), "endstone", "obsidian"
+                }
+        ));
+        
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "StrengthProviderEmptiness"), new ShapelessArcaneRecipe(
+                defaultGroup, "EMPTINESS_MODIFIER", 25, new AspectList().add(Aspect.ENTROPY, 1).add(Aspect.EARTH, 1),
+                CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_emptiness")),
+                new Object[] {
+                        new ItemStack(ItemsTC.visResonator), "stoneVoid", 
+                        new ItemStack(TABlocks.STONE, 1, StoneType.STONE_TAINT_NODECAY.getMeta())
+                }
+        ));
+        
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "StrengthProviderFrenzy"), new ShapelessArcaneRecipe(
+                defaultGroup, "FRENZY_MODIFIER", 25, new AspectList().add(Aspect.ENTROPY, 1).add(Aspect.FIRE, 1),
+                CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_frenzy")),
+                new Object[] {
+                        new ItemStack(ItemsTC.visResonator), new ItemStack(ItemsTC.modules, 1, 1), ItemsTC.mechanismSimple
+                }
+        ));
         
         ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "AugmentGauntletRiftEnergyStorage"), new ShapelessArcaneRecipe(
                 defaultGroup, "RIFT_POWER@2", 25, 

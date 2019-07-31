@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -57,7 +58,6 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.PerspectiveMapWrapper;
-import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
@@ -65,7 +65,10 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugment
 import thecodex6824.thaumicaugmentation.common.capability.AugmentCasterCustom;
 
 public class CustomCasterAugmentModel implements IModel {
-
+    
+    private static final ImmutableList<ResourceLocation> DEPS = ImmutableList.of(
+            new ResourceLocation("minecraft", "item/generated"));
+    
     @Override
     public IModelState getDefaultState() {
         return TRSRTransformation.identity();
@@ -73,7 +76,7 @@ public class CustomCasterAugmentModel implements IModel {
     
     @Override
     public Collection<ResourceLocation> getDependencies() {
-        return Collections.emptyList();
+        return DEPS;
     }
     
     @Override
@@ -85,12 +88,11 @@ public class CustomCasterAugmentModel implements IModel {
     public IBakedModel bake(IModelState state, VertexFormat format,
             Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         
-        ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms = PerspectiveMapWrapper.getTransforms(state);
-        IModelState transformedState = new SimpleModelState(transforms);
-        IBakedModel missingModel = ModelLoaderRegistry.getMissingModel().bake(transformedState, DefaultVertexFormats.ITEM,
+        IModel base = ModelLoaderRegistry.getModelOrLogError(DEPS.get(0), "Could not get base item model (?)");
+        IBakedModel baseBaked = base.bake(base.getDefaultState(), DefaultVertexFormats.ITEM,
                 ModelLoader.defaultTextureGetter());
         
-        return new BakedModel(missingModel, transforms);
+        return new BakedModel(baseBaked);
     }
     
     public static class Loader implements ICustomModelLoader {
@@ -112,13 +114,27 @@ public class CustomCasterAugmentModel implements IModel {
     
     public static class BakedModel implements IBakedModel {
         
+        private static TRSRTransformation create(float tx, float ty, float tz, float ax, float ay, float az, float s) {
+            return TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                    new Vector3f(tx / 16, ty / 16, tz / 16), TRSRTransformation.quatFromXYZDegrees(
+                            new Vector3f(ax, ay, az)), new Vector3f(s, s, s), null));
+        }
+        
+        private static final ImmutableMap<TransformType, TRSRTransformation> TRANSFORMS = ImmutableMap.<TransformType, TRSRTransformation>builder().put(
+                TransformType.GROUND, create(0, 2, 0, 0, 0, 0, 0.5F)).put(
+                TransformType.HEAD, create(0, 13, 7, 0, 180, 0, 1)).put(
+                TransformType.THIRD_PERSON_RIGHT_HAND, create(0, 3, 1, 0, 0, 0, 0.55F)).put(
+                TransformType.THIRD_PERSON_LEFT_HAND, create(0, 3, 1, 0, 0, 0, 0.55F)).put(
+                TransformType.FIRST_PERSON_RIGHT_HAND, create(1.13F, 3.2F, 1.13F, 0, -90, 25, 0.68F)).put(
+                TransformType.FIRST_PERSON_LEFT_HAND, create(1.13F, 3.2F, 1.13F, 0, 90, -25, 0.68F)).put(
+                TransformType.FIXED, create(0, 0, 0, 0, 180, 0, 1)).build();
+        
         private static int hashStack(AugmentCasterCustom aug) {
             return 31 * CasterAugmentBuilder.getStrengthProviderIDString(aug.getStrengthProvider()).hashCode() +
                     CasterAugmentBuilder.getEffectProviderIDString(aug.getEffectProvider()).hashCode();
         }
         
         protected IBakedModel wrappedFallback;
-        protected ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transform;
         protected Cache<Integer, IBakedModel> cache;
         
         protected ItemOverrideList handler = new ItemOverrideList(ImmutableList.of()) {
@@ -139,17 +155,19 @@ public class CustomCasterAugmentModel implements IModel {
         
         private IBakedModel buildModel(AugmentCasterCustom aug, World world, EntityLivingBase entity) {
             ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
-            quads.addAll(Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(aug.getStrengthProvider(),
-                    world, entity).getQuads(null, null, world != null ? world.rand.nextLong() : 0));
-            quads.addAll(Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(aug.getEffectProvider(),
-                    world, entity).getQuads(null, null, world != null ? world.rand.nextLong() : 0));
-            return new CustomBakedModel(quads.build(), transform);
+            for (BakedQuad quad : Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(aug.getStrengthProvider(),
+                    world, entity).getQuads(null, null, world != null ? world.rand.nextLong() : 0))
+                quads.add(new BakedQuad(quad.getVertexData(), 0, quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat()));
+            
+            for (BakedQuad quad : Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(aug.getEffectProvider(),
+                    world, entity).getQuads(null, null, world != null ? world.rand.nextLong() : 0))
+                quads.add(new BakedQuad(quad.getVertexData(), 1, quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat()));
+            
+            return new CustomBakedModel(quads.build(), TRANSFORMS);
         }
         
-        protected BakedModel(IBakedModel wrappedModel, 
-                ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> itemTransforms) {
+        protected BakedModel(IBakedModel wrappedModel) {
             wrappedFallback = wrappedModel;
-            transform = itemTransforms;
             cache = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterAccess(300, TimeUnit.SECONDS).build();
         }
         
@@ -191,7 +209,7 @@ public class CustomCasterAugmentModel implements IModel {
         
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-            return PerspectiveMapWrapper.handlePerspective(this, transform, cameraTransformType);
+            return PerspectiveMapWrapper.handlePerspective(this, TRANSFORMS, cameraTransformType);
         }
         
     }

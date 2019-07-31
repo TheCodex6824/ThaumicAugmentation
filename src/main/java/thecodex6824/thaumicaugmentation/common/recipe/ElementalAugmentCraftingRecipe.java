@@ -34,7 +34,7 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugment
 public class ElementalAugmentCraftingRecipe extends ShapelessArcaneRecipe {
 
     public ElementalAugmentCraftingRecipe() {
-        super(new ResourceLocation(""), "GAUNTLET_AUGMENTATION@2", 50,
+        super(new ResourceLocation(""), "GAUNTLET_AUGMENTATION@2", 25,
                 new AspectList().add(Aspect.AIR, 1).add(Aspect.EARTH, 1).add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 1).add(
                 Aspect.ORDER, 1).add(Aspect.WATER, 1), CasterAugmentBuilder.createStackForStrengthProvider(
                         new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental")), new Object[] {
