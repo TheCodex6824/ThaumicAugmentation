@@ -156,7 +156,7 @@
                 "GAUNTLET_AUGMENTATION"
             ],
             "location": [
-                6,
+                7,
                 -1.5
             ],
             "stages": [
@@ -245,6 +245,37 @@
                     "text": "thaumicaugmentation.research.frenzy_modifier.1",
                     "recipes": [
                         "thaumicaugmentation:StrengthProviderFrenzy"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "EXPERIENCE_MODIFIER",
+            "name": "thaumicaugmentation.research.experience_modifier.title",
+            "icons": [
+                "thaumicaugmentation:augment_builder_power;1;0;{id:\"thaumicaugmentation:strength_experience\"}"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "GAUNTLET_AUGMENTATION",
+                "~CURIOSITYBAND"
+            ],
+            "location": [
+                5,
+                -2
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.experience_modifier.0",
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.experience_modifier.1",
+                    "recipes": [
+                        "thaumicaugmentation:StrengthProviderExperience"
                     ]
                 }
             ]

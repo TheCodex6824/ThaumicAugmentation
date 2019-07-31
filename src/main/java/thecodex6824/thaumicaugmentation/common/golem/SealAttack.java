@@ -79,7 +79,7 @@ public class SealAttack implements ISeal, ISealGui {
             return false;
         }
         else if (task.getEntity() instanceof IEntityOwnable) {
-            if (((IEntityOwnable) task.getEntity()).getOwnerId().equals(((IEntityOwnable) golem.getGolemEntity()).getOwnerId()))
+            if (((IEntityOwnable) task.getEntity()).getOwnerId() != null && ((IEntityOwnable) task.getEntity()).getOwnerId().equals(((IEntityOwnable) golem.getGolemEntity()).getOwnerId()))
                 return false;
         }
         

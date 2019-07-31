@@ -41,6 +41,7 @@ import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.crafting.Part;
 import thaumcraft.api.crafting.ShapedArcaneRecipe;
 import thaumcraft.api.crafting.ShapelessArcaneRecipe;
+import thaumcraft.api.golems.GolemHelper;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.blocks.basic.BlockPillar;
 import thaumcraft.common.lib.crafting.DustTriggerMultiblock;
@@ -144,6 +145,14 @@ public final class RecipeHandler {
                 new CrucibleRecipe("GAUNTLET_AUGMENTATION@2", CasterAugmentBuilder.createStackForEffectProvider(
                         new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cast_speed")),
                         ThaumcraftApiHelper.makeCrystal(Aspect.ORDER), new AspectList().add(Aspect.ENERGY, 15).add(Aspect.CRYSTAL, 10).add(Aspect.MAGIC, 5)));
+    
+        ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "SealSecure"),
+                new CrucibleRecipe("SEAL_SECURE", GolemHelper.getSealStack(ThaumicAugmentationAPI.MODID + ":attack"), ItemsTC.seals,
+                        new AspectList().add(Aspect.AVERSION, 30).add(Aspect.PROTECT, 10)));
+        
+        ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "SealSecureAdvanced"),
+                new CrucibleRecipe("SEAL_SECURE&&MINDBIOTHAUMIC", GolemHelper.getSealStack(ThaumicAugmentationAPI.MODID + ":attack_advanced"), GolemHelper.getSealStack(ThaumicAugmentationAPI.MODID + ":attack"),
+                        new AspectList().add(Aspect.SENSES, 20).add(Aspect.MIND, 20)));
     }
     
     public static void initArcaneCraftingRecipes() {
@@ -360,6 +369,14 @@ public final class RecipeHandler {
                 CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_frenzy")),
                 new Object[] {
                         new ItemStack(ItemsTC.visResonator), new ItemStack(ItemsTC.modules, 1, 1), ItemsTC.mechanismSimple
+                }
+        ));
+        
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "StrengthProviderExperience"), new ShapelessArcaneRecipe(
+                defaultGroup, "EXPERIENCE_MODIFIER", 25, new AspectList().add(Aspect.ORDER, 1),
+                CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_experience")),
+                new Object[] {
+                        new ItemStack(ItemsTC.visResonator), Items.EMERALD, Items.EMERALD, new ItemStack(Items.DYE, 1, 4)
                 }
         ));
         

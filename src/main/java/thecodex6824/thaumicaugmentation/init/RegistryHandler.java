@@ -145,7 +145,7 @@ public final class RegistryHandler {
         }
 
         registry.register(setupItem(new ItemTieredCasterGauntlet(), "gauntlet"));
-        registry.register(setupItem(new ItemTABase("lattice", "warding_sigil", "amalgamated_gear", "rift_energy_cell", "harness_base"), "material"));
+        registry.register(setupItem(new ItemTABase("lattice", "warding_sigil", "amalgamated_gear", "rift_energy_cell"), "material"));
         registry.register(setupItem(new ItemSealCopier(), "seal_copier"));
         registry.register(setupItem(new ItemArcaneDoor(), "arcane_door"));
         registry.register(setupItem(new ItemKey(), "key"));

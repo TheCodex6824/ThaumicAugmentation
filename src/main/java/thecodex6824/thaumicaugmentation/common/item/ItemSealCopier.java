@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
+import java.util.List;
+
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.IItemPropertyGetter;
@@ -32,11 +35,16 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import thaumcraft.api.golems.GolemHelper;
 import thaumcraft.api.golems.ISealDisplayer;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.api.golems.seals.SealPos;
+import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.golems.seals.SealHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
@@ -105,6 +113,16 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
         }
 
         return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flagIn) {
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("sealType", NBT.TAG_STRING)) {
+            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_seal", 
+                    new TextComponentTranslation(ItemsTC.seals.getTranslationKey(GolemHelper.getSealStack(
+                    stack.getTagCompound().getString("sealType"))) + ".name").getFormattedText()).getFormattedText());
+        }
     }
 
 }

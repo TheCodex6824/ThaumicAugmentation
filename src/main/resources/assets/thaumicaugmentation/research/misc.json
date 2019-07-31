@@ -85,7 +85,7 @@
             ],
             "location": [
                 -3,
-                -0
+                -1.5
             ],
             "stages": [
                 {
@@ -141,6 +141,48 @@
                     "recipes": [
                         "thaumicaugmentation:BootsVoid"
                     ]
+                }
+            ]
+        },
+        {
+            "key": "SEAL_SECURE",
+            "name": "thaumicaugmentation.research.seal_secure.title",
+            "icons": [
+                "thaumicaugmentation:textures/items/seal/seal_attack.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "THAUMIC_AUGMENTATION_BASE",
+                "~SEALGUARD"
+            ],
+            "location": [
+                -3,
+                1.5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.seal_secure.0",
+                    "required_knowledge": [
+                        "OBSERVATION;GOLEMANCY;1",
+                        "THEORY;GOLEMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.seal_secure.1",
+                    "recipes": [
+                        "thaumicaugmentation:SealSecure"
+                    ]
+                }
+            ],
+            "addenda": [
+                { 
+                    "text": "thaumicaugmentation.research.seal_secure.2",  
+                    "recipes": [
+                        "thaumicaugmentation:SealSecureAdvanced"
+                    ],  
+                    "required_research":[
+                        "MINDBIOTHAUMIC"
+                    ] 
                 }
             ]
         }
