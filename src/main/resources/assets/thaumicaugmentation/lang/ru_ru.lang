@@ -1,0 +1,85 @@
+tile.thaumicaugmentation.vis_regenerator.name=ВИС-Регенератор
+tile.thaumicaugmentation.warded_chest.name=Защищённый сундук
+tile.thaumicaugmentation.arcane_door.name=Тайная дверь
+tile.thaumicaugmentation.arcane_door_greatwood.name=Великодревесная тайная дверь
+tile.thaumicaugmentation.arcane_door_thaumium.name=Таумиевая тайная дверь
+tile.thaumicaugmentation.arcane_door_silverwood.name=Серебрянодревесная тайная дверь
+tile.thaumicaugmentation.temporary_light.name=Призванный свет
+tile.thaumicaugmentation.stone.stone_void.name=Пустотный камень
+tile.thaumicaugmentation.stone.stone_taint_nodecay.name=Заражённый пустотный камень
+tile.thaumicaugmentation.stone.soil_stone_taint_nodecay.name=Заражённая пустотная каменистая земля
+tile.thaumicaugmentation.arcane_trapdoor_wood.name=Великодревесный такный люк
+tile.thaumicaugmentation.arcane_trapdoor_metal.name=Таумиевый тайный люк
+tile.thaumicaugmentation.arcane_trapdoor_silverwood.name=Серебрянодревеснаый тайный люк
+tile.thaumicaugmentation.taint_flower.name=Заражённый цветок
+
+item.thaumicaugmentation.gauntlet.thaumium.name=Таумиевая перчатка заклинателя
+item.thaumicaugmentation.gauntlet.void.name=Пустотная перчатка заклинателя
+item.thaumicaugmentation.material.lattice.name=Фильтр ВИС-Регенератора
+item.thaumicaugmentation.material.warding_sigil.name=Защитный символ
+item.thaumicaugmentation.material.amalgamated_gear.name=Связанные механизмы
+item.thaumicaugmentation.material.rift_energy_cell.name=Импульсная клетка
+item.thaumicaugmentation.material.harness_base.name=Основа ремня
+item.thaumicaugmentation.seal_copier.name=Репликатор печатей
+item.thaumicaugmentation.arcane_door.greatwood.name=Великодревесная тайная дверь
+item.thaumicaugmentation.arcane_door.thaumium.name=Таумиевая тайная дверь
+item.thaumicaugmentation.arcane_door.silverwood.name=Серебрянодревесная тайная дверь
+item.thaumicaugmentation.key.iron.name=Железный ключ
+item.thaumicaugmentation.key.brass.name=Латунный ключ
+item.thaumicaugmentation.key.thaumium.name=Таумиевый ключ
+item.thaumicaugmentation.void_boots.name=Ботинки шагающего в пустоте
+item.thaumicaugmentation.rift_seed.flux.name=Семя флаксового разлома
+item.thaumicaugmentation.rift_seed.flux_aura.name=Флаксовое семя
+item.thaumicaugmentation.augment_caster_elemental.name=Элементальный резонатор
+item.thaumicaugmentation.augment_caster_rift_energy_storage.name=Импульсный проводник
+item.thaumicaugmentation.fracture_locator.name=Локатор изломов
+item.thaumicaugmentation.augment_custom.name=Модульный модификатор заклинаний
+
+item.thaumicaugmentation.strength_experience.name=Модификатор: Опыт
+item.thaumicaugmentation.strength_overworld.name=Модификатор: Мир
+item.thaumicaugmentation.strength_nether.name=Модификатор: Ад
+item.thaumicaugmentation.strength_end.name=Модификатор: Край
+item.thaumicaugmentation.strength_emptiness.name=Модификатор: Пустота
+item.thaumicaugmentation.strength_elemental.name=Модификатор: Элемент
+item.thaumicaugmentation.strength_frenzy.name=Модификатор: Неистовство
+
+item.thaumicaugmentation.effect_power.name=Кристалл эффекта: Сила печати
+item.thaumicaugmentation.effect_cost.name=Кристалл эффекта: Уменьшитель стоимости ВИС
+item.thaumicaugmentation.effect_cast_speed.name=Кристалл эффекта: Скорость применения
+
+item.seal.attack.name=Песать контроля: Безопасность
+item.seal.attack_advanced.name=Улучшенная печать контроля: Безопасность
+golem.prop.other=Другие цели
+golem.prop.sight=Поле зрения
+
+entity.thaumicaugmentation.dimensional_fracture.name=Пространственный излом
+
+itemGroup.thaumicaugmentation=Thaumic Augmentation
+
+thaumicaugmentation.text.key_bound=Ключ привязан
+thaumicaugmentation.text.key_bound_object=Ключ привязан к %s на %s
+thaumicaugmentation.text.key_unbound=Ключ отвязан
+thaumicaugmentation.text.bound_to=Привязан к: %s
+thaumicaugmentation.text.bound_to_type=Связанный блок: %s
+thaumicaugmentation.text.bound_to_pos=Связанная позиция: %s
+thaumicaugmentation.text.rift_seed_size=Размер: %d
+thaumicaugmentation.text.flux_seed_amount=Флакс: %d
+thaumicaugmentation.text.rift_seed_grown=Выросший
+thaumicaugmentation.text.rift_too_close=Неподалёку уже есть разлом...
+thaumicaugmentation.text.no_fracture_target=Этот пространственный излом никуда не ведёт...
+thaumicaugmentation.text.augmented=§cAugmented§r (%d/%d)
+thaumicaugmentation.text.elemental_aspect=Аспект: %s
+thaumicaugmentation.text.stored_energy=Уровень импульса: %s
+thaumicaugmentation.text.energy_none=§4Нет
+thaumicaugmentation.text.energy_minimal=§cМинимальный
+thaumicaugmentation.text.energy_very_weak=§6Очень слабый
+thaumicaugmentation.text.energy_weak=§eСлабый
+thaumicaugmentation.text.energy_medium=§aСредний
+thaumicaugmentation.text.energy_strong=§aСильный
+thaumicaugmentation.text.energy_max=§2Максимальный
+thaumicaugmentation.text.entered_void=§5Вы посетили пустоту.
+thaumicaugmentation.text.stored_seal=Печать: %s
+
+thaumicaugmentation.subtitle.spooky=Жуткие шумы
+thaumicaugmentation.subtitle.spooky_wind=Вой ветра
+thaumicaugmentation.subtitle.rift_energy_zap=Порывы импульсной энергии
