@@ -71,7 +71,6 @@ dependencies {
     runtime curse.resolve("jei", "2733488")
     runtime curse.resolve("thaumic-jei", "2705304")
     runtime curse.resolve("the-one-probe", "2667280")
-    runtime curse.resolve("the-aether", "2698950")
 }
 
 processResources {
