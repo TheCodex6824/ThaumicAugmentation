@@ -38,7 +38,7 @@ public class BiomeEmptinessHighlands extends Biome implements IPurgeBiomeSpawns,
 
     public BiomeEmptinessHighlands() {
         super(new BiomeProperties("Emptiness Highlands").setBaseHeight(0.75F).setHeightVariation(0.3F).setRainDisabled().setTemperature(
-                0xAA00AA).setWaterColor(0xAA00AA));
+                0.25F).setWaterColor(0xAA00AA));
 
         purgeSpawns();
         flowers.clear();

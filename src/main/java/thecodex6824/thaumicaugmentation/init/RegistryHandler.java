@@ -31,6 +31,8 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -187,9 +189,17 @@ public final class RegistryHandler {
 
     @SubscribeEvent
     public static void registerBiomes(RegistryEvent.Register<Biome> event) {
-        event.getRegistry().register(new BiomeEmptiness().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness")));
-        event.getRegistry().register(new BiomeTaintedLands().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "tainted_lands")));
-        event.getRegistry().register(new BiomeEmptinessHighlands().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_highlands")));
+        Biome emptiness = new BiomeEmptiness().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness"));
+        event.getRegistry().register(emptiness);
+        BiomeDictionary.addTypes(emptiness, Type.COLD, Type.SPARSE, Type.SPOOKY, Type.VOID);
+        
+        Biome tainted = new BiomeTaintedLands().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "tainted_lands"));
+        event.getRegistry().register(tainted);
+        BiomeDictionary.addTypes(tainted, Type.COLD, Type.SPOOKY, Type.VOID);
+        
+        Biome highlands = new BiomeEmptinessHighlands().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_highlands"));
+        event.getRegistry().register(highlands);
+        BiomeDictionary.addTypes(highlands, Type.COLD, Type.SPARSE, Type.SPOOKY, Type.VOID, Type.HILLS, Type.MOUNTAIN);
     }
     
     @SubscribeEvent

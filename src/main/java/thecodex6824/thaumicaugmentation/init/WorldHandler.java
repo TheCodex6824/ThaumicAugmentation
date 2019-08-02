@@ -4,11 +4,6 @@ import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.common.BiomeManager;
-import net.minecraftforge.common.BiomeManager.BiomeEntry;
-import net.minecraftforge.common.BiomeManager.BiomeType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -99,13 +94,6 @@ public final class WorldHandler {
     }
 
     public static void init() {
-        BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(TABiomes.EMPTINESS, 0));
-        BiomeDictionary.addTypes(TABiomes.EMPTINESS, Type.COLD, Type.SPARSE, Type.SPOOKY, Type.VOID);
-        BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(TABiomes.TAINTED_LANDS, 0));
-        BiomeDictionary.addTypes(TABiomes.TAINTED_LANDS, Type.COLD, Type.SPOOKY, Type.VOID);
-        BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(TABiomes.EMPTINESS_HIGHLANDS, 0));
-        BiomeDictionary.addTypes(TABiomes.EMPTINESS_HIGHLANDS, Type.COLD, Type.SPARSE, Type.SPOOKY, Type.VOID, Type.HILLS, Type.MOUNTAIN);
-        
         GameRegistry.registerWorldGenerator(new TAWorldGenerator(), 20);
     }
 
