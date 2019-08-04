@@ -114,7 +114,7 @@ public final class TAWorldGenerator implements IWorldGenerator {
         random.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ world.getSeed());
         
         BlockPos pos = new BlockPos(chunkX * 16, 0, chunkZ * 16);
-        Biome biome = world.getBiomeProvider().getBiome(pos);
+        Biome biome = world.getBiome(pos);
         if (biome instanceof IFluxBiome) {
             float flux = AuraHelper.getAuraBase(world, pos) * ((IFluxBiome) biome).getBaseFluxConcentration();
             AuraHelper.drainVis(world, pos, flux, false);

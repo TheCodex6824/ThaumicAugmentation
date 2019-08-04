@@ -26,13 +26,12 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeDecorator;
 import thaumcraft.common.entities.monster.boss.EntityTaintacleGiant;
 import thaumcraft.common.entities.monster.tainted.EntityTaintSeed;
 import thaumcraft.common.entities.monster.tainted.EntityTaintSeedPrime;
 import thaumcraft.common.lib.utils.EntityUtils;
 
-public class BiomeDecoratorTaintedLands extends BiomeDecorator {
+public class BiomeDecoratorTaintedLands extends BiomeDecoratorEmptinessBase {
     
     private void generateEntities(World world, Random rand, Biome biome, BlockPos pos) {
         BlockPos p = world.getTopSolidOrLiquidBlock(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16)));
@@ -54,7 +53,7 @@ public class BiomeDecoratorTaintedLands extends BiomeDecorator {
             
             if (thingToSpawn != null) {
                 thingToSpawn.setLocationAndAngles(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, rand.nextInt(360), 0);
-                if (thingToSpawn.getCanSpawnHere() && thingToSpawn.isNotColliding()) {
+                if (thingToSpawn.getCanSpawnHere() && !thingToSpawn.isEntityInsideOpaqueBlock()) {
                     thingToSpawn.enablePersistence();
                     world.spawnEntity(thingToSpawn);
                 }
@@ -74,6 +73,7 @@ public class BiomeDecoratorTaintedLands extends BiomeDecorator {
     
     @Override
     public void decorate(World world, Random rand, Biome biome, BlockPos pos) {
+        super.decorate(world, rand, biome, pos);
         generateFeatures(world, rand, biome, pos);
         generateEntities(world, rand, biome, pos);
     }

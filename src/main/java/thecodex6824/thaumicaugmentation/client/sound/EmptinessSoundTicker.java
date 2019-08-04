@@ -71,7 +71,7 @@ public class EmptinessSoundTicker implements ITickable {
             mc.getSoundHandler().stopSound(LOOP);
             playingMusic = false;
         }
-        else if (mc.world != null) {
+        else if (mc.world != null && (!mc.isSingleplayer() || !mc.isGamePaused())) {
             if (mc.world.provider.getDimension() != TADimensions.EMPTINESS.getId() && playingMusic) {
                 mc.getSoundHandler().stopSound(LOOP);
                 playingMusic = false;

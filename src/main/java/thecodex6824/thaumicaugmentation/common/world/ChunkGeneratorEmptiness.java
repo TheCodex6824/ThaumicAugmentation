@@ -45,7 +45,6 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
-import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenVoidStoneSpike;
 
 public class ChunkGeneratorEmptiness implements IChunkGenerator {
 
@@ -59,8 +58,6 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
     protected NoiseGeneratorOctaves depth;
     protected NoiseGeneratorPerlin gen4;
     
-    protected WorldGenVoidStoneSpike spikeGen;
-    
     protected double[] biomeWeights;
 
     public ChunkGeneratorEmptiness(World w) {
@@ -72,8 +69,6 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         scale = new NoiseGeneratorOctaves(rand, 10);
         depth = new NoiseGeneratorOctaves(rand, 16);
         gen4 = new NoiseGeneratorPerlin(rand, 4);
-
-        spikeGen = new WorldGenVoidStoneSpike();
         
         biomeWeights = new double[25];
         for (int x = -2; x <= 2; ++x) {
@@ -280,9 +275,6 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         
         ForgeEventFactory.onChunkPopulate(true, this, world, rand, x, z, false);
         biome.decorate(world, rand, pos);
-        
-        if (rand.nextBoolean())
-            spikeGen.generate(world, rand, world.getHeight(pos.add(8 + rand.nextInt(8), 0, 8 + rand.nextInt(8))));
 
         ForgeEventFactory.onChunkPopulate(false, this, world, rand, x, z, false);
         BlockFalling.fallInstantly = false;
