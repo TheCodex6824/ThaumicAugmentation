@@ -70,6 +70,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvid
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
+import thecodex6824.thaumicaugmentation.common.item.ItemMorphicTool;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
@@ -158,6 +159,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemCustomCasterStrengthProvider(), "augment_builder_power"));
         registry.register(setupItem(new ItemCustomCasterEffectProvider(), "augment_builder_effect"));
         registry.register(setupItem(new ItemCustomCasterAugment(), "augment_custom"));
+        registry.register(setupItem(new ItemMorphicTool(), "morphic_tool"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }

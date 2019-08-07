@@ -185,6 +185,39 @@
                     ] 
                 }
             ]
+        },
+        {
+            "key": "MORPHIC_TOOL",
+            "name": "thaumicaugmentation.research.morphic_tool.title",
+            "icons": [
+                "thaumcraft:enchanted_placeholder"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "THAUMIC_AUGMENTATION_BASE",
+                "~PRIMALCRUSHER"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "location": [
+                -5,
+                0
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.morphic_tool.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ELDRITCH;2"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.morphic_tool.1",
+                    "recipes": [
+                        "thaumicaugmentation:MorphicToolBindingFake"
+                    ]
+                }
+            ]
         }
     ]
 }

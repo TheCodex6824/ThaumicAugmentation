@@ -34,6 +34,7 @@ item.thaumicaugmentation.augment_caster_elemental.name=Elemental Resonator
 item.thaumicaugmentation.augment_caster_rift_energy_storage.name=Impetus Conductor
 item.thaumicaugmentation.fracture_locator.name=Fracture Locator
 item.thaumicaugmentation.augment_custom.name=Modular Caster Augment
+item.thaumicaugmentation.morphic_tool.name=Morphic Tool
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld

@@ -42,6 +42,7 @@ import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvid
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityAugmentInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityAugmentableItemInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityFractureLocationInit;
+import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityMorphicToolInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityPortalStateInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityRiftEnergyStorageInit;
 import thecodex6824.thaumicaugmentation.common.capability.init.CapabilityWardStorageInit;
@@ -63,6 +64,7 @@ public final class CapabilityHandler {
         CapabilityWardStorageInit.init();
         CapabilityWardedTileInit.init();
         CapabilityPortalStateInit.init();
+        CapabilityMorphicToolInit.init();
     }
     
     @SubscribeEvent

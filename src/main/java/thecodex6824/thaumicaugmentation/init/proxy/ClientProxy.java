@@ -51,12 +51,14 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
+import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
 import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
@@ -209,6 +211,7 @@ public class ClientProxy extends CommonProxy {
         ModelLoaderRegistry.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/effect_provider"),
                 () -> CasterAugmentBuilder.getAllEffectProviders(), stack -> ItemCustomCasterEffectProvider.getProviderID(stack)));
         ModelLoaderRegistry.registerLoader(new CustomCasterAugmentModel.Loader());
+        ModelLoaderRegistry.registerLoader(new MorphicToolModel.Loader());
     }
 
     @Override
@@ -288,6 +291,18 @@ public class ClientProxy extends CommonProxy {
             }
         };
         registerTo.registerItemColorHandler(fractureLocatorColor, TAItems.FRACTURE_LOCATOR);
+        
+        IItemColor morphicTool = new IItemColor() {
+            @Override
+            public int colorMultiplier(ItemStack stack, int tintIndex) {
+                ItemStack display = stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getDisplayStack();
+                if (!display.isEmpty())
+                    return Minecraft.getMinecraft().getItemColors().colorMultiplier(display, tintIndex);
+                else
+                    return -1;
+            }
+        };
+        registerTo.registerItemColorHandler(morphicTool, TAItems.MORPHIC_TOOL);
     }
 
 }

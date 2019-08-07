@@ -65,7 +65,7 @@ import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
 public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProvider<Item>, IArmorReduceFallDamage, IRechargable,
-IVisDiscountGear, ISpecialArmor, IWarpingGear {
+    IVisDiscountGear, ISpecialArmor, IWarpingGear {
 
     protected static final String TEXTURE_PATH = 
             new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/armor/boots_void.png").toString();

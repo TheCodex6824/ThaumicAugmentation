@@ -50,8 +50,11 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.common.recipe.ElementalAugmentCraftingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.FluxSeedGrowthRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.MorphicToolBindingRecipe;
 
 public final class RecipeHandler {
 
@@ -121,6 +124,20 @@ public final class RecipeHandler {
                     new ItemStack(ItemsTC.voidSeed), new Object[] {
                             "plateVoid", ItemsTC.primordialPearl, "plateVoid", ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH),
                             "plateVoid", "dustRedstone", "plateVoid", "gemAmber"
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "MorphicToolBinding"),
+                    new MorphicToolBindingRecipe());
+            
+            ItemStack morphicSample = new ItemStack(TAItems.MORPHIC_TOOL);
+            IMorphicTool tool = morphicSample.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+            tool.setDisplayStack(new ItemStack(Items.GOLDEN_SWORD));
+            tool.setFunctionalStack(new ItemStack(Items.DIAMOND_SWORD));
+            ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "MorphicToolBindingFake"),
+                    new InfusionRecipe("MORPHIC_TOOL", morphicSample, 5, new AspectList().add(Aspect.VOID, 50),
+                    Items.DIAMOND_SWORD, new Object[] {
+                            ItemsTC.primordialPearl, Items.GOLDEN_SWORD
                     }
             ));
     }
