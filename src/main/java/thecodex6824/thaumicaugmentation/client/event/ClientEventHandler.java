@@ -199,14 +199,15 @@ public final class ClientEventHandler {
     
     @SubscribeEvent
     public static void onRenderLiving(RenderLivingEvent.Pre<EntityLivingBase> event) {
-        if (TAConfig.gauntletCastAnimation.getValue()) {
+        if (TAConfig.gauntletCastAnimation.getValue() && (event.getEntity().getHeldItemMainhand().getItem() instanceof ICaster ||
+                event.getEntity().getHeldItemOffhand().getItem() instanceof ICaster)) {
             Boolean value = CAST_CACHE.getIfPresent(event.getEntity().getEntityId());
             if (value != null && event.getRenderer().getMainModel() instanceof ModelBiped) {
                 ModelBiped biped = (ModelBiped) event.getRenderer().getMainModel();
                 if (event.getEntity().getActiveHand() == EnumHand.MAIN_HAND)
-                    biped.leftArmPose = ArmPose.BOW_AND_ARROW;
-                else
                     biped.rightArmPose = ArmPose.BOW_AND_ARROW;
+                else
+                    biped.leftArmPose = ArmPose.BOW_AND_ARROW;
             }
         }
     }

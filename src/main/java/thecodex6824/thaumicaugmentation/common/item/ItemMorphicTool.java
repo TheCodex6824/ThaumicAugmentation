@@ -48,14 +48,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import thecodex6824.thaumicaugmentation.api.TAItems;
+import net.minecraftforge.common.util.Constants.NBT;
+import thaumcraft.api.items.IWarpingGear;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderMorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
-import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
-public class ItemMorphicTool extends ItemTABase {
+public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
 
     public ItemMorphicTool() {
         super();
@@ -64,11 +65,38 @@ public class ItemMorphicTool extends ItemTABase {
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new SimpleCapabilityProvider<>(new MorphicTool(), CapabilityMorphicTool.MORPHIC_TOOL);
+        return new CapabilityProviderMorphicTool(new MorphicTool());
     }
     
     private IMorphicTool getTool(ItemStack stack) {
         return stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+    }
+    
+    @Override
+    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (stack.hasTagCompound())
+            tag.setTag("item", stack.getTagCompound());
+        
+        tag.setTag("cap", stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+        if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+            stack.setTagCompound(nbt.getCompoundTag("item"));
+        
+        stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).deserializeNBT(nbt.getCompoundTag("cap"));
+    }
+    
+    @Override
+    public int getWarp(ItemStack stack, EntityPlayer player) {
+        ItemStack func = getTool(stack).getFunctionalStack();
+        if (func.getItem() instanceof IWarpingGear)
+            return Math.max(((IWarpingGear) func.getItem()).getWarp(func, player) - 1, 0);
+        else
+            return 0;
     }
     
     @Override
@@ -303,10 +331,14 @@ public class ItemMorphicTool extends ItemTABase {
         return func.getItem().onEntitySwing(entityLiving, func);
     }
     
+    // setStackInSlot in EntityPlayer plays a sound client-side when setting stacks
     private static void setStackWithoutAnnoyingNoise(EntityLivingBase entity, EnumHand hand, ItemStack stack) {
         if (entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
-            player.inventory.mainInventory.set(player.inventory.currentItem, stack);
+            if (hand == EnumHand.MAIN_HAND)
+                player.inventory.mainInventory.set(player.inventory.currentItem, stack);
+            else if (hand == EnumHand.OFF_HAND)
+                player.inventory.offHandInventory.set(0, stack);
         }
         else
             entity.setHeldItem(hand, stack);
@@ -425,10 +457,7 @@ public class ItemMorphicTool extends ItemTABase {
     }
     
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH)
-            items.add(new ItemStack(this));
-    }
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {}
     
     @Override
     public void registerModels() {

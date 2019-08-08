@@ -60,6 +60,7 @@ import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
 import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
 import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
+import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
 import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
@@ -206,12 +207,14 @@ public class ClientProxy extends CommonProxy {
             }
         });
         
-        ModelLoaderRegistry.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/strength_provider"),
+        TAModelLoader loader = new TAModelLoader();
+        loader.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/strength_provider"),
                 () -> CasterAugmentBuilder.getAllStrengthProviders(), stack -> ItemCustomCasterStrengthProvider.getProviderID(stack)));
-        ModelLoaderRegistry.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/effect_provider"),
+        loader.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/effect_provider"),
                 () -> CasterAugmentBuilder.getAllEffectProviders(), stack -> ItemCustomCasterEffectProvider.getProviderID(stack)));
-        ModelLoaderRegistry.registerLoader(new CustomCasterAugmentModel.Loader());
-        ModelLoaderRegistry.registerLoader(new MorphicToolModel.Loader());
+        loader.registerLoader(new CustomCasterAugmentModel.Loader());
+        loader.registerLoader(new MorphicToolModel.Loader());
+        ModelLoaderRegistry.registerLoader(loader);
     }
 
     @Override

@@ -83,6 +83,7 @@ import thecodex6824.thaumicaugmentation.common.recipe.AuthorizedKeyCreationRecip
 import thecodex6824.thaumicaugmentation.common.recipe.CustomAugmentCreationRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.DyeableItemRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ElementChangeRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.MorphicToolUnbindingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumKeyCopyRecipe;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
@@ -187,6 +188,7 @@ public final class RegistryHandler {
                 'S', "stoneVoid", 'C', ItemsTC.crystalEssence
             }
         ).setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "EldritchStone")));
+        event.getRegistry().register(new MorphicToolUnbindingRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_tool_unbinding")));
     }
 
     @SubscribeEvent

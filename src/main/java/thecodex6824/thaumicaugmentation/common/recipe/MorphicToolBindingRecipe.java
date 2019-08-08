@@ -36,7 +36,7 @@ import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 public class MorphicToolBindingRecipe extends InfusionRecipe {
 
     public MorphicToolBindingRecipe() {
-        super("MORPHIC_TOOL", new ItemStack(TAItems.MORPHIC_TOOL), 5, new AspectList().add(Aspect.VOID, 50),
+        super("MORPHIC_TOOL", ItemStack.EMPTY, 5, new AspectList().add(Aspect.VOID, 15),
                 ItemStack.EMPTY, new Object[] {});
     }
     
