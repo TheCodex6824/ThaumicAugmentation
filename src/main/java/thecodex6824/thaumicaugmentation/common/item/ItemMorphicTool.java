@@ -58,6 +58,33 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
 
+    private static final IMorphicTool NULL_TOOL = new IMorphicTool() {
+        
+        @Override
+        public NBTTagCompound serializeNBT() {
+            return null;
+        }
+        
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {}
+        
+        @Override
+        public void setFunctionalStack(ItemStack stack) {}
+        
+        @Override
+        public void setDisplayStack(ItemStack stack) {}
+        
+        @Override
+        public ItemStack getFunctionalStack() {
+            return ItemStack.EMPTY;
+        }
+        
+        @Override
+        public ItemStack getDisplayStack() {
+            return ItemStack.EMPTY;
+        }
+    };
+    
     public ItemMorphicTool() {
         super();
         setMaxStackSize(1);
@@ -69,7 +96,8 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     }
     
     private IMorphicTool getTool(ItemStack stack) {
-        return stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        return stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null) ?
+                stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null) : NULL_TOOL;
     }
     
     @Override
@@ -354,8 +382,9 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
             // we can't actually pass a stack and instead just rely on the hand, so fake it for the forwarded call
             ItemStack old = playerIn.getHeldItem(handIn);
             setStackWithoutAnnoyingNoise(playerIn, handIn, func);
-            ActionResult<ItemStack> result = new ActionResult<>(func.getItem().onItemRightClick(worldIn, playerIn, handIn).getType(),
-                    old);
+            ActionResult<ItemStack> innerResult = func.getItem().onItemRightClick(worldIn, playerIn, handIn);
+            old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).setFunctionalStack(innerResult.getResult());
+            ActionResult<ItemStack> result = new ActionResult<>(innerResult.getType(), old);
             setStackWithoutAnnoyingNoise(playerIn, handIn, old);
             return result;
         }
@@ -372,6 +401,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
             ItemStack old = player.getHeldItem(hand);
             setStackWithoutAnnoyingNoise(player, hand, func);
             EnumActionResult result = func.getItem().onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+            old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).setFunctionalStack(player.getHeldItem(hand));
             setStackWithoutAnnoyingNoise(player, hand, old);
             return result;
         }
@@ -380,7 +410,8 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
         ItemStack func = getTool(stack).getFunctionalStack();
-        func.getItem().onItemUseFinish(func, worldIn, entityLiving);
+        ItemStack ret = func.getItem().onItemUseFinish(func, worldIn, entityLiving);
+        stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).setFunctionalStack(ret);
         return stack;
     }
     
@@ -395,6 +426,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
             ItemStack old = player.getHeldItem(hand);
             setStackWithoutAnnoyingNoise(player, hand, func);
             EnumActionResult result = func.getItem().onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
+            old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).setFunctionalStack(player.getHeldItem(hand));
             setStackWithoutAnnoyingNoise(player, hand, old);
             return result;
         }
@@ -426,8 +458,15 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     
     @Override
     public void setDamage(ItemStack stack, int damage) {
-        ItemStack func = getTool(stack).getFunctionalStack();
-        func.getItem().setDamage(func, damage);
+        // don't worry, this is painful to read for me too
+        // but vanilla decides to reset the metadata after the onItemUse call for creative mode players only (?)
+        // which will mess up the internal stack's meta if this check isn't here
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+        if (trace.length < 4 || (!trace[3].getClassName().equals("net.minecraft.server.management.PlayerInteractionManager") &&
+                !trace[3].getClassName().equals("net.minecraft.client.multiplayer.PlayerControllerMP"))) {
+            ItemStack func = getTool(stack).getFunctionalStack();
+            func.getItem().setDamage(func, damage);
+        }
     }
     
     @Override

@@ -28,6 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -42,7 +43,9 @@ public class MorphicEventHandler {
      * so I can't do anything to them without listeners. Additionally, this is not an exhaustive collection of 
      * every single event possible that can be fired, instead I put the few that I think would most commonly be used.
      * I don't think that most modded items would need events working to be at least functional - most of my 
-     * worry comes from vanilla items that have been overhauled/changed with extra functions.
+     * worry comes from vanilla items that have been overhauled/changed with extra functions. I also don't
+     * want to add too many events, because the poor GC is already getting worked hard enough by BlockPos and
+     * friends...
      */
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -193,7 +196,7 @@ public class MorphicEventHandler {
     }
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onPlayerInteractRightClickBlock(PlayerInteractEvent.RightClickItem event) {
+    public static void onPlayerInteractRightClickItem(PlayerInteractEvent.RightClickItem event) {
         if (event.getItemStack().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
             ItemStack old = event.getItemStack();
             if (!old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
@@ -203,6 +206,42 @@ public class MorphicEventHandler {
                 MinecraftForge.EVENT_BUS.post(newEvent);
                 setStackSilently(event.getEntityPlayer(), event.getHand(), old);
                 event.setCanceled(newEvent.isCanceled());
+            }
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        EnumHand hand = event.getPlayer().getActiveHand();
+        ItemStack stack = event.getPlayer().getHeldItem(hand);
+        if (stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
+            if (!stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
+                setStackSilently(event.getPlayer(), hand, stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
+                BlockEvent.BreakEvent newEvent = new BlockEvent.BreakEvent(event.getWorld(), event.getPos(),
+                        event.getState(), event.getPlayer());
+                MinecraftForge.EVENT_BUS.post(newEvent);
+                setStackSilently(event.getPlayer(), hand, stack);
+                event.setCanceled(newEvent.isCanceled());
+            }
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onBlockHarvest(BlockEvent.HarvestDropsEvent event) {
+        if (event.getHarvester() != null) {
+            EnumHand hand = event.getHarvester().getActiveHand();
+            ItemStack stack = event.getHarvester().getHeldItem(hand);
+            if (stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
+                if (!stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
+                    setStackSilently(event.getHarvester(), hand, stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
+                    BlockEvent.HarvestDropsEvent newEvent = new BlockEvent.HarvestDropsEvent(event.getWorld(), event.getPos(),
+                            event.getState(), event.getFortuneLevel(), event.getDropChance(), event.getDrops(),
+                            event.getHarvester(), event.isSilkTouching());
+                    MinecraftForge.EVENT_BUS.post(newEvent);
+                    setStackSilently(event.getHarvester(), hand, stack);
+                    event.setDropChance(newEvent.getDropChance());
+                    // can't cancel
+                }
             }
         }
     }

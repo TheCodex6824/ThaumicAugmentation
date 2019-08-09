@@ -60,6 +60,7 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
@@ -197,10 +198,19 @@ public final class ClientEventHandler {
         }
     }
     
+    private static boolean isHoldingCaster(EntityLivingBase entity) {
+        for (ItemStack stack : entity.getHeldEquipment()) {
+            if (stack.getItem() instanceof ICaster || stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null) &&
+                    stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().getItem() instanceof ICaster)
+                return true;
+        }
+        
+        return false;
+    }
+    
     @SubscribeEvent
     public static void onRenderLiving(RenderLivingEvent.Pre<EntityLivingBase> event) {
-        if (TAConfig.gauntletCastAnimation.getValue() && (event.getEntity().getHeldItemMainhand().getItem() instanceof ICaster ||
-                event.getEntity().getHeldItemOffhand().getItem() instanceof ICaster)) {
+        if (TAConfig.gauntletCastAnimation.getValue() && isHoldingCaster(event.getEntity())) {
             Boolean value = CAST_CACHE.getIfPresent(event.getEntity().getEntityId());
             if (value != null && event.getRenderer().getMainModel() instanceof ModelBiped) {
                 ModelBiped biped = (ModelBiped) event.getRenderer().getMainModel();

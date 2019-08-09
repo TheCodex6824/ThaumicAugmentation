@@ -24,11 +24,14 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.items.ItemsTC;
+import thaumcraft.common.lib.enchantment.EnumInfusionEnchantment;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
@@ -42,10 +45,12 @@ public class MorphicToolBindingRecipe extends InfusionRecipe {
     
     @Override
     public boolean matches(List<ItemStack> input, ItemStack central, World world, EntityPlayer player) {
-        if (input.size() != 2 || central.getItem() == TAItems.MORPHIC_TOOL || central.getItem() == ItemsTC.primordialPearl)
+        if (input.size() != 3 || central.getItem() == TAItems.MORPHIC_TOOL || central.getItem() == ItemsTC.primordialPearl ||
+                !ThaumcraftCapabilities.knowsResearch(player, research))
             return false;
 
         boolean morphicFound = false;
+        boolean quicksilverFound = false;
         for (ItemStack stack : input) {
             if (stack.getItem() == ItemsTC.primordialPearl) {
                 if (morphicFound)
@@ -53,18 +58,32 @@ public class MorphicToolBindingRecipe extends InfusionRecipe {
                 else
                     morphicFound = true;
             }
+            else if (stack.getItem() == ItemsTC.quicksilver) {
+                if (quicksilverFound)
+                    return false;
+                else
+                    quicksilverFound = true;
+            }
         }
 
-        return morphicFound;
+        return morphicFound && quicksilverFound;
     }
 
     @Override
     public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
         ItemStack toReturn = new ItemStack(TAItems.MORPHIC_TOOL);
+        if (input.hasTagCompound()) {
+            toReturn.setTagCompound(new NBTTagCompound());
+            if (input.getTagCompound().hasKey("ench"))
+                toReturn.getTagCompound().setTag("ench", input.getEnchantmentTagList().copy());
+            if (input.getTagCompound().hasKey("infench"))
+                toReturn.getTagCompound().setTag("infench", EnumInfusionEnchantment.getInfusionEnchantmentTagList(input).copy());
+        }
+        
         IMorphicTool tool = toReturn.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
         tool.setFunctionalStack(input);
         for (ItemStack stack : comps) {
-            if (stack.getItem() != ItemsTC.primordialPearl) {
+            if (stack.getItem() != ItemsTC.primordialPearl && stack.getItem() != ItemsTC.quicksilver) {
                 tool.setDisplayStack(stack);
                 return toReturn;
             }

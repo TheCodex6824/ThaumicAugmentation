@@ -137,7 +137,7 @@ public final class RecipeHandler {
             ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "MorphicToolBindingFake"),
                     new InfusionRecipe("MORPHIC_TOOL", morphicSample, 5, new AspectList().add(Aspect.VOID, 15),
                     Items.DIAMOND_SWORD, new Object[] {
-                            ItemsTC.primordialPearl, Items.GOLDEN_SWORD
+                            ItemsTC.primordialPearl, Items.GOLDEN_SWORD, ItemsTC.quicksilver
                     }
             ));
     }
