@@ -113,12 +113,14 @@ public final class TAWorldGenerator implements IWorldGenerator {
         long zSeed = random.nextLong() >> 2 + 1;
         random.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ world.getSeed());
         
-        BlockPos pos = new BlockPos(chunkX * 16, 0, chunkZ * 16);
-        Biome biome = world.getBiome(pos);
-        if (biome instanceof IFluxBiome) {
-            float flux = AuraHelper.getAuraBase(world, pos) * ((IFluxBiome) biome).getBaseFluxConcentration();
-            AuraHelper.drainVis(world, pos, flux, false);
-            AuraHelper.polluteAura(world, pos, flux, false);
+        if (world.provider.getDimension() == TADimensions.EMPTINESS.getId()) {
+            BlockPos pos = new BlockPos(chunkX * 16, 0, chunkZ * 16);
+            Biome biome = world.getBiome(pos);
+            if (biome instanceof IFluxBiome) {
+                float flux = AuraHelper.getAuraBase(world, pos) * ((IFluxBiome) biome).getBaseFluxConcentration();
+                AuraHelper.drainVis(world, pos, flux, false);
+                AuraHelper.polluteAura(world, pos, flux, false);
+            }
         }
         
         if (!TAConfig.disableEmptiness.getValue() && !ModConfig.CONFIG_MISC.wussMode) {

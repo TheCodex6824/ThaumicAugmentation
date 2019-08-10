@@ -197,12 +197,13 @@ public class WardEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
-        if (event.getWorld().isBlockLoaded(event.getPos())) {
+        if (event.getWorld().isBlockLoaded(event.getPos()) &&
+                event.getWorld().isChunkGeneratedAt(event.getPos().getX() >> 4, event.getPos().getZ() >> 4)) {
             BlockPos notifier = event.getPos();
             EnumSet<EnumFacing> sidesToRemove = EnumSet.noneOf(EnumFacing.class);
             for (EnumFacing facing : event.getNotifiedSides()) {
                 BlockPos pos = notifier.offset(facing);
-                if (!event.getWorld().isAirBlock(pos) && event.getWorld().isBlockLoaded(pos)) {
+                if (event.getWorld().isChunkGeneratedAt(pos.getX() >> 4, pos.getZ() >> 4) && !event.getWorld().isAirBlock(pos)) {
                     Chunk chunk = event.getWorld().getChunk(pos);
                     if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                         IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
@@ -215,7 +216,8 @@ public class WardEventHandler {
                     }
                 }
             }
-            doAllTheNotifications(event.getWorld(), notifier, EnumSet.complementOf(sidesToRemove));
+            if (!sidesToRemove.isEmpty())
+                doAllTheNotifications(event.getWorld(), notifier, EnumSet.complementOf(sidesToRemove));
             
             if (event.getWorld().isAirBlock(event.getPos()) || event.getWorld().getChunk(event.getPos()).getTileEntity(
                     event.getPos(), EnumCreateEntityType.CHECK) != null) {
