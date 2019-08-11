@@ -280,8 +280,8 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     
     @Override
     public boolean hasEffect(ItemStack stack) {
-        ItemStack display = getTool(stack).getDisplayStack();
-        return display.getItem().hasEffect(display);
+        ItemStack func = getTool(stack).getFunctionalStack();
+        return func.getItem().hasEffect(func);
     }
     
     @Override

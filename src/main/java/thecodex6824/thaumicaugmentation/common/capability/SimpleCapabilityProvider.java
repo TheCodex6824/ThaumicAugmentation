@@ -55,7 +55,8 @@ public class SimpleCapabilityProvider<C> implements ICapabilitySerializable<NBTT
     @Override
     @Nullable
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == cap)
+        // in case some mod decides to query caps before they were set up
+        if (cap != null && capability == cap)
             return cap.cast(instance);
         
         return null;

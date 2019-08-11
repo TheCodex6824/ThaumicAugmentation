@@ -228,7 +228,7 @@ public class MorphicEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onBlockHarvest(BlockEvent.HarvestDropsEvent event) {
-        if (event.getHarvester() != null) {
+        if (event.getHarvester() != null && event.getHarvester().getActiveHand() != null) {
             EnumHand hand = event.getHarvester().getActiveHand();
             ItemStack stack = event.getHarvester().getHeldItem(hand);
             if (stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
