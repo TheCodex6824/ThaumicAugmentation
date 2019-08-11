@@ -58,6 +58,7 @@ public final class BiomeTerrainBlocks {
 
     }
 
+    private static final TerrainBlocks NULL_ENTRY = new TerrainBlocks(Blocks.GRASS.getDefaultState(), Blocks.DIRT.getDefaultState());
     private static HashMap<String, TerrainBlocks> terrain = new HashMap<>();
     private static HashMap<Block, Function<IBlockState, IBlockState>> blockReplacements = new HashMap<>();
 
@@ -91,7 +92,7 @@ public final class BiomeTerrainBlocks {
     }
 
     public static TerrainBlocks getTerrainBlocksForBiome(Biome biome) {
-        return terrain.get(biome.getRegistryName().toString());
+        return terrain.getOrDefault(biome.getRegistryName().toString(), NULL_ENTRY);
     }
     
     private static void updateReplacements() {
