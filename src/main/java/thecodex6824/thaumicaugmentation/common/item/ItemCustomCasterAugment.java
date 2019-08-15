@@ -38,6 +38,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 import thecodex6824.thaumicaugmentation.common.capability.AugmentCasterCustom;
@@ -55,21 +56,48 @@ public class ItemCustomCasterAugment extends ItemTABase {
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
         AugmentCasterCustom augment = new AugmentCasterCustom();
-        // check for remapped augment
-        if (nbt == null || !nbt.hasKey("strength", NBT.TAG_COMPOUND) || !nbt.hasKey("effect", NBT.TAG_COMPOUND)) {
-            if (nbt == null || !nbt.hasKey("strength", NBT.TAG_COMPOUND)) {
-                augment.setStrengthProvider(CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(
-                        ThaumicAugmentationAPI.MODID, "strength_elemental")));
-                if (stack.hasTagCompound())
-                    augment.getStrengthProvider().getTagCompound().setString("aspect", stack.getTagCompound().getString("aspect"));
+        SimpleCapabilityProvider<IAugment> provider = new SimpleCapabilityProvider<>(augment, CapabilityAugment.AUGMENT);
+        if (nbt != null) {
+            NBTTagCompound data = nbt.getCompoundTag("Parent");
+            // check for remapped augment
+            if (data.isEmpty() || !data.hasKey("strength", NBT.TAG_COMPOUND) || !data.hasKey("effect", NBT.TAG_COMPOUND)) {
+                if (data.isEmpty() || !data.hasKey("strength", NBT.TAG_COMPOUND)) {
+                    augment.setStrengthProvider(CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(
+                            ThaumicAugmentationAPI.MODID, "strength_elemental")));
+                    if (stack.hasTagCompound())
+                        augment.getStrengthProvider().getTagCompound().setString("aspect", stack.getTagCompound().getString("aspect"));
+                }
+                
+                if (data.isEmpty() || !data.hasKey("effect", NBT.TAG_COMPOUND)) {
+                    augment.setEffectProvider(CasterAugmentBuilder.createStackForEffectProvider(new ResourceLocation(
+                            ThaumicAugmentationAPI.MODID, "effect_power")));
+                }
             }
-            
-            if (nbt == null || !nbt.hasKey("effect", NBT.TAG_COMPOUND)) {
-                augment.setEffectProvider(CasterAugmentBuilder.createStackForEffectProvider(new ResourceLocation(
-                        ThaumicAugmentationAPI.MODID, "effect_power")));
-            }
+            if (!data.isEmpty())
+                provider.deserializeNBT(nbt);
         }
-        return new SimpleCapabilityProvider<>(augment, CapabilityAugment.AUGMENT);
+        
+        return provider;
+    }
+    
+    @Override
+    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (stack.hasTagCompound())
+            tag.setTag("item", stack.getTagCompound());
+        
+        tag.setTag("cap", stack.getCapability(CapabilityAugment.AUGMENT, null).serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+        if (nbt != null) {
+            if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+                stack.deserializeNBT(nbt.getCompoundTag("item"));
+            
+            stack.getCapability(CapabilityAugment.AUGMENT, null).deserializeNBT(nbt.getCompoundTag("cap"));
+        }
     }
     
     @Override

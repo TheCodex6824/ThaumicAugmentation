@@ -41,14 +41,11 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.registries.IForgeRegistry;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectEventProxy;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.AspectRegistryEvent;
-import thaumcraft.api.blocks.BlocksTC;
-import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
@@ -71,6 +68,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProv
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemMorphicTool;
+import thecodex6824.thaumicaugmentation.common.item.ItemPrimalCutter;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
@@ -161,6 +159,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemCustomCasterEffectProvider(), "augment_builder_effect"));
         registry.register(setupItem(new ItemCustomCasterAugment(), "augment_custom"));
         registry.register(setupItem(new ItemMorphicTool(), "morphic_tool"));
+        registry.register(setupItem(new ItemPrimalCutter(), "primal_cutter"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }
@@ -181,13 +180,6 @@ public final class RegistryHandler {
         event.getRegistry().register(new AugmentRemovalRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "augment_removal")));
         event.getRegistry().register(new ElementChangeRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "element_swap")));
         event.getRegistry().register(new CustomAugmentCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "custom_augment")));
-        event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(""), new ItemStack(BlocksTC.stoneEldritchTile, 9), new Object[] {
-                "SSS",
-                "SCS",
-                "SSS",
-                'S', "stoneVoid", 'C', ItemsTC.crystalEssence
-            }
-        ).setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "EldritchStone")));
         event.getRegistry().register(new MorphicToolUnbindingRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_tool_unbinding")));
     }
 

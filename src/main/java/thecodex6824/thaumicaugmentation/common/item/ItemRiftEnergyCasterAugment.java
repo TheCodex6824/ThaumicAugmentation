@@ -33,6 +33,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -62,7 +63,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new CapabilityProviderAugmentRiftEnergyStorage(new Augment() {
+        CapabilityProviderAugmentRiftEnergyStorage storage = new CapabilityProviderAugmentRiftEnergyStorage(new Augment() {
             
             private boolean syncNeeded;
             
@@ -146,6 +147,10 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             }
             
         }, new RiftEnergyStorage(300, 10));
+        if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
+            storage.deserializeNBT(nbt.getCompoundTag("Parent"));
+        
+        return storage;
     }
     
     @Override

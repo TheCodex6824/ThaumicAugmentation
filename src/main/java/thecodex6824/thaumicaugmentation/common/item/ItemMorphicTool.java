@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
@@ -27,6 +28,7 @@ import com.google.common.collect.Multimap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -49,6 +51,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.items.IWarpingGear;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
@@ -92,7 +96,11 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new CapabilityProviderMorphicTool(new MorphicTool());
+        CapabilityProviderMorphicTool tool = new CapabilityProviderMorphicTool(new MorphicTool());
+        if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
+            tool.deserializeNBT(nbt.getCompoundTag("Parent"));
+        
+        return tool;
     }
     
     private IMorphicTool getTool(ItemStack stack) {
@@ -112,10 +120,12 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     
     @Override
     public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
-        if (nbt.hasKey("item", NBT.TAG_COMPOUND))
-            stack.setTagCompound(nbt.getCompoundTag("item"));
-        
-        stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).deserializeNBT(nbt.getCompoundTag("cap"));
+        if (nbt != null) {
+            if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+                stack.setTagCompound(nbt.getCompoundTag("item"));
+            
+            stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).deserializeNBT(nbt.getCompoundTag("cap"));
+        }
     }
     
     @Override
@@ -312,6 +322,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean isFull3D() {
         return true;
     }
@@ -386,6 +397,11 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
             old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).setFunctionalStack(innerResult.getResult());
             ActionResult<ItemStack> result = new ActionResult<>(innerResult.getType(), old);
             setStackWithoutAnnoyingNoise(playerIn, handIn, old);
+            if (result.getType() == EnumActionResult.SUCCESS) {
+                playerIn.resetActiveHand();
+                playerIn.setActiveHand(playerIn.getActiveHand());
+            }
+            
             return result;
         }
     }
@@ -493,6 +509,13 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     public boolean showDurabilityBar(ItemStack stack) {
         ItemStack func = getTool(stack).getFunctionalStack();
         return func.getItem().showDurabilityBar(func);
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        ItemStack func = getTool(stack).getFunctionalStack();
+        func.getItem().addInformation(func, worldIn, tooltip, flagIn);
     }
     
     @Override

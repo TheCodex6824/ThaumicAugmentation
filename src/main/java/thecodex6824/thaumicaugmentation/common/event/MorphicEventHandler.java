@@ -212,16 +212,18 @@ public class MorphicEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        EnumHand hand = event.getPlayer().getActiveHand();
-        ItemStack stack = event.getPlayer().getHeldItem(hand);
-        if (stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
-            if (!stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
-                setStackSilently(event.getPlayer(), hand, stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
-                BlockEvent.BreakEvent newEvent = new BlockEvent.BreakEvent(event.getWorld(), event.getPos(),
-                        event.getState(), event.getPlayer());
-                MinecraftForge.EVENT_BUS.post(newEvent);
-                setStackSilently(event.getPlayer(), hand, stack);
-                event.setCanceled(newEvent.isCanceled());
+        if (event.getPlayer() != null && event.getPlayer().getActiveHand() != null) {
+            EnumHand hand = event.getPlayer().getActiveHand();
+            ItemStack stack = event.getPlayer().getHeldItem(hand);
+            if (stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
+                if (!stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
+                    setStackSilently(event.getPlayer(), hand, stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
+                    BlockEvent.BreakEvent newEvent = new BlockEvent.BreakEvent(event.getWorld(), event.getPos(),
+                            event.getState(), event.getPlayer());
+                    MinecraftForge.EVENT_BUS.post(newEvent);
+                    setStackSilently(event.getPlayer(), hand, stack);
+                    event.setCanceled(newEvent.isCanceled());
+                }
             }
         }
     }

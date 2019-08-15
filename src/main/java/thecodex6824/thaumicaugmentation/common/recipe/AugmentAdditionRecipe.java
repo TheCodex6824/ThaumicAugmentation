@@ -59,7 +59,7 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
                     return false;
             }
         }
-
+        
         return !augmentable.isEmpty() && !augment.isEmpty() && augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getNextAvailableSlot() != -1 &&
                 augment.getCapability(CapabilityAugment.AUGMENT, null).canBeAppliedToItem(augmentable) &&
                 augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).isAugmentAcceptable(

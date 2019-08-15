@@ -101,7 +101,7 @@
                     "text": "thaumicaugmentation.research.void_stone_usage.0",
                     "required_item": [
                         "oredict:stoneVoid",
-                        "thaumcraft:crystal"
+                        "thaumcraft:phial;1;1;{Aspects:[{amount:10,key:'alienis'}]}"
                     ],
                     "required_knowledge": [
                         "OBSERVATION;ELDRITCH;1",

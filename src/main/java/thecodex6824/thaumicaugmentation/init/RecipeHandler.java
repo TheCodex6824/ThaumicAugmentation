@@ -45,6 +45,7 @@ import thaumcraft.api.golems.GolemHelper;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.blocks.basic.BlockPillar;
 import thaumcraft.common.lib.crafting.DustTriggerMultiblock;
+import thaumcraft.common.lib.enchantment.EnumInfusionEnchantment;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -140,6 +141,17 @@ public final class RecipeHandler {
                             ItemsTC.primordialPearl, Items.GOLDEN_SWORD, ItemsTC.quicksilver
                     }
             ));
+            
+            ItemStack cutter = new ItemStack(TAItems.PRIMAL_CUTTER);
+            EnumInfusionEnchantment.addInfusionEnchantment(cutter, EnumInfusionEnchantment.ARCING, 2);
+            EnumInfusionEnchantment.addInfusionEnchantment(cutter, EnumInfusionEnchantment.BURROWING, 1);
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "PrimalCutter"),
+                    new InfusionRecipe("PRIMAL_CUTTER", cutter, 6, new AspectList().add(Aspect.PLANT, 75).add(
+                    Aspect.TOOL, 50).add(Aspect.MAGIC, 50).add(Aspect.VOID, 50).add(Aspect.AVERSION, 75).add(
+                    Aspect.ELDRITCH, 50).add(Aspect.DESIRE, 50), ItemsTC.primordialPearl, new Object[] {
+                            ItemsTC.voidAxe, ItemsTC.voidSword, ItemsTC.elementalAxe, ItemsTC.elementalSword
+                    }
+            ));
     }
     
     public static void initCrucibleRecipes() {
@@ -170,6 +182,9 @@ public final class RecipeHandler {
         ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "SealSecureAdvanced"),
                 new CrucibleRecipe("SEAL_SECURE&&MINDBIOTHAUMIC", GolemHelper.getSealStack(ThaumicAugmentationAPI.MODID + ":attack_advanced"), GolemHelper.getSealStack(ThaumicAugmentationAPI.MODID + ":attack"),
                         new AspectList().add(Aspect.SENSES, 20).add(Aspect.MIND, 20)));
+        
+        ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "EldritchStone"),
+                new CrucibleRecipe("VOID_STONE_USAGE", new ItemStack(BlocksTC.stoneEldritchTile), "stoneVoid", new AspectList().add(Aspect.ELDRITCH, 8)));
     }
     
     public static void initArcaneCraftingRecipes() {

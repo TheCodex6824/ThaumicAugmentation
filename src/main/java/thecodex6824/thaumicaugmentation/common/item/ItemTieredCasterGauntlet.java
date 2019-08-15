@@ -82,6 +82,7 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.event.CastEvent;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.item.ITieredCaster;
@@ -125,8 +126,12 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new SimpleCapabilityProvider<>(new AugmentableItem(3), 
-                CapabilityAugmentableItem.AUGMENTABLE_ITEM);
+        SimpleCapabilityProvider<IAugmentableItem> provider =
+                new SimpleCapabilityProvider<>(new AugmentableItem(3), CapabilityAugmentableItem.AUGMENTABLE_ITEM);
+        if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
+            provider.deserializeNBT(nbt.getCompoundTag("Parent"));
+        
+        return provider;
     }
 
     @Override
@@ -508,6 +513,26 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         return super.onItemRightClick(world, player, hand);
     }
 
+    @Override
+    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (stack.hasTagCompound())
+            tag.setTag("item", stack.getTagCompound());
+        
+        tag.setTag("cap", stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+        if (nbt != null) {
+            if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+                stack.deserializeNBT(nbt.getCompoundTag("item"));
+            
+            stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).deserializeNBT(nbt.getCompoundTag("cap"));
+        }
+    }
+    
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
