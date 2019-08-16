@@ -28,6 +28,7 @@ import java.util.List;
 
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -527,7 +528,14 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
         if (nbt != null) {
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
-                stack.deserializeNBT(nbt.getCompoundTag("item"));
+                stack.setTagCompound(nbt.getCompoundTag("item"));
+            
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
+                stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
+            }
             
             stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).deserializeNBT(nbt.getCompoundTag("cap"));
         }
@@ -541,6 +549,10 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
                     ItemStack toAdd = new ItemStack(this, 1, i);
                     toAdd.setTagCompound(new NBTTagCompound());
                     setDyedColor(toAdd, getDefaultDyedColorForMeta(i));
+                    
+                    if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer())
+                        toAdd.getTagCompound().setTag("cap", toAdd.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT());
+                    
                     items.add(toAdd);
                 }
             }

@@ -75,7 +75,7 @@ public final class TAWorldGenerator implements IWorldGenerator {
 
     private static BlockPos getTopValidSpot(World world, int x, int z, boolean allowVoid) {
         BlockPos pos = new BlockPos(x, 0, z);
-        for (int y = Math.max(world.getActualHeight() - 1, 0); y >= 0; --y) {
+        for (int y = Math.min(Math.max(world.getActualHeight() - 1, 0), 255); y >= 0; --y) {
             BlockPos check = pos.add(0, y, 0);
             IBlockState state = world.getBlockState(check);
             if (state.getMaterial().blocksMovement() && !state.getBlock().isLeaves(state, world, check) &&

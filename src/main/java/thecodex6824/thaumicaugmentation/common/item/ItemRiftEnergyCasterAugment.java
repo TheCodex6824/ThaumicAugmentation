@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -34,6 +35,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -42,6 +44,7 @@ import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.energy.CapabilityRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.energy.RiftEnergyHelper;
@@ -154,6 +157,36 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
     }
     
     @Override
+    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (stack.hasTagCompound())
+            tag.setTag("item", stack.getTagCompound());
+        
+        tag.setTag("cap", new NBTTagCompound());
+        tag.getCompoundTag("cap").setTag("augment", stack.getCapability(CapabilityAugment.AUGMENT, null).serializeNBT());
+        tag.getCompoundTag("cap").setTag("energy", stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null).serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+        if (nbt != null) {
+            if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+                stack.setTagCompound(nbt.getCompoundTag("item"));
+            
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
+                stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
+            }
+            
+            stack.getCapability(CapabilityAugment.AUGMENT, null).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("augment"));
+            stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("energy"));
+        }
+    }
+    
+    @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
             ItemStack empty = new ItemStack(this);
@@ -163,6 +196,16 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             IRiftEnergyStorage energy = full.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
             while (energy.getEnergyStored() < energy.getMaxEnergyStored())
                 energy.receiveEnergy(energy.getMaxEnergyStored(), false);
+            
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+                if (!full.hasTagCompound())
+                    full.setTagCompound(new NBTTagCompound());
+                
+                full.getTagCompound().setTag("cap", new NBTTagCompound());
+                full.getTagCompound().getCompoundTag("cap").setTag("augment", full.getCapability(CapabilityAugment.AUGMENT, null).serializeNBT());
+                full.getTagCompound().getCompoundTag("cap").setTag("energy", energy.serializeNBT());
+            }
+            
             items.add(full);
         }
     }

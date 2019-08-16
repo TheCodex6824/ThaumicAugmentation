@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -34,6 +35,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -94,7 +96,14 @@ public class ItemCustomCasterAugment extends ItemTABase {
     public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
         if (nbt != null) {
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
-                stack.deserializeNBT(nbt.getCompoundTag("item"));
+                stack.setTagCompound(nbt.getCompoundTag("item"));
+            
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
+                stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
+            }
             
             stack.getCapability(CapabilityAugment.AUGMENT, null).deserializeNBT(nbt.getCompoundTag("cap"));
         }

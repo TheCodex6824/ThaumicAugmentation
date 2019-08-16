@@ -27,6 +27,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -51,6 +52,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.items.IWarpingGear;
@@ -123,6 +125,13 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
         if (nbt != null) {
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
+            
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
+                stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
+            }
             
             stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).deserializeNBT(nbt.getCompoundTag("cap"));
         }
