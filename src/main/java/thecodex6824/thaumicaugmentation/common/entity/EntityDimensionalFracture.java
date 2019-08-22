@@ -177,8 +177,10 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                             }
                             else {
                                 entity = entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(linkedTo));
-                                entity.timeUntilPortal = entity.getPortalCooldown();
-                                PortalStateManager.markEntityInPortal(entity);
+                                if (entity != null) {
+                                    entity.timeUntilPortal = entity.getPortalCooldown();
+                                    PortalStateManager.markEntityInPortal(entity);
+                                }
                             }
                         }
                     }
