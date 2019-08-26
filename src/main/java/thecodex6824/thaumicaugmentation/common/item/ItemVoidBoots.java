@@ -271,6 +271,8 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
             int current = 0;
             if (stack.hasTagCompound() && stack.getTagCompound().hasKey("energyRemaining", NBT.TAG_INT))
                 current = stack.getTagCompound().getInteger("energyRemaining");
+            else if (!stack.hasTagCompound())
+                stack.setTagCompound(new NBTTagCompound());
 
             if (current > 0)
                 --current;
