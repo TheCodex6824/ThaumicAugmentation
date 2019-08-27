@@ -494,7 +494,7 @@ public class TestWardStorage {
         HashMap<UUID, Integer> counts = new HashMap<>();
         for (int i = 1; i < players.length; ++i)
             counts.put(players[i], 0);
-        System.out.println((long) ((StorageManagerByte) storage.manager).counts[127]);
+        
         for (Map.Entry<BlockPos, UUID> entry : data.entrySet()) {
             if (!entry.getValue().equals(IWardStorageServer.NIL_UUID)) {
                 storage.setWard(entry.getKey(), entry.getValue());
@@ -504,7 +504,6 @@ public class TestWardStorage {
                 storage.clearWard(entry.getKey());
         }
         
-        System.out.println((long) ((StorageManagerByte) storage.manager).counts[127]);
         for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
             if (storage.isWardOwner(entry.getKey())) {
                 int internalID = ((StorageManagerByte) storage.manager).reverseMap.getByte(entry.getKey()) + 128;

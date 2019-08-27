@@ -55,7 +55,7 @@ public final class PlayerEventHandler {
     public static void onJoin(PlayerLoggedInEvent event) {
         TAConfigHolder.loadOrSyncConfig(event.player);
         if (!ThaumcraftCapabilities.knowsResearchStrict(event.player, "THAUMIC_AUGMENTATION_BASE@1") &&
-                (ThaumcraftCapabilities.knowsResearchStrict(event.player, "FIRSTSTEPS") || ThaumcraftCapabilities.knowsResearchStrict(event.player, "~FIRSTSTEPS"))) {
+                (ThaumcraftCapabilities.knowsResearch(event.player, "FIRSTSTEPS") || ThaumcraftCapabilities.knowsResearch(event.player, "~FIRSTSTEPS"))) {
     
             ThaumcraftCapabilities.getKnowledge(event.player).addResearch("THAUMIC_AUGMENTATION_BASE");
             ThaumcraftCapabilities.getKnowledge(event.player).setResearchFlag("THAUMIC_AUGMENTATION_BASE", EnumResearchFlag.RESEARCH);

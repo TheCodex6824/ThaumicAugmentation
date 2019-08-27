@@ -67,12 +67,12 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
     @Override
     public String getAccessTransformerClass() {
-        return "thecodex6824.thaumicaugmentation.core.TATransformer";
+        return null;
     }
     
     @Override
     public String[] getASMTransformerClass() {
-        return null;
+        return new String[] {"thecodex6824.thaumicaugmentation.core.TATransformer"};
     }
     
     @Override
