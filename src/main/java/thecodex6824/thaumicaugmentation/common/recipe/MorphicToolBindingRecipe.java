@@ -24,14 +24,12 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.items.ItemsTC;
-import thaumcraft.common.lib.enchantment.EnumInfusionEnchantment;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
@@ -72,13 +70,8 @@ public class MorphicToolBindingRecipe extends InfusionRecipe {
     @Override
     public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
         ItemStack toReturn = new ItemStack(TAItems.MORPHIC_TOOL);
-        if (input.hasTagCompound()) {
-            toReturn.setTagCompound(new NBTTagCompound());
-            if (input.getTagCompound().hasKey("ench"))
-                toReturn.getTagCompound().setTag("ench", input.getEnchantmentTagList().copy());
-            if (input.getTagCompound().hasKey("infench"))
-                toReturn.getTagCompound().setTag("infench", EnumInfusionEnchantment.getInfusionEnchantmentTagList(input).copy());
-        }
+        if (input.hasTagCompound())
+            toReturn.setTagCompound(input.getTagCompound().copy());
         
         IMorphicTool tool = toReturn.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
         tool.setFunctionalStack(input);
