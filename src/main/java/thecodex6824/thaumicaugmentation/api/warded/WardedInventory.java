@@ -58,6 +58,7 @@ public class WardedInventory implements IWardedInventory {
     }
     
     @Override
+    @SuppressWarnings("null")
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         return wrapped.insertItem(slot, stack, simulate);
     }

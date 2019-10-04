@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.capability;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -74,7 +76,7 @@ public class AugmentCasterCustom implements ICustomCasterAugment {
     }
     
     @Override
-    public void onDamaged(Entity user, Entity attacker) {
+    public void onDamaged(Entity user, @Nullable Entity attacker) {
         if (!strength.isEmpty() && strengthLoc != null)
             CasterAugmentBuilder.getStrengthProvider(strengthLoc).onDamaged(this, user, attacker);
         if (!effect.isEmpty() && effectLoc != null)
@@ -82,7 +84,7 @@ public class AugmentCasterCustom implements ICustomCasterAugment {
     }
     
     @Override
-    public void onHurt(Entity user, Entity attacker) {
+    public void onHurt(Entity user, @Nullable Entity attacker) {
         if (!strength.isEmpty() && strengthLoc != null)
             CasterAugmentBuilder.getStrengthProvider(strengthLoc).onHurt(this, user, attacker);
         if (!effect.isEmpty() && effectLoc != null)

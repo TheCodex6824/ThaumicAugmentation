@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.capability;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -48,13 +49,13 @@ public class SimpleCapabilityProvider<C> implements ICapabilitySerializable<NBTT
     }
     
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == cap;
     }
     
     @Override
     @Nullable
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         // in case some mod decides to query caps before they were set up
         if (cap != null && capability == cap)
             return cap.cast(instance);

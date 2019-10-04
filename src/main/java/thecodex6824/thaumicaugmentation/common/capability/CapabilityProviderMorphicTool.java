@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.capability;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -36,7 +39,7 @@ public class CapabilityProviderMorphicTool implements ICapabilitySerializable<NB
     }
     
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityMorphicTool.MORPHIC_TOOL)
             return true;
         else
@@ -44,7 +47,7 @@ public class CapabilityProviderMorphicTool implements ICapabilitySerializable<NB
     }
     
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityMorphicTool.MORPHIC_TOOL)
             return CapabilityMorphicTool.MORPHIC_TOOL.cast(morphic);
         else

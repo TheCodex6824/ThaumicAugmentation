@@ -90,6 +90,7 @@ public class MorphicEventHandler {
         }
     }
     
+    @SuppressWarnings("null")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onUseFinish(LivingEntityUseItemEvent.Finish event) {
         if (event.getItem().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
@@ -105,6 +106,7 @@ public class MorphicEventHandler {
         }
     }
     
+    @SuppressWarnings("null")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         boolean fromMorphic = event.getFrom().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null) &&

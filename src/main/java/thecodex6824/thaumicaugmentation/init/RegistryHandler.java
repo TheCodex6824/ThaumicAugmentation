@@ -55,6 +55,9 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneTyp
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
+import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
+import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.block.BlockImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
 import thecodex6824.thaumicaugmentation.common.block.BlockTaintFlower;
 import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
@@ -86,6 +89,9 @@ import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumKeyCopyRecipe;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
@@ -130,12 +136,18 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockArcaneTrapdoor(Material.IRON), "arcane_trapdoor_metal"));
         registry.register(setupBlock(new BlockArcaneTrapdoor(Material.WOOD), "arcane_trapdoor_silverwood"));
         registry.register(setupBlock(new BlockTaintFlower(), "taint_flower"));
+        registry.register(setupBlock(new BlockImpetusDrainer(), "impetus_drainer"));
+        registry.register(setupBlock(new BlockImpetusRelay(), "impetus_relay"));
+        registry.register(setupBlock(new BlockImpetusDiffuser(), "impetus_diffuser"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
         GameRegistry.registerTileEntity(TileArcaneDoor.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_door"));
         GameRegistry.registerTileEntity(TileCastedLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "temporary_light"));
         GameRegistry.registerTileEntity(TileArcaneTrapdoor.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_trapdoor"));
+        GameRegistry.registerTileEntity(TileImpetusDrainer.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_drainer"));
+        GameRegistry.registerTileEntity(TileImpetusRelay.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_relay"));
+        GameRegistry.registerTileEntity(TileImpetusDiffuser.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_diffuser"));
     }
 
     @SubscribeEvent

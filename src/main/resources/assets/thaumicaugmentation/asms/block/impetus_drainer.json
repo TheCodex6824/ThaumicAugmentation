@@ -1,0 +1,45 @@
+{
+    "parameters": {
+        "time": ["+/", "#delay", "#cycle_length"],
+        "end_anim": ["compose", ["+", "#cycle_length"], "#act_time"],
+        "trigger_end": ["-", "#end_anim"],
+        "anim_progress": ["-/", "#act_time", "#cycle_length"]
+    },
+    "clips": {
+        "enabled": [
+            "apply",
+            "thaumicaugmentation:block/impetus_drainer@enabled",
+            "#time"
+        ],
+        "starting": [
+            "trigger_positive",
+            ["apply", "thaumicaugmentation:block/impetus_drainer@starting", "#anim_progress"],
+            "#trigger_end",
+            "!transition:enabled"
+        ],
+        "stopping": [
+            "trigger_positive",
+            ["apply", "thaumicaugmentation:block/impetus_drainer@stopping", "#anim_progress"],
+            "#trigger_end",
+            "!transition:disabled"
+        ],
+        "disabled": [
+            "apply",
+            "thaumicaugmentation:block/impetus_drainer@disabled",
+            "#time"
+        ]
+    },
+    "states": [
+        "enabled",
+        "disabled",
+        "starting",
+        "stopping"
+    ],
+    "transitions": {
+        "enabled": ["stopping", "disabled", "starting"],
+        "disabled": ["starting", "enabled", "stopping"],
+        "starting": ["enabled", "stopping", "disabled"],
+        "stopping": ["disabled", "starting", "enabled"]
+    },
+    "start_state": "disabled"
+}

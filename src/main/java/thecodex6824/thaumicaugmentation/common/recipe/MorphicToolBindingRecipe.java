@@ -42,6 +42,7 @@ public class MorphicToolBindingRecipe extends InfusionRecipe {
     }
     
     @Override
+    @SuppressWarnings("null")
     public boolean matches(List<ItemStack> input, ItemStack central, World world, EntityPlayer player) {
         if (input.size() != 3 || central.getItem() == TAItems.MORPHIC_TOOL || central.getItem() == ItemsTC.primordialPearl ||
                 !ThaumcraftCapabilities.knowsResearch(player, research))

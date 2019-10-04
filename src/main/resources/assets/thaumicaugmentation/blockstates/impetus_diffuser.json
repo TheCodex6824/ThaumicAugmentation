@@ -1,0 +1,13 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "ta_enabled": {
+            "false": {"model": "thaumicaugmentation:impetus_diffuser"},
+            "true": {"model": "thaumicaugmentation:impetus_diffuser"}
+        },
+        "inventory": {
+            "model": "thaumicaugmentation:impetus_diffuser",
+            "transform": "forge:default-block"
+        }
+    }
+}

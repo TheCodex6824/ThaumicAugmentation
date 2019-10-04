@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,14 +31,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.IWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.WardedTile;
 
-public abstract class TileWarded extends TileEntity implements IInteractWithCaster, ICapabilityProvider {
+public abstract class TileWarded extends TileEntity implements IInteractWithCaster {
 
     protected IWardedTile ward;
 
@@ -63,12 +64,12 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
     }
     
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == CapabilityWardedTile.WARDED_TILE ? true : super.hasCapability(capability, facing);
     }
     
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityWardedTile.WARDED_TILE)
             return CapabilityWardedTile.WARDED_TILE.cast(ward);
         else

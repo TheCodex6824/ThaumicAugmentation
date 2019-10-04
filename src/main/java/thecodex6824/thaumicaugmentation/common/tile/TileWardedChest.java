@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.block.state.IBlockState;
@@ -35,7 +37,6 @@ import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
@@ -45,7 +46,7 @@ import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
 import thecodex6824.thaumicaugmentation.api.warded.WardedInventory;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
-public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapabilityProvider {
+public class TileWardedChest extends TileWarded implements IAnimatedTile {
 
     protected IWardedInventory inventory;
     protected IAnimationStateMachine asm;
@@ -107,7 +108,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityAnimation.ANIMATION_CAPABILITY || capability == CapabilityWardedInventory.WARDED_INVENTORY)
             return true;
         else
@@ -115,7 +116,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, ICapab
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
         else if (capability == CapabilityWardedInventory.WARDED_INVENTORY)

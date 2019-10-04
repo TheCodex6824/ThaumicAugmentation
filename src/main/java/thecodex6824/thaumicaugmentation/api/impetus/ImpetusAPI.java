@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.energy;
+package thecodex6824.thaumicaugmentation.api.impetus;
 
 import javax.annotation.Nullable;
 
@@ -34,13 +34,9 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-/**
- * Utility methods for dealing with rift energy.
- * @author TheCodex6824
- */
-public class RiftEnergyHelper {
+public final class ImpetusAPI {
 
-    private RiftEnergyHelper() {}
+    private ImpetusAPI() {}
     
     public static final String ENERGY_NONE = "thaumicaugmentation.text.energy_none";
     public static final String ENERGY_MINIMAL = "thaumicaugmentation.text.energy_minimal";
@@ -55,7 +51,7 @@ public class RiftEnergyHelper {
      * @param storage The object to get the descriptor of
      * @return An unlocalized String describing the ratio of stored energy to max energy
      */
-    public static String getEnergyAmountDescriptor(IRiftEnergyStorage storage) {
+    public static String getEnergyAmountDescriptor(IImpetusStorage storage) {
         if (storage.getEnergyStored() <= 0)
             return ENERGY_NONE;
         else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.1)
@@ -72,6 +68,32 @@ public class RiftEnergyHelper {
             return ENERGY_MAX;
     }
     
+    public static void createImpetusParticles(World world, Vec3d origin, Vec3d dest) {
+        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
+                origin.x, origin.y, origin.z, dest.x, dest.y, dest.z, 0.04F), 
+                new TargetPoint(world.provider.getDimension(), dest.x, dest.y, dest.z, 64.0F));
+    }
+    
+    public static boolean drainEnergyIntoStorage(World world, IImpetusStorage src, IImpetusStorage dest) {
+        return drainEnergyIntoStorage(world, src, dest, null, null);
+    }
+    
+    public static boolean drainEnergyIntoStorage(World world, IImpetusStorage src, IImpetusStorage dest, @Nullable Vec3d effectOrigin, @Nullable Vec3d effectDest) {
+        long maxToExtract = dest.getMaxEnergyStored() - dest.getEnergyStored();
+        long extracted = src.extractEnergy(maxToExtract, false);
+        if (extracted > 0) {
+            dest.receiveEnergy(extracted, false);
+            if (effectOrigin != null && effectDest != null) {
+                TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
+                        effectOrigin.x, effectOrigin.y, effectOrigin.z, effectDest.x, effectDest.y, effectDest.z, 0.04F), 
+                        new TargetPoint(world.provider.getDimension(), effectDest.x, effectDest.y, effectDest.z, 64.0F));
+            }
+            return true;
+        }
+        
+        return false;
+    }
+    
     /**
      * Searches for IRiftEnergyStorage instances in the world, and drains energy from them into the passed storage.
      * @param world The world to look in
@@ -79,7 +101,7 @@ public class RiftEnergyHelper {
      * @param range The bounding box to check for energy storage in
      * @return If any energy was received at all
      */
-    public static boolean drainNearbyEnergyIntoStorage(World world, IRiftEnergyStorage dest, AxisAlignedBB range) {
+    public static boolean drainNearbyEnergyIntoStorage(World world, IImpetusStorage dest, AxisAlignedBB range) {
         return drainNearbyEnergyIntoStorage(world, dest, range, null);
     }
     
@@ -92,7 +114,7 @@ public class RiftEnergyHelper {
      * @param effectDest The position that the energy particles should go to, or null to not send particles
      * @return If any energy was received at all
      */
-    public static boolean drainNearbyEnergyIntoStorage(World world, IRiftEnergyStorage dest, AxisAlignedBB range, @Nullable Vec3d effectDest) {
+    public static boolean drainNearbyEnergyIntoStorage(World world, IImpetusStorage dest, AxisAlignedBB range, @Nullable Vec3d effectDest) {
         boolean receivedEnergy = false;
         MutableBlockPos pos = new MutableBlockPos(0, 0, 0);
         for (int x = (int) Math.floor(range.minX); x < Math.ceil(range.maxX); ++x) {
@@ -101,9 +123,9 @@ public class RiftEnergyHelper {
                 for (int y = (int) Math.floor(range.minY); y < Math.ceil(range.maxY); ++y) {  
                     if (world.isBlockLoaded(pos) && world.getChunk(pos).getTileEntity(pos, EnumCreateEntityType.CHECK) != null) {
                         TileEntity tile = world.getTileEntity(pos);
-                        if (tile.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
+                        if (tile.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
                             long maxToExtract = dest.getMaxEnergyStored() - dest.getEnergyStored();
-                            long extracted = tile.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null).extractEnergy(maxToExtract, false);
+                            long extracted = tile.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null).extractEnergy(maxToExtract, false);
                             if (extracted > 0) {
                                 dest.receiveEnergy(extracted, false);
                                 if (effectDest != null) {
@@ -123,9 +145,9 @@ public class RiftEnergyHelper {
         }
         
         for (Entity entity : world.getEntitiesWithinAABB(Entity.class, range)) {
-            if (entity.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
+            if (entity.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
                 long maxToExtract = dest.getMaxEnergyStored() - dest.getEnergyStored();
-                long extracted = entity.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null).extractEnergy(maxToExtract, false);
+                long extracted = entity.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null).extractEnergy(maxToExtract, false);
                 if (extracted > 0) {
                     dest.receiveEnergy(extracted, false);
                     if (effectDest != null) {

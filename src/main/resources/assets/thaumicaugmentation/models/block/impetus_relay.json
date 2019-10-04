@@ -1,0 +1,114 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "thaumcraft:models/vcrystal",
+		"1": "thaumcraft:blocks/base_metal",
+		"3": "thaumicaugmentation:blocks/impetus_relay",
+		"particle": "thaumicaugmentation:blocks/impetus_relay"
+	},
+	"elements": [
+		{
+			"from": [6, 0, 6],
+			"to": [10, 1, 10],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.5, 0.5, 7.5]},
+			"faces": {
+				"north": {"uv": [4, 14, 12, 16], "texture": "#1"},
+				"east": {"uv": [4, 14, 12, 16], "texture": "#1"},
+				"south": {"uv": [4, 14, 12, 16], "texture": "#1"},
+				"west": {"uv": [4, 14, 12, 16], "texture": "#1"},
+				"up": {"uv": [4, 4, 12, 12], "texture": "#1"},
+				"down": {"uv": [4, 4, 12, 12], "texture": "#1"}
+			}
+		},
+		{
+			"from": [6.5, 1, 6.5],
+			"to": [9.5, 3.5, 9.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.5, 1.5, 7.5]},
+			"faces": {
+				"north": {"uv": [4, 9.5, 7, 12], "texture": "#3"},
+				"east": {"uv": [11.5, 9.5, 14.5, 12], "texture": "#3"},
+				"south": {"uv": [9, 9.5, 12, 12], "texture": "#3"},
+				"west": {"uv": [6.5, 9.5, 9.5, 12], "texture": "#3"},
+				"up": {"uv": [11, 1, 14, 4], "texture": "#3"}
+			}
+		},
+		{
+			"from": [5.5, 2, 5.5],
+			"to": [10.5, 3, 10.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.5, 2.5, 7.5]},
+			"faces": {
+				"north": {"uv": [0, 7, 5, 8], "texture": "#3"},
+				"east": {"uv": [0, 6, 5, 7], "texture": "#3"},
+				"south": {"uv": [0, 5, 5, 6], "texture": "#3"},
+				"west": {"uv": [0, 8, 5, 9], "texture": "#3"},
+				"up": {"uv": [0, 0, 5, 5], "texture": "#3"},
+				"down": {"uv": [0, 0, 5, 5], "texture": "#3"}
+			}
+		},
+		{
+			"from": [10, 2.5, 5],
+			"to": [11, 6, 6],
+			"rotation": {"angle": 0, "axis": "y", "origin": [10.5, 2.5, 5.5]},
+			"faces": {
+				"north": {"uv": [6.5, 0, 7.5, 3.5], "texture": "#3"},
+				"east": {"uv": [5.5, 0, 6.5, 3.5], "texture": "#3"},
+				"south": {"uv": [8.5, 0, 9.5, 3.5], "texture": "#3"},
+				"west": {"uv": [7.5, 0, 8.5, 3.5], "texture": "#3"},
+				"up": {"uv": [5.5, 3.5, 6.5, 4.5], "texture": "#3"},
+				"down": {"uv": [6.5, 3.5, 7.5, 4.5], "texture": "#3"}
+			}
+		},
+		{
+			"from": [10, 2.5, 10],
+			"to": [11, 6, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [10.5, 2.5, 10.5]},
+			"faces": {
+				"north": {"uv": [7.5, 0, 8.5, 3.5], "texture": "#3"},
+				"east": {"uv": [8.5, 0, 9.5, 3.5], "texture": "#3"},
+				"south": {"uv": [5.5, 0, 6.5, 3.5], "texture": "#3"},
+				"west": {"uv": [6.5, 0, 7.5, 3.5], "texture": "#3"},
+				"up": {"uv": [7.5, 3.5, 8.5, 4.5], "texture": "#3"},
+				"down": {"uv": [8.5, 3.5, 9.5, 4.5], "texture": "#3"}
+			}
+		},
+		{
+			"from": [5, 2.5, 10],
+			"to": [6, 6, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [5.5, 2.5, 10.5]},
+			"faces": {
+				"north": {"uv": [7.5, 5.5, 8.5, 9], "texture": "#3"},
+				"east": {"uv": [6.5, 5.5, 7.5, 9], "texture": "#3"},
+				"south": {"uv": [5.5, 5.5, 6.5, 9], "texture": "#3"},
+				"west": {"uv": [8.5, 5.5, 9.5, 9], "texture": "#3"},
+				"up": {"uv": [5.5, 4.5, 6.5, 5.5], "texture": "#3"},
+				"down": {"uv": [6.5, 4.5, 7.5, 5.5], "texture": "#3"}
+			}
+		},
+		{
+			"from": [5, 2.5, 5],
+			"to": [6, 6, 6],
+			"rotation": {"angle": 0, "axis": "y", "origin": [5.5, 2.5, 5.5]},
+			"faces": {
+				"north": {"uv": [5.5, 5.5, 6.5, 9], "texture": "#3"},
+				"east": {"uv": [8.5, 5.5, 9.5, 9], "texture": "#3"},
+				"south": {"uv": [6.5, 5.5, 7.5, 9], "texture": "#3"},
+				"west": {"uv": [7.5, 5.5, 8.5, 9], "texture": "#3"},
+				"up": {"uv": [7.5, 5, 8.5, 6], "texture": "#3"},
+				"down": {"uv": [8.5, 5, 9.5, 6], "texture": "#3"}
+			}
+		},
+		{
+			"from": [6.5, 5.5, 6.5],
+			"to": [9.5, 8.5, 9.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [14, 12, 14]},
+			"faces": {
+				"north": {"uv": [5, 5, 11, 11], "texture": "#0"},
+				"east": {"uv": [5, 5, 11, 11], "texture": "#0"},
+				"south": {"uv": [5, 5, 11, 11], "texture": "#0"},
+				"west": {"uv": [5, 5, 11, 11], "texture": "#0"},
+				"up": {"uv": [5, 5, 11, 11], "texture": "#0"},
+				"down": {"uv": [5, 5, 11, 11], "texture": "#0"}
+			}
+		}
+	]
+}

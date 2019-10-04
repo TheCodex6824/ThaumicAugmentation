@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -56,7 +58,7 @@ public class ItemCustomCasterAugment extends ItemTABase {
     }
     
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         AugmentCasterCustom augment = new AugmentCasterCustom();
         SimpleCapabilityProvider<IAugment> provider = new SimpleCapabilityProvider<>(augment, CapabilityAugment.AUGMENT);
         if (nbt != null) {
@@ -93,7 +95,7 @@ public class ItemCustomCasterAugment extends ItemTABase {
     }
     
     @Override
-    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+    public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
@@ -114,7 +116,7 @@ public class ItemCustomCasterAugment extends ItemTABase {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flagIn) {
         if (stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomCasterAugment) {
             ICustomCasterAugment aug = (ICustomCasterAugment) stack.getCapability(CapabilityAugment.AUGMENT, null);
             tooltip.add( new TextComponentTranslation(aug.getStrengthProvider().getTranslationKey()).getFormattedText());

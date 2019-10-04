@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -145,8 +146,8 @@ public class ProviderModel implements IModel {
         protected ItemOverrideList handler = new ItemOverrideList(ImmutableList.of()) {
             
             @Override
-            public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world,
-                    EntityLivingBase entity) {
+            public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world,
+                    @Nullable EntityLivingBase entity) {
                 
                 return baked.getOrDefault(lookup.apply(stack).toString(),
                         wrappedFallback);
@@ -164,7 +165,7 @@ public class ProviderModel implements IModel {
         }
         
         @Override
-        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
             return Collections.emptyList();
         }
         

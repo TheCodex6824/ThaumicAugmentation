@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.item.foci;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -80,7 +82,7 @@ public class FocusEffectLight extends FocusEffect {
     }
 
     @Override
-    public boolean execute(RayTraceResult result, Trajectory trajectory, float finalPower, int something) {
+    public boolean execute(RayTraceResult result, @Nullable Trajectory trajectory, float finalPower, int something) {
         if (result.typeOfHit == Type.BLOCK) {
             IBlockState state = getPackage().world.getBlockState(result.getBlockPos());
             if (state.getBlock().isAir(state, getPackage().world, result.getBlockPos()) || 

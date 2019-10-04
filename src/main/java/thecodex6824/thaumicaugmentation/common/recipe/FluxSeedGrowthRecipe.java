@@ -48,6 +48,7 @@ public class FluxSeedGrowthRecipe extends InfusionRecipe {
     }
 
     @Override
+    @SuppressWarnings("null")
     public boolean matches(List<ItemStack> input, ItemStack central, World world, EntityPlayer player) {
         if (input.size() > 9 || input.isEmpty() || !ThaumcraftCapabilities.knowsResearch(player, research))
             return false;

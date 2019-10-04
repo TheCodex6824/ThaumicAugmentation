@@ -26,6 +26,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -119,14 +121,14 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         setMaxStackSize(1);
         addPropertyOverride(new ResourceLocation("focus"), new IItemPropertyGetter() {
             @Override
-            public float apply(ItemStack stack, World world, EntityLivingBase entity) {
+            public float apply(ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
                 return isStoringFocus(stack) ? 1.0F : 0.0F;
             }
         });
     }
     
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         SimpleCapabilityProvider<IAugmentableItem> provider =
                 new SimpleCapabilityProvider<>(new AugmentableItem(3), CapabilityAugmentableItem.AUGMENTABLE_ITEM);
         if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
@@ -525,7 +527,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     }
     
     @Override
-    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+    public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
@@ -569,7 +571,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         if (isStoringFocus(stack)) {
             ItemStack focus = getFocusStack(stack);
             float visCost = ((ItemFocus) focus.getItem()).getVisCost(focus);

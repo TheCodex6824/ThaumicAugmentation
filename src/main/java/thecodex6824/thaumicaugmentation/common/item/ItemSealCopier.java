@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,7 +57,7 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
         setMaxStackSize(1);
         addPropertyOverride(new ResourceLocation("holding"), new IItemPropertyGetter() {
             @Override
-            public float apply(ItemStack stack, World world, EntityLivingBase entity) {
+            public float apply(ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
                 if (stack.hasTagCompound() && stack.getTagCompound().hasKey("seal", NBT.TAG_COMPOUND))
                     return 1;
                 else
@@ -117,7 +119,7 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flagIn) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey("sealType", NBT.TAG_STRING)) {
             tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_seal", 
                     new TextComponentTranslation(ItemsTC.seals.getTranslationKey(GolemHelper.getSealStack(

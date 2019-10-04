@@ -23,6 +23,8 @@ package thecodex6824.thaumicaugmentation.common.world.biome;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -91,12 +93,12 @@ public class BiomeProviderEmptiness extends BiomeProvider {
     }
     
     @Override
-    public Biome[] getBiomes(Biome[] oldBiomeList, int x, int z, int width, int depth) {
+    public Biome[] getBiomes(@Nullable Biome[] oldBiomeList, int x, int z, int width, int depth) {
         return getBiomes(oldBiomeList, x, z, width, depth, true);
     }
     
     @Override
-    public Biome[] getBiomes(Biome[] biomes, int x, int z, int width, int height, boolean cacheFlag) {
+    public Biome[] getBiomes(@Nullable Biome[] biomes, int x, int z, int width, int height, boolean cacheFlag) {
         IntCache.resetIntCache();
         
         if (biomes == null || biomes.length < width * height)

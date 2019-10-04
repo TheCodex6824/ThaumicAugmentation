@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -55,7 +57,7 @@ public class ItemRiftSeed extends ItemTABase {
         setHasSubtypes(true);
         addPropertyOverride(new ResourceLocation("size"), new IItemPropertyGetter() {
             @Override
-            public float apply(ItemStack stack, World world, EntityLivingBase entity) {
+            public float apply(ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
                 if (stack.hasTagCompound()) {
                     if (stack.getMetadata() == 0)
                         return stack.getTagCompound().getInteger("riftSize") / 100.0F;
@@ -140,7 +142,7 @@ public class ItemRiftSeed extends ItemTABase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         if (stack.hasTagCompound()) {
             if (stack.getMetadata() == 0) {
                 tooltip.add(new TextComponentTranslation(

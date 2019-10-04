@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
@@ -129,8 +130,8 @@ public class MorphicToolModel implements IModel {
         protected ItemOverrideList handler = new ItemOverrideList(ImmutableList.of()) {
             
             @Override
-            public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world,
-                    EntityLivingBase entity) {
+            public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world,
+                    @Nullable EntityLivingBase entity) {
                 
                 IMorphicTool tool = stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
                 if (tool.getDisplayStack().isEmpty())
@@ -146,7 +147,7 @@ public class MorphicToolModel implements IModel {
         }
         
         @Override
-        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
             return Collections.emptyList();
         }
         

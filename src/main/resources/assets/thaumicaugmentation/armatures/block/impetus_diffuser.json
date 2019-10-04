@@ -1,0 +1,241 @@
+{
+    "joints": {
+        "spinY": {
+            "0": [1.0],
+            "1": [1.0],
+            "2": [1.0],
+            "3": [1.0],
+            "4": [1.0],
+            "5": [1.0],
+            "6": [1.0],
+            "7": [1.0],
+            "8": [1.0],
+            "9": [1.0],
+            "10": [1.0],
+            "11": [1.0],
+            "12": [1.0]
+        },
+        "spinX": {
+            "5": [1.0],
+            "6": [1.0],
+            "7": [1.0],
+            "8": [1.0],
+            "9": [1.0],
+            "10": [1.0],
+            "11": [1.0],
+            "12": [1.0]
+        }
+    },
+    "clips": {
+        "enabled": {
+            "loop": true,
+            "joint_clips": {
+                "spinX": [
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "origin_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.75]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            90
+                        ]
+                    }
+                ],
+                "spinY": [
+                    {
+                        "variable": "axis_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            90
+                        ]
+                    }
+                ]
+            },
+            "events": {}
+        },
+        "starting": {
+            "loop": true,
+            "joint_clips": {
+                "spinX1": [
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "origin_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.25]
+                    },
+                    {
+                        "variable": "origin_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.75]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            0, 5, 10, 15, 20, 25, 35, 45, 55, 65, 70, 85, 100, 
+                            120, 140, 160, 180, 210, 240, 270, 300, 330, 360
+                        ]
+                    }
+                ],
+                "spinX2": [
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "origin_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.75]
+                    },
+                    {
+                        "variable": "origin_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.75]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            0, 5, 10, 15, 20, 25, 35, 45, 55, 65, 70, 85, 100, 
+                            120, 140, 160, 180, 210, 240, 270, 300, 330, 360
+                        ]
+                    }
+                ],
+                "spinY": [
+                    {
+                        "variable": "axis_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            0, 5, 10, 15, 20, 25, 35, 45, 55, 65, 70, 85, 100, 
+                            120, 140, 160, 180, 210, 240, 270, 300, 330, 360
+                        ]
+                    }
+                ]
+            },
+            "events": {}
+        },
+        "stopping": {
+            "loop": true,
+            "joint_clips": {
+                "spinX1": [
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "origin_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.25]
+                    },
+                    {
+                        "variable": "origin_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.75]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                           360, 330, 300, 270, 240, 210, 180, 160, 140, 120, 100, 85, 70, 65, 
+                            55, 45, 35, 25, 20, 15, 10, 5, 0
+                        ]
+                    }
+                ],
+                "spinX2": [
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "origin_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.75]
+                    },
+                    {
+                        "variable": "origin_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.75]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                           360, 330, 300, 270, 240, 210, 180, 160, 140, 120, 100, 85, 70, 65, 
+                            55, 45, 35, 25, 20, 15, 10, 5, 0
+                        ]
+                    }
+                ],
+                "spinY": [
+                    {
+                        "variable": "axis_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            360, 330, 300, 270, 240, 210, 180, 160, 140, 120, 100, 85, 70, 65, 
+                            55, 45, 35, 25, 20, 15, 10, 5, 0
+                        ]
+                    }
+                ]
+            },
+            "events": {}
+        },
+        "disabled": {
+            "joint_clips": {},
+            "events": {}
+        }
+    }
+}

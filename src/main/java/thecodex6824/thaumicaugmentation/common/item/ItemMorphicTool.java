@@ -23,6 +23,8 @@ package thecodex6824.thaumicaugmentation.common.item;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
@@ -97,7 +99,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     }
     
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         CapabilityProviderMorphicTool tool = new CapabilityProviderMorphicTool(new MorphicTool());
         if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
             tool.deserializeNBT(nbt.getCompoundTag("Parent"));
@@ -121,7 +123,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     }
     
     @Override
-    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+    public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
@@ -220,7 +222,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     }
     
     @Override
-    public int getHarvestLevel(ItemStack stack, String toolClass, EntityPlayer player, IBlockState blockState) {
+    public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
         ItemStack func = getTool(stack).getFunctionalStack();
         return func.getItem().getHarvestLevel(func, toolClass, player, blockState);
     }
@@ -342,7 +344,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     }
     
     @Override
-    public boolean isShield(ItemStack stack, EntityLivingBase entity) {
+    public boolean isShield(ItemStack stack, @Nullable EntityLivingBase entity) {
         ItemStack func = getTool(stack).getFunctionalStack();
         return func.getItem().isShield(func, entity);
     }
@@ -522,7 +524,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         ItemStack func = getTool(stack).getFunctionalStack();
         func.getItem().addInformation(func, worldIn, tooltip, flagIn);
     }

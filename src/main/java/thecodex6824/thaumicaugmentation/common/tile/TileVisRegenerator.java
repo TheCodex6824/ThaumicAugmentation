@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.tile;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.block.state.IBlockState;
@@ -37,7 +39,6 @@ import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
@@ -50,7 +51,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.Part
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
-public class TileVisRegenerator extends TileEntity implements ITickable, IAnimatedTile, ICapabilityProvider {
+public class TileVisRegenerator extends TileEntity implements ITickable, IAnimatedTile {
 
     private static final int DELAY = 100;
 
@@ -119,12 +120,12 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == CapabilityAnimation.ANIMATION_CAPABILITY || super.hasCapability(capability, facing);
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         return capability == CapabilityAnimation.ANIMATION_CAPABILITY ? CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm) : 
             super.getCapability(capability, facing);
     }

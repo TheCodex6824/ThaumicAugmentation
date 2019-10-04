@@ -1,0 +1,12 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "normal": {
+            "model": "thaumicaugmentation:impetus_relay"
+        },
+        "inventory": {
+            "model": "thaumicaugmentation:impetus_relay",
+            "transform": "forge:default-block"
+        }
+    }
+}

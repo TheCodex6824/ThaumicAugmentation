@@ -1,0 +1,13 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "ta_enabled": {
+            "false": {"model": "thaumicaugmentation:impetus_drainer"},
+            "true": {"model": "thaumicaugmentation:impetus_drainer"}
+        },
+        "inventory": {
+            "model": "thaumicaugmentation:impetus_drainer",
+            "transform": "forge:default-block"
+        }
+    }
+}

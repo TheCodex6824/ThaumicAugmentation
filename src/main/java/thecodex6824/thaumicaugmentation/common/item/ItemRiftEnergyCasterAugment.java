@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -45,11 +47,11 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
-import thecodex6824.thaumicaugmentation.api.energy.CapabilityRiftEnergyStorage;
-import thecodex6824.thaumicaugmentation.api.energy.IRiftEnergyStorage;
-import thecodex6824.thaumicaugmentation.api.energy.RiftEnergyHelper;
-import thecodex6824.thaumicaugmentation.api.energy.RiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
+import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
+import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderAugmentRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
@@ -65,7 +67,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
     }
     
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         CapabilityProviderAugmentRiftEnergyStorage storage = new CapabilityProviderAugmentRiftEnergyStorage(new Augment() {
             
             private boolean syncNeeded;
@@ -82,8 +84,8 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             
             @Override
             public void onCastPre(ItemStack caster, FocusWrapper focusPackage, Entity user) {
-                if (stack.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
-                    IRiftEnergyStorage energy = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+                if (stack.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
+                    IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                     // not actually removing energy is intentional
                     if (energy.extractEnergy(10, true) == 10)
                         focusPackage.setFocusPower(focusPackage.getFocusPower() * 1.1F);
@@ -93,9 +95,9 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             @Override
             public void onTick(Entity user) {
                 if (!user.getEntityWorld().isRemote && user.getEntityWorld().getTotalWorldTime() % 20 == 0) {
-                    IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+                    IImpetusStorage stackStorage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                     if (stackStorage.canReceive() && stackStorage.getEnergyStored() < stackStorage.getMaxEnergyStored()) {
-                        syncNeeded = RiftEnergyHelper.drainNearbyEnergyIntoStorage(user.getEntityWorld(), stackStorage, 
+                        syncNeeded = ImpetusAPI.drainNearbyEnergyIntoStorage(user.getEntityWorld(), stackStorage, 
                                 user.getEntityBoundingBox().grow(user.width * 2, user.height, user.width * 2), 
                                 user.getPositionVector().add(0, user.height / 2, 0));
                         if (stackStorage.getEnergyStored() == stackStorage.getMaxEnergyStored()) {
@@ -111,7 +113,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                 if (!user.getEntityWorld().isRemote && target instanceof IDimensionalFracture) {
                     IDimensionalFracture fracture = (IDimensionalFracture) target;
                     if (!fracture.isOpening() && !fracture.isOpen()) {
-                        IRiftEnergyStorage stackStorage = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+                        IImpetusStorage stackStorage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                         if (stackStorage.canExtract() && stackStorage.extractEnergy(75, true) == 75) {
                             stackStorage.extractEnergy(75, false);
                             fracture.open();
@@ -142,14 +144,14 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             
             @Override
             public void appendAdditionalAugmentTooltip(List<String> tooltip) {
-                if (stack.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
-                    IRiftEnergyStorage energy = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+                if (stack.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
+                    IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                     tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy", new TextComponentTranslation(
-                            RiftEnergyHelper.getEnergyAmountDescriptor(energy))).getFormattedText());
+                            ImpetusAPI.getEnergyAmountDescriptor(energy))).getFormattedText());
                 }
             }
             
-        }, new RiftEnergyStorage(300, 10));
+        }, new ImpetusStorage(300, 10));
         if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
             storage.deserializeNBT(nbt.getCompoundTag("Parent"));
         
@@ -164,12 +166,12 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
         
         tag.setTag("cap", new NBTTagCompound());
         tag.getCompoundTag("cap").setTag("augment", stack.getCapability(CapabilityAugment.AUGMENT, null).serializeNBT());
-        tag.getCompoundTag("cap").setTag("energy", stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null).serializeNBT());
+        tag.getCompoundTag("cap").setTag("energy", stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null).serializeNBT());
         return tag;
     }
     
     @Override
-    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+    public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
@@ -182,7 +184,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             }
             
             stack.getCapability(CapabilityAugment.AUGMENT, null).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("augment"));
-            stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("energy"));
+            stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("energy"));
         }
     }
     
@@ -193,7 +195,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             items.add(empty);
             
             ItemStack full = new ItemStack(this);
-            IRiftEnergyStorage energy = full.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+            IImpetusStorage energy = full.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
             while (energy.getEnergyStored() < energy.getMaxEnergyStored())
                 energy.receiveEnergy(energy.getMaxEnergyStored(), false);
             
@@ -212,11 +214,11 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
-        if (stack.hasCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)) {
-            IRiftEnergyStorage energy = stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null);
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+        if (stack.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
+            IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
             tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy", new TextComponentTranslation(
-                    RiftEnergyHelper.getEnergyAmountDescriptor(energy))).getFormattedText());
+                    ImpetusAPI.getEnergyAmountDescriptor(energy))).getFormattedText());
         }
     }
     

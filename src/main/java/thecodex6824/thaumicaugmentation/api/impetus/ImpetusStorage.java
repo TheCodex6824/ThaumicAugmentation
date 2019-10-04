@@ -18,34 +18,34 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.energy;
+package thecodex6824.thaumicaugmentation.api.impetus;
 
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
- * Default implementation of the RiftEnergyStorage capability.
+ * Default implementation of the ImpetusStorage capability.
  * @author TheCodex6824
  */
-public class RiftEnergyStorage implements IRiftEnergyStorage {
+public class ImpetusStorage implements IImpetusStorage {
 
     private long energy;
     private long maxEnergy;
     private long maxReceive;
     private long maxExtract;
     
-    public RiftEnergyStorage(long maxEnergy) {
+    public ImpetusStorage(long maxEnergy) {
         this(maxEnergy, maxEnergy, maxEnergy, 0);
     }
     
-    public RiftEnergyStorage(long maxEnergy, long maxTransfer) {
+    public ImpetusStorage(long maxEnergy, long maxTransfer) {
         this(maxEnergy, maxTransfer, maxTransfer, 0);
     }
     
-    public RiftEnergyStorage(long maxEnergy, long maxReceive, long maxExtract) {
+    public ImpetusStorage(long maxEnergy, long maxReceive, long maxExtract) {
         this(maxEnergy, maxReceive, maxExtract, 0);
     }
     
-    public RiftEnergyStorage(long maxEnergy, long maxReceive, long maxExtract, long initialEnergy) {
+    public ImpetusStorage(long maxEnergy, long maxReceive, long maxExtract, long initialEnergy) {
         energy = Math.max(0, Math.min(maxEnergy, initialEnergy));
         this.maxEnergy = maxEnergy;
         this.maxReceive = maxReceive;
@@ -65,7 +65,7 @@ public class RiftEnergyStorage implements IRiftEnergyStorage {
     @Override
     public long extractEnergy(long maxToExtract, boolean simulate) {
         if (canExtract()) {
-            long amount = Math.min(energy, Math.max(maxExtract, maxToExtract));
+            long amount = Math.min(energy, Math.min(maxExtract, maxToExtract));
             if (!simulate)
                 energy -= amount;
             

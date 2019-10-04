@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.client.model;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -52,7 +53,7 @@ public class CustomBakedModel implements IBakedModel {
     }
     
     @Override
-    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         if (side == null)
             return quads;
         else

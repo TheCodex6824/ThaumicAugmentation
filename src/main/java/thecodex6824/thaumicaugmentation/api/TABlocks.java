@@ -44,6 +44,9 @@ public final class TABlocks {
     public static final Block ARCANE_TRAPDOOR_METAL = null;
     public static final Block ARCANE_TRAPDOOR_SILVERWOOD = null;
     public static final Block TAINT_FLOWER = null;
+    public static final Block IMPETUS_DRAINER = null;
+    public static final Block IMPETUS_RELAY = null;
+    public static final Block IMPETUS_DIFFUSER = null;
 
     /**
      * Returns all blocks in the mod.
@@ -52,7 +55,7 @@ public final class TABlocks {
     public static Block[] getAllBlocks() {
         return new Block[] {VIS_REGENERATOR, WARDED_CHEST, ARCANE_DOOR_GREATWOOD, ARCANE_DOOR_THAUMIUM,
                ARCANE_DOOR_SILVERWOOD, TEMPORARY_LIGHT, STONE, ARCANE_TRAPDOOR_WOOD, ARCANE_TRAPDOOR_METAL, 
-               ARCANE_TRAPDOOR_SILVERWOOD, TAINT_FLOWER};
+               ARCANE_TRAPDOOR_SILVERWOOD, TAINT_FLOWER, IMPETUS_DRAINER, IMPETUS_RELAY, IMPETUS_DIFFUSER};
     }
 
 }

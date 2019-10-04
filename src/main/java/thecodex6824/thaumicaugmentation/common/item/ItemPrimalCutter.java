@@ -23,6 +23,8 @@ package thecodex6824.thaumicaugmentation.common.item;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.block.Block;
@@ -245,7 +247,7 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         tooltip.add(TextFormatting.GOLD + new TextComponentTranslation("enchantment.special.sapgreat").getFormattedText());
         super.addInformation(stack, world, tooltip, flag);
     }

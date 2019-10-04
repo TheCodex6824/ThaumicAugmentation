@@ -23,6 +23,8 @@ package thecodex6824.thaumicaugmentation.common.item;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -179,7 +181,7 @@ public class ItemKey extends ItemTABase implements IWardAuthenticator {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flagIn) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey("boundToDisplay")) {
 
             tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.bound_to", 

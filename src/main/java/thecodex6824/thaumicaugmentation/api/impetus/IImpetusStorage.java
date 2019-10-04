@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.energy;
+package thecodex6824.thaumicaugmentation.api.impetus;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -29,7 +29,7 @@ import net.minecraftforge.common.util.INBTSerializable;
  * based on the Forge Energy / RF API, only using longs instead of ints to allow crazy energy values.
  * @author TheCodex6824
  */
-public interface IRiftEnergyStorage extends INBTSerializable<NBTTagCompound> {
+public interface IImpetusStorage extends INBTSerializable<NBTTagCompound> {
 
     /**
      * Attempts to insert energy into this object, optionally just simulating the result.

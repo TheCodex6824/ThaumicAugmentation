@@ -23,6 +23,8 @@ package thecodex6824.thaumicaugmentation.common.block;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -72,7 +74,7 @@ public class BlockTAStone extends BlockTABase implements ITAStoneType, IItemBloc
     }
     
     @Override
-    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, Entity entity) {
+    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
         return state.getValue(ITAStoneType.STONE_TYPE).getSoundType();
     }
     

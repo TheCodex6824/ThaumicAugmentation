@@ -52,6 +52,7 @@ public final class PlayerEventHandler {
     private PlayerEventHandler() {}
     
     @SubscribeEvent
+    @SuppressWarnings("null")
     public static void onJoin(PlayerLoggedInEvent event) {
         TAConfigHolder.loadOrSyncConfig(event.player);
         if (!ThaumcraftCapabilities.knowsResearchStrict(event.player, "THAUMIC_AUGMENTATION_BASE@1") &&

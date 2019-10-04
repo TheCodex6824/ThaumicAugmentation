@@ -163,7 +163,9 @@ public final class TAShaderManager {
         if (shouldUseShaders() && shader.getID() != 0) {
             ARBShaderObjects.glUseProgramObjectARB(shader.getID());
             int timeUniform = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "time");
-            ARBShaderObjects.glUniform1iARB(timeUniform, Minecraft.getMinecraft().getRenderViewEntity().ticksExisted);
+            ARBShaderObjects.glUniform1iARB(timeUniform, Minecraft.getMinecraft().getRenderViewEntity() != null ?
+                    Minecraft.getMinecraft().getRenderViewEntity().ticksExisted : Minecraft.getMinecraft().player.ticksExisted);
+            
             if (callback != null)
                 callback.accept(shader);
         }

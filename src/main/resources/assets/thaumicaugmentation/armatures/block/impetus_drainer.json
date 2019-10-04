@@ -1,0 +1,148 @@
+{
+    "joints": {
+        "base": {
+            "17": [1.0],
+            "18": [1.0],
+            "19": [1.0],
+            "20": [1.0],
+            "21": [1.0],
+            "22": [1.0],
+            "23": [1.0],
+            "24": [1.0],
+            "25": [1.0]
+        },
+        "top": {
+            "26": [1.0],
+            "27": [1.0],
+            "28": [1.0],
+            "29": [1.0],
+            "30": [1.0],
+            "31": [1.0],
+            "32": [1.0]
+        }
+    },
+    "clips": {
+        "enabled": {
+            "loop": true,
+            "joint_clips": {
+                "base": [
+                    {
+                        "variable": "axis_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            0, 90, 180, 270
+                        ]
+                    }
+                ],
+                "top": [
+                    {
+                        "variable": "axis_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            0, 90, 180, 270
+                        ]
+                    }
+                ]
+            },
+            "events": {}
+        },
+        "starting": {
+            "loop": true,
+            "joint_clips": {
+                "base": [
+                    {
+                        "variable": "axis_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            0, 5, 10, 15, 20, 25, 35, 45, 55, 65, 70, 85, 100, 
+                            120, 140, 160, 180, 210, 240, 270, 300, 330, 360
+                        ]
+                    }
+                ],
+                "top": [
+                    {
+                        "variable": "axis_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            0, 5, 10, 15, 20, 25, 35, 45, 55, 65, 70, 85, 100, 
+                            120, 140, 160, 180, 210, 240, 270, 300, 330, 360
+                        ]
+                    }
+                ]
+            },
+            "events": {}
+        },
+        "stopping": {
+            "loop": true,
+            "joint_clips": {
+                "base": [
+                    {
+                        "variable": "axis_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                           360, 330, 300, 270, 240, 210, 180, 160, 140, 120, 100, 85, 70, 65, 
+                            55, 45, 35, 25, 20, 15, 10, 5, 0
+                        ]
+                    }
+                ],
+                "top": [
+                    {
+                        "variable": "axis_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            360, 330, 300, 270, 240, 210, 180, 160, 140, 120, 100, 85, 70, 65, 
+                            55, 45, 35, 25, 20, 15, 10, 5, 0
+                        ]
+                    }
+                ]
+            },
+            "events": {}
+        },
+        "disabled": {
+            "joint_clips": {},
+            "events": {}
+        }
+    }
+}

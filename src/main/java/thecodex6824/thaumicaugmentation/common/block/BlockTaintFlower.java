@@ -22,6 +22,9 @@ package thecodex6824.thaumicaugmentation.common.block;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -76,12 +79,13 @@ public class BlockTaintFlower extends BlockTABase implements ITaintBlock, IPlant
     }
     
     @Override
-    public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos) {
+    public boolean isShearable(@Nullable ItemStack item, IBlockAccess world, BlockPos pos) {
         return true;
     }
     
     @Override
-    public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
+    @SuppressWarnings("null")
+    public @Nonnull List<ItemStack> onSheared(@Nullable ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
         return NonNullList.withSize(1, new ItemStack(this, 1));
     }
     

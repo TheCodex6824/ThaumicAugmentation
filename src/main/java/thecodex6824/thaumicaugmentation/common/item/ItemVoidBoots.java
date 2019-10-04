@@ -23,6 +23,8 @@ package thecodex6824.thaumicaugmentation.common.item;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -114,18 +116,18 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
     }
 
     @Override
-    public void damageArmor(EntityLivingBase entity, ItemStack stack, DamageSource source, int damage, int slot) {
+    public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
         if (source != DamageSource.FALL)
             stack.damageItem(damage, entity);
     }
 
     @Override
-    public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
+    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
         return damageReduceAmount;
     }
 
     @Override
-    public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage,
+    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage,
             int slot) {
 
         int priority = 0;

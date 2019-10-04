@@ -18,20 +18,39 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.energy;
+package thecodex6824.thaumicaugmentation.api.graph;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import java.util.Deque;
+import java.util.Set;
 
-/**
- * Holds an instance of the capability for {@link IRiftEnergyStorage}.
- * @author TheCodex6824
- */
-public final class CapabilityRiftEnergyStorage {
+import javax.annotation.Nullable;
 
-    private CapabilityRiftEnergyStorage() {}
+public interface IGraph<Node, Self> {
+
+    public void addNode(Node node);
     
-    @CapabilityInject(IRiftEnergyStorage.class)
-    public static final Capability<IRiftEnergyStorage> RIFT_ENERGY_STORAGE = null;
+    public void removeNode(Node node);
+    
+    public int size();
+    
+    public default boolean isEmpty() {
+        return size() == 0;
+    }
+    
+    public Set<Node> getNodes();
+    
+    public Set<Node> getInputs(Node node);
+    
+    public Set<Node> getOutputs(Node node);
+    
+    public void addInput(Node node, Node newInput);
+    
+    public void addOutput(Node node, Node newOutput);
+    
+    public boolean removeInput(Node node, Node input);
+    
+    public boolean removeOutput(Node node, Node output);
+    
+    public @Nullable Deque<Node> findPath(Node start, Node end);
     
 }
