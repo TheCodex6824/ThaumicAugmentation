@@ -30,6 +30,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
@@ -62,6 +63,16 @@ public class CommonProxy implements ISidedProxy {
             renderHelper = new TARenderHelperCommon();
 
         return renderHelper;
+    }
+    
+    @Override
+    public boolean registerRenderableImpetusNode(IImpetusNode node) {
+        return false;
+    }
+    
+    @Override
+    public boolean deregisterRenderableImpetusNode(IImpetusNode node) {
+        return false;
     }
     
     @Override

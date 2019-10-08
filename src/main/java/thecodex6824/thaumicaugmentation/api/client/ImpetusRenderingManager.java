@@ -18,42 +18,31 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.graph;
+package thecodex6824.thaumicaugmentation.api.client;
 
-import java.util.Set;
+import java.util.Collection;
 
-public interface INode<Graph extends IGraph<Self, ?>, Self> {
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 
-    public Graph getGraph();
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
+
+public final class ImpetusRenderingManager {
+
+    private ImpetusRenderingManager() {}
     
-    public void setGraph(Graph newGraph);
+    private static Multimap<Integer, IImpetusNode> nodes = MultimapBuilder.hashKeys().hashSetValues().build();
     
-    public int getNumInputs();
+    public static boolean registerRenderableNode(IImpetusNode node) {
+        return nodes.put(node.getLocation().getDimension(), node);
+    }
     
-    public int getNumOutputs();
+    public static boolean deregisterRenderableNode(IImpetusNode node) {
+        return nodes.remove(node.getLocation().getDimension(), node);
+    }
     
-    public int getMaxInputs();
-    
-    public int getMaxOutputs();
-    
-    public default void onConnected(Self other) {}
-    
-    public default void onDisconnected(Self other) {}
-    
-    public Set<Self> getInputs();
-    
-    public Set<Self> getOutputs();
-    
-    public boolean hasInput(Self in);
-    
-    public boolean hasOutput(Self out);
-    
-    public void addInput(Self input);
-    
-    public void addOutput(Self output);
-    
-    public boolean removeInput(Self input);
-    
-    public boolean removeOutput(Self output);
+    public static Collection<IImpetusNode> getAllRenderableNodes(int dim) {
+        return nodes.get(dim);
+    }
     
 }

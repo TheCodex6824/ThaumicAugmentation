@@ -18,42 +18,16 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.graph;
+package thecodex6824.thaumicaugmentation.api.block.property;
 
-import java.util.Set;
+import java.util.Arrays;
 
-public interface INode<Graph extends IGraph<Self, ?>, Self> {
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.util.EnumFacing;
 
-    public Graph getGraph();
-    
-    public void setGraph(Graph newGraph);
-    
-    public int getNumInputs();
-    
-    public int getNumOutputs();
-    
-    public int getMaxInputs();
-    
-    public int getMaxOutputs();
-    
-    public default void onConnected(Self other) {}
-    
-    public default void onDisconnected(Self other) {}
-    
-    public Set<Self> getInputs();
-    
-    public Set<Self> getOutputs();
-    
-    public boolean hasInput(Self in);
-    
-    public boolean hasOutput(Self out);
-    
-    public void addInput(Self input);
-    
-    public void addOutput(Self output);
-    
-    public boolean removeInput(Self input);
-    
-    public boolean removeOutput(Self output);
+public interface IDirectionalBlock {
+
+    public static final PropertyDirection DIRECTION = PropertyDirection.create("ta_direction", 
+            Arrays.asList(EnumFacing.VALUES));
     
 }

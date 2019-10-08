@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.tile;
+package thecodex6824.thaumicaugmentation.api.impetus.node;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -32,13 +32,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
-import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
-public final class CommonImpetusOperations {
+public final class NodeHelper {
 
-    private CommonImpetusOperations() {}
+    private NodeHelper() {}
     
     @SuppressWarnings("null")
     public static boolean handleCasterInteract(ICapabilityProvider provider, World world, ItemStack stack, EntityPlayer player, BlockPos pos, 

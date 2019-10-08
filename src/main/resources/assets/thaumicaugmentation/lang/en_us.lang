@@ -12,6 +12,9 @@ tile.thaumicaugmentation.arcane_trapdoor_wood.name=Greatwood Arcane Trapdoor
 tile.thaumicaugmentation.arcane_trapdoor_metal.name=Thaumium Arcane Trapdoor
 tile.thaumicaugmentation.arcane_trapdoor_silverwood.name=Silverwood Arcane Trapdoor
 tile.thaumicaugmentation.taint_flower.name=Tainted Flower
+tile.thaumicaugmentation.impetus_drainer.name=Impetus Drainer
+tile.thaumicaugmentation.impetus_relay.name=Impetus Relay
+tile.thaumicaugmentation.impetus_diffuser.name=Impetus Diffuser
 
 item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
 item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet
@@ -81,6 +84,8 @@ thaumicaugmentation.text.energy_strong=§aStrong
 thaumicaugmentation.text.energy_max=§2Maximum
 thaumicaugmentation.text.entered_void=§5You have visited a vast Emptiness.
 thaumicaugmentation.text.stored_seal=Seal: %s
+thaumicaugmentation.text.impetus_link_limit_in=The destination node already has too many inputs
+thaumicaugmentation.text.impetus_link_limit_out=The source node already has too many outputs
 
 thaumicaugmentation.subtitle.spooky=Spooky noises
 thaumicaugmentation.subtitle.spooky_wind=Wind howls

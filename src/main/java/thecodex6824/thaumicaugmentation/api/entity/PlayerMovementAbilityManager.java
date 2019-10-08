@@ -85,7 +85,7 @@ public final class PlayerMovementAbilityManager {
         }
 
         public float stepHeight;
-        public float jumpMovementFactor;    
+        public float jumpMovementFactor;
     }
 
     private static WeakHashMap<EntityPlayer, OldMovementData> oldMovementValues = new WeakHashMap<>();
@@ -169,7 +169,7 @@ public final class PlayerMovementAbilityManager {
                         oldMovementValues.remove(player);
                     }
 
-                    return;
+                    continue;
                 }
 
                 stepHeight += func.tickFunction.apply(player, MovementType.STEP_HEIGHT);
@@ -182,7 +182,7 @@ public final class PlayerMovementAbilityManager {
                     jumpMovementFactor += func.tickFunction.apply(player, MovementType.JUMP_FACTOR);
                 }
             }
-
+            
             player.stepHeight = stepHeight;
             player.jumpMovementFactor = jumpMovementFactor;
         }
@@ -191,8 +191,10 @@ public final class PlayerMovementAbilityManager {
 
     public static void onJump(EntityPlayer player) {
         if (players.containsKey(player)) {
-            for (PlayerFunctions func : players.get(player))
+            for (PlayerFunctions func : players.get(player)) {
                 player.motionY += func.tickFunction.apply(player, MovementType.JUMP_BEGIN);
+                player.velocityChanged = true;
+            }
         }
     }
 

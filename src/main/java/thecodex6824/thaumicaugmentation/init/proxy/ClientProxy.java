@@ -54,6 +54,8 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
@@ -97,6 +99,16 @@ public class ClientProxy extends CommonProxy {
             renderHelper = new TARenderHelperClient();
 
         return renderHelper;
+    }
+    
+    @Override
+    public boolean registerRenderableImpetusNode(IImpetusNode node) {
+        return ImpetusRenderingManager.registerRenderableNode(node);
+    }
+    
+    @Override
+    public boolean deregisterRenderableImpetusNode(IImpetusNode node) {
+        return ImpetusRenderingManager.deregisterRenderableNode(node);
     }
     
     @Override

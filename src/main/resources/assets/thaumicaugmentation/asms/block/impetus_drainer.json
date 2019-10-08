@@ -3,7 +3,7 @@
         "time": ["+/", "#delay", "#cycle_length"],
         "end_anim": ["compose", ["+", "#cycle_length"], "#act_time"],
         "trigger_end": ["-", "#end_anim"],
-        "anim_progress": ["-/", "#act_time", "#cycle_length"]
+        "anim_progress": ["-/+", "#act_time", "#cycle_length", 0.01]
     },
     "clips": {
         "enabled": [

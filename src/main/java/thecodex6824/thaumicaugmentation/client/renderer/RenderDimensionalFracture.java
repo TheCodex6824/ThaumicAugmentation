@@ -20,9 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer;
 
-import java.util.function.Consumer;
-
-import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 
 import com.sasmaster.glelwjgl.java.CoreGLE;
@@ -38,7 +35,6 @@ import net.minecraft.world.World;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
-import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager.Shader;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 
@@ -103,20 +99,6 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
             0.00052,
             0
     };
-    
-    protected static final Consumer<Shader> SHADER_CALLBACK = shader -> {
-        Minecraft mc = Minecraft.getMinecraft();
-        float yaw = mc.getRenderViewEntity().rotationYaw;
-        float pitch = -mc.getRenderViewEntity().rotationPitch;
-        if (mc.gameSettings.thirdPersonView == 2)
-            pitch *= -1;
-        
-        int x = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "yaw");
-        ARBShaderObjects.glUniform1fARB(x, (float) (yaw * 2.0F * Math.PI / 360.0));
-        
-        int z = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "pitch");
-        ARBShaderObjects.glUniform1fARB(z, (float) (pitch * 2.0F * Math.PI / 360.0));
-    };
 
     protected CoreGLE gle;
 
@@ -140,11 +122,12 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
     public void doRender(EntityDimensionalFracture entity, double x, double y, double z, float yaw, float partialTicks) {
 
         World world = entity.getEntityWorld();
-        boolean isRevealing = EntityUtils.hasGoggles(Minecraft.getMinecraft().player);
+        boolean isRevealing = EntityUtils.hasGoggles(Minecraft.getMinecraft().getRenderViewEntity() != null ?
+                Minecraft.getMinecraft().getRenderViewEntity() : Minecraft.getMinecraft().player);
 
         GL11.glPushMatrix();
         bindTexture(entity.isOpen() ? TEXTURE_OPEN : TEXTURE_CLOSED);
-        TAShaderManager.enableShader(TAShaders.FRACTURE, SHADER_CALLBACK);
+        TAShaderManager.enableShader(TAShaders.FRACTURE, TAShaders.FRACTURE_SHADER_CALLBACK);
         GL11.glEnable(GL11.GL_BLEND);
         for (int layer = 0; layer < 4; ++layer) {
             if (layer != 3) {

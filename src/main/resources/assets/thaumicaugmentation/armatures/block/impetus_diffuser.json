@@ -60,6 +60,12 @@
                         "samples": [1]
                     },
                     {
+                        "variable": "origin_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.75]
+                    },
+                    {
                         "variable": "angle",
                         "type": "uniform",
                         "interpolation": "linear",

@@ -38,8 +38,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
@@ -58,12 +56,14 @@ import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.FluxRiftImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
+import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster {
+public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster, IBreakCallback {
 
     protected IImpetusProvider provider;
     protected FluxRiftImpetusStorage storage;
@@ -87,7 +87,12 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
                 return result;
             }
         };
-        provider = new BufferedImpetusProvider(0, 2, storage);
+        provider = new BufferedImpetusProvider(0, 2, storage) {
+            @Override
+            public Vec3d getLocationForRendering() {
+                return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.9375, pos.getZ() + 0.5);
+            }
+        };
         cycleLength = new VariableValue(1);
         delayTicks = new VariableValue(delay);
         actionTime = new VariableValue(Float.MIN_VALUE);
@@ -100,12 +105,12 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
         rifts.sort((rift1, rift2) -> Double.compare(rift1.getPosition().distanceSq(pos), rift2.getPosition().distanceSq(pos)));
         for (EntityFluxRift rift : rifts) {
             if (!rift.isDead) {
-                RayTraceResult result = world.rayTraceBlocks(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
-                        rift.getPositionVector());
-                if (result != null && result.typeOfHit != Type.BLOCK) {
+                //RayTraceResult result = world.rayTraceBlocks(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
+                //        rift.getPositionVector().add(0.0, rift.height / 2.0, 0.0));
+                //if (result == null || result.getBlockPos() == null) {
                     storage.bindToRift(rift);
                     break;
-                }
+                //}
             }
         }
     }
@@ -128,7 +133,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
             EnumFacing face, EnumHand hand) {
         
-        boolean result = CommonImpetusOperations.handleCasterInteract(this, world, stack, player, pos, face, hand);
+        boolean result = NodeHelper.handleCasterInteract(this, world, stack, player, pos, face, hand);
         markDirty();
         return result;
     }
@@ -148,16 +153,30 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     @Override
     public void onLoad() {
         provider.init();
+        ThaumicAugmentation.proxy.registerRenderableImpetusNode(provider);
     }
     
     @Override
     public void onChunkUnload() {
         provider.destroy();
+        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
+    }
+    
+    @Override
+    public void onBlockBroken() {
+        provider.destroy();
+        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
     }
     
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        return oldState.getBlock() != newState.getBlock();
+        if (oldState.getBlock() != newState.getBlock()) {
+            provider.destroy();
+            ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
+            return true;
+        }
+        
+        return false;
     }
     
     @Override

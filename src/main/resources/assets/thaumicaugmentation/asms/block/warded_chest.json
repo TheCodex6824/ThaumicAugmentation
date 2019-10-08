@@ -2,7 +2,7 @@
     "parameters": {
         "end_anim": ["compose", ["+", "#open_speed"], "#open_time"],
         "trigger_end": ["-", "#end_anim"],
-        "anim_progress": ["-/-", "#open_time", "#open_speed", 0.01]
+        "anim_progress": ["-/+", "#open_time", "#open_speed", 0.01]
     },
     "clips": {
         "model": "thaumicaugmentation:block/warded_chest@model",

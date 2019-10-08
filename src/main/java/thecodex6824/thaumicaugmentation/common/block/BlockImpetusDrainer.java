@@ -29,6 +29,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -37,9 +38,12 @@ import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 public class BlockImpetusDrainer extends BlockTABase implements IEnabledBlock, IItemBlockProvider {
 
+    protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.1875, 0.0, 0.1875, 0.8125, 1.0, 0.8125);
+    
     public BlockImpetusDrainer() {
         super(Material.IRON);
         setHardness(3.0F);
@@ -61,6 +65,11 @@ public class BlockImpetusDrainer extends BlockTABase implements IEnabledBlock, I
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(IEnabledBlock.ENABLED, meta == 1);
     }
+    
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return BOUNDING_BOX;
+    }
 
     protected void update(IBlockState state, World world, BlockPos pos) {
         boolean powered = world.isBlockPowered(pos);
@@ -77,6 +86,15 @@ public class BlockImpetusDrainer extends BlockTABase implements IEnabledBlock, I
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         update(state, world, pos);
+    }
+    
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile != null && tile instanceof IBreakCallback)
+            ((IBreakCallback) tile).onBlockBroken();
+        
+        super.breakBlock(world, pos, state);
     }
 
     @Override

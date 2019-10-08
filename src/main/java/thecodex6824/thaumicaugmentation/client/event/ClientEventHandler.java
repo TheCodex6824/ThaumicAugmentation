@@ -27,9 +27,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelBiped.ArmPose;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -41,7 +38,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -60,7 +56,6 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
@@ -194,30 +189,6 @@ public final class ClientEventHandler {
                                 mc.getRenderPartialTicks()));
                     }
                 }
-            }
-        }
-    }
-    
-    private static boolean isHoldingCaster(EntityLivingBase entity) {
-        for (ItemStack stack : entity.getHeldEquipment()) {
-            if (stack.getItem() instanceof ICaster || stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null) &&
-                    stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().getItem() instanceof ICaster)
-                return true;
-        }
-        
-        return false;
-    }
-    
-    @SubscribeEvent
-    public static void onRenderLiving(RenderLivingEvent.Pre<EntityLivingBase> event) {
-        if (TAConfig.gauntletCastAnimation.getValue() && isHoldingCaster(event.getEntity())) {
-            Boolean value = CAST_CACHE.getIfPresent(event.getEntity().getEntityId());
-            if (value != null && event.getRenderer().getMainModel() instanceof ModelBiped) {
-                ModelBiped biped = (ModelBiped) event.getRenderer().getMainModel();
-                if (event.getEntity().getActiveHand() == EnumHand.MAIN_HAND)
-                    biped.rightArmPose = ArmPose.BOW_AND_ARROW;
-                else
-                    biped.leftArmPose = ArmPose.BOW_AND_ARROW;
             }
         }
     }

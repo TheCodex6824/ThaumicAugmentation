@@ -55,12 +55,14 @@ import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
+import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster {
+public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster, IBreakCallback {
 
     protected IImpetusConsumer consumer;
     protected IAnimationStateMachine asm;
@@ -72,7 +74,12 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     
     public TileImpetusDiffuser() {
         super();
-        consumer = new SimpleImpetusConsumer(2, 0);
+        consumer = new SimpleImpetusConsumer(2, 0) {
+            @Override
+            public Vec3d getLocationForRendering() {
+                return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5);
+            }
+        };
         cycleLength = new VariableValue(2);
         delayTicks = new VariableValue(delay);
         actionTime = new VariableValue(Float.MIN_VALUE);
@@ -118,7 +125,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
             EnumFacing face, EnumHand hand) {
         
-        boolean result = CommonImpetusOperations.handleCasterInteract(this, world, stack, player, pos, face, hand);
+        boolean result = NodeHelper.handleCasterInteract(this, world, stack, player, pos, face, hand);
         markDirty();
         return result;
     }
@@ -138,16 +145,30 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     @Override
     public void onLoad() {
         consumer.init();
+        ThaumicAugmentation.proxy.registerRenderableImpetusNode(consumer);
     }
     
     @Override
     public void onChunkUnload() {
         consumer.destroy();
+        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+    }
+    
+    @Override
+    public void onBlockBroken() {
+        consumer.destroy();
+        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
     }
     
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        return oldState.getBlock() != newState.getBlock();
+        if (oldState.getBlock() != newState.getBlock()) {
+            consumer.destroy();
+            ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+            return true;
+        }
+        
+        return false;
     }
     
     @Override

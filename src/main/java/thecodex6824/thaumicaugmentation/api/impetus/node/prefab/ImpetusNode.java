@@ -41,7 +41,6 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusGraph;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
@@ -130,12 +129,14 @@ public class ImpetusNode implements IImpetusNode {
     @Override
     public boolean removeInput(IImpetusNode input) {
         onDisconnected(input);
+        input.removeOutputLocation(loc);
         return inputs.remove(input.getLocation());
     }
     
     @Override
     public boolean removeOutput(IImpetusNode output) {
         onDisconnected(output);
+        output.removeInputLocation(loc);
         return outputs.remove(output.getLocation());
     }
     
@@ -208,15 +209,6 @@ public class ImpetusNode implements IImpetusNode {
         loc = location;
         graph.addNode(this);
     }
-    
-    @Override
-    public void onConnected(IImpetusNode other) {}
-    
-    @Override
-    public void onDisconnected(IImpetusNode other) {}
-    
-    @Override
-    public void onTransaction(IImpetusConsumer originator, long impetusAmount) {}
     
     @Override
     public void destroy() {
