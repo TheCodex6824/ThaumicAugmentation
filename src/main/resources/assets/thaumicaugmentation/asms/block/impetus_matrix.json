@@ -1,0 +1,19 @@
+{
+    "parameters": {
+        "time": ["+/", "#delay", "#cycle_length"]
+    },
+    "clips": {
+        "default": [
+            "apply",
+            "thaumicaugmentation:block/impetus_matrix@model",
+            "#time"
+        ]
+    },
+    "states": [
+        "default", "dummy"
+    ],
+    "transitions": {
+        "default": []
+    },
+    "start_state": "default"
+}

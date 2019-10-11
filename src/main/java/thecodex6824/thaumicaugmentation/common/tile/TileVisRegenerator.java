@@ -59,16 +59,14 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
     protected VariableValue cycleLength;
     protected VariableValue actionTime;
     protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
-    protected VariableValue delayTicks;
     protected boolean lastState = false;
 
     public TileVisRegenerator() {
         super();
         cycleLength = new VariableValue(1);
         actionTime = new VariableValue(Float.MIN_VALUE);
-        delayTicks = new VariableValue(delay);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/vis_regenerator.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", cycleLength, "act_time", actionTime, "delay", delayTicks));
+                ImmutableMap.<String, ITimeValue>of("cycle_length", cycleLength, "act_time", actionTime, "delay", new VariableValue(delay)));
     }
 
     private float getAuraOffset() {

@@ -1,0 +1,12 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "normal": {
+            "model": "thaumicaugmentation:impetus_matrix"
+        },
+        "inventory": {
+            "model": "thaumicaugmentation:impetus_matrix",
+            "transform": "forge:default-block"
+        }
+    }
+}

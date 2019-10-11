@@ -53,11 +53,11 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
-import thecodex6824.thaumicaugmentation.api.impetus.FluxRiftImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
+import thecodex6824.thaumicaugmentation.api.impetus.WeakImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusProvider;
+import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
@@ -66,24 +66,22 @@ import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster, IBreakCallback {
 
     protected IImpetusProvider provider;
-    protected FluxRiftImpetusStorage storage;
+    protected Vec3d lastRiftPos;
+    protected WeakImpetusStorage storage;
     protected IAnimationStateMachine asm;
-    protected VariableValue cycleLength;
-    protected VariableValue delayTicks;
     protected VariableValue actionTime;
     protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
     protected boolean lastState = false;
     
     public TileImpetusDrainer() {
         super();
-        storage = new FluxRiftImpetusStorage() {
+        storage = new WeakImpetusStorage() {
             @Override
             public long extractEnergy(long maxToExtract, boolean simulate) {
                 long result = super.extractEnergy(maxToExtract, simulate);
-                EntityFluxRift rift = this.rift.get();
-                if (rift != null)
-                    ImpetusAPI.createImpetusParticles(world, rift.getPositionVector().add(0, rift.height / 2, 0), new Vec3d(pos).add(0.5, 0.5, 0.5));
-                
+                if (result > 0)
+                    ImpetusAPI.createImpetusParticles(world, lastRiftPos, new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5));
+                    
                 return result;
             }
         };
@@ -93,22 +91,21 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
                 return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.9375, pos.getZ() + 0.5);
             }
         };
-        cycleLength = new VariableValue(1);
-        delayTicks = new VariableValue(delay);
         actionTime = new VariableValue(Float.MIN_VALUE);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_drainer.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", cycleLength, "act_time", actionTime, "delay", delayTicks));
+                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(1), "act_time", actionTime, "delay", new VariableValue(delay)));
     }
     
     protected void findRift() {
         List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class, new AxisAlignedBB(pos).grow(8.0));
         rifts.sort((rift1, rift2) -> Double.compare(rift1.getPosition().distanceSq(pos), rift2.getPosition().distanceSq(pos)));
         for (EntityFluxRift rift : rifts) {
-            if (!rift.isDead) {
+            if (!rift.isDead && rift.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
                 //RayTraceResult result = world.rayTraceBlocks(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
                 //        rift.getPositionVector().add(0.0, rift.height / 2.0, 0.0));
                 //if (result == null || result.getBlockPos() == null) {
-                    storage.bindToRift(rift);
+                    storage.bind(rift.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null));
+                    lastRiftPos = rift.getPositionVector();
                     break;
                 //}
             }
@@ -190,7 +187,6 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         tag.setTag("node", provider.serializeNBT());
-        tag.setTag("energy", storage.serializeNBT());
         return super.writeToNBT(tag);
     }
     
@@ -198,7 +194,6 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         provider.deserializeNBT(nbt.getCompoundTag("node"));
-        storage.deserializeNBT(nbt.getCompoundTag("energy"));
     }
     
     @Override

@@ -27,8 +27,8 @@ import thaumcraft.common.entities.EntityFluxRift;
 
 public class FluxRiftImpetusStorage implements IImpetusStorage {
     
-    protected static final long MAX_ENERGY = 5464;
     protected static final int MAX_SIZE = 200;
+    protected static final double LN_2 = Math.log(2);
     
     protected WeakReference<EntityFluxRift> rift;
     
@@ -62,13 +62,13 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
         size = size % MAX_SIZE;
         long energy = 0;
         if (size > 100) {
-             energy += (long) (5 * Math.pow(2, (size - 85) / 20.0 + 2) / Math.log(2) + 31 * size) -
-                     (long) ((5 * Math.pow(2, 2.75)) / Math.log(2) + 3131);
+             energy += (long) (5 * Math.pow(2, (size - 85) / 20.0 + 2) / LN_2 + 31 * size) -
+                     (long) ((5 * Math.pow(2, 2.75)) / LN_2 + 3131);
         }
         
         size = Math.min(size, 100);
-        energy += (long) (5 * Math.pow(2, size / 20.0 + 2) / Math.log(2)) -
-                (long) (5 * Math.pow(2, 2.05) / Math.log(2));
+        energy += (long) (5 * Math.pow(2, size / 20.0 + 2) / LN_2) -
+                (long) (5 * Math.pow(2, 2.05) / LN_2);
         
         return energy;
     }
@@ -77,9 +77,9 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
         if (size > MAX_SIZE)
             return 84;
         else if (size > 100)
-            return (long) Math.pow(2, (size - 85) / 20.0) + 31;
+            return (long) Math.pow(2.0, (size - 85) / 20.0) + 31;
         else
-            return (long) Math.pow(2, size / 20.0);
+            return (long) Math.pow(2.0, size / 20.0);
     }
     
     @Override
@@ -94,7 +94,7 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
     @Override
     public long getMaxEnergyStored() {
         if (rift.get() != null)
-            return MAX_ENERGY;
+            return calcTotalRiftEnergy(MAX_SIZE);
         
         return 0;
     }
@@ -103,7 +103,7 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
     public long extractEnergy(long maxToExtract, boolean simulate) {
         EntityFluxRift r = rift.get();
         if (r != null && r.getRiftSize() > 0) {
-            long toExtract = Math.min(calcEnergyThisSize(r.getRiftSize()), Math.min(5, maxToExtract));
+            long toExtract = Math.min(calcEnergyThisSize(r.getRiftSize()), maxToExtract);
             if (!simulate) {
                 r.setRiftSize(r.getRiftSize() - 1);
                 r.setRiftStability(r.getRiftStability() - 1.0F);
@@ -119,11 +119,16 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
     public long receiveEnergy(long maxToReceive, boolean simulate) {
         EntityFluxRift r = rift.get();
         if (r != null && r.getRiftSize() < MAX_SIZE) {
-            long toReceive = Math.min(maxToReceive, calcEnergyThisSize(r.getRiftSize() + 1));
-            if (!simulate)
-                r.setRiftSize(r.getRiftSize() + 1);
-            
-            return toReceive;
+            long required = calcEnergyThisSize(r.getRiftSize() + 1);
+            long toReceive = Math.min(maxToReceive, required);
+            if (toReceive >= required) {
+                if (!simulate)
+                    r.setRiftSize(r.getRiftSize() + 1);
+                
+                return required;
+            }
+            else
+                return 0;
         }
         
         return 0;

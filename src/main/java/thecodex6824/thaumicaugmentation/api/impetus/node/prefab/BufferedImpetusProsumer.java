@@ -22,18 +22,20 @@ package thecodex6824.thaumicaugmentation.api.impetus.node.prefab;
 
 import net.minecraft.util.math.BlockPos;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusProvider;
+import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
-public class BufferedImpetusProvider extends ImpetusNode implements IImpetusProvider {
-    
+public class BufferedImpetusProsumer extends ImpetusNode implements IImpetusProvider, IImpetusConsumer {
+
     protected IImpetusStorage buffer;
     
-    public BufferedImpetusProvider(int totalInputs, int totalOutputs, IImpetusStorage owning) {
+    public BufferedImpetusProsumer(int totalInputs, int totalOutputs, IImpetusStorage owning) {
         this(totalInputs, totalOutputs, new DimensionalBlockPos(new BlockPos(0, 0, 0), 0), owning);
     }
     
-    public BufferedImpetusProvider(int totalInputs, int totalOutputs, DimensionalBlockPos location, IImpetusStorage storage) {
+    public BufferedImpetusProsumer(int totalInputs, int totalOutputs, DimensionalBlockPos location, IImpetusStorage storage) {
         super(totalInputs, totalOutputs, location);
         buffer = storage;
     }
@@ -43,7 +45,13 @@ public class BufferedImpetusProvider extends ImpetusNode implements IImpetusProv
         return buffer.extractEnergy(energy, simulate);
     }
     
-    public IImpetusStorage getProvider() {
+    @Override
+    public long consume(long amount) {
+        amount = Math.min(amount, buffer.receiveEnergy(Long.MAX_VALUE, true));
+        return buffer.receiveEnergy(NodeHelper.consumeImpetusFromConnectedProviders(amount, this), false);
+    }
+    
+    public IImpetusStorage getProsumer() {
         return buffer;
     }
     

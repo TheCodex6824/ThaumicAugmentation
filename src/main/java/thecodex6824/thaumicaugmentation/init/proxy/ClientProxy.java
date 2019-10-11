@@ -22,8 +22,6 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 
 import java.util.Random;
 
-import javax.vecmath.Quat4f;
-
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.client.Minecraft;
@@ -39,7 +37,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.animation.ITimeValue;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -82,6 +79,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
@@ -242,8 +240,8 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileWardedChest.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusDrainer.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusDiffuser.class, new ListeningAnimatedTESR<>());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusMatrix.class, new ListeningAnimatedTESR<>());
         registerItemColorHandlers();
-        System.out.println(TRSRTransformation.toXYZDegrees(new Quat4f(0.8204731F, 0.33985102F, 0.17591994F, 0.42470855F)));
     }
 
     @Override

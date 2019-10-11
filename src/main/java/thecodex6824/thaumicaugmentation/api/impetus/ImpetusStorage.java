@@ -28,10 +28,10 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class ImpetusStorage implements IImpetusStorage {
 
-    private long energy;
-    private long maxEnergy;
-    private long maxReceive;
-    private long maxExtract;
+    protected long energy;
+    protected long maxEnergy;
+    protected long maxReceive;
+    protected long maxExtract;
     
     public ImpetusStorage(long maxEnergy) {
         this(maxEnergy, maxEnergy, maxEnergy, 0);

@@ -66,8 +66,6 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
 
     protected IImpetusConsumer consumer;
     protected IAnimationStateMachine asm;
-    protected VariableValue cycleLength;
-    protected VariableValue delayTicks;
     protected VariableValue actionTime;
     protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
     protected boolean lastState = false;
@@ -80,11 +78,9 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                 return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5);
             }
         };
-        cycleLength = new VariableValue(2);
-        delayTicks = new VariableValue(delay);
         actionTime = new VariableValue(Float.MIN_VALUE);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_diffuser.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", cycleLength, "act_time", actionTime, "delay", delayTicks));
+                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(2), "act_time", actionTime, "delay", new VariableValue(delay)));
     }
     
     @Override
@@ -96,7 +92,8 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                     for (ItemStack stack : player.inventory.mainInventory) {
                         IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                         if (storage != null && storage.canReceive()) {
-                            if (storage.receiveEnergy(consumer.consume(10), false) > 0)
+                            long canReceive = Math.min(storage.receiveEnergy(Long.MAX_VALUE, true), 10);
+                            if (storage.receiveEnergy(consumer.consume(canReceive), false) > 0)
                                 ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), player.getPositionVector().add(0, player.height / 2, 0));
                         }
                     }
@@ -105,7 +102,8 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                 for (ItemStack stack : entity.getEquipmentAndArmor()) {
                     IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                     if (storage != null && storage.canReceive()) {
-                        if (storage.receiveEnergy(consumer.consume(10), false) > 0)
+                        long canReceive = Math.min(storage.receiveEnergy(Long.MAX_VALUE, true), 10);
+                        if (storage.receiveEnergy(consumer.consume(canReceive), false) > 0)
                             ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), entity.getPositionVector());
                     }
                 }

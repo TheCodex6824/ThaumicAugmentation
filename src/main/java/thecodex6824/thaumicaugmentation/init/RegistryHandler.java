@@ -57,6 +57,8 @@ import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrix;
+import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrixBase;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
 import thecodex6824.thaumicaugmentation.common.block.BlockTaintFlower;
@@ -91,6 +93,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
@@ -139,6 +142,8 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockImpetusDrainer(), "impetus_drainer"));
         registry.register(setupBlock(new BlockImpetusRelay(), "impetus_relay"));
         registry.register(setupBlock(new BlockImpetusDiffuser(), "impetus_diffuser"));
+        registry.register(setupBlock(new BlockImpetusMatrix(), "impetus_matrix"));
+        registry.register(setupBlock(new BlockImpetusMatrixBase(), "impetus_matrix_base"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -148,6 +153,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileImpetusDrainer.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_drainer"));
         GameRegistry.registerTileEntity(TileImpetusRelay.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_relay"));
         GameRegistry.registerTileEntity(TileImpetusDiffuser.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_diffuser"));
+        GameRegistry.registerTileEntity(TileImpetusMatrix.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_matrix"));
     }
 
     @SubscribeEvent
@@ -183,7 +189,7 @@ public final class RegistryHandler {
         RecipeHandler.initInfusionRecipes();
         RecipeHandler.initCrucibleRecipes();
         RecipeHandler.initArcaneCraftingRecipes();
-        RecipeHandler.fixInfusionAltarMultiblocks();
+        RecipeHandler.initMultiblocks();
         
         event.getRegistry().register(new DyeableItemRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "dyeable_item")));
         event.getRegistry().register(new AuthorizedKeyCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "bound_key_creation")));

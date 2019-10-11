@@ -434,6 +434,30 @@ public final class RecipeHandler {
         ));
     }
     
+    public static void initMultiblocks() {
+        Part matrix = new Part(BlocksTC.infusionMatrix, TABlocks.IMPETUS_MATRIX);
+        Part base = new Part(BlocksTC.pedestalEldritch, TABlocks.IMPETUS_MATRIX_BASE);
+        Part[][][] blueprint = new Part[][][] {
+            {
+                {base}
+            },
+            {
+                {matrix}
+            },
+            {
+                {base}
+            }
+        };
+        
+        IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("FIRSTSTEPS", blueprint));
+        ThaumcraftApi.addMultiblockRecipeToCatalog(new ResourceLocation("thaumicaugmentation", "impetus_matrix"), new BluePrint("IMPETUS_MATRIX", blueprint, new ItemStack[] {
+                new ItemStack(BlocksTC.infusionMatrix),
+                new ItemStack(BlocksTC.pedestalEldritch, 2)
+        }));
+        
+        fixInfusionAltarMultiblocks();
+    }
+    
     public static String getDustTriggerResearch(DustTriggerMultiblock trigger) {
         try {
             return (String) TRIGGER_RESEARCH.get(trigger);

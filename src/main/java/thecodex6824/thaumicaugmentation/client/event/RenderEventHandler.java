@@ -40,12 +40,16 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -122,12 +126,54 @@ public class RenderEventHandler {
         GlStateManager.popMatrix();
     }
     
+    private static void renderCubeOutline(Entity rv, float partial, Vec3d eyePos, BlockPos blockPosition, AxisAlignedBB cube) {
+        GlStateManager.depthMask(false);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.disableLighting();
+        GlStateManager.pushMatrix();
+        
+        Vec3d pos = new Vec3d(blockPosition);
+        GlStateManager.translate(-(rv.lastTickPosX + (rv.posX - rv.lastTickPosX) * partial),
+                -(rv.lastTickPosY + (rv.posY - rv.lastTickPosY) * partial),
+                -(rv.lastTickPosZ + (rv.posZ - rv.lastTickPosZ) * partial));
+        
+        GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        GlStateManager.glLineWidth(3.0F);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableCull();
+        
+        Tessellator t = Tessellator.getInstance();
+        BufferBuilder buffer = t.getBuffer();
+        buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
+        buffer.pos(pos.x, pos.y, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        buffer.pos(pos.x, pos.y + 1, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        buffer.pos(pos.x + 1, pos.y, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        buffer.pos(pos.x + 1, pos.y + 1, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        buffer.pos(pos.x + 1, pos.y, pos.z + 1).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        buffer.pos(pos.x + 1, pos.y + 1, pos.z + 1).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        buffer.pos(pos.x, pos.y, pos.z + 1).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        buffer.pos(pos.x, pos.y + 1, pos.z + 1).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        buffer.pos(pos.x, pos.y, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        buffer.pos(pos.x, pos.y + 1, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        t.draw();
+        
+        GlStateManager.enableCull();
+        GlStateManager.enableTexture2D();
+        GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+        GlStateManager.enableLighting();
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
+        GlStateManager.popMatrix();
+    }
+    
     @SubscribeEvent
     public static void onRenderWorldLast(RenderWorldLastEvent event) {
+        Entity renderView = Minecraft.getMinecraft().getRenderViewEntity() != null ? Minecraft.getMinecraft().getRenderViewEntity() :
+            Minecraft.getMinecraft().player;
+        
         Collection<IImpetusNode> nodes = ImpetusRenderingManager.getAllRenderableNodes(Minecraft.getMinecraft().world.provider.getDimension());
         if (!nodes.isEmpty()) {
-            Entity renderView = Minecraft.getMinecraft().getRenderViewEntity() != null ? Minecraft.getMinecraft().getRenderViewEntity() :
-                Minecraft.getMinecraft().player;
             Vec3d eyePos = renderView.getPositionEyes(event.getPartialTicks());
             List<IImpetusNode> renderNodes = nodes.stream()
                     .filter(node -> eyePos.squareDistanceTo(new Vec3d(node.getLocation().getPos())) < 128 * 128)
@@ -137,6 +183,21 @@ public class RenderEventHandler {
             for (IImpetusNode node : renderNodes) {
                 for (IImpetusNode out : node.getOutputs())
                     renderBeam(renderView, event.getPartialTicks(), eyePos, node.getLocationForRendering(), out.getLocationForRendering());
+            }
+        }
+        
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        for (ItemStack stack : player.getHeldEquipment()) {
+            if (stack.hasTagCompound() && stack.getTagCompound().hasKey("impetusBindSelection", NBT.TAG_INT_ARRAY)) {
+                int[] data = stack.getTagCompound().getIntArray("impetusBindSelection");
+                if (data.length == 4 && player.dimension == data[3]) {
+                    BlockPos pos = new BlockPos(data[0], data[1], data[2]);
+                    Vec3d eyes = player.getPositionEyes(event.getPartialTicks());
+                    if (pos.distanceSq(eyes.x, eyes.y, eyes.z) < 64 * 64) {
+                        renderCubeOutline(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
+                                 pos, player.world.getBlockState(pos).getBoundingBox(player.world, pos));
+                    }
+                }
             }
         }
     }

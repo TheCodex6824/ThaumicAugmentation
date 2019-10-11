@@ -97,7 +97,7 @@ focus.thaumicaugmentation.light.intensity=Intensity
 focus.thaumicaugmentation.ward.name=Ward
 focus.thaumicaugmentation.ward.text=Makes most blocks extremely durable and virtually immune to mining, explosions, and fire. 
 
-tc.research_category.THAUMIC_AUGMENTATION=Augmentation
+tc.research_category.THAUMIC_AUGMENTATION=Thaumic Augmentation
 thaumicaugmentation.research.thaumic_augmentation_base.title=Thaumic Augmentation
 thaumicaugmentation.research.thaumic_augmentation_base.0=I'll dedicate this section of the Thaumonomicon to any miscellaneous discoveries I make. Who knows what I may come up with?
 

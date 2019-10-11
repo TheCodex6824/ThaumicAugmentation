@@ -43,7 +43,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
-public class BlockImpetusRelay extends BlockTABase implements IItemBlockProvider {
+public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock, IItemBlockProvider {
 
     protected static final AxisAlignedBB DOWN_BOX = new AxisAlignedBB(0.3125, 0.46875, 0.3125, 0.6875, 1.0, 0.6875);
     protected static final AxisAlignedBB EAST_BOX = new AxisAlignedBB(0.0, 0.3125, 0.3125, 0.53125, 0.6875, 0.6875);

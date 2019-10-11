@@ -1,0 +1,110 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:impetus_matrix_base"
+    },
+    "variants": {
+        "ta_direction_v": {
+            "up": {"__nop": ""},
+            "down": {"x": 180}
+        },
+        "ta_cell_info": {
+            "0": {"__nop": ""},
+            "1": {
+                "submodel": {
+                    "south": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 180}
+                }
+            },
+            "2": {
+                "submodel": {
+                    "west": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 270}
+                }
+            },
+            "3": {
+                "submodel": {
+                    "south": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 180},
+                    "west": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 270}
+                }
+            },
+            "4": {
+                "submodel": {
+                    "north": {"model": "thaumicaugmentation:impetus_matrix_base_cell"}
+                }
+            },
+            "5": {
+                "submodel": {
+                    "south": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 180},
+                    "north": {"model": "thaumicaugmentation:impetus_matrix_base_cell"}
+                }
+            },
+            "6": {
+                "submodel": {
+                    "west": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 270},
+                    "north": {"model": "thaumicaugmentation:impetus_matrix_base_cell"}
+                }
+            },
+            "7": {
+                "submodel": {
+                    "south": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 180},
+                    "west": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 270},
+                    "north": {"model": "thaumicaugmentation:impetus_matrix_base_cell"}
+                }
+            },
+            "8": {
+                "submodel": {
+                    "east": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 90}
+                }
+            },
+            "9": {
+                "submodel": {
+                    "east": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 90},
+                    "south": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 180}
+                }
+            },
+            "10": {
+                "submodel": {
+                    "east": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 90},
+                    "west": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 270}
+                }
+            },
+            "11": {
+                "submodel": {
+                    "east": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 90},
+                    "west": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 270},
+                    "south": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 180}
+                }
+            },
+            "12": {
+                "submodel": {
+                    "east": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 90},
+                    "north": {"model": "thaumicaugmentation:impetus_matrix_base_cell"}
+                }
+            },
+            "13": {
+                "submodel": {
+                    "east": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 90},
+                    "south": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 180},
+                    "north": {"model": "thaumicaugmentation:impetus_matrix_base_cell"}
+                }
+            },
+            "14": {
+                "submodel": {
+                    "east": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 90},
+                    "west": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 270},
+                    "north": {"model": "thaumicaugmentation:impetus_matrix_base_cell"}
+                }
+            },
+            "15": {
+                "submodel": {
+                    "east": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 90},
+                    "south": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 180},
+                    "west": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 270},
+                    "north": {"model": "thaumicaugmentation:impetus_matrix_base_cell"}
+                }
+            }
+        },
+        "inventory": {
+            "transform": "forge:default-block"
+        }
+    }
+}

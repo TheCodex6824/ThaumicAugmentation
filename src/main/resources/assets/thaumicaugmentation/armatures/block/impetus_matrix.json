@@ -1,0 +1,90 @@
+{
+    "joints": {
+        "cube1": {
+            "0": [1.0],
+            "1": [1.0],
+            "2": [1.0],
+            "3": [1.0],
+            "4": [1.0],
+            "5": [1.0],
+            "6": [1.0],
+            "7": [1.0]
+        },
+        "cube2": {
+            "0": [1.0],
+            "1": [1.0],
+            "2": [1.0],
+            "3": [1.0],
+            "4": [1.0],
+            "5": [1.0],
+            "6": [1.0],
+            "7": [1.0]
+        },
+        "cube3": {
+            "0": [1.0],
+            "1": [1.0],
+            "2": [1.0],
+            "3": [1.0],
+            "4": [1.0],
+            "5": [1.0],
+            "6": [1.0],
+            "7": [1.0]
+        }
+    },
+    "clips": {
+        "model": {
+            "loop": true,
+            "joint_clips": {
+                "cube1": [
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [
+                            45
+                        ]
+                    }
+                ],
+                "cube2": [
+                    {
+                        "variable": "axis_z",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [
+                            45
+                        ]
+                    }
+                ],
+                "cube3": [
+                    {
+                        "variable": "axis_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [
+                            0, 90, 180, 270
+                        ]
+                    }
+                ]
+            },
+            "events": {}
+        }
+    }
+}

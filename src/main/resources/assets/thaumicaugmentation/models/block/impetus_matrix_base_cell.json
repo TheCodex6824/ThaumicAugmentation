@@ -1,0 +1,22 @@
+{
+    "credit": "Made with Blockbench",
+    "textures": {
+        "0": "thaumicaugmentation:blocks/impetus_matrix_cell",
+        "particle": "thaumicaugmentation:blocks/impetus_matrix_cell"
+    },
+    "elements": [
+        {
+            "name": "northcell",
+            "from": [7, 9, 1],
+            "to": [9, 11, 2],
+            "rotation": {"angle": -22.5, "axis": "x", "origin": [8, 6, 2]},
+            "faces": {
+                "north": {"uv": [7, 7, 9, 9], "texture": "#0"},
+                "east": {"uv": [6, 7, 7, 9], "texture": "#0"},
+                "west": {"uv": [9, 7, 10, 9], "texture": "#0"},
+                "up": {"uv": [7, 6, 9, 7], "texture": "#0"},
+                "down": {"uv": [7, 9, 9, 10], "texture": "#0"}
+            }
+        }
+    ]
+}

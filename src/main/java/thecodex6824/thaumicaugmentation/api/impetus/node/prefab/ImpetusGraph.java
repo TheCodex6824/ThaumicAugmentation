@@ -152,7 +152,7 @@ public class ImpetusGraph implements IImpetusGraph {
             IImpetusNode check = toCheck.pop();
             if (!visited.contains(check)) {
                 visited.add(check);
-                if (check instanceof IImpetusProvider)
+                if (check != node && check instanceof IImpetusProvider)
                     providers.add((IImpetusProvider) check);
                 else
                     toCheck.addAll(check.getInputs());

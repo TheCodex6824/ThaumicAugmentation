@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus.node;
 
+import java.util.ArrayList;
+import java.util.Deque;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,6 +50,16 @@ public final class NodeHelper {
                 stack.setTagCompound(new NBTTagCompound());
             
             if (player.isSneaking()) {
+                if (stack.getTagCompound().hasKey("impetusBindSelection", NBT.TAG_INT_ARRAY)) {
+                    int[] data = stack.getTagCompound().getIntArray("impetusBindSelection");
+                    if (data.length == 4 && data[0] == pos.getX() && data[1] == pos.getY() && data[2] == pos.getZ() &&
+                            data[3] == world.provider.getDimension()) {
+                        
+                        stack.getTagCompound().removeTag("impetusBindSelection");
+                        return true;
+                    }
+                }
+                
                 stack.getTagCompound().setIntArray("impetusBindSelection", new int[] {pos.getX(), pos.getY(), pos.getZ(),
                         world.provider.getDimension()});
                 return true;
@@ -82,6 +95,45 @@ public final class NodeHelper {
         }
         
         return false;
+    }
+    
+    public static long consumeImpetusFromConnectedProviders(long amount, IImpetusConsumer dest) {
+        if (amount <= 0)
+            return 0;
+        
+        ArrayList<IImpetusProvider> providers = new ArrayList<>(dest.getGraph().findDirectProviders(dest));
+        if (!providers.isEmpty()) {
+            providers.sort((p1, p2) -> (int) Math.max(1, Math.min(-1, p1.provide(Long.MAX_VALUE, true) - p2.provide(Long.MAX_VALUE, true))));
+            ArrayList<Deque<IImpetusNode>> paths = new ArrayList<>(providers.size());
+            for (IImpetusProvider p : providers) {
+                Deque<IImpetusNode> path = dest.getGraph().findPath(p, dest);
+                if (path != null)
+                    paths.add(path);
+            }
+            
+            long drawn = 0;
+            long step = amount / providers.size();
+            long remain = amount % providers.size();
+            for (int i = 0; i < providers.size(); ++i) {
+                IImpetusProvider p = providers.get(i);
+                long actuallyDrawn = p.provide(Math.min(step + (remain > 0 ? 1 : 0), amount - drawn), false);
+                drawn += actuallyDrawn;
+                if (actuallyDrawn < step && i < providers.size() - 1) {
+                    step = (amount - drawn) / (providers.size() - (i + 1));
+                    remain = (amount - drawn) % (providers.size() - (i + 1));
+                }
+                else
+                    --remain;
+                
+                Deque<IImpetusNode> nodes = paths.get(i);
+                for (IImpetusNode n : nodes)
+                    n.onTransaction(dest, actuallyDrawn);
+            }
+            
+            return drawn;
+        }
+        
+        return 0;
     }
     
 }
