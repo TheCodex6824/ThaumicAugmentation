@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
@@ -51,6 +52,7 @@ public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellI
         setHardness(7.5F);
         setResistance(500.0F);
         setDefaultState(getDefaultState().withProperty(IImpetusCellInfo.CELL_INFO, 0));
+        setSoundType(SoundType.STONE);
     }
     
     @Override
@@ -111,6 +113,11 @@ public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellI
         int cells = IImpetusCellInfo.getNumberOfCells(state.getValue(IImpetusCellInfo.CELL_INFO));
         if (cells > 0)
             drops.add(new ItemStack(TAItems.MATERIAL, cells, 3));
+    }
+    
+    @Override
+    public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player) {
+        return true;
     }
     
     @Override

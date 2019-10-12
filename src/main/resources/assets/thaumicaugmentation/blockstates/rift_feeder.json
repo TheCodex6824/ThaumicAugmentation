@@ -1,0 +1,27 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:rift_feeder"
+    },
+    "variants": {
+        "ta_direction": {
+            "up": {"x": 270},
+            "down": {"x": 90},
+            "north": {"__nop": ""},
+            "east": {"y": 90},
+            "south": {"y": 180},
+            "west": {"y": 270}
+        },
+        "ta_enabled": {
+            "false": {"__nop": ""},
+            "true": {
+                "textures": {
+                    "3": "thaumicaugmentation:blocks/rift_feeder_on"
+                }
+            }
+        },
+        "inventory": {
+            "transform": "forge:default-block"
+        }
+    }
+}

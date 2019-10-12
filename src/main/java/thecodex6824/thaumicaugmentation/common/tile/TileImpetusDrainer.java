@@ -114,8 +114,10 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     
     @Override
     public void update() {
-        if (!world.isRemote && world.getTotalWorldTime() % 60 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED))
+        if (!world.isRemote && (world.getTotalWorldTime() + delay) % 60 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED))
             findRift();
+        else if (!world.isRemote && !world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) && storage.isValid())
+            storage.bind(null);
         else if (world.isRemote && (world.getTotalWorldTime() + delay) % 5 == 0) {
             boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
             if (enabled != lastState) {

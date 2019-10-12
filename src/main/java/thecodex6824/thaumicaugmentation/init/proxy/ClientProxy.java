@@ -46,6 +46,8 @@ import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.items.casters.ItemFocus;
+import thaumcraft.common.lib.events.EssentiaHandler;
+import thaumcraft.common.lib.events.EssentiaHandler.EssentiaSourceFX;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
@@ -178,6 +180,22 @@ public class ClientProxy extends CommonProxy {
                         double x = d[0], y = d[1], z = d[2];
                         FXDispatcher.INSTANCE.drawCurlyWisp(x, y, z, 0.0, 0.0, 0.0, rand.nextFloat() + 0.1F, 1.0F, 1.0F, 
                                 1.0F, 0.45F, null, 1, 0, 0);
+                    }
+                    
+                    break;
+                }
+                case ESSENTIA_TRAIL: {
+                    double[] d = message.getData();
+                    if (d.length == 7) {
+                        int x1 = (int) d[0], y1 = (int) d[1], z1 = (int) d[2], x2 = (int) d[3], 
+                                y2 = (int) d[4], z2 = (int) d[5], color = (int) d[6];
+                        
+                        // this seems kinda sketchy but it's what TC does...
+                        String key = x2 + ":" + y2 + ":" + z2 + ":" + x1 + ":" + y1 + ":" + z1 + ":" + color;
+                        if (!EssentiaHandler.sourceFX.containsKey(key)) {
+                            EssentiaHandler.sourceFX.put(key, new EssentiaSourceFX(new BlockPos(x2, y2, z2),
+                                    new BlockPos(x1, y1, z1), color, 15));
+                        }
                     }
                     
                     break;

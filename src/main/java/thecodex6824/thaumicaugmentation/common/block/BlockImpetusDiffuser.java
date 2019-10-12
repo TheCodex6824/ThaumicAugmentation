@@ -21,10 +21,12 @@
 package thecodex6824.thaumicaugmentation.common.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -49,6 +51,7 @@ public class BlockImpetusDiffuser extends BlockTABase implements IEnabledBlock, 
         setHardness(3.0F);
         setResistance(35.0F);
         setDefaultState(getDefaultState().withProperty(IEnabledBlock.ENABLED, true));
+        setSoundType(SoundType.METAL);
     }
     
     @Override
@@ -86,6 +89,11 @@ public class BlockImpetusDiffuser extends BlockTABase implements IEnabledBlock, 
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         update(state, world, pos);
+    }
+    
+    @Override
+    public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player) {
+        return true;
     }
     
     @Override

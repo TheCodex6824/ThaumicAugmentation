@@ -20,10 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -47,6 +49,7 @@ public class BlockImpetusMatrix extends BlockTABase implements IItemBlockProvide
         super(Material.ROCK);
         setHardness(7.5F);
         setResistance(500.0F);
+        setSoundType(SoundType.STONE);
     }
     
     @Override
@@ -69,6 +72,11 @@ public class BlockImpetusMatrix extends BlockTABase implements IItemBlockProvide
             int fortune) {
         
         drops.add(new ItemStack(BlocksTC.infusionMatrix));
+    }
+    
+    @Override
+    public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player) {
+        return true;
     }
     
     @Override

@@ -20,11 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -57,6 +59,7 @@ public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock,
         setHardness(3.0F);
         setResistance(35.0F);
         setDefaultState(getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.UP));
+        setSoundType(SoundType.METAL);
     }
     
     @Override
@@ -102,6 +105,11 @@ public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock,
             case UP:
             default:    return UP_BOX;
         }
+    }
+    
+    @Override
+    public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player) {
+        return true;
     }
 
     @Override

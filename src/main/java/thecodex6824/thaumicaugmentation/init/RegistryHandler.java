@@ -60,6 +60,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrixBase;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusRelay;
+import thecodex6824.thaumicaugmentation.common.block.BlockRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
 import thecodex6824.thaumicaugmentation.common.block.BlockTaintFlower;
 import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
@@ -95,6 +96,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
@@ -144,6 +146,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockImpetusDiffuser(), "impetus_diffuser"));
         registry.register(setupBlock(new BlockImpetusMatrix(), "impetus_matrix"));
         registry.register(setupBlock(new BlockImpetusMatrixBase(), "impetus_matrix_base"));
+        registry.register(setupBlock(new BlockRiftFeeder(), "rift_feeder"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -154,6 +157,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileImpetusRelay.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_relay"));
         GameRegistry.registerTileEntity(TileImpetusDiffuser.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_diffuser"));
         GameRegistry.registerTileEntity(TileImpetusMatrix.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_matrix"));
+        GameRegistry.registerTileEntity(TileRiftFeeder.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_feeder"));
     }
 
     @SubscribeEvent

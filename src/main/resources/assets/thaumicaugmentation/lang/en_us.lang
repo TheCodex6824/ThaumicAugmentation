@@ -15,6 +15,9 @@ tile.thaumicaugmentation.taint_flower.name=Tainted Flower
 tile.thaumicaugmentation.impetus_drainer.name=Impetus Drainer
 tile.thaumicaugmentation.impetus_relay.name=Impetus Relay
 tile.thaumicaugmentation.impetus_diffuser.name=Impetus Diffuser
+tile.thaumicaugmentation.impetus_matrix.name=Impetus Matrix
+tile.thaumicaugmentation.impetus_matrix_base.name=Impetus Matrix Base
+tile.thaumicaugmentation.rift_feeder.name=Rift Feeder
 
 item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
 item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet

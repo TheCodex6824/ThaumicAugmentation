@@ -40,7 +40,8 @@ public class PacketParticleEffect implements IMessage {
         WARD(2),
         POOF(3),
         SMOKE_SPIRAL(4),
-        CURLY_WISP(5);
+        CURLY_WISP(5),
+        ESSENTIA_TRAIL(6);
         
         private int id;
         
