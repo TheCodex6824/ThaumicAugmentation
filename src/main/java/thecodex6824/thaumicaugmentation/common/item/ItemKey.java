@@ -27,6 +27,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -34,6 +35,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -120,14 +122,15 @@ public class ItemKey extends ItemTABase implements IWardAuthenticator {
 
         if (!world.isRemote && player.getHeldItem(hand).getMetadata() == 2) {
             ItemStack stack = player.getHeldItem(hand);
-            if (!player.isSneaking() && !stack.hasTagCompound() && world.getTileEntity(pos).hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
+            TileEntity tile = world.getChunk(pos).getTileEntity(pos, EnumCreateEntityType.CHECK);
+            if (!player.isSneaking() && !stack.hasTagCompound() && tile != null && tile.hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
                 stack.setTagCompound(new NBTTagCompound());
                 stack.getTagCompound().setString("boundTo", player.getUniqueID().toString());
                 stack.getTagCompound().setString("boundToDisplay", player.getName());
                 stack.getTagCompound().setInteger("boundToColor", generateKeyColor(player.getUniqueID().toString()));
 
                 stack.getTagCompound().setIntArray("boundBlockPos", new int[] {pos.getX(), pos.getY(), pos.getZ()});
-                stack.getTagCompound().setString("boundType", world.getTileEntity(pos).getCapability(CapabilityWardedTile.WARDED_TILE, null).getUniqueTypeID());
+                stack.getTagCompound().setString("boundType", tile.getCapability(CapabilityWardedTile.WARDED_TILE, null).getUniqueTypeID());
                 stack.getTagCompound().setString("boundTypeDisplay", world.getBlockState(pos).getBlock().getTranslationKey() + ".name");
 
                 player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_bound_object", 

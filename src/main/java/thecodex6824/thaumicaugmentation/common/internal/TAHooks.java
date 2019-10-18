@@ -27,68 +27,57 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 
 public class TAHooks {
 
-    public static float checkWardHardness(float oldHardness, World world, BlockPos pos) {
-        if (world != null && pos != null && world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            return world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos) ?
-                -1.0F : oldHardness;
+    private static boolean hasWard(World world, BlockPos pos) {
+        if (world != null && pos != null && world.getChunkProvider() != null && world.isBlockLoaded(pos)) {
+            Chunk chunk = world.getChunk(pos);
+            if (chunk != null) {
+                IWardStorage ward = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                if (ward != null)
+                    return ward.hasWard(pos);
+            }
         }
         
-        return oldHardness;
+        return false;
+    }
+    
+    public static float checkWardHardness(float oldHardness, World world, BlockPos pos) {
+        return hasWard(world, pos) ? -1.0F : oldHardness;
     }
     
     public static float checkWardResistance(float oldResistance, World world, BlockPos pos) {
-        if (world != null && pos != null && world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            return world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos) ?
-                6000000.0F : oldResistance;
-        }
-        
-        return oldResistance;
+        return hasWard(world, pos) ? 6000000.0F : oldResistance;
     }
     
     public static int checkWardFlammability(int oldFlammability, IBlockAccess access, BlockPos pos) {
         if (oldFlammability == 0)
             return 0;
-        else if (access instanceof World && pos != null) {
-            World world = (World) access;
-            if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                return world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos) ?
-                    0 : oldFlammability;
-            }
-        }
-        
-        return oldFlammability;
+        else if (access instanceof World)
+            return hasWard((World) access, pos) ? 0 : oldFlammability;
+        else
+            return oldFlammability;
     }
     
     public static int checkWardFireEncouragement(int oldEncouragement, IBlockAccess access, BlockPos pos) {
         if (oldEncouragement == 0)
             return 0;
-        else if (access instanceof World && pos != null) {
-            World world = (World) access;
-            if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                return world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos) ?
-                    0 : oldEncouragement;
-            }
-        }
-        
-        return oldEncouragement;
+        else if (access instanceof World)
+            return hasWard((World) access, pos) ? 0 : oldEncouragement;
+        else
+            return oldEncouragement;
     }
     
     public static boolean checkWardRandomTick(WorldServer world, BlockPos pos, IBlockState state, Random rand) {
-        if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null))
-            return !world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos);
-        
-        return true;
+        return !hasWard(world, pos);
     }
     
     public static boolean checkWardGeneric(World world, BlockPos pos) {
-        if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null))
-            return !world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos);
-        
-        return true;
+        return !hasWard(world, pos);
     }
     
 }

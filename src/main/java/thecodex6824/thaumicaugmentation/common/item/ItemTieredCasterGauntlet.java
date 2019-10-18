@@ -25,6 +25,8 @@ import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
@@ -146,34 +148,37 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
             return false;
         }
         else {
-            int validChunks = 0, voidseerArea = TAConfig.voidseerArea.getValue();
+            int voidseerArea = TAConfig.voidseerArea.getValue();
             float totalVis = 0.0F;
+            TreeMap<Float, BlockPos> visAmounts = new TreeMap<>();
             for (int x = -voidseerArea / 2; x < (int) Math.ceil(voidseerArea / 2); ++x) {
                 for (int z = -voidseerArea / 2; z < (int) Math.ceil(voidseerArea / 2); ++z) {
                     BlockPos loc = user.getPosition().add(x * 16, 0, z * 16);
                     if (user.getEntityWorld().isBlockLoaded(loc, true)) {
-                        totalVis += AuraHelper.getVis(user.getEntityWorld(), loc);
-                        ++validChunks;
+                        float vis = AuraHelper.getVis(user.getEntityWorld(), loc);
+                        totalVis += vis;
+                        visAmounts.put(vis, loc);
                     }
                 }
             }
 
             if (totalVis >= amount) {
-                float toRemove = amount / validChunks;
-                for (int x = -voidseerArea / 2; x < (int) Math.ceil(voidseerArea / 2); ++x) {
-                    for (int z = -voidseerArea / 2; z < (int) Math.ceil(voidseerArea / 2); ++z) {
-                        BlockPos loc = user.getPosition().add(x * 16, 0, z * 16);
-                        if (user.getEntityWorld().isBlockLoaded(loc, true)) {
-                            amount -= AuraHelper.drainVis(user.getEntityWorld(), loc, Math.min(amount, toRemove), simulate);
-                            // epislon is used here as sometimes the amount may be really close to but not below 0
-                            if (amount <= 0.0F + EPSILON)
-                                return true;
-                        }
-                    }
+                float step = totalVis / visAmounts.size();
+                float drawn = 0;
+                int index = 0;
+                for (Map.Entry<Float, BlockPos> entry : visAmounts.entrySet()) {
+                    float actuallyDrawn = AuraHelper.drainVis(user.getEntityWorld(), entry.getValue(), step, false);
+                    drawn += actuallyDrawn;
+                    if (actuallyDrawn < step)
+                        step = (amount - drawn) / (visAmounts.size() - (index + 1));
+                    
+                    ++index;
                 }
+                
+                return Math.abs(drawn - amount) <= EPSILON;
             }
-
-            return amount <= 0.0F + EPSILON;
+            else
+                return false;
         }
     }
 
