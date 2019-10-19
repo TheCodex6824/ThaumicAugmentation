@@ -18,33 +18,19 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.network;
+package thecodex6824.thaumicaugmentation.api.impetus.node;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import java.util.Collection;
+import java.util.Deque;
 
-public class PacketEntityCast implements IMessage {
+public class ConsumeResult {
 
-    private int id;
+    public final long energyConsumed;
+    public final Collection<Deque<IImpetusNode>> paths;
     
-    public PacketEntityCast() {}
-    
-    public PacketEntityCast(int entityID) {
-        id = entityID;
-    }
-    
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        id = buf.readInt();
-    }
-    
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(id);
-    }
-    
-    public int getEntityID() {
-        return id;
+    public ConsumeResult(long l, Collection<Deque<IImpetusNode>> r) {
+        energyConsumed = l;
+        paths = r;
     }
     
 }

@@ -20,31 +20,21 @@
 
 package thecodex6824.thaumicaugmentation.common.network;
 
-import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
-public class PacketEntityCast implements IMessage {
+public class GenericMessageHandler<T extends IMessage> implements IMessageHandler<T, IMessage> {
 
-    private int id;
-    
-    public PacketEntityCast() {}
-    
-    public PacketEntityCast(int entityID) {
-        id = entityID;
-    }
-    
     @Override
-    public void fromBytes(ByteBuf buf) {
-        id = buf.readInt();
-    }
-    
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(id);
-    }
-    
-    public int getEntityID() {
-        return id;
+    public IMessage onMessage(T message, MessageContext ctx) {
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+            ThaumicAugmentation.proxy.handlePacket(message, ctx);
+        });
+        
+        return null;
     }
     
 }

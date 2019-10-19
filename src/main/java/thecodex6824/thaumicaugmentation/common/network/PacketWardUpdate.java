@@ -22,11 +22,7 @@ package thecodex6824.thaumicaugmentation.common.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
 public class PacketWardUpdate implements IMessage {
 
@@ -74,19 +70,6 @@ public class PacketWardUpdate implements IMessage {
     
     public byte getStatus() {
         return status;
-    }
-    
-    public static class Handler implements IMessageHandler<PacketWardUpdate, IMessage> {
-        
-        @Override
-        public IMessage onMessage(PacketWardUpdate message, MessageContext ctx) {
-            FMLClientHandler.instance().getClient().addScheduledTask(() -> {
-                ThaumicAugmentation.proxy.handleWardUpdatePacket(message);
-            });
-            
-            return null;
-        }
-        
     }
     
 }

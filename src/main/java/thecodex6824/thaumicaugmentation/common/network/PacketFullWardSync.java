@@ -27,10 +27,7 @@ import java.io.IOException;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
 public class PacketFullWardSync implements IMessage {
@@ -72,19 +69,6 @@ public class PacketFullWardSync implements IMessage {
     
     public NBTTagCompound getTag() {
         return tag;
-    }
-    
-    public static class Handler implements IMessageHandler<PacketFullWardSync, IMessage> {
-        
-        @Override
-        public IMessage onMessage(PacketFullWardSync message, MessageContext ctx) {
-            FMLClientHandler.instance().getClient().addScheduledTask(() -> {
-                ThaumicAugmentation.proxy.handleFullWardSyncPacket(message);
-            });
-            
-            return null;
-        }
-        
     }
     
 }

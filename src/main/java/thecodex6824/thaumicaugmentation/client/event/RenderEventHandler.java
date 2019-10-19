@@ -22,7 +22,10 @@ package thecodex6824.thaumicaugmentation.client.event;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,7 @@ import com.google.common.cache.CacheBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBiped.ArmPose;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -57,15 +61,21 @@ import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
+import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
+import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public class RenderEventHandler {
 
     private static final Cache<Integer, Boolean> CAST_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterWrite(
             3000, TimeUnit.MILLISECONDS).maximumSize(250).build();
+    
+    private static final HashMap<DimensionalBlockPos[], Long> TRANSACTIONS = new HashMap<>();
+    
     private static final ResourceLocation BEAM = new ResourceLocation("thaumcraft", "textures/misc/wispy.png");
+    private static final ResourceLocation LASER = new ResourceLocation("thaumcraft", "textures/misc/beamh.png");
     
     private static boolean isHoldingCaster(EntityLivingBase entity) {
         for (ItemStack stack : entity.getHeldEquipment()) {
@@ -75,6 +85,15 @@ public class RenderEventHandler {
         }
         
         return false;
+    }
+    
+    public static void onEntityCast(int id) {
+        if (TAConfig.gauntletCastAnimation.getValue())
+            CAST_CACHE.put(id, true);
+    }
+    
+    public static void onImpetusTransaction(DimensionalBlockPos[] positions) {
+        TRANSACTIONS.put(positions, Minecraft.getMinecraft().world.getTotalWorldTime());
     }
     
     @SubscribeEvent
@@ -95,7 +114,7 @@ public class RenderEventHandler {
         Vec3d ps = new Vec3d(from.x - eyePos.x, from.y - eyePos.y, from.z - eyePos.z);
         Vec3d se = new Vec3d(to.x - from.x, to.y - from.y, to.z - from.z);
         Vec3d beam = ps.crossProduct(se).normalize();
-        Vec3d width = new Vec3d(beam.x * 0.07125, beam.y * 0.07125, beam.z * 0.07125);
+        Vec3d width = new Vec3d(beam.x * 0.106875, beam.y * 0.106875, beam.z * 0.106875);
         Vec3d p1 = from.add(width);
         Vec3d p2 = to.add(width);
         Vec3d p3 = to.subtract(width);
@@ -126,7 +145,43 @@ public class RenderEventHandler {
         GlStateManager.popMatrix();
     }
     
-    private static void renderCubeOutline(Entity rv, float partial, Vec3d eyePos, BlockPos blockPosition, AxisAlignedBB cube) {
+    private static void renderLaser(Entity rv, float partial, Vec3d eyePos, Vec3d from, Vec3d to, double factor) {
+        Vec3d ps = new Vec3d(from.x - eyePos.x, from.y - eyePos.y, from.z - eyePos.z);
+        Vec3d se = new Vec3d(to.x - from.x, to.y - from.y, to.z - from.z);
+        Vec3d beam = ps.crossProduct(se).normalize();
+        Vec3d width = new Vec3d(beam.x * 0.4275 * factor, beam.y * 0.4275 * factor, beam.z * 0.4275 * factor);
+        Vec3d p1 = from.add(width);
+        Vec3d p2 = to.add(width);
+        Vec3d p3 = to.subtract(width);
+        Vec3d p4 = from.subtract(width);
+        double dist = from.distanceTo(to);
+        
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(false);
+        GlStateManager.enableBlend();
+        GlStateManager.disableLighting();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-(rv.lastTickPosX + (rv.posX - rv.lastTickPosX) * partial),
+                -(rv.lastTickPosY + (rv.posY - rv.lastTickPosY) * partial),
+                -(rv.lastTickPosZ + (rv.posZ - rv.lastTickPosZ) * partial));
+        
+        double offset = rv.ticksExisted % 25 / 25.0;
+        Minecraft.getMinecraft().renderEngine.bindTexture(LASER);
+        Tessellator t = Tessellator.getInstance();
+        BufferBuilder buffer = t.getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        buffer.pos(p1.x, p1.y, p1.z).tex(1.0 - offset, 0).color(0.5F, 0.4F, 0.5F, (float) factor).endVertex();
+        buffer.pos(p2.x, p2.y, p2.z).tex(dist - offset, 0).color(0.5F, 0.4F, 0.5F, (float) factor).endVertex();
+        buffer.pos(p3.x, p3.y, p3.z).tex(dist - offset, 1.0).color(0.5F, 0.4F, 0.5F, (float) factor).endVertex();
+        buffer.pos(p4.x, p4.y, p4.z).tex(1.0 - offset, 1.0).color(0.5F, 0.4F, 0.5F, (float) factor).endVertex();
+        t.draw();
+        GlStateManager.enableLighting();
+        GlStateManager.depthMask(true);
+        GlStateManager.popMatrix();
+    }
+    
+    private static void renderCubeOutline(Entity rv, float partial, Vec3d eyePos, BlockPos blockPosition, AxisAlignedBB cube,
+            float r, float g, float b, float a) {
         GlStateManager.depthMask(false);
         GlStateManager.disableDepth();
         GlStateManager.enableBlend();
@@ -146,16 +201,16 @@ public class RenderEventHandler {
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
         buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(pos.x, pos.y, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
-        buffer.pos(pos.x, pos.y + 1, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
-        buffer.pos(pos.x + 1, pos.y, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
-        buffer.pos(pos.x + 1, pos.y + 1, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
-        buffer.pos(pos.x + 1, pos.y, pos.z + 1).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
-        buffer.pos(pos.x + 1, pos.y + 1, pos.z + 1).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
-        buffer.pos(pos.x, pos.y, pos.z + 1).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
-        buffer.pos(pos.x, pos.y + 1, pos.z + 1).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
-        buffer.pos(pos.x, pos.y, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
-        buffer.pos(pos.x, pos.y + 1, pos.z).color(0.8F, 0.8F, 1.0F, 1.0F).endVertex();
+        buffer.pos(pos.x, pos.y, pos.z).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y + 1, pos.z).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y, pos.z).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y + 1, pos.z).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y, pos.z + 1).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y + 1, pos.z + 1).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y, pos.z + 1).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y + 1, pos.z + 1).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y, pos.z).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y + 1, pos.z).color(r, g, b, a).endVertex();
         t.draw();
         
         GlStateManager.enableCull();
@@ -171,19 +226,47 @@ public class RenderEventHandler {
     public static void onRenderWorldLast(RenderWorldLastEvent event) {
         Entity renderView = Minecraft.getMinecraft().getRenderViewEntity() != null ? Minecraft.getMinecraft().getRenderViewEntity() :
             Minecraft.getMinecraft().player;
+        Vec3d eyePos = renderView.getPositionEyes(event.getPartialTicks());
+        WorldClient world = Minecraft.getMinecraft().world;
         
-        Collection<IImpetusNode> nodes = ImpetusRenderingManager.getAllRenderableNodes(Minecraft.getMinecraft().world.provider.getDimension());
+        Collection<IImpetusNode> nodes = ImpetusRenderingManager.getAllRenderableNodes(world.provider.getDimension());
         if (!nodes.isEmpty()) {
-            Vec3d eyePos = renderView.getPositionEyes(event.getPartialTicks());
             List<IImpetusNode> renderNodes = nodes.stream()
-                    .filter(node -> eyePos.squareDistanceTo(new Vec3d(node.getLocation().getPos())) < 128 * 128)
+                    .filter(node -> {
+                        return eyePos.squareDistanceTo(new Vec3d(node.getLocation().getPos())) < 128 * 128 &&
+                        world.isBlockLoaded(node.getLocation().getPos()) &&
+                        world.getTileEntity(node.getLocation().getPos()) != null &&
+                        world.getTileEntity(node.getLocation().getPos()).hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                    })
                     .sorted(Comparator.<IImpetusNode>comparingDouble(node -> eyePos.squareDistanceTo(new Vec3d(node.getLocation().getPos()))).reversed())
                     .collect(Collectors.toList());
             
             for (IImpetusNode node : renderNodes) {
-                for (IImpetusNode out : node.getOutputs())
-                    renderBeam(renderView, event.getPartialTicks(), eyePos, node.getLocationForRendering(), out.getLocationForRendering());
+                for (IImpetusNode out : node.getOutputs()) {
+                    //if (world.isBlockLoaded(out.getLocation().getPos()) && world.getTileEntity(out.getLocation().getPos()) != null &&
+                    //        world.getTileEntity(out.getLocation().getPos()).hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null)) {
+                    
+                        renderBeam(renderView, event.getPartialTicks(), eyePos, node.getBeamEndpoint(), out.getBeamEndpoint());
+                    //}
+                }
             }
+        }
+        
+        long time = world.getTotalWorldTime();
+        Iterator<Map.Entry<DimensionalBlockPos[], Long>> iterator = TRANSACTIONS.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<DimensionalBlockPos[], Long> entry = iterator.next();
+            DimensionalBlockPos[] array = entry.getKey();
+            double factor = 1.0 - (time - entry.getValue()) / 20.0;
+            for (int i = 0; i < array.length - 1; ++i) {
+                IImpetusNode start = ImpetusRenderingManager.findNodeByPosition(array[i]);
+                IImpetusNode end = ImpetusRenderingManager.findNodeByPosition(array[i + 1]);
+                if (start != null && end != null)
+                    renderLaser(renderView, event.getPartialTicks(), eyePos, start.getBeamEndpoint(), end.getBeamEndpoint(), factor);
+            }
+            
+            if (factor < 0.0)
+                iterator.remove();
         }
         
         EntityPlayer player = Minecraft.getMinecraft().player;
@@ -192,10 +275,29 @@ public class RenderEventHandler {
                 int[] data = stack.getTagCompound().getIntArray("impetusBindSelection");
                 if (data.length == 4 && player.dimension == data[3]) {
                     BlockPos pos = new BlockPos(data[0], data[1], data[2]);
-                    Vec3d eyes = player.getPositionEyes(event.getPartialTicks());
-                    if (pos.distanceSq(eyes.x, eyes.y, eyes.z) < 64 * 64) {
-                        renderCubeOutline(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
-                                 pos, player.world.getBlockState(pos).getBoundingBox(player.world, pos));
+                    if (world.isBlockLoaded(pos) && world.getTileEntity(pos) != null) {
+                        IImpetusNode cap = world.getTileEntity(pos).getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                        if (cap != null) {
+                            Vec3d eyes = player.getPositionEyes(event.getPartialTicks());
+                            if (pos.distanceSq(eyes.x, eyes.y, eyes.z) < 64 * 64) {
+                                renderCubeOutline(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
+                                         pos, player.world.getBlockState(pos).getBoundingBox(player.world, pos), 0.8F, 0.8F, 1.0F, 1.0F);
+                            }
+                            
+                            for (DimensionalBlockPos p : cap.getInputLocations()) {
+                                if (p.getDimension() == player.dimension && p.getPos().distanceSq(eyes.x, eyes.y, eyes.z) < 64 * 64) {
+                                    renderCubeOutline(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
+                                             p.getPos(), player.world.getBlockState(p.getPos()).getBoundingBox(player.world, p.getPos()), 1.0F, 0.8F, 0.8F, 1.0F);
+                                }
+                            }
+                            
+                            for (DimensionalBlockPos p : cap.getOutputLocations()) {
+                                if (p.getDimension() == player.dimension && p.getPos().distanceSq(eyes.x, eyes.y, eyes.z) < 64 * 64) {
+                                    renderCubeOutline(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
+                                             p.getPos(), player.world.getBlockState(p.getPos()).getBoundingBox(player.world, p.getPos()), 0.8F, 1.0F, 0.8F, 1.0F);
+                                }
+                            }
+                        }
                     }
                 }
             }

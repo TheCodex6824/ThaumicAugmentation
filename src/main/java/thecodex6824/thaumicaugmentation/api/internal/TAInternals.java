@@ -20,8 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.api.internal;
 
+import java.util.Collection;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
+import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
 public final class TAInternals {
 
@@ -55,6 +59,18 @@ public final class TAInternals {
     
     public static String getCasterEffectProviderID(ItemStack stack) {
         return provider.getCasterEffectProviderID(stack);
+    }
+    
+    public static void syncImpetusTransaction(Collection<IImpetusNode> path) {
+        provider.syncImpetusTransaction(path);
+    }
+    
+    public static void fullySyncImpetusNode(IImpetusNode node) {
+        provider.fullySyncImpetusNode(node);
+    }
+    
+    public static void updateImpetusNode(IImpetusNode node, DimensionalBlockPos connection, boolean output, boolean remove) {
+        provider.updateImpetusNode(node, connection, output, remove);
     }
     
 }

@@ -21,10 +21,6 @@
 package thecodex6824.thaumicaugmentation.client.event;
 
 import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -63,15 +59,7 @@ import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public final class ClientEventHandler {
 
-    private static final Cache<Integer, Boolean> CAST_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterWrite(
-            3000, TimeUnit.MILLISECONDS).maximumSize(250).build();
-    
     private ClientEventHandler() {}
-    
-    public static void onEntityCast(int id) {
-        if (TAConfig.gauntletCastAnimation.getValue())
-            CAST_CACHE.put(id, true);
-    }
     
     private static void handleAugmentTooltips(ItemTooltipEvent event, IAugmentableItem cap) {
         LinkedList<LinkedList<String>> tooltip = new LinkedList<>();

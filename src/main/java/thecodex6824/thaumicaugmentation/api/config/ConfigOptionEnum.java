@@ -18,33 +18,39 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.network;
+package thecodex6824.thaumicaugmentation.api.config;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-public class PacketEntityCast implements IMessage {
+public class ConfigOptionEnum<T extends Enum<T>> extends ConfigOption<T> {
 
-    private int id;
-    
-    public PacketEntityCast() {}
-    
-    public PacketEntityCast(int entityID) {
-        id = entityID;
+    protected T value;
+    protected IEnumSerializer<T> save;
+
+    public ConfigOptionEnum(boolean enforceServer, T defaultValue, IEnumSerializer<T> serializer) {
+        super(enforceServer);
+        value = defaultValue;
+        save = serializer;
     }
-    
+
     @Override
-    public void fromBytes(ByteBuf buf) {
-        id = buf.readInt();
+    public void serialize(ByteBuf buf) {
+        save.serialize(value, buf);
     }
-    
+
     @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(id);
+    public void deserialize(ByteBuf buf) {
+        value = save.deserialize(buf);
     }
-    
-    public int getEntityID() {
-        return id;
+
+    @Override
+    public T getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(T value) {
+        this.value = value;
     }
     
 }

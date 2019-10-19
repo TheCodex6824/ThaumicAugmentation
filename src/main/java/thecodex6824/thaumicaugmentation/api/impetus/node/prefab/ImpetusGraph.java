@@ -174,10 +174,11 @@ public class ImpetusGraph implements IImpetusGraph {
         else {
             IImpetusGraph otherGraph = adding.getGraph();
             for (IImpetusNode node : nodes.values()) {
-                removeNode(node);
                 node.setGraph(otherGraph);
                 otherGraph.addNode(node);
             }
+            
+            nodes.clear();
         }
     }
     

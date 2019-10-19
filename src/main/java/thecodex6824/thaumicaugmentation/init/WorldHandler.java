@@ -82,7 +82,7 @@ public final class WorldHandler {
             if (emptinessID != TAConfig.emptinessDimID.getValue()) {
                 ThaumicAugmentation.getLogger().warn("The dimension ID {} was already taken. Assigning {} instead and updating the config...",
                         TAConfig.emptinessDimID.getValue(), emptinessID);
-                TAConfigHolder.emptinessDimID = emptinessID;
+                TAConfigHolder.world.emptinessDimID = emptinessID;
                 TAConfigHolder.syncLocally();
                 TAConfigHolder.syncConfig();
             }

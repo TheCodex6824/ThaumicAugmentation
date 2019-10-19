@@ -222,8 +222,10 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
         }
     }
     
+    @Override
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onWardBlock(BlockWardEvent.WardedServer.Post event) {
+        super.onWardBlock(event);
         BlockPos warded = event.getPos();
         for (EnumFacing facing : EnumFacing.values()) {
             BlockPos pos = warded.offset(facing);

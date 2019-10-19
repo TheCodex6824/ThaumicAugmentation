@@ -27,19 +27,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusGraph;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
@@ -211,45 +207,31 @@ public class ImpetusNode implements IImpetusNode {
     }
     
     @Override
+    public Vec3d getBeamEndpoint() {
+        return new Vec3d(loc.getPos().getX() + 0.5, loc.getPos().getY() + 0.5, loc.getPos().getZ() + 0.5);
+    }
+    
+    @Override
     public void destroy() {
         graph.removeNode(this);
     }
     
     @Override
-    public void init() {
+    public void init(World world) {
         if (tempStorage != null) {
             for (Map.Entry<DimensionalBlockPos, Boolean> entry : tempStorage.entrySet()) {
                 DimensionalBlockPos pos = entry.getKey();
-                if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-                    WorldServer world = DimensionManager.getWorld(pos.getDimension());
-                    if (world != null && world.isBlockLoaded(pos.getPos()) &&
-                            world.getChunk(pos.getPos()).getTileEntity(pos.getPos(), EnumCreateEntityType.CHECK) != null) {
+                if (world.isBlockLoaded(pos.getPos()) &&
+                        world.getChunk(pos.getPos()).getTileEntity(pos.getPos(), EnumCreateEntityType.CHECK) != null) {
+                    
+                    TileEntity te = world.getTileEntity(pos.getPos());
+                    if (te.hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null)) {
+                        if (entry.getValue())
+                            addOutput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
+                        else
+                            addInput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
                         
-                        TileEntity te = world.getTileEntity(pos.getPos());
-                        if (te.hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null)) {
-                            if (entry.getValue())
-                                addOutput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
-                            else
-                                addInput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
-                            
-                            continue;
-                        }
-                    }
-                }
-                else {
-                    WorldClient world = Minecraft.getMinecraft().world;
-                    if (world != null && world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos()) &&
-                            world.getChunk(pos.getPos()).getTileEntity(pos.getPos(), EnumCreateEntityType.CHECK) != null) {
-                        
-                        TileEntity te = world.getTileEntity(pos.getPos());
-                        if (te.hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null)) {
-                            if (entry.getValue())
-                                addOutput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
-                            else
-                                addInput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
-                            
-                            continue;
-                        }
+                        continue;
                     }
                 }
                 

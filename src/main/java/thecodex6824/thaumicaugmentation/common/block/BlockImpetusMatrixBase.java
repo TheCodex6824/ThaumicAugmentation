@@ -90,7 +90,9 @@ public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellI
                     hand != null && !player.getHeldItem(hand).isEmpty()) {
                 ItemStack stack = player.getHeldItem(hand);
                 if (stack.getItem() == TAItems.MATERIAL && stack.getMetadata() == 3) {
-                    stack.shrink(1);
+                    if (!player.isCreative())
+                        stack.shrink(1);
+                    
                     world.setBlockState(pos, state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(value, facing)));
                     return true;
                 }

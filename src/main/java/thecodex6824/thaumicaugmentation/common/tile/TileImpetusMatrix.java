@@ -49,6 +49,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IImpetusCellInfo;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
+import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
@@ -137,8 +138,11 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     
     @Override
     public void update() {
-        if (!world.isRemote && (world.getTotalWorldTime() + delay) % 20 == 0)
-            prosumer.consume(getTotalCells() * CELL_CAPACITY);
+        if (!world.isRemote && (world.getTotalWorldTime() + delay) % 20 == 0) {
+            ConsumeResult result = prosumer.consume(getTotalCells() * CELL_CAPACITY);
+            if (result.energyConsumed > 0)
+                NodeHelper.syncAllImpetusTransactions(result.paths);
+        }
     }
     
     @Override
@@ -175,7 +179,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     
     @Override
     public void onLoad() {
-        prosumer.init();
+        prosumer.init(world);
         ThaumicAugmentation.proxy.registerRenderableImpetusNode(prosumer);
     }
     
@@ -200,6 +204,19 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         }
         
         return false;
+    }
+    
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound tag = super.getUpdateTag();
+        tag.setTag("node", prosumer.serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        super.handleUpdateTag(tag);
+        prosumer.init(world);
     }
     
     @Override

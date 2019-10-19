@@ -29,6 +29,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -37,7 +38,7 @@ import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
@@ -87,15 +88,33 @@ public class WardEventHandler {
         if (event.phase == Phase.END) {
             for (Map.Entry<DimensionalChunkPos, WardUpdateEntry> entry : WardSyncManager.getEntries()) {
                 DimensionalChunkPos pos = entry.getKey();
-                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) {
-                    if (player.dimension == pos.dim && isPlayerInChunkRange(pos, player)) {
-                        byte send = 0;
-                        if (entry.getValue().update.equals(player.getUniqueID()))
-                            send = 1;
-                        else if (!entry.getValue().update.equals(IWardStorageServer.NIL_UUID))
-                            send = 2;
-                        
-                        TANetwork.INSTANCE.sendTo(new PacketWardUpdate(entry.getValue().pos, send), player);
+                if (entry.getValue().update != null) {
+                    for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) {
+                        if (player.dimension == pos.dim && isPlayerInChunkRange(pos, player)) {
+                            byte send = 0;
+                            if (entry.getValue().update.equals(player.getUniqueID()))
+                                send = 1;
+                            else if (!entry.getValue().update.equals(IWardStorageServer.NIL_UUID))
+                                send = 2;
+                            
+                            TANetwork.INSTANCE.sendTo(new PacketWardUpdate(entry.getValue().pos, send), player);
+                        }
+                    }
+                }
+                else {
+                    World world = DimensionManager.getWorld(pos.dim);
+                    if (world != null && world.isBlockLoaded(entry.getValue().pos)) {
+                        Chunk chunk = world.getChunk(pos.x, pos.z);
+                        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                        if (storage instanceof IWardStorageServer) {
+                            NBTTagCompound sync = ((IWardStorageServer) storage).fullSyncToClient(chunk, WardHelper.generateSafeUUID(), true);
+                            if (sync != null) {
+                                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) {
+                                    if (player.dimension == pos.dim && isPlayerInChunkRange(pos, player))
+                                        TANetwork.INSTANCE.sendTo(new PacketFullWardSync(sync), player);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -219,8 +238,8 @@ public class WardEventHandler {
             if (!sidesToRemove.isEmpty())
                 doAllTheNotifications(event.getWorld(), notifier, EnumSet.complementOf(sidesToRemove));
             
-            if (event.getWorld().isAirBlock(event.getPos()) || event.getWorld().getChunk(event.getPos()).getTileEntity(
-                    event.getPos(), EnumCreateEntityType.CHECK) != null) {
+            TileEntity check = event.getWorld().getTileEntity(event.getPos());
+            if (event.getWorld().isAirBlock(event.getPos()) || !WardHelper.isTileWardAllowed(check)) {
                 Chunk chunk = event.getWorld().getChunk(event.getPos());
                 if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
                     IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
@@ -324,11 +343,17 @@ public class WardEventHandler {
     }
     
     @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onWardBlock(BlockWardEvent.WardedServer.Post event) {
+        event.getWorld().markChunkDirty(event.getPos(), null);
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onDewardBlock(BlockWardEvent.DewardedServer.Post event) {
         event.getWorld().neighborChanged(event.getPos(), event.getWorld().getBlockState(event.getPos().up()).getBlock(),
                 event.getPos().up());
         event.getWorld().scheduleUpdate(event.getPos(), event.getWorld().getBlockState(event.getPos()).getBlock(),
                 event.getWorld().getBlockState(event.getPos()).getBlock().tickRate(event.getWorld()));
+        event.getWorld().markChunkDirty(event.getPos(), null);
     }
     
 }

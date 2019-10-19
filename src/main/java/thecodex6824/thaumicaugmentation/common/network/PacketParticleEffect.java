@@ -23,11 +23,7 @@ package thecodex6824.thaumicaugmentation.common.network;
 import javax.annotation.Nullable;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
 public class PacketParticleEffect implements IMessage {
 
@@ -97,19 +93,6 @@ public class PacketParticleEffect implements IMessage {
     
     public ParticleEffect getEffect() {
         return effect;
-    }
-    
-    public static class Handler implements IMessageHandler<PacketParticleEffect, IMessage> {
-
-        @Override
-        public IMessage onMessage(PacketParticleEffect message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                ThaumicAugmentation.proxy.handleParticlePacket(message);
-            });
-
-            return null;
-        }
-
     }
     
 }

@@ -87,8 +87,8 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
         };
         provider = new BufferedImpetusProvider(0, 2, storage) {
             @Override
-            public Vec3d getLocationForRendering() {
-                return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.9375, pos.getZ() + 0.5);
+            public Vec3d getBeamEndpoint() {
+                return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.4375, pos.getZ() + 0.5);
             }
         };
         actionTime = new VariableValue(Float.MIN_VALUE);
@@ -151,7 +151,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     
     @Override
     public void onLoad() {
-        provider.init();
+        provider.init(world);
         ThaumicAugmentation.proxy.registerRenderableImpetusNode(provider);
     }
     
@@ -185,6 +185,19 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     
     @Override
     public void handleEvents(float time, Iterable<Event> pastEvents) {}
+    
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound tag = super.getUpdateTag();
+        tag.setTag("node", provider.serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        super.handleUpdateTag(tag);
+        provider.init(world);
+    }
     
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {

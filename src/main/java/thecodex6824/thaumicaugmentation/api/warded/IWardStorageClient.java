@@ -38,6 +38,11 @@ public interface IWardStorageClient extends IWardStorage {
     public void clearWard(BlockPos pos);
     
     /**
+     * Unconditionally clears <strong>all</strong> of the wards in this chunk.
+     */
+    public void clearAllWards();
+    
+    /**
      * Sets the ward at the given position to the given logical ward owner.
      * @param pos The position of the block
      * @param id The effective client side owner of the ward

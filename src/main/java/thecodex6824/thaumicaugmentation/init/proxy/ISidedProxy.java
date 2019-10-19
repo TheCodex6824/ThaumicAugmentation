@@ -25,10 +25,9 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
-import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public interface ISidedProxy {
@@ -37,20 +36,18 @@ public interface ISidedProxy {
 
     public ITARenderHelper getRenderHelper();
     
-    public boolean registerRenderableImpetusNode(IImpetusNode node);
+    public void registerRenderableImpetusNode(IImpetusNode node);
     
     public boolean deregisterRenderableImpetusNode(IImpetusNode node);
     
-    public void handleParticlePacket(PacketParticleEffect message);
+    public boolean isOpenToLAN();
     
-    public void handleFullWardSyncPacket(PacketFullWardSync message);
-    
-    public void handleWardUpdatePacket(PacketWardUpdate message);
+    public void handlePacket(IMessage message, MessageContext context);
 
     public void preInit();
 
     public void init();
 
     public void postInit();
-
+    
 }

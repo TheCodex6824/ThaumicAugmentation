@@ -22,11 +22,7 @@ package thecodex6824.thaumicaugmentation.common.network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
 
 public class PacketConfigSync implements IMessage {
 
@@ -52,18 +48,6 @@ public class PacketConfigSync implements IMessage {
 
     public ByteBuf getBuffer() {
         return buffer;
-    }
-
-    public static class Handler implements IMessageHandler<PacketConfigSync, IMessage> {
-
-        @Override
-        public IMessage onMessage(PacketConfigSync message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                TAConfigManager.sync(ctx.side, message.getBuffer());
-            });
-            return null;
-        }
-
     }
 
 }

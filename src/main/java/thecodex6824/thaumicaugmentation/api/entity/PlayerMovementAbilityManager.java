@@ -29,6 +29,7 @@ import java.util.function.Predicate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 
 /**
  * Class that manages non-attribute movement changes.
@@ -95,9 +96,10 @@ public final class PlayerMovementAbilityManager {
     public static boolean isValidSideForMovement(EntityPlayer player) {
         // we want to update if:
         // 1. we are the client (to move differently at all)
-        // 2. we are the DEDICATED server (to update network vars)
+        // 2. we are the DEDICATED server and it is enabled in the config (to update network vars)
         // In SP this is shared between client and server so picking client is fine
-        return player.getEntityWorld().isRemote || FMLCommonHandler.instance().getSide() == Side.SERVER;
+        return player.getEntityWorld().isRemote ||
+                (FMLCommonHandler.instance().getSide() == Side.SERVER && TAConfig.serverMovementCalculation.getValue());
     }
     
     public static void put(EntityPlayer player, BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> continueApplying) {
@@ -191,10 +193,8 @@ public final class PlayerMovementAbilityManager {
 
     public static void onJump(EntityPlayer player) {
         if (players.containsKey(player)) {
-            for (PlayerFunctions func : players.get(player)) {
+            for (PlayerFunctions func : players.get(player))
                 player.motionY += func.tickFunction.apply(player, MovementType.JUMP_BEGIN);
-                player.velocityChanged = true;
-            }
         }
     }
 

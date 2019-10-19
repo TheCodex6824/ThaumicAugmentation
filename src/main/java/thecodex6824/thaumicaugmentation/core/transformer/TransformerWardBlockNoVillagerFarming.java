@@ -36,7 +36,7 @@ public class TransformerWardBlockNoVillagerFarming extends Transformer {
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
-        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "general", false, "") &&
+        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "") &&
                 transformedName.equals(CLASS);
     }
     

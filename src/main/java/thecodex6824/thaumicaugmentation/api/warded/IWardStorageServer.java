@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.api.warded;
 
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -76,6 +78,13 @@ public interface IWardStorageServer extends IWardStorage, INBTSerializable<NBTTa
     public void clearWard(World syncTo, BlockPos pos);
     
     /**
+     * Unconditionally clears <strong>all</strong> of the wards in this chunk.
+     * @param syncTo The world this storage exists in
+     * @param inside A BlockPos that exists inside this chunk
+     */
+    public void clearAllWards(World syncTo, BlockPos inside);
+    
+    /**
      * Returns the owner of the ward of a block, or the {@link #NIL_UUID} if
      * there is no ward.
      * @param pos The position of the block
@@ -104,6 +113,19 @@ public interface IWardStorageServer extends IWardStorage, INBTSerializable<NBTTa
      * @param player The player that needs to be synced to
      * @return An NBTTagCompound to send to the client for sync purposes, or null if no sync is needed
      */
-    public NBTTagCompound fullSyncToClient(Chunk chunk, UUID player);
+    public @Nullable NBTTagCompound fullSyncToClient(Chunk chunk, UUID player);
+    
+    /**
+     * Creates a NBTTagCompound suitable for a full sync to the client. A full
+     * sync means that it should include all blocks needed in a storage instance such that
+     * the client will have an up-to-date view of the wards in this area, no matter
+     * what data they already have. If this storage has no meaningful data,
+     * null can be returned to not do a sync unless force is true, in which case it will still return data.
+     * @param chunk The chunk the player is located in
+     * @param player The player that needs to be synced to
+     * @param force To force the storage to return a tag compound, even if it has no meaningful data
+     * @return An NBTTagCompound to send to the client for sync purposes, or null if no sync is needed
+     */
+    public @Nullable NBTTagCompound fullSyncToClient(Chunk chunk, UUID player, boolean force);
     
 }

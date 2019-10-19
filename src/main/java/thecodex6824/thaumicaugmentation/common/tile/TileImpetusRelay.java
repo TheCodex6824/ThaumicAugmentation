@@ -51,7 +51,7 @@ public class TileImpetusRelay extends TileEntity implements IInteractWithCaster,
     public TileImpetusRelay() {
         node = new ImpetusNode(2, 2) {
             @Override
-            public Vec3d getLocationForRendering() {
+            public Vec3d getBeamEndpoint() {
                 Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
                 switch (Minecraft.getMinecraft().world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION)) {
                     case DOWN:  return position.add(0.5, 0.5625, 0.5);
@@ -87,7 +87,7 @@ public class TileImpetusRelay extends TileEntity implements IInteractWithCaster,
     
     @Override
     public void onLoad() {
-        node.init();
+        node.init(world);
         ThaumicAugmentation.proxy.registerRenderableImpetusNode(node);
     }
     
@@ -124,6 +124,19 @@ public class TileImpetusRelay extends TileEntity implements IInteractWithCaster,
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         node.deserializeNBT(nbt.getCompoundTag("node"));
+    }
+    
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound tag = super.getUpdateTag();
+        tag.setTag("node", node.serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        super.handleUpdateTag(tag);
+        node.init(world);
     }
     
     @Override

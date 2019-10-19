@@ -20,15 +20,25 @@
 
 package thecodex6824.thaumicaugmentation.api.warded;
 
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
+import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.TAConfig.TileWardMode;
 
 public final class WardHelper {
 
     private WardHelper() {}
+    
+    private static final long VERSION_MASK = 0xF000;
     
     public static boolean doesPlayerHaveSpecialPermission(EntityPlayer player) {
         if (TAConfig.opWardOverride.getValue() && FMLCommonHandler.instance().getSide() == Side.SERVER) {
@@ -44,6 +54,23 @@ public final class WardHelper {
         }
         
         return false;
+    }
+    
+    public static boolean isTileWardAllowed(@Nullable TileEntity tile) {
+        if (TAConfig.tileWardMode.getValue() != TileWardMode.ALL) {
+            if (TAConfig.tileWardMode.getValue() == TileWardMode.NOTICK && tile instanceof ITickable)
+                return false;
+            else if (TAConfig.tileWardMode.getValue() == TileWardMode.NONE && tile != null)
+                return false;
+        }
+        
+        return true;
+    }
+    
+    public static UUID generateSafeUUID() {
+        long most = ThreadLocalRandom.current().nextLong();
+        long least = ThreadLocalRandom.current().nextLong();
+        return new UUID(most & ~VERSION_MASK, least);
     }
     
 }

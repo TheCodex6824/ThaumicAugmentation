@@ -27,6 +27,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -38,9 +40,6 @@ import thecodex6824.thaumicaugmentation.common.event.WardEventHandler;
 import thecodex6824.thaumicaugmentation.common.event.WardEventHandlerNoCoremodFallback;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.internal.InternalMethodProvider;
-import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperCommon;
 import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
@@ -66,9 +65,7 @@ public class CommonProxy implements ISidedProxy {
     }
     
     @Override
-    public boolean registerRenderableImpetusNode(IImpetusNode node) {
-        return false;
-    }
+    public void registerRenderableImpetusNode(IImpetusNode node) {}
     
     @Override
     public boolean deregisterRenderableImpetusNode(IImpetusNode node) {
@@ -76,13 +73,12 @@ public class CommonProxy implements ISidedProxy {
     }
     
     @Override
-    public void handleParticlePacket(PacketParticleEffect message) {}
+    public boolean isOpenToLAN() {
+        return false;
+    }
     
     @Override
-    public void handleFullWardSyncPacket(PacketFullWardSync message) {}
-    
-    @Override
-    public void handleWardUpdatePacket(PacketWardUpdate message) {}
+    public void handlePacket(IMessage message, MessageContext context) {}
 
     @Override
     public void preInit() {

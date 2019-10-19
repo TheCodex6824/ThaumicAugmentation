@@ -20,13 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus.node.prefab;
 
-import java.util.ArrayList;
-import java.util.Deque;
-
 import net.minecraft.util.math.BlockPos;
+import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusProvider;
+import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
 public class SimpleImpetusConsumer extends ImpetusNode implements IImpetusConsumer {
@@ -40,43 +37,8 @@ public class SimpleImpetusConsumer extends ImpetusNode implements IImpetusConsum
     }
     
     @Override
-    public long consume(long amount) {
-        if (amount <= 0)
-            return 0;
-        
-        ArrayList<IImpetusProvider> providers = new ArrayList<>(graph.findDirectProviders(this));
-        if (!providers.isEmpty()) {
-            providers.sort((p1, p2) -> (int) Math.max(1, Math.min(-1, p1.provide(Long.MAX_VALUE, true) - p2.provide(Long.MAX_VALUE, true))));
-            ArrayList<Deque<IImpetusNode>> paths = new ArrayList<>(providers.size());
-            for (IImpetusProvider p : providers) {
-                Deque<IImpetusNode> path = graph.findPath(p, this);
-                if (path != null)
-                    paths.add(path);
-            }
-            
-            long drawn = 0;
-            long step = amount / providers.size();
-            long remain = amount % providers.size();
-            for (int i = 0; i < providers.size(); ++i) {
-                IImpetusProvider p = providers.get(i);
-                long actuallyDrawn = p.provide(Math.min(step + (remain > 0 ? 1 : 0), amount - drawn), false);
-                drawn += actuallyDrawn;
-                if (actuallyDrawn < step && i < providers.size() - 1) {
-                    step = (amount - drawn) / (providers.size() - (i + 1));
-                    remain = (amount - drawn) % (providers.size() - (i + 1));
-                }
-                else
-                    --remain;
-                
-                Deque<IImpetusNode> nodes = paths.get(i);
-                for (IImpetusNode n : nodes)
-                    n.onTransaction(this, actuallyDrawn);
-            }
-            
-            return drawn;
-        }
-        
-        return 0;
+    public ConsumeResult consume(long amount) {
+        return NodeHelper.consumeImpetusFromConnectedProviders(amount, this);
     }
     
 }

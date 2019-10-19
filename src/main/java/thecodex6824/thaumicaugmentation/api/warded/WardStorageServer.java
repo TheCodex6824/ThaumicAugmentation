@@ -23,6 +23,8 @@ package thecodex6824.thaumicaugmentation.api.warded;
 import java.util.Arrays;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import com.google.common.annotations.VisibleForTesting;
 
 import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
@@ -70,6 +72,8 @@ public class WardStorageServer implements IWardStorageServer {
             public UUID getOwner(BlockPos pos);
             
             public void setOwner(BlockPos pos, UUID owner);
+            
+            public void clearAllOwnersAndWards();
             
             public UUID[] getOwners();
             
@@ -123,6 +127,9 @@ public class WardStorageServer implements IWardStorageServer {
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {}
+            
+            @Override
+            public void clearAllOwnersAndWards() {}
             
             @Override
             public UUID[] getOwners() {
@@ -234,6 +241,13 @@ public class WardStorageServer implements IWardStorageServer {
                     if (count == 0)
                         removeOwner(this.owner, false);
                 }
+            }
+            
+            @Override
+            public void clearAllOwnersAndWards() {
+                Arrays.fill(data, (byte) 0);
+                owner = NIL_UUID;
+                count = 0;
             }
             
             @Override
@@ -351,6 +365,14 @@ public class WardStorageServer implements IWardStorageServer {
                 }
                 else
                     removeOwner(owner);
+            }
+            
+            @Override
+            public void clearAllOwnersAndWards() {
+                Arrays.fill(data, (byte) 0);
+                Arrays.fill(owners, NIL_UUID);
+                Arrays.fill(counts, (char) 0);
+                reverseMap.clear();
             }
             
             @Override
@@ -519,6 +541,14 @@ public class WardStorageServer implements IWardStorageServer {
                 }
                 else
                     removeOwner(owner);
+            }
+            
+            @Override
+            public void clearAllOwnersAndWards() {
+                Arrays.fill(data, (byte) 0);
+                Arrays.fill(owners, NIL_UUID);
+                Arrays.fill(counts, (char) 0);
+                reverseMap.clear();
             }
             
             @Override
@@ -693,6 +723,14 @@ public class WardStorageServer implements IWardStorageServer {
             }
             
             @Override
+            public void clearAllOwnersAndWards() {
+                Arrays.fill(data, (byte) 0);
+                Arrays.fill(owners, NIL_UUID);
+                Arrays.fill(counts, (char) 0);
+                reverseMap.clear();
+            }
+            
+            @Override
             public int getMaxAllowedOwners() {
                 return 255;
             }
@@ -853,6 +891,14 @@ public class WardStorageServer implements IWardStorageServer {
             }
             
             @Override
+            public void clearAllOwnersAndWards() {
+                Arrays.fill(data, (short) 0);
+                Arrays.fill(owners, NIL_UUID);
+                Arrays.fill(counts, (char) 0);
+                reverseMap.clear();
+            }
+            
+            @Override
             public int getMaxAllowedOwners() {
                 return 65535;
             }
@@ -990,6 +1036,12 @@ public class WardStorageServer implements IWardStorageServer {
         }
     }
     
+    @Override
+    public void clearAllWards(World syncTo, BlockPos inside) {
+        manager.clearAllOwnersAndWards();
+        WardSyncManager.markChunkForClear(syncTo, inside);
+    }
+    
     protected StorageManagersServer.IWardStorageManagerServer createIncreasedSizeManager() {
         switch (manager.getStorageID()) {
             case 0: return new StorageManagersServer.StorageManager1Bit(manager);
@@ -1051,8 +1103,13 @@ public class WardStorageServer implements IWardStorageServer {
     }
     
     @Override
-    public NBTTagCompound fullSyncToClient(Chunk chunk, UUID player) {
-        if (manager.getNumCurrentOwners() > 0) {
+    public @Nullable NBTTagCompound fullSyncToClient(Chunk chunk, UUID player) {
+        return fullSyncToClient(chunk, player, false);
+    }
+    
+    @Override
+    public @Nullable NBTTagCompound fullSyncToClient(Chunk chunk, UUID player, boolean force) {
+        if (force || manager.getNumCurrentOwners() > 0) {
             NBTTagCompound tag = new NBTTagCompound();
             byte[] data = new byte[StorageManagersServer.CHUNK_DATA_SIZE / 4];
             MutableBlockPos pos = new MutableBlockPos(0, 0, 0);

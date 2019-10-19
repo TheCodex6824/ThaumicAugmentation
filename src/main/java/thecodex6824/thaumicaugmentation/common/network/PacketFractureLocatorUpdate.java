@@ -21,15 +21,8 @@
 package thecodex6824.thaumicaugmentation.common.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 
 public class PacketFractureLocatorUpdate implements IMessage {
 
@@ -85,30 +78,6 @@ public class PacketFractureLocatorUpdate implements IMessage {
     
     public int getZ() {
         return z;
-    }
-    
-    public static class Handler implements IMessageHandler<PacketFractureLocatorUpdate, IMessage> {
-        
-        @Override
-        public IMessage onMessage(PacketFractureLocatorUpdate message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                EntityPlayerSP player = Minecraft.getMinecraft().player;
-                for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
-                    ItemStack stack = player.inventory.getStackInSlot(i);
-                    if (stack.getItem() instanceof ItemFractureLocator) {
-                        if (!stack.hasTagCompound())
-                            stack.setTagCompound(new NBTTagCompound());
-                        
-                        stack.getTagCompound().setBoolean("found", message.wasFractureFound());
-                        if (message.wasFractureFound())
-                            stack.getTagCompound().setIntArray("pos", new int[] {message.getX(), message.getY(), message.getZ()});
-                    }
-                }
-            });
-            
-            return null;
-        }
-        
     }
     
 }

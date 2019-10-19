@@ -21,16 +21,20 @@
 package thecodex6824.thaumicaugmentation.init.proxy;
 
 import java.util.Random;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -42,24 +46,33 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.lib.events.EssentiaHandler;
 import thaumcraft.common.lib.events.EssentiaHandler.EssentiaSourceFX;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
+import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
+import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
+import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
+import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
 import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
@@ -76,7 +89,14 @@ import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvid
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
+import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketConfigSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
+import thecodex6824.thaumicaugmentation.common.network.PacketFractureLocatorUpdate;
+import thecodex6824.thaumicaugmentation.common.network.PacketFullImpetusNodeSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketImpetusNodeUpdate;
+import thecodex6824.thaumicaugmentation.common.network.PacketImpetusTransaction;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
@@ -102,8 +122,8 @@ public class ClientProxy extends CommonProxy {
     }
     
     @Override
-    public boolean registerRenderableImpetusNode(IImpetusNode node) {
-        return ImpetusRenderingManager.registerRenderableNode(node);
+    public void registerRenderableImpetusNode(IImpetusNode node) {
+        ImpetusRenderingManager.registerRenderableNode(node);
     }
     
     @Override
@@ -112,7 +132,37 @@ public class ClientProxy extends CommonProxy {
     }
     
     @Override
-    public void handleParticlePacket(PacketParticleEffect message) {
+    public boolean isOpenToLAN() {
+        return Minecraft.getMinecraft().getIntegratedServer() != null && Minecraft.getMinecraft().getIntegratedServer().getPublic();
+    }
+    
+    @Override
+    public void handlePacket(IMessage message, MessageContext context) {
+        if (message instanceof PacketParticleEffect)
+            handleParticlePacket((PacketParticleEffect) message, context);
+        else if (message instanceof PacketConfigSync)
+            handleConfigSyncPacket((PacketConfigSync) message, context);
+        else if (message instanceof PacketAugmentableItemSync)
+            handleAugmentableItemSyncPacket((PacketAugmentableItemSync) message, context);
+        else if (message instanceof PacketFullWardSync)
+            handleFullWardSyncPacket((PacketFullWardSync) message, context);
+        else if (message instanceof PacketWardUpdate)
+            handleWardUpdatePacket((PacketWardUpdate) message, context);
+        else if (message instanceof PacketFractureLocatorUpdate)
+            handleFractureLocatorUpdatePacket((PacketFractureLocatorUpdate) message, context);
+        else if (message instanceof PacketEntityCast)
+            handleEntityCastPacket((PacketEntityCast) message, context);
+        else if (message instanceof PacketFullImpetusNodeSync)
+            handleFullImpetusNodeSyncPacket((PacketFullImpetusNodeSync) message, context);
+        else if (message instanceof PacketImpetusNodeUpdate)
+            handleImpetusNodeUpdatePacket((PacketImpetusNodeUpdate) message, context);
+        else if (message instanceof PacketImpetusTransaction)
+            handleImpetusTransationPacket((PacketImpetusTransaction) message, context);
+        else
+            ThaumicAugmentation.getLogger().warn("An unknown packet was received and will be dropped: " + message.getClass().toString());
+    }
+    
+    protected void handleParticlePacket(PacketParticleEffect message, MessageContext context) {
         if (FMLClientHandler.instance().getClient().world != null) {
             Random rand = FMLClientHandler.instance().getClient().world.rand;
             switch (message.getEffect()) {
@@ -205,10 +255,32 @@ public class ClientProxy extends CommonProxy {
         }
     }
     
-    @Override
-    public void handleFullWardSyncPacket(PacketFullWardSync message) {
+    protected void handleConfigSyncPacket(PacketConfigSync message, MessageContext context) {
+        TAConfigManager.sync(context.side, message.getBuffer());
+    }
+    
+    protected void handleAugmentableItemSyncPacket(PacketAugmentableItemSync message, MessageContext context) {
+        Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
+        if (entity != null) {
+            int i = 0;
+            for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
+                for (ItemStack stack : func.apply(entity)) {
+                    if (i == message.getItemIndex()) {
+                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+                            stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).deserializeNBT(message.getTagCompound());
+                            return;
+                        }
+                    }
+                    
+                    ++i;
+                }
+            }
+        }
+    }
+    
+    protected void handleFullWardSyncPacket(PacketFullWardSync message, MessageContext context) {
         NBTTagCompound tag = message.getTag();
-        World world = FMLClientHandler.instance().getClient().world;
+        World world = Minecraft.getMinecraft().world;
         int chunkX = tag.getInteger("x"), chunkZ = tag.getInteger("z");
         if (world.isBlockLoaded(new BlockPos(chunkX << 4, 0, chunkZ << 4)) && world.getChunk(chunkX, chunkZ).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             if (world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageClient) {
@@ -218,16 +290,100 @@ public class ClientProxy extends CommonProxy {
         }
     }
     
-    @Override
-    public void handleWardUpdatePacket(PacketWardUpdate message) {
+    protected void handleWardUpdatePacket(PacketWardUpdate message, MessageContext context) {
         BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
-        World world = FMLClientHandler.instance().getClient().world;
+        World world = Minecraft.getMinecraft().world;
         if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageClient) {
                 IWardStorageClient storage = (IWardStorageClient) world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                 storage.setWard(pos, ClientWardStorageValue.fromID(message.getStatus()));
             }
         }
+    }
+    
+    protected void handleFractureLocatorUpdatePacket(PacketFractureLocatorUpdate message, MessageContext context) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
+            ItemStack stack = player.inventory.getStackInSlot(i);
+            if (stack.getItem() instanceof ItemFractureLocator) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
+                stack.getTagCompound().setBoolean("found", message.wasFractureFound());
+                if (message.wasFractureFound())
+                    stack.getTagCompound().setIntArray("pos", new int[] {message.getX(), message.getY(), message.getZ()});
+            }
+        }
+    }
+    
+    protected void handleEntityCastPacket(PacketEntityCast message, MessageContext context) {
+        RenderEventHandler.onEntityCast(message.getEntityID());
+    }
+    
+    protected void handleFullImpetusNodeSyncPacket(PacketFullImpetusNodeSync message, MessageContext context) {
+        NBTTagCompound tag = message.getTag();
+        BlockPos pos = message.getNode();
+        World world = Minecraft.getMinecraft().world;
+        if (world.isBlockLoaded(pos)) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile != null) {
+                IImpetusNode node = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                if (node != null)
+                    node.deserializeNBT(tag);
+            }
+        }
+    }
+    
+    protected void handleImpetusNodeUpdatePacket(PacketImpetusNodeUpdate message, MessageContext context) {
+        World world = Minecraft.getMinecraft().world;
+        if (world.isBlockLoaded(message.getNode())) {
+            TileEntity tile = world.getTileEntity(message.getNode());
+            if (tile != null) {
+                IImpetusNode node = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                if (node != null) {
+                    DimensionalBlockPos dest = message.getDest();
+                    if (dest.getDimension() == world.provider.getDimension() && world.isBlockLoaded(dest.getPos())) {
+                        TileEntity destTile = world.getTileEntity(dest.getPos());
+                        if (destTile != null) {
+                            IImpetusNode destNode = destTile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                            if (destNode != null) {
+                                if (message.isOutput()) {
+                                    if (message.shouldRemove())
+                                        node.removeOutput(destNode);
+                                    else
+                                        node.addOutput(destNode);
+                                }
+                                else {
+                                    if (message.shouldRemove())
+                                        node.removeInput(destNode);
+                                    else
+                                        node.addInput(destNode);
+                                }
+                                
+                                return;
+                            }
+                        }
+                    }
+                    
+                    if (message.isOutput()) {
+                        if (message.shouldRemove())
+                            node.removeOutputLocation(message.getDest());
+                        else
+                            node.addOutputLocation(message.getDest());
+                    }
+                    else {
+                        if (message.shouldRemove())
+                            node.removeInputLocation(message.getDest());
+                        else
+                            node.addInputLocation(message.getDest());
+                    }
+                }
+            }
+        }
+    }
+    
+    protected void handleImpetusTransationPacket(PacketImpetusTransaction message, MessageContext context) {
+        RenderEventHandler.onImpetusTransaction(message.getPositions());
     }
 
     @Override

@@ -48,7 +48,7 @@
                         "type": "uniform",
                         "interpolation": "linear",
                         "samples": [
-                            90
+                            0, 90, 180, 270
                         ]
                     }
                 ],
@@ -70,7 +70,7 @@
                         "type": "uniform",
                         "interpolation": "linear",
                         "samples": [
-                            90
+                            0, 90, 180, 270
                         ]
                     }
                 ]

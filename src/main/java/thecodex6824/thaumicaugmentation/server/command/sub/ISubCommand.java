@@ -18,33 +18,26 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.network;
+package thecodex6824.thaumicaugmentation.server.command.sub;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import java.util.List;
 
-public class PacketEntityCast implements IMessage {
+import javax.annotation.Nullable;
 
-    private int id;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+
+public interface ISubCommand {
+
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException;
     
-    public PacketEntityCast() {}
+    public String getName();
     
-    public PacketEntityCast(int entityID) {
-        id = entityID;
-    }
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+            @Nullable BlockPos targetPos);
     
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        id = buf.readInt();
-    }
-    
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(id);
-    }
-    
-    public int getEntityID() {
-        return id;
-    }
+    public boolean isUsernameIndex(String[] args, int index);
     
 }

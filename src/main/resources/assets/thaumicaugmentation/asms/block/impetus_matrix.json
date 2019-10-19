@@ -10,7 +10,7 @@
         ]
     },
     "states": [
-        "default", "dummy"
+        "default"
     ],
     "transitions": {
         "default": []

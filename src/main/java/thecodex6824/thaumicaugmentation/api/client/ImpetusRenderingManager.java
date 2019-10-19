@@ -21,28 +21,45 @@
 package thecodex6824.thaumicaugmentation.api.client;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
+import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableMap;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
+import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
 public final class ImpetusRenderingManager {
 
     private ImpetusRenderingManager() {}
     
-    private static Multimap<Integer, IImpetusNode> nodes = MultimapBuilder.hashKeys().hashSetValues().build();
+    private static Int2ObjectOpenHashMap<Map<DimensionalBlockPos, IImpetusNode>> nodes = new Int2ObjectOpenHashMap<>();
+    private static final ImmutableMap<DimensionalBlockPos, IImpetusNode> EMPTY = ImmutableMap.of();
     
-    public static boolean registerRenderableNode(IImpetusNode node) {
-        return nodes.put(node.getLocation().getDimension(), node);
+    public static void registerRenderableNode(IImpetusNode node) {
+        Map<DimensionalBlockPos, IImpetusNode> map = nodes.get(node.getLocation().getDimension());
+        if (map == null) {
+            map = new HashMap<>();
+            nodes.put(node.getLocation().getDimension(), map);
+        }
+        
+        map.put(node.getLocation(), node);
     }
     
     public static boolean deregisterRenderableNode(IImpetusNode node) {
-        return nodes.remove(node.getLocation().getDimension(), node);
+        return nodes.getOrDefault(node.getLocation().getDimension(), EMPTY).remove(node.getLocation()) != null;
     }
     
     public static Collection<IImpetusNode> getAllRenderableNodes(int dim) {
-        return nodes.get(dim);
+        return nodes.getOrDefault(dim, EMPTY).values();
+    }
+    
+    @Nullable
+    public static IImpetusNode findNodeByPosition(DimensionalBlockPos pos) {
+        return nodes.getOrDefault(pos.getDimension(), EMPTY).get(pos);
     }
     
 }

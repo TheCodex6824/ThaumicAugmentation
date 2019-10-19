@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.api.impetus.node.prefab;
 
 import net.minecraft.util.math.BlockPos;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
@@ -46,9 +47,10 @@ public class BufferedImpetusProsumer extends ImpetusNode implements IImpetusProv
     }
     
     @Override
-    public long consume(long amount) {
+    public ConsumeResult consume(long amount) {
         amount = Math.min(amount, buffer.receiveEnergy(Long.MAX_VALUE, true));
-        return buffer.receiveEnergy(NodeHelper.consumeImpetusFromConnectedProviders(amount, this), false);
+        ConsumeResult pair = NodeHelper.consumeImpetusFromConnectedProviders(amount, this);
+        return new ConsumeResult(buffer.receiveEnergy(pair.energyConsumed, false), pair.paths);
     }
     
     public IImpetusStorage getProsumer() {

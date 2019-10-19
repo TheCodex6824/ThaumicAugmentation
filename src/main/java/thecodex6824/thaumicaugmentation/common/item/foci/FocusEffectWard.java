@@ -26,6 +26,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -42,6 +44,7 @@ import thaumcraft.api.casters.Trajectory;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.TAConfig.TileWardMode;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
@@ -89,7 +92,15 @@ public class FocusEffectWard extends FocusEffect {
                 }
                 
                 Chunk chunk = getPackage().getCaster().getEntityWorld().getChunk(pos);
-                if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && chunk.getTileEntity(pos, EnumCreateEntityType.CHECK) == null) {
+                if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+                    if (TAConfig.tileWardMode.getValue() != TileWardMode.ALL) {
+                        TileEntity tile = chunk.getTileEntity(pos, EnumCreateEntityType.CHECK);
+                        if (TAConfig.tileWardMode.getValue() == TileWardMode.NOTICK && tile instanceof ITickable)
+                            return false;
+                        else if (TAConfig.tileWardMode.getValue() == TileWardMode.NONE && tile != null)
+                            return false;
+                    }
+                    
                     IWardStorage wardStorage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                     if (wardStorage instanceof IWardStorageServer) {
                         IWardStorageServer storage = (IWardStorageServer) wardStorage;

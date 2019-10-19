@@ -31,6 +31,7 @@ import java.util.UUID;
 
 import org.junit.Test;
 
+import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
@@ -47,13 +48,29 @@ public class TestWardStorage {
     private HashMap<BlockPos, UUID> data;
     private IWardStorageManagerServer manager;
     
+    /**
+     * The default Java UUID factory uses SecureRandom,
+     * which is nice and all but we aren't using these
+     * for secure purposes
+     */
+    private UUID fastGenerateUUID() {
+        long most = ThreadLocalRandom.current().nextLong();
+        long least = ThreadLocalRandom.current().nextLong();
+        
+        most &= ~0xF000;
+        most |= 0x4000;
+        least &= 0x0FFFFFFFFFFFFFFFL;
+        least |= 0x8000000000000000L;
+        return new UUID(most, least);
+    }
+    
     private void sharedTest(int numPlayers) {
         WardStorageServer storage = new WardStorageServer(manager);
         
         UUID[] players = new UUID[numPlayers + 1];
         players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
-            players[i] = UUID.randomUUID();
+            players[i] = fastGenerateUUID();
         
         data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
@@ -124,7 +141,7 @@ public class TestWardStorage {
         UUID[] players = new UUID[123];
         players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
-            players[i] = UUID.randomUUID();
+            players[i] = fastGenerateUUID();
         
         data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
@@ -161,7 +178,7 @@ public class TestWardStorage {
         UUID[] players = new UUID[13];
         players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
-            players[i] = UUID.randomUUID();
+            players[i] = fastGenerateUUID();
         
         data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
@@ -198,7 +215,7 @@ public class TestWardStorage {
         UUID[] players = new UUID[storage.manager.getMaxAllowedOwners() + 1];
         players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
-            players[i] = UUID.randomUUID();
+            players[i] = fastGenerateUUID();
         
         data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
@@ -275,7 +292,7 @@ public class TestWardStorage {
         UUID[] players = new UUID[storage.manager.getMaxAllowedOwners() + 1];
         players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
-            players[i] = UUID.randomUUID();
+            players[i] = fastGenerateUUID();
         
         data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
@@ -376,7 +393,7 @@ public class TestWardStorage {
         UUID[] players = new UUID[storage.manager.getMaxAllowedOwners() + 1];
         players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
-            players[i] = UUID.randomUUID();
+            players[i] = fastGenerateUUID();
         
         data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
@@ -477,7 +494,7 @@ public class TestWardStorage {
         UUID[] players = new UUID[storage.manager.getMaxAllowedOwners() + 1];
         players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
-            players[i] = UUID.randomUUID();
+            players[i] = fastGenerateUUID();
         
         data = new HashMap<>(16 * 16 * 256);
         int forcedIndex = 1;
@@ -581,7 +598,7 @@ public class TestWardStorage {
         UUID[] players = new UUID[storage.manager.getMaxAllowedOwners() + 1];
         players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
-            players[i] = UUID.randomUUID();
+            players[i] = fastGenerateUUID();
         
         data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
@@ -672,6 +689,50 @@ public class TestWardStorage {
         }
         
         for (UUID id : snapped)
+            assertFalse(storage.isWardOwner(id));
+    }
+    
+    @Test
+    public void testClearAll() {
+        WardStorageServer storage = new WardStorageServer(new StorageManager2Bits());
+        
+        UUID[] players = new UUID[storage.manager.getMaxAllowedOwners() + 1];
+        players[0] = IWardStorageServer.NIL_UUID;
+        for (int i = 1; i < players.length; ++i)
+            players[i] = fastGenerateUUID();
+        
+        data = new HashMap<>(16 * 16 * 256);
+        Random rand = new Random();
+        for (int x = 0; x < 16; ++x) {
+            for (int z = 0; z < 16; ++z) {
+                for (int y = 0; y < 256; ++y)
+                    data.put(new BlockPos(x, y, z), players[rand.nextInt(players.length)]);
+            }
+        }
+        
+        HashMap<UUID, Integer> counts = new HashMap<>();
+        for (int i = 1; i < players.length; ++i)
+            counts.put(players[i], 0);
+        
+        for (Map.Entry<BlockPos, UUID> entry : data.entrySet()) {
+            if (!entry.getValue().equals(IWardStorageServer.NIL_UUID)) {
+                storage.setWard(entry.getKey(), entry.getValue());
+                counts.put(entry.getValue(), counts.get(entry.getValue()) + 1);
+            }
+            else
+                storage.clearWard(entry.getKey());
+        }
+        
+        for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
+            if (storage.isWardOwner(entry.getKey())) {
+                int internalID = ((StorageManager2Bits) storage.manager).reverseMap.getByte(entry.getKey());
+                assertEquals((long) ((StorageManager2Bits) storage.manager).counts[internalID], (long) entry.getValue());
+            }
+        }
+        
+        storage.manager.clearAllOwnersAndWards();
+        
+        for (UUID id : players)
             assertFalse(storage.isWardOwner(id));
     }
     

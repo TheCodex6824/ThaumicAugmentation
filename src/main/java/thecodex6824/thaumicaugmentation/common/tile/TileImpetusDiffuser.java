@@ -55,8 +55,9 @@ import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
+import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
+import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
@@ -74,8 +75,8 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
         super();
         consumer = new SimpleImpetusConsumer(2, 0) {
             @Override
-            public Vec3d getLocationForRendering() {
-                return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5);
+            public Vec3d getBeamEndpoint() {
+                return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.21875, pos.getZ() + 0.5);
             }
         };
         actionTime = new VariableValue(Float.MIN_VALUE);
@@ -93,8 +94,11 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                         IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                         if (storage != null && storage.canReceive()) {
                             long canReceive = Math.min(storage.receiveEnergy(Long.MAX_VALUE, true), 10);
-                            if (storage.receiveEnergy(consumer.consume(canReceive), false) > 0)
+                            ConsumeResult result = consumer.consume(canReceive);
+                            if (storage.receiveEnergy(result.energyConsumed, false) > 0) {
                                 ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), player.getPositionVector().add(0, player.height / 2, 0));
+                                NodeHelper.syncAllImpetusTransactions(result.paths);
+                            }
                         }
                     }
                 }
@@ -103,8 +107,11 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                     IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                     if (storage != null && storage.canReceive()) {
                         long canReceive = Math.min(storage.receiveEnergy(Long.MAX_VALUE, true), 10);
-                        if (storage.receiveEnergy(consumer.consume(canReceive), false) > 0)
+                        ConsumeResult result = consumer.consume(canReceive);
+                        if (storage.receiveEnergy(result.energyConsumed, false) > 0) {
                             ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), entity.getPositionVector());
+                            NodeHelper.syncAllImpetusTransactions(result.paths);
+                        }
                     }
                 }
             }
@@ -142,7 +149,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     
     @Override
     public void onLoad() {
-        consumer.init();
+        consumer.init(world);
         ThaumicAugmentation.proxy.registerRenderableImpetusNode(consumer);
     }
     
@@ -176,6 +183,19 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     
     @Override
     public void handleEvents(float time, Iterable<Event> pastEvents) {}
+    
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound tag = super.getUpdateTag();
+        tag.setTag("node", consumer.serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        super.handleUpdateTag(tag);
+        consumer.init(world);
+    }
     
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {

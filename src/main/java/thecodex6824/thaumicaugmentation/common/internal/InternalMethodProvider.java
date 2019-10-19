@@ -20,12 +20,29 @@
 
 package thecodex6824.thaumicaugmentation.common.internal;
 
+import java.util.Collection;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.internal.IInternalMethodProvider;
+import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
+import thecodex6824.thaumicaugmentation.common.network.PacketFullImpetusNodeSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketImpetusNodeUpdate;
+import thecodex6824.thaumicaugmentation.common.network.PacketImpetusTransaction;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public class InternalMethodProvider implements IInternalMethodProvider {
     
@@ -57,6 +74,50 @@ public class InternalMethodProvider implements IInternalMethodProvider {
     @Override
     public String getCasterEffectProviderID(ItemStack stack) {
         return ItemCustomCasterEffectProvider.getProviderIDString(stack);
+    }
+    
+    @Override
+    public void syncImpetusTransaction(Collection<IImpetusNode> path) {
+        DimensionalBlockPos[] positions = new DimensionalBlockPos[path.size()];
+        Multimap<Integer, ChunkPos> chunks = MultimapBuilder.hashKeys().hashSetValues().build();
+        int i = 0;
+        for (IImpetusNode node : path) {
+            DimensionalBlockPos newPos = new DimensionalBlockPos(node.getLocation().getPos().toImmutable(), node.getLocation().getDimension());
+            positions[i] = newPos;
+            ++i;
+            chunks.put(newPos.getDimension(), new ChunkPos(newPos.getPos()));
+        }
+        
+        PacketImpetusTransaction packet = new PacketImpetusTransaction(positions);
+        for (int dim : chunks.keySet()) {
+            WorldServer world = DimensionManager.getWorld(dim);
+            if (world != null) {
+                for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class, Predicates.alwaysTrue())) {
+                    for (ChunkPos pos : chunks.get(dim)) {
+                        if (world.getPlayerChunkMap().isPlayerWatchingChunk(player, pos.x, pos.z)) {
+                            TANetwork.INSTANCE.sendTo(packet, player);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void fullySyncImpetusNode(IImpetusNode node) {
+        DimensionalBlockPos pos = node.getLocation();
+        TANetwork.INSTANCE.sendToAllTracking(new PacketFullImpetusNodeSync(pos.getPos(), node.serializeNBT()),
+                new TargetPoint(pos.getDimension(), pos.getPos().getX() + 0.5, pos.getPos().getY() + 0.5,
+                pos.getPos().getZ() + 0.5, 64));
+    }
+    
+    @Override
+    public void updateImpetusNode(IImpetusNode node, DimensionalBlockPos connection, boolean output, boolean remove) {
+        DimensionalBlockPos pos = node.getLocation();
+        TANetwork.INSTANCE.sendToAllTracking(new PacketImpetusNodeUpdate(pos.getPos(), connection,
+                output, remove), new TargetPoint(pos.getDimension(), pos.getPos().getX() + 0.5, pos.getPos().getY() + 0.5,
+                pos.getPos().getZ() + 0.5, 64));
     }
     
 }

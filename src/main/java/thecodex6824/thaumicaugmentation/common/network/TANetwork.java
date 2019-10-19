@@ -35,13 +35,16 @@ public final class TANetwork {
     public static void init() {
         int id = 0;
         INSTANCE.registerMessage(PacketAuraToClient.class, PacketAuraToClient.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(PacketParticleEffect.Handler.class, PacketParticleEffect.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(PacketAugmentableItemSync.Handler.class, PacketAugmentableItemSync.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(PacketFractureLocatorUpdate.Handler.class, PacketFractureLocatorUpdate.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(PacketFullWardSync.Handler.class, PacketFullWardSync.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(PacketWardUpdate.Handler.class, PacketWardUpdate.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(PacketEntityCast.Handler.class, PacketEntityCast.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketParticleEffect.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketConfigSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketAugmentableItemSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketFractureLocatorUpdate.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketFullWardSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketWardUpdate.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketEntityCast.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketFullImpetusNodeSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketImpetusNodeUpdate.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketImpetusTransaction.class, id++, Side.CLIENT);
     }
 
 }

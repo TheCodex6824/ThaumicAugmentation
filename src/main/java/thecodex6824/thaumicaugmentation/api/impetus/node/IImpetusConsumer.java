@@ -22,6 +22,6 @@ package thecodex6824.thaumicaugmentation.api.impetus.node;
 
 public interface IImpetusConsumer extends IImpetusNode {
     
-    public long consume(long amount);
+    public ConsumeResult consume(long amount);
     
 }

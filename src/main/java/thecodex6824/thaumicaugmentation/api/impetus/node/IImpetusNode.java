@@ -23,8 +23,8 @@ package thecodex6824.thaumicaugmentation.api.impetus.node;
 import java.util.Set;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.graph.INode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
@@ -41,10 +41,7 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode>, INBTSe
     
     public void setLocation(DimensionalBlockPos location);
     
-    public default Vec3d getLocationForRendering() {
-        BlockPos pos = getLocation().getPos();
-        return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-    }
+    public Vec3d getBeamEndpoint();
     
     public boolean canConnectNodeAsInput(IImpetusNode toConnect);
     
@@ -58,7 +55,7 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode>, INBTSe
     
     public boolean removeOutputLocation(DimensionalBlockPos toRemove);
     
-    public void init();
+    public void init(World world);
     
     public void destroy();
     

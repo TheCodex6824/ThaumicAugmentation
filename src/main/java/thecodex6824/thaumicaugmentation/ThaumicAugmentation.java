@@ -38,6 +38,7 @@ import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 import thecodex6824.thaumicaugmentation.init.proxy.ISidedProxy;
+import thecodex6824.thaumicaugmentation.server.command.TACommands;
 
 @Mod(modid = ThaumicAugmentationAPI.MODID, name = ThaumicAugmentationAPI.NAME, version = ThaumicAugmentation.VERSION, useMetadata = true,
         certificateFingerprint = "@FINGERPRINT@")
@@ -77,6 +78,7 @@ public class ThaumicAugmentation {
         
         FractureUtils.initDimensionCache();
         WorldDataCache.setInitialized();
+        TACommands.registerCommands(event);
     }
     
     @EventHandler

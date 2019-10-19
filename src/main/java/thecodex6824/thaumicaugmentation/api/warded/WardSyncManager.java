@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 
@@ -55,6 +57,8 @@ public final class WardSyncManager {
     public static class WardUpdateEntry {
         
         public final BlockPos pos;
+        
+        @Nullable
         public final UUID update;
         
         public WardUpdateEntry(BlockPos p, UUID data) {
@@ -65,6 +69,10 @@ public final class WardSyncManager {
     }
     
     private static Multimap<DimensionalChunkPos, WardUpdateEntry> entries = MultimapBuilder.hashKeys().arrayListValues(16).build();
+    
+    public static void markChunkForClear(World world, BlockPos pos) {
+        markPosForNewOwner(world, pos, null);
+    }
     
     public static void markPosForClear(World world, BlockPos pos) {
         markPosForNewOwner(world, pos, IWardStorageServer.NIL_UUID);

@@ -31,7 +31,6 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import thaumcraft.api.aura.AuraHelper;
-import thaumcraft.common.config.ModConfig;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.event.QueuedWorldGenManager;
@@ -124,8 +123,7 @@ public final class TAWorldGenerator implements IWorldGenerator {
                 }
             }
             
-            // ModConfig is the Thaumcraft config
-            if (!ModConfig.CONFIG_MISC.wussMode) {
+            if (TAConfig.fractureGenChance.getValue() > 0) {
                 if (WorldDataCache.isInitialized())
                     generateFractures(random, chunkX, chunkZ, world);
                 else {

@@ -87,7 +87,7 @@ public class BlockImpetusMatrix extends BlockTABase implements IItemBlockProvide
         
         if (world.getBlockState(pos.down()).getBlock() == TABlocks.IMPETUS_MATRIX_BASE)
             world.setBlockState(pos.down(), BlocksTC.pedestalEldritch.getDefaultState());
-        else if (world.getBlockState(pos.up()).getBlock() == TABlocks.IMPETUS_MATRIX_BASE)
+        if (world.getBlockState(pos.up()).getBlock() == TABlocks.IMPETUS_MATRIX_BASE)
             world.setBlockState(pos.up(), BlocksTC.pedestalEldritch.getDefaultState());
         
         super.breakBlock(world, pos, state);

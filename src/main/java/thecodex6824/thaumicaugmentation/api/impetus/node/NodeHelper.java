@@ -21,6 +21,8 @@
 package thecodex6824.thaumicaugmentation.api.impetus.node;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,8 +35,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
 public final class NodeHelper {
@@ -42,7 +44,7 @@ public final class NodeHelper {
     private NodeHelper() {}
     
     @SuppressWarnings("null")
-    public static boolean handleCasterInteract(ICapabilityProvider provider, World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
+    public static boolean handleCasterInteract(TileEntity provider, World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
             EnumFacing face, EnumHand hand) {
         
         if (!world.isRemote) {
@@ -72,8 +74,12 @@ public final class NodeHelper {
                     if (te != null) {
                         IImpetusNode otherNode = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                         if (otherNode != null) {
-                            if (node.getInputLocations().contains(first))
+                            if (node.getInputLocations().contains(first)) {
                                 node.removeInput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
+                                provider.markDirty();
+                                te.markDirty();
+                                syncRemovedImpetusNodeInput(node, first);
+                            }
                             else {
                                 if (otherNode.getNumOutputs() >= otherNode.getMaxOutputs())
                                     player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.impetus_link_limit_out"), true);
@@ -81,7 +87,9 @@ public final class NodeHelper {
                                     player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.impetus_link_limit_in"), true);
                                 else {
                                     node.addInput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
+                                    provider.markDirty();
                                     te.markDirty();
+                                    syncAddedImpetusNodeInput(node, first);
                                 }
                             }
                         }
@@ -97,9 +105,9 @@ public final class NodeHelper {
         return false;
     }
     
-    public static long consumeImpetusFromConnectedProviders(long amount, IImpetusConsumer dest) {
+    public static ConsumeResult consumeImpetusFromConnectedProviders(long amount, IImpetusConsumer dest) {
         if (amount <= 0)
-            return 0;
+            return new ConsumeResult(0, Collections.emptyList());
         
         ArrayList<IImpetusProvider> providers = new ArrayList<>(dest.getGraph().findDirectProviders(dest));
         if (!providers.isEmpty()) {
@@ -114,6 +122,7 @@ public final class NodeHelper {
             long drawn = 0;
             long step = amount / providers.size();
             long remain = amount % providers.size();
+            ArrayList<Deque<IImpetusNode>> usedPaths = new ArrayList<>();
             for (int i = 0; i < providers.size(); ++i) {
                 IImpetusProvider p = providers.get(i);
                 long actuallyDrawn = p.provide(Math.min(step + (remain > 0 ? 1 : 0), amount - drawn), false);
@@ -125,15 +134,48 @@ public final class NodeHelper {
                 else
                     --remain;
                 
-                Deque<IImpetusNode> nodes = paths.get(i);
-                for (IImpetusNode n : nodes)
-                    n.onTransaction(dest, actuallyDrawn);
+                if (actuallyDrawn > 0) {
+                    Deque<IImpetusNode> nodes = paths.get(i);
+                    for (IImpetusNode n : nodes)
+                        n.onTransaction(dest, actuallyDrawn);
+                    
+                    usedPaths.add(nodes);
+                }
             }
             
-            return drawn;
+            return new ConsumeResult(drawn, usedPaths);
         }
         
-        return 0;
+        return new ConsumeResult(0, Collections.emptyList());
+    }
+    
+    public static void syncImpetusTransaction(Deque<IImpetusNode> path) {
+        TAInternals.syncImpetusTransaction(path);
+    }
+    
+    public static void syncAllImpetusTransactions(Collection<Deque<IImpetusNode>> paths) {
+        for (Deque<IImpetusNode> path : paths)
+            TAInternals.syncImpetusTransaction(path);
+    }
+    
+    public static void syncImpetusNodeFully(IImpetusNode node) {
+        TAInternals.fullySyncImpetusNode(node);
+    }
+    
+    public static void syncAddedImpetusNodeInput(IImpetusNode node, DimensionalBlockPos input) {
+        TAInternals.updateImpetusNode(node, input, false, false);
+    }
+    
+    public static void syncAddedImpetusNodeOutput(IImpetusNode node, DimensionalBlockPos output) {
+        TAInternals.updateImpetusNode(node, output, true, false);
+    }
+    
+    public static void syncRemovedImpetusNodeInput(IImpetusNode node, DimensionalBlockPos input) {
+        TAInternals.updateImpetusNode(node, input, false, true);
+    }
+    
+    public static void syncRemovedImpetusNodeOutput(IImpetusNode node, DimensionalBlockPos output) {
+        TAInternals.updateImpetusNode(node, output, true, true);
     }
     
 }

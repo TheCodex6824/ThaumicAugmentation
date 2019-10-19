@@ -24,6 +24,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import scala.actors.threadpool.Arrays;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 
 /**
@@ -49,6 +50,8 @@ public class WardStorageClient implements IWardStorageClient {
             
             public boolean isNullStorage();
             
+            public void clearAll();
+            
         }
         
         public static class StorageManagerNull implements IWardStorageManagerClient {
@@ -67,6 +70,9 @@ public class WardStorageClient implements IWardStorageClient {
             public boolean isNullStorage() {
                 return true;
             }
+            
+            @Override
+            public void clearAll() {}
             
         }
         
@@ -100,6 +106,11 @@ public class WardStorageClient implements IWardStorageClient {
                     (byte) (data[index / 4] & ~(1 << (index % 4 * 2)));
                 data[index / 4] = (id & 2) != 0 ? (byte) (data[index / 4] | (2 << (index % 4 * 2))) : 
                     (byte) (data[index / 4] & ~(2 << (index % 4 * 2)));
+            }
+            
+            @Override
+            public void clearAll() {
+                Arrays.fill(data, 0, data.length, (byte) 0);
             }
             
             @Override
@@ -137,6 +148,11 @@ public class WardStorageClient implements IWardStorageClient {
             manager.setOwner(pos, ClientWardStorageValue.EMPTY);
             MinecraftForge.EVENT_BUS.post(new BlockWardEvent.DewardedClient.Post(FMLClientHandler.instance().getClient().world, pos));
         }
+    }
+    
+    @Override
+    public void clearAllWards() {
+        manager.clearAll();
     }
     
     @Override
