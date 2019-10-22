@@ -26,5 +26,15 @@ public class TARenderHelperCommon implements ITARenderHelper {
 
     @Override
     public void renderGlowingSphere(World world, double x, double y, double z, int color) {}
+    
+    @Override
+    public void renderBurstParticle(World world, double x, double y, double z, float size, int color) {}
+    
+    @Override
+    public void renderSpark(World world, double x, double y, double z, float size, int color, boolean colorAlpha) {}
+    
+    @Override
+    public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel,
+            boolean ignoreGoggles) {}
 
 }

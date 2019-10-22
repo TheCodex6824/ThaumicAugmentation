@@ -55,7 +55,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile {
     public TileWardedChest() {
         super();
         inventory = new WardedInventory(27);
-        openTime = new VariableValue(Float.MIN_VALUE);
+        openTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/warded_chest.json"), 
                 ImmutableMap.<String, ITimeValue>of("open_speed", new VariableValue(0.5F), "open_time", openTime));
     }

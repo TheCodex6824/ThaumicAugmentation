@@ -79,7 +79,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                 return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.21875, pos.getZ() + 0.5);
             }
         };
-        actionTime = new VariableValue(Float.MIN_VALUE);
+        actionTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_diffuser.json"), 
                 ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(2), "act_time", actionTime, "delay", new VariableValue(delay)));
     }

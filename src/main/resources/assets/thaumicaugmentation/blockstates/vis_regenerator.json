@@ -1,12 +1,22 @@
 {
     "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:vis_regenerator"
+    },
     "variants": {
         "ta_enabled": {
-            "false": {"model": "thaumicaugmentation:vis_regenerator"},
-            "true": {"model": "thaumicaugmentation:vis_regenerator"}
+            "false": {"__nop": ""},
+            "true": {"__nop": ""}
+        },
+        "static": {
+            "true": {
+                "model": "thaumicaugmentation:vis_regenerator_static"
+            },
+            "false": {
+                "model": "thaumicaugmentation:vis_regenerator_anim"
+            }
         },
         "inventory": {
-            "model": "thaumicaugmentation:vis_regenerator",
             "transform": "forge:default-block"
         }
     }

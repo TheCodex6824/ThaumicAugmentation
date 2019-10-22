@@ -18,6 +18,9 @@ tile.thaumicaugmentation.impetus_diffuser.name=Impetus Diffuser
 tile.thaumicaugmentation.impetus_matrix.name=Impetus Matrix
 tile.thaumicaugmentation.impetus_matrix_base.name=Impetus Matrix Base
 tile.thaumicaugmentation.rift_feeder.name=Flux Inducer
+tile.thaumicaugmentation.rift_input.name=Rift Mover Input
+tile.thaumicaugmentation.rift_output.name=Rift Mover Output
+tile.thaumicaugmentation.rift_jar.name=Rift in a Jar
 
 item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
 item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet

@@ -10,6 +10,14 @@
             "north": {"y": 0},
             "east": {"y": 90}
         },
+        "static": {
+            "true": {
+                "model": "thaumicaugmentation:warded_chest_static"
+            },
+            "false": {
+                "model": "thaumicaugmentation:warded_chest_anim"
+            }
+        },
         "inventory": {
             "transform": "forge:default-block"
         }

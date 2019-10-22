@@ -25,5 +25,11 @@ import net.minecraft.world.World;
 public interface ITARenderHelper {
 
     public void renderGlowingSphere(World world, double x, double y, double z, int color);
+    
+    public void renderBurstParticle(World world, double x, double y, double z, float size, int color);
+    
+    public void renderSpark(World world, double x, double y, double z, float size, int color, boolean colorAlpha);
+    
+    public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean ignoreGoggles);
 
 }

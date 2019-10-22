@@ -53,7 +53,8 @@ public class BlockVisRegenerator extends BlockTABase implements IEnabledBlock, I
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(IEnabledBlock.ENABLED).add(Properties.AnimationProperty).build();
+        return new BlockStateContainer.Builder(this).add(IEnabledBlock.ENABLED).add(Properties.AnimationProperty).add(
+                Properties.StaticProperty).build();
     }
 
     @Override
@@ -140,7 +141,7 @@ public class BlockVisRegenerator extends BlockTABase implements IEnabledBlock, I
 
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+        return EnumBlockRenderType.MODEL;
     }
 
 }

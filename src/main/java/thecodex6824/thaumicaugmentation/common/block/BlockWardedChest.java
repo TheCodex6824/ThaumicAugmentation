@@ -72,7 +72,7 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer.Builder(this).add(IHorizontallyDirectionalBlock.DIRECTION).add(
-                Properties.AnimationProperty).build();
+                Properties.AnimationProperty).add(Properties.StaticProperty).build();
     }
 
     @Override
@@ -250,7 +250,7 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
 
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+        return EnumBlockRenderType.MODEL;
     }
 
 }

@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.client.renderer;
+package thecodex6824.thaumicaugmentation.client.renderer.entity;
 
 import org.lwjgl.opengl.GL11;
 

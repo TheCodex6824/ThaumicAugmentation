@@ -32,8 +32,24 @@ public class TAShaders {
 
     public static Shader FRACTURE;
     public static Shader EMPTINESS_SKY;
+    public static Shader FLUX_RIFT;
     
     public static final Consumer<Shader> FRACTURE_SHADER_CALLBACK = shader -> {
+        Minecraft mc = Minecraft.getMinecraft();
+        Entity view = mc.getRenderViewEntity() != null ? mc.getRenderViewEntity() : mc.player;
+        float yaw = view.rotationYaw;
+        float pitch = -view.rotationPitch;
+        if (mc.gameSettings.thirdPersonView == 2)
+            pitch *= -1;
+        
+        int x = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "yaw");
+        ARBShaderObjects.glUniform1fARB(x, (float) (yaw * 2.0F * Math.PI / 360.0));
+        
+        int z = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "pitch");
+        ARBShaderObjects.glUniform1fARB(z, (float) (pitch * 2.0F * Math.PI / 360.0));
+    };
+    
+    public static final Consumer<Shader> FLUX_RIFT_SHADER_CALLBACK = shader -> {
         Minecraft mc = Minecraft.getMinecraft();
         Entity view = mc.getRenderViewEntity() != null ? mc.getRenderViewEntity() : mc.player;
         float yaw = view.rotationYaw;

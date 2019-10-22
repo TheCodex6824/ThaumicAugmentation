@@ -1,0 +1,16 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:rift_mover_output.obj",
+        "custom": { "flip-v": true }
+    },
+    "variants": {
+        "ta_enabled": {
+            "false": {"__nop": ""},
+            "true": {"__nop": ""}
+        },
+        "inventory": {
+            "transform": "forge:default-block"
+        }
+    }
+}

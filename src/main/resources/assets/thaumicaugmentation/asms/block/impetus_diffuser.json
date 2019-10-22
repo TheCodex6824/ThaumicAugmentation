@@ -3,29 +3,29 @@
         "time": ["+/", "#delay", "#cycle_length"],
         "end_anim": ["compose", ["+", "#cycle_length"], "#act_time"],
         "trigger_end": ["-", "#end_anim"],
-        "anim_progress": ["-/+", "#act_time", "#cycle_length", 0.01]
+        "anim_progress": ["-/-", "#act_time", "#cycle_length", 0.01]
     },
     "clips": {
         "enabled": [
             "apply",
-            "thaumicaugmentation:block/impetus_diffuser@enabled",
+            "thaumicaugmentation:block/impetus_diffuser_anim@enabled",
             "#time"
         ],
         "starting": [
             "trigger_positive",
-            ["apply", "thaumicaugmentation:block/impetus_diffuser@starting", "#anim_progress"],
+            ["apply", "thaumicaugmentation:block/impetus_diffuser_anim@starting", "#anim_progress"],
             "#trigger_end",
             "!transition:enabled"
         ],
         "stopping": [
             "trigger_positive",
-            ["apply", "thaumicaugmentation:block/impetus_diffuser@stopping", "#anim_progress"],
+            ["apply", "thaumicaugmentation:block/impetus_diffuser_anim@stopping", "#anim_progress"],
             "#trigger_end",
             "!transition:disabled"
         ],
         "disabled": [
             "apply",
-            "thaumicaugmentation:block/impetus_diffuser@disabled",
+            "thaumicaugmentation:block/impetus_diffuser_anim@disabled",
             "#time"
         ]
     },

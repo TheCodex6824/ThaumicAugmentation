@@ -74,13 +74,15 @@ import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
+import thecodex6824.thaumicaugmentation.client.model.BuiltInModel;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
 import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
 import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
-import thecodex6824.thaumicaugmentation.client.renderer.ListeningAnimatedTESR;
-import thecodex6824.thaumicaugmentation.client.renderer.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftJar;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
@@ -98,10 +100,12 @@ import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpetusNodeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpetusTransaction;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
@@ -158,6 +162,8 @@ public class ClientProxy extends CommonProxy {
             handleImpetusNodeUpdatePacket((PacketImpetusNodeUpdate) message, context);
         else if (message instanceof PacketImpetusTransaction)
             handleImpetusTransationPacket((PacketImpetusTransaction) message, context);
+        else if (message instanceof PacketRiftJarInstability)
+            handleRiftJarInstabilityPacket((PacketRiftJarInstability) message, context);
         else
             ThaumicAugmentation.getLogger().warn("An unknown packet was received and will be dropped: " + message.getClass().toString());
     }
@@ -385,6 +391,15 @@ public class ClientProxy extends CommonProxy {
     protected void handleImpetusTransationPacket(PacketImpetusTransaction message, MessageContext context) {
         RenderEventHandler.onImpetusTransaction(message.getPositions());
     }
+    
+    protected void handleRiftJarInstabilityPacket(PacketRiftJarInstability message, MessageContext context) {
+        World world = Minecraft.getMinecraft().world;
+        if (world.isBlockLoaded(message.getPosition())) {
+            TileEntity tile = world.getTileEntity(message.getPosition());
+            if (tile instanceof TileRiftJar)
+                ((TileRiftJar) tile).setRiftStability(message.getStability());
+        }
+    }
 
     @Override
     public void preInit() {
@@ -403,6 +418,7 @@ public class ClientProxy extends CommonProxy {
                 () -> CasterAugmentBuilder.getAllEffectProviders(), stack -> ItemCustomCasterEffectProvider.getProviderID(stack)));
         loader.registerLoader(new CustomCasterAugmentModel.Loader());
         loader.registerLoader(new MorphicToolModel.Loader());
+        loader.registerLoader(new BuiltInModel.Loader());
         ModelLoaderRegistry.registerLoader(loader);
     }
 
@@ -415,6 +431,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusDrainer.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusDiffuser.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusMatrix.class, new ListeningAnimatedTESR<>());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileRiftJar.class, new RenderRiftJar());
         registerItemColorHandlers();
     }
 
@@ -424,6 +441,7 @@ public class ClientProxy extends CommonProxy {
         if (TAShaderManager.shouldUseShaders()) {
             TAShaders.FRACTURE = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture"));
             TAShaders.EMPTINESS_SKY = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_sky"));
+            TAShaders.FLUX_RIFT = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ender"));
         }
     }
 

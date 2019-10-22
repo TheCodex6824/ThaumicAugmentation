@@ -1,0 +1,184 @@
+/**
+ *  Thaumic Augmentation
+ *  Copyright (c) 2019 TheCodex6824.
+ *
+ *  This file is part of Thaumic Augmentation.
+ *
+ *  Thaumic Augmentation is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Thaumic Augmentation is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package thecodex6824.thaumicaugmentation.common.tile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.texture.ITickable;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import thaumcraft.api.aspects.Aspect;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.util.FluxRiftReconstructor;
+
+public class TileRiftJar extends TileEntity implements ITickable {
+
+    protected class VoidInventory implements IItemHandler {
+        
+        @Override
+        @Nonnull
+        @SuppressWarnings("null")
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            setRiftStability(Math.max(stability - stack.getCount() * 2, -200));
+            return ItemStack.EMPTY;
+        }
+        
+        @Override
+        @Nonnull
+        @SuppressWarnings("null")
+        public ItemStack getStackInSlot(int slot) {
+            return ItemStack.EMPTY;
+        }
+        
+        @Override
+        public int getSlots() {
+            return 1;
+        }
+        
+        @Override
+        public int getSlotLimit(int slot) {
+            return Integer.MAX_VALUE;
+        }
+        
+        @Override
+        @Nonnull
+        @SuppressWarnings("null")
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return ItemStack.EMPTY;
+        }
+    }
+    
+    protected FluxRiftReconstructor rift;
+    protected IItemHandler inventory;
+    protected int stability;
+    protected long lastStabilityUpdate;
+    
+    public TileRiftJar() {
+        super();
+        rift = new FluxRiftReconstructor(0, 0);
+        inventory = new VoidInventory();
+    }
+    
+    @Override
+    public void tick() {
+        if (world.getTotalWorldTime() - lastStabilityUpdate >= 100)
+            setRiftStability(Math.min(-10, (int) (stability + lastStabilityUpdate / 100 * 3)));
+    }
+    
+    public void setRiftStability(int newStability) {
+        stability = newStability;
+        lastStabilityUpdate = world.getTotalWorldTime();
+        if (!world.isRemote) {
+            TANetwork.INSTANCE.sendToAllTracking(new PacketRiftJarInstability(pos, stability),
+                    new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64.0));
+        }
+        else {
+            ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.1865 + world.rand.nextDouble() * 0.626,
+                    pos.getY() + world.rand.nextDouble() * 0.75, pos.getZ() + 0.1865 + world.rand.nextDouble() * 0.626, 1.5F, Aspect.ELDRITCH.getColor(), false);
+        }
+    }
+    
+    public void setRift(int seed, int size) {
+        rift = new FluxRiftReconstructor(seed, size);
+        markDirty();
+        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+    }
+    
+    public FluxRiftReconstructor getRift() {
+        return rift;
+    }
+    
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock();
+    }
+    
+    @Override
+    @Nullable
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger("riftSeed", rift.getRiftSeed());
+        tag.setInteger("riftSize", rift.getRiftSize());
+        return new SPacketUpdateTileEntity(pos, 1, tag);
+    }
+    
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        rift = new FluxRiftReconstructor(pkt.getNbtCompound().getInteger("riftSeed"),
+                pkt.getNbtCompound().getInteger("riftSize"));
+    }
+    
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound tag = super.getUpdateTag();
+        tag.setInteger("riftSeed", rift.getRiftSeed());
+        tag.setInteger("riftSize", rift.getRiftSize());
+        return tag;
+    }
+    
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? true :
+            super.hasCapability(capability, facing);
+    }
+    
+    @Override
+    @Nullable
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? 
+                CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(inventory) : super.getCapability(capability, facing);
+    }
+    
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        compound.setInteger("riftSeed", rift.getRiftSeed());
+        compound.setInteger("riftSize", rift.getRiftSize());
+        compound.setInteger("stability", stability);
+        compound.setLong("lastStabUpdate", lastStabilityUpdate);
+        return super.writeToNBT(compound);
+    }
+    
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        rift = new FluxRiftReconstructor(compound.getInteger("riftSeed"), compound.getInteger("riftSize"));
+        if (compound.hasKey("stability", NBT.TAG_INT))
+            stability = compound.getInteger("stability");
+        if (compound.hasKey("lastStabUpdate", NBT.TAG_LONG))
+            lastStabilityUpdate = compound.getLong("lastStabUpdate");
+    }
+    
+}

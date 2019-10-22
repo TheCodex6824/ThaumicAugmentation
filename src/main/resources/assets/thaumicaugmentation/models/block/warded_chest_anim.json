@@ -1,0 +1,41 @@
+{
+    "credit": "Made with Blockbench",
+    "textures": {
+        "0": "thaumicaugmentation:blocks/warded_chest",
+        "particle": "thaumicaugmentation:blocks/warded_chest"
+    },
+    "elements": [
+        {
+            "name": "latch",
+            "from": [7, 7, 0],
+            "to": [9, 11, 1],
+            "faces": {
+                "north": {"uv": [0.25, 0.5, 0.75, 1.5], "texture": "#0"},
+                "east": {"uv": [0, 0.5, 0.25, 1.5], "texture": "#0"},
+                "south": {"uv": [1, 0.5, 1.5, 1.5], "texture": "#0"},
+                "west": {"uv": [0.75, 0.5, 1, 1.5], "texture": "#0"},
+                "up": {"uv": [0.75, 0.5, 0.25, 0.25], "texture": "#0"},
+                "down": {"uv": [1.25, 0.25, 0.75, 0.5], "texture": "#0"}
+            }
+        },
+        {
+            "name": "lid",
+            "from": [1, 9, 1],
+            "to": [15, 14, 15],
+            "faces": {
+                "north": {"uv": [3.5, 9.75, 7, 11], "texture": "#0"},
+                "east": {"uv": [0, 9.75, 3.5, 11], "texture": "#0"},
+                "south": {"uv": [10.5, 9.75, 14, 11], "texture": "#0"},
+                "west": {"uv": [7, 9.75, 10.5, 11], "texture": "#0"},
+                "up": {"uv": [7, 9.75, 3.5, 6.25], "texture": "#0"},
+                "down": {"uv": [10.5, 6.25, 7, 9.75], "texture": "#0"}
+            }
+        }
+    ],
+    "groups": [0,
+        {
+            "name": "top",
+            "children": [0, 1]
+        }
+    ]
+}

@@ -91,7 +91,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
                 return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.4375, pos.getZ() + 0.5);
             }
         };
-        actionTime = new VariableValue(Float.MIN_VALUE);
+        actionTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_drainer.json"), 
                 ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(1), "act_time", actionTime, "delay", new VariableValue(delay)));
     }

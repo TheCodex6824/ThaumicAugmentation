@@ -37,6 +37,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
@@ -69,8 +70,8 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
     
     @Nullable
     protected EntityFluxRift findClosestRift(EnumFacing face) {
-        BlockPos pos1 = pos.offset(face);
-        BlockPos pos2 = pos.offset(face, 10);
+        BlockPos pos1 = pos.offset(face).add(1.0 - face.getXOffset(), 1.0 - face.getYOffset(), 1.0 - face.getZOffset());
+        BlockPos pos2 = pos.offset(face, 10).add(1.0 + face.getXOffset(), 1.0 + face.getYOffset(), 1.0 + face.getZOffset());
         List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class, 
                 new AxisAlignedBB(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX() + 1, pos2.getY() + 1, pos2.getZ() + 1));
         if (!rifts.isEmpty()) {
@@ -189,6 +190,11 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
     @Override
     public int takeEssentia(Aspect aspect, int amount, EnumFacing face) {
         return 0;
+    }
+    
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock();
     }
     
     @Override

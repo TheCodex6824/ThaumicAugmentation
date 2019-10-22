@@ -76,6 +76,7 @@ public class RenderEventHandler {
     
     private static final ResourceLocation BEAM = new ResourceLocation("thaumcraft", "textures/misc/wispy.png");
     private static final ResourceLocation LASER = new ResourceLocation("thaumcraft", "textures/misc/beamh.png");
+    private static final ResourceLocation FRAME = new ResourceLocation("thaumicaugmentation", "textures/misc/frame_1x1_simple.png");
     
     private static boolean isHoldingCaster(EntityLivingBase entity) {
         for (ItemStack stack : entity.getHeldEquipment()) {
@@ -180,7 +181,7 @@ public class RenderEventHandler {
         GlStateManager.popMatrix();
     }
     
-    private static void renderCubeOutline(Entity rv, float partial, Vec3d eyePos, BlockPos blockPosition, AxisAlignedBB cube,
+    private static void renderCubeFrame(Entity rv, float partial, Vec3d eyePos, BlockPos blockPosition, AxisAlignedBB cube,
             float r, float g, float b, float a) {
         GlStateManager.depthMask(false);
         GlStateManager.disableDepth();
@@ -193,29 +194,29 @@ public class RenderEventHandler {
                 -(rv.lastTickPosY + (rv.posY - rv.lastTickPosY) * partial),
                 -(rv.lastTickPosZ + (rv.posZ - rv.lastTickPosZ) * partial));
         
-        GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-        GlStateManager.glLineWidth(3.0F);
-        GlStateManager.disableTexture2D();
+        Minecraft.getMinecraft().renderEngine.bindTexture(FRAME);
         GlStateManager.disableCull();
         
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
-        buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(pos.x, pos.y, pos.z).color(r, g, b, a).endVertex();
-        buffer.pos(pos.x, pos.y + 1, pos.z).color(r, g, b, a).endVertex();
-        buffer.pos(pos.x + 1, pos.y, pos.z).color(r, g, b, a).endVertex();
-        buffer.pos(pos.x + 1, pos.y + 1, pos.z).color(r, g, b, a).endVertex();
-        buffer.pos(pos.x + 1, pos.y, pos.z + 1).color(r, g, b, a).endVertex();
-        buffer.pos(pos.x + 1, pos.y + 1, pos.z + 1).color(r, g, b, a).endVertex();
-        buffer.pos(pos.x, pos.y, pos.z + 1).color(r, g, b, a).endVertex();
-        buffer.pos(pos.x, pos.y + 1, pos.z + 1).color(r, g, b, a).endVertex();
-        buffer.pos(pos.x, pos.y, pos.z).color(r, g, b, a).endVertex();
-        buffer.pos(pos.x, pos.y + 1, pos.z).color(r, g, b, a).endVertex();
+        buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX_COLOR);
+        buffer.pos(pos.x, pos.y + 1, pos.z + 1).tex(0, 0).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y + 1, pos.z + 1).tex(1, 0).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y, pos.z + 1).tex(0, 1).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y, pos.z + 1).tex(1, 1).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y, pos.z).tex(1, 0).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y + 1, pos.z + 1).tex(0, 1).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y + 1, pos.z).tex(0, 0).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y + 1, pos.z + 1).tex(1, 1).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y + 1, pos.z).tex(1, 0).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y, pos.z + 1).tex(0, 1).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y, pos.z).tex(0, 0).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y, pos.z).tex(1, 0).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x, pos.y + 1, pos.z).tex(0, 1).color(r, g, b, a).endVertex();
+        buffer.pos(pos.x + 1, pos.y + 1, pos.z).tex(1, 1).color(r, g, b, a).endVertex();
         t.draw();
         
         GlStateManager.enableCull();
-        GlStateManager.enableTexture2D();
-        GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);
@@ -280,20 +281,20 @@ public class RenderEventHandler {
                         if (cap != null) {
                             Vec3d eyes = player.getPositionEyes(event.getPartialTicks());
                             if (pos.distanceSq(eyes.x, eyes.y, eyes.z) < 64 * 64) {
-                                renderCubeOutline(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
+                                renderCubeFrame(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
                                          pos, player.world.getBlockState(pos).getBoundingBox(player.world, pos), 0.8F, 0.8F, 1.0F, 1.0F);
                             }
                             
                             for (DimensionalBlockPos p : cap.getInputLocations()) {
                                 if (p.getDimension() == player.dimension && p.getPos().distanceSq(eyes.x, eyes.y, eyes.z) < 64 * 64) {
-                                    renderCubeOutline(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
+                                    renderCubeFrame(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
                                              p.getPos(), player.world.getBlockState(p.getPos()).getBoundingBox(player.world, p.getPos()), 1.0F, 0.8F, 0.8F, 1.0F);
                                 }
                             }
                             
                             for (DimensionalBlockPos p : cap.getOutputLocations()) {
                                 if (p.getDimension() == player.dimension && p.getPos().distanceSq(eyes.x, eyes.y, eyes.z) < 64 * 64) {
-                                    renderCubeOutline(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
+                                    renderCubeFrame(renderView, event.getPartialTicks(), renderView.getPositionEyes(event.getPartialTicks()),
                                              p.getPos(), player.world.getBlockState(p.getPos()).getBoundingBox(player.world, p.getPos()), 0.8F, 1.0F, 0.8F, 1.0F);
                                 }
                             }

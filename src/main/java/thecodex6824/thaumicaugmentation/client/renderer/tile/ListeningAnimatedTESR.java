@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.client.renderer;
+package thecodex6824.thaumicaugmentation.client.renderer.tile;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.model.animation.AnimationTESR;

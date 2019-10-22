@@ -1,0 +1,23 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumcraft:jar_normal",
+        "textures": {
+            "side": "thaumicaugmentation:blocks/jar_reinforced_side",
+            "bottom": "thaumicaugmentation:blocks/jar_reinforced_bottom",
+            "top": "thaumicaugmentation:blocks/jar_reinforced_top",
+            "particle": "thaumicaugmentation:blocks/jar_reinforced_side"
+        }
+    },
+    "variants": {
+        "ta_direction_h": {
+            "south": {"y": 180},
+            "west": {"y": 270},
+            "north": {"y": 0},
+            "east": {"y": 90}
+        },
+        "inventory": {
+            "transform": "forge:default-block"
+        }
+    }
+}
