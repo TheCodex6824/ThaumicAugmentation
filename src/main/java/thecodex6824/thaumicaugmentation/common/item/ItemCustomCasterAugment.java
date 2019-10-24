@@ -117,12 +117,18 @@ public class ItemCustomCasterAugment extends ItemTABase {
     public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flagIn) {
         if (stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomCasterAugment) {
             ICustomCasterAugment aug = (ICustomCasterAugment) stack.getCapability(CapabilityAugment.AUGMENT, null);
-            tooltip.add( new TextComponentTranslation(aug.getStrengthProvider().getTranslationKey()).getFormattedText());
-            CasterAugmentBuilder.getStrengthProvider(ItemCustomCasterStrengthProvider.getProviderID(
-                    aug.getStrengthProvider())).appendAdditionalTooltip(aug.getStrengthProvider(), tooltip);
-            tooltip.add(new TextComponentTranslation(aug.getEffectProvider().getTranslationKey()).getFormattedText());
-            CasterAugmentBuilder.getEffectProvider(ItemCustomCasterEffectProvider.getProviderID(
-                    aug.getEffectProvider())).appendAdditionalTooltip(aug.getEffectProvider(), tooltip);
+            if (aug.getStrengthProvider().isEmpty() && aug.getEffectProvider().isEmpty()) {
+                tooltip.add( new TextComponentTranslation("thaumicaugmentation.text.strength_provider_any").getFormattedText());
+                tooltip.add( new TextComponentTranslation("thaumicaugmentation.text.effect_provider_any").getFormattedText());
+            }
+            else {
+                tooltip.add( new TextComponentTranslation(aug.getStrengthProvider().getTranslationKey()).getFormattedText());
+                CasterAugmentBuilder.getStrengthProvider(ItemCustomCasterStrengthProvider.getProviderID(
+                        aug.getStrengthProvider())).appendAdditionalTooltip(aug.getStrengthProvider(), tooltip);
+                tooltip.add(new TextComponentTranslation(aug.getEffectProvider().getTranslationKey()).getFormattedText());
+                CasterAugmentBuilder.getEffectProvider(ItemCustomCasterEffectProvider.getProviderID(
+                        aug.getEffectProvider())).appendAdditionalTooltip(aug.getEffectProvider(), tooltip);
+            }
         }
     }
     

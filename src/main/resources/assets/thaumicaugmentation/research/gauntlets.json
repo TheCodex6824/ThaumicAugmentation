@@ -129,7 +129,8 @@
                         "thaumicaugmentation:StrengthProviderElemental",
                         "thaumicaugmentation:EffectProviderPower",
                         "thaumicaugmentation:EffectProviderCastSpeed",
-                        "thaumicaugmentation:EffectProviderCost"
+                        "thaumicaugmentation:EffectProviderCost",
+                        "thaumicaugmentation:CustomAugmentExample"
                     ]
                 },
                 {
@@ -138,7 +139,8 @@
                         "thaumicaugmentation:StrengthProviderElemental",
                         "thaumicaugmentation:EffectProviderPower",
                         "thaumicaugmentation:EffectProviderCastSpeed",
-                        "thaumicaugmentation:EffectProviderCost"
+                        "thaumicaugmentation:EffectProviderCost",
+                        "thaumicaugmentation:CustomAugmentExample"
                     ]
                 }
             ]

@@ -81,6 +81,8 @@ thaumicaugmentation.text.energy_strong=§aStrong
 thaumicaugmentation.text.energy_max=§2Maximum
 thaumicaugmentation.text.entered_void=§5You have visited a vast Emptiness.
 thaumicaugmentation.text.stored_seal=Seal: %s
+thaumicaugmentation.text.strength_provider_any=Any Modifier
+thaumicaugmentation.text.effect_provider_any=Any Effect Crystal
 
 thaumicaugmentation.subtitle.spooky=Spooky noises
 thaumicaugmentation.subtitle.spooky_wind=Wind howls
