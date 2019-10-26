@@ -130,12 +130,12 @@ public final class CapabilityHandler {
     
     @SubscribeEvent
     public static void onAttachCapabilitiesChunk(AttachCapabilitiesEvent<Chunk> event) {
-        if (!TAConfig.disableEmptiness.getValue() && FractureUtils.isDimAllowedForLinking(event.getObject().getWorld().provider.getDimension())) {
+        if (!TAConfig.disableEmptiness.getValue() && event.getObject().getWorld() != null && FractureUtils.isDimAllowedForLinking(event.getObject().getWorld().provider.getDimension())) {
             event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture_location"), new SimpleCapabilityProvider<>(
                     new FractureLocations(event.getObject()), CapabilityFractureLocations.FRACTURE_LOCATIONS));
         }
         
-        if (!TAConfig.disableWardFocus.getValue()) {
+        if (!TAConfig.disableWardFocus.getValue() && event.getObject().getWorld() != null) {
             event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ward_storage"), new SimpleCapabilityProvider<>(
                     event.getObject().getWorld().isRemote ? new WardStorageClient() : new WardStorageServer(), CapabilityWardStorage.WARD_STORAGE));
         }

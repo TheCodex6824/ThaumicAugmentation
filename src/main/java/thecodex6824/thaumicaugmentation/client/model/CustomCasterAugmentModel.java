@@ -68,7 +68,7 @@ import thecodex6824.thaumicaugmentation.common.capability.AugmentCasterCustom;
 public class CustomCasterAugmentModel implements IModel {
     
     private static final ImmutableList<ResourceLocation> DEPS = ImmutableList.of(
-            new ResourceLocation("minecraft", "item/generated"));
+            new ResourceLocation("thaumcraft", "item/enchanted_placeholder"));
     
     @Override
     public IModelState getDefaultState() {
@@ -155,6 +155,9 @@ public class CustomCasterAugmentModel implements IModel {
         };
         
         private IBakedModel buildModel(AugmentCasterCustom aug, World world, EntityLivingBase entity) {
+            if (aug.getStrengthProvider().isEmpty() && aug.getEffectProvider().isEmpty())
+                return wrappedFallback;
+            
             ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
             for (BakedQuad quad : Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(aug.getStrengthProvider(),
                     world, entity).getQuads(null, null, world != null ? world.rand.nextLong() : 0))

@@ -91,6 +91,8 @@ thaumicaugmentation.text.energy_strong=§aStrong
 thaumicaugmentation.text.energy_max=§2Maximum
 thaumicaugmentation.text.entered_void=§5You have visited a vast Emptiness.
 thaumicaugmentation.text.stored_seal=Seal: %s
+thaumicaugmentation.text.strength_provider_any=Any Modifier
+thaumicaugmentation.text.effect_provider_any=Any Effect Crystal
 thaumicaugmentation.text.impetus_link_limit_in=The destination node already has too many inputs
 thaumicaugmentation.text.impetus_link_limit_out=The source node already has too many outputs
 

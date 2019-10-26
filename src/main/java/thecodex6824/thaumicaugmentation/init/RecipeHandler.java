@@ -29,6 +29,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApi.BluePrint;
 import thaumcraft.api.ThaumcraftApiHelper;
@@ -49,7 +50,10 @@ import thaumcraft.common.lib.enchantment.EnumInfusionEnchantment;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
+import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
@@ -432,6 +436,16 @@ public final class RecipeHandler {
                         'B', "plateBrass", 'C', ThaumcraftApiHelper.makeCrystal(Aspect.VOID), 'E', new ItemStack(ItemsTC.nuggets, 1, 10)
                 }
         ));
+        
+        ItemStack customAugment = new ItemStack(TAItems.AUGMENT_CUSTOM);
+        IAugment aug = customAugment.getCapability(CapabilityAugment.AUGMENT, null);
+        if (aug instanceof ICustomCasterAugment) {
+            ICustomCasterAugment custom = (ICustomCasterAugment) aug;
+            custom.setStrengthProvider(CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental")));
+            custom.setEffectProvider(CasterAugmentBuilder.createStackForEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_power")));
+            ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "CustomAugmentExample"), new ShapelessOreRecipe(
+                    defaultGroup, customAugment, custom.getStrengthProvider(), custom.getEffectProvider()));
+        }
     }
     
     public static void initMultiblocks() {
