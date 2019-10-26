@@ -29,8 +29,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
-import thecodex6824.thaumicaugmentation.common.util.FluxRiftReconstructor;
 
 public class RenderRiftJar extends TileEntitySpecialRenderer<TileRiftJar> {
 

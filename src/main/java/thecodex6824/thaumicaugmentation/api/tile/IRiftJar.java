@@ -18,19 +18,16 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.util;
+package thecodex6824.thaumicaugmentation.api.tile;
 
-import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 
-public interface ITARenderHelper {
+public interface IRiftJar {
 
-    public void renderGlowingSphere(World world, double x, double y, double z, int color);
+    public void setRift(FluxRiftReconstructor newRift);
     
-    public void renderBurstParticle(World world, double x, double y, double z, float size, int color);
+    public FluxRiftReconstructor getRift();
     
-    public void renderSpark(World world, double x, double y, double z, float size, int color, boolean colorAlpha);
+    public boolean hasRift();
     
-    public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean ignoreGoggles);
-
 }

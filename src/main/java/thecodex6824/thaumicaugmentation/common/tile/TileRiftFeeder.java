@@ -108,7 +108,7 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
                 
                 if (storedEssentia > 0 && state.getValue(IEnabledBlock.ENABLED)) {
                     EntityFluxRift rift = findClosestRift(state.getValue(IDirectionalBlock.DIRECTION));
-                    if (rift != null && rift.getRiftSize() < 200) {
+                    if (rift != null && rift.getRiftSize() < 200 && !rift.getCollapse()) {
                         int required = (int) Math.sqrt(rift.getRiftSize() * 2);
                         if (storedEssentia >= required) {
                             storedEssentia -= required;

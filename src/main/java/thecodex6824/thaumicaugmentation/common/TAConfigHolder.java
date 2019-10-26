@@ -319,9 +319,10 @@ public final class TAConfigHolder {
         
         @Name("simpleCastedLightRendering")
         @Comment({
-            "Disables the casted light from rendering particles, falling back to a (ugly) static model instead."
+            "Disables some unneccessary particle effects.",
+            "This includes the special effect of the casted light, as well as most of the particles on the Metaspatial Accumulator/Extruder"
         })
-        public boolean castedLightSimpleRenderer = false;
+        public boolean reducedEffects = false;
         
         @Name("gauntletCastAnimation")
         @Comment({
@@ -378,7 +379,7 @@ public final class TAConfigHolder {
         TAConfig.singlePlayerWardOverride.setValue(gameplay.ward.singlePlayerWardOverride, side);
         TAConfig.tileWardMode.setValue(gameplay.ward.tileWardMode, side);
 
-        TAConfig.castedLightSimpleRenderer.setValue(client.castedLightSimpleRenderer, side);
+        TAConfig.reducedEffects.setValue(client.reducedEffects, side);
 
         TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
         TAConfig.defaultVoidBootsColor.setValue(gameplay.defaultVoidBootsColor, side);
@@ -446,7 +447,7 @@ public final class TAConfigHolder {
             
         }));
         
-        TAConfig.castedLightSimpleRenderer = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.castedLightSimpleRenderer));
+        TAConfig.reducedEffects = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.reducedEffects));
 
         TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
         TAConfig.defaultVoidBootsColor = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));

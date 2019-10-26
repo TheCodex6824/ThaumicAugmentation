@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.util;
+package thecodex6824.thaumicaugmentation.api.util;
 
 import java.util.ArrayList;
 import java.util.Random;

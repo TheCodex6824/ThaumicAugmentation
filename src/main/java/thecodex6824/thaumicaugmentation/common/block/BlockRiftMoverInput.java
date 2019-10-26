@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -27,15 +29,20 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.block.property.IConnected;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
+import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockRiftMoverInput extends BlockTABase implements IEnabledBlock, IItemBlockProvider {
@@ -50,7 +57,7 @@ public class BlockRiftMoverInput extends BlockTABase implements IEnabledBlock, I
     
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, IEnabledBlock.ENABLED);
+        return new BlockStateContainer(this, IEnabledBlock.ENABLED, IConnected.CONNECTED);
     }
     
     @Override
@@ -61,6 +68,15 @@ public class BlockRiftMoverInput extends BlockTABase implements IEnabledBlock, I
     @Override
     public int getMetaFromState(IBlockState state) {
         return BitUtil.setBit(0, 0, state.getValue(IEnabledBlock.ENABLED));
+    }
+    
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        boolean value = false;
+        if (world.getBlockState(pos.down()).getBlock() == TABlocks.RIFT_JAR)
+            value = world.getTileEntity(pos.down()) instanceof IRiftJar;
+        
+        return state.withProperty(IConnected.CONNECTED, value);
     }
     
     protected void update(IBlockState state, World world, BlockPos pos) {
@@ -78,6 +94,17 @@ public class BlockRiftMoverInput extends BlockTABase implements IEnabledBlock, I
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         update(state, world, pos);
+    }
+    
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
+    }
+    
+    @Override
+    @Nullable
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new TileRiftMoverInput();
     }
     
     @Override

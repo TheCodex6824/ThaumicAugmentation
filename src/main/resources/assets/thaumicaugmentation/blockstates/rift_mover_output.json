@@ -9,6 +9,17 @@
             "false": {"__nop": ""},
             "true": {"__nop": ""}
         },
+        "ta_connected": {
+            "false": {"__nop": true},
+            "true": {
+                "submodel": {
+                    "connector": {
+                        "model": "thaumicaugmentation:rift_mover_connector.obj",
+                        "custom": { "flip-v": true }
+                    }
+                }
+            }
+        },
         "inventory": {
             "transform": "forge:default-block"
         }

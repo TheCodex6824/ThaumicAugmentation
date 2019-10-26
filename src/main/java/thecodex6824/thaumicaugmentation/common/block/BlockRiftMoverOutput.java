@@ -33,7 +33,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.block.property.IConnected;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
+import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
@@ -50,7 +53,7 @@ public class BlockRiftMoverOutput  extends BlockTABase implements IEnabledBlock,
     
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, IEnabledBlock.ENABLED);
+        return new BlockStateContainer(this, IEnabledBlock.ENABLED, IConnected.CONNECTED);
     }
     
     @Override
@@ -61,6 +64,15 @@ public class BlockRiftMoverOutput  extends BlockTABase implements IEnabledBlock,
     @Override
     public int getMetaFromState(IBlockState state) {
         return BitUtil.setBit(0, 0, state.getValue(IEnabledBlock.ENABLED));
+    }
+    
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        boolean value = false;
+        if (world.getBlockState(pos.down()).getBlock() == TABlocks.RIFT_JAR)
+            value = world.getTileEntity(pos.down()) instanceof IRiftJar;
+        
+        return state.withProperty(IConnected.CONNECTED, value);
     }
     
     protected void update(IBlockState state, World world, BlockPos pos) {

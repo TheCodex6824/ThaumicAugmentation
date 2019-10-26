@@ -36,7 +36,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
-import thecodex6824.thaumicaugmentation.common.util.FluxRiftReconstructor;
+import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 
 public class RenderItemBlockRiftJar extends TileEntityItemStackRenderer {
 
@@ -50,10 +50,9 @@ public class RenderItemBlockRiftJar extends TileEntityItemStackRenderer {
     
     @Override
     public void renderByItem(ItemStack stack) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0.5F, 0.25F, 0.5F);
         if (stack.hasTagCompound()) {
-            if (jar == null)
-                jar = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(TABlocks.RIFT_JAR.getDefaultState());
-            
             FluxRiftReconstructor rift = null;
             try {
                 rift = rifts.get(stack, () -> new FluxRiftReconstructor(stack.getTagCompound().getInteger("riftSeed"),
@@ -64,8 +63,6 @@ public class RenderItemBlockRiftJar extends TileEntityItemStackRenderer {
                 return;
             }
             
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(0.5F, 0.25F, 0.5F);
             int tess = 6;
             if (stack.getItemFrame() != null) {
                 Entity rv = Minecraft.getMinecraft().getRenderViewEntity() != null ? Minecraft.getMinecraft().getRenderViewEntity() :
@@ -89,14 +86,16 @@ public class RenderItemBlockRiftJar extends TileEntityItemStackRenderer {
                 ThaumicAugmentation.proxy.getRenderHelper().renderFluxRift(rift, -10, Minecraft.getMinecraft().getRenderPartialTicks(), tess, true);
                 GlStateManager.popMatrix();
             }
-            
-            GlStateManager.translate(0.0F, 0.25F, 0.0F);
-            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-            GlStateManager.enableBlend();
-            Minecraft.getMinecraft().getRenderItem().renderItem(stack, jar);
-            GlStateManager.disableBlend();
-            GlStateManager.popMatrix();
         }
+        
+        if (jar == null)
+            jar = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(TABlocks.RIFT_JAR.getDefaultState());
+        
+        GlStateManager.translate(0.0F, 0.25F, 0.0F);
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        GlStateManager.enableBlend();
+        Minecraft.getMinecraft().getRenderItem().renderItem(stack, jar);
+        GlStateManager.popMatrix();
     }
     
 }

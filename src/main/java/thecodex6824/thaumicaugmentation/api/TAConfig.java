@@ -63,7 +63,7 @@ public final class TAConfig {
     
     public static ConfigOptionEnum<TileWardMode> tileWardMode;
 
-    public static ConfigOptionBoolean castedLightSimpleRenderer;
+    public static ConfigOptionBoolean reducedEffects;
 
     public static ConfigOptionIntList defaultGauntletColors;
     public static ConfigOptionInt defaultVoidBootsColor;

@@ -37,7 +37,7 @@ public class TileCastedLight extends TileEntity implements ITickable {
 
     public TileCastedLight() {
         super();
-        lastRenderState = TAConfig.castedLightSimpleRenderer.getValue();
+        lastRenderState = TAConfig.reducedEffects.getValue();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class TileCastedLight extends TileEntity implements ITickable {
     @Override
     public void update() {
         if (world.isRemote && world.getTotalWorldTime() % DELAY == 0) {
-            if (lastRenderState != TAConfig.castedLightSimpleRenderer.getValue()) {
+            if (lastRenderState != TAConfig.reducedEffects.getValue()) {
                 lastRenderState = !lastRenderState;
                 world.markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
             }

@@ -156,7 +156,7 @@ public class BlockCastedLight extends BlockTABase implements ILightSourceBlock, 
 
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
-        return TAConfig.castedLightSimpleRenderer.getValue() ? EnumBlockRenderType.MODEL : EnumBlockRenderType.INVISIBLE;
+        return TAConfig.reducedEffects.getValue() ? EnumBlockRenderType.MODEL : EnumBlockRenderType.INVISIBLE;
     }
 
     @Override
@@ -180,7 +180,7 @@ public class BlockCastedLight extends BlockTABase implements ILightSourceBlock, 
     @Override
     @SideOnly(Side.CLIENT)
     public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
-        if (!TAConfig.castedLightSimpleRenderer.getValue() && rand.nextBoolean()) {
+        if (!TAConfig.reducedEffects.getValue() && rand.nextBoolean()) {
             int color = Aspect.LIGHT.getColor();
             FXDispatcher.INSTANCE.drawWispyMotes(pos.getX() + 0.5F + rand.nextGaussian() / 4, pos.getY() + 0.5F + rand.nextGaussian() / 4,
                     pos.getZ() + 0.5F + rand.nextGaussian() / 4, 0, 0, 0, 40, ((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 0.01F);

@@ -40,11 +40,12 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.aspects.Aspect;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
+import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
-import thecodex6824.thaumicaugmentation.common.util.FluxRiftReconstructor;
 
-public class TileRiftJar extends TileEntity implements ITickable {
+public class TileRiftJar extends TileEntity implements ITickable, IRiftJar {
 
     protected class VoidInventory implements IItemHandler {
         
@@ -111,14 +112,21 @@ public class TileRiftJar extends TileEntity implements ITickable {
         }
     }
     
-    public void setRift(int seed, int size) {
-        rift = new FluxRiftReconstructor(seed, size);
+    @Override
+    public void setRift(FluxRiftReconstructor newRift) {
+        rift = newRift;
         markDirty();
         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
     }
     
+    @Override
     public FluxRiftReconstructor getRift() {
         return rift;
+    }
+    
+    @Override
+    public boolean hasRift() {
+        return rift.getRiftSize() > 0;
     }
     
     @Override

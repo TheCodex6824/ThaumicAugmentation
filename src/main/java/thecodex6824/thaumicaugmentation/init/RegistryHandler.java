@@ -70,6 +70,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
@@ -102,6 +103,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
@@ -167,6 +169,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileImpetusMatrix.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_matrix"));
         GameRegistry.registerTileEntity(TileRiftFeeder.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_feeder"));
         GameRegistry.registerTileEntity(TileRiftJar.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_jar"));
+        GameRegistry.registerTileEntity(TileRiftMoverInput.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_mover_input"));
     }
 
     @SubscribeEvent
@@ -236,6 +239,9 @@ public final class RegistryHandler {
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityDimensionalFracture.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "dimensional_fracture"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".dimensional_fracture").tracker(128, 4, false).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityItemBlockRiftJar.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_rift_jar"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".item_rift_jar").tracker(64, 20, true).build());
     }
     
     @SubscribeEvent

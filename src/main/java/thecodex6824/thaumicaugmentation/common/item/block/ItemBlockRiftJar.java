@@ -20,8 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.common.item.block;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -31,9 +35,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.util.Constants.NBT;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.client.renderer.item.RenderItemBlockRiftJar;
+import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
@@ -52,11 +59,36 @@ public class ItemBlockRiftJar extends ItemBlock implements IModelProvider<Item> 
         boolean placed = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
         if (placed && !world.isRemote) {
             TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileRiftJar && stack.hasTagCompound())
-                ((TileRiftJar) tile).setRift(stack.getTagCompound().getInteger("riftSeed"), stack.getTagCompound().getInteger("riftSize"));
+            if (tile instanceof TileRiftJar && stack.hasTagCompound()) {
+                ((TileRiftJar) tile).setRift(new FluxRiftReconstructor(stack.getTagCompound().getInteger("riftSeed"),
+                        stack.getTagCompound().getInteger("riftSize")));
+            }
         }
         
         return placed;
+    }
+    
+    @Override
+    public boolean hasCustomEntity(ItemStack stack) {
+        return stack.hasTagCompound() && stack.getTagCompound().hasKey("riftSeed", NBT.TAG_INT) &&
+                stack.getTagCompound().hasKey("riftSize", NBT.TAG_INT);
+    }
+    
+    @Override
+    @Nullable
+    public Entity createEntity(World world, Entity location, ItemStack stack) {
+        EntityItemBlockRiftJar item = new EntityItemBlockRiftJar(world, location.posX, location.posY, location.posZ, stack);
+        item.setDefaultPickupDelay();
+        item.setNoDespawn();
+        item.motionX = location.motionX;
+        item.motionY = location.motionY;
+        item.motionZ = location.motionZ;
+        if (location instanceof EntityItem) {
+            item.setThrower(((EntityItem) location).getThrower());
+            item.setOwner(((EntityItem) location).getOwner());
+        }
+        
+        return item;
     }
     
     @Override

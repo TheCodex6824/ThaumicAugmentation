@@ -36,6 +36,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -171,9 +172,9 @@ public class ClientProxy extends CommonProxy {
     protected void handleParticlePacket(PacketParticleEffect message, MessageContext context) {
         if (FMLClientHandler.instance().getClient().world != null) {
             Random rand = FMLClientHandler.instance().getClient().world.rand;
+            double d[] = message.getData();
             switch (message.getEffect()) {
                 case VIS_REGENERATOR: {
-                    double[] d = message.getData();
                     if (d.length == 3) {
                         for (int i = 0; i < rand.nextInt(3) + 3; ++i) {
                             double x = d[0] + rand.nextGaussian() / 4, y = d[1] + rand.nextDouble() / 2, z = d[2] + rand.nextGaussian() / 4;
@@ -185,7 +186,6 @@ public class ClientProxy extends CommonProxy {
                     break;
                 }
                 case VOID_STREAKS: {
-                    double[] d = message.getData();
                     if (d.length == 7) {
                         double x1 = d[0], y1 = d[1], z1 = d[2];
                         double x2 = d[3], y2 = d[4], z2 = d[5];
@@ -196,7 +196,6 @@ public class ClientProxy extends CommonProxy {
                     break;
                 }
                 case WARD: {
-                    double[] d = message.getData();
                     if (d.length == 7) {
                         double x = d[0], y = d[1], z = d[2];
                         int index = (int) d[3];
@@ -209,7 +208,6 @@ public class ClientProxy extends CommonProxy {
                     break;
                 }
                 case POOF: {
-                    double[] d = message.getData();
                     if (d.length == 4) {
                         double x = d[0], y = d[1], z = d[2];
                         int index = (int) d[3];
@@ -220,7 +218,6 @@ public class ClientProxy extends CommonProxy {
                     break;
                 }
                 case SMOKE_SPIRAL: {
-                    double[] d = message.getData();
                     if (d.length == 7) {
                         double x = d[0], y = d[1], z = d[2];
                         float radius = (float) d[3];
@@ -231,7 +228,6 @@ public class ClientProxy extends CommonProxy {
                     break;
                 }
                 case CURLY_WISP: {
-                    double[] d = message.getData();
                     if (d.length == 3) {
                         double x = d[0], y = d[1], z = d[2];
                         FXDispatcher.INSTANCE.drawCurlyWisp(x, y, z, 0.0, 0.0, 0.0, rand.nextFloat() + 0.1F, 1.0F, 1.0F, 
@@ -241,7 +237,6 @@ public class ClientProxy extends CommonProxy {
                     break;
                 }
                 case ESSENTIA_TRAIL: {
-                    double[] d = message.getData();
                     if (d.length == 7) {
                         int x1 = (int) d[0], y1 = (int) d[1], z1 = (int) d[2], x2 = (int) d[3], 
                                 y2 = (int) d[4], z2 = (int) d[5], color = (int) d[6];
@@ -252,6 +247,25 @@ public class ClientProxy extends CommonProxy {
                             EssentiaHandler.sourceFX.put(key, new EssentiaSourceFX(new BlockPos(x2, y2, z2),
                                     new BlockPos(x1, y1, z1), color, 15));
                         }
+                    }
+                    
+                    break;
+                }
+                case EXPLOSION: {
+                    if (d.length == 3) {
+                        double x = d[0], y = d[1], z = d[2];
+                        Minecraft.getMinecraft().world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, false,
+                                x, y, z, 0, 0, 0, 0);
+                    }
+                    
+                    break;
+                }
+                case SPARK: {
+                    if (d.length == 5) {
+                        double x = d[0], y = d[1], z = d[2];
+                        float size = (float) d[3];
+                        int color = (int) d[4];
+                        getRenderHelper().renderSpark(Minecraft.getMinecraft().world, x, y, z, size, color, false);
                     }
                     
                     break;

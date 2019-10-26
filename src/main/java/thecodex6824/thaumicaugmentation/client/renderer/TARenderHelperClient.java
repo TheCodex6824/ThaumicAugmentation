@@ -35,9 +35,9 @@ import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXFireMote;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.lib.utils.EntityUtils;
+import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
-import thecodex6824.thaumicaugmentation.common.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public class TARenderHelperClient implements ITARenderHelper {

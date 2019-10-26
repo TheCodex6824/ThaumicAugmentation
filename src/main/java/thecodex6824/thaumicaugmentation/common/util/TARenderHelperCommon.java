@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.common.util;
 
 import net.minecraft.world.World;
+import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 
 public class TARenderHelperCommon implements ITARenderHelper {
 

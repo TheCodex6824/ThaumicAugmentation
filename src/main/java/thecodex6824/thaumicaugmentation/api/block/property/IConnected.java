@@ -18,19 +18,12 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.util;
+package thecodex6824.thaumicaugmentation.api.block.property;
 
-import net.minecraft.world.World;
-import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
+import net.minecraft.block.properties.PropertyBool;
 
-public interface ITARenderHelper {
+public interface IConnected {
 
-    public void renderGlowingSphere(World world, double x, double y, double z, int color);
+    public static final PropertyBool CONNECTED = PropertyBool.create("ta_connected");
     
-    public void renderBurstParticle(World world, double x, double y, double z, float size, int color);
-    
-    public void renderSpark(World world, double x, double y, double z, float size, int color, boolean colorAlpha);
-    
-    public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean ignoreGoggles);
-
 }

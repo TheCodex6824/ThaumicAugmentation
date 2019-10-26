@@ -120,7 +120,7 @@ public class BuiltInModel implements IModel {
                 TransformType.GROUND, create(0, 3, 0, 0, 0, 0, 0.25F)).put(
                 TransformType.GUI, create(0, 0, 0, 30, 225, 0, 0.625F)).put(
                 TransformType.THIRD_PERSON_RIGHT_HAND, create(0, 2.5F, 0, 75, 45, 0, 0.375F)).put(
-                TransformType.THIRD_PERSON_LEFT_HAND, create(0, 2.5F, 0, 150, 45, 0, 0.375F)).put(
+                TransformType.THIRD_PERSON_LEFT_HAND, create(0, 2.5F, 0, 135, 45, 0, 0.375F)).put(
                 TransformType.FIRST_PERSON_RIGHT_HAND, create(0, 0, 0, 0, 45, 0, 0.4F)).put(
                 TransformType.FIRST_PERSON_LEFT_HAND, create(0, 0, 0, 0, 225, 0, 0.4F)).put(
                 TransformType.FIXED, create(0, 0, 0, 0, 0, 0, 0.5F)).build();
@@ -179,10 +179,7 @@ public class BuiltInModel implements IModel {
         
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-            if (wrapped != null)
-                return Pair.of(this, wrapped.handlePerspective(cameraTransformType).getRight());
-            else
-                return PerspectiveMapWrapper.handlePerspective(this, TRANSFORMS, cameraTransformType);
+            return PerspectiveMapWrapper.handlePerspective(this, TRANSFORMS, cameraTransformType);
         }
         
     }
