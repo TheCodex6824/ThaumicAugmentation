@@ -18,21 +18,16 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.util;
+package thecodex6824.thaumicaugmentation.api.tile;
 
-import net.minecraft.world.World;
-import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
-public interface ITARenderHelper {
+public final class CapabilityRiftJar {
 
-    public void renderGlowingSphere(World world, double x, double y, double z, int color);
+    private CapabilityRiftJar() {}
     
-    public void renderBurst(World world, double x, double y, double z, float size, int color);
+    @CapabilityInject(IRiftJar.class)
+    public static Capability<IRiftJar> RIFT_JAR = null;
     
-    public void renderSpark(World world, double x, double y, double z, float size, int color, boolean colorAlpha);
-    
-    public void renderArc(World world, double x, double y, double z, double dx, double dy, double dz, int color, double height);
-    
-    public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean ignoreGoggles);
-
 }

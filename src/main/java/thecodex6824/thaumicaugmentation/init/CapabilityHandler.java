@@ -50,6 +50,8 @@ import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
+import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
+import thecodex6824.thaumicaugmentation.api.tile.RiftJar;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
@@ -115,6 +117,7 @@ public final class CapabilityHandler {
         CapabilityManager.INSTANCE.register(IPortalState.class, new DefaultStorage<>(), PortalState::new);
         CapabilityManager.INSTANCE.register(IMorphicTool.class, new DefaultStorage<>(), MorphicTool::new);
         CapabilityManager.INSTANCE.register(IImpetusNode.class, new DefaultStorage<>(), () -> new ImpetusNode(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        CapabilityManager.INSTANCE.register(IRiftJar.class, new DefaultStorage<>(), RiftJar::new);
     }
     
     @SubscribeEvent

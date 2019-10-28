@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
@@ -43,6 +45,8 @@ import net.minecraft.world.World;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
+import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
@@ -93,6 +97,48 @@ public class BlockRiftJar extends BlockTABase implements IHorizontallyDirectiona
     @Override
     public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player) {
         return true;
+    }
+    
+    @Override
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
+            boolean willHarvest) {
+        
+        if (willHarvest)
+            return true;
+        else
+            return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
+    
+    @Override
+    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state,
+            @Nullable TileEntity te, ItemStack stack) {
+       
+        super.harvestBlock(worldIn, player, pos, state, te, stack);
+        worldIn.setBlockToAir(pos);
+    }
+    
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
+            int fortune) {
+        
+        ItemStack jar = new ItemStack(this);
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile != null) {
+            IRiftJar rift = tile.getCapability(CapabilityRiftJar.RIFT_JAR, null);
+            if (rift != null) {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setInteger("seed", rift.getRift().getRiftSeed());
+                tag.setInteger("size", rift.getRift().getRiftSize());
+                jar.setTagCompound(tag);
+            }
+        }
+        
+        drops.add(jar);
+    }
+    
+    @Override
+    public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+        return false;
     }
     
     @Override
@@ -148,10 +194,11 @@ public class BlockRiftJar extends BlockTABase implements IHorizontallyDirectiona
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
+            items.add(new ItemStack(this));
             ItemStack stack = new ItemStack(this);
             NBTTagCompound tag = new NBTTagCompound();
-            tag.setInteger("riftSeed", 1337);
-            tag.setInteger("riftSize", 100);
+            tag.setInteger("seed", 1337);
+            tag.setInteger("size", 100);
             stack.setTagCompound(tag);
             items.add(stack);
         }

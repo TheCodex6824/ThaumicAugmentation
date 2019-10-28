@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -43,12 +42,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aura.AuraHelper;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
+import thaumcraft.common.config.ModConfig;
 import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
@@ -57,19 +56,78 @@ import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
 import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-public class TileRiftMoverInput extends TileEntity implements ITickable, IInteractWithCaster, IBreakCallback {
+public class TileRiftMoverOutput extends TileEntity implements ITickable, IInteractWithCaster, IBreakCallback {
 
     protected boolean operating;
-    protected int oldSize;
-    protected int oldSeed;
-    protected float oldStability;
     protected EntityFluxRift rift;
+    protected int targetSize;
     protected UUID loadedRiftUUID;
+    
+    @Nullable
+    protected Vec3d findRiftPos() {
+        Vec3d position = new Vec3d(pos.up());
+        for (int offset = 5; offset > 0; --offset) {
+            Vec3d test = new Vec3d(pos.up(offset));
+            RayTraceResult trace = world.rayTraceBlocks(position, test);
+            if (trace == null || trace.hitVec == null)
+                return test;
+        }
+        
+        return null;
+    }
+    
+    @Override
+    public boolean onCasterRightClick(World w, ItemStack stack, EntityPlayer player, BlockPos position,
+            EnumFacing face, EnumHand hand) {
+        
+        if (!world.isRemote && !operating && !ModConfig.CONFIG_MISC.wussMode) {
+            TileEntity below = world.getTileEntity(pos.down());
+            if (below != null) {
+                IRiftJar jar = below.getCapability(CapabilityRiftJar.RIFT_JAR, null);
+                if (jar != null) {
+                    Vec3d riftPos = findRiftPos();
+                    if (riftPos != null) {
+                        rift = new EntityFluxRift(world);
+                        rift.setPositionAndRotation(riftPos.x, riftPos.y, riftPos.z, world.rand.nextInt(360), 0);
+                        if (world.spawnEntity(rift)) {
+                            rift.setRiftSize(1);
+                            operating = true;
+                            targetSize = jar.getRift().getRiftSize();
+                            markDirty();
+                            world.playSound(null, pos, SoundsTC.craftstart, SoundCategory.BLOCKS, 0.5F, 1.0F);
+                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+                        }
+                        else
+                            rift = null;
+                    }
+                }
+            }
+            
+            return true;
+        }
+        else if (world.isRemote && !operating)
+            return true;
+        else
+            return false;
+    }
+    
+    @Override
+    public void onBlockBroken() {
+        if (!world.isRemote && operating) {
+            if (rift != null) {
+                if (rift.getCollapse())
+                    rift.setCollapse(false);
+                
+                rift.setRiftSize(0);
+            }
+            
+            AuraHelper.polluteAura(world, pos, targetSize, true);
+            operating = false;
+            world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
+        }
+    }
     
     protected EntityFluxRift findRift() {
         BlockPos pos1 = pos.add(-1, 1, -1);
@@ -89,38 +147,6 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
     }
     
     @Override
-    public boolean onCasterRightClick(World w, ItemStack stack, EntityPlayer player, BlockPos position,
-            EnumFacing face, EnumHand hand) {
-        
-        if (!world.isRemote && !operating) {
-            TileEntity below = world.getTileEntity(pos.down());
-            if (below != null) {
-                IRiftJar jar = below.getCapability(CapabilityRiftJar.RIFT_JAR, null);
-                if (jar != null) {
-                    rift = findRift();
-                    if (rift != null && !rift.isDead && rift.getRiftSize() > 0 && !rift.getCollapse()) {
-                        operating = true;
-                        oldSize = rift.getRiftSize();
-                        oldSeed = rift.getRiftSeed();
-                        oldStability = rift.getRiftStability();
-                        markDirty();
-                        world.playSound(null, pos, SoundsTC.craftstart, SoundCategory.BLOCKS, 0.5F, 1.0F);
-                        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
-                    }
-                    else
-                        rift = null;
-                }
-            }
-            
-            return true;
-        }
-        else if (world.isRemote && !operating)
-            return true;
-        else
-            return false;
-    }
-    
-    @Override
     public void onLoad() {
         if (operating && loadedRiftUUID != null) {
             EntityFluxRift check = findRift();
@@ -132,12 +158,12 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
     }
     
     protected int getParticleDelay(int size) {
-        if (size < 11)
-            return 20;
-        else if (size < 30)
+        if (size < targetSize / 3)
+            return 5;
+        else if (size < targetSize / 1.5)
             return 10;
         else
-            return 5;
+            return 20;
     }
     
     @Override
@@ -146,37 +172,29 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
             if (!world.isRemote && world.getTotalWorldTime() % 10 == 0) {
                 TileEntity below = world.getTileEntity(pos.down());
                 if (rift == null || rift.isDead || rift.getRiftSize() < 1 || rift.getCollapse() ||
-                        below == null || !below.hasCapability(CapabilityRiftJar.RIFT_JAR, null) ||
-                        below.getCapability(CapabilityRiftJar.RIFT_JAR, null).hasRift()) {
+                        below == null || !below.hasCapability(CapabilityRiftJar.RIFT_JAR, null) || 
+                        !below.getCapability(CapabilityRiftJar.RIFT_JAR, null).hasRift()) {
                     
-                    if (rift == null || rift.isDead)
-                        AuraHelper.polluteAura(world, pos, oldSize, true);
-                    else {
+                    if (rift != null) {
                         if (rift.getCollapse())
                             rift.setCollapse(false);
                         
-                        rift.setRiftSize(oldSize);
-                        rift.setRiftStability(-150.0F);
-                        rift.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
-                        Vec3d riftCenter = RiftHelper.getRiftCenter(rift);
-                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
-                                riftCenter.x, riftCenter.y, riftCenter.z), rift);
-                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, riftCenter.x,
-                                riftCenter.y, riftCenter.z, 5.0F, Aspect.ELDRITCH.getColor()),
-                                new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64.0));
-                        rift = null;
+                        rift.setRiftSize(0);
                     }
                     
+                    if (below != null && below.hasCapability(CapabilityRiftJar.RIFT_JAR, null))
+                        below.getCapability(CapabilityRiftJar.RIFT_JAR, null).setRift(new FluxRiftReconstructor(0, 0));
+                    
+                    AuraHelper.polluteAura(world, pos, targetSize, true);
                     operating = false;
                     markDirty();
                     world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
                     world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                 }
                 else {
-                    rift.setRiftSize(rift.getRiftSize() - 1);
-                    rift.setRiftStability(rift.getRiftStability() - 0.5F);
-                    if (rift.getRiftSize() == 0) {
-                        below.getCapability(CapabilityRiftJar.RIFT_JAR, null).setRift(new FluxRiftReconstructor(oldSeed, oldSize));
+                    rift.setRiftSize(rift.getRiftSize() + 1);
+                    if (rift.getRiftSize() == targetSize) {
+                        below.getCapability(CapabilityRiftJar.RIFT_JAR, null).setRift(new FluxRiftReconstructor(0, 0));
                         rift = null;
                         operating = false;
                         markDirty();
@@ -194,9 +212,9 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                     loadedRiftUUID = null;
                 }
                 if (rift != null && world.getTotalWorldTime() % getParticleDelay(rift.getRiftSize()) == 0) {
-                    Vec3d particlePos = RiftHelper.pickRandomPointOnRift(rift).add(rift.posX, rift.posY, rift.posZ);
-                    Vec3d dir = particlePos.subtract(new Vec3d(pos).add(0.5, 0.5, 0.5)).normalize();
-                    FXGeneric fx = new FXGeneric(world, particlePos.x, particlePos.y, particlePos.z, -dir.x * 0.25, -dir.y * 0.25, -dir.z * 0.25);
+                    Vec3d particleDest = RiftHelper.pickRandomPointOnRift(rift).add(rift.posX, rift.posY, rift.posZ);
+                    Vec3d dir = particleDest.subtract(new Vec3d(pos).add(0.5, 0.5, 0.5)).normalize();
+                    FXGeneric fx = new FXGeneric(world, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, dir.x * 0.25, dir.y * 0.25, dir.z * 0.25);
                     fx.setMaxAge(12 + world.rand.nextInt(6));
                     fx.setRBGColorF(0.044F, 0.036F, 0.063F);
                     fx.setAlphaF(0.75F);
@@ -210,45 +228,19 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                     ParticleEngine.addEffect(world, fx);
                     
                     if (!TAConfig.reducedEffects.getValue()) {
-                        particlePos = RiftHelper.pickRandomPointOnRift(rift).add(rift.posX, rift.posY, rift.posZ);
-                        ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, particlePos.x, particlePos.y, particlePos.z, 5.0F + world.rand.nextFloat() * 7.5F,
+                        particleDest = RiftHelper.pickRandomPointOnRift(rift).add(rift.posX, rift.posY, rift.posZ);
+                        ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, particleDest.x, particleDest.y, particleDest.z, 5.0F + world.rand.nextFloat() * 7.5F,
                                 Aspect.ELDRITCH.getColor(), false);
                         if (world.rand.nextBoolean()) {
-                            particlePos = RiftHelper.pickRandomPointOnRiftWithInstability(rift, Minecraft.getMinecraft().player.ticksExisted,
+                            particleDest = RiftHelper.pickRandomPointOnRiftWithInstability(rift, Minecraft.getMinecraft().player.ticksExisted,
                                     Minecraft.getMinecraft().getRenderPartialTicks()).add(rift.posX, rift.posY, rift.posZ);
-                            ThaumicAugmentation.proxy.getRenderHelper().renderArc(world, particlePos.x,
-                                    particlePos.y, particlePos.z, pos.getX() + 0.5, pos.getY() + 0.75,
+                            ThaumicAugmentation.proxy.getRenderHelper().renderArc(world, particleDest.x,
+                                    particleDest.y, particleDest.z, pos.getX() + 0.5, pos.getY() + 0.75,
                                     pos.getZ() + 0.5, Aspect.ELDRITCH.getColor(), rift.height / 2);
                         }
                     }
                 }
             }
-        }
-    }
-    
-    @Override
-    public void onBlockBroken() {
-        if (!world.isRemote && operating) {
-            if (rift == null || rift.isDead)
-                AuraHelper.polluteAura(world, pos, oldSize, true);
-            else {
-                if (rift.getCollapse())
-                    rift.setCollapse(false);
-                
-                rift.setRiftSize(oldSize);
-                rift.setRiftStability(-150.0F);
-                rift.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
-                Vec3d riftCenter = RiftHelper.getRiftCenter(rift);
-                TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
-                        riftCenter.x, riftCenter.y, riftCenter.z), rift);
-                TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, riftCenter.x,
-                        riftCenter.y, riftCenter.z, 5.0F, Aspect.ELDRITCH.getColor()),
-                        new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64.0));
-                rift = null;
-            }
-            
-            operating = false;
-            world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
         }
     }
     
@@ -300,9 +292,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setBoolean("operating", operating);
         if (operating) {
-            compound.setInteger("size", oldSize);
-            compound.setInteger("seed", oldSeed);
-            compound.setFloat("stab", oldStability);
+            compound.setInteger("size", targetSize);
             if (rift != null)
                 compound.setUniqueId("rift", rift.getUniqueID());
         }
@@ -315,9 +305,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
         super.readFromNBT(compound);
         operating = compound.getBoolean("operating");
         if (operating) {
-            oldSize = compound.getInteger("size");
-            oldSeed = compound.getInteger("seed");
-            oldStability = compound.getFloat("stab");
+            targetSize = compound.getInteger("size");
             loadedRiftUUID = compound.getUniqueId("rift");
         }
     }

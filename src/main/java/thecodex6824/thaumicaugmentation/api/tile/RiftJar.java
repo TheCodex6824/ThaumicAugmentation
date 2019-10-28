@@ -18,27 +18,49 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.util;
+package thecodex6824.thaumicaugmentation.api.tile;
 
-import net.minecraft.world.World;
+import net.minecraft.nbt.NBTTagCompound;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 
-public class TARenderHelperCommon implements ITARenderHelper {
+public class RiftJar implements IRiftJar {
 
-    @Override
-    public void renderGlowingSphere(World world, double x, double y, double z, int color) {}
+    protected FluxRiftReconstructor rift;
+    
+    public RiftJar() {
+        rift = new FluxRiftReconstructor(0, 0);
+    }
+    
+    public RiftJar(int seed, int size) {
+        rift = new FluxRiftReconstructor(seed, size);
+    }
     
     @Override
-    public void renderBurst(World world, double x, double y, double z, float size, int color) {}
+    public boolean hasRift() {
+        return rift.getRiftSize() > 0;
+    }
     
     @Override
-    public void renderSpark(World world, double x, double y, double z, float size, int color, boolean colorAlpha) {}
+    public FluxRiftReconstructor getRift() {
+        return rift;
+    }
     
     @Override
-    public void renderArc(World world, double x, double y, double z, double dx, double dy, double dz, int color, double height) {}
+    public void setRift(FluxRiftReconstructor newRift) {
+        rift = newRift;
+    }
     
     @Override
-    public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel,
-            boolean ignoreGoggles) {}
-
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger("seed", rift.getRiftSeed());
+        tag.setInteger("size", rift.getRiftSize());
+        return tag;
+    }
+    
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        rift = new FluxRiftReconstructor(nbt.getInteger("seed"), nbt.getInteger("size"));
+    }
+    
 }

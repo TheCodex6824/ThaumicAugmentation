@@ -40,12 +40,13 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.aspects.Aspect;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
+import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
+import thecodex6824.thaumicaugmentation.api.tile.RiftJar;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-public class TileRiftJar extends TileEntity implements ITickable, IRiftJar {
+public class TileRiftJar extends TileEntity implements ITickable {
 
     protected class VoidInventory implements IItemHandler {
         
@@ -82,14 +83,25 @@ public class TileRiftJar extends TileEntity implements ITickable, IRiftJar {
         }
     }
     
-    protected FluxRiftReconstructor rift;
+    protected RiftJar rift;
     protected IItemHandler inventory;
     protected int stability;
     protected long lastStabilityUpdate;
     
     public TileRiftJar() {
         super();
-        rift = new FluxRiftReconstructor(0, 0);
+        rift = new RiftJar(0, 0) {
+        
+            @Override
+            public void setRift(FluxRiftReconstructor newRift) {
+                super.setRift(newRift);
+                if (!world.isRemote) {
+                    markDirty();
+                    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+                }
+            }
+            
+        };
         inventory = new VoidInventory();
     }
     
@@ -113,23 +125,6 @@ public class TileRiftJar extends TileEntity implements ITickable, IRiftJar {
     }
     
     @Override
-    public void setRift(FluxRiftReconstructor newRift) {
-        rift = newRift;
-        markDirty();
-        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
-    }
-    
-    @Override
-    public FluxRiftReconstructor getRift() {
-        return rift;
-    }
-    
-    @Override
-    public boolean hasRift() {
-        return rift.getRiftSize() > 0;
-    }
-    
-    @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return oldState.getBlock() != newState.getBlock();
     }
@@ -137,43 +132,43 @@ public class TileRiftJar extends TileEntity implements ITickable, IRiftJar {
     @Override
     @Nullable
     public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setInteger("riftSeed", rift.getRiftSeed());
-        tag.setInteger("riftSize", rift.getRiftSize());
-        return new SPacketUpdateTileEntity(pos, 1, tag);
+        return new SPacketUpdateTileEntity(pos, 1, rift.serializeNBT());
     }
     
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        rift = new FluxRiftReconstructor(pkt.getNbtCompound().getInteger("riftSeed"),
-                pkt.getNbtCompound().getInteger("riftSize"));
+        rift.deserializeNBT(pkt.getNbtCompound());
     }
     
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound tag = super.getUpdateTag();
-        tag.setInteger("riftSeed", rift.getRiftSeed());
-        tag.setInteger("riftSize", rift.getRiftSize());
+        tag.setTag("rift", rift.serializeNBT());
         return tag;
     }
     
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? true :
-            super.hasCapability(capability, facing);
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            return rift.hasRift();
+        else
+            return capability == CapabilityRiftJar.RIFT_JAR ? true : super.hasCapability(capability, facing);
     }
     
     @Override
     @Nullable
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? 
-                CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(inventory) : super.getCapability(capability, facing);
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && rift.hasRift())
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(inventory);
+        else if (capability == CapabilityRiftJar.RIFT_JAR)
+            return CapabilityRiftJar.RIFT_JAR.cast(rift);
+        else
+            return super.getCapability(capability, facing);
     }
     
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setInteger("riftSeed", rift.getRiftSeed());
-        compound.setInteger("riftSize", rift.getRiftSize());
+        compound.setTag("rift", rift.serializeNBT());
         compound.setInteger("stability", stability);
         compound.setLong("lastStabUpdate", lastStabilityUpdate);
         return super.writeToNBT(compound);
@@ -182,7 +177,7 @@ public class TileRiftJar extends TileEntity implements ITickable, IRiftJar {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        rift = new FluxRiftReconstructor(compound.getInteger("riftSeed"), compound.getInteger("riftSize"));
+        rift.deserializeNBT(compound.getCompoundTag("rift"));
         if (compound.hasKey("stability", NBT.TAG_INT))
             stability = compound.getInteger("stability");
         if (compound.hasKey("lastStabUpdate", NBT.TAG_LONG))

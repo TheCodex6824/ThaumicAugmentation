@@ -409,12 +409,13 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     @Override
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
             float hitY, float hitZ, EnumHand hand) {
+        
+        ItemStack stack = player.getHeldItem(hand);
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof IInteractWithCaster && 
-                ((IInteractWithCaster) state.getBlock()).onCasterRightClick(world, player.getHeldItem(hand), player, pos, side, hand))
-            return EnumActionResult.PASS;
+                ((IInteractWithCaster) state.getBlock()).onCasterRightClick(world, stack, player, pos, side, hand))
+            return EnumActionResult.SUCCESS;
 
-        ItemStack stack = player.getHeldItem(hand);
         if (state.getBlock() == Blocks.CAULDRON && state.getValue(BlockCauldron.LEVEL) > 0 && 
                 getDyedColor(stack) != getDefaultDyedColorForMeta(stack.getMetadata())) {
             setDyedColor(stack, getDefaultDyedColorForMeta(stack.getMetadata()));
@@ -426,11 +427,12 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IInteractWithCaster && 
                 ((IInteractWithCaster) tile).onCasterRightClick(world, stack, player, pos, side, hand))
-            return EnumActionResult.PASS;
+            return EnumActionResult.SUCCESS;
 
-        if (CasterTriggerRegistry.hasTrigger(state))
+        if (CasterTriggerRegistry.hasTrigger(state)) {
             return CasterTriggerRegistry.performTrigger(world, stack, player, pos, side, state) ? 
                     EnumActionResult.SUCCESS : EnumActionResult.FAIL;
+        }
 
         if (isStoringFocus(stack)) {
             ItemStack focus = getFocusStack(stack);

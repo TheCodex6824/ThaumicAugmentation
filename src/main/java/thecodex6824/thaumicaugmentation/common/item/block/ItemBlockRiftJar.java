@@ -38,10 +38,11 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.util.Constants.NBT;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
+import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.client.renderer.item.RenderItemBlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
-import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
 public class ItemBlockRiftJar extends ItemBlock implements IModelProvider<Item> {
@@ -59,9 +60,12 @@ public class ItemBlockRiftJar extends ItemBlock implements IModelProvider<Item> 
         boolean placed = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
         if (placed && !world.isRemote) {
             TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileRiftJar && stack.hasTagCompound()) {
-                ((TileRiftJar) tile).setRift(new FluxRiftReconstructor(stack.getTagCompound().getInteger("riftSeed"),
-                        stack.getTagCompound().getInteger("riftSize")));
+            if (tile != null && stack.hasTagCompound()) {
+                IRiftJar rift = tile.getCapability(CapabilityRiftJar.RIFT_JAR, null);
+                if (rift != null) {
+                    rift.setRift(new FluxRiftReconstructor(stack.getTagCompound().getInteger("seed"),
+                            stack.getTagCompound().getInteger("size")));
+                }
             }
         }
         
@@ -70,8 +74,8 @@ public class ItemBlockRiftJar extends ItemBlock implements IModelProvider<Item> 
     
     @Override
     public boolean hasCustomEntity(ItemStack stack) {
-        return stack.hasTagCompound() && stack.getTagCompound().hasKey("riftSeed", NBT.TAG_INT) &&
-                stack.getTagCompound().hasKey("riftSize", NBT.TAG_INT);
+        return stack.hasTagCompound() && stack.getTagCompound().hasKey("seed", NBT.TAG_INT) &&
+                stack.getTagCompound().hasKey("size", NBT.TAG_INT);
     }
     
     @Override
@@ -89,6 +93,11 @@ public class ItemBlockRiftJar extends ItemBlock implements IModelProvider<Item> 
         }
         
         return item;
+    }
+    
+    @Override
+    public String getTranslationKey(ItemStack stack) {
+        return hasCustomEntity(stack) ? super.getTranslationKey(stack) : "tile.thaumicaugmentation.rift_jar_empty";
     }
     
     @Override

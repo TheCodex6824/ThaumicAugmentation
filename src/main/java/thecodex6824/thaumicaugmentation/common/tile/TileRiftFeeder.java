@@ -45,6 +45,7 @@ import thaumcraft.api.aspects.IEssentiaTransport;
 import thaumcraft.common.entities.EntityFluxRift;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
+import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -113,8 +114,9 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
                         if (storedEssentia >= required) {
                             storedEssentia -= required;
                             rift.setRiftSize(rift.getRiftSize() + 1);
+                            Vec3d particlePos = RiftHelper.getRiftCenter(rift).add(rift.posX, rift.posY, rift.posZ);
                             TANetwork.INSTANCE.sendToAllAround(new PacketParticleEffect(ParticleEffect.ESSENTIA_TRAIL, 
-                                    pos.getX(), pos.getY(), pos.getZ(), rift.posX, rift.posY, rift.posZ, Aspect.FLUX.getColor()),
+                                    pos.getX(), pos.getY(), pos.getZ(), particlePos.x, particlePos.y, particlePos.z, Aspect.FLUX.getColor()),
                                     new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 48));
                             world.notifyBlockUpdate(pos, state, state, 2);
                             markDirty();

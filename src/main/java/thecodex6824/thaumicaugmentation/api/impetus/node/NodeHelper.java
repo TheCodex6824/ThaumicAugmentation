@@ -101,6 +101,8 @@ public final class NodeHelper {
                 return true;
             }
         }
+        else if (world.isRemote)
+            return true;
         
         return false;
     }

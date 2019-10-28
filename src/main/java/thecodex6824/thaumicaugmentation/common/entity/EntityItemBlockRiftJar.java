@@ -27,6 +27,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import thaumcraft.api.aura.AuraHelper;
+import thaumcraft.common.config.ModConfig;
 import thaumcraft.common.entities.EntityFluxRift;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
@@ -51,22 +52,30 @@ public class EntityItemBlockRiftJar extends EntityItem {
         super.attackEntityFrom(source, amount);
         if (isDead) {
             ItemStack stack = getItem();
-            if (stack.hasTagCompound() && stack.getTagCompound().hasKey("riftSeed", NBT.TAG_INT) && 
-                    stack.getTagCompound().hasKey("riftSize", NBT.TAG_INT)) {
+            if (stack.hasTagCompound() && stack.getTagCompound().hasKey("seed", NBT.TAG_INT) && 
+                    stack.getTagCompound().hasKey("size", NBT.TAG_INT)) {
                 
-                int size = stack.getTagCompound().getInteger("riftSize");
+                int size = stack.getTagCompound().getInteger("size");
                 if (size > 0) {
-                    EntityFluxRift rift = new EntityFluxRift(world);
-                    rift.setPositionAndRotation(posX, posY, posZ, rotationYaw, rotationPitch);
-                    rift.setRiftSeed(stack.getTagCompound().getInteger("riftSeed"));
-                    rift.setRiftSize(size);
-                    rift.setRiftStability(-50.0F);
-                    if (world.spawnEntity(rift)) {
-                        AuraHelper.polluteAura(world, rift.getPosition(), (float) Math.sqrt(size), true);
-                        rift.playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.75F, 1.0F);
-                        rift.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
+                    if (!ModConfig.CONFIG_MISC.wussMode) {
+                        EntityFluxRift rift = new EntityFluxRift(world);
+                        rift.setPositionAndRotation(posX, posY, posZ, rotationYaw, rotationPitch);
+                        rift.setRiftSeed(stack.getTagCompound().getInteger("seed"));
+                        rift.setRiftSize(size);
+                        rift.setRiftStability(-50.0F);
+                        if (world.spawnEntity(rift)) {
+                            AuraHelper.polluteAura(world, rift.getPosition(), (float) Math.sqrt(size), true);
+                            rift.playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.75F, 1.0F);
+                            rift.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
+                                    rift.posX, rift.posY, rift.posZ), rift);
+                        }
+                    }
+                    else {
+                        playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.75F, 1.0F);
+                        playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
                         TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
-                                rift.posX, rift.posY, rift.posZ), rift);
+                                posX, posY, posZ), this);
                     }
                 }
             }
@@ -78,10 +87,10 @@ public class EntityItemBlockRiftJar extends EntityItem {
     @Override
     protected void outOfWorld() {
         ItemStack stack = getItem();
-        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("riftSeed", NBT.TAG_INT) && 
-                stack.getTagCompound().hasKey("riftSize", NBT.TAG_INT)) {
+        if (!ModConfig.CONFIG_MISC.wussMode && stack.hasTagCompound() && stack.getTagCompound().hasKey("seed", NBT.TAG_INT) && 
+                stack.getTagCompound().hasKey("size", NBT.TAG_INT)) {
             
-            int size = stack.getTagCompound().getInteger("riftSize");
+            int size = stack.getTagCompound().getInteger("size");
             if (size > 0)
                 AuraHelper.polluteAura(world, getPosition(), size, true);
         }

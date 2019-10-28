@@ -22,7 +22,6 @@ package thecodex6824.thaumicaugmentation.common.block;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
@@ -36,64 +35,54 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.IConnected;
-import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
-import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
+import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverInput;
-import thecodex6824.thaumicaugmentation.common.util.BitUtil;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class BlockRiftMoverInput extends BlockTABase implements IEnabledBlock, IItemBlockProvider {
+public class BlockRiftMoverInput extends BlockTABase implements IItemBlockProvider {
 
     public BlockRiftMoverInput() {
         super(Material.IRON);
         setHardness(1.5F);
         setResistance(15.0F);
-        setDefaultState(getDefaultState().withProperty(IEnabledBlock.ENABLED, false));
         setSoundType(SoundType.METAL);
     }
     
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, IEnabledBlock.ENABLED, IConnected.CONNECTED);
+        return new BlockStateContainer(this, IConnected.CONNECTED);
     }
     
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(IEnabledBlock.ENABLED, BitUtil.isBitSet(meta, 0));
+        return getDefaultState();
     }
     
     @Override
     public int getMetaFromState(IBlockState state) {
-        return BitUtil.setBit(0, 0, state.getValue(IEnabledBlock.ENABLED));
+        return 0;
     }
     
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         boolean value = false;
-        if (world.getBlockState(pos.down()).getBlock() == TABlocks.RIFT_JAR)
-            value = world.getTileEntity(pos.down()) instanceof IRiftJar;
+        TileEntity tile = world.getTileEntity(pos.down());
+        if (tile != null)
+            value = tile.hasCapability(CapabilityRiftJar.RIFT_JAR, null);
         
         return state.withProperty(IConnected.CONNECTED, value);
     }
     
-    protected void update(IBlockState state, World world, BlockPos pos) {
-        boolean powered = world.isBlockPowered(pos);
-        if (powered != state.getValue(IEnabledBlock.ENABLED))
-            world.setBlockState(pos, state.cycleProperty(IEnabledBlock.ENABLED), 3);
-    }
-
     @Override
-    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        update(state, world, pos);
-        super.onBlockAdded(world, pos, state);
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
-        update(state, world, pos);
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof IBreakCallback)
+            ((IBreakCallback) tile).onBlockBroken();
+        
+        super.breakBlock(world, pos, state);
     }
     
     @Override

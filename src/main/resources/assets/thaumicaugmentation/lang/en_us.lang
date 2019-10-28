@@ -21,6 +21,7 @@ tile.thaumicaugmentation.rift_feeder.name=Flux Inducer
 tile.thaumicaugmentation.rift_input.name=Rift Mover Input
 tile.thaumicaugmentation.rift_output.name=Rift Mover Output
 tile.thaumicaugmentation.rift_jar.name=Rift in a Jar
+tile.thaumicaugmentation.rift_jar_empty.name=Reinforced Jar
 tile.thaumicaugmentation.rift_mover_input.name=Metaspatial Accumulator
 tile.thaumicaugmentation.rift_mover_output.name=Metaspatial Extruder
 

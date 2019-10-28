@@ -36,6 +36,7 @@ import thaumcraft.client.fx.particles.FXFireMote;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
+import thecodex6824.thaumicaugmentation.client.fx.FXArcCustom;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
@@ -55,7 +56,7 @@ public class TARenderHelperClient implements ITARenderHelper {
     }
     
     @Override
-    public void renderBurstParticle(World world, double x, double y, double z, float size, int color) {
+    public void renderBurst(World world, double x, double y, double z, float size, int color) {
         FXGeneric fx = new FXGeneric(world, x, y, z, 0, 0, 0);
         fx.setMaxAge(31);
         fx.setGridSize(16);
@@ -69,6 +70,14 @@ public class TARenderHelperClient implements ITARenderHelper {
     public void renderSpark(World world, double x, double y, double z, float size, int color, boolean colorAlpha) {
         FXDispatcher.INSTANCE.spark(x, y, z, size, ((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F,
                 (color & 0xFF) / 255.0F, colorAlpha ? ((color >> 24) & 0xFF) / 255.0F : 1.0F);
+    }
+    
+    @Override
+    public void renderArc(World world, double x, double y, double z, double dx, double dy, double dz, int color, double height) {
+        FXArcCustom arc = new FXArcCustom(world, x, y, z, dx, dy, dz, ((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F,
+                (color & 0xFF) / 255.0F, height, 0.2, 0.0625, 0.125F);
+        arc.setMaxAge(5 + world.rand.nextInt(5));
+        ParticleEngine.addEffect(world, arc);
     }
     
     @Override

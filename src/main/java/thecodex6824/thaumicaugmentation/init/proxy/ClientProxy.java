@@ -254,8 +254,8 @@ public class ClientProxy extends CommonProxy {
                 case EXPLOSION: {
                     if (d.length == 3) {
                         double x = d[0], y = d[1], z = d[2];
-                        Minecraft.getMinecraft().world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, false,
-                                x, y, z, 0, 0, 0, 0);
+                        Minecraft.getMinecraft().world.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, false,
+                                x, y, z, 0, 0, 0);
                     }
                     
                     break;

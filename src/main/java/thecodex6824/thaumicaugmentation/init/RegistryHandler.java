@@ -104,6 +104,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverInput;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
@@ -170,6 +171,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileRiftFeeder.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_feeder"));
         GameRegistry.registerTileEntity(TileRiftJar.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_jar"));
         GameRegistry.registerTileEntity(TileRiftMoverInput.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_mover_input"));
+        GameRegistry.registerTileEntity(TileRiftMoverOutput.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_mover_output"));
     }
 
     @SubscribeEvent

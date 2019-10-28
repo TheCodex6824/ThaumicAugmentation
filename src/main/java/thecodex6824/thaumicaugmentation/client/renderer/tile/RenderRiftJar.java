@@ -29,6 +29,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
+import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 
@@ -38,31 +40,34 @@ public class RenderRiftJar extends TileEntitySpecialRenderer<TileRiftJar> {
     public void render(TileRiftJar te, double x, double y, double z, float partialTicks, int destroyStage,
             float alpha) {
         
-        int tess = 6;
-        Entity rv = Minecraft.getMinecraft().getRenderViewEntity() != null ? Minecraft.getMinecraft().getRenderViewEntity() :
-            Minecraft.getMinecraft().player;
-        double dist = rv.getPositionEyes(partialTicks).squareDistanceTo(te.getPos().getX() + 0.5,
-                te.getPos().getY() + 0.25, te.getPos().getZ() + 0.5);
-        if (dist <= 64 * 64) {
-            if (dist > 16 * 16)
-                tess = 2;
-            else if (dist > 8 * 8)
-                tess = 3;
-            
-            IBlockState state = te.getWorld().getBlockState(te.getPos());
-            FluxRiftReconstructor rift = te.getRift();
-            
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(x + 0.5, y + 0.25, z + 0.5);
-            EnumFacing dir = state.getValue(IHorizontallyDirectionalBlock.DIRECTION);
-            if (dir != null)
-                GlStateManager.rotate(dir.getHorizontalAngle(), 0F, 1.0F, 0F);
-            
-            AxisAlignedBB box = rift.getBoundingBox();
-            GlStateManager.scale(0.3125 / (Math.max(Math.abs(box.minX), Math.abs(box.maxX)) + 0.075), 0.375 / (Math.max(Math.abs(box.minY), Math.abs(box.maxY)) + 0.075),
-                    0.3125 / (Math.max(Math.abs(box.minZ), Math.abs(box.maxZ)) + 0.075));
-            ThaumicAugmentation.proxy.getRenderHelper().renderFluxRift(rift, -10, partialTicks, tess, true);
-            GlStateManager.popMatrix();
+        IRiftJar jar = te.getCapability(CapabilityRiftJar.RIFT_JAR, null);
+        if (jar != null) {
+            int tess = 6;
+            Entity rv = Minecraft.getMinecraft().getRenderViewEntity() != null ? Minecraft.getMinecraft().getRenderViewEntity() :
+                Minecraft.getMinecraft().player;
+            double dist = rv.getPositionEyes(partialTicks).squareDistanceTo(te.getPos().getX() + 0.5,
+                    te.getPos().getY() + 0.25, te.getPos().getZ() + 0.5);
+            if (dist <= 64 * 64) {
+                if (dist > 16 * 16)
+                    tess = 2;
+                else if (dist > 8 * 8)
+                    tess = 3;
+                
+                IBlockState state = te.getWorld().getBlockState(te.getPos());
+                FluxRiftReconstructor rift = jar.getRift();
+                
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(x + 0.5, y + 0.25, z + 0.5);
+                EnumFacing dir = state.getValue(IHorizontallyDirectionalBlock.DIRECTION);
+                if (dir != null)
+                    GlStateManager.rotate(dir.getHorizontalAngle(), 0F, 1.0F, 0F);
+                
+                AxisAlignedBB box = rift.getBoundingBox();
+                GlStateManager.scale(0.3125 / (Math.max(Math.abs(box.minX), Math.abs(box.maxX)) + 0.075), 0.375 / (Math.max(Math.abs(box.minY), Math.abs(box.maxY)) + 0.075),
+                        0.3125 / (Math.max(Math.abs(box.minZ), Math.abs(box.maxZ)) + 0.075));
+                ThaumicAugmentation.proxy.getRenderHelper().renderFluxRift(rift, -10, partialTicks, tess, true);
+                GlStateManager.popMatrix();
+            }
         }
     }
     

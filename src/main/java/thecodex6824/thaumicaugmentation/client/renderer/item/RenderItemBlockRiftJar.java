@@ -55,8 +55,8 @@ public class RenderItemBlockRiftJar extends TileEntityItemStackRenderer {
         if (stack.hasTagCompound()) {
             FluxRiftReconstructor rift = null;
             try {
-                rift = rifts.get(stack, () -> new FluxRiftReconstructor(stack.getTagCompound().getInteger("riftSeed"),
-                        stack.getTagCompound().getInteger("riftSize")));
+                rift = rifts.get(stack, () -> new FluxRiftReconstructor(stack.getTagCompound().getInteger("seed"),
+                        stack.getTagCompound().getInteger("size")));
             }
             catch (ExecutionException ex) {
                 ThaumicAugmentation.getLogger().error("FluxRiftReconstructor somehow had an error: " + ex.getMessage());
