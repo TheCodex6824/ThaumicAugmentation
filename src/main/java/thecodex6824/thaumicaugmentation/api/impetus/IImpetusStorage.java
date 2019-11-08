@@ -37,7 +37,7 @@ public interface IImpetusStorage extends INBTSerializable<NBTTagCompound> {
      * @param simulate Whether the energy value of this item should be changed
      * @return The actual amount of energy inserted
      */
-    long receiveEnergy(long maxEnergy, boolean simulate);
+    public long receiveEnergy(long maxEnergy, boolean simulate);
     
     /**
      * Attempts to remove energy from this object, optionally just simulating the result.
@@ -45,32 +45,33 @@ public interface IImpetusStorage extends INBTSerializable<NBTTagCompound> {
      * @param simulate Whether the energy value of this item should be changed
      * @return The actual amount of energy removed
      */
-    long extractEnergy(long maxEnergy, boolean simulate);
+    public long extractEnergy(long maxEnergy, boolean simulate);
     
     /**
      * Returns the amount of energy currently stored.
      * @return The amount of energy stored
      */
-    long getEnergyStored();
+    public long getEnergyStored();
     
     /**
      * Returns the maximum amount of energy that can be stored in this object.
      * @return The maximum amount of energy that can be stored
      */
-    long getMaxEnergyStored();
+    public long getMaxEnergyStored();
     
     /**
      * Returns whether this object is capable of receiving at all. If this object is not, then
      * {@link #receiveEnergy} will always return 0.
      * @return If this object can receive energy
      */
-    boolean canReceive();
+    public boolean canReceive();
     
     /**
      * Returns whether this object is capable of having energy be extracted at all. If this object is not, then
      * {@link #extractEnergy} will always return 0.
      * @return If this object can have energy extracted
      */
-    boolean canExtract();
+    public boolean canExtract();
     
+    public default void onEnergyChanged() {}
 }

@@ -183,11 +183,6 @@ public class ImpetusGraph implements IImpetusGraph {
     }
     
     protected void removeAndSplitGraph(IImpetusNode splitAt) {
-        for (IImpetusNode node : nodes.values()) {
-            node.removeInput(splitAt);
-            node.removeOutput(splitAt);
-        }
-        
         nodes.remove(splitAt.getLocation());
         Map<IImpetusNode, Integer> tags = new IdentityHashMap<>();
         int tag = 0;

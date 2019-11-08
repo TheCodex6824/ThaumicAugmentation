@@ -38,13 +38,12 @@ import thaumcraft.api.casters.IInteractWithCaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
+import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusRelay extends TileEntity implements IInteractWithCaster, IBreakCallback {
+public class TileImpetusRelay extends TileEntity implements IInteractWithCaster {
 
     protected IImpetusNode node;
     
@@ -92,26 +91,14 @@ public class TileImpetusRelay extends TileEntity implements IInteractWithCaster,
     }
     
     @Override
-    public void onChunkUnload() {
-        node.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
-    }
-    
-    @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         node.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }
     
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        if (oldState.getBlock() != newState.getBlock()) {
-            node.destroy();
-            ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
-            return true;
-        }
-        
-        return false;
+        return oldState.getBlock() != newState.getBlock();
     }
     
     @Override

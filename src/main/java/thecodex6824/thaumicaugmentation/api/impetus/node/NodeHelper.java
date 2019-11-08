@@ -75,18 +75,20 @@ public final class NodeHelper {
                         IImpetusNode otherNode = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                         if (otherNode != null) {
                             if (node.getInputLocations().contains(first)) {
-                                node.removeInput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
-                                provider.markDirty();
-                                te.markDirty();
-                                syncRemovedImpetusNodeInput(node, first);
+                                if (node.canRemoveNodeAsInput(otherNode) && otherNode.canRemoveNodeAsOutput(node)) {
+                                    node.removeInput(otherNode);
+                                    provider.markDirty();
+                                    te.markDirty();
+                                    syncRemovedImpetusNodeInput(node, first);
+                                }
                             }
                             else {
                                 if (otherNode.getNumOutputs() >= otherNode.getMaxOutputs())
                                     player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.impetus_link_limit_out"), true);
                                 else if (node.getNumInputs() >= node.getMaxInputs())
                                     player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.impetus_link_limit_in"), true);
-                                else {
-                                    node.addInput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
+                                else if (node.canConnectNodeAsInput(otherNode) && otherNode.canConnectNodeAsOutput(node)) {
+                                    node.addInput(otherNode);
                                     provider.markDirty();
                                     te.markDirty();
                                     syncAddedImpetusNodeInput(node, first);
@@ -139,7 +141,7 @@ public final class NodeHelper {
                 if (actuallyDrawn > 0) {
                     Deque<IImpetusNode> nodes = paths.get(i);
                     for (IImpetusNode n : nodes)
-                        n.onTransaction(dest, actuallyDrawn);
+                        n.onTransaction(dest, nodes, actuallyDrawn);
                     
                     usedPaths.add(nodes);
                 }

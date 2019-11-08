@@ -147,6 +147,16 @@ public class ImpetusNode implements IImpetusNode {
     }
     
     @Override
+    public boolean canRemoveNodeAsInput(IImpetusNode toRemove) {
+        return true;
+    }
+    
+    @Override
+    public boolean canRemoveNodeAsOutput(IImpetusNode toRemove) {
+        return true;
+    }
+    
+    @Override
     public void addInputLocation(DimensionalBlockPos toConnect) {
         if (inputs.size() == maxInputs && !inputs.contains(toConnect))
             throw new IndexOutOfBoundsException("Exceeded maximum amount of inputs for node (" + inputs.size() + ")");
@@ -209,6 +219,11 @@ public class ImpetusNode implements IImpetusNode {
     @Override
     public Vec3d getBeamEndpoint() {
         return new Vec3d(loc.getPos().getX() + 0.5, loc.getPos().getY() + 0.5, loc.getPos().getZ() + 0.5);
+    }
+    
+    @Override
+    public boolean shouldDrawBeamTo(IImpetusNode other) {
+        return true;
     }
     
     @Override

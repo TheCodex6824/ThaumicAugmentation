@@ -1,0 +1,13 @@
+{
+    "parent": "item/generated",
+    "overrides": [
+        {
+            "predicate": {"thaumicaugmentation:linked": 0},
+            "model": "thaumicaugmentation:item/impetus_mirror_normal"
+        },
+        {
+            "predicate": {"thaumicaugmentation:linked": 1},
+            "model": "thaumicaugmentation:item/impetus_mirror_linked"
+        }
+    ]
+}

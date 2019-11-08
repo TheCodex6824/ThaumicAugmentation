@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -56,14 +57,15 @@ import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.WeakImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster, IBreakCallback {
+public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster {
 
     protected IImpetusProvider provider;
     protected Vec3d lastRiftPos;
@@ -84,11 +86,21 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
                     
                 return result;
             }
+            
+            @Override
+            public void onEnergyChanged() {
+                markDirty();
+            }
         };
         provider = new BufferedImpetusProvider(0, 2, storage) {
             @Override
             public Vec3d getBeamEndpoint() {
                 return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.4375, pos.getZ() + 0.5);
+            }
+            
+            @Override
+            public void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy) {
+                markDirty();
             }
         };
         actionTime = new VariableValue(-1);
@@ -132,9 +144,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
             EnumFacing face, EnumHand hand) {
         
-        boolean result = NodeHelper.handleCasterInteract(this, world, stack, player, pos, face, hand);
-        markDirty();
-        return result;
+        return NodeHelper.handleCasterInteract(this, world, stack, player, pos, face, hand);
     }
     
     @Override
@@ -156,26 +166,14 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     }
     
     @Override
-    public void onChunkUnload() {
-        provider.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
-    }
-    
-    @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         provider.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
     }
     
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        if (oldState.getBlock() != newState.getBlock()) {
-            provider.destroy();
-            ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
-            return true;
-        }
-        
-        return false;
+        return oldState.getBlock() != newState.getBlock();
     }
     
     @Override

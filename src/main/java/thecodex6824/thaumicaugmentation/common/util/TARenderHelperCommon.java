@@ -40,5 +40,12 @@ public class TARenderHelperCommon implements ITARenderHelper {
     @Override
     public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel,
             boolean ignoreGoggles) {}
+    
+    @Override
+    public void renderFluxRiftOutline(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel) {}
 
+    @Override
+    public void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel,
+            float r, float g, float b, float a) {}
+    
 }

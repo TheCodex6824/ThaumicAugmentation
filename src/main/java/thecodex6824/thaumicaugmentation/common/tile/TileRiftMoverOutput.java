@@ -50,8 +50,10 @@ import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.config.ModConfig;
 import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.lib.SoundsTC;
+import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
 import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
@@ -72,10 +74,16 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
             Vec3d test = new Vec3d(pos.up(offset));
             RayTraceResult trace = world.rayTraceBlocks(position, test);
             if (trace == null || trace.hitVec == null)
-                return test;
+                return test.add(0.5, 0.5, 0.5);
         }
         
         return null;
+    }
+    
+    @Nullable
+    public Vec3d findLocalRiftPos() {
+        Vec3d vec = findRiftPos();
+        return vec != null ? vec.subtract(pos.getX(), pos.getY(), pos.getZ()) : null;
     }
     
     @Override
@@ -90,9 +98,11 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                     Vec3d riftPos = findRiftPos();
                     if (riftPos != null) {
                         rift = new EntityFluxRift(world);
-                        rift.setPositionAndRotation(riftPos.x, riftPos.y, riftPos.z, world.rand.nextInt(360), 0);
+                        EnumFacing facing = world.getBlockState(pos.down()).getValue(IHorizontallyDirectionalBlock.DIRECTION);
+                        rift.setPositionAndRotation(riftPos.x, riftPos.y, riftPos.z, facing != null ? facing.getHorizontalAngle() : 0.0F, 0.0F);
                         if (world.spawnEntity(rift)) {
                             rift.setRiftSize(1);
+                            rift.setRiftSeed(jar.getRift().getRiftSeed());
                             operating = true;
                             targetSize = jar.getRift().getRiftSize();
                             markDirty();
@@ -191,7 +201,7 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                     world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
                     world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                 }
-                else {
+                else if (AuraHelper.drainVis(world, pos, 0.25F, false) >= 0.25F - 0.0001) {
                     rift.setRiftSize(rift.getRiftSize() + 1);
                     if (rift.getRiftSize() == targetSize) {
                         below.getCapability(CapabilityRiftJar.RIFT_JAR, null).setRift(new FluxRiftReconstructor(0, 0));
@@ -308,6 +318,26 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
             targetSize = compound.getInteger("size");
             loadedRiftUUID = compound.getUniqueId("rift");
         }
+    }
+    
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        AxisAlignedBB normal = super.getRenderBoundingBox();
+        if (EntityUtils.hasGoggles(Minecraft.getMinecraft().player)) {
+            Vec3d origin = findLocalRiftPos();
+            if (origin != null) {
+                TileEntity below = world.getTileEntity(pos.down());
+                if (below != null) {
+                    IRiftJar jar = below.getCapability(CapabilityRiftJar.RIFT_JAR, null);
+                    if (jar != null && jar.hasRift()) {
+                        return normal.union(jar.getRift().getBoundingBox().grow(0.5).offset(pos.getX(),
+                                pos.getY() + origin.y, pos.getZ()));
+                    }
+                }
+            }
+        }
+        
+        return normal;
     }
     
 }

@@ -2,11 +2,11 @@
     "parent": "item/generated",    
     "overrides": [
         {
-            "predicate": {"focus": 0},
+            "predicate": {"thaumicaugmentation:focus": 0},
             "model": "thaumicaugmentation:item/gauntlet_thaumium_empty"
         },
         {
-            "predicate": {"focus": 1},
+            "predicate": {"thaumicaugmentation:focus": 1},
             "model": "thaumicaugmentation:item/gauntlet_thaumium_focus"
         }
     ]

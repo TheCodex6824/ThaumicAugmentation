@@ -40,7 +40,6 @@ import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 public class BlockImpetusDiffuser extends BlockTABase implements IEnabledBlock, IItemBlockProvider {
 
@@ -95,15 +94,6 @@ public class BlockImpetusDiffuser extends BlockTABase implements IEnabledBlock, 
     @Override
     public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player) {
         return true;
-    }
-    
-    @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile != null && tile instanceof IBreakCallback)
-            ((IBreakCallback) tile).onBlockBroken();
-        
-        super.breakBlock(world, pos, state);
     }
 
     @Override

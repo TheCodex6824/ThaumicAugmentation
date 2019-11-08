@@ -28,6 +28,7 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -58,13 +59,16 @@ public class BlockRiftJar extends BlockTABase implements IHorizontallyDirectiona
     public BlockRiftJar() {
         super(Material.GLASS);
         setHardness(0.3F); // sets default resistance of 0.3 * 5
-        setSoundType(SoundsTC.JAR); // still need to override later because this is probably null
+        setSoundType(SoundsTC.JAR);
         setDefaultState(getDefaultState().withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.SOUTH));
     }
     
     @Override
-    public SoundType getSoundType() {
-        return SoundsTC.JAR;
+    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
+        if (blockSoundType == null)
+            setSoundType(SoundsTC.JAR);
+        
+        return super.getSoundType(state, world, pos, entity);
     }
     
     @Override

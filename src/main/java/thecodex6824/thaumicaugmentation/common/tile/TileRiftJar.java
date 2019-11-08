@@ -24,13 +24,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -106,21 +106,23 @@ public class TileRiftJar extends TileEntity implements ITickable {
     }
     
     @Override
-    public void tick() {
+    public void update() {
         if (world.getTotalWorldTime() - lastStabilityUpdate >= 100)
-            setRiftStability(Math.min(-10, (int) (stability + lastStabilityUpdate / 100 * 3)));
+            setRiftStability(Math.min(0, (int) (stability + lastStabilityUpdate / 100 * 3)));
     }
     
     public void setRiftStability(int newStability) {
-        stability = newStability;
-        lastStabilityUpdate = world.getTotalWorldTime();
-        if (!world.isRemote) {
-            TANetwork.INSTANCE.sendToAllTracking(new PacketRiftJarInstability(pos, stability),
-                    new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64.0));
-        }
-        else {
-            ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.1865 + world.rand.nextDouble() * 0.626,
-                    pos.getY() + world.rand.nextDouble() * 0.75, pos.getZ() + 0.1865 + world.rand.nextDouble() * 0.626, 1.5F, Aspect.ELDRITCH.getColor(), false);
+        if (stability != newStability) {
+            stability = newStability;
+            lastStabilityUpdate = world.getTotalWorldTime();
+            if (!world.isRemote) {
+                TANetwork.INSTANCE.sendToAllTracking(new PacketRiftJarInstability(pos, stability),
+                        new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64.0));
+            }
+            else {
+                ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.1865 + world.rand.nextDouble() * 0.626,
+                        pos.getY() + world.rand.nextDouble() * 0.75, pos.getZ() + 0.1865 + world.rand.nextDouble() * 0.626, 1.5F, Aspect.ELDRITCH.getColor(), false);
+            }
         }
     }
     

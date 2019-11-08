@@ -114,8 +114,8 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                     IDimensionalFracture fracture = (IDimensionalFracture) target;
                     if (!fracture.isOpening() && !fracture.isOpen()) {
                         IImpetusStorage stackStorage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                        if (stackStorage.canExtract() && stackStorage.extractEnergy(75, true) == 75) {
-                            stackStorage.extractEnergy(75, false);
+                        if (stackStorage.canExtract() && stackStorage.extractEnergy(15, true) == 15) {
+                            stackStorage.extractEnergy(15, false);
                             fracture.open();
                             target.playSound(TASounds.RIFT_ENERGY_ZAP, 0.5F + target.getEntityWorld().rand.nextFloat() / 5.0F,
                                     0.75F + target.getEntityWorld().rand.nextFloat() / 2.0F);
@@ -151,7 +151,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                 }
             }
             
-        }, new ImpetusStorage(300, 10));
+        }, new ImpetusStorage(150, 15));
         if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
             storage.deserializeNBT(nbt.getCompoundTag("Parent"));
         

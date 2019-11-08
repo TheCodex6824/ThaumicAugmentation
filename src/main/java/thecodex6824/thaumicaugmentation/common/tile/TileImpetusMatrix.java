@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.Deque;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
@@ -50,15 +51,16 @@ import thecodex6824.thaumicaugmentation.api.block.property.IImpetusCellInfo;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster, IBreakCallback{
+public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster {
 
-    protected static final long CELL_CAPACITY = 500;
+    protected static final long CELL_CAPACITY = 250;
     
     protected class MatrixImpetusStorage implements IImpetusStorage {
         
@@ -88,8 +90,10 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         public long extractEnergy(long maxEnergy, boolean simulate) {
             if (canExtract()) {
                 long amount = Math.min(energy, Math.min(getTotalCells() * CELL_CAPACITY, maxEnergy));
-                if (!simulate)
+                if (!simulate) {
                     energy -= amount;
+                    onEnergyChanged();
+                }
                 
                 return amount;
             }
@@ -101,8 +105,10 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         public long receiveEnergy(long maxEnergy, boolean simulate) {
             if (canReceive()) {
                 long amount = Math.min(Math.min(getTotalCells() * CELL_CAPACITY, maxEnergy), getMaxEnergyStored() - energy);
-                if (!simulate)
+                if (!simulate) {
                     energy += amount;
+                    onEnergyChanged();
+                }
                 
                 return amount;
             }
@@ -122,6 +128,11 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
             energy = nbt.getLong("energy");
         }
         
+        @Override
+        public void onEnergyChanged() {
+            markDirty();
+        }
+        
     }
     
     protected IImpetusStorage buffer;
@@ -131,7 +142,12 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     
     public TileImpetusMatrix() {
         buffer = new MatrixImpetusStorage();
-        prosumer = new BufferedImpetusProsumer(1, 1, buffer);
+        prosumer = new BufferedImpetusProsumer(1, 1, buffer) {
+            @Override
+            public void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy) {
+                markDirty();
+            }
+        };
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_matrix.json"), 
                 ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(20), "delay", new VariableValue(delay)));
     }
@@ -184,26 +200,14 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     }
     
     @Override
-    public void onChunkUnload() {
-        prosumer.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
-    }
-    
-    @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         prosumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
     }
     
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        if (oldState.getBlock() != newState.getBlock()) {
-            prosumer.destroy();
-            ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
-            return true;
-        }
-        
-        return false;
+        return oldState.getBlock() != newState.getBlock();
     }
     
     @Override

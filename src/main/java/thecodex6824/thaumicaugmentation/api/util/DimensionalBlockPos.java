@@ -26,6 +26,40 @@ import net.minecraft.util.math.BlockPos;
 
 public class DimensionalBlockPos {
 
+    public static final DimensionalBlockPos INVALID = new DimensionalBlockPos(0, 0, 0, 0) {
+        
+        @Override
+        public BlockPos getPos() {
+            throw new UnsupportedOperationException("Attempted to get position of invalid DimensionalBlockPos");
+        }
+        
+        @Override
+        public int getDimension() {
+            throw new UnsupportedOperationException("Attempted to get dimension of invalid DimensionalBlockPos");
+        }
+        
+        @Override
+        public int[] toArray() {
+            throw new UnsupportedOperationException("Attempted to convert invalid DimensionalBlockPos to an array");
+        }
+        
+        @Override
+        public String toString() {
+            return "InvalidDimensionalBlockPos{}";
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            return obj == this;
+        }
+        
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(this);
+        }
+        
+    };
+    
     protected BlockPos pos;
     protected int dim;
     
@@ -65,7 +99,7 @@ public class DimensionalBlockPos {
     
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof DimensionalBlockPos) {
+        if (obj.getClass() == DimensionalBlockPos.class) {
             return ((DimensionalBlockPos) obj).getPos().equals(pos) && 
                     ((DimensionalBlockPos) obj).getDimension() == dim;
         }

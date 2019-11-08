@@ -83,7 +83,7 @@ public class RenderItemBlockRiftJar extends TileEntityItemStackRenderer {
                 AxisAlignedBB box = rift.getBoundingBox();
                 GlStateManager.scale(0.3125 / (Math.max(Math.abs(box.minX), Math.abs(box.maxX)) + 0.075), 0.375 / (Math.max(Math.abs(box.minY), Math.abs(box.maxY)) + 0.075),
                         0.3125 / (Math.max(Math.abs(box.minZ), Math.abs(box.maxZ)) + 0.075));
-                ThaumicAugmentation.proxy.getRenderHelper().renderFluxRift(rift, -10, Minecraft.getMinecraft().getRenderPartialTicks(), tess, true);
+                ThaumicAugmentation.proxy.getRenderHelper().renderFluxRift(rift, 0, Minecraft.getMinecraft().getRenderPartialTicks(), tess, true);
                 GlStateManager.popMatrix();
             }
         }
@@ -91,7 +91,7 @@ public class RenderItemBlockRiftJar extends TileEntityItemStackRenderer {
         if (jar == null)
             jar = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(TABlocks.RIFT_JAR.getDefaultState());
         
-        GlStateManager.translate(0.0F, 0.25F, 0.0F);
+        GlStateManager.translate(0.0F, 0.375F, 0.0F);
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.enableBlend();
         Minecraft.getMinecraft().getRenderItem().renderItem(stack, jar);

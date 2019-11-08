@@ -57,7 +57,7 @@ public class RenderRiftJar extends TileEntitySpecialRenderer<TileRiftJar> {
                 FluxRiftReconstructor rift = jar.getRift();
                 
                 GlStateManager.pushMatrix();
-                GlStateManager.translate(x + 0.5, y + 0.25, z + 0.5);
+                GlStateManager.translate(x + 0.5, y + 0.375, z + 0.5);
                 EnumFacing dir = state.getValue(IHorizontallyDirectionalBlock.DIRECTION);
                 if (dir != null)
                     GlStateManager.rotate(dir.getHorizontalAngle(), 0F, 1.0F, 0F);
@@ -65,7 +65,7 @@ public class RenderRiftJar extends TileEntitySpecialRenderer<TileRiftJar> {
                 AxisAlignedBB box = rift.getBoundingBox();
                 GlStateManager.scale(0.3125 / (Math.max(Math.abs(box.minX), Math.abs(box.maxX)) + 0.075), 0.375 / (Math.max(Math.abs(box.minY), Math.abs(box.maxY)) + 0.075),
                         0.3125 / (Math.max(Math.abs(box.minZ), Math.abs(box.maxZ)) + 0.075));
-                ThaumicAugmentation.proxy.getRenderHelper().renderFluxRift(rift, -10, partialTicks, tess, true);
+                ThaumicAugmentation.proxy.getRenderHelper().renderFluxRift(rift, 0, partialTicks, tess, true);
                 GlStateManager.popMatrix();
             }
         }

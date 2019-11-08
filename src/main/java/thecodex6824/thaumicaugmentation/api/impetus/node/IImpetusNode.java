@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus.node;
 
+import java.util.Deque;
 import java.util.Set;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,7 +36,7 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode>, INBTSe
     
     public Set<DimensionalBlockPos> getOutputLocations();
     
-    public default void onTransaction(IImpetusConsumer originator, long impetusAmount) {}
+    public default void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy) {}
     
     public DimensionalBlockPos getLocation();
     
@@ -43,9 +44,15 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode>, INBTSe
     
     public Vec3d getBeamEndpoint();
     
+    public boolean shouldDrawBeamTo(IImpetusNode other);
+    
     public boolean canConnectNodeAsInput(IImpetusNode toConnect);
     
     public boolean canConnectNodeAsOutput(IImpetusNode toConnect);
+    
+    public boolean canRemoveNodeAsInput(IImpetusNode toRemove);
+    
+    public boolean canRemoveNodeAsOutput(IImpetusNode toRemove);
     
     public void addInputLocation(DimensionalBlockPos toConnect);
     

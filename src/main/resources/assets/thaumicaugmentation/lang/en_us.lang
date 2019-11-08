@@ -24,6 +24,8 @@ tile.thaumicaugmentation.rift_jar.name=Rift in a Jar
 tile.thaumicaugmentation.rift_jar_empty.name=Reinforced Jar
 tile.thaumicaugmentation.rift_mover_input.name=Metaspatial Accumulator
 tile.thaumicaugmentation.rift_mover_output.name=Metaspatial Extruder
+tile.thaumicaugmentation.void_recharge_pedestal.name=Void Recharge Pedestal
+tile.thaumicaugmentation.impetus_mirror.name=Impetus Mirror
 
 item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
 item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet
@@ -96,6 +98,8 @@ thaumicaugmentation.text.strength_provider_any=Any Modifier
 thaumicaugmentation.text.effect_provider_any=Any Effect Crystal
 thaumicaugmentation.text.impetus_link_limit_in=The destination node already has too many inputs
 thaumicaugmentation.text.impetus_link_limit_out=The source node already has too many outputs
+thaumicaugmentation.text.mirror_already_linked=That mirror is already linked to a valid destination
+thaumicaugmentation.text.mirror_link=Linked to %d, %d, %d in the %s
 
 thaumicaugmentation.command.not_entity=You must provide a location as you are not an entity in the world
 thaumicaugmentation.command.invalid_arg=Invalid argument

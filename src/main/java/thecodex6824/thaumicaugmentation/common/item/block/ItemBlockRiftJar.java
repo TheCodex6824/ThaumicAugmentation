@@ -75,7 +75,7 @@ public class ItemBlockRiftJar extends ItemBlock implements IModelProvider<Item> 
     @Override
     public boolean hasCustomEntity(ItemStack stack) {
         return stack.hasTagCompound() && stack.getTagCompound().hasKey("seed", NBT.TAG_INT) &&
-                stack.getTagCompound().hasKey("size", NBT.TAG_INT);
+                stack.getTagCompound().getInteger("size") > 0;
     }
     
     @Override

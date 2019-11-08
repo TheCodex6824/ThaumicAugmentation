@@ -61,9 +61,8 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster, IBreakCallback {
+public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster {
 
     protected IImpetusConsumer consumer;
     protected IAnimationStateMachine asm;
@@ -154,26 +153,14 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     }
     
     @Override
-    public void onChunkUnload() {
-        consumer.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
-    }
-    
-    @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         consumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
     }
     
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        if (oldState.getBlock() != newState.getBlock()) {
-            consumer.destroy();
-            ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
-            return true;
-        }
-        
-        return false;
+        return oldState.getBlock() != newState.getBlock();
     }
     
     @Override

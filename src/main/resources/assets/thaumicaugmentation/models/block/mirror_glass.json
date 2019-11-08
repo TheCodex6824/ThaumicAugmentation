@@ -1,0 +1,14 @@
+{
+	"textures": {
+		"0": "thaumcraft:blocks/mirrorpane"
+	},
+	"elements": [
+		{
+			"from": [4, 0.05, 3],
+			"to": [12, 0.35, 13],
+			"faces": {
+				"up": {"uv": [4, 3, 12, 13], "texture": "#0"}
+			}
+		}
+	]
+}

@@ -85,6 +85,7 @@ import thaumcraft.common.world.aura.AuraChunk;
 import thaumcraft.common.world.aura.AuraHandler;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
@@ -121,7 +122,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     public ItemTieredCasterGauntlet() {
         super(new String[] {"thaumium", "void"});
         setMaxStackSize(1);
-        addPropertyOverride(new ResourceLocation("focus"), new IItemPropertyGetter() {
+        addPropertyOverride(new ResourceLocation(ThaumicAugmentationAPI.MODID, "focus"), new IItemPropertyGetter() {
             @Override
             public float apply(ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
                 return isStoringFocus(stack) ? 1.0F : 0.0F;

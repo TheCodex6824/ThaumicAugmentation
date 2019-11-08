@@ -41,7 +41,6 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 public class BlockImpetusMatrix extends BlockTABase implements IItemBlockProvider {
 
@@ -81,10 +80,6 @@ public class BlockImpetusMatrix extends BlockTABase implements IItemBlockProvide
     
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile != null && tile instanceof IBreakCallback)
-            ((IBreakCallback) tile).onBlockBroken();
-        
         if (world.getBlockState(pos.down()).getBlock() == TABlocks.IMPETUS_MATRIX_BASE)
             world.setBlockState(pos.down(), BlocksTC.pedestalEldritch.getDefaultState());
         if (world.getBlockState(pos.up()).getBlock() == TABlocks.IMPETUS_MATRIX_BASE)

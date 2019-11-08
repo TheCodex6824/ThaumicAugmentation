@@ -20,12 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -39,32 +42,41 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import thaumcraft.common.lib.SoundsTC;
+import thecodex6824.thaumicaugmentation.api.block.property.IConnected;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
-import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
-import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
-public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock, IItemBlockProvider {
+public class BlockImpetusMirror extends BlockTABase implements IDirectionalBlock {
 
-    protected static final AxisAlignedBB DOWN_BOX = new AxisAlignedBB(0.3125, 0.46875, 0.3125, 0.6875, 1.0, 0.6875);
-    protected static final AxisAlignedBB EAST_BOX = new AxisAlignedBB(0.0, 0.3125, 0.3125, 0.53125, 0.6875, 0.6875);
-    protected static final AxisAlignedBB NORTH_BOX = new AxisAlignedBB(0.3125, 0.3125, 0.46875, 0.6875, 0.6875, 1.0);
-    protected static final AxisAlignedBB SOUTH_BOX = new AxisAlignedBB(0.3125, 0.3125, 0.0, 0.6875, 0.6875, 0.53125);
-    protected static final AxisAlignedBB UP_BOX = new AxisAlignedBB(0.3125, 0.0, 0.3125, 0.6875, 0.53125, 0.6875);
-    protected static final AxisAlignedBB WEST_BOX = new AxisAlignedBB(1.0, 0.3125, 0.3125, 0.46875, 0.6875, 0.6875);
+    protected static final AxisAlignedBB DOWN_BOX = new AxisAlignedBB(0.0, 0.875, 0.0, 1.0, 1.0, 1.0);
+    protected static final AxisAlignedBB EAST_BOX = new AxisAlignedBB(0.0, 0.0, 0.0, 0.125, 1.0, 1.0);
+    protected static final AxisAlignedBB NORTH_BOX = new AxisAlignedBB(0.0, 0.0, 0.875, 1.0, 1.0, 1.0);
+    protected static final AxisAlignedBB SOUTH_BOX = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.125);
+    protected static final AxisAlignedBB UP_BOX = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.125, 1.0);
+    protected static final AxisAlignedBB WEST_BOX = new AxisAlignedBB(0.875, 0.0, 0.0, 1.0, 1.0, 1.0);
     
-    public BlockImpetusRelay() {
+    public BlockImpetusMirror() {
         super(Material.IRON);
-        setHardness(3.0F);
-        setResistance(35.0F);
+        setSoundType(SoundsTC.JAR);
+        setHardness(0.1F);
         setDefaultState(getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.UP));
-        setSoundType(SoundType.METAL);
     }
     
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, IDirectionalBlock.DIRECTION);
+        return new BlockStateContainer(this, IDirectionalBlock.DIRECTION, IConnected.CONNECTED);
+    }
+    
+    @Override
+    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
+        if (blockSoundType == null)
+            setSoundType(SoundsTC.JAR);
+        
+        return super.getSoundType(state, world, pos, entity);
     }
     
     @Override
@@ -92,6 +104,16 @@ public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock,
     @Override
     public IBlockState withMirror(IBlockState state, Mirror mirror) {
         return state.withRotation(mirror.toRotation(state.getValue(IDirectionalBlock.DIRECTION)));
+    }
+    
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        boolean value = false;
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileImpetusMirror)
+            value = ((TileImpetusMirror) tile).getLink() != DimensionalBlockPos.INVALID;
+        
+        return state.withProperty(IConnected.CONNECTED, value);
     }
     
     @Override
@@ -134,7 +156,7 @@ public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock,
 
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileImpetusRelay();
+        return new TileImpetusMirror();
     }
 
     @Override
@@ -169,7 +191,7 @@ public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock,
 
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override

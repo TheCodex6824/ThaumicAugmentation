@@ -59,6 +59,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrixBase;
+import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftJar;
@@ -67,6 +68,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
 import thecodex6824.thaumicaugmentation.common.block.BlockTaintFlower;
 import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
+import thecodex6824.thaumicaugmentation.common.block.BlockVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
@@ -84,6 +86,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
 import thecodex6824.thaumicaugmentation.common.item.ItemVoidBoots;
+import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.recipe.AugmentAdditionRecipe;
@@ -100,12 +103,14 @@ import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
+import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessHighlands;
@@ -158,6 +163,8 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockRiftMoverInput(), "rift_mover_input"));
         registry.register(setupBlock(new BlockRiftMoverOutput(), "rift_mover_output"));
         registry.register(setupBlock(new BlockRiftJar(), "rift_jar"));
+        registry.register(setupBlock(new BlockVoidRechargePedestal(), "void_recharge_pedestal"));
+        registry.register(setupBlock(new BlockImpetusMirror(), "impetus_mirror"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -172,6 +179,8 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileRiftJar.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_jar"));
         GameRegistry.registerTileEntity(TileRiftMoverInput.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_mover_input"));
         GameRegistry.registerTileEntity(TileRiftMoverOutput.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_mover_output"));
+        GameRegistry.registerTileEntity(TileVoidRechargePedestal.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "void_recharge_pedestal"));
+        GameRegistry.registerTileEntity(TileImpetusMirror.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_mirror"));
     }
 
     @SubscribeEvent
@@ -197,6 +206,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemMorphicTool(), "morphic_tool"));
         registry.register(setupItem(new ItemPrimalCutter(), "primal_cutter"));
         registry.register(setupItem(new ItemBlockRiftJar(), "rift_jar"));
+        registry.register(setupItem(new ItemBlockImpetusMirror(), "impetus_mirror"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }

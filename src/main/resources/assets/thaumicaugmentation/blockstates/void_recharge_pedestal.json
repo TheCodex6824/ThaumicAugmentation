@@ -1,0 +1,14 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:void_recharge_pedestal"
+    },
+    "variants": {
+        "normal": {
+            "__nop": ""
+        },
+        "inventory": {
+            "transform": "forge:default-block"
+        }
+    }
+}

@@ -172,7 +172,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                     world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
                     world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                 }
-                else {
+                else if (AuraHelper.drainVis(world, pos, 0.25F, false) >= 0.25F - 0.0001){
                     rift.setRiftSize(rift.getRiftSize() - 1);
                     rift.setRiftStability(rift.getRiftStability() - 0.5F);
                     if (rift.getRiftSize() == 0) {
