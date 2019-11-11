@@ -31,7 +31,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
@@ -52,7 +51,7 @@ public class ImpetusNode implements IImpetusNode {
     protected Object2BooleanOpenHashMap<DimensionalBlockPos> tempStorage;
     
     public ImpetusNode(int totalInputs, int totalOutputs) {
-        this(totalInputs, totalOutputs, new DimensionalBlockPos(new BlockPos(0, 0, 0), 0));
+        this(totalInputs, totalOutputs, DimensionalBlockPos.INVALID);
     }
     
     public ImpetusNode(int totalInputs, int totalOutputs, DimensionalBlockPos location) {

@@ -47,8 +47,9 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusMirror extends TileEntity implements ITickable, IInteractWithCaster {
+public class TileImpetusMirror extends TileEntity implements ITickable, IInteractWithCaster, IBreakCallback {
 
     protected IImpetusNode node;
     protected DimensionalBlockPos linked;
@@ -105,7 +106,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
     @Override
     public void update() {
         if (!world.isRemote && world.getTotalWorldTime() % 100 == 0 && linked != DimensionalBlockPos.INVALID &&
-            node.getGraph().findNodeByPosition(linked) == null) {
+                node.getLocation() != DimensionalBlockPos.INVALID && node.getGraph().findNodeByPosition(linked) == null) {
                 
             World targetWorld = DimensionManager.getWorld(linked.getDimension());
             if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
@@ -118,12 +119,27 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
                         
                         node.addInput(otherNode);
                         node.addOutput(otherNode);
+                        markDirty();
                         NodeHelper.syncAddedImpetusNodeInput(node, otherNode.getLocation());
                         NodeHelper.syncAddedImpetusNodeInput(otherNode, node.getLocation());
                         NodeHelper.syncAddedImpetusNodeOutput(node, otherNode.getLocation());
                         NodeHelper.syncAddedImpetusNodeOutput(otherNode, node.getLocation());
                     }
                 }
+            }
+        }
+    }
+    
+    @Override
+    public void onBlockBroken() {
+        if (!world.isRemote && linked != DimensionalBlockPos.INVALID && node.getLocation() != DimensionalBlockPos.INVALID &&
+                node.getGraph().findNodeByPosition(linked) != null) {
+                    
+            World targetWorld = DimensionManager.getWorld(linked.getDimension());
+            if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
+                TileEntity tile = world.getTileEntity(linked.getPos());
+                if (tile instanceof TileImpetusMirror)
+                    ((TileImpetusMirror) tile).setLink(DimensionalBlockPos.INVALID);
             }
         }
     }
@@ -146,11 +162,34 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
                 NodeHelper.syncRemovedImpetusNodeOutput(node, linked);
             }
             
-            node.addInputLocation(linkTo);
-            node.addOutputLocation(linkTo);
-            linked = linkTo;
-            markDirty();
-            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+            if (linkTo != DimensionalBlockPos.INVALID) {
+                node.addInputLocation(linkTo);
+                node.addOutputLocation(linkTo);
+                linked = linkTo;
+                markDirty();
+                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+                if (!world.isRemote) {
+                    World targetWorld = DimensionManager.getWorld(linked.getDimension());
+                    if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
+                        TileEntity tile = world.getTileEntity(linked.getPos());
+                        if (tile != null) {
+                            IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                            if (otherNode != null) {
+                                if (tile instanceof TileImpetusMirror)
+                                    ((TileImpetusMirror) tile).setLink(node.getLocation());
+                                
+                                node.addInput(otherNode);
+                                node.addOutput(otherNode);
+                                markDirty();
+                                NodeHelper.syncAddedImpetusNodeInput(node, otherNode.getLocation());
+                                NodeHelper.syncAddedImpetusNodeInput(otherNode, node.getLocation());
+                                NodeHelper.syncAddedImpetusNodeOutput(node, otherNode.getLocation());
+                                NodeHelper.syncAddedImpetusNodeOutput(otherNode, node.getLocation());
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -242,8 +281,10 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
     
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        if (world.isRemote && packet.getNbtCompound().hasKey("link", NBT.TAG_INT_ARRAY))
+        if (world.isRemote && packet.getNbtCompound().hasKey("link", NBT.TAG_INT_ARRAY)) {
             linked = new DimensionalBlockPos(packet.getNbtCompound().getIntArray("link"));
+            world.markBlockRangeForRenderUpdate(pos, pos);
+        }
     }
     
     @Override

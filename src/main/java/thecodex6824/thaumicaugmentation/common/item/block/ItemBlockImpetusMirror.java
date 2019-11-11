@@ -49,6 +49,8 @@ import net.minecraftforge.common.util.Constants.NBT;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
@@ -81,7 +83,10 @@ public class ItemBlockImpetusMirror extends ItemBlock implements IModelProvider<
             TileEntity target = world.getTileEntity(pos);
             if (target instanceof TileImpetusMirror) {
                 TileImpetusMirror mirror = (TileImpetusMirror) target;
-                if (mirror.getLink() == DimensionalBlockPos.INVALID) {
+                IImpetusNode node = mirror.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                if (mirror.getLink() == DimensionalBlockPos.INVALID ||
+                        (node != null && node.getGraph().findNodeByPosition(mirror.getLink()) == null)) {
+                    
                     ItemStack copy = player.getHeldItem(hand).copy();
                     copy.setCount(1);
                     NBTTagCompound tag = new NBTTagCompound();

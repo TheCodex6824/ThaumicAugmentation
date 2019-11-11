@@ -48,6 +48,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockImpetusMirror extends BlockTABase implements IDirectionalBlock {
@@ -123,6 +124,15 @@ public class BlockImpetusMirror extends BlockTABase implements IDirectionalBlock
             dropBlockAsItem(world, pos, state, 0);
             world.setBlockToAir(pos);
         }
+    }
+    
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof IBreakCallback)
+            ((IBreakCallback) tile).onBlockBroken();
+        
+        super.breakBlock(world, pos, state);
     }
     
     @Override
