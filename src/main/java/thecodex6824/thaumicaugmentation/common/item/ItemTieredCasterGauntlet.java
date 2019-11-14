@@ -142,7 +142,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         if (stack.getMetadata() == 0 || TAConfig.voidseerArea.getValue() <= 1) {
             if (amount <= AuraHelper.getVis(user.getEntityWorld(), user.getPosition())) {
                 amount -= AuraHelper.drainVis(user.getEntityWorld(), user.getPosition(), amount, simulate);
-                return amount <= 0.0F;
+                return amount <= EPSILON;
             }
 
             return false;
@@ -163,7 +163,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
             }
 
             if (totalVis >= amount) {
-                float step = totalVis / visAmounts.size();
+                float step = amount / visAmounts.size();
                 float drawn = 0;
                 int index = 0;
                 for (Map.Entry<Float, BlockPos> entry : visAmounts.entrySet()) {
