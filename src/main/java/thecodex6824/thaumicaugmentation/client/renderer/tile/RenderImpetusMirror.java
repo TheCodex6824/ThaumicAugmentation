@@ -41,7 +41,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
-import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 
 public class RenderImpetusMirror extends TileEntitySpecialRenderer<TileImpetusMirror> {
@@ -176,7 +175,7 @@ public class RenderImpetusMirror extends TileEntitySpecialRenderer<TileImpetusMi
             float alpha) {
         
         EnumFacing facing = te.getWorld().getBlockState(te.getPos()).getValue(IDirectionalBlock.DIRECTION);
-        if (facing != null && te.getLink() != DimensionalBlockPos.INVALID) {
+        if (facing != null && !te.getLink().isInvalid()) {
             Random random = new Random(31100);
             Tessellator t = Tessellator.getInstance();
             BufferBuilder buffer = t.getBuffer();

@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.api.augment;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Default implementation of the Augment capability.
@@ -29,7 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * 
  * @see thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment
  */
-public class Augment implements IAugment {
+public class Augment implements IAugment, INBTSerializable<NBTTagCompound> {
     
     public Augment() {}
     

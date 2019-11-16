@@ -21,8 +21,6 @@
 package thecodex6824.thaumicaugmentation.api.warded;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 
 /**
@@ -31,7 +29,7 @@ import net.minecraftforge.items.IItemHandler;
  * don't access warded inventories.
  * @author TheCodex6824
  */
-public interface IWardedInventory extends INBTSerializable<NBTTagCompound> {
+public interface IWardedInventory {
     
     public ItemStack extractItem(int slot, int amount, boolean simulate);
     

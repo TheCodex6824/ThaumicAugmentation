@@ -22,16 +22,14 @@ package thecodex6824.thaumicaugmentation.api.world.capability;
 
 import java.util.Collection;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Interface that marks an area as having a fracture in it.
  * @author TheCodex6824
  */
-public interface IFractureLocations extends INBTSerializable<NBTTagCompound> {
+public interface IFractureLocations {
 
     /**
      * Sets the chunk the fracture(s) are located in.

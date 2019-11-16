@@ -44,6 +44,11 @@ public class DimensionalBlockPos {
         }
         
         @Override
+        public boolean isInvalid() {
+            return true;
+        }
+        
+        @Override
         public String toString() {
             return "InvalidDimensionalBlockPos{}";
         }
@@ -72,6 +77,11 @@ public class DimensionalBlockPos {
         dim = dimension;
     }
     
+    public DimensionalBlockPos(DimensionalBlockPos toCopy) {
+        pos = toCopy.getPos().toImmutable();
+        dim = toCopy.getDimension();
+    }
+    
     public DimensionalBlockPos(int[] components) {
         if (components.length != 4)
             throw new ArrayIndexOutOfBoundsException("DimensionalBlockPos component array has wrong size");
@@ -90,6 +100,10 @@ public class DimensionalBlockPos {
     
     public int[] toArray() {
         return new int[] {pos.getX(), pos.getY(), pos.getZ(), dim};
+    }
+    
+    public boolean isInvalid() {
+        return false;
     }
     
     @Override

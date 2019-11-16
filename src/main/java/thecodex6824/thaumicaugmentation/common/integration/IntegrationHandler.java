@@ -20,32 +20,51 @@
 
 package thecodex6824.thaumicaugmentation.common.integration;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import net.minecraftforge.fml.common.Loader;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
 public class IntegrationHandler {
 
-    private static final String WIZARDRY_MOD_ID = "wizardry";
+    public static final String WIZARDRY_MOD_ID = "wizardry";
+    public static final String JEID_MOD_ID = "jeid";
     
-    private static ArrayList<IIntegrationHolder> integrations = new ArrayList<>();
+    private static HashMap<String, IIntegrationHolder> integrations = new HashMap<>();
     
     public static void preInit() {
         if (Loader.isModLoaded(WIZARDRY_MOD_ID))
-            integrations.add(new IntegrationWizardry());
+            integrations.put(WIZARDRY_MOD_ID, new IntegrationWizardry());
+        if (Loader.isModLoaded(JEID_MOD_ID))
+            integrations.put(JEID_MOD_ID, new IntegrationJEID());
         
-        for (IIntegrationHolder holder : integrations)
+        for (IIntegrationHolder holder : integrations.values())
             holder.preInit();
     }
     
     public static void init() {
-        for (IIntegrationHolder holder : integrations)
+        for (IIntegrationHolder holder : integrations.values())
             holder.init();
     }
     
     public static void postInit() {
-        for (IIntegrationHolder holder : integrations)
-            holder.postInit();
+        ThaumicAugmentation.getLogger().info("The following mods were detected and have integration enabled:");
+        for (Map.Entry<String, IIntegrationHolder> entry : integrations.entrySet()) {
+            entry.getValue().postInit();
+            ThaumicAugmentation.getLogger().info(entry.getKey());
+        }
+    }
+    
+    public static boolean isIntegrationPresent(String modid) {
+        return integrations.containsKey(modid);
+    }
+    
+    @Nullable
+    public static IIntegrationHolder getIntegration(String modid) {
+        return integrations.get(modid);
     }
     
 }

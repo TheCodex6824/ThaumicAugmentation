@@ -90,7 +90,7 @@ public class ItemCustomCasterAugment extends ItemTABase {
         if (stack.hasTagCompound())
             tag.setTag("item", stack.getTagCompound());
         
-        tag.setTag("cap", stack.getCapability(CapabilityAugment.AUGMENT, null).serializeNBT());
+        tag.setTag("cap", ((AugmentCasterCustom) stack.getCapability(CapabilityAugment.AUGMENT, null)).serializeNBT());
         return tag;
     }
     
@@ -107,7 +107,7 @@ public class ItemCustomCasterAugment extends ItemTABase {
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
             }
             
-            stack.getCapability(CapabilityAugment.AUGMENT, null).deserializeNBT(nbt.getCompoundTag("cap"));
+            ((AugmentCasterCustom) stack.getCapability(CapabilityAugment.AUGMENT, null)).deserializeNBT(nbt.getCompoundTag("cap"));
         }
     }
     

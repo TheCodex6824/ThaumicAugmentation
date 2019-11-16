@@ -21,15 +21,13 @@
 package thecodex6824.thaumicaugmentation.api.warded;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Interface for warded tile entities.
  * @author TheCodex6824
  */
-public interface IWardedTile extends INBTSerializable<NBTTagCompound> {
+public interface IWardedTile {
 
     /**
      * Returns the block position of this warded tile. If for some reason it would

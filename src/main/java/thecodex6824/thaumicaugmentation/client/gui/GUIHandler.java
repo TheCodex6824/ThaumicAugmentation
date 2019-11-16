@@ -25,14 +25,17 @@ import net.minecraft.inventory.Container;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
+import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 
 public class GUIHandler implements IGuiHandler {
 
     public enum TAInventory {
 
-        WARDED_CHEST(0);
+        WARDED_CHEST(0),
+        ARCANE_TERRAFORMER(1);
 
         private int id;
 
@@ -50,6 +53,8 @@ public class GUIHandler implements IGuiHandler {
         switch (TAInventory.values()[ID]) {
             case WARDED_CHEST: return new ContainerWardedChest(player.inventory, 
                 (TileWardedChest) world.getTileEntity(new BlockPos(x, y, z)));
+            case ARCANE_TERRAFORMER: return new ContainerArcaneTerraformer(player.inventory, 
+                    (TileArcaneTerraformer) world.getTileEntity(new BlockPos(x, y, z)));
             default: return null;
         }
     }
@@ -58,6 +63,7 @@ public class GUIHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (TAInventory.values()[ID]) {
             case WARDED_CHEST: return new GUIWardedChest(getServerGuiElement(ID, player, world, x, y, z), player.inventory);
+            case ARCANE_TERRAFORMER: return new GUIArcaneTerraformer(getServerGuiElement(ID, player, world, x, y, z), player.inventory);
             default: return null;
         }
     }

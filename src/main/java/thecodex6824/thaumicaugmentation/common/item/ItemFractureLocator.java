@@ -41,7 +41,7 @@ public class ItemFractureLocator extends ItemTABase {
     
     public ItemFractureLocator() {
         super();
-        setMaxStackSize(1);
+        setHasSubtypes(true);
     }
     
     @Override

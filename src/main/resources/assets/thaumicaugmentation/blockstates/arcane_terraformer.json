@@ -1,0 +1,16 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:arcane_terraformer.obj",
+        "custom": { "flip-v": true }
+    },
+    "variants": {
+        "ta_terraformer_half": {
+            "lower": {"__nop": ""},
+            "upper": {"__nop": ""}
+        },
+        "inventory": {
+            "transform": "forge:default-block"
+        }
+    }
+}

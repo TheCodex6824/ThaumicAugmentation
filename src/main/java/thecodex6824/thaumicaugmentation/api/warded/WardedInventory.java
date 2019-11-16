@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.api.warded;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -29,7 +30,7 @@ import net.minecraftforge.items.ItemStackHandler;
  * Default implementation of {@link IWardedInventory}.
  * @author TheCodex6824
  */
-public class WardedInventory implements IWardedInventory {
+public class WardedInventory implements IWardedInventory, INBTSerializable<NBTTagCompound> {
 
     private ItemStackHandler wrapped;
     

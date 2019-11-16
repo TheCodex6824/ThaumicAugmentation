@@ -47,10 +47,10 @@ public class BufferedImpetusProsumer extends ImpetusNode implements IImpetusProv
     }
     
     @Override
-    public ConsumeResult consume(long amount) {
+    public ConsumeResult consume(long amount, boolean simulate) {
         amount = Math.min(amount, buffer.receiveEnergy(Long.MAX_VALUE, true));
-        ConsumeResult pair = NodeHelper.consumeImpetusFromConnectedProviders(amount, this);
-        return new ConsumeResult(buffer.receiveEnergy(pair.energyConsumed, false), pair.paths);
+        ConsumeResult pair = NodeHelper.consumeImpetusFromConnectedProviders(amount, this, simulate);
+        return new ConsumeResult(buffer.receiveEnergy(pair.energyConsumed, simulate), pair.paths);
     }
     
     public IImpetusStorage getProsumer() {

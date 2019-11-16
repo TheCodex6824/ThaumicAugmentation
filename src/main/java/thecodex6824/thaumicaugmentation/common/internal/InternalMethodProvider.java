@@ -107,7 +107,7 @@ public class InternalMethodProvider implements IInternalMethodProvider {
     @Override
     public void fullySyncImpetusNode(IImpetusNode node) {
         DimensionalBlockPos pos = node.getLocation();
-        TANetwork.INSTANCE.sendToAllTracking(new PacketFullImpetusNodeSync(pos.getPos(), node.serializeNBT()),
+        TANetwork.INSTANCE.sendToAllTracking(new PacketFullImpetusNodeSync(pos.getPos(), node.getSyncNBT()),
                 new TargetPoint(pos.getDimension(), pos.getPos().getX() + 0.5, pos.getPos().getY() + 0.5,
                 pos.getPos().getZ() + 0.5, 64));
     }

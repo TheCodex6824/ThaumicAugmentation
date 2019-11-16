@@ -49,6 +49,7 @@ item.thaumicaugmentation.fracture_locator.name=Fracture Locator
 item.thaumicaugmentation.augment_custom.name=Modular Caster Augment
 item.thaumicaugmentation.morphic_tool.name=Morphic Tool
 item.thaumicaugmentation.primal_cutter.name=Primal Cutter
+item.thaumicaugmentation.biome_selector.name=Biome Selector (WIP)
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld
@@ -100,6 +101,9 @@ thaumicaugmentation.text.impetus_link_limit_in=The destination node already has 
 thaumicaugmentation.text.impetus_link_limit_out=The source node already has too many outputs
 thaumicaugmentation.text.mirror_already_linked=That mirror is already linked to a valid destination
 thaumicaugmentation.text.mirror_link=Linked to %d, %d, %d in the %s
+thaumicaugmentation.text.selected_biome=Biome: %s
+thaumicaugmentation.text.biome_empty=None
+thaumicaugmentation.text.biome_reset=Primeval
 
 thaumicaugmentation.command.not_entity=You must provide a location as you are not an entity in the world
 thaumicaugmentation.command.invalid_arg=Invalid argument

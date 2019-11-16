@@ -37,8 +37,8 @@ public class SimpleImpetusConsumer extends ImpetusNode implements IImpetusConsum
     }
     
     @Override
-    public ConsumeResult consume(long amount) {
-        return NodeHelper.consumeImpetusFromConnectedProviders(amount, this);
+    public ConsumeResult consume(long amount, boolean simulate) {
+        return NodeHelper.consumeImpetusFromConnectedProviders(amount, this, simulate);
     }
     
 }

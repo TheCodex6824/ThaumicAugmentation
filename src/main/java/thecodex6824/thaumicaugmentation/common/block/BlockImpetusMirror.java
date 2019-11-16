@@ -45,7 +45,6 @@ import net.minecraft.world.World;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.block.property.IConnected;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
-import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
@@ -112,7 +111,7 @@ public class BlockImpetusMirror extends BlockTABase implements IDirectionalBlock
         boolean value = false;
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileImpetusMirror)
-            value = ((TileImpetusMirror) tile).getLink() != DimensionalBlockPos.INVALID;
+            value = !((TileImpetusMirror) tile).getLink().isInvalid();
         
         return state.withProperty(IConnected.CONNECTED, value);
     }

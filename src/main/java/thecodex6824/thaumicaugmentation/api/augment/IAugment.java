@@ -26,11 +26,9 @@ import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
 /**
@@ -38,7 +36,7 @@ import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
  * an {@link IAugmentableItem}, and respond to events created by the wearer.
  * @author TheCodex6824
  */
-public interface IAugment extends INBTSerializable<NBTTagCompound> {
+public interface IAugment {
     
     /**
      * Called on both the client and server when the augment is equipped on the user. This includes when the

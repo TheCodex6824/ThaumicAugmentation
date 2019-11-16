@@ -35,13 +35,14 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 
 /**
  * Default implementation of {@link IWardStorage} for servers.
  * @author TheCodex6824
  */
-public class WardStorageServer implements IWardStorageServer {
+public class WardStorageServer implements IWardStorageServer, INBTSerializable<NBTTagCompound> {
 
     @VisibleForTesting
     static final class StorageManagersServer {

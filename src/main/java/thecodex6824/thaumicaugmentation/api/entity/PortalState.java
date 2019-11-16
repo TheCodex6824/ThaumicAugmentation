@@ -21,8 +21,9 @@
 package thecodex6824.thaumicaugmentation.api.entity;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 
-public class PortalState implements IPortalState {
+public class PortalState implements IPortalState, INBTSerializable<NBTTagCompound> {
 
     private boolean portal;
     

@@ -20,10 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.entity;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.INBTSerializable;
-
-public interface IPortalState extends INBTSerializable<NBTTagCompound> {
+public interface IPortalState {
     
     public boolean isInPortal();
     

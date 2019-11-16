@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.Constants.NBT;
 
 /**
@@ -33,7 +34,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 * 
 * @see thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem
 */
-public class AugmentableItem implements IAugmentableItem {
+public class AugmentableItem implements IAugmentableItem, INBTSerializable<NBTTagCompound> {
 
     private ItemStack[] augments;
     
@@ -138,6 +139,16 @@ public class AugmentableItem implements IAugmentableItem {
         }
         
         return false;
+    }
+    
+    @Override
+    public NBTTagCompound getSyncNBT() {
+        return serializeNBT();
+    }
+    
+    @Override
+    public void readSyncNBT(NBTTagCompound tag) {
+        deserializeNBT(tag);
     }
     
     @Override

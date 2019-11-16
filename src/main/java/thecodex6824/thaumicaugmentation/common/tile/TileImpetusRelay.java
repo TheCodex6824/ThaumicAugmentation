@@ -24,28 +24,22 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import thaumcraft.api.casters.IInteractWithCaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
-public class TileImpetusRelay extends TileEntity implements IInteractWithCaster {
+public class TileImpetusRelay extends TileEntity {
 
-    protected IImpetusNode node;
+    protected ImpetusNode node;
     
     public TileImpetusRelay() {
         node = new ImpetusNode(2, 2) {
@@ -63,13 +57,6 @@ public class TileImpetusRelay extends TileEntity implements IInteractWithCaster 
                 }
             }
         };
-    }
-    
-    @Override
-    public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
-            EnumFacing face, EnumHand hand) {
-        
-        return NodeHelper.handleCasterInteract(this, world, stack, player, pos, face, hand);
     }
     
     @Override

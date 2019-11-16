@@ -530,7 +530,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         if (stack.hasTagCompound())
             tag.setTag("item", stack.getTagCompound());
         
-        tag.setTag("cap", stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT());
+        tag.setTag("cap", ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).serializeNBT());
         return tag;
     }
     
@@ -547,7 +547,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
             }
             
-            stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).deserializeNBT(nbt.getCompoundTag("cap"));
+            ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).deserializeNBT(nbt.getCompoundTag("cap"));
         }
     }
     
@@ -561,7 +561,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
                     setDyedColor(toAdd, getDefaultDyedColorForMeta(i));
                     
                     if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer())
-                        toAdd.getTagCompound().setTag("cap", toAdd.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT());
+                        toAdd.getTagCompound().setTag("cap", ((AugmentableItem) toAdd.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).serializeNBT());
                     
                     items.add(toAdd);
                 }

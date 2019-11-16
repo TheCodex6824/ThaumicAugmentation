@@ -30,8 +30,8 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 public class SimpleCapabilityProvider<C> implements ICapabilitySerializable<NBTTagCompound> {
 
-    private C instance;
-    private Capability<C> cap;
+    protected C instance;
+    protected Capability<C> cap;
     
     public SimpleCapabilityProvider(C inst, Capability<C> c) {
         cap = c;

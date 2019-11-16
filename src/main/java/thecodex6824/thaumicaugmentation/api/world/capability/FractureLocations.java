@@ -27,6 +27,7 @@ import java.util.HashSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.Constants.NBT;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
@@ -34,7 +35,7 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
  * Default implementation for {@link IFractureLocations}.
  * @author TheCodex6824
  */
-public class FractureLocations implements IFractureLocations {
+public class FractureLocations implements IFractureLocations, INBTSerializable<NBTTagCompound> {
 
     private HashSet<BlockPos> positions;
     private WeakReference<Chunk> chunk;

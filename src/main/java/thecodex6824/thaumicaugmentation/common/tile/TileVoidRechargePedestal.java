@@ -27,14 +27,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -43,7 +41,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.casters.IInteractWithCaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
@@ -51,7 +48,6 @@ import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
@@ -60,10 +56,10 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-public class TileVoidRechargePedestal extends TileEntity implements ITickable, IInteractWithCaster {
+public class TileVoidRechargePedestal extends TileEntity implements ITickable {
 
     protected ItemStackHandler inventory;
-    protected IImpetusConsumer consumer;
+    protected SimpleImpetusConsumer consumer;
     
     public TileVoidRechargePedestal() {
         inventory = new ItemStackHandler(1) {
@@ -119,7 +115,7 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
             IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
             if (storage != null) {
                 long receivable = storage.receiveEnergy(Long.MAX_VALUE, true);
-                ConsumeResult consume = consumer.consume(receivable);
+                ConsumeResult consume = consumer.consume(receivable, false);
                 if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
                     sync = true;
                     transactions.addAll(consume.paths);
@@ -132,7 +128,7 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
                     storage = augment.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                     if (storage != null) {
                         long receivable = storage.receiveEnergy(Long.MAX_VALUE, true);
-                        ConsumeResult consume = consumer.consume(receivable);
+                        ConsumeResult consume = consumer.consume(receivable, false);
                         if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
                             sync = true;
                             transactions.addAll(consume.paths);
@@ -162,13 +158,6 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         inventory.deserializeNBT(pkt.getNbtCompound());
-    }
-    
-    @Override
-    public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
-            EnumFacing face, EnumHand hand) {
-        
-        return NodeHelper.handleCasterInteract(this, world, stack, player, pos, face, hand);
     }
     
     @Override

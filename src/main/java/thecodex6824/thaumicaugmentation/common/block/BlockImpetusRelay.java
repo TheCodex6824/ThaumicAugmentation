@@ -106,7 +106,8 @@ public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock,
     @Override
     public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side) {
         BlockPos test = pos.offset(side.getOpposite());
-        return world.getBlockState(test).isSideSolid(world, test, side);
+        IBlockState state = world.getBlockState(test);
+        return state.isSideSolid(world, test, side) || state.getBlock().canPlaceTorchOnTop(state, world, test);
     }
     
     @Override

@@ -20,16 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.INBTSerializable;
-
 /**
  * Interface for the Rift Energy Storage capability. This represents an object capable of giving and/or receiving energy.
  * Transmission of the energy is left to individual components, this capability only handles storing a quantity. The API was
  * based on the Forge Energy / RF API, only using longs instead of ints to allow crazy energy values.
  * @author TheCodex6824
  */
-public interface IImpetusStorage extends INBTSerializable<NBTTagCompound> {
+public interface IImpetusStorage {
 
     /**
      * Attempts to insert energy into this object, optionally just simulating the result.

@@ -82,7 +82,7 @@ public final class AugmentEventHandler {
                             hasAugments.add(event.getEntity());
                             if (!event.getEntity().getEntityWorld().isRemote) {
                                 TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(event.getEntity().getEntityId(), totalIndex, current.getCapability(
-                                        CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).serializeNBT()), event.getEntity());
+                                        CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getSyncNBT()), event.getEntity());
                             }
                         }
                     

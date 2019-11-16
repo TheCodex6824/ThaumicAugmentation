@@ -22,14 +22,13 @@ package thecodex6824.thaumicaugmentation.api.augment;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Interface for the AugmentableItem capability. This interface allows arbitrary items to hold {@link IAugment}
  * instances.
  * @author TheCodex6824
  */
-public interface IAugmentableItem extends INBTSerializable<NBTTagCompound> {
+public interface IAugmentableItem {
 
     /**
      * Returns the current amount of augments equipped on this augmentable item.
@@ -100,5 +99,9 @@ public interface IAugmentableItem extends INBTSerializable<NBTTagCompound> {
      * @return If this augmentable item has any augments in it
      */
     public boolean isAugmented();
+    
+    public NBTTagCompound getSyncNBT();
+    
+    public void readSyncNBT(NBTTagCompound tag);
     
 }

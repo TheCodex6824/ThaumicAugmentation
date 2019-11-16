@@ -62,6 +62,7 @@ dependencies {
     deobfCompile "curse.maven:thaumcraft:2629023"
     deobfCompile "curse.maven:librarianlib:2725449"
     deobfCompile "curse.maven:wizardry-mod:2726334"
+    deobfCompile "curse.maven:jeid:2810213"
     
     testCompile "junit:junit:4.12"
     testCompile "org.hamcrest:hamcrest:2.1"

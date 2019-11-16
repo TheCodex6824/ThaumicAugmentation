@@ -34,13 +34,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.Constants.NBT;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusGraph;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
-public class ImpetusNode implements IImpetusNode {
+public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompound> {
     
     protected IImpetusGraph graph;
     protected int maxInputs;
@@ -257,6 +258,16 @@ public class ImpetusNode implements IImpetusNode {
             
             tempStorage = null;
         }
+    }
+    
+    @Override
+    public NBTTagCompound getSyncNBT() {
+        return serializeNBT();
+    }
+    
+    @Override
+    public void readSyncNBT(NBTTagCompound tag) {
+        deserializeNBT(tag);
     }
     
     @Override

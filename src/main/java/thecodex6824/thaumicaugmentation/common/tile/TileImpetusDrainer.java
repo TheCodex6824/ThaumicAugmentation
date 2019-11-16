@@ -29,12 +29,9 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -48,7 +45,6 @@ import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import thaumcraft.api.casters.IInteractWithCaster;
 import thaumcraft.common.entities.EntityFluxRift;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -59,15 +55,13 @@ import thecodex6824.thaumicaugmentation.api.impetus.WeakImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusProvider;
-import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
-public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster {
+public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile {
 
-    protected IImpetusProvider provider;
+    protected BufferedImpetusProvider provider;
     protected Vec3d lastRiftPos;
     protected WeakImpetusStorage storage;
     protected IAnimationStateMachine asm;
@@ -99,7 +93,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
             }
             
             @Override
-            public void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy) {
+            public void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {
                 markDirty();
             }
         };
@@ -138,13 +132,6 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
                 asm.transition(lastState ? "starting" : "stopping");
             }
         }
-    }
-    
-    @Override
-    public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
-            EnumFacing face, EnumHand hand) {
-        
-        return NodeHelper.handleCasterInteract(this, world, stack, player, pos, face, hand);
     }
     
     @Override

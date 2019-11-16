@@ -165,8 +165,8 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             tag.setTag("item", stack.getTagCompound());
         
         tag.setTag("cap", new NBTTagCompound());
-        tag.getCompoundTag("cap").setTag("augment", stack.getCapability(CapabilityAugment.AUGMENT, null).serializeNBT());
-        tag.getCompoundTag("cap").setTag("energy", stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null).serializeNBT());
+        tag.getCompoundTag("cap").setTag("augment", ((Augment) stack.getCapability(CapabilityAugment.AUGMENT, null)).serializeNBT());
+        tag.getCompoundTag("cap").setTag("energy", ((ImpetusStorage) stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)).serializeNBT());
         return tag;
     }
     
@@ -183,8 +183,8 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
             }
             
-            stack.getCapability(CapabilityAugment.AUGMENT, null).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("augment"));
-            stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("energy"));
+            ((Augment) stack.getCapability(CapabilityAugment.AUGMENT, null)).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("augment"));
+            ((ImpetusStorage) stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("energy"));
         }
     }
     
@@ -204,8 +204,8 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                     full.setTagCompound(new NBTTagCompound());
                 
                 full.getTagCompound().setTag("cap", new NBTTagCompound());
-                full.getTagCompound().getCompoundTag("cap").setTag("augment", full.getCapability(CapabilityAugment.AUGMENT, null).serializeNBT());
-                full.getTagCompound().getCompoundTag("cap").setTag("energy", energy.serializeNBT());
+                full.getTagCompound().getCompoundTag("cap").setTag("augment", ((Augment) full.getCapability(CapabilityAugment.AUGMENT, null)).serializeNBT());
+                full.getTagCompound().getCompoundTag("cap").setTag("energy", ((ImpetusStorage) energy).serializeNBT());
             }
             
             items.add(full);

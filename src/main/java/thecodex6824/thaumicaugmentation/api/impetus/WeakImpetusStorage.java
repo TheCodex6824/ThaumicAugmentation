@@ -23,8 +23,9 @@ package thecodex6824.thaumicaugmentation.api.impetus;
 import java.lang.ref.WeakReference;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 
-public class WeakImpetusStorage implements IImpetusStorage {
+public class WeakImpetusStorage implements IImpetusStorage, INBTSerializable<NBTTagCompound> {
 
     protected WeakReference<IImpetusStorage> wrapped;
     

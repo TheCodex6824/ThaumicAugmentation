@@ -53,6 +53,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoor;
+import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
@@ -74,10 +75,12 @@ import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
+import thecodex6824.thaumicaugmentation.common.item.ItemBiomeSelector;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
+import thecodex6824.thaumicaugmentation.common.item.ItemImpetusLinker;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemMorphicTool;
 import thecodex6824.thaumicaugmentation.common.item.ItemPrimalCutter;
@@ -98,6 +101,7 @@ import thecodex6824.thaumicaugmentation.common.recipe.ElementChangeRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicToolUnbindingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumKeyCopyRecipe;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
+import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
@@ -165,6 +169,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockRiftJar(), "rift_jar"));
         registry.register(setupBlock(new BlockVoidRechargePedestal(), "void_recharge_pedestal"));
         registry.register(setupBlock(new BlockImpetusMirror(), "impetus_mirror"));
+        registry.register(setupBlock(new BlockArcaneTerraformer(), "arcane_terraformer"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -181,6 +186,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileRiftMoverOutput.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_mover_output"));
         GameRegistry.registerTileEntity(TileVoidRechargePedestal.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "void_recharge_pedestal"));
         GameRegistry.registerTileEntity(TileImpetusMirror.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_mirror"));
+        GameRegistry.registerTileEntity(TileArcaneTerraformer.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_terraformer"));
     }
 
     @SubscribeEvent
@@ -207,6 +213,8 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemPrimalCutter(), "primal_cutter"));
         registry.register(setupItem(new ItemBlockRiftJar(), "rift_jar"));
         registry.register(setupItem(new ItemBlockImpetusMirror(), "impetus_mirror"));
+        registry.register(setupItem(new ItemImpetusLinker(), "impetus_linker"));
+        registry.register(setupItem(new ItemBiomeSelector(), "biome_selector"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }

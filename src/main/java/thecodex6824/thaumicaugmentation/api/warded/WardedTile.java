@@ -28,6 +28,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.event.WardedTilePermissionEvent;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 
@@ -35,7 +36,7 @@ import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
  * Default implementation of {@link IWardedTile}.
  * @author TheCodex6824
  */
-public class WardedTile implements IWardedTile {
+public class WardedTile implements IWardedTile, INBTSerializable<NBTTagCompound> {
 
     protected String owner = "";
     protected WeakReference<TileEntity> tile;

@@ -24,14 +24,11 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -39,7 +36,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
-import thaumcraft.api.casters.IInteractWithCaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
@@ -49,9 +45,9 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusMirror extends TileEntity implements ITickable, IInteractWithCaster, IBreakCallback {
+public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCallback {
 
-    protected IImpetusNode node;
+    protected ImpetusNode node;
     protected DimensionalBlockPos linked;
     
     public TileImpetusMirror() {
@@ -105,8 +101,8 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
     
     @Override
     public void update() {
-        if (!world.isRemote && world.getTotalWorldTime() % 100 == 0 && linked != DimensionalBlockPos.INVALID &&
-                node.getLocation() != DimensionalBlockPos.INVALID && node.getGraph().findNodeByPosition(linked) == null) {
+        if (!world.isRemote && world.getTotalWorldTime() % 100 == 0 && !linked.isInvalid() &&
+                !node.getLocation().isInvalid() && node.getGraph().findNodeByPosition(linked) == null) {
                 
             World targetWorld = DimensionManager.getWorld(linked.getDimension());
             if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
@@ -132,7 +128,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
     
     @Override
     public void onBlockBroken() {
-        if (!world.isRemote && linked != DimensionalBlockPos.INVALID && node.getLocation() != DimensionalBlockPos.INVALID &&
+        if (!world.isRemote && !linked.isInvalid() && node.getLocation() != DimensionalBlockPos.INVALID &&
                 node.getGraph().findNodeByPosition(linked) != null) {
                     
             World targetWorld = DimensionManager.getWorld(linked.getDimension());
@@ -162,7 +158,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
                 NodeHelper.syncRemovedImpetusNodeOutput(node, linked);
             }
             
-            if (linkTo != DimensionalBlockPos.INVALID) {
+            if (!linkTo.isInvalid()) {
                 node.addInputLocation(linkTo);
                 node.addOutputLocation(linkTo);
                 linked = linkTo;
@@ -198,13 +194,6 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
     }
     
     @Override
-    public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
-            EnumFacing face, EnumHand hand) {
-        
-        return NodeHelper.handleCasterInteract(this, world, stack, player, pos, face, hand);
-    }
-    
-    @Override
     public void setPos(BlockPos posIn) {
         super.setPos(posIn);
         node.setLocation(new DimensionalBlockPos(pos, world.provider.getDimension()));
@@ -218,7 +207,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
     
     @Override
     public void onLoad() {
-        if (linked != DimensionalBlockPos.INVALID) {
+        if (!linked.isInvalid()) {
             node.addInputLocation(linked);
             node.addOutputLocation(linked);
         }
@@ -240,7 +229,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         tag.setTag("node", node.serializeNBT());
-        if (linked != DimensionalBlockPos.INVALID)
+        if (!linked.isInvalid())
             tag.setIntArray("link", linked.toArray());
         
         return super.writeToNBT(tag);
@@ -258,7 +247,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound tag = super.getUpdateTag();
         tag.setTag("node", node.serializeNBT());
-        if (linked != DimensionalBlockPos.INVALID)
+        if (!linked.isInvalid())
             tag.setIntArray("link", linked.toArray());
         return tag;
     }
@@ -274,7 +263,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IInterac
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
-        if (linked != DimensionalBlockPos.INVALID)
+        if (!linked.isInvalid())
             tag.setIntArray("link", linked.toArray());
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }

@@ -135,7 +135,7 @@ public class TestImpetusGraph {
         provider1.getProvider().receiveEnergy(Long.MAX_VALUE, false);
         provider2.getProvider().receiveEnergy(Long.MAX_VALUE, false);
         
-        consumer.consume(Long.MAX_VALUE);
+        consumer.consume(Long.MAX_VALUE, false);
         assertEquals(40, consumer.getConsumer().getEnergyStored());
     }
     

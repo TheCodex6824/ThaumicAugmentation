@@ -21,12 +21,13 @@
 package thecodex6824.thaumicaugmentation.api.impetus;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Default implementation of the ImpetusStorage capability.
  * @author TheCodex6824
  */
-public class ImpetusStorage implements IImpetusStorage {
+public class ImpetusStorage implements IImpetusStorage, INBTSerializable<NBTTagCompound> {
 
     protected long energy;
     protected long maxEnergy;

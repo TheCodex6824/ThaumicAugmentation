@@ -22,13 +22,11 @@ package thecodex6824.thaumicaugmentation.api.impetus;
 
 import java.lang.ref.WeakReference;
 
-import net.minecraft.nbt.NBTTagCompound;
 import thaumcraft.common.entities.EntityFluxRift;
 
 public class FluxRiftImpetusStorage implements IImpetusStorage {
     
     protected static final int MAX_SIZE = 200;
-    protected static final double LN_2 = Math.log(2);
     
     protected WeakReference<EntityFluxRift> rift;
     
@@ -55,31 +53,20 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
     }
     
     protected long calcTotalRiftEnergy(int size) {
-        /*
-         * f(x) = { 0 < x <= 100: 2^(x / 20),
-         *          100 < x <= 200: 2^((x - 85) / 20) + 31 }
-         */
-        size = size % MAX_SIZE;
-        long energy = 0;
-        if (size > 100) {
-             energy += (long) (5 * Math.pow(2, (size - 85) / 20.0 + 2) / LN_2 + 31 * size) -
-                     (long) ((5 * Math.pow(2, 2.75)) / LN_2 + 3131);
-        }
+        size = Math.min(size, MAX_SIZE);
+        long total = 0;
+        for (int i = 1; i <= size; ++i)
+            total += calcEnergyThisSize(size);
         
-        size = Math.min(size, 100);
-        energy += (long) (5 * Math.pow(2, size / 20.0 + 2) / LN_2) -
-                (long) (5 * Math.pow(2, 2.05) / LN_2);
-        
-        return energy;
+        return total;
     }
     
     protected long calcEnergyThisSize(int size) {
-        if (size > MAX_SIZE)
-            return 84;
-        else if (size > 100)
-            return (long) Math.pow(2.0, (size - 85) / 20.0) + 31;
-        else
-            return (long) Math.pow(2.0, size / 20.0);
+        /*
+         * f(x) = (1/2) (e^(-(x-172)^2 / 11250) * x)
+         */
+        size = Math.min(size, MAX_SIZE);
+        return (long) (0.5 * (Math.pow(Math.E, -Math.pow(size - 172, 2) / 11250.0) * size));
     }
     
     @Override
@@ -132,14 +119,6 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
         }
         
         return 0;
-    }
-    
-    @Override
-    public void deserializeNBT(NBTTagCompound nbt) {}
-    
-    @Override
-    public NBTTagCompound serializeNBT() {
-        return new NBTTagCompound();
     }
     
 }

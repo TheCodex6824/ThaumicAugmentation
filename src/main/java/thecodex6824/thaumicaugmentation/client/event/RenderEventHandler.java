@@ -55,7 +55,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -65,7 +64,9 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
+import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
@@ -289,10 +290,11 @@ public class RenderEventHandler {
         
         EntityPlayer player = Minecraft.getMinecraft().player;
         for (ItemStack stack : player.getHeldEquipment()) {
-            if (stack.hasTagCompound() && stack.getTagCompound().hasKey("impetusBindSelection", NBT.TAG_INT_ARRAY)) {
-                int[] data = stack.getTagCompound().getIntArray("impetusBindSelection");
-                if (data.length == 4 && player.dimension == data[3]) {
-                    BlockPos pos = new BlockPos(data[0], data[1], data[2]);
+            IImpetusLinker linker = stack.getCapability(CapabilityImpetusLinker.IMPETUS_LINKER, null);
+            if (linker != null) {
+                DimensionalBlockPos dimPos = linker.getOrigin();
+                if (!dimPos.isInvalid() && player.dimension == dimPos.getDimension()) {
+                    BlockPos pos = dimPos.getPos();
                     if (world.isBlockLoaded(pos) && world.getTileEntity(pos) != null) {
                         IImpetusNode cap = world.getTileEntity(pos).getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                         if (cap != null) {

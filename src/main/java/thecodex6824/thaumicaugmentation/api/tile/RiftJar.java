@@ -21,9 +21,10 @@
 package thecodex6824.thaumicaugmentation.api.tile;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 
-public class RiftJar implements IRiftJar {
+public class RiftJar implements IRiftJar, INBTSerializable<NBTTagCompound> {
 
     protected FluxRiftReconstructor rift;
     

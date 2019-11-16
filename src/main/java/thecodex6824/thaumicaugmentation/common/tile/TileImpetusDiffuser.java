@@ -33,7 +33,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -47,7 +46,6 @@ import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import thaumcraft.api.casters.IInteractWithCaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
@@ -56,15 +54,14 @@ import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
-public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster {
+public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnimatedTile {
 
-    protected IImpetusConsumer consumer;
+    protected SimpleImpetusConsumer consumer;
     protected IAnimationStateMachine asm;
     protected VariableValue actionTime;
     protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
@@ -93,7 +90,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                         IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                         if (storage != null && storage.canReceive()) {
                             long canReceive = Math.min(storage.receiveEnergy(Long.MAX_VALUE, true), 10);
-                            ConsumeResult result = consumer.consume(canReceive);
+                            ConsumeResult result = consumer.consume(canReceive, false);
                             if (storage.receiveEnergy(result.energyConsumed, false) > 0) {
                                 ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), player.getPositionVector().add(0, player.height / 2, 0));
                                 NodeHelper.syncAllImpetusTransactions(result.paths);
@@ -106,7 +103,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                     IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                     if (storage != null && storage.canReceive()) {
                         long canReceive = Math.min(storage.receiveEnergy(Long.MAX_VALUE, true), 10);
-                        ConsumeResult result = consumer.consume(canReceive);
+                        ConsumeResult result = consumer.consume(canReceive, false);
                         if (storage.receiveEnergy(result.energyConsumed, false) > 0) {
                             ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), entity.getPositionVector());
                             NodeHelper.syncAllImpetusTransactions(result.paths);
@@ -123,15 +120,6 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                 asm.transition(lastState ? "starting" : "stopping");
             }
         }
-    }
-    
-    @Override
-    public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
-            EnumFacing face, EnumHand hand) {
-        
-        boolean result = NodeHelper.handleCasterInteract(this, world, stack, player, pos, face, hand);
-        markDirty();
-        return result;
     }
     
     @Override

@@ -28,7 +28,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * The ward storage interface for the server side. Servers have access to all information
@@ -36,7 +35,7 @@ import net.minecraftforge.common.util.INBTSerializable;
  * Implementations should try to be efficient when it comes to server resources.
  * @author TheCodex6824
  */
-public interface IWardStorageServer extends IWardStorage, INBTSerializable<NBTTagCompound> {
+public interface IWardStorageServer extends IWardStorage {
 
     /**
      * A constant UUID that should be used for blocks with

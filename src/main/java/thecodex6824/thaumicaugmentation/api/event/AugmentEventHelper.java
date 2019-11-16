@@ -146,7 +146,7 @@ public final class AugmentEventHelper {
             }
             
             if (sync) {
-                PacketAugmentableItemSync syncPacket = new PacketAugmentableItemSync(entity.getEntityId(), index, cap.serializeNBT());
+                PacketAugmentableItemSync syncPacket = new PacketAugmentableItemSync(entity.getEntityId(), index, cap.getSyncNBT());
                 if (entity instanceof EntityPlayerMP)
                     TANetwork.INSTANCE.sendTo(syncPacket, (EntityPlayerMP) entity);
               

@@ -26,17 +26,16 @@ import java.util.Set;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.graph.INode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
-public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode>, INBTSerializable<NBTTagCompound> {
+public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
     
     public Set<DimensionalBlockPos> getInputLocations();
     
     public Set<DimensionalBlockPos> getOutputLocations();
     
-    public default void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy) {}
+    public default void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {}
     
     public DimensionalBlockPos getLocation();
     
@@ -65,5 +64,9 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode>, INBTSe
     public void init(World world);
     
     public void destroy();
+    
+    public NBTTagCompound getSyncNBT();
+    
+    public void readSyncNBT(NBTTagCompound tag);
     
 }

@@ -20,11 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.api.tile;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 
-public interface IRiftJar extends INBTSerializable<NBTTagCompound> {
+public interface IRiftJar {
 
     public void setRift(FluxRiftReconstructor newRift);
     

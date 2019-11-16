@@ -40,6 +40,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
@@ -67,7 +68,9 @@ import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
+import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
@@ -96,6 +99,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProv
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketBiomeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketConfigSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
 import thecodex6824.thaumicaugmentation.common.network.PacketFractureLocatorUpdate;
@@ -116,6 +120,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
+import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
 public class ClientProxy extends CommonProxy {
 
@@ -171,6 +176,8 @@ public class ClientProxy extends CommonProxy {
             handleImpetusTransationPacket((PacketImpetusTransaction) message, context);
         else if (message instanceof PacketRiftJarInstability)
             handleRiftJarInstabilityPacket((PacketRiftJarInstability) message, context);
+        else if (message instanceof PacketBiomeUpdate)
+            handleBiomeUpdatePacket((PacketBiomeUpdate) message, context);
         else
             ThaumicAugmentation.getLogger().warn("An unknown packet was received and will be dropped: " + message.getClass().toString());
     }
@@ -293,7 +300,7 @@ public class ClientProxy extends CommonProxy {
                 for (ItemStack stack : func.apply(entity)) {
                     if (i == message.getItemIndex()) {
                         if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                            stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).deserializeNBT(message.getTagCompound());
+                            stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).readSyncNBT(message.getTagCompound());
                             return;
                         }
                     }
@@ -355,7 +362,7 @@ public class ClientProxy extends CommonProxy {
             if (tile != null) {
                 IImpetusNode node = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                 if (node != null)
-                    node.deserializeNBT(tag);
+                    node.readSyncNBT(tag);
             }
         }
     }
@@ -419,6 +426,10 @@ public class ClientProxy extends CommonProxy {
             if (tile instanceof TileRiftJar)
                 ((TileRiftJar) tile).setRiftStability(message.getStability());
         }
+    }
+    
+    protected void handleBiomeUpdatePacket(PacketBiomeUpdate message, MessageContext context) {
+        BiomeUtil.setBiome(Minecraft.getMinecraft().world, new BlockPos(message.getX(), 64, message.getZ()), Biome.getBiome(message.getBiome()));
     }
 
     @Override
@@ -539,6 +550,21 @@ public class ClientProxy extends CommonProxy {
             }
         };
         registerTo.registerItemColorHandler(morphicTool, TAItems.MORPHIC_TOOL);
+        
+        IItemColor biomeSelector = new IItemColor() {
+            @Override
+            public int colorMultiplier(ItemStack stack, int tintIndex) {
+                IBiomeSelector selected = stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null);
+                if (tintIndex == 1 && selected != null) {
+                    Biome biome = Biome.REGISTRY.getObject(selected.getBiomeID());
+                    if (biome != null)
+                        return biome.getGrassColorAtPos(new BlockPos(0, 64, 0));
+                }
+                
+                return -1;
+            }
+        };
+        registerTo.registerItemColorHandler(biomeSelector, TAItems.BIOME_SELECTOR);
     }
 
 }

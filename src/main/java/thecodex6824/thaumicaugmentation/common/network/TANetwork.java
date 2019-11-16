@@ -46,6 +46,7 @@ public final class TANetwork {
         INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketImpetusNodeUpdate.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketImpetusTransaction.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketRiftJarInstability.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketBiomeUpdate.class, id++, Side.CLIENT);
     }
 
 }

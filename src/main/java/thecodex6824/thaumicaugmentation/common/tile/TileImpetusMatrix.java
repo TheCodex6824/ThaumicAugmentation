@@ -28,12 +28,9 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -44,7 +41,7 @@ import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import thaumcraft.api.casters.IInteractWithCaster;
+import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IImpetusCellInfo;
@@ -58,11 +55,11 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusP
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
-public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimatedTile, IInteractWithCaster {
+public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimatedTile {
 
-    protected static final long CELL_CAPACITY = 250;
+    protected static final long CELL_CAPACITY = 500;
     
-    protected class MatrixImpetusStorage implements IImpetusStorage {
+    protected class MatrixImpetusStorage implements IImpetusStorage, INBTSerializable<NBTTagCompound> {
         
         protected long energy;
         
@@ -135,7 +132,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         
     }
     
-    protected IImpetusStorage buffer;
+    protected MatrixImpetusStorage buffer;
     protected BufferedImpetusProsumer prosumer;
     protected IAnimationStateMachine asm;
     protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
@@ -144,7 +141,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         buffer = new MatrixImpetusStorage();
         prosumer = new BufferedImpetusProsumer(1, 1, buffer) {
             @Override
-            public void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy) {
+            public void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {
                 markDirty();
             }
         };
@@ -155,17 +152,10 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     @Override
     public void update() {
         if (!world.isRemote && (world.getTotalWorldTime() + delay) % 20 == 0) {
-            ConsumeResult result = prosumer.consume(getTotalCells() * CELL_CAPACITY);
+            ConsumeResult result = prosumer.consume(getTotalCells() * CELL_CAPACITY, false);
             if (result.energyConsumed > 0)
                 NodeHelper.syncAllImpetusTransactions(result.paths);
         }
-    }
-    
-    @Override
-    public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player, BlockPos pos, 
-            EnumFacing face, EnumHand hand) {
-        
-        return NodeHelper.handleCasterInteract(this, world, stack, player, pos, face, hand);
     }
     
     public int getTotalCells() {
