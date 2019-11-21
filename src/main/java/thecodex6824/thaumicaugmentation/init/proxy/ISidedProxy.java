@@ -42,8 +42,10 @@ public interface ISidedProxy {
     
     public boolean isOpenToLAN();
     
-    public void handlePacket(IMessage message, MessageContext context);
+    public void handlePacketClient(IMessage message, MessageContext context);
 
+    public void handlePacketServer(IMessage message, MessageContext context);
+    
     public void preInit();
 
     public void init();

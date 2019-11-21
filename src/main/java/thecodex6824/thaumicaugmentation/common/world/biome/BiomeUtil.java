@@ -20,11 +20,26 @@
 
 package thecodex6824.thaumicaugmentation.common.world.biome;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
+import java.util.Random;
+
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aura.AuraHelper;
+import thaumcraft.common.world.aura.AuraHandler;
+import thaumcraft.common.world.biomes.BiomeHandler;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationJEID;
 import thecodex6824.thaumicaugmentation.common.network.PacketBiomeUpdate;
@@ -94,6 +109,82 @@ public final class BiomeUtil {
             return biomeArray[0] == world.getBiome(pos);
         else
             return false;
+    }
+    
+    private static Random copyRand(Random rand) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(out)) {
+            oos.writeObject(rand);
+            oos.close();
+            try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(out.toByteArray()))) {
+                return (Random) in.readObject();
+            }
+        }
+        catch (Exception ex) {
+            ThaumicAugmentation.getLogger().error("Failed to copy random for generateNewAura");
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    public static boolean generateNewAura(World world, BlockPos pos, boolean preserveAmounts) {
+        Biome biome = world.getBiome(pos);
+        if (BiomeHandler.getBiomeBlacklist(Biome.getIdForBiome(biome)) != -1)
+            return false;
+        float life = BiomeHandler.getBiomeAuraModifier(biome);
+        for (EnumFacing face : EnumFacing.HORIZONTALS) {
+            Biome b = world.getBiome(pos.offset(face, 16));
+            life += BiomeHandler.getBiomeAuraModifier(b);
+        }
+        
+        life /= 5.0F;
+        int target = AuraHelper.getAuraBase(world, pos);
+        float flux = AuraHelper.getFlux(world, pos);
+        float vis = AuraHelper.getVis(world, pos);
+        
+        Random chunkRandom = new Random(world.getSeed());
+        long xSeed = chunkRandom.nextLong() >> 2 + 1;
+        long zSeed = chunkRandom.nextLong() >> 2 + 1;
+        chunkRandom.setSeed((xSeed * (pos.getX() >> 16) + zSeed * (pos.getZ() >> 16) ^ world.getSeed()));
+        // highest safe number of ints that can be skipped
+        for (int i = 0; i < 8; ++i)
+            chunkRandom.nextInt();
+        
+        Random copy = copyRand(chunkRandom);
+        boolean solutionFound = false;
+        for (int i = 0; i < 1024 * 32; ++i) {
+            double g = chunkRandom.nextGaussian();
+            // the clamp means this may not be 100% accurate for auras outside that range, but it's better than nothing
+            if (MathHelper.clamp((short) ((float) (1.0 + g * 0.10000000149011612D) * life * 500.0F), 0, 500) == target) {
+                solutionFound = true;
+                break;
+            }
+            else {
+                chunkRandom = copy;
+                chunkRandom.nextBoolean();
+                copy = copyRand(chunkRandom);
+            }
+        }
+        
+        AuraHandler.generateAura(world.getChunk(pos), copy);
+        if (preserveAmounts) {
+            float applyVis = Math.min(vis, AuraHelper.getVis(world, pos));
+            AuraHelper.drainVis(world, pos, AuraHelper.getVis(world, pos) - applyVis, false);
+            AuraHelper.polluteAura(world, pos, flux, false);
+        }
+        return solutionFound;
+    }
+    
+    @SuppressWarnings("rawtypes")
+    public static Aspect getAspectForType(BiomeDictionary.Type type, Aspect fallback) {
+        // yes, TC actually uses a raw list
+        List stuff = BiomeHandler.biomeInfo.get(type);
+        if (stuff != null && stuff.size() >= 2) {
+            Object thing = stuff.get(1);
+            if (thing instanceof Aspect)
+                return (Aspect) thing;
+        }
+        
+        return fallback;
     }
     
 }

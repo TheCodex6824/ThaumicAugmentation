@@ -51,11 +51,11 @@ import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
 import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
-import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
+import thecodex6824.thaumicaugmentation.init.GUIHandler;
 
 public class BlockWardedChest extends BlockTABase implements IHorizontallyDirectionalBlock, IItemBlockProvider,
     IUnwardableBlock, IWardParticles {

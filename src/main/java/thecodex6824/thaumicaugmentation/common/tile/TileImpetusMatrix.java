@@ -54,8 +54,9 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimatedTile {
+public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimatedTile, IBreakCallback {
 
     protected static final long CELL_CAPACITY = 500;
     
@@ -191,6 +192,18 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     
     @Override
     public void invalidate() {
+        prosumer.unload();
+        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
+    }
+    
+    @Override
+    public void onBlockBroken() {
+        for (IImpetusNode input : prosumer.getInputs())
+            NodeHelper.syncRemovedImpetusNodeOutput(input, prosumer.getLocation());
+        
+        for (IImpetusNode output : prosumer.getOutputs())
+            NodeHelper.syncRemovedImpetusNodeInput(output, prosumer.getLocation());
+        
         prosumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
     }

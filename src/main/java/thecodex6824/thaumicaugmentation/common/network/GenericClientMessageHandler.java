@@ -26,12 +26,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
-public class GenericMessageHandler<T extends IMessage> implements IMessageHandler<T, IMessage> {
+public class GenericClientMessageHandler<T extends IMessage> implements IMessageHandler<T, IMessage> {
 
     @Override
     public IMessage onMessage(T message, MessageContext ctx) {
         Minecraft.getMinecraft().addScheduledTask(() -> {
-            ThaumicAugmentation.proxy.handlePacket(message, ctx);
+            ThaumicAugmentation.proxy.handlePacketClient(message, ctx);
         });
         
         return null;

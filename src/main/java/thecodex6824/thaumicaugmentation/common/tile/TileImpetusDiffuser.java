@@ -54,12 +54,14 @@ import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnimatedTile {
+public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnimatedTile, IBreakCallback {
 
     protected SimpleImpetusConsumer consumer;
     protected IAnimationStateMachine asm;
@@ -142,6 +144,18 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     
     @Override
     public void invalidate() {
+        consumer.unload();
+        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+    }
+    
+    @Override
+    public void onBlockBroken() {
+        for (IImpetusNode input : consumer.getInputs())
+            NodeHelper.syncRemovedImpetusNodeOutput(input, consumer.getLocation());
+        
+        for (IImpetusNode output : consumer.getOutputs())
+            NodeHelper.syncRemovedImpetusNodeInput(output, consumer.getLocation());
+        
         consumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
     }

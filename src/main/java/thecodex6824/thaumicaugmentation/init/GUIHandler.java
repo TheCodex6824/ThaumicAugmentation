@@ -18,13 +18,15 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.client.gui;
+package thecodex6824.thaumicaugmentation.init;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
@@ -63,7 +65,7 @@ public class GUIHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (TAInventory.values()[ID]) {
             case WARDED_CHEST: return new GUIWardedChest(getServerGuiElement(ID, player, world, x, y, z), player.inventory);
-            case ARCANE_TERRAFORMER: return new GUIArcaneTerraformer(getServerGuiElement(ID, player, world, x, y, z), player.inventory);
+            case ARCANE_TERRAFORMER: return new GUIArcaneTerraformer((ContainerArcaneTerraformer) getServerGuiElement(ID, player, world, x, y, z));
             default: return null;
         }
     }

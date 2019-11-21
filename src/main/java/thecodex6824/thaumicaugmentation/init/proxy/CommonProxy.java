@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 
 import com.google.common.collect.ImmutableMap;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.animation.ITimeValue;
@@ -34,15 +35,17 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
-import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.event.WardEventHandler;
 import thecodex6824.thaumicaugmentation.common.event.WardEventHandlerNoCoremodFallback;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.internal.InternalMethodProvider;
+import thecodex6824.thaumicaugmentation.common.network.PacketInteractGUI;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperCommon;
 import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
+import thecodex6824.thaumicaugmentation.init.GUIHandler;
 import thecodex6824.thaumicaugmentation.init.MiscHandler;
 import thecodex6824.thaumicaugmentation.init.ResearchHandler;
 import thecodex6824.thaumicaugmentation.init.WorldHandler;
@@ -78,7 +81,30 @@ public class CommonProxy implements ISidedProxy {
     }
     
     @Override
-    public void handlePacket(IMessage message, MessageContext context) {}
+    public void handlePacketClient(IMessage message, MessageContext context) {
+        ThaumicAugmentation.getLogger().warn("A packet was received on the wrong side: " + message.getClass().toString());
+    }
+    
+    @Override
+    public void handlePacketServer(IMessage message, MessageContext context) {
+        if (message instanceof PacketInteractGUI)
+            handleInteractGUIPacket((PacketInteractGUI) message, context);
+        else
+            ThaumicAugmentation.getLogger().warn("An unknown packet was received and will be dropped: " + message.getClass().toString());
+    }
+    
+    protected void handleInteractGUIPacket(PacketInteractGUI message, MessageContext context) {
+        EntityPlayerMP sender = context.getServerHandler().player;
+        if (sender != null && sender.openContainer instanceof ContainerArcaneTerraformer) {
+            ContainerArcaneTerraformer terraformer = (ContainerArcaneTerraformer) sender.openContainer;
+            if (!terraformer.getTile().isRunning()) {
+                if (message.getComponentID() == 0)
+                    terraformer.getTile().setRadius(Math.max(Math.min(message.getSelectionValue(), 32), 1));
+                else if (message.getComponentID() == 1)
+                    terraformer.getTile().setCircle(message.getSelectionValue() != 0);
+            }
+        }
+    }
 
     @Override
     public void preInit() {

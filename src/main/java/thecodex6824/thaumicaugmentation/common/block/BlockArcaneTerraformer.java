@@ -46,11 +46,11 @@ import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IArcaneTerraformerHalf;
-import thecodex6824.thaumicaugmentation.client.gui.GUIHandler;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
+import thecodex6824.thaumicaugmentation.init.GUIHandler;
 
 public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraformerHalf, IItemBlockProvider {
 

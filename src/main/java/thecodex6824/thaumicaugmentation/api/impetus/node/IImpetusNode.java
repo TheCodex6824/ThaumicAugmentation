@@ -63,6 +63,8 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
     
     public void init(World world);
     
+    public void unload();
+    
     public void destroy();
     
     public NBTTagCompound getSyncNBT();

@@ -54,9 +54,10 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusCon
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-public class TileVoidRechargePedestal extends TileEntity implements ITickable {
+public class TileVoidRechargePedestal extends TileEntity implements ITickable, IBreakCallback {
 
     protected ItemStackHandler inventory;
     protected SimpleImpetusConsumer consumer;
@@ -180,6 +181,18 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable {
     
     @Override
     public void invalidate() {
+        consumer.unload();
+        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+    }
+    
+    @Override
+    public void onBlockBroken() {
+        for (IImpetusNode input : consumer.getInputs())
+            NodeHelper.syncRemovedImpetusNodeOutput(input, consumer.getLocation());
+        
+        for (IImpetusNode output : consumer.getOutputs())
+            NodeHelper.syncRemovedImpetusNodeInput(output, consumer.getLocation());
+        
         consumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
     }

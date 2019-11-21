@@ -21,17 +21,25 @@
 package thecodex6824.thaumicaugmentation.common.tile;
 
 import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.math.DoubleMath;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Biomes;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -41,13 +49,20 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import thaumcraft.api.ThaumcraftApiHelper;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.IEssentiaTransport;
 import thaumcraft.api.aura.AuraHelper;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thaumcraft.client.fx.ParticleEngine;
@@ -56,21 +71,37 @@ import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
-public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable {
+public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable, IEssentiaTransport, IBreakCallback {
 
+    protected static final int MAX_ESSENTIA = 20; // per aspect
+    protected static final long IMPETUS_COST = 5;
+    protected static final Cache<Biome, Object2IntOpenHashMap<Aspect>> BIOME_COSTS =
+            CacheBuilder.newBuilder().softValues().concurrencyLevel(1).build();
+    protected static final EnumFacing[] VALID_SIDES = new EnumFacing[] {EnumFacing.DOWN, EnumFacing.NORTH,
+            EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST};
+    
     protected ItemStackHandler inventory;
     protected SimpleImpetusConsumer consumer;
     protected int radius;
     protected ResourceLocation activeBiome;
-    protected int currentX, currentZ;
+    protected MutableBlockPos currentPos;
+    protected int blocksChecked;
     protected boolean impetusPaid, essentiaPaid, visPaid;
+    protected Object2IntOpenHashMap<Aspect> essentia;
+    protected HashSet<ChunkPos> chunks;
+    protected boolean circle;
     
     public TileArcaneTerraformer() {
         super();
@@ -78,6 +109,7 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
             @Override
             protected void onContentsChanged(int slot) {
                 markDirty();
+                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
             }
             
             @Override
@@ -92,6 +124,71 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
         };
         consumer = new SimpleImpetusConsumer(1, 0);
         radius = 16;
+        currentPos = new MutableBlockPos(0, 0, 0);
+        essentia = new Object2IntOpenHashMap<>(5);
+        circle = true;
+        chunks = new HashSet<>();
+    }
+    
+    @Nullable
+    public EnumFacing getSideForAspect(Aspect aspect) {
+        if (aspect == Aspect.EXCHANGE)
+            return EnumFacing.DOWN;
+        else if (aspect == Aspect.FIRE)
+            return EnumFacing.WEST;
+        else if (aspect == Aspect.AIR)
+            return EnumFacing.NORTH;
+        else if (aspect == Aspect.WATER)
+            return EnumFacing.EAST;
+        else if (aspect == Aspect.EARTH)
+            return EnumFacing.SOUTH;
+        else
+            return null;
+    }
+    
+    @Nullable
+    public Aspect getAspectForSide(EnumFacing side) {
+        return getAspectForSide(side.getIndex());
+    }
+    
+    @Nullable
+    public Aspect getAspectForSide(int side) {
+        switch (side) {
+            case 0: return Aspect.EXCHANGE;
+            case 2: return Aspect.AIR;
+            case 3: return Aspect.EARTH;
+            case 4: return Aspect.FIRE;
+            case 5: return Aspect.WATER;
+            default: return null;
+        }
+    }
+    
+    public int getRadius() {
+        return radius;
+    }
+    
+    public void setRadius(int radius) {
+        this.radius = Math.max(Math.min(radius, 32), 1);
+        if (!world.isRemote) {
+            markDirty();
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+        }
+    }
+    
+    public boolean isCircle() {
+        return circle;
+    }
+    
+    public void setCircle(boolean circle) {
+        this.circle = circle;
+        if (!world.isRemote) {
+            markDirty();
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+        }
+    }
+    
+    public boolean isRunning() {
+        return activeBiome != null;
     }
     
     @Override
@@ -105,8 +202,9 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                     IBiomeSelector selected = inv.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null);
                     if (selected != null) {
                         activeBiome = selected.getBiomeID();
-                        currentX = 0;
-                        currentZ = 0;
+                        currentPos.setPos(pos.getX(), pos.getY(), pos.getZ());
+                        blocksChecked = 0;
+                        chunks.clear();
                         markDirty();
                         world.playSound(null, pos, SoundsTC.craftstart, SoundCategory.BLOCKS, 0.5F, 1.0F);
                         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
@@ -115,8 +213,9 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
             }
             else {
                 activeBiome = null;
-                currentX = 0;
-                currentZ = 0;
+                currentPos.setPos(0, 0, 0);
+                blocksChecked = 0;
+                chunks.clear();
                 markDirty();
                 world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
                 world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
@@ -128,111 +227,117 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     
     @Override
     public void update() {
-        if (!world.isRemote && activeBiome != null && world.getTotalWorldTime() % 10 == 0) {
+        if (!world.isRemote && activeBiome != null && world.getTotalWorldTime() % 5 == 0) {
             ItemStack inv = inventory.getStackInSlot(0);
             if (inv.isEmpty() ||
                     !inv.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null).getBiomeID().equals(activeBiome)) {
                 
                 activeBiome = null;
-                currentX = 0;
-                currentZ = 0;
+                currentPos.setPos(0, 0, 0);
+                blocksChecked = 0;
+                chunks.clear();
                 markDirty();
                 world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
                 world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
             }
             else {
-                HashSet<BlockPos> positions = new HashSet<>(4);
-                positions.add(pos.add(currentX, 0, currentZ));
-                positions.add(pos.add(-currentX, 0, currentZ));
-                positions.add(pos.add(-currentX, 0, -currentZ));
-                positions.add(pos.add(currentX, 0, -currentZ));
-                if (currentX * currentX + currentZ * currentZ < radius * radius) {
-                    if (activeBiome.equals(IBiomeSelector.RESET)) {
-                        positions.removeIf(set -> BiomeUtil.isNaturalBiomePresent(world, set));
-                        if (!positions.isEmpty()) {
-                            if (!impetusPaid) {
-                                ConsumeResult consume = consumer.consume(5 * positions.size(), true);
-                                if (consume.energyConsumed == 5 * positions.size()) {
-                                    consumer.consume(5 * positions.size(), false);
-                                    for (BlockPos set : positions)
-                                        BiomeUtil.resetBiome(world, set);
-                                    NodeHelper.syncAllImpetusTransactions(consume.paths);
-                                    impetusPaid = true;
-                                    markDirty();
-                                }
-                                
-                                if (!essentiaPaid) {
-                                    // do essentia stuff
-                                    essentiaPaid = true;
-                                    markDirty();
-                                }
-                                
-                                if (!visPaid) {
-                                    if (DoubleMath.fuzzyEquals(AuraHelper.drainVis(world, pos, 0.5F, true), 0.5F, 0.00001)) {
-                                        AuraHelper.drainVis(world, pos, 0.5F, false);
-                                        visPaid = true;
-                                        markDirty();
-                                    }
+                for (EnumFacing facing : VALID_SIDES) {
+                    Aspect aspect = getAspectForSide(facing);
+                    if (essentia.getInt(aspect) < MAX_ESSENTIA) {
+                        TileEntity tile = ThaumcraftApiHelper.getConnectableTile(world, pos, facing);
+                        if (tile != null) {
+                            IEssentiaTransport t = (IEssentiaTransport) tile;
+                            if (t.canOutputTo(facing.getOpposite()) && t.getEssentiaType(facing) == aspect) {
+                                if (t.getEssentiaAmount(facing.getOpposite()) > 0 && t.getSuctionAmount(facing.getOpposite()) < getSuctionAmount(facing) &&
+                                        getSuctionAmount(facing) >= t.getMinimumSuction()) {
+                                    
+                                    essentia.addTo(aspect, t.takeEssentia(aspect, 1, facing.getOpposite()));
                                 }
                             }
-                        }
-                        else {
-                            impetusPaid = true;
-                            essentiaPaid = true;
-                            visPaid = true;
-                            markDirty();
                         }
                     }
-                    else {
-                        Biome biome = Biome.REGISTRY.getObject(activeBiome);
-                        if (biome != null) {
-                            positions.removeIf(set -> BiomeUtil.areBiomesSame(world, set, biome));
-                            if (!positions.isEmpty()) {
-                                if (!impetusPaid) {
-                                    ConsumeResult consume = consumer.consume(5 * positions.size(), true);
-                                    if (consume.energyConsumed == 5 * positions.size()) {
-                                        consumer.consume(5 * positions.size(), false);
-                                        for (BlockPos set : positions)
-                                            BiomeUtil.setBiome(world, set, biome);
-                                        NodeHelper.syncAllImpetusTransactions(consume.paths);
-                                        impetusPaid = true;
-                                        markDirty();
+                }
+                
+                boolean skipSet = false;
+                if (!circle || (currentPos.getX() - pos.getX()) * (currentPos.getX() - pos.getX()) + (currentPos.getZ() - pos.getZ()) *
+                        (currentPos.getZ() - pos.getZ()) < radius * radius) {
+                    
+                    if ((activeBiome.equals(IBiomeSelector.RESET) && !BiomeUtil.isNaturalBiomePresent(world, currentPos)) ||
+                            (!activeBiome.equals(IBiomeSelector.RESET) && !BiomeUtil.areBiomesSame(world, currentPos, Biome.REGISTRY.getObject(activeBiome)))) {
+                    
+                        if (!impetusPaid) {
+                            ConsumeResult consume = consumer.consume(IMPETUS_COST, true);
+                            if (consume.energyConsumed == IMPETUS_COST) {
+                                consume = consumer.consume(IMPETUS_COST, false);
+                                NodeHelper.syncAllImpetusTransactions(consume.paths);
+                                impetusPaid = true;
+                                markDirty();
+                            }
+                        }
+                            
+                        if (!essentiaPaid) {
+                            Biome biome = activeBiome.equals(IBiomeSelector.RESET) ? BiomeUtil.getNaturalBiome(world, currentPos, Biomes.PLAINS) : Biome.REGISTRY.getObject(activeBiome);
+                            Object2IntOpenHashMap<Aspect> neededAspects = null;
+                            try {
+                                neededAspects = BIOME_COSTS.get(biome, () -> {
+                                    Object2IntOpenHashMap<Aspect> map = new Object2IntOpenHashMap<>();
+                                    map.put(Aspect.EXCHANGE, 1);
+                                    for (BiomeDictionary.Type type : BiomeDictionary.getTypes(biome)) {
+                                        Aspect aspect = BiomeUtil.getAspectForType(type, Aspect.EXCHANGE);
+                                        if (aspect != null) {
+                                            if (aspect == Aspect.ORDER || aspect == Aspect.ENTROPY)
+                                                map.addTo(Aspect.EXCHANGE, 1);
+                                            else if (aspect.isPrimal() || aspect == Aspect.EXCHANGE)
+                                                map.addTo(aspect, 1);
+                                        }
                                     }
-                                }
-                                
-                                if (!essentiaPaid) {
-                                    // do essentia stuff
-                                    essentiaPaid = true;
-                                    markDirty();
-                                }
-                                
-                                if (!visPaid) {
-                                    if (DoubleMath.fuzzyEquals(AuraHelper.drainVis(world, pos, 0.25F, true), 0.25F, 0.00001)) {
-                                        AuraHelper.drainVis(world, pos, 0.25F, false);
-                                        visPaid = true;
-                                        markDirty();
-                                    }
+                                    
+                                    return map;
+                                });
+                            }
+                            catch (ExecutionException ex) {
+                                ThaumicAugmentation.getLogger().error("An exception was somehow thrown when it really should not have!");
+                                throw new RuntimeException(ex);
+                            }
+                            
+                            boolean enoughEssentia = true;
+                            for (Map.Entry<Aspect, Integer> entry : neededAspects.entrySet()) {
+                                if (essentia.getInt(entry.getKey()) < entry.getValue()) {
+                                    enoughEssentia = false;
+                                    break;
                                 }
                             }
-                            else {
-                                impetusPaid = true;
+                            
+                            if (enoughEssentia) {
+                                for (Map.Entry<Aspect, Integer> entry : neededAspects.entrySet())
+                                    essentia.addTo(entry.getKey(), -entry.getValue());
+                                
                                 essentiaPaid = true;
+                                markDirty();
+                            }
+                        }
+                        
+                        if (!visPaid) {
+                            if (DoubleMath.fuzzyEquals(AuraHelper.drainVis(world, pos, 0.5F, true), 0.5F, 0.00001)) {
+                                AuraHelper.drainVis(world, pos, 0.5F, false);
                                 visPaid = true;
                                 markDirty();
                             }
                         }
-                        else {
-                            impetusPaid = true;
-                            essentiaPaid = true;
-                            visPaid = true;
-                            markDirty();
-                        }
+                    }
+                    else {
+                        impetusPaid = true;
+                        essentiaPaid = true;
+                        visPaid = true;
+                        skipSet = true;
+                        markDirty();
                     }
                 }
                 else {
                     impetusPaid = true;
                     essentiaPaid = true;
                     visPaid = true;
+                    skipSet = true;
                     markDirty();
                 }
                 
@@ -240,17 +345,38 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                     impetusPaid = false;
                     essentiaPaid = false;
                     visPaid = false;
-                    ++currentX;
-                    if (currentX == radius) {
-                        currentX = 0;
-                        ++currentZ;
-                        if (currentZ == radius) {
-                            activeBiome = null;
-                            currentX = 0;
-                            currentZ = 0;
-                            world.playSound(null, pos, SoundsTC.wand, SoundCategory.BLOCKS, 0.5F, 1.0F);
-                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+                    if (!skipSet) {
+                        if (activeBiome.equals(IBiomeSelector.RESET))
+                            BiomeUtil.resetBiome(world, currentPos);
+                        else
+                            BiomeUtil.setBiome(world, currentPos, Biome.REGISTRY.getObject(activeBiome));
+                        
+                        chunks.add(new ChunkPos(currentPos));
+                        int y = world.getHeight(currentPos.getX(), currentPos.getZ());
+                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.POOF, currentPos.getX(), y, currentPos.getZ(), Aspect.EXCHANGE.getColor(), EnumFacing.UP.getIndex()),
+                                new TargetPoint(world.provider.getDimension(), currentPos.getX(), y, currentPos.getZ(), 64.0));
+                    }
+                    
+                    if (Math.abs(currentPos.getX() - pos.getX()) <= Math.abs(currentPos.getZ() - pos.getZ()) && ((currentPos.getX() - pos.getX()) != (currentPos.getZ() - pos.getZ()) || (currentPos.getX() - pos.getX()) >= 0))
+                        currentPos.setPos(currentPos.getX() + ((currentPos.getZ() - pos.getZ()) >= 0 ? 1 : -1), currentPos.getY(), currentPos.getZ());
+                    else
+                        currentPos.setPos(currentPos.getX(), currentPos.getY(), currentPos.getZ() + ((currentPos.getX() - pos.getX()) >= 0 ? -1 : 1));
+                        
+                    ++blocksChecked;
+                    if (blocksChecked >= (radius * 2 - 1) * (radius * 2 - 1) + 1) {
+                        for (ChunkPos c : chunks) {
+                            BlockPos base = new BlockPos(c.getXStart(), pos.getY(), c.getZStart());
+                            BiomeUtil.generateNewAura(world, base, true);
+                            for (EnumFacing facing : EnumFacing.HORIZONTALS)
+                                BiomeUtil.generateNewAura(world, base.offset(facing, 16), true);
                         }
+                        
+                        activeBiome = null;
+                        currentPos.setPos(0, 0, 0);
+                        blocksChecked = 0;
+                        chunks.clear();
+                        world.playSound(null, pos, SoundsTC.wand, SoundCategory.BLOCKS, 0.5F, 1.0F);
+                        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                     }
                     
                     markDirty();
@@ -267,7 +393,7 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
             if (biome != null) {
                 Vec3d dir = new Vec3d(1.0, 0.5, 0.0).rotateYaw(world.getTotalWorldTime() % 20 / 20.0F * 360.0F).normalize();
                 FXGeneric fx = new FXGeneric(world, pos.getX() + 0.5, pos.getY() + 1.6, pos.getZ() + 0.5, dir.x * 0.25, dir.y * 0.25, dir.z * 0.25);
-                fx.setMaxAge(24 + world.rand.nextInt(12));
+                fx.setMaxAge(30 + world.rand.nextInt(12));
                 int color = world.rand.nextInt(3);
                 if (color == 0)
                     color = biome.getGrassColorAtPos(pos);
@@ -277,7 +403,7 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                     color = biome.getWaterColor() & 0x3F76E4;
                 
                 fx.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
-                fx.setAlphaF(0.75F);
+                fx.setAlphaF(0.9F, 0.0F);
                 fx.setGridSize(64);
                 fx.setParticles(264, 8, 1);
                 fx.setScale(2.0F);
@@ -286,8 +412,75 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                 fx.setNoClip(false); // this is REALLY poorly named, it actually should be "setCollides", as that's what it does
                 fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
                 ParticleEngine.addEffect(world, fx);
+                
+                ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.5, pos.getY() + 1.25, pos.getZ() + 0.5, 5.0F, color, false);
             }
         }
+    }
+    
+    @Override
+    public boolean canInputFrom(EnumFacing facing) {
+        return facing != EnumFacing.UP && activeBiome != null;
+    }
+    
+    @Override
+    public boolean canOutputTo(EnumFacing facing) {
+        return facing != EnumFacing.UP && activeBiome == null;
+    }
+    
+    @Override
+    public int getEssentiaAmount(EnumFacing facing) {
+        return facing == EnumFacing.UP ? 0 : essentia.getInt(getAspectForSide(facing));
+    }
+    
+    @Override
+    public Aspect getEssentiaType(EnumFacing facing) {
+        return facing == EnumFacing.UP ? null : getAspectForSide(facing);
+    }
+    
+    @Override
+    public int getMinimumSuction() {
+        return 0;
+    }
+    
+    @Override
+    public int getSuctionAmount(EnumFacing facing) {
+        return facing == EnumFacing.UP ? 0 : 64;
+    }
+    
+    @Override
+    public Aspect getSuctionType(EnumFacing facing) {
+        return facing == EnumFacing.UP ? null : getAspectForSide(facing);
+    }
+    
+    @Override
+    public boolean isConnectable(EnumFacing facing) {
+        return facing != EnumFacing.UP;
+    }
+    
+    @Override
+    public void setSuction(Aspect aspect, int amount) {}
+    
+    @Override
+    public int addEssentia(Aspect aspect, int amount, EnumFacing facing) {
+        if (aspect == getAspectForSide(facing)) {
+            int taken = Math.min(amount, MAX_ESSENTIA - essentia.getInt(aspect));
+            essentia.addTo(aspect, taken);
+            return taken;
+        }
+        
+        return 0;
+    }
+    
+    @Override
+    public int takeEssentia(Aspect aspect, int amount, EnumFacing facing) {
+        if (aspect == getAspectForSide(facing)) {
+            int taken = Math.min(essentia.getInt(aspect), amount);
+            essentia.addTo(aspect, -taken);
+            return taken;
+        }
+        
+        return 0;
     }
     
     @Override
@@ -310,6 +503,18 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     
     @Override
     public void invalidate() {
+        consumer.unload();
+        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+    }
+    
+    @Override
+    public void onBlockBroken() {
+        for (IImpetusNode input : consumer.getInputs())
+            NodeHelper.syncRemovedImpetusNodeOutput(input, consumer.getLocation());
+        
+        for (IImpetusNode output : consumer.getOutputs())
+            NodeHelper.syncRemovedImpetusNodeInput(output, consumer.getLocation());
+        
         consumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
     }
@@ -324,37 +529,74 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
         compound.setTag("inventory", inventory.serializeNBT());
         compound.setTag("node", consumer.serializeNBT());
         compound.setInteger("radius", radius);
+        compound.setBoolean("circle", circle);
         if (activeBiome != null) {
             compound.setString("biome", activeBiome.toString());
-            compound.setInteger("currentX", currentX);
-            compound.setInteger("currentZ", currentZ);
+            compound.setInteger("currentX", currentPos.getX());
+            compound.setInteger("currentZ", currentPos.getZ());
+            compound.setInteger("checked", blocksChecked);
             compound.setBoolean("impetusPaid", impetusPaid);
             compound.setBoolean("essentiaPaid", essentiaPaid);
             compound.setBoolean("visPaid", visPaid);
+            NBTTagList cList = new NBTTagList();
+            for (ChunkPos c : chunks)
+                cList.appendTag(new NBTTagIntArray(new int[] {c.x, c.z}));
+            
+            compound.setTag("chunks", cList);
         }
+        
+        int[] e = new int[5];
+        e[0] = essentia.getInt(Aspect.EXCHANGE);
+        e[1] = essentia.getInt(Aspect.AIR);
+        e[2] = essentia.getInt(Aspect.EARTH);
+        e[3] = essentia.getInt(Aspect.FIRE);
+        e[4] = essentia.getInt(Aspect.WATER);
+        compound.setIntArray("essentia", e);
+        
         return super.writeToNBT(compound);
     }
     
     @Override
     public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
         inventory.deserializeNBT(compound.getCompoundTag("inventory"));
         consumer.deserializeNBT(compound.getCompoundTag("node"));
         radius = compound.getInteger("radius");
+        circle = compound.getBoolean("circle");
         if (compound.hasKey("biome", NBT.TAG_STRING)) {
             activeBiome = new ResourceLocation(compound.getString("biome"));
-            currentX = compound.getInteger("currentX");
-            currentZ = compound.getInteger("currentZ");
+            currentPos.setPos(compound.getInteger("currentX"), pos.getY(), compound.getInteger("currentZ"));
+            blocksChecked = compound.getInteger("checked");
             impetusPaid = compound.getBoolean("impetusPaid");
             essentiaPaid = compound.getBoolean("essentiaPaid");
             visPaid = compound.getBoolean("visPaid");
+            NBTTagList cList = compound.getTagList("chunks", NBT.TAG_INT_ARRAY);
+            for (NBTBase tag : cList) {
+                if (tag instanceof NBTTagIntArray) {
+                    NBTTagIntArray arr = (NBTTagIntArray) tag;
+                    if (arr.getIntArray().length == 2)
+                        chunks.add(new ChunkPos(arr.getIntArray()[0], arr.getIntArray()[1]));
+                }
+            }
         }
-        super.readFromNBT(compound);
+        
+        int[] e = compound.getIntArray("essentia");
+        if (e.length == 5) {
+            essentia.put(Aspect.EXCHANGE, e[0]);
+            essentia.put(Aspect.AIR, e[1]);
+            essentia.put(Aspect.EARTH, e[2]);
+            essentia.put(Aspect.FIRE, e[3]);
+            essentia.put(Aspect.WATER, e[4]);
+        }
     }
     
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound tag = super.getUpdateTag();
         tag.setTag("node", consumer.serializeNBT());
+        tag.setTag("inventory", inventory.serializeNBT());
+        tag.setInteger("radius", radius);
+        tag.setBoolean("circle", circle);
         if (activeBiome != null)
             tag.setString("biome", activeBiome.toString());
         
@@ -365,6 +607,9 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
         consumer.init(world);
+        inventory.deserializeNBT(tag.getCompoundTag("inventory"));
+        radius = tag.getInteger("radius");
+        circle = tag.getBoolean("circle");
         if (tag.hasKey("biome", NBT.TAG_STRING))
             activeBiome = new ResourceLocation(tag.getString("biome"));
     }
@@ -373,6 +618,9 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setString("biome", activeBiome != null ? activeBiome.toString() : "");
+        tag.setTag("inventory", inventory.serializeNBT());
+        tag.setInteger("radius", radius);
+        tag.setBoolean("circle", circle);
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
     
@@ -381,6 +629,10 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
         if (world.isRemote) {
             String id = packet.getNbtCompound().getString("biome");
             activeBiome = id.isEmpty() ? null : new ResourceLocation(id);
+            inventory.deserializeNBT(packet.getNbtCompound().getCompoundTag("inventory"));
+            radius = packet.getNbtCompound().getInteger("radius");
+            circle = packet.getNbtCompound().getBoolean("circle");
+            world.markBlockRangeForRenderUpdate(pos, pos.up());
         }
     }
     

@@ -33,9 +33,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusGraph;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
@@ -227,8 +226,19 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     }
     
     @Override
-    public void destroy() {
+    public void unload() {
         graph.removeNode(this);
+    }
+    
+    @Override
+    public void destroy() {
+        for (IImpetusNode node : graph.getInputs(this))
+            removeInputLocation(node.getLocation());
+            
+        for (IImpetusNode node : graph.getOutputs(this))
+            removeOutputLocation(node.getLocation());
+        
+        unload();
     }
     
     @Override
@@ -236,18 +246,16 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
         if (tempStorage != null) {
             for (Map.Entry<DimensionalBlockPos, Boolean> entry : tempStorage.entrySet()) {
                 DimensionalBlockPos pos = entry.getKey();
-                if (world.isBlockLoaded(pos.getPos()) &&
-                        world.getChunk(pos.getPos()).getTileEntity(pos.getPos(), EnumCreateEntityType.CHECK) != null) {
-                    
+                if (world.isBlockLoaded(pos.getPos())) {
                     TileEntity te = world.getTileEntity(pos.getPos());
-                    if (te.hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null)) {
+                    if (te != null && te.hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null)) {
                         if (entry.getValue())
                             addOutput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
                         else
                             addInput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
-                        
-                        continue;
                     }
+                    
+                    continue;
                 }
                 
                 if (entry.getValue())

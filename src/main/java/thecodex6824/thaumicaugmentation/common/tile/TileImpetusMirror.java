@@ -138,6 +138,15 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
                     ((TileImpetusMirror) tile).setLink(DimensionalBlockPos.INVALID);
             }
         }
+        
+        for (IImpetusNode input : node.getInputs())
+            NodeHelper.syncRemovedImpetusNodeOutput(input, node.getLocation());
+        
+        for (IImpetusNode output : node.getOutputs())
+            NodeHelper.syncRemovedImpetusNodeInput(output, node.getLocation());
+        
+        node.destroy();
+        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }
     
     public void setLink(DimensionalBlockPos linkTo) {
@@ -217,7 +226,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
     
     @Override
     public void invalidate() {
-        node.destroy();
+        node.unload();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }
     

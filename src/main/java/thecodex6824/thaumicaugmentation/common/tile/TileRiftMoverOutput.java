@@ -109,8 +109,12 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                             world.playSound(null, pos, SoundsTC.craftstart, SoundCategory.BLOCKS, 0.5F, 1.0F);
                             world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                         }
-                        else
+                        else {
                             rift = null;
+                            AuraHelper.polluteAura(world, pos, jar.getRift().getRiftSize(), true);
+                            jar.setRift(new FluxRiftReconstructor(0, 0));
+                            world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
+                        }
                     }
                 }
             }
@@ -131,6 +135,13 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                     rift.setCollapse(false);
                 
                 rift.setRiftSize(0);
+            }
+            
+            TileEntity below = world.getTileEntity(pos.down());
+            if (below != null) {
+                IRiftJar jar = below.getCapability(CapabilityRiftJar.RIFT_JAR, null);
+                if (jar != null)
+                    jar.setRift(new FluxRiftReconstructor(0, 0));
             }
             
             AuraHelper.polluteAura(world, pos, targetSize, true);

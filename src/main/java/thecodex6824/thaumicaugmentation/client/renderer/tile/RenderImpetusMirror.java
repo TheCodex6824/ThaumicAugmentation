@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -175,7 +176,11 @@ public class RenderImpetusMirror extends TileEntitySpecialRenderer<TileImpetusMi
             float alpha) {
         
         EnumFacing facing = te.getWorld().getBlockState(te.getPos()).getValue(IDirectionalBlock.DIRECTION);
-        if (facing != null && !te.getLink().isInvalid()) {
+        Entity rv = Minecraft.getMinecraft().getRenderViewEntity();
+        rv = rv != null ? rv : Minecraft.getMinecraft().player;
+        double dist = rv.getPositionEyes(partialTicks).squareDistanceTo(te.getPos().getX() + 0.5,
+                te.getPos().getY() + 0.25, te.getPos().getZ() + 0.5);
+        if (facing != null && !te.getLink().isInvalid() && dist < 64 * 64) {
             Random random = new Random(31100);
             Tessellator t = Tessellator.getInstance();
             BufferBuilder buffer = t.getBuffer();

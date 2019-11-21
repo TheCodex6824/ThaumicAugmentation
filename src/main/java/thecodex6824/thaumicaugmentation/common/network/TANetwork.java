@@ -35,18 +35,19 @@ public final class TANetwork {
     public static void init() {
         int id = 0;
         INSTANCE.registerMessage(PacketAuraToClient.class, PacketAuraToClient.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketParticleEffect.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketConfigSync.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketAugmentableItemSync.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketFractureLocatorUpdate.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketFullWardSync.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketWardUpdate.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketEntityCast.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketFullImpetusNodeSync.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketImpetusNodeUpdate.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketImpetusTransaction.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketRiftJarInstability.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericMessageHandler<>(), PacketBiomeUpdate.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketParticleEffect.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketConfigSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketAugmentableItemSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFractureLocatorUpdate.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFullWardSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketWardUpdate.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketEntityCast.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFullImpetusNodeSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketImpetusNodeUpdate.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketImpetusTransaction.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketRiftJarInstability.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketBiomeUpdate.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketInteractGUI.class, id++, Side.SERVER);
     }
 
 }

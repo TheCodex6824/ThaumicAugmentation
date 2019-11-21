@@ -23,10 +23,15 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 import java.util.Random;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.Render;
@@ -39,6 +44,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -50,6 +56,8 @@ import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.client.fx.FXDispatcher;
@@ -57,6 +65,7 @@ import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.lib.events.EssentiaHandler;
 import thaumcraft.common.lib.events.EssentiaHandler.EssentiaSourceFX;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
@@ -110,6 +119,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketImpetusTransaction;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
+import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
@@ -153,7 +163,15 @@ public class ClientProxy extends CommonProxy {
     }
     
     @Override
-    public void handlePacket(IMessage message, MessageContext context) {
+    public void handlePacketServer(IMessage message, MessageContext context) {
+        if (Minecraft.getMinecraft().getIntegratedServer() == null)
+            ThaumicAugmentation.getLogger().warn("A packet was received on the wrong side: " + message.getClass().toString());
+        else
+            super.handlePacketServer(message, context);
+    }
+    
+    @Override
+    public void handlePacketClient(IMessage message, MessageContext context) {
         if (message instanceof PacketParticleEffect)
             handleParticlePacket((PacketParticleEffect) message, context);
         else if (message instanceof PacketConfigSync)
@@ -221,10 +239,10 @@ public class ClientProxy extends CommonProxy {
                     break;
                 }
                 case POOF: {
-                    if (d.length == 4) {
+                    if (d.length == 5) {
                         double x = d[0], y = d[1], z = d[2];
-                        int index = (int) d[3];
-                        FXDispatcher.INSTANCE.drawBamf(new BlockPos(x, y, z), Aspect.PROTECT.getColor(), true, true,
+                        int color = (int) d[3], index = (int) d[4];
+                        FXDispatcher.INSTANCE.drawBamf(new BlockPos(x, y, z), color, true, true,
                                 EnumFacing.byIndex(index));
                     }
                     
@@ -467,6 +485,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileVoidRechargePedestal.class, new RenderVoidRechargePedestal());
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusMirror.class, new RenderImpetusMirror());
         registerItemColorHandlers();
+        registerBlockColorHandlers();
     }
 
     @Override
@@ -558,13 +577,46 @@ public class ClientProxy extends CommonProxy {
                 if (tintIndex == 1 && selected != null) {
                     Biome biome = Biome.REGISTRY.getObject(selected.getBiomeID());
                     if (biome != null)
-                        return biome.getGrassColorAtPos(new BlockPos(0, 64, 0));
+                        return biome.getGrassColorAtPos(Minecraft.getMinecraft().player.getPosition());
                 }
                 
                 return -1;
             }
         };
         registerTo.registerItemColorHandler(biomeSelector, TAItems.BIOME_SELECTOR);
+    }
+    
+    private static void registerBlockColorHandlers() {
+        BlockColors registerTo = Minecraft.getMinecraft().getBlockColors();
+        IBlockColor terraformer = new IBlockColor() {
+            @Override
+            public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos,
+                    int tintIndex) {
+                
+                if (tintIndex == 0 && world != null && pos != null) {
+                    TileEntity tile = world.getTileEntity(pos);
+                    if (tile instanceof TileArcaneTerraformer) {
+                        IItemHandler inv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                        if (inv != null) {
+                            ItemStack stack = inv.getStackInSlot(0);
+                            IBiomeSelector item = stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null);
+                            if (item != null) {
+                                if (item.getBiomeID().equals(IBiomeSelector.EMPTY) || item.getBiomeID().equals(IBiomeSelector.RESET))
+                                    return -1;
+                                else {
+                                    Biome biome = Biome.REGISTRY.getObject(item.getBiomeID());
+                                    if (biome != null)
+                                        return biome.getGrassColorAtPos(pos);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                return -1;
+            }
+        };
+        registerTo.registerBlockColorHandler(terraformer, TABlocks.ARCANE_TERRAFORMER);
     }
 
 }

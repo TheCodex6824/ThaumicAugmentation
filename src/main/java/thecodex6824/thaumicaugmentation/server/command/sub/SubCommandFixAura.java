@@ -22,7 +22,6 @@ package thecodex6824.thaumicaugmentation.server.command.sub;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.annotation.Nullable;
@@ -39,6 +38,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import thaumcraft.common.world.aura.AuraHandler;
+import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
 public class SubCommandFixAura implements ISubCommand {
     
@@ -80,12 +80,12 @@ public class SubCommandFixAura implements ISubCommand {
                 }
                 else {
                     if (AuraHandler.getAuraChunk(dim, x, z) == null || force) {
-                        sender.sendMessage(new TextComponentTranslation("thaumicaugmentation.command.fixaura.aura_regen"));
-                        Random random = new Random(world.getSeed());
-                        long xSeed = random.nextLong() >> 2 + 1;
-                        long zSeed = random.nextLong() >> 2 + 1;
-                        random.setSeed((xSeed * x + zSeed * z) ^ world.getSeed());
-                        AuraHandler.generateAura(world.getChunk(x, z), random);
+                        if (AuraHandler.getAuraChunk(dim, x, z) == null)
+                            sender.sendMessage(new TextComponentTranslation("thaumicaugmentation.command.fixaura.aura_regen"));
+                        
+                        if (!BiomeUtil.generateNewAura(world, new BlockPos(x * 16, 0, z * 16), false))
+                            sender.sendMessage(new TextComponentTranslation("thaumicaugmentation.command.fixaura.warn_rng_failed"));
+                            
                         CopyOnWriteArrayList<ChunkPos> list = AuraHandler.dirtyChunks.get(dim);
                         if (!AuraHandler.dirtyChunks.containsKey(dim)) {
                             list = new CopyOnWriteArrayList<>();
