@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'com.wynprice.cursemaven:CurseMaven:1.1.0'
+        classpath 'com.wynprice.cursemaven:CurseMaven:2.1.1'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -59,18 +59,18 @@ runServer {
 }
 
 dependencies {
-    deobfCompile curse.resolve("thaumcraft", "2629023")
-    deobfCompile curse.resolve("librarianlib", "2725449")
-    deobfCompile curse.resolve("wizardry-mod", "2726334")
+    deobfCompile "curse.maven:thaumcraft:2629023"
+    deobfCompile "curse.maven:librarianlib:2725449"
+    deobfCompile "curse.maven:wizardry-mod:2726334"
     
     testCompile "junit:junit:4.12"
     testCompile "org.hamcrest:hamcrest:2.1"
     
-    runtime curse.resolve("baubles", "2518667")
-    runtime curse.resolve("shadowfacts-forgelin", "2727070")
-    runtime curse.resolve("jei", "2733488")
-    runtime curse.resolve("thaumic-jei", "2705304")
-    runtime curse.resolve("the-one-probe", "2667280")
+    runtime "curse.maven:baubles:2518667"
+    runtime "curse.maven:shadowfacts-forgelin:2785465"
+    runtime "curse.maven:jei:2803400"
+    runtime "curse.maven:thaumic-jei:2705304"
+    runtime "curse.maven:the-one-probe:2667280"
 }
 
 processResources {
@@ -122,15 +122,15 @@ jar {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-	from 'build/docs/javadoc'
-	classifier = 'javadoc'
+    from 'build/docs/javadoc'
+    classifier = 'javadoc'
 }
 
 task apiJar(type: Jar) {
-	from sourceSets.main.output
-	from sourceSets.main.java
-	classifier = 'api'
-	include 'thecodex6824/thaumicaugmentation/api/**'
+    from sourceSets.main.output
+    from sourceSets.main.java
+    classifier = 'api'
+    include 'thecodex6824/thaumicaugmentation/api/**'
 }
 
 task sourcesJar(type: Jar) {
@@ -139,9 +139,9 @@ task sourcesJar(type: Jar) {
 }
 
 artifacts {
-	archives apiJar
-	archives javadocJar
-	archives sourcesJar
+    archives apiJar
+    archives javadocJar
+    archives sourcesJar
 }
 
 test {
