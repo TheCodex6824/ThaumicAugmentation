@@ -119,18 +119,18 @@ public class RenderEventHandler {
     private static Vec3d rotate(Vec3d input, double angle, Vec3d axis) {
         double sin = Math.sin(angle * 0.5);
         Vector4d vec = new Vector4d(axis.x * sin, axis.y * sin, axis.z * sin, Math.cos(angle * 0.5));
-        double d1 = -vec.x * input.x - vec.y * input.y - vec.z * input.z;
-        double d2 = vec.w * input.x + vec.y * input.z - vec.z * input.y;
-        double d3 = vec.w * input.y - vec.x * input.z + vec.z * input.x;
-        double d4 = vec.w * input.z + vec.x * input.y - vec.y * input.x;
-        return new Vec3d(d2 * vec.w - d1 * vec.x - d3 * vec.z + d4 * vec.y,
-                d3 * vec.w - d1 * vec.y + d2 * vec.z - d4 * vec.x,
-                d4 * vec.w - d1 * vec.z - d2 * vec.y + d3 * vec.x);
+        double d = -vec.x * input.x - vec.y * input.y - vec.z * input.z;
+        double d1 = vec.w * input.x + vec.y * input.z - vec.z * input.y;
+        double d2 = vec.w * input.y - vec.x * input.z + vec.z * input.x;
+        double d3 = vec.w * input.z + vec.x * input.y - vec.y * input.x;
+        return new Vec3d(d1 * vec.w - d * vec.x - d2 * vec.z + d3 * vec.y,
+                d2 * vec.w - d * vec.y + d1 * vec.z - d3 * vec.x,
+                d3 * vec.w - d * vec.z - d1 * vec.y + d2 * vec.x);
     }
     
     private static void renderNormalBeam(Entity rv, float partial, Vec3d from, Vec3d to) {
         Vec3d se = to.subtract(from);
-        Vec3d axis = se.crossProduct(se.z == 0.0 ? new Vec3d(se.y, -se.x, 0.0) : new Vec3d(0.0, se.z, -se.y)).normalize();
+        Vec3d axis = (se.z == 0.0 ? new Vec3d(se.y, -se.x, 0.0) : new Vec3d(0.0, se.z, -se.y)).normalize();
         double dist = from.distanceTo(to);
         double offset = rv.ticksExisted % 100 / 100.0 + partial / 100.0;
         GlStateManager.enableDepth();
@@ -142,9 +142,9 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().renderEngine.bindTexture(BEAM);
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
-        double angle = offset * Math.PI * 2;
+        double angle = 0;
         for (int i = 0; i < 4; ++i) {
-            Vec3d perpendicular = rotate(axis, angle, se).normalize().scale(0.125);
+            Vec3d perpendicular = rotate(axis, angle, se).normalize().scale(0.0625);
             Vec3d p1 = from.add(perpendicular);
             Vec3d p2 = to.add(perpendicular);
             Vec3d p3 = to.subtract(perpendicular);
@@ -156,7 +156,7 @@ public class RenderEventHandler {
             buffer.pos(p3.x, p3.y, p3.z).tex(dist - offset, 1.0).color(0.4F, 0.4F, 0.5F, 0.65F).endVertex();
             buffer.pos(p4.x, p4.y, p4.z).tex(1.0 - offset, 1.0).color(0.4F, 0.4F, 0.5F, 0.65F).endVertex();
             t.draw();
-            angle += Math.PI / 4;
+            angle += Math.PI / 24;
         }
         
         GlStateManager.enableCull();
@@ -167,7 +167,7 @@ public class RenderEventHandler {
     
     private static void renderStrongLaser(Entity rv, float partial, Vec3d eyePos, Vec3d from, Vec3d to, double factor) {
         Vec3d se = to.subtract(from);
-        Vec3d axis = se.crossProduct(se.z == 0.0 ? new Vec3d(se.y, -se.x, 0.0) : new Vec3d(0.0, se.z, -se.y)).normalize();
+        Vec3d axis = (se.z == 0.0 ? new Vec3d(se.y, -se.x, 0.0) : new Vec3d(0.0, se.z, -se.y)).normalize();
         double dist = from.distanceTo(to);
         double offset = rv.ticksExisted % 100 / 100.0 + partial / 100.0;
         GlStateManager.enableDepth();
@@ -179,7 +179,7 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().renderEngine.bindTexture(LASER);
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
-        double angle = offset * Math.PI * 2;
+        double angle = 0;//offset * Math.PI * 2;
         for (int i = 0; i < 4; ++i) {
             Vec3d perpendicular = rotate(axis, angle, se).normalize().scale(0.4275);
             Vec3d p1 = from.add(perpendicular);
@@ -188,10 +188,10 @@ public class RenderEventHandler {
             Vec3d p4 = from.subtract(perpendicular);
             
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-            buffer.pos(p1.x, p1.y, p1.z).tex(1.0 - offset, 0).color(0.35F, 0.35F, 0.5F, 0.65F).endVertex();
-            buffer.pos(p2.x, p2.y, p2.z).tex(dist - offset, 0).color(0.35F, 0.35F, 0.5F, 0.65F).endVertex();
-            buffer.pos(p3.x, p3.y, p3.z).tex(dist - offset, 1.0).color(0.35F, 0.35F, 0.5F, 0.65F).endVertex();
-            buffer.pos(p4.x, p4.y, p4.z).tex(1.0 - offset, 1.0).color(0.35F, 0.35F, 0.5F, 0.65F).endVertex();
+            buffer.pos(p1.x, p1.y, p1.z).tex(1.0 - offset, 0).color(0.35F, 0.35F, 0.5F, (float) factor).endVertex();
+            buffer.pos(p2.x, p2.y, p2.z).tex(dist - offset, 0).color(0.35F, 0.35F, 0.5F, (float) factor).endVertex();
+            buffer.pos(p3.x, p3.y, p3.z).tex(dist - offset, 1.0).color(0.35F, 0.35F, 0.5F, (float) factor).endVertex();
+            buffer.pos(p4.x, p4.y, p4.z).tex(1.0 - offset, 1.0).color(0.35F, 0.35F, 0.5F, (float) factor).endVertex();
             t.draw();
             angle += Math.PI / 4;
         }

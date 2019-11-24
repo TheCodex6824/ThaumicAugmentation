@@ -73,6 +73,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemBiomeSelector;
@@ -262,6 +263,9 @@ public final class RegistryHandler {
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityItemBlockRiftJar.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_rift_jar"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".item_rift_jar").tracker(64, 20, true).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityFocusShield.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "shield_focus"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".shield_focus").tracker(512, 1, false).build());
     }
     
     @SubscribeEvent

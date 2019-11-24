@@ -20,7 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.common.event;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -31,6 +35,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
+import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class EntityEventHandler {
@@ -43,6 +48,29 @@ public class EntityEventHandler {
                 event.getEntity().getCapability(CapabilityPortalState.PORTAL_STATE, null).isInPortal()) {
             
             PortalStateManager.markEntityInPortal(event.getEntity());
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onProjectileCollide(ProjectileImpactEvent event) {
+        if (event.getRayTraceResult().entityHit instanceof EntityFocusShield) {
+            EntityFocusShield s = (EntityFocusShield) event.getRayTraceResult().entityHit;
+            if (s.getOwner() != null) {
+                // owner's projectiles should always pass through
+                Entity projectile = event.getEntity();
+                if (projectile instanceof EntityThrowable && s.getOwner().equals(((EntityThrowable) projectile).getThrower())) {
+                    event.setCanceled(true);
+                    return;
+                }
+                else if (projectile instanceof EntityArrow && s.getOwner().equals(((EntityArrow) projectile).shootingEntity)) {
+                    event.setCanceled(true);
+                    return;
+                }
+                
+                // TODO: check velocty + collision to allow outward projectiles?
+            }
+            
+            // we check for projectile reflection later as we want damage to be applied to the shield
         }
     }
     

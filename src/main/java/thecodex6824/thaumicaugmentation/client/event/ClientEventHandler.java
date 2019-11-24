@@ -110,7 +110,7 @@ public final class ClientEventHandler {
     private static void handleWardOverlay(RayTraceResult result) {
         Minecraft mc = FMLClientHandler.instance().getClient();
         World world = mc.world;
-        if (result.typeOfHit == Type.BLOCK) {
+        if (result != null && result.typeOfHit == Type.BLOCK) {
             BlockPos p = result.getBlockPos();
             for (int offsetX = -2; offsetX <= 2; ++offsetX) { 
                 for (int offsetY = -2; offsetY <= 2; ++offsetY) {

@@ -233,10 +233,10 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     @Override
     public void destroy() {
         for (IImpetusNode node : graph.getInputs(this))
-            removeInputLocation(node.getLocation());
+            removeInput(node);
             
         for (IImpetusNode node : graph.getOutputs(this))
-            removeOutputLocation(node.getLocation());
+            removeOutput(node);
         
         unload();
     }
