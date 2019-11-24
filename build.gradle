@@ -123,15 +123,15 @@ jar {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-	from 'build/docs/javadoc'
-	classifier = 'javadoc'
+    from 'build/docs/javadoc'
+    classifier = 'javadoc'
 }
 
 task apiJar(type: Jar) {
-	from sourceSets.main.output
-	from sourceSets.main.java
-	classifier = 'api'
-	include 'thecodex6824/thaumicaugmentation/api/**'
+    from sourceSets.main.output
+    from sourceSets.main.java
+    classifier = 'api'
+    include 'thecodex6824/thaumicaugmentation/api/**'
 }
 
 task sourcesJar(type: Jar) {
@@ -140,9 +140,9 @@ task sourcesJar(type: Jar) {
 }
 
 artifacts {
-	archives apiJar
-	archives javadocJar
-	archives sourcesJar
+    archives apiJar
+    archives javadocJar
+    archives sourcesJar
 }
 
 test {
