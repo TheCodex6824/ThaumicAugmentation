@@ -71,6 +71,7 @@ golem.prop.other=Target Others
 golem.prop.sight=Require Sight
 
 entity.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
+entity.thaumicaugmentation.shield_focus.name=Void Shield
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
 
@@ -135,6 +136,12 @@ focus.thaumicaugmentation.light.text=Creates light at the target location. This 
 focus.thaumicaugmentation.light.intensity=Intensity
 focus.thaumicaugmentation.ward.name=Ward
 focus.thaumicaugmentation.ward.text=Makes most blocks extremely durable and virtually immune to mining, explosions, and fire. 
+focus.thaumicaugmentation.shield.name=Void Shield
+focus.thaumicaugmentation.shield.text=Creates a shield in front of the target that protects against attacks, at the cost of some Impetus.
+focus.thaumicaugmentation.shield.health=Health
+focus.thaumicaugmentation.shield.reflect=Reflect Projectiles
+focus.thaumicaugmentation.shield.reflect_no=No
+focus.thaumicaugmentation.shield.reflect_yes=Yes
 
 tc.research_category.THAUMIC_AUGMENTATION=Thaumic Augmentation
 thaumicaugmentation.research.thaumic_augmentation_base.title=Thaumic Augmentation

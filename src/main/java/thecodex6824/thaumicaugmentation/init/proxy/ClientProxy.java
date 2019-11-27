@@ -94,6 +94,7 @@ import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftJar;
@@ -103,6 +104,7 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
@@ -457,6 +459,12 @@ public class ClientProxy extends CommonProxy {
             @Override
             public Render<EntityDimensionalFracture> createRenderFor(RenderManager manager) {
                 return new RenderDimensionalFracture(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityFocusShield.class, new IRenderFactory<EntityFocusShield>() {
+            @Override
+            public Render<EntityFocusShield> createRenderFor(RenderManager manager) {
+                return new RenderFocusShield(manager);
             }
         });
         

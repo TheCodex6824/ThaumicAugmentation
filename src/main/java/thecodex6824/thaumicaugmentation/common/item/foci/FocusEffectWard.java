@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.tileentity.TileEntity;
@@ -41,7 +40,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.FocusEffect;
-import thaumcraft.api.casters.NodeSetting;
 import thaumcraft.api.casters.Trajectory;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
@@ -52,37 +50,11 @@ import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
-import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public class FocusEffectWard extends FocusEffect {
-
-    protected class NodeSettingShieldHealth extends NodeSetting.NodeSettingIntRange {
-        
-        public NodeSettingShieldHealth() {
-            super(5, 50);
-        }
-        
-        @Override
-        public int getDefault() {
-            return 5;
-        }
-        
-    }
-    
-    protected class NodeSettingReflectProjectiles extends NodeSetting {
-        
-        public NodeSettingReflectProjectiles() {
-            super("reflect", "focus." + ThaumicAugmentationAPI.MODID + ".ward.reflect",
-                    new NodeSetting.NodeSettingIntList(new int[] {0, 1}, new String[] {
-                            "focus." + ThaumicAugmentationAPI.MODID + ".ward.reflect_no",
-                            "focus." + ThaumicAugmentationAPI.MODID + ".ward.reflect_yes"
-                    }), "FIRSTSTEPS");
-        }
-        
-    }
     
     @Override
     public Aspect getAspect() {
@@ -91,13 +63,7 @@ public class FocusEffectWard extends FocusEffect {
     
     @Override
     public int getComplexity() {
-        return 23 + getSettingValue("health") - 5 + getSettingValue("reflect") * 15;
-    }
-    
-    @Override
-    public NodeSetting[] createSettings() {
-        return new NodeSetting[] {new NodeSetting("health", "focus." + ThaumicAugmentationAPI.MODID + ".ward.health", new NodeSettingShieldHealth(), "FIRSTSTEPS"),
-                new NodeSettingReflectProjectiles()};
+        return 23;
     }
     
     @Override
@@ -149,24 +115,6 @@ public class FocusEffectWard extends FocusEffect {
                                     new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
                         }
                     }
-                }
-            }
-            else if (!world.isRemote && result.typeOfHit == Type.ENTITY) {
-                boolean spawn = true;
-                for (EntityFocusShield s : world.getEntitiesWithinAABB(EntityFocusShield.class, getPackage().getCaster().getEntityBoundingBox().grow(1.0),
-                        e -> e.getOwner().equals(getPackage().getCaster()))) {
-                    
-                    s.setDead();
-                    spawn = !getPackage().getCaster().isSneaking();
-                }
-                
-                if (spawn) {
-                    EntityFocusShield shield = new EntityFocusShield(world);
-                    shield.setOwner(getPackage().getCaster());
-                    shield.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getSettingValue("health"));
-                    shield.setHealth(shield.getMaxHealth());
-                    shield.setReflect(getSettingValue("reflect") != 0);
-                    world.spawnEntity(shield);
                 }
             }
         }

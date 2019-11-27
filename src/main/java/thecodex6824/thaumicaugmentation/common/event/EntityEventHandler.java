@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.event;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -63,6 +64,10 @@ public class EntityEventHandler {
                     return;
                 }
                 else if (projectile instanceof EntityArrow && s.getOwner().equals(((EntityArrow) projectile).shootingEntity)) {
+                    event.setCanceled(true);
+                    return;
+                }
+                else if (projectile instanceof EntityFireball && s.getOwner().equals(((EntityFireball) projectile).shootingEntity)) {
                     event.setCanceled(true);
                     return;
                 }

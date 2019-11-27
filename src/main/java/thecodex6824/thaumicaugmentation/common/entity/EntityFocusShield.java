@@ -40,6 +40,7 @@ import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -50,10 +51,12 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import thaumcraft.client.fx.FXDispatcher;
 
 public class EntityFocusShield extends EntityLivingBase implements IEntityOwnable {
 
@@ -61,16 +64,15 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     
     protected int lifespan;
     protected boolean reflect;
-    protected boolean firstUpdate;
+    protected int aloneTicks;
     protected WeakReference<Entity> ownerRef;
     
     public EntityFocusShield(World world) {
         super(world);
         ownerRef = new WeakReference<>(null);
         maxHurtResistantTime = 0;
-        setSize(2.0F, 3.0F);
+        setSize(1.8F, 2.0F);
         setHealth(getMaxHealth());
-        firstUpdate = true;
     }
     
     @Override
@@ -101,8 +103,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         dataManager.set(OWNER_ID, Optional.of(newOwner.getPersistentID()));
         ownerRef = new WeakReference<>(newOwner);
         Vec3d lookVec = newOwner.getLookVec();
-        lookVec = lookVec.scale(1.5);
-        setLocationAndAngles(newOwner.posX + lookVec.x, newOwner.posY + lookVec.y, newOwner.posZ + lookVec.z, newOwner.rotationYaw, newOwner.rotationPitch);
+        lookVec = lookVec.scale(1.75);
+        setLocationAndAngles(newOwner.posX + lookVec.x, newOwner.posY + lookVec.y + 0.07, newOwner.posZ + lookVec.z, newOwner.getRotationYawHead(), newOwner.rotationPitch);
     }
     
     public void setReflect(boolean ref) {
@@ -115,16 +117,36 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (reflect && !world.isRemote) {
+        if (source == DamageSource.FALL)
+            return false;
+        else if (reflect && !world.isRemote) {
             Entity entity = source.getImmediateSource();
-            if (entity instanceof IProjectile) {
-                Entity newProjectile = EntityList.newEntity(entity.getClass(), entity.world);
-                newProjectile.setLocationAndAngles(entity.posX, entity.posY, entity.posZ, -entity.rotationYaw, -entity.rotationPitch);
-                newProjectile.motionX = -entity.motionX;
-                newProjectile.motionY = -entity.motionY;
-                newProjectile.motionZ = -entity.motionZ;
-                newProjectile.velocityChanged = true;
-                newProjectile.world.spawnEntity(newProjectile);
+            if (entity instanceof IProjectile || entity instanceof EntityFireball) {
+                Entity newEntity = EntityList.newEntity(entity.getClass(), entity.world);
+                if (newEntity != null) {
+                    newEntity.setLocationAndAngles(entity.posX - entity.motionX, entity.posY - entity.motionY, entity.posZ - entity.motionZ, -entity.rotationYaw, -entity.rotationPitch);
+                    newEntity.motionX = -entity.motionX;
+                    newEntity.motionY = -entity.motionY;
+                    newEntity.motionZ = -entity.motionZ;
+                    if (entity instanceof EntityFireball && newEntity instanceof EntityFireball) {
+                        EntityFireball original = (EntityFireball) entity;
+                        EntityFireball fireball = (EntityFireball) newEntity;
+                        fireball.accelerationX = -original.accelerationX;
+                        fireball.accelerationY = -original.accelerationY;
+                        fireball.accelerationZ = -original.accelerationZ;
+                    }
+                    newEntity.velocityChanged = true;
+                    newEntity.world.spawnEntity(newEntity);
+                    Entity owner = ownerRef.get();
+                    if (owner != null) {
+                        if (newEntity instanceof EntityThrowable && owner instanceof EntityLivingBase)
+                            ((EntityThrowable) newEntity).thrower = (EntityLivingBase) owner;
+                        else if (newEntity instanceof EntityArrow)
+                            ((EntityArrow) newEntity).shootingEntity = owner;
+                        else if (newEntity instanceof EntityFireball && owner instanceof EntityLivingBase)
+                            ((EntityFireball) newEntity).shootingEntity = (EntityLivingBase) owner;
+                    }
+                }
             }
         }
         
@@ -132,52 +154,117 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     }
     
     @Override
+    public boolean canBeCollidedWith() {
+        // I hate this
+        if (world.isRemote && Minecraft.getMinecraft().player.equals(ownerRef.get())) {
+            StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+            if (trace.length >= 3 && trace[2].getClassName().equals("net.minecraft.client.renderer.EntityRenderer$1"))
+                return false;
+        }
+        
+        return super.canBeCollidedWith();
+    }
+    
+    @Override
     protected void collideWithEntity(Entity entity) {
         Entity owner = ownerRef.get();
         if (owner != null) {
-            if (entity.equals(owner))
+            if (entity.equals(owner) || (world.isRemote && entity.equals(Minecraft.getMinecraft().getRenderViewEntity())))
                 return;
             else if (entity instanceof EntityThrowable && owner.equals(((EntityThrowable) entity).getThrower()))
                 return;
             else if (entity instanceof EntityArrow && owner.equals(((EntityArrow) entity).shootingEntity))
+                return;
+            else if (entity instanceof EntityFireball && owner.equals(((EntityFireball) entity).shootingEntity))
                 return;
         }
         
         super.collideWithEntity(entity);
     }
     
+    protected void resetBoundingBoxes() {
+        double heightOffset = Math.abs(rotationPitch) / 90.0 * 0.9;
+        Vec3d pos1 = new Vec3d(-1, -heightOffset, 0);
+        Vec3d pos2 = new Vec3d(1, 2 - heightOffset, 0.125);
+        pos1 = pos1.rotatePitch((float) Math.toRadians(rotationPitch)).rotateYaw((float) Math.toRadians(rotationYaw)).add(posX, posY, posZ);
+        pos2 = pos2.rotatePitch((float) Math.toRadians(rotationPitch)).rotateYaw((float) Math.toRadians(rotationYaw)).add(posX, posY, posZ);
+        setEntityBoundingBox(new AxisAlignedBB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z));
+    }
+    
+    @Override
+    @Nullable
+    public AxisAlignedBB getCollisionBoundingBox() {
+        return getEntityBoundingBox();
+    }
+    
+    @Override
+    public void setLocationAndAngles(double x, double y, double z, float yaw, float pitch) {
+        prevPosX = lastTickPosX = posX;
+        prevPosY = lastTickPosY = posY;
+        prevPosZ = lastTickPosZ = posZ;
+        posX = x;
+        posY = y;
+        posZ = z;
+        rotationYaw = yaw;
+        rotationPitch = pitch;
+        setPosition(posX, posY, posZ);
+    }
+    
     @Override
     public void onLivingUpdate() {
-        super.onLivingUpdate();
-        if (firstUpdate || (ownerRef.get() == null && dataManager.get(OWNER_ID).isPresent())) {
+        if (ownerRef.get() == null && dataManager.get(OWNER_ID).isPresent()) {
             if (ownerRef.get() == null) {
-                List<Entity> entities = world.getEntities(Entity.class, entity -> entity.getPersistentID().equals(dataManager.get(OWNER_ID).get()));
+                List<Entity> entities = world.getEntities(Entity.class, entity -> entity != null && entity.getPersistentID().equals(dataManager.get(OWNER_ID).get()));
                 if (!entities.isEmpty())
                     ownerRef = new WeakReference<>(entities.get(0));
+                else
+                    ++aloneTicks;
             }
-            
-            firstUpdate = false;
         }
         
         Entity owner = ownerRef.get();
         if (owner != null) {
-            if (!world.isRemote) {
-                if (owner.dimension != dimension) {
-                    changeDimension(owner.dimension);
-                    return;
+            if (!owner.isEntityAlive())
+                setDead();
+            else {
+                if (!world.isRemote) {
+                    if (owner.dimension != dimension) {
+                        changeDimension(owner.dimension);
+                        return;
+                    }
+                    
+                    Vec3d lookVec = owner.getLookVec();
+                    lookVec = lookVec.scale(1.75);
+                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + 0.1, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
+                    motionX = owner.motionX;
+                    motionY = owner.motionY;
+                    motionZ = owner.motionZ;
+                }
+                else {
+                    Vec3d lookVec = owner.getLook(Minecraft.getMinecraft().getRenderPartialTicks());
+                    lookVec = lookVec.scale(1.75);
+                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + 0.1, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
+                    motionX = owner.motionX;
+                    motionY = owner.motionY;
+                    motionZ = owner.motionZ;
                 }
                 
-                Vec3d lookVec = owner.getLookVec();
-                lookVec = lookVec.scale(1.5);
-                setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y, owner.posZ + lookVec.z, owner.rotationYaw, owner.rotationPitch);
-            }
-            else {
-                Vec3d lookVec = owner.getLook(Minecraft.getMinecraft().getRenderPartialTicks());
-                lookVec = lookVec.scale(1.5);
-                setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y, owner.posZ + lookVec.z, owner.rotationYaw, owner.rotationPitch);
+                resetBoundingBoxes();
+                collideWithNearbyEntities();
+                if (world.isRemote) {
+                    AxisAlignedBB box = getEntityBoundingBox();
+                    double xDiff = box.maxX - box.minX;
+                    double yDiff = box.maxY - box.minY;
+                    double zDiff = box.maxZ - box.minZ;
+                    for (int i = 0; i < 2; ++i) {
+                        FXDispatcher.INSTANCE.drawFireMote((float) (box.minX + rand.nextFloat() * xDiff), (float) (box.minY + rand.nextFloat() * yDiff),
+                                (float) (box.minZ + rand.nextFloat() * zDiff), (float) motionX, 0.05F, (float) motionZ,
+                                0.0F, 0.0F, 1.0F, 0.35F, 1.5F);
+                    }
+                }
             }
         }
-        else if (owner == null || !owner.isEntityAlive())
+        else if (aloneTicks >= 10)
             setDead();
     }
     
@@ -306,5 +393,10 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     
     @Override
     public void setFire(int seconds) {}
+    
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 1;
+    }
     
 }

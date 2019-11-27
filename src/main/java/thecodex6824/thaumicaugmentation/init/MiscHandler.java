@@ -33,6 +33,7 @@ import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.common.golem.SealAttack;
 import thecodex6824.thaumicaugmentation.common.golem.SealAttackAdvanced;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectLight;
+import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectVoidShield;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWard;
 
 public final class MiscHandler {
@@ -48,6 +49,8 @@ public final class MiscHandler {
         FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 
                 Aspect.LIGHT.getColor());
         FocusEngine.registerElement(FocusEffectWard.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/ward.png"),
+                Aspect.PROTECT.getColor());
+        FocusEngine.registerElement(FocusEffectVoidShield.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/ward.png"),
                 Aspect.PROTECT.getColor());
         
         AugmentAPI.addAugmentableItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
