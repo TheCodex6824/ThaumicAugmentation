@@ -166,4 +166,17 @@ public final class ImpetusAPI {
         return receivedEnergy;
     }
     
+    public static boolean tryExtractFully(IImpetusStorage storage, long amount) {
+        if (!storage.canExtract())
+            return false;
+        
+        long oldAmount = amount;
+        do {
+            oldAmount = amount;
+            amount -= storage.extractEnergy(amount, false);
+        } while (amount > 0 && oldAmount != amount);
+        
+        return amount <= 0;
+    }
+    
 }

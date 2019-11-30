@@ -151,7 +151,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                 }
             }
             
-        }, new ImpetusStorage(150, 15));
+        }, new ImpetusStorage(300, 15));
         if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
             storage.deserializeNBT(nbt.getCompoundTag("Parent"));
         

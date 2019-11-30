@@ -26,6 +26,7 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionEnum;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
@@ -79,6 +80,9 @@ public final class TAConfig {
     public static ConfigOptionBoolean disableCoremod;
     
     public static ConfigOptionBoolean gauntletCastAnimation;
+    
+    public static ConfigOptionLong terraformerImpetusCost;
+    public static ConfigOptionLong shieldFocusImpetusCost;
     
     /**
      * Registers a callback to be notified when the config is synced or updated.

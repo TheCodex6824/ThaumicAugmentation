@@ -28,6 +28,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
@@ -40,7 +41,13 @@ import thaumcraft.api.casters.NodeSetting;
 import thaumcraft.api.casters.Trajectory;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 
 public class FocusEffectVoidShield extends FocusEffect {
@@ -72,7 +79,7 @@ public class FocusEffectVoidShield extends FocusEffect {
     
     @Override
     public Aspect getAspect() {
-        return Aspect.PROTECT;
+        return Aspect.MAGIC;
     }
     
     @Override
@@ -100,22 +107,58 @@ public class FocusEffectVoidShield extends FocusEffect {
     public boolean execute(RayTraceResult result, @Nullable Trajectory trajectory, float finalPower, int whatever) {
         World world = getPackage().world;
         EntityLivingBase caster = getPackage().getCaster();
-        if (!world.isRemote && result.typeOfHit == Type.ENTITY && !(result.entityHit instanceof EntityFocusShield)) {
-            List<EntityFocusShield>  shields = world.getEntitiesWithinAABB(EntityFocusShield.class, result.entityHit.getEntityBoundingBox().grow(1.5),
-                    e -> e.getOwner().equals(result.entityHit));
-            if (!shields.isEmpty() && !caster.isSneaking()) {
-                EntityFocusShield shield = shields.get(0);
-                shield.setHealth(shield.getMaxHealth());
+        if (caster.getActiveHand() != null) {
+            ItemStack active = caster.getHeldItem(caster.getActiveHand());
+            IImpetusStorage storage = active.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+            if (storage == null) {
+                IAugmentableItem item = active.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                if (item != null) {
+                    for (ItemStack stack : item.getAllAugments()) {
+                        IImpetusStorage test = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                        if (test != null && test.canExtract() && test.getEnergyStored() >= TAConfig.shieldFocusImpetusCost.getValue()) {
+                            storage = test;
+                            break;
+                        }
+                    }
+                }
             }
-            else if (!shields.isEmpty() && caster.isSneaking())
-                shields.get(0).setDead();
-            else {
-                EntityFocusShield shield = new EntityFocusShield(world);
-                shield.setOwner(result.entityHit);
-                shield.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getSettingValue("health"));
-                shield.setHealth(shield.getMaxHealth());
-                shield.setReflect(getSettingValue("reflect") != 0);
-                world.spawnEntity(shield);
+            
+            if (!world.isRemote && result.typeOfHit == Type.ENTITY && storage != null) {
+                EntityFocusShield shield = null;
+                if (result.entityHit instanceof EntityFocusShield)
+                    shield = (EntityFocusShield) result.entityHit;
+                else {
+                    List<EntityFocusShield> shields = world.getEntitiesWithinAABB(EntityFocusShield.class, result.entityHit.getEntityBoundingBox().grow(1.5),
+                            e -> e.getOwner().equals(result.entityHit));
+                    if (!shields.isEmpty())
+                        shield = shields.get(0);
+                }
+                
+                if (shield != null) {
+                    if (!caster.isSneaking()) {
+                        if (ImpetusAPI.tryExtractFully(storage, (long) (shield.getHealth() / shield.getMaxHealth() * TAConfig.shieldFocusImpetusCost.getValue()))) {
+                            shield.setHealth(shield.getMaxHealth());
+                            return true;
+                        }
+                    }
+                    else if (caster.isSneaking() &&
+                            caster.getUniqueID().equals(shield.getCasterID()) || caster.getUniqueID().equals(shield.getOwnerId())) {
+                        
+                        shield.setDead();
+                        return true;
+                    }
+                }
+                else {
+                    if (ImpetusAPI.tryExtractFully(storage, TAConfig.shieldFocusImpetusCost.getValue())) {
+                        shield = new EntityFocusShield(world);
+                        shield.setOwner(result.entityHit);
+                        shield.setCasterID(caster.getUniqueID());
+                        shield.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getSettingValue("health"));
+                        shield.setHealth(shield.getMaxHealth());
+                        shield.setReflect(getSettingValue("reflect") != 0);
+                        return world.spawnEntity(shield);
+                    }
+                }
             }
         }
         
@@ -124,7 +167,7 @@ public class FocusEffectVoidShield extends FocusEffect {
     
     @Override
     public void onCast(Entity caster) {
-        caster.world.playSound(null, caster.getPosition().up(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 
+        caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_PREPARE_SUMMON, 
                 SoundCategory.PLAYERS, 0.2F, 1.2F);
     }
     

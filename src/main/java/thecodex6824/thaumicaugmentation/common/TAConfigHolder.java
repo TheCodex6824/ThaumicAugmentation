@@ -49,6 +49,7 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionEnum;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
 import thecodex6824.thaumicaugmentation.api.config.IEnumSerializer;
 import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
@@ -89,6 +90,7 @@ public final class TAConfigHolder {
     public static class GameplayOptions {
         
         public WardOptions ward = new WardOptions();
+        public ImpetusCosts impetusCosts = new ImpetusCosts();
         
         private static class WardOptions {
             
@@ -122,6 +124,23 @@ public final class TAConfigHolder {
                 "Allowing all tiles may be very overpowered - use at your own risk!"
             })
             public TileWardMode tileWardMode = TileWardMode.NOTICK;
+            
+        }
+        
+        private static class ImpetusCosts {
+            
+            @Name("terraformerCost")
+            @Comment({
+                "The amount of Impetus the Arcane Terraformer consumes per block terraformed."
+            })
+            public int terraformerCost = 5;
+            
+            @Name("shieldFocusCost")
+            @Comment({
+                "The amount of Impetus the Void Shield focus effect consumes to create the shield.",
+                "Note that a proportion of this amount will be consumed to heal a damaged shield."
+            })
+            public int shieldFocusCost = 10;
             
         }
         
@@ -390,6 +409,9 @@ public final class TAConfigHolder {
         TAConfig.fracturesAlwaysTeleport.setValue(world.fracturesAlwaysTeleport, side);
         
         TAConfig.gauntletCastAnimation.setValue(client.gauntletCastAnimation, side);
+        
+        TAConfig.terraformerImpetusCost.setValue((long) gameplay.impetusCosts.terraformerCost);
+        TAConfig.shieldFocusImpetusCost.setValue((long) gameplay.impetusCosts.shieldFocusCost);
     }
 
     public static void syncLocally() {
@@ -463,6 +485,9 @@ public final class TAConfigHolder {
         TAConfig.disableCoremod = TAConfigManager.addOption(new ConfigOptionBoolean(false, general.disableCoremod));
         
         TAConfig.gauntletCastAnimation = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.gauntletCastAnimation));
+    
+        TAConfig.terraformerImpetusCost = TAConfigManager.addOption(new ConfigOptionLong(false, (long) gameplay.impetusCosts.terraformerCost));
+        TAConfig.shieldFocusImpetusCost = TAConfigManager.addOption(new ConfigOptionLong(false, (long) gameplay.impetusCosts.shieldFocusCost));
     }
 
 }

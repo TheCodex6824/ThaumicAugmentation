@@ -38,7 +38,7 @@ public class ContainerArcaneTerraformer extends Container {
         tile = t;
         IItemHandler inventory = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         
-        addSlotToContainer(new SlotItemHandler(inventory, 0, 79, 33) {
+        addSlotToContainer(new SlotItemHandler(inventory, 0, 74, 33) {
             @Override
             public void onSlotChanged() {
                 tile.markDirty();

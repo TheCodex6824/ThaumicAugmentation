@@ -46,6 +46,7 @@ import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IArcaneTerraformerHalf;
+import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
@@ -67,7 +68,7 @@ public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraf
     
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, IArcaneTerraformerHalf.TERRAFORMER_HALF);
+        return new BlockStateContainer(this, IArcaneTerraformerHalf.TERRAFORMER_HALF, IEnabledBlock.ENABLED);
     }
     
     @Override
@@ -89,6 +90,24 @@ public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraf
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(IArcaneTerraformerHalf.TERRAFORMER_HALF, meta == 0 ?
                 ArcaneTerraformerHalf.LOWER : ArcaneTerraformerHalf.UPPER);
+    }
+    
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        if (state.getValue(IArcaneTerraformerHalf.TERRAFORMER_HALF) == ArcaneTerraformerHalf.LOWER) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te != null) {
+                IItemHandler items = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                if (items != null && !items.getStackInSlot(0).isEmpty()) {
+                    state = state.withProperty(IEnabledBlock.ENABLED, true);
+                    return state;
+                }
+            }
+            
+            state = state.withProperty(IEnabledBlock.ENABLED, false);
+        }
+        
+        return state;
     }
     
     @Override

@@ -69,6 +69,7 @@ import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
@@ -86,7 +87,6 @@ import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable, IEssentiaTransport, IBreakCallback {
 
     protected static final int MAX_ESSENTIA = 20; // per aspect
-    protected static final long IMPETUS_COST = 5;
     protected static final Cache<Biome, Object2IntOpenHashMap<Aspect>> BIOME_COSTS =
             CacheBuilder.newBuilder().softValues().concurrencyLevel(1).build();
     protected static final EnumFacing[] VALID_SIDES = new EnumFacing[] {EnumFacing.DOWN, EnumFacing.NORTH,
@@ -259,70 +259,81 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                 }
                 
                 boolean skipSet = false;
-                if (!circle || (currentPos.getX() - pos.getX()) * (currentPos.getX() - pos.getX()) + (currentPos.getZ() - pos.getZ()) *
-                        (currentPos.getZ() - pos.getZ()) < radius * radius) {
-                    
-                    if ((activeBiome.equals(IBiomeSelector.RESET) && !BiomeUtil.isNaturalBiomePresent(world, currentPos)) ||
-                            (!activeBiome.equals(IBiomeSelector.RESET) && !BiomeUtil.areBiomesSame(world, currentPos, Biome.REGISTRY.getObject(activeBiome)))) {
-                    
-                        if (!impetusPaid) {
-                            ConsumeResult consume = consumer.consume(IMPETUS_COST, true);
-                            if (consume.energyConsumed == IMPETUS_COST) {
-                                consume = consumer.consume(IMPETUS_COST, false);
-                                NodeHelper.syncAllImpetusTransactions(consume.paths);
-                                impetusPaid = true;
-                                markDirty();
+                while (true) {
+                    skipSet = false;
+                    if (!circle || (currentPos.getX() - pos.getX()) * (currentPos.getX() - pos.getX()) + (currentPos.getZ() - pos.getZ()) *
+                            (currentPos.getZ() - pos.getZ()) < radius * radius) {
+                        
+                        if ((activeBiome.equals(IBiomeSelector.RESET) && !BiomeUtil.isNaturalBiomePresent(world, currentPos)) ||
+                                (!activeBiome.equals(IBiomeSelector.RESET) && !BiomeUtil.areBiomesSame(world, currentPos, Biome.REGISTRY.getObject(activeBiome)))) {
+                        
+                            if (!impetusPaid) {
+                                long cost = TAConfig.terraformerImpetusCost.getValue();
+                                ConsumeResult consume = consumer.consume(cost, true);
+                                if (consume.energyConsumed == cost) {
+                                    consume = consumer.consume(cost, false);
+                                    NodeHelper.syncAllImpetusTransactions(consume.paths);
+                                    impetusPaid = true;
+                                    markDirty();
+                                }
                             }
-                        }
-                            
-                        if (!essentiaPaid) {
-                            Biome biome = activeBiome.equals(IBiomeSelector.RESET) ? BiomeUtil.getNaturalBiome(world, currentPos, Biomes.PLAINS) : Biome.REGISTRY.getObject(activeBiome);
-                            Object2IntOpenHashMap<Aspect> neededAspects = null;
-                            try {
-                                neededAspects = BIOME_COSTS.get(biome, () -> {
-                                    Object2IntOpenHashMap<Aspect> map = new Object2IntOpenHashMap<>();
-                                    map.put(Aspect.EXCHANGE, 1);
-                                    for (BiomeDictionary.Type type : BiomeDictionary.getTypes(biome)) {
-                                        Aspect aspect = BiomeUtil.getAspectForType(type, Aspect.EXCHANGE);
-                                        if (aspect != null) {
-                                            if (aspect == Aspect.ORDER || aspect == Aspect.ENTROPY)
-                                                map.addTo(Aspect.EXCHANGE, 1);
-                                            else if (aspect.isPrimal() || aspect == Aspect.EXCHANGE)
-                                                map.addTo(aspect, 1);
+                                
+                            if (!essentiaPaid) {
+                                Biome biome = activeBiome.equals(IBiomeSelector.RESET) ? BiomeUtil.getNaturalBiome(world, currentPos, Biomes.PLAINS) : Biome.REGISTRY.getObject(activeBiome);
+                                Object2IntOpenHashMap<Aspect> neededAspects = null;
+                                try {
+                                    neededAspects = BIOME_COSTS.get(biome, () -> {
+                                        Object2IntOpenHashMap<Aspect> map = new Object2IntOpenHashMap<>();
+                                        map.put(Aspect.EXCHANGE, 1);
+                                        for (BiomeDictionary.Type type : BiomeDictionary.getTypes(biome)) {
+                                            Aspect aspect = BiomeUtil.getAspectForType(type, Aspect.EXCHANGE);
+                                            if (aspect != null) {
+                                                if (aspect == Aspect.ORDER || aspect == Aspect.ENTROPY)
+                                                    map.addTo(Aspect.EXCHANGE, 1);
+                                                else if (aspect.isPrimal() || aspect == Aspect.EXCHANGE)
+                                                    map.addTo(aspect, 1);
+                                            }
                                         }
+                                        
+                                        return map;
+                                    });
+                                }
+                                catch (ExecutionException ex) {
+                                    ThaumicAugmentation.getLogger().error("An exception was somehow thrown when it really should not have!");
+                                    throw new RuntimeException(ex);
+                                }
+                                
+                                boolean enoughEssentia = true;
+                                for (Map.Entry<Aspect, Integer> entry : neededAspects.entrySet()) {
+                                    if (essentia.getInt(entry.getKey()) < entry.getValue()) {
+                                        enoughEssentia = false;
+                                        break;
                                     }
+                                }
+                                
+                                if (enoughEssentia) {
+                                    for (Map.Entry<Aspect, Integer> entry : neededAspects.entrySet())
+                                        essentia.addTo(entry.getKey(), -entry.getValue());
                                     
-                                    return map;
-                                });
-                            }
-                            catch (ExecutionException ex) {
-                                ThaumicAugmentation.getLogger().error("An exception was somehow thrown when it really should not have!");
-                                throw new RuntimeException(ex);
-                            }
-                            
-                            boolean enoughEssentia = true;
-                            for (Map.Entry<Aspect, Integer> entry : neededAspects.entrySet()) {
-                                if (essentia.getInt(entry.getKey()) < entry.getValue()) {
-                                    enoughEssentia = false;
-                                    break;
+                                    essentiaPaid = true;
+                                    markDirty();
                                 }
                             }
                             
-                            if (enoughEssentia) {
-                                for (Map.Entry<Aspect, Integer> entry : neededAspects.entrySet())
-                                    essentia.addTo(entry.getKey(), -entry.getValue());
-                                
-                                essentiaPaid = true;
-                                markDirty();
+                            if (!visPaid) {
+                                if (DoubleMath.fuzzyEquals(AuraHelper.drainVis(world, pos, 0.5F, true), 0.5F, 0.00001)) {
+                                    AuraHelper.drainVis(world, pos, 0.5F, false);
+                                    visPaid = true;
+                                    markDirty();
+                                }
                             }
                         }
-                        
-                        if (!visPaid) {
-                            if (DoubleMath.fuzzyEquals(AuraHelper.drainVis(world, pos, 0.5F, true), 0.5F, 0.00001)) {
-                                AuraHelper.drainVis(world, pos, 0.5F, false);
-                                visPaid = true;
-                                markDirty();
-                            }
+                        else {
+                            impetusPaid = true;
+                            essentiaPaid = true;
+                            visPaid = true;
+                            skipSet = true;
+                            markDirty();
                         }
                     }
                     else {
@@ -332,54 +343,52 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                         skipSet = true;
                         markDirty();
                     }
-                }
-                else {
-                    impetusPaid = true;
-                    essentiaPaid = true;
-                    visPaid = true;
-                    skipSet = true;
-                    markDirty();
-                }
-                
-                if (impetusPaid && essentiaPaid && visPaid) {
-                    impetusPaid = false;
-                    essentiaPaid = false;
-                    visPaid = false;
-                    if (!skipSet) {
-                        if (activeBiome.equals(IBiomeSelector.RESET))
-                            BiomeUtil.resetBiome(world, currentPos);
-                        else
-                            BiomeUtil.setBiome(world, currentPos, Biome.REGISTRY.getObject(activeBiome));
-                        
-                        chunks.add(new ChunkPos(currentPos));
-                        int y = world.getHeight(currentPos.getX(), currentPos.getZ());
-                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.POOF, currentPos.getX(), y, currentPos.getZ(), Aspect.EXCHANGE.getColor(), EnumFacing.UP.getIndex()),
-                                new TargetPoint(world.provider.getDimension(), currentPos.getX(), y, currentPos.getZ(), 64.0));
-                    }
                     
-                    if (Math.abs(currentPos.getX() - pos.getX()) <= Math.abs(currentPos.getZ() - pos.getZ()) && ((currentPos.getX() - pos.getX()) != (currentPos.getZ() - pos.getZ()) || (currentPos.getX() - pos.getX()) >= 0))
-                        currentPos.setPos(currentPos.getX() + ((currentPos.getZ() - pos.getZ()) >= 0 ? 1 : -1), currentPos.getY(), currentPos.getZ());
-                    else
-                        currentPos.setPos(currentPos.getX(), currentPos.getY(), currentPos.getZ() + ((currentPos.getX() - pos.getX()) >= 0 ? -1 : 1));
-                        
-                    ++blocksChecked;
-                    if (blocksChecked >= (radius * 2 - 1) * (radius * 2 - 1) + 1) {
-                        for (ChunkPos c : chunks) {
-                            BlockPos base = new BlockPos(c.getXStart(), pos.getY(), c.getZStart());
-                            BiomeUtil.generateNewAura(world, base, true);
-                            for (EnumFacing facing : EnumFacing.HORIZONTALS)
-                                BiomeUtil.generateNewAura(world, base.offset(facing, 16), true);
+                    if (impetusPaid && essentiaPaid && visPaid) {
+                        impetusPaid = false;
+                        essentiaPaid = false;
+                        visPaid = false;
+                        if (!skipSet) {
+                            if (activeBiome.equals(IBiomeSelector.RESET))
+                                BiomeUtil.resetBiome(world, currentPos);
+                            else
+                                BiomeUtil.setBiome(world, currentPos, Biome.REGISTRY.getObject(activeBiome));
+                            
+                            chunks.add(new ChunkPos(currentPos));
+                            int y = world.getHeight(currentPos.getX(), currentPos.getZ());
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, currentPos.getX(), y, currentPos.getZ(), 8.0, Aspect.EXCHANGE.getColor()),
+                                    new TargetPoint(world.provider.getDimension(), currentPos.getX(), y, currentPos.getZ(), 64.0));
+                            world.playSound(null, pos, SoundsTC.hhoff, SoundCategory.BLOCKS, 0.35F, 1.0F);
+                            break;
                         }
                         
-                        activeBiome = null;
-                        currentPos.setPos(0, 0, 0);
-                        blocksChecked = 0;
-                        chunks.clear();
-                        world.playSound(null, pos, SoundsTC.wand, SoundCategory.BLOCKS, 0.5F, 1.0F);
-                        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+                        if (Math.abs(currentPos.getX() - pos.getX()) <= Math.abs(currentPos.getZ() - pos.getZ()) && ((currentPos.getX() - pos.getX()) != (currentPos.getZ() - pos.getZ()) || (currentPos.getX() - pos.getX()) >= 0))
+                            currentPos.setPos(currentPos.getX() + ((currentPos.getZ() - pos.getZ()) >= 0 ? 1 : -1), currentPos.getY(), currentPos.getZ());
+                        else
+                            currentPos.setPos(currentPos.getX(), currentPos.getY(), currentPos.getZ() + ((currentPos.getX() - pos.getX()) >= 0 ? -1 : 1));
+                            
+                        ++blocksChecked;
+                        if (blocksChecked >= (radius * 2 - 1) * (radius * 2 - 1) + 1) {
+                            for (ChunkPos c : chunks) {
+                                BlockPos base = new BlockPos(c.getXStart(), pos.getY(), c.getZStart());
+                                BiomeUtil.generateNewAura(world, base, true);
+                                for (EnumFacing facing : EnumFacing.HORIZONTALS)
+                                    BiomeUtil.generateNewAura(world, base.offset(facing, 16), true);
+                            }
+                            
+                            activeBiome = null;
+                            currentPos.setPos(0, 0, 0);
+                            blocksChecked = 0;
+                            chunks.clear();
+                            world.playSound(null, pos, SoundsTC.wand, SoundCategory.BLOCKS, 0.5F, 1.0F);
+                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+                            break;
+                        }
+                        
+                        markDirty();
                     }
-                    
-                    markDirty();
+                    else
+                        break;
                 }
             }
         }
@@ -404,8 +413,8 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                 
                 fx.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
                 fx.setAlphaF(0.9F, 0.0F);
-                fx.setGridSize(64);
-                fx.setParticles(264, 8, 1);
+                fx.setGridSize(16);
+                fx.setParticles(56, 1, 1);
                 fx.setScale(2.0F);
                 fx.setLayer(1);
                 fx.setLoop(true);

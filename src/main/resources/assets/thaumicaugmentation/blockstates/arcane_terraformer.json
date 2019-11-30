@@ -6,28 +6,21 @@
     },
     "variants": {
         "ta_terraformer_half": {
-            "lower": {
+            "lower": {"__nop": ""},
+            "upper": {"__nop": ""}
+        },
+        "ta_enabled": {
+            "true": {
                 "submodel": {
                     "focus": {
                         "model": "thaumicaugmentation:arcane_terraformer_focus"
                     }
                 }
             },
-            "upper": {
-                "submodel": {
-                    "focus": {
-                        "model": "thaumicaugmentation:arcane_terraformer_focus"
-                    }
-                }
-            }
+            "false": {"__nop": ""}
         },
         "inventory": {
-            "transform": "forge:default-block",
-            "submodel": {
-                "focus": {
-                    "model": "thaumicaugmentation:arcane_terraformer_focus"
-                }
-            }
+            "transform": "forge:default-block"
         }
     }
 }

@@ -68,7 +68,7 @@ public class GUIArcaneTerraformer extends GuiContainer {
     public void initGui() {
         super.initGui();
         ContainerArcaneTerraformer c = (ContainerArcaneTerraformer) inventorySlots;
-        buttonList.add(new ButtonSpinner(0, guiLeft + xSize - 64, (this.height - this.ySize) / 2 + 24, 48) {
+        buttonList.add(new ButtonSpinner(0, guiLeft + xSize - 64, (this.height - this.ySize) / 2 + 27, 48) {
             @Override
             public String getLabel() {
                 return new TextComponentTranslation("thaumicaugmentation.text.terraformer_radius").getFormattedText();
@@ -97,7 +97,7 @@ public class GUIArcaneTerraformer extends GuiContainer {
                 TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, c.getTile().getRadius()));
             }
         });
-        buttonList.add(new ButtonSpinner(1, guiLeft + xSize - 64, (this.height - this.ySize) / 2 + 56, 48) {
+        buttonList.add(new ButtonSpinner(1, guiLeft + xSize - 64, (this.height - this.ySize) / 2 + 57, 48) {
             @Override
             public String getLabel() {
                 return new TextComponentTranslation("thaumicaugmentation.text.terraformer_circle_mode").getFormattedText();
@@ -209,13 +209,13 @@ public class GUIArcaneTerraformer extends GuiContainer {
                 
                 if (!costs.isEmpty()) {
                     GlStateManager.enableBlend();
-                    int drawX = 15;
-                    int drawY = 15;
+                    int drawX = 14;
+                    int drawY = 14;
                     for (Map.Entry<Aspect, Integer> entry : costs.entrySet()) {
                         UtilsFX.drawTag(drawX, drawY, entry.getKey(), entry.getValue(), 0, 0.0);
                         drawX += 17;
-                        if (drawX > 32) {
-                            drawX = 15;
+                        if (drawX > 31) {
+                            drawX = 14;
                             drawY += 17;
                         }
                     }

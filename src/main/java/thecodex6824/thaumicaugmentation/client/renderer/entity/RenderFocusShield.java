@@ -53,21 +53,21 @@ public class RenderFocusShield extends Render<EntityFocusShield> {
             rv = Minecraft.getMinecraft().player;
         
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y + rv.getEyeHeight() / entity.height + 0.15, z);
-        
+        GlStateManager.translate(x, y + rv.getEyeHeight() / entity.height + 0.2, z);
         GlStateManager.rotate(entity.rotationYaw + 180.0F, 0.0F, -1.0F, 0.0F);
         GlStateManager.rotate(entity.rotationPitch, -1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
         GlStateManager.disableCull();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-        int color = Aspect.PROTECT.getColor();
+        int color = Aspect.MAGIC.getColor();
         float r = ((color >> 16) & 0xFF) / 255.0F, g = ((color >> 8) & 0xFF) / 255.0F, b = (color & 0xFF) / 255.0F, a = 0.25F;
         GlStateManager.color(r, g, b, a);
         THE_DISK.draw(entity.height / 2.0F, 0, 6, 6);
-        GlStateManager.color(0.0F, 0.0F, 0.0F, a * 2);
-        THE_DISK.draw(entity.height / 2.0F + 0.01F, entity.height / 2.0F, 6, 6);
+        GlStateManager.color(0.0F, 0.0F, 0.0F, 0.6F);
+        THE_DISK.draw(entity.height / 2.0F + 0.025F, entity.height / 2.0F, 6, 6);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableBlend();
         GlStateManager.enableCull();

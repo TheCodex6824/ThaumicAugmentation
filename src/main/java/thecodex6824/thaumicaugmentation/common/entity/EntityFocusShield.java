@@ -39,6 +39,7 @@ import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -51,18 +52,24 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import thaumcraft.client.fx.FXDispatcher;
+import thaumcraft.common.lib.SoundsTC;
+import thecodex6824.thaumicaugmentation.api.entity.ICastedEntity;
 
-public class EntityFocusShield extends EntityLivingBase implements IEntityOwnable {
+public class EntityFocusShield extends EntityLivingBase implements IEntityOwnable, ICastedEntity {
 
     protected static final DataParameter<Optional<UUID>> OWNER_ID = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+    protected static final DataParameter<Optional<UUID>> CASTER_ID = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.OPTIONAL_UNIQUE_ID);
     
-    protected int lifespan;
+    protected int timeAlive;
+    protected int totalLifespan;
     protected boolean reflect;
     protected int aloneTicks;
     protected WeakReference<Entity> ownerRef;
@@ -72,19 +79,20 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         ownerRef = new WeakReference<>(null);
         maxHurtResistantTime = 0;
         setSize(1.8F, 2.0F);
+        setMaxHealth(5.0F);
         setHealth(getMaxHealth());
     }
     
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(5.0F);
+    public void setMaxHealth(float newMax) {
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(newMax);
+        totalLifespan = (int) (newMax * 200);
     }
     
     @Override
     protected void entityInit() {
         super.entityInit();
         dataManager.register(OWNER_ID, Optional.absent());
+        dataManager.register(CASTER_ID, Optional.absent());
     }
     
     @Override
@@ -105,6 +113,17 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         Vec3d lookVec = newOwner.getLookVec();
         lookVec = lookVec.scale(1.75);
         setLocationAndAngles(newOwner.posX + lookVec.x, newOwner.posY + lookVec.y + 0.07, newOwner.posZ + lookVec.z, newOwner.getRotationYawHead(), newOwner.rotationPitch);
+    }
+    
+    @Override
+    @Nullable
+    public UUID getCasterID() {
+        return dataManager.get(CASTER_ID).get();
+    }
+    
+    @Override
+    public void setCasterID(@Nullable UUID newCaster) {
+        dataManager.set(CASTER_ID, Optional.fromNullable(newCaster));
     }
     
     public void setReflect(boolean ref) {
@@ -182,6 +201,52 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         super.collideWithEntity(entity);
     }
     
+    @Override
+    public void onCollideWithPlayer(EntityPlayer entity) {
+        Entity owner = ownerRef.get();
+        if (owner != null) {
+            if (entity.equals(owner) || (world.isRemote && entity.equals(Minecraft.getMinecraft().getRenderViewEntity())))
+                return;
+        }
+        
+        super.onCollideWithPlayer(entity);
+    }
+    
+    @Override
+    public void applyEntityCollision(Entity entity) {
+        Entity owner = ownerRef.get();
+        if (owner != null) {
+            if (entity.equals(owner) || (world.isRemote && entity.equals(Minecraft.getMinecraft().getRenderViewEntity())))
+                return;
+            else if (entity instanceof EntityThrowable && owner.equals(((EntityThrowable) entity).getThrower()))
+                return;
+            else if (entity instanceof EntityArrow && owner.equals(((EntityArrow) entity).shootingEntity))
+                return;
+            else if (entity instanceof EntityFireball && owner.equals(((EntityFireball) entity).shootingEntity))
+                return;
+        }
+        
+        super.applyEntityCollision(entity);
+    }
+    
+    @Override
+    @Nullable
+    public AxisAlignedBB getCollisionBox(Entity entity) {
+        Entity owner = ownerRef.get();
+        if (owner != null) {
+            if (entity.equals(owner) || (world.isRemote && entity.equals(Minecraft.getMinecraft().getRenderViewEntity())))
+                return null;
+            else if (entity instanceof EntityThrowable && owner.equals(((EntityThrowable) entity).getThrower()))
+                return null;
+            else if (entity instanceof EntityArrow && owner.equals(((EntityArrow) entity).shootingEntity))
+                return null;
+            else if (entity instanceof EntityFireball && owner.equals(((EntityFireball) entity).shootingEntity))
+                return null;
+        }
+        
+        return getEntityBoundingBox();
+    }
+    
     protected void resetBoundingBoxes() {
         double heightOffset = Math.abs(rotationPitch) / 90.0 * 0.9;
         Vec3d pos1 = new Vec3d(-1, -heightOffset, 0);
@@ -194,7 +259,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     @Override
     @Nullable
     public AxisAlignedBB getCollisionBoundingBox() {
-        return getEntityBoundingBox();
+        return null;
     }
     
     @Override
@@ -212,6 +277,12 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     
     @Override
     public void onLivingUpdate() {
+        ++timeAlive;
+        if (timeAlive > totalLifespan && isEntityAlive()) {
+            setHealth(0);
+            return;
+        }
+        
         if (ownerRef.get() == null && dataManager.get(OWNER_ID).isPresent()) {
             if (ownerRef.get() == null) {
                 List<Entity> entities = world.getEntities(Entity.class, entity -> entity != null && entity.getPersistentID().equals(dataManager.get(OWNER_ID).get()));
@@ -259,7 +330,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                     for (int i = 0; i < 2; ++i) {
                         FXDispatcher.INSTANCE.drawFireMote((float) (box.minX + rand.nextFloat() * xDiff), (float) (box.minY + rand.nextFloat() * yDiff),
                                 (float) (box.minZ + rand.nextFloat() * zDiff), (float) motionX, 0.05F, (float) motionZ,
-                                0.0F, 0.0F, 1.0F, 0.35F, 1.5F);
+                                1.0F, 0.0F, 1.0F, 0.35F, 1.5F);
                     }
                 }
             }
@@ -269,9 +340,60 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     }
     
     @Override
+    protected void onDeathUpdate() {
+        ++deathTime;
+        if (this.deathTime == 20) {
+            setDead();
+            if (world.isRemote) {
+                AxisAlignedBB box = getEntityBoundingBox();
+                double xDiff = box.maxX - box.minX;
+                double yDiff = box.maxY - box.minY;
+                double zDiff = box.maxZ - box.minZ;
+                for (int i = 0; i < 20; ++i) {
+                    double vX = this.rand.nextGaussian() * 0.02D;
+                    double vY = this.rand.nextGaussian() * 0.02D;
+                    double vZ = this.rand.nextGaussian() * 0.02D;
+                    FXDispatcher.INSTANCE.drawFireMote((float) (box.minX + rand.nextFloat() * xDiff), (float) (box.minY + rand.nextFloat() * yDiff),
+                            (float) (box.minZ + rand.nextFloat() * zDiff), (float) vX, (float) vY, (float) vZ,
+                            1.0F, 0.0F, 1.0F, 0.55F, 1.0F);
+                }
+            }
+        }
+    }
+    
+    @Override
+    @Nullable
+    protected SoundEvent getDeathSound() {
+        return SoundsTC.craftfail;
+    }
+    
+    @Override
+    @Nullable
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+        return SoundsTC.runicShieldEffect;
+    }
+    
+    @Override
+    public SoundCategory getSoundCategory() {
+        Entity owner = ownerRef.get();
+        return owner != null ? owner.getSoundCategory() : super.getSoundCategory();
+    }
+    
+    @Override
+    protected float getSoundPitch() {
+        return rand.nextFloat() + 0.25F;
+    }
+    
+    @Override
+    protected float getSoundVolume() {
+        return 1.0F;
+    }
+    
+    @Override
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
-        compound.setInteger("lifespan", lifespan);
+        compound.setInteger("timeAlive", timeAlive);
+        compound.setInteger("lifespan", totalLifespan);
         compound.setBoolean("reflect", reflect);
         Entity owner = ownerRef.get();
         if (owner != null)
@@ -281,7 +403,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     @Override
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
-        lifespan = compound.getInteger("lifespan");
+        timeAlive = compound.getInteger("timeAlive");
+        totalLifespan = compound.getInteger("lifespan");
         reflect = compound.getBoolean("reflect");
         dataManager.set(OWNER_ID, Optional.of(compound.getUniqueId("owner")));
     }

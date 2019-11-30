@@ -50,8 +50,8 @@ public final class MiscHandler {
                 Aspect.LIGHT.getColor());
         FocusEngine.registerElement(FocusEffectWard.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/ward.png"),
                 Aspect.PROTECT.getColor());
-        FocusEngine.registerElement(FocusEffectVoidShield.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/ward.png"),
-                Aspect.PROTECT.getColor());
+        FocusEngine.registerElement(FocusEffectVoidShield.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/shield.png"),
+                Aspect.MAGIC.getColor());
         
         AugmentAPI.addAugmentableItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
             if (entity instanceof EntityLivingBase)
