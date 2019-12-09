@@ -20,11 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.api.warded;
 
+import java.util.Arrays;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import scala.actors.threadpool.Arrays;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 
 /**

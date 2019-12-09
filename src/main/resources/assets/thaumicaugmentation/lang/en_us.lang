@@ -52,6 +52,9 @@ item.thaumicaugmentation.morphic_tool.name=Morphic Tool
 item.thaumicaugmentation.primal_cutter.name=Primal Cutter
 item.thaumicaugmentation.biome_selector.name=Biome Focus
 item.thaumicaugmentation.impetus_linker.name=Impetus Resonator
+item.thaumicaugmentation.thaumostatic_harness.name=Thaumostatic Harness
+item.thaumicaugmentation.thaumostatic_harness_augment.gyroscope.name=Gyroscope Upgrade
+item.thaumicaugmentation.thaumostatic_harness_augment.girdle.name=Girdle Upgrade
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld
@@ -74,6 +77,7 @@ entity.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
 entity.thaumicaugmentation.shield_focus.name=Void Shield
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
+itemGroup.thaumicaugmentation.biome_selector=TA: Biome Foci
 
 thaumicaugmentation.text.key_bound=Key bound
 thaumicaugmentation.text.key_bound_object=Key bound to %s at %s

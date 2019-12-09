@@ -22,12 +22,22 @@ package thecodex6824.thaumicaugmentation.common.internal;
 
 import java.util.Random;
 
+import baubles.api.BaubleType;
+import baubles.api.cap.BaublesCapabilities;
+import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.builder.IThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 
@@ -78,6 +88,27 @@ public class TAHooks {
     
     public static boolean checkWardGeneric(World world, BlockPos pos) {
         return !hasWard(world, pos);
+    }
+    
+    public static boolean checkPlayerSprintState(EntityPlayerSP player, boolean sprint) {
+        if (sprint && !player.isCreative() && !player.isSpectator() && player.capabilities.isFlying) {
+            IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+            if (baubles != null) {
+                ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
+                IAugmentableItem augmentable = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                if (augmentable != null) {
+                    for (ItemStack augment : augmentable.getAllAugments()) {
+                        IAugment aug = augment.getCapability(CapabilityAugment.AUGMENT, null);
+                        if (aug instanceof IThaumostaticHarnessAugment) {
+                            if (!((IThaumostaticHarnessAugment) aug).shouldAllowSprintFly(player))
+                                return false;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return sprint;
     }
     
 }

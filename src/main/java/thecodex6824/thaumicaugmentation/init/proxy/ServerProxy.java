@@ -24,33 +24,18 @@ import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.TAConfig;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
-import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
-import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
-import thecodex6824.thaumicaugmentation.common.event.WardEventHandler;
-import thecodex6824.thaumicaugmentation.common.event.WardEventHandlerNoCoremodFallback;
-import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
-import thecodex6824.thaumicaugmentation.common.internal.InternalMethodProvider;
 import thecodex6824.thaumicaugmentation.common.network.PacketInteractGUI;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
-import thecodex6824.thaumicaugmentation.common.util.TARenderHelperCommon;
-import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
-import thecodex6824.thaumicaugmentation.init.GUIHandler;
-import thecodex6824.thaumicaugmentation.init.MiscHandler;
-import thecodex6824.thaumicaugmentation.init.ResearchHandler;
-import thecodex6824.thaumicaugmentation.init.WorldHandler;
+import thecodex6824.thaumicaugmentation.common.util.TARenderHelperServer;
 
-public class CommonProxy implements ISidedProxy {
+public class ServerProxy implements ISidedProxy {
 
     protected static ITARenderHelper renderHelper;
 
@@ -62,7 +47,7 @@ public class CommonProxy implements ISidedProxy {
     @Override
     public ITARenderHelper getRenderHelper() {
         if (renderHelper == null)
-            renderHelper = new TARenderHelperCommon();
+            renderHelper = new TARenderHelperServer();
 
         return renderHelper;
     }
@@ -107,35 +92,12 @@ public class CommonProxy implements ISidedProxy {
     }
 
     @Override
-    public void preInit() {
-        TAConfigHolder.preInit();
-        CapabilityHandler.preInit();
-        WorldHandler.preInit();
-        NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
-        TAInternals.setInternalMethodProvider(new InternalMethodProvider());
-        MiscHandler.preInit();
-        IntegrationHandler.preInit();
-        
-        if (!TAConfig.disableWardFocus.getValue()) {
-            if (ThaumicAugmentationAPI.isCoremodAvailable())
-                MinecraftForge.EVENT_BUS.register(new WardEventHandler());
-            else
-                MinecraftForge.EVENT_BUS.register(new WardEventHandlerNoCoremodFallback());
-        }
-    }
+    public void preInit() {}
 
     @Override
-    public void init() {
-        WorldHandler.init();
-        ResearchHandler.init();
-        MiscHandler.init();
-        IntegrationHandler.init();
-    }
+    public void init() {}
 
     @Override
-    public void postInit() {
-        WorldHandler.postInit();
-        IntegrationHandler.postInit();
-    }
+    public void postInit() {}
 
 }

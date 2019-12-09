@@ -27,32 +27,32 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import thecodex6824.thaumicaugmentation.api.augment.Augment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
-import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 
 public class CapabilityProviderAugmentRiftEnergyStorage implements ICapabilitySerializable<NBTTagCompound> {
 
-    private IAugment augment;
-    private IImpetusStorage energy;
+    private Augment augment;
+    private ImpetusStorage energy;
     
-    public CapabilityProviderAugmentRiftEnergyStorage(IAugment aug, IImpetusStorage e) {
+    public CapabilityProviderAugmentRiftEnergyStorage(Augment aug, ImpetusStorage e) {
         augment = aug;
         energy = e;
     }
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        CapabilityAugment.AUGMENT.readNBT(augment, null, nbt.getCompoundTag("augment"));
-        CapabilityImpetusStorage.IMPETUS_STORAGE.readNBT(energy, null, nbt.getCompoundTag("energy"));
+        augment.deserializeNBT(nbt.getCompoundTag("augment"));
+        energy.deserializeNBT(nbt.getCompoundTag("energy"));
     }
     
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setTag("augment", CapabilityAugment.AUGMENT.writeNBT(augment, null));
-        tag.setTag("energy", CapabilityImpetusStorage.IMPETUS_STORAGE.writeNBT(energy, null));
+        tag.setTag("augment", augment.serializeNBT());
+        tag.setTag("energy", energy.serializeNBT());
         return tag;
     }
     

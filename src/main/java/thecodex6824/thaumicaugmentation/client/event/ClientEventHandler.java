@@ -166,7 +166,7 @@ public final class ClientEventHandler {
                                 mc.getRenderPartialTicks()));
                         return;
                     }
-                }
+                }   
                 
                 if (mc.player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ICaster) {
                     ItemStack stack = mc.player.getHeldItem(EnumHand.OFF_HAND);

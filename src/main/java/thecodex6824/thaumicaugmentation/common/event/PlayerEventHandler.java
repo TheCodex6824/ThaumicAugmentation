@@ -72,14 +72,15 @@ public final class PlayerEventHandler {
 
     @SubscribeEvent
     public static void onTick(LivingEvent.LivingUpdateEvent event) {
-        if (event.getEntity() instanceof EntityPlayer && PlayerMovementAbilityManager.isValidSideForMovement((EntityPlayer) event.getEntity()))
-            PlayerMovementAbilityManager.tick((EntityPlayer) event.getEntity());
-        
-        if (!event.getEntity().getEntityWorld().isRemote && event.getEntity().getEntityWorld().getTotalWorldTime() % 40 == 0 &&
-                event.getEntity() instanceof EntityPlayer) {
+        if (event.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getEntity();
-            if (!TAConfig.disableEmptiness.getValue() && player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && 
+            if (PlayerMovementAbilityManager.isValidSideForMovement(player))
+                PlayerMovementAbilityManager.tick(player);
+            
+            if (!player.getEntityWorld().isRemote && player.getEntityWorld().getTotalWorldTime() % 40 == 0 &&
+                    !TAConfig.disableEmptiness.getValue() && player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && 
                     !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
+                
                 ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERVOID");
                 player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void"), true);
             }

@@ -20,12 +20,19 @@
 
 package thecodex6824.thaumicaugmentation.common.event;
 
+import java.util.HashSet;
+
+import com.google.common.base.Predicates;
+
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -76,6 +83,27 @@ public class EntityEventHandler {
             }
             
             // we check for projectile reflection later as we want damage to be applied to the shield
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onGetCollisionBoxes(GetCollisionBoxesEvent event) {
+        if (event.getEntity() != null) {
+            IntOpenHashSet checked = new IntOpenHashSet();
+            HashSet<AxisAlignedBB> toRemove = new HashSet<>();
+            for (AxisAlignedBB box : event.getCollisionBoxesList()) {
+                for (Entity e : event.getWorld().getEntitiesInAABBexcluding(event.getEntity(), box, Predicates.instanceOf(EntityFocusShield.class))) {
+                    if (!checked.contains(e.getEntityId())) {
+                        checked.add(e.getEntityId());
+                        if (event.getEntity().equals(((EntityFocusShield) e).getOwner()) && box.equals(e.getCollisionBoundingBox())) {
+                            toRemove.add(box);
+                            continue;
+                        }
+                    }
+                }
+            }
+            
+            event.getCollisionBoxesList().removeAll(toRemove);
         }
     }
     

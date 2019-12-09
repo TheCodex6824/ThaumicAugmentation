@@ -112,7 +112,7 @@ public class ItemBiomeSelector extends ItemTABase {
     
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
+        if (tab == TAItems.BIOME_SELECTOR_CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
             ItemStack stack = new ItemStack(this);
             stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null).setBiomeID(IBiomeSelector.EMPTY);
             items.add(stack);

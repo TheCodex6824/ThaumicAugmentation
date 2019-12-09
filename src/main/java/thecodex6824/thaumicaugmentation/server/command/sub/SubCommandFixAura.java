@@ -54,8 +54,9 @@ public class SubCommandFixAura implements ISubCommand {
                     return;
                 }
                 else {
-                    x = e.chunkCoordX;
-                    z = e.chunkCoordZ;
+                    BlockPos pos = e.getPosition();
+                    x = pos.getX() >> 16;
+                    z = pos.getZ() >> 16;
                     dim = e.dimension;
                 }
             }
@@ -64,9 +65,10 @@ public class SubCommandFixAura implements ISubCommand {
                     throw new WrongUsageException("thaumicaugmentation.command.fixaura.usage");
                 else {
                     Entity e = sender.getCommandSenderEntity();
-                    x = (int) (CommandBase.parseCoordinate(e != null ? e.posX : 0, args[0], false).getResult());
-                    z = (int) (CommandBase.parseCoordinate(e != null ? e.posZ : 0, args[1], false).getResult());
-                    dim = CommandBase.parseInt(args[2]);
+                    BlockPos pos = e != null ? e.getPosition() : BlockPos.ORIGIN;
+                    x = (int) (CommandBase.parseCoordinate(pos.getX() >> 16, args[0], false).getResult());
+                    z = (int) (CommandBase.parseCoordinate(pos.getZ() >> 16, args[1], false).getResult());
+                    dim = (int) (CommandBase.parseCoordinate(e != null ? e.dimension : 0, args[2], false).getResult());
                     if (args.length == 4)
                         force = Boolean.parseBoolean(args[3]);
                 }

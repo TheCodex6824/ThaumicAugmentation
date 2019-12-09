@@ -88,6 +88,8 @@ import thecodex6824.thaumicaugmentation.common.item.ItemPrimalCutter;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
+import thecodex6824.thaumicaugmentation.common.item.ItemThaumostaticHarness;
+import thecodex6824.thaumicaugmentation.common.item.ItemThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
 import thecodex6824.thaumicaugmentation.common.item.ItemVoidBoots;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockImpetusMirror;
@@ -199,7 +201,7 @@ public final class RegistryHandler {
         }
 
         registry.register(setupItem(new ItemTieredCasterGauntlet(), "gauntlet"));
-        registry.register(setupItem(new ItemTABase("lattice", "warding_sigil", "amalgamated_gear", "rift_energy_cell"), "material"));
+        registry.register(setupItem(new ItemTABase("lattice", "warding_sigil", "amalgamated_gear", "rift_energy_cell", "harness_base"), "material"));
         registry.register(setupItem(new ItemSealCopier(), "seal_copier"));
         registry.register(setupItem(new ItemArcaneDoor(), "arcane_door"));
         registry.register(setupItem(new ItemKey(), "key"));
@@ -215,7 +217,9 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemBlockRiftJar(), "rift_jar"));
         registry.register(setupItem(new ItemBlockImpetusMirror(), "impetus_mirror"));
         registry.register(setupItem(new ItemImpetusLinker(), "impetus_linker"));
-        registry.register(setupItem(new ItemBiomeSelector(), "biome_selector"));
+        registry.register(setupItem(new ItemBiomeSelector(), "biome_selector").setCreativeTab(TAItems.BIOME_SELECTOR_CREATIVE_TAB));
+        registry.register(setupItem(new ItemThaumostaticHarness(), "thaumostatic_harness"));
+        registry.register(setupItem(new ItemThaumostaticHarnessAugment(), "thaumostatic_harness_augment"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }

@@ -21,7 +21,7 @@ If you want to contribute to the mod or just mess around with it, here's how to 
    For IntelliJ IDEA:
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run "gradlew idea"  
    
-   Note that IDE users will probably need to add the following JVM arugment to their IDE's launch options to allow the coremod to work (this only has to be done if working on the mod itself, not if just using the API):
+   Note that IDE users will probably need to add the following JVM argument to their IDE's launch options to allow the coremod to work (this only has to be done if working on the mod itself, not if just using the API):
    
    -Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore
 

@@ -28,13 +28,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 
 public class CapabilityProviderMorphicTool implements ICapabilitySerializable<NBTTagCompound> {
 
-    private IMorphicTool morphic;
+    private MorphicTool morphic;
     
-    public CapabilityProviderMorphicTool(IMorphicTool tool) {
+    public CapabilityProviderMorphicTool(MorphicTool tool) {
         morphic = tool;
     }
     
@@ -56,12 +55,12 @@ public class CapabilityProviderMorphicTool implements ICapabilitySerializable<NB
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        CapabilityMorphicTool.MORPHIC_TOOL.readNBT(morphic, null, nbt);
+        morphic.deserializeNBT(nbt);
     }
     
     @Override
     public NBTTagCompound serializeNBT() {
-        return (NBTTagCompound) CapabilityMorphicTool.MORPHIC_TOOL.writeNBT(morphic, null);
+        return morphic.serializeNBT();
     }
     
 }

@@ -36,6 +36,7 @@ import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -64,6 +65,7 @@ import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.lib.events.EssentiaHandler;
 import thaumcraft.common.lib.events.EssentiaHandler.EssentiaSourceFX;
+import thaumcraft.common.lib.network.fx.PacketFXShield;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
@@ -95,6 +97,7 @@ import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
+import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftJar;
@@ -134,7 +137,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
-public class ClientProxy extends CommonProxy {
+public class ClientProxy extends ServerProxy {
 
     @Override
     public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params) {
@@ -198,6 +201,8 @@ public class ClientProxy extends CommonProxy {
             handleRiftJarInstabilityPacket((PacketRiftJarInstability) message, context);
         else if (message instanceof PacketBiomeUpdate)
             handleBiomeUpdatePacket((PacketBiomeUpdate) message, context);
+        else if (message instanceof PacketFXShield)
+            handleFXShieldPacket((PacketFXShield) message, context);
         else
             ThaumicAugmentation.getLogger().warn("An unknown packet was received and will be dropped: " + message.getClass().toString());
     }
@@ -303,6 +308,23 @@ public class ClientProxy extends CommonProxy {
                     
                     break;
                 }
+                case FIRE_EXPLOSION: {
+                    if (d.length == 5) {
+                        double x = d[0], y = d[1], z = d[2];
+                        float size = (float) d[3];
+                        int color = (int) d[4];
+                        float r = ((color >> 16) & 0xFF) / 255.0F;
+                        float g = ((color >> 8) & 0xFF) / 255.0F;
+                        float b = (color & 0xFF) / 255.0F;
+                        for (int i = 0; i < 16; ++i) {
+                            FXDispatcher.INSTANCE.drawFireMote((float) x, (float) y, (float) z, (rand.nextFloat() - rand.nextFloat()) / 10.0F,
+                                    (rand.nextFloat() - rand.nextFloat()) / 10.0F, (rand.nextFloat() - rand.nextFloat()) / 10.0F, r, g, b, 0.75F, size);
+                        }
+                    }
+                    
+                    break;
+                }
+             
                 default: {break;}
             }
         }
@@ -451,6 +473,10 @@ public class ClientProxy extends CommonProxy {
     protected void handleBiomeUpdatePacket(PacketBiomeUpdate message, MessageContext context) {
         BiomeUtil.setBiome(Minecraft.getMinecraft().world, new BlockPos(message.getX(), 64, message.getZ()), Biome.getBiome(message.getBiome()));
     }
+    
+    protected void handleFXShieldPacket(PacketFXShield message, MessageContext context) {
+        message.onMessage(message, context);
+    }
 
     @Override
     public void preInit() {
@@ -494,6 +520,8 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusMirror.class, new RenderImpetusMirror());
         registerItemColorHandlers();
         registerBlockColorHandlers();
+        for (RenderPlayer render : Minecraft.getMinecraft().getRenderManager().getSkinMap().values())
+            render.addLayer(new RenderLayerHarness(render));
     }
 
     @Override

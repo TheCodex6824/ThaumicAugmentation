@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -33,10 +34,23 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
+import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.event.WardEventHandler;
+import thecodex6824.thaumicaugmentation.common.event.WardEventHandlerNoCoremodFallback;
+import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
+import thecodex6824.thaumicaugmentation.common.internal.InternalMethodProvider;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
+import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
+import thecodex6824.thaumicaugmentation.init.GUIHandler;
+import thecodex6824.thaumicaugmentation.init.MiscHandler;
+import thecodex6824.thaumicaugmentation.init.ResearchHandler;
+import thecodex6824.thaumicaugmentation.init.WorldHandler;
 import thecodex6824.thaumicaugmentation.init.proxy.ISidedProxy;
 import thecodex6824.thaumicaugmentation.server.command.TACommands;
 
@@ -51,23 +65,44 @@ public class ThaumicAugmentation {
 
     private static Logger logger;
 
-    @SidedProxy(serverSide = "thecodex6824.thaumicaugmentation.init.proxy.CommonProxy", clientSide = "thecodex6824.thaumicaugmentation.init.proxy.ClientProxy")
+    @SidedProxy(serverSide = "thecodex6824.thaumicaugmentation.init.proxy.ServerProxy", clientSide = "thecodex6824.thaumicaugmentation.init.proxy.ClientProxy")
     public static ISidedProxy proxy = null;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
+        TAConfigHolder.preInit();
+        CapabilityHandler.preInit();
+        WorldHandler.preInit();
+        NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
+        TAInternals.setInternalMethodProvider(new InternalMethodProvider());
+        MiscHandler.preInit();
+        IntegrationHandler.preInit();
+        
+        if (!TAConfig.disableWardFocus.getValue()) {
+            if (ThaumicAugmentationAPI.isCoremodAvailable())
+                MinecraftForge.EVENT_BUS.register(new WardEventHandler());
+            else
+                MinecraftForge.EVENT_BUS.register(new WardEventHandlerNoCoremodFallback());
+        }
+        
         proxy.preInit();
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
         TANetwork.init();
+        WorldHandler.init();
+        ResearchHandler.init();
+        MiscHandler.init();
+        IntegrationHandler.init();
         proxy.init();
     }
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+        WorldHandler.postInit();
+        IntegrationHandler.postInit();
         proxy.postInit();
     }
     

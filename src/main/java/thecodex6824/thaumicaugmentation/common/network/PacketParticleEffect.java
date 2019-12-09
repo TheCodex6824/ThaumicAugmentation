@@ -39,7 +39,8 @@ public class PacketParticleEffect implements IMessage {
         CURLY_WISP(5),
         ESSENTIA_TRAIL(6),
         EXPLOSION(7),
-        SPARK(8);
+        SPARK(8),
+        FIRE_EXPLOSION(9);
         
         private int id;
         

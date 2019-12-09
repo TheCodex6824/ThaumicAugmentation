@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "thaumicaugmentation:items/material_harness_base",
+        "layer1": "thaumicaugmentation:items/harness_thaumostatic"
+    }
+}

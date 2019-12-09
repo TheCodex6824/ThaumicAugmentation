@@ -89,6 +89,21 @@ public final class PlayerMovementAbilityManager {
         public float jumpMovementFactor;
     }
 
+    private static final class FlyData {
+        
+        public FlyData(boolean e, boolean f, float s) {
+            flyEnabled = e;
+            wasFlying = f;
+            flySpeed = s;
+        }
+        
+        public boolean flyEnabled;
+        public boolean wasFlying;
+        public float flySpeed;
+        
+    }
+    
+    private static WeakHashMap<EntityPlayer, FlyData> flyData = new WeakHashMap<>();
     private static WeakHashMap<EntityPlayer, OldMovementData> oldMovementValues = new WeakHashMap<>();
     private static WeakHashMap<EntityPlayer, LinkedList<PlayerFunctions>> players = 
             new WeakHashMap<>();
@@ -196,6 +211,23 @@ public final class PlayerMovementAbilityManager {
             for (PlayerFunctions func : players.get(player))
                 player.motionY += func.tickFunction.apply(player, MovementType.JUMP_BEGIN);
         }
+    }
+    
+    public static void recordFlyState(EntityPlayer player) {
+        flyData.put(player, new FlyData(player.capabilities.allowFlying, player.capabilities.isFlying, player.capabilities.getFlySpeed()));
+    }
+    
+    public static boolean popAndApplyFlyState(EntityPlayer player) {
+        FlyData data = flyData.remove(player);
+        if (data != null) {
+            player.capabilities.allowFlying = data.flyEnabled;
+            player.capabilities.isFlying &= data.wasFlying;
+            player.capabilities.setFlySpeed(data.flySpeed);
+            player.sendPlayerAbilities();
+            return true;
+        }
+        else
+            return false;
     }
 
 }

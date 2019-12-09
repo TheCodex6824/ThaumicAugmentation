@@ -24,9 +24,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
@@ -41,6 +39,7 @@ import thaumcraft.api.casters.NodeSetting;
 import thaumcraft.api.casters.Trajectory;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
+import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
@@ -55,7 +54,7 @@ public class FocusEffectVoidShield extends FocusEffect {
     protected class NodeSettingShieldHealth extends NodeSetting.NodeSettingIntRange {
         
         public NodeSettingShieldHealth() {
-            super(5, 50);
+            super(5, 75);
         }
         
         @Override
@@ -84,7 +83,7 @@ public class FocusEffectVoidShield extends FocusEffect {
     
     @Override
     public int getComplexity() {
-        return getSettingValue("health") - 4 + getSettingValue("reflect") * 15;
+        return (int) ((getSettingValue("health") / 1.5)) - 2 + getSettingValue("reflect") * 15;
     }
     
     @Override
@@ -123,39 +122,53 @@ public class FocusEffectVoidShield extends FocusEffect {
                 }
             }
             
-            if (!world.isRemote && result.typeOfHit == Type.ENTITY && storage != null) {
+            if (!world.isRemote && result.typeOfHit == Type.ENTITY) {
                 EntityFocusShield shield = null;
                 if (result.entityHit instanceof EntityFocusShield)
                     shield = (EntityFocusShield) result.entityHit;
                 else {
                     List<EntityFocusShield> shields = world.getEntitiesWithinAABB(EntityFocusShield.class, result.entityHit.getEntityBoundingBox().grow(1.5),
-                            e -> e.getOwner().equals(result.entityHit));
+                            e -> e != null && result.entityHit.equals(e.getOwner()));
                     if (!shields.isEmpty())
                         shield = shields.get(0);
                 }
                 
                 if (shield != null) {
-                    if (!caster.isSneaking()) {
-                        if (ImpetusAPI.tryExtractFully(storage, (long) (shield.getHealth() / shield.getMaxHealth() * TAConfig.shieldFocusImpetusCost.getValue()))) {
+                    if (!caster.isSneaking() && storage != null) {
+                        double prop = Math.max(shield.getHealth() / shield.getMaxHealth(), (double) shield.getTimeAlive() / shield.getTotalLifespan());
+                        if (ImpetusAPI.tryExtractFully(storage, (long) (prop * TAConfig.shieldFocusImpetusCost.getValue()))) {
                             shield.setHealth(shield.getMaxHealth());
+                            shield.resetTimeAlive();
+                            caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, 
+                                    SoundCategory.PLAYERS, 0.2F, 1.2F);
                             return true;
+                        }
+                        else {
+                            caster.world.playSound(null, caster.getPosition().up(), SoundsTC.jacobs, 
+                                    SoundCategory.PLAYERS, 0.2F, 0.6F);
+                            
+                            return false;
                         }
                     }
                     else if (caster.isSneaking() &&
                             caster.getUniqueID().equals(shield.getCasterID()) || caster.getUniqueID().equals(shield.getOwnerId())) {
                         
                         shield.setDead();
+                        caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, 
+                                SoundCategory.PLAYERS, 0.2F, 0.75F);
                         return true;
                     }
                 }
-                else {
+                else if (storage != null) {
                     if (ImpetusAPI.tryExtractFully(storage, TAConfig.shieldFocusImpetusCost.getValue())) {
                         shield = new EntityFocusShield(world);
                         shield.setOwner(result.entityHit);
                         shield.setCasterID(caster.getUniqueID());
-                        shield.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getSettingValue("health"));
+                        shield.setMaxHealth(getSettingValue("health"));
                         shield.setHealth(shield.getMaxHealth());
                         shield.setReflect(getSettingValue("reflect") != 0);
+                        caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, 
+                                SoundCategory.PLAYERS, 0.2F, 1.2F);
                         return world.spawnEntity(shield);
                     }
                 }
@@ -163,12 +176,6 @@ public class FocusEffectVoidShield extends FocusEffect {
         }
         
         return false;
-    }
-    
-    @Override
-    public void onCast(Entity caster) {
-        caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_PREPARE_SUMMON, 
-                SoundCategory.PLAYERS, 0.2F, 1.2F);
     }
     
     @Override
@@ -182,7 +189,7 @@ public class FocusEffectVoidShield extends FocusEffect {
         fb.setSlowDown(0.5D);
         fb.setAlphaF(new float[] { 1.0F, 0.0F });
         fb.setScale(new float[] { (float)(0.699999988079071D + world.rand.nextGaussian() * 0.30000001192092896D) });
-        int color = getAspect().getColor();
+        int color = 0x5000C8;
         fb.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
         fb.setRotationSpeed(world.rand.nextFloat(), 0.0F);
         ParticleEngine.addEffectWithDelay(world, fb, 0);
