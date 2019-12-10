@@ -79,6 +79,7 @@ public class ItemCustomCasterEffectProvider extends ItemTABase {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerModels() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(
                 "ta_special:effect_provider", "inventory"));

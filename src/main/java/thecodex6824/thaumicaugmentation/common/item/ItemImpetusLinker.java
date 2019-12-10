@@ -22,7 +22,6 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,6 +35,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
@@ -93,7 +93,7 @@ public class ItemImpetusLinker extends ItemTABase {
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 

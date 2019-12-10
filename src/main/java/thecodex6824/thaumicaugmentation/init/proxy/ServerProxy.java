@@ -22,18 +22,31 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 
 import com.google.common.collect.ImmutableMap;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import thaumcraft.api.golems.seals.ISealEntity;
+import thaumcraft.common.golems.client.gui.SealBaseContainer;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
+import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
 import thecodex6824.thaumicaugmentation.common.network.PacketInteractGUI;
+import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperServer;
+import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 
 public class ServerProxy implements ISidedProxy {
 
@@ -53,6 +66,11 @@ public class ServerProxy implements ISidedProxy {
     }
     
     @Override
+    public IWardStorage createWardStorageInstance(World world) {
+        return new WardStorageServer();
+    }
+    
+    @Override
     public void registerRenderableImpetusNode(IImpetusNode node) {}
     
     @Override
@@ -63,6 +81,37 @@ public class ServerProxy implements ISidedProxy {
     @Override
     public boolean isOpenToLAN() {
         return false;
+    }
+    
+    @Override
+    public boolean isSingleplayer() {
+        return false;
+    }
+    
+    @Override
+    public Container getServerGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        switch (TAInventory.values()[ID]) {
+            case WARDED_CHEST: return new ContainerWardedChest(player.inventory, 
+                (TileWardedChest) world.getTileEntity(new BlockPos(x, y, z)));
+            case ARCANE_TERRAFORMER: return new ContainerArcaneTerraformer(player.inventory, 
+                    (TileArcaneTerraformer) world.getTileEntity(new BlockPos(x, y, z)));
+            default: return null;
+        }
+    }
+    
+    @Override
+    public Object getClientGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        throw new UnsupportedOperationException("Cannot get client GUI element on the server side!");
+    }
+    
+    @Override
+    public Object getSealContainer(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal) {
+        return new SealBaseContainer(player.inventory, world, seal);
+    }
+    
+    @Override
+    public Object getSealGUI(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal) {
+        throw new UnsupportedOperationException("Cannot get client GUI element on the server side!");
     }
     
     @Override

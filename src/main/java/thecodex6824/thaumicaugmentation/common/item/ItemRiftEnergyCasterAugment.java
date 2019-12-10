@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -43,6 +42,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.common.lib.SoundsTC;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
@@ -176,7 +176,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
@@ -199,7 +199,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             while (energy.getEnergyStored() < energy.getMaxEnergyStored())
                 energy.receiveEnergy(energy.getMaxEnergyStored(), false);
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!full.hasTagCompound())
                     full.setTagCompound(new NBTTagCompound());
                 

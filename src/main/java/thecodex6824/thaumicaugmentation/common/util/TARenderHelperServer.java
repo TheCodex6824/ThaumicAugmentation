@@ -48,4 +48,16 @@ public class TARenderHelperServer implements ITARenderHelper {
     public void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel,
             float r, float g, float b, float a) {}
     
+    @Override
+    public void renderWispyMotes(World world, double x, double y, double z, double dx, double dy, double dz, int age,
+            float r, float g, float b, float gravity) {}
+    
+    @Override
+    public void renderFireMote(World world, float x, float y, float z, float vx, float vy, float vz, float r, float g,
+            float b, float a, float scale) {}
+    
+    @Override
+    public void renderSmokeSpiral(World world, double x, double y, double z, float rad, int start, int minY,
+            int color) {}
+    
 }

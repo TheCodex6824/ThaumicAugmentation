@@ -21,10 +21,10 @@
 package thecodex6824.thaumicaugmentation.api.warded;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
 
-import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;

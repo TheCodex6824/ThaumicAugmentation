@@ -71,7 +71,7 @@ public class TransformerWardBlockRandomTick extends Transformer {
                 update.instructions.insert(insertAfter, new InsnNode(Opcodes.POP));
                 update.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ISTORE, 20));
                 update.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS_COMMON,
                         "checkWardRandomTick",
                         "(Lnet/minecraft/world/WorldServer;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)Z",
                         false

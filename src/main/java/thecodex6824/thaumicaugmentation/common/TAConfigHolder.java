@@ -21,10 +21,10 @@
 package thecodex6824.thaumicaugmentation.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.config.Config;
@@ -35,10 +35,8 @@ import net.minecraftforge.common.config.Config.RangeInt;
 import net.minecraftforge.common.config.Config.RequiresMcRestart;
 import net.minecraftforge.common.config.Config.Type;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAConfig.TileWardMode;
@@ -361,23 +359,9 @@ public final class TAConfigHolder {
     public static boolean removeListener(Runnable r) {
         return listeners.remove(r);
     }
-
-    @SubscribeEvent
-    public static void onConfigChanged(OnConfigChangedEvent event) {
-        if (event.getModID().equals(ThaumicAugmentationAPI.MODID)) {
-            syncLocally();
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-                if (Minecraft.getMinecraft().isSingleplayer())
-                    loadConfigValues(Side.SERVER);
-                else
-                    loadConfigValues(Side.CLIENT);
-            }
-            else
-                loadConfigValues(Side.SERVER);
-            
-            for (Runnable r : listeners)
-                r.run();
-        }
+    
+    public static Collection<Runnable> getListeners() {
+        return listeners;
     }
 
     public static void loadConfigValues(Side side) {

@@ -47,7 +47,7 @@ public class TransformerThaumostaticHarnessSprintCheck extends Transformer {
                 sprint.instructions.insert(insertAfter, new InsnNode(Opcodes.SWAP));
                 sprint.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
                 sprint.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS_CLIENT,
                         "checkPlayerSprintState",
                         "(Lnet/minecraft/client/entity/EntityPlayerSP;Z)Z",
                         false

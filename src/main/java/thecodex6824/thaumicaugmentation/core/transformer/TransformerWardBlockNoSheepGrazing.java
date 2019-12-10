@@ -52,7 +52,7 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
                 AbstractInsnNode grassAfter = nom.instructions.get(normalGrass);
                 nom.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
                 nom.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS_COMMON,
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false
@@ -64,7 +64,7 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
                 
                 nom.instructions.insert(grassAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) grassAfter).label));
                 nom.instructions.insert(grassAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS_COMMON,
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false

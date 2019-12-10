@@ -31,6 +31,9 @@ public final class TransformUtil {
 
     private TransformUtil() {}
     
+    public static final String HOOKS_COMMON = "thecodex6824/thaumicaugmentation/common/internal/TAHooksCommon";
+    public static final String HOOKS_CLIENT = "thecodex6824/thaumicaugmentation/common/internal/TAHooksClient";
+    
     public static String correctNameForRuntime(String deobf, String srg) {
         // "runtime deobf" refers to the srg names being used, not the dev ones
         return ThaumicAugmentationCore.isRuntimeDeobfEnabled() ? srg : deobf;

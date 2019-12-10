@@ -38,6 +38,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -61,7 +62,9 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.ICaster;
+import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.client.fx.FXDispatcher;
+import thaumcraft.common.golems.client.gui.SealBaseGUI;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.lib.events.EssentiaHandler;
 import thaumcraft.common.lib.events.EssentiaHandler.EssentiaSourceFX;
@@ -86,9 +89,14 @@ import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
+import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageClient;
+import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
+import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
 import thecodex6824.thaumicaugmentation.client.model.BuiltInModel;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
 import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
@@ -106,6 +114,7 @@ import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderVoidRechargeP
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
+import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
@@ -136,6 +145,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
+import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 
 public class ClientProxy extends ServerProxy {
 
@@ -153,6 +163,11 @@ public class ClientProxy extends ServerProxy {
     }
     
     @Override
+    public IWardStorage createWardStorageInstance(World world) {
+        return world.isRemote ? new WardStorageClient() : new WardStorageServer();
+    }
+    
+    @Override
     public void registerRenderableImpetusNode(IImpetusNode node) {
         ImpetusRenderingManager.registerRenderableNode(node);
     }
@@ -165,6 +180,25 @@ public class ClientProxy extends ServerProxy {
     @Override
     public boolean isOpenToLAN() {
         return Minecraft.getMinecraft().getIntegratedServer() != null && Minecraft.getMinecraft().getIntegratedServer().getPublic();
+    }
+    
+    @Override
+    public boolean isSingleplayer() {
+        return Minecraft.getMinecraft().isSingleplayer();
+    }
+    
+    @Override
+    public Object getClientGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        switch (TAInventory.values()[ID]) {
+            case WARDED_CHEST: return new GUIWardedChest(getServerGUIElement(ID, player, world, x, y, z), player.inventory);
+            case ARCANE_TERRAFORMER: return new GUIArcaneTerraformer((ContainerArcaneTerraformer) getServerGUIElement(ID, player, world, x, y, z));
+            default: return null;
+        }
+    }
+    
+    @Override
+    public Object getSealGUI(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal) {
+        return new SealBaseGUI(player.inventory, world, seal);
     }
     
     @Override

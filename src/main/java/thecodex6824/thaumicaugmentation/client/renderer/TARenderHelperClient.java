@@ -218,5 +218,26 @@ public class TARenderHelperClient implements ITARenderHelper {
         GlStateManager.disableBlend();
         GL11.glPopMatrix();
     }
+    
+    @Override
+    public void renderWispyMotes(World world, double x, double y, double z, double dx, double dy, double dz, int age,
+            float r, float g, float b, float gravity) {
+        
+        FXDispatcher.INSTANCE.drawWispyMotes(x, y, z, dx, dy, dz, age, r, g, b, gravity);
+    }
+    
+    @Override
+    public void renderFireMote(World world, float x, float y, float z, float vx, float vy, float vz, float r, float g,
+            float b, float a, float scale) {
+        
+        FXDispatcher.INSTANCE.drawFireMote(x, y, z, vx, vy, vz, r, g, b, a, scale);
+    }
+    
+    @Override
+    public void renderSmokeSpiral(World world, double x, double y, double z, float rad, int start, int minY,
+            int color) {
+        
+        FXDispatcher.INSTANCE.smokeSpiral(x, y, z, rad, start, minY, color);
+    }
 
 }

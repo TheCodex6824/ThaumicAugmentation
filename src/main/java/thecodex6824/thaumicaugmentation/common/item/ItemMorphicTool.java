@@ -29,7 +29,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -58,6 +57,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.items.IWarpingGear;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderMorphicTool;
@@ -128,7 +128,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
@@ -300,6 +300,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean hasEffect(ItemStack stack) {
         ItemStack func = getTool(stack).getFunctionalStack();
         return func.getItem().hasEffect(func);
@@ -533,6 +534,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {}
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerModels() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(
                 "ta_special:morphic_tool", "inventory"));

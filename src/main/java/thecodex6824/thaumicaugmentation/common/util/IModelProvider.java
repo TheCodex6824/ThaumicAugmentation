@@ -20,8 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.common.util;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 public interface IModelProvider<T> {
 
+    @SideOnly(Side.CLIENT)
     public void registerModels();
 
 }

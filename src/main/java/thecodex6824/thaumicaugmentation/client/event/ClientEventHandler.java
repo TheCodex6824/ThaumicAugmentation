@@ -36,6 +36,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -46,6 +47,7 @@ import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IFocusElement;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.items.casters.ItemFocus;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
@@ -55,6 +57,7 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
+import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public final class ClientEventHandler {
@@ -178,6 +181,20 @@ public final class ClientEventHandler {
                     }
                 }
             }
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onConfigChanged(OnConfigChangedEvent event) {
+        if (event.getModID().equals(ThaumicAugmentationAPI.MODID)) {
+            TAConfigHolder.syncLocally();
+            if (ThaumicAugmentation.proxy.isSingleplayer())
+                TAConfigHolder.loadConfigValues(Side.SERVER);
+            else
+                TAConfigHolder.loadConfigValues(Side.CLIENT);
+            
+            for (Runnable r : TAConfigHolder.getListeners())
+                r.run();
         }
     }
     

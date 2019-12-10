@@ -48,7 +48,7 @@ public class TransformerWardBlockFlammability extends Transformer {
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(fire, ret, Opcodes.IRETURN)) != -1) {
                 AbstractInsnNode insertAfter = fire.instructions.get(ret).getPrevious();
                 fire.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS_COMMON,
                         "checkWardFlammability",
                         "(ILnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)I",
                         false

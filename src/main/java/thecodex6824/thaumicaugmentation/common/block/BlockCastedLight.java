@@ -41,7 +41,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.aspects.Aspect;
-import thaumcraft.client.fx.FXDispatcher;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
@@ -182,7 +182,7 @@ public class BlockCastedLight extends BlockTABase implements ILightSourceBlock, 
     public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
         if (!TAConfig.reducedEffects.getValue() && rand.nextBoolean()) {
             int color = Aspect.LIGHT.getColor();
-            FXDispatcher.INSTANCE.drawWispyMotes(pos.getX() + 0.5F + rand.nextGaussian() / 4, pos.getY() + 0.5F + rand.nextGaussian() / 4,
+            ThaumicAugmentation.proxy.getRenderHelper().renderWispyMotes(world, pos.getX() + 0.5F + rand.nextGaussian() / 4, pos.getY() + 0.5F + rand.nextGaussian() / 4,
                     pos.getZ() + 0.5F + rand.nextGaussian() / 4, 0, 0, 0, 40, ((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 0.01F);
         }
     }

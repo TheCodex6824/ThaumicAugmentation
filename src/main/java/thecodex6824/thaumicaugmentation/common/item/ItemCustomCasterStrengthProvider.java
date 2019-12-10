@@ -79,6 +79,7 @@ public class ItemCustomCasterStrengthProvider extends ItemTABase {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerModels() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(
                 "ta_special:strength_provider", "inventory"));

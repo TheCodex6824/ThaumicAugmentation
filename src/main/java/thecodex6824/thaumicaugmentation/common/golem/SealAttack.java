@@ -46,9 +46,8 @@ import thaumcraft.api.golems.seals.ISealConfigToggles;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.api.golems.seals.ISealGui;
 import thaumcraft.api.golems.tasks.Task;
-import thaumcraft.common.golems.client.gui.SealBaseContainer;
-import thaumcraft.common.golems.client.gui.SealBaseGUI;
 import thaumcraft.common.golems.tasks.TaskHandler;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
 public class SealAttack implements ISeal, ISealGui {
@@ -161,13 +160,13 @@ public class SealAttack implements ISeal, ISealGui {
     
     @Override
     public Object returnContainer(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal) {
-        return new SealBaseContainer(player.inventory, world, seal);
+        return ThaumicAugmentation.proxy.getSealContainer(world, player, pos, face, seal);
     }
     
     @Override
     @SideOnly(Side.CLIENT)
     public Object returnGui(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal) {
-        return new SealBaseGUI(player.inventory, world, seal);
+        return ThaumicAugmentation.proxy.getSealGUI(world, player, pos, face, seal);
     }
     
     @Override

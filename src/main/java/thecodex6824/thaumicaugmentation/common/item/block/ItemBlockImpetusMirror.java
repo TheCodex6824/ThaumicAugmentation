@@ -46,6 +46,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -141,6 +143,7 @@ public class ItemBlockImpetusMirror extends ItemBlock implements IModelProvider<
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerModels() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName().toString(), "inventory"));
     }

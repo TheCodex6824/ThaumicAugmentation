@@ -22,10 +22,11 @@ package thecodex6824.thaumicaugmentation.api.warded;
 
 import java.util.Arrays;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 
 /**
@@ -130,24 +131,26 @@ public class WardStorageClient implements IWardStorageClient {
     
     @Override
     public void setWard(BlockPos pos, ClientWardStorageValue val) {
-        BlockWardEvent.WardedClient event = new BlockWardEvent.WardedClient.Pre(FMLClientHandler.instance().getClient().world, pos, val);
+        World world = Minecraft.getMinecraft().world;
+        BlockWardEvent.WardedClient event = new BlockWardEvent.WardedClient.Pre(world, pos, val);
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.isCanceled()) {
             if (manager.isNullStorage())
                 manager = new StorageManagersClient.StorageManager2Bits();
             
             manager.setOwner(pos, val);
-            MinecraftForge.EVENT_BUS.post(new BlockWardEvent.WardedClient.Post(FMLClientHandler.instance().getClient().world, pos, val));
+            MinecraftForge.EVENT_BUS.post(new BlockWardEvent.WardedClient.Post(world, pos, val));
         }
     }
     
     @Override
     public void clearWard(BlockPos pos) {
-        BlockWardEvent.DewardedClient event = new BlockWardEvent.DewardedClient.Pre(FMLClientHandler.instance().getClient().world, pos);
+        World world = Minecraft.getMinecraft().world;
+        BlockWardEvent.DewardedClient event = new BlockWardEvent.DewardedClient.Pre(world, pos);
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.isCanceled()) {
             manager.setOwner(pos, ClientWardStorageValue.EMPTY);
-            MinecraftForge.EVENT_BUS.post(new BlockWardEvent.DewardedClient.Post(FMLClientHandler.instance().getClient().world, pos));
+            MinecraftForge.EVENT_BUS.post(new BlockWardEvent.DewardedClient.Post(world, pos));
         }
     }
     

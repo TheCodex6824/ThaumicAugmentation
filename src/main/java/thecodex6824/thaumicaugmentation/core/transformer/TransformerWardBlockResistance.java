@@ -49,7 +49,7 @@ public class TransformerWardBlockResistance extends Transformer {
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(resistance, ret, Opcodes.FRETURN)) != -1) {
                 AbstractInsnNode insertAfter = resistance.instructions.get(ret).getPrevious();
                 resistance.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS_COMMON,
                         "checkWardResistance",
                         "(FLnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F",
                         false

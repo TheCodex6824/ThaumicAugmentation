@@ -67,9 +67,9 @@ import net.minecraftforge.oredict.OreDictionary;
 import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.api.items.IWarpingGear;
 import thaumcraft.api.items.ItemsTC;
-import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.enchantment.EnumInfusionEnchantment;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
@@ -215,7 +215,7 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
                     player.getEntityWorld().rand.nextInt(360), player.posY - 1.0, 0x221F2F), player);
         }
         else {
-            FXDispatcher.INSTANCE.smokeSpiral(player.posX, player.posY, player.posZ, player.width / 2.0F, 
+            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, player.posX, player.posY, player.posZ, player.width / 2.0F, 
                     player.getEntityWorld().rand.nextInt(360), (int) player.posY - 1, 0x221F2F);
         }
     }
@@ -241,6 +241,7 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerModels() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName().toString(), "inventory"));
     }

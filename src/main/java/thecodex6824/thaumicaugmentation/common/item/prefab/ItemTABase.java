@@ -26,6 +26,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
@@ -59,6 +61,7 @@ public class ItemTABase extends Item implements IModelProvider<Item> {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerModels() {
         if (subItemNames.length > 0) {
             for (int i = 0; i < subItemNames.length; ++i) {

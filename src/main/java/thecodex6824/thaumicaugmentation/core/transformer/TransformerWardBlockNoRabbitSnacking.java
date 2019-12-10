@@ -50,7 +50,7 @@ public class TransformerWardBlockNoRabbitSnacking extends Transformer {
                 AbstractInsnNode insertAfter = nom.instructions.get(ret);
                 nom.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
                 nom.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS_COMMON,
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false

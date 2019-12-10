@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 
 import baubles.api.BaubleType;
 import baubles.api.cap.BaubleItem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -35,6 +34,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.items.IRechargable;
 import thaumcraft.api.items.RechargeHelper;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
@@ -253,7 +253,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable 
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 

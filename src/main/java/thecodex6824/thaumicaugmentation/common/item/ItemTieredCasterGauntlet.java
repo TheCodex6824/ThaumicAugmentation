@@ -32,7 +32,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -83,6 +82,7 @@ import thaumcraft.common.lib.network.misc.PacketAuraToClient;
 import thaumcraft.common.lib.utils.BlockUtils;
 import thaumcraft.common.world.aura.AuraChunk;
 import thaumcraft.common.world.aura.AuraHandler;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -540,7 +540,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
@@ -560,7 +560,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
                     toAdd.setTagCompound(new NBTTagCompound());
                     setDyedColor(toAdd, getDefaultDyedColorForMeta(i));
                     
-                    if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer())
+                    if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer())
                         toAdd.getTagCompound().setTag("cap", ((AugmentableItem) toAdd.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).serializeNBT());
                     
                     items.add(toAdd);

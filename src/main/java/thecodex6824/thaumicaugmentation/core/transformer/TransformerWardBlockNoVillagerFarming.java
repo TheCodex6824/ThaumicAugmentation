@@ -50,7 +50,7 @@ public class TransformerWardBlockNoVillagerFarming extends Transformer {
                 AbstractInsnNode insertAfter = farm.instructions.get(plant);
                 farm.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
                 farm.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS_COMMON,
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false
@@ -61,7 +61,7 @@ public class TransformerWardBlockNoVillagerFarming extends Transformer {
                 insertAfter = farm.instructions.get(harvest);
                 farm.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
                 farm.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS_COMMON,
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false

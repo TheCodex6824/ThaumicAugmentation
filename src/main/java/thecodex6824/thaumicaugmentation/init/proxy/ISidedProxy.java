@@ -22,12 +22,19 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 
 import com.google.common.collect.ImmutableMap;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import thaumcraft.api.golems.seals.ISealEntity;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
+import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public interface ISidedProxy {
@@ -36,11 +43,23 @@ public interface ISidedProxy {
 
     public ITARenderHelper getRenderHelper();
     
+    public IWardStorage createWardStorageInstance(World world);
+    
+    public Container getServerGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z);
+    
+    public Object getClientGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z);
+    
+    public Object getSealContainer(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal);
+    
+    public Object getSealGUI(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal);
+    
     public void registerRenderableImpetusNode(IImpetusNode node);
     
     public boolean deregisterRenderableImpetusNode(IImpetusNode node);
     
     public boolean isOpenToLAN();
+    
+    public boolean isSingleplayer();
     
     public void handlePacketClient(IMessage message, MessageContext context);
 

@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
@@ -95,8 +95,8 @@ public class ItemFractureLocator extends ItemTABase {
             int[] pos = stack.getTagCompound().getIntArray("pos");
             if (pos.length == 3) {
                 Vec3d fracture = new Vec3d(pos[0], pos[1], pos[2]);
-                Entity entity = stack.getItemFrame() != null ? stack.getItemFrame() : FMLClientHandler.instance().getClientPlayerEntity();
-                float partialTicks = FMLClientHandler.instance().getClient().getRenderPartialTicks();
+                Entity entity = stack.getItemFrame() != null ? stack.getItemFrame() : Minecraft.getMinecraft().player;
+                float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();
                 Vec3d playerPos = entity.getPositionEyes(partialTicks);
                 double optimalAngle = normalize(Math.atan2(fracture.z + 0.5 - playerPos.z, fracture.x + 0.5 - playerPos.x));
                 double currentYaw = getLookYaw(entity) * Math.PI / 180.0;

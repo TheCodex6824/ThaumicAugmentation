@@ -20,75 +20,20 @@
 
 package thecodex6824.thaumicaugmentation.common.internal;
 
-import java.util.Random;
-
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IThaumostaticHarnessAugment;
-import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
 
-public class TAHooks {
+public final class TAHooksClient {
 
-    private static boolean hasWard(World world, BlockPos pos) {
-        if (world != null && pos != null && world.getChunkProvider() != null && world.isBlockLoaded(pos)) {
-            Chunk chunk = world.getChunk(pos);
-            if (chunk != null) {
-                IWardStorage ward = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (ward != null)
-                    return ward.hasWard(pos);
-            }
-        }
-        
-        return false;
-    }
-    
-    public static float checkWardHardness(float oldHardness, World world, BlockPos pos) {
-        return hasWard(world, pos) ? -1.0F : oldHardness;
-    }
-    
-    public static float checkWardResistance(float oldResistance, World world, BlockPos pos) {
-        return hasWard(world, pos) ? 6000000.0F : oldResistance;
-    }
-    
-    public static int checkWardFlammability(int oldFlammability, IBlockAccess access, BlockPos pos) {
-        if (oldFlammability == 0)
-            return 0;
-        else if (access instanceof World)
-            return hasWard((World) access, pos) ? 0 : oldFlammability;
-        else
-            return oldFlammability;
-    }
-    
-    public static int checkWardFireEncouragement(int oldEncouragement, IBlockAccess access, BlockPos pos) {
-        if (oldEncouragement == 0)
-            return 0;
-        else if (access instanceof World)
-            return hasWard((World) access, pos) ? 0 : oldEncouragement;
-        else
-            return oldEncouragement;
-    }
-    
-    public static boolean checkWardRandomTick(WorldServer world, BlockPos pos, IBlockState state, Random rand) {
-        return !hasWard(world, pos);
-    }
-    
-    public static boolean checkWardGeneric(World world, BlockPos pos) {
-        return !hasWard(world, pos);
-    }
+    private TAHooksClient() {}
     
     public static boolean checkPlayerSprintState(EntityPlayerSP player, boolean sprint) {
         if (sprint && !player.isCreative() && !player.isSpectator() && player.capabilities.isFlying) {

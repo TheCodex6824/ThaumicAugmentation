@@ -61,9 +61,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.network.fx.PacketFXShield;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.entity.ICastedEntity;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
@@ -372,7 +372,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                     float g = ((color >> 8) & 0xFF) / 255.0F;
                     float b = (color & 0xFF) / 255.0F;
                     for (int i = 0; i < 2; ++i) {
-                        FXDispatcher.INSTANCE.drawFireMote((float) (box.minX + rand.nextFloat() * xDiff), (float) (box.minY + rand.nextFloat() * yDiff),
+                        ThaumicAugmentation.proxy.getRenderHelper().renderFireMote(world, (float) (box.minX + rand.nextFloat() * xDiff), (float) (box.minY + rand.nextFloat() * yDiff),
                                 (float) (box.minZ + rand.nextFloat() * zDiff), (float) motionX, 0.05F, (float) motionZ,
                                 r, g, b, 0.35F, 1.5F);
                     }

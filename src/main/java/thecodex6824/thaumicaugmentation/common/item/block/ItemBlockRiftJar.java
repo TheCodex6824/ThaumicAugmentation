@@ -36,6 +36,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
@@ -101,6 +103,7 @@ public class ItemBlockRiftJar extends ItemBlock implements IModelProvider<Item> 
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerModels() {
         setTileEntityItemStackRenderer(new RenderItemBlockRiftJar());
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(
