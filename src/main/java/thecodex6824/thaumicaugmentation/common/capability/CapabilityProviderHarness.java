@@ -32,12 +32,12 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 
-public class CapabilityProviderThaumostaticHarness implements ICapabilitySerializable<NBTTagCompound> {
+public class CapabilityProviderHarness implements ICapabilitySerializable<NBTTagCompound> {
 
     private AugmentableItem augmentable;
     private BaubleItem bauble;
     
-    public CapabilityProviderThaumostaticHarness(AugmentableItem a, BaubleItem b) {
+    public CapabilityProviderHarness(AugmentableItem a, BaubleItem b) {
         augmentable = a;
         bauble = b;
     }

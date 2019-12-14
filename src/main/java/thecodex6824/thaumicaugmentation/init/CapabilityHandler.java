@@ -23,6 +23,9 @@ package thecodex6824.thaumicaugmentation.init;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -34,13 +37,17 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import thaumcraft.api.blocks.BlocksTC;
+import thaumcraft.common.blocks.basic.BlockBannerTCItem;
 import thaumcraft.common.entities.EntityFluxRift;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.IPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.PortalState;
@@ -70,6 +77,7 @@ import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
+import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProviderNoSave;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
@@ -352,6 +360,18 @@ public final class CapabilityHandler {
             }
             
         }, ImpetusLinker::new);
+    }
+    
+    @SubscribeEvent
+    public static void onAttachCapabilitiesItemStack(AttachCapabilitiesEvent<ItemStack> event) {
+        if (event.getObject().getItem() == Items.BANNER || event.getObject().getItem() == ItemBlock.getItemFromBlock(BlocksTC.bannerCrimsonCult) || event.getObject().getItem() instanceof BlockBannerTCItem) {
+            event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "elytra_harness_augment"), new SimpleCapabilityProviderNoSave<IAugment>(new IElytraHarnessAugment() {
+                @Override
+                public boolean isCosmetic() {
+                    return true;
+                }
+            }, CapabilityAugment.AUGMENT));
+        }
     }
     
     @SubscribeEvent

@@ -55,6 +55,8 @@ item.thaumicaugmentation.impetus_linker.name=Impetus Resonator
 item.thaumicaugmentation.thaumostatic_harness.name=Thaumostatic Harness
 item.thaumicaugmentation.thaumostatic_harness_augment.gyroscope.name=Gyroscope Upgrade
 item.thaumicaugmentation.thaumostatic_harness_augment.girdle.name=Girdle Upgrade
+item.thaumicaugmentation.elytra_harness.name=Elytra Harness
+item.thaumicaugmentation.elytra_harness_augment.impetus_booster.name=Impetus Boost Upgrade
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld

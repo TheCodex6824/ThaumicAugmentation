@@ -80,6 +80,8 @@ import thecodex6824.thaumicaugmentation.common.item.ItemBiomeSelector;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
+import thecodex6824.thaumicaugmentation.common.item.ItemElytraHarness;
+import thecodex6824.thaumicaugmentation.common.item.ItemElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpetusLinker;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
@@ -220,6 +222,8 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemBiomeSelector(), "biome_selector").setCreativeTab(TAItems.BIOME_SELECTOR_CREATIVE_TAB));
         registry.register(setupItem(new ItemThaumostaticHarness(), "thaumostatic_harness"));
         registry.register(setupItem(new ItemThaumostaticHarnessAugment(), "thaumostatic_harness_augment"));
+        registry.register(setupItem(new ItemElytraHarness(), "elytra_harness"));
+        registry.register(setupItem(new ItemElytraHarnessAugment(), "elytra_harness_augment"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }

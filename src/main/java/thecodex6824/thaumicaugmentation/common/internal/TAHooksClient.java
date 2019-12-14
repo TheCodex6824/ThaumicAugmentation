@@ -24,12 +24,16 @@ import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketEntityAction;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IThaumostaticHarnessAugment;
+import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 
 public final class TAHooksClient {
 
@@ -54,6 +58,18 @@ public final class TAHooksClient {
         }
         
         return sprint;
+    }
+    
+    public static void checkElytra(ItemStack chestArmorStack, EntityPlayerSP player) {
+        // if regular elytra is also being worn, let vanilla send the packet
+        if (chestArmorStack.getItem() != Items.ELYTRA || !ItemElytra.isUsable(chestArmorStack)) {
+            IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+            if (baubles != null) {
+                ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
+                if (stack.getItem() instanceof IElytraCompat && ((IElytraCompat) stack.getItem()).allowElytraFlight(player, stack))
+                    player.connection.sendPacket(new CPacketEntityAction(player, CPacketEntityAction.Action.START_FALL_FLYING));
+            }
+        }
     }
     
 }

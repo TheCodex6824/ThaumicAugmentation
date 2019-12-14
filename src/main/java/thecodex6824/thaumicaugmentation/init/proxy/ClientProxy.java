@@ -64,6 +64,8 @@ import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.client.fx.FXDispatcher;
+import thaumcraft.client.fx.ParticleEngine;
+import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.golems.client.gui.SealBaseGUI;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.lib.events.EssentiaHandler;
@@ -185,6 +187,11 @@ public class ClientProxy extends ServerProxy {
     @Override
     public boolean isSingleplayer() {
         return Minecraft.getMinecraft().isSingleplayer();
+    }
+    
+    @Override
+    public boolean isJumpDown() {
+        return Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown();
     }
     
     @Override
@@ -342,6 +349,19 @@ public class ClientProxy extends ServerProxy {
                     
                     break;
                 }
+                case FIRE: {
+                    if (d.length == 5) {
+                        double x = d[0], y = d[1], z = d[2];
+                        float size = (float) d[3];
+                        int color = (int) d[4];
+                        float r = ((color >> 16) & 0xFF) / 255.0F;
+                        float g = ((color >> 8) & 0xFF) / 255.0F;
+                        float b = (color & 0xFF) / 255.0F;
+                        FXDispatcher.INSTANCE.drawFireMote((float) x, (float) y, (float) z, 0, 0, 0, r, g, b, 0.75F, size);
+                    }
+                    
+                    break;
+                }
                 case FIRE_EXPLOSION: {
                     if (d.length == 5) {
                         double x = d[0], y = d[1], z = d[2];
@@ -354,6 +374,28 @@ public class ClientProxy extends ServerProxy {
                             FXDispatcher.INSTANCE.drawFireMote((float) x, (float) y, (float) z, (rand.nextFloat() - rand.nextFloat()) / 10.0F,
                                     (rand.nextFloat() - rand.nextFloat()) / 10.0F, (rand.nextFloat() - rand.nextFloat()) / 10.0F, r, g, b, 0.75F, size);
                         }
+                    }
+                    
+                    break;
+                }
+                case GENERIC_SPHERE: {
+                    if (d.length == 5) {
+                        double x = d[0], y = d[1], z = d[2];
+                        float size = (float) d[3];
+                        int color = (int) d[4];
+                        float r = ((color >> 16) & 0xFF) / 255.0F;
+                        float g = ((color >> 8) & 0xFF) / 255.0F;
+                        float b = (color & 0xFF) / 255.0F;
+                        FXGeneric fx = new FXGeneric(Minecraft.getMinecraft().world, x, y, z, 0, 0, 0);
+                        fx.setRBGColorF(r, g, b);
+                        fx.setAlphaF(0.9F, 0.0F);
+                        fx.setGridSize(64);
+                        fx.setParticles(264, 8, 1);
+                        fx.setScale(size);
+                        fx.setLayer(1);
+                        fx.setLoop(true);
+                        fx.setRotationSpeed(rand.nextFloat(), rand.nextBoolean() ? 1.0F : -1.0F);
+                        ParticleEngine.addEffect(Minecraft.getMinecraft().world, fx);
                     }
                     
                     break;

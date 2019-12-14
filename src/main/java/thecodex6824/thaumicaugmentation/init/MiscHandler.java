@@ -20,11 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
+import baubles.api.BaublesApi;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.FocusEngine;
 import thaumcraft.common.golems.seals.SealHandler;
@@ -56,6 +60,18 @@ public final class MiscHandler {
         AugmentAPI.addAugmentableItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
             if (entity instanceof EntityLivingBase)
                 return ((EntityLivingBase) entity).getEquipmentAndArmor();
+            
+            return Collections.<ItemStack>emptyList();
+        });
+        AugmentAPI.addAugmentableItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "baubles"), (entity) -> {
+            if (entity instanceof EntityPlayer) {
+                IItemHandler handler = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+                ArrayList<ItemStack> stacks = new ArrayList<>(Collections.nCopies(handler.getSlots(), ItemStack.EMPTY));
+                for (int i = 0; i < stacks.size(); ++i)
+                    stacks.set(i, handler.getStackInSlot(i));
+                
+                return stacks;
+            }
             
             return Collections.<ItemStack>emptyList();
         });

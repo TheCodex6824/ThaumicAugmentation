@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -114,6 +115,34 @@ public final class TransformUtil {
                         method.owner.equals(owningClass))
                     return i;
             }
+        }
+        
+        return -1;
+    }
+    
+    public static int findFirstLabel(MethodNode node, int startIndex) {
+        
+        if (startIndex < 0 || startIndex >= node.instructions.size())
+            return -1;
+        
+        for (int i = startIndex; i < node.instructions.size(); ++i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn instanceof LabelNode)
+                return i;
+        }
+        
+        return -1;
+    }
+    
+    public static int findLastLabel(MethodNode node, int endIndex) {
+        
+        if ((endIndex - 1) < 0 || (endIndex - 1) >= node.instructions.size())
+            return -1;
+        
+        for (int i = endIndex - 1; i >= 0; --i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn instanceof LabelNode)
+                return i;
         }
         
         return -1;

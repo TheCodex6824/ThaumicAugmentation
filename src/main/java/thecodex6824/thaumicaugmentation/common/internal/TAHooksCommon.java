@@ -22,7 +22,14 @@ package thecodex6824.thaumicaugmentation.common.internal;
 
 import java.util.Random;
 
+import baubles.api.BaubleType;
+import baubles.api.cap.BaublesCapabilities;
+import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -30,6 +37,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
+import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 
 public final class TAHooksCommon {
 
@@ -80,6 +88,31 @@ public final class TAHooksCommon {
     
     public static boolean checkWardGeneric(World world, BlockPos pos) {
         return !hasWard(world, pos);
+    }
+    
+    public static void checkElytra(ItemStack chestArmorStack, EntityPlayerMP player) {
+        IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+        if (baubles != null) {
+            ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
+            if (stack.getItem() instanceof IElytraCompat && ((IElytraCompat) stack.getItem()).allowElytraFlight(player, stack))
+                player.setElytraFlying();
+        }
+    }
+    
+    public static boolean updateElytraFlag(EntityLivingBase entity, boolean flag) {
+        if (flag)
+            return true;
+        else if (entity instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) entity;
+            IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+            if (baubles != null) {
+                ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
+                if (stack.getItem() instanceof IElytraCompat)
+                    return ((IElytraCompat) stack.getItem()).allowElytraFlight(player, stack);
+            }
+        }
+        
+        return false;
     }
     
 }

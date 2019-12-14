@@ -84,6 +84,7 @@ public class ItemThaumostaticHarnessAugment extends ItemTABase {
                     wearer.motionY *= factor;
                     wearer.motionZ *= factor;
                 }
+                
             };
         }
         else if (stack.getMetadata() == 1) {
@@ -116,6 +117,7 @@ public class ItemThaumostaticHarnessAugment extends ItemTABase {
                         wearer.motionZ *= 1.0199999F;
                     }
                 }
+                
             };
         }
         else {
@@ -142,6 +144,7 @@ public class ItemThaumostaticHarnessAugment extends ItemTABase {
                 
                 @Override
                 public void applyDrift(EntityPlayer wearer) {}
+                
             };
         }
     }

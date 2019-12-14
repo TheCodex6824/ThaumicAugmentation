@@ -42,7 +42,7 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
-import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderThaumostaticHarness;
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderHarness;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemThaumostaticHarness extends ItemTABase implements IRechargable {
@@ -119,7 +119,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable 
     @Override
     @Nullable
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-        CapabilityProviderThaumostaticHarness provider = new CapabilityProviderThaumostaticHarness(new AugmentableItem(1) {
+        CapabilityProviderHarness provider = new CapabilityProviderHarness(new AugmentableItem(1) {
             
             @Override
             public boolean isAugmentAcceptable(ItemStack augment, int slot) {
@@ -234,7 +234,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable 
     
     @Override
     public EnumChargeDisplay showInHud(ItemStack arg0, EntityLivingBase arg1) {
-        return IRechargable.EnumChargeDisplay.NORMAL;
+        return EnumChargeDisplay.NORMAL;
     }
     
     @Override

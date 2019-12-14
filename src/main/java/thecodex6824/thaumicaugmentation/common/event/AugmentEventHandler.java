@@ -30,6 +30,7 @@ import java.util.function.Function;
 import com.google.common.collect.Iterables;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -59,30 +60,31 @@ public final class AugmentEventHandler {
     private static WeakHashMap<Entity, ArrayList<ItemStack>> oldItems = new WeakHashMap<>();
     private static Set<Entity> hasAugments = Collections.newSetFromMap(new WeakHashMap<>());
     
-    @SubscribeEvent
-    public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+    public static void onEquipmentChange(EntityLivingBase entity) {
         int totalIndex = 0;
         for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
-            Iterable<ItemStack> stacks = func.apply(event.getEntity());
-            if (!oldItems.containsKey(event.getEntity()))
-                oldItems.put(event.getEntity(), new ArrayList<>(Collections.nCopies(Iterables.size(stacks), ItemStack.EMPTY)));
+            Iterable<ItemStack> stacks = func.apply(entity);
+            if (!oldItems.containsKey(entity))
+                oldItems.put(entity, new ArrayList<>(Collections.nCopies(Iterables.size(stacks), ItemStack.EMPTY)));
+            else if (oldItems.get(entity).size() < totalIndex + Iterables.size(stacks) + 1)
+                oldItems.get(entity).addAll(Collections.nCopies(Iterables.size(stacks), ItemStack.EMPTY));
             else {
                 int i = 0;
                 Iterator<ItemStack> iterator = stacks.iterator();
                 while (iterator.hasNext()) {
                     ItemStack current = iterator.next();
-                    ArrayList<ItemStack> oldList = oldItems.get(event.getEntity());
+                    ArrayList<ItemStack> oldList = oldItems.get(entity);
                     ItemStack old = oldList != null && oldList.size() > i ? oldList.get(i) : ItemStack.EMPTY;
                     if (!ItemStack.areItemStacksEqual(current, old)) {
                         if (old.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
-                            AugmentEventHelper.fireUnequipEvent(old.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), event.getEntity());
+                            AugmentEventHelper.fireUnequipEvent(old.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), entity);
                     
                         if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                            AugmentEventHelper.fireEquipEvent(current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), event.getEntity());
-                            hasAugments.add(event.getEntity());
-                            if (!event.getEntity().getEntityWorld().isRemote) {
-                                TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(event.getEntity().getEntityId(), totalIndex, current.getCapability(
-                                        CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getSyncNBT()), event.getEntity());
+                            AugmentEventHelper.fireEquipEvent(current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), entity);
+                            hasAugments.add(entity);
+                            if (!entity.getEntityWorld().isRemote) {
+                                TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(entity.getEntityId(), totalIndex, current.getCapability(
+                                        CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getSyncNBT()), entity);
                             }
                         }
                     
@@ -97,7 +99,12 @@ public final class AugmentEventHandler {
         }
         
         if (totalIndex == 0)
-            hasAugments.remove(event.getEntity());
+            hasAugments.remove(entity);
+    }
+    
+    @SubscribeEvent
+    public static void onEquipmentChangeEvent(LivingEquipmentChangeEvent event) {
+        onEquipmentChange(event.getEntityLiving());
     }
     
     @SubscribeEvent
@@ -113,6 +120,8 @@ public final class AugmentEventHandler {
                         AugmentEventHelper.fireTickEvent(cap, event.getEntity());
                         AugmentEventHelper.handleSync(cap, event.getEntity(), totalIndex);
                     }
+                    
+                    ++totalIndex;
                 }
             }
         }

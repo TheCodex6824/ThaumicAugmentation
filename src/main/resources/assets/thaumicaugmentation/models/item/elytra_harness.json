@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "thaumicaugmentation:items/harness_elytra",
+        "layer1": "thaumicaugmentation:items/material_harness_base"
+    }
+}

@@ -28,7 +28,10 @@ import org.objectweb.asm.tree.ClassNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerUpdateElytra;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFireEncouragement;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFlammability;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockHardness;
@@ -41,7 +44,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockRes
 
 public class TATransformer implements IClassTransformer {
 
-    private static final ArrayList<ITransformer> TRANSFORMERS = new ArrayList<>(5);
+    private static final ArrayList<ITransformer> TRANSFORMERS = new ArrayList<>(11);
     
     static {
         TRANSFORMERS.add(new TransformerWardBlockHardness());
@@ -56,7 +59,11 @@ public class TATransformer implements IClassTransformer {
         TRANSFORMERS.add(new TransformerWardBlockNoRabbitSnacking());
         TRANSFORMERS.add(new TransformerWardBlockNoSheepGrazing());
         TRANSFORMERS.add(new TransformerWardBlockNoVillagerFarming());
+        
         TRANSFORMERS.add(new TransformerThaumostaticHarnessSprintCheck());
+        TRANSFORMERS.add(new TransformerElytraClientCheck());
+        TRANSFORMERS.add(new TransformerElytraServerCheck());
+        TRANSFORMERS.add(new TransformerUpdateElytra());
     }
     
     public TATransformer() {}
@@ -86,7 +93,7 @@ public class TATransformer implements IClassTransformer {
                         ThaumicAugmentationCore.getLogger().error("A class transformer has failed! This is probably very bad...");
                         ThaumicAugmentationCore.getLogger().error("Class: " + transformedName + ", Transformer: " + transformer.getClass());
                         if (transformer.getRaisedException() != null) {
-                            ThaumicAugmentationCore.getLogger().error("Additional information:", transformer.getRaisedException());
+                            ThaumicAugmentationCore.getLogger().error("Additional information: ", transformer.getRaisedException());
                             throw transformer.getRaisedException();
                         }
                         else

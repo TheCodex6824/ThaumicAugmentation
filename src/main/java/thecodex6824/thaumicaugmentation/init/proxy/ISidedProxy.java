@@ -61,6 +61,8 @@ public interface ISidedProxy {
     
     public boolean isSingleplayer();
     
+    public boolean isJumpDown();
+    
     public void handlePacketClient(IMessage message, MessageContext context);
 
     public void handlePacketServer(IMessage message, MessageContext context);

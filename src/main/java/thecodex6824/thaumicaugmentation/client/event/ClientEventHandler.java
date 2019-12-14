@@ -69,7 +69,7 @@ public final class ClientEventHandler {
         for (ItemStack augment : cap.getAllAugments()) {
             if (augment.hasCapability(CapabilityAugment.AUGMENT, null)) {
                 LinkedList<String> thisTooltip = new LinkedList<>();
-                thisTooltip.add(new TextComponentTranslation(augment.getItem().getTranslationKey(augment) + ".name").getFormattedText());
+                thisTooltip.add(augment.getDisplayName());
                 IAugment aug = augment.getCapability(CapabilityAugment.AUGMENT, null);
                 if (aug.hasAdditionalAugmentTooltip())
                     aug.appendAdditionalAugmentTooltip(thisTooltip);
