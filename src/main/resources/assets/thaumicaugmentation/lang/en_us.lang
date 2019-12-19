@@ -27,6 +27,7 @@ tile.thaumicaugmentation.rift_mover_output.name=Metaspatial Extruder
 tile.thaumicaugmentation.void_recharge_pedestal.name=Void Recharge Pedestal
 tile.thaumicaugmentation.impetus_mirror.name=Impetus Mirror
 tile.thaumicaugmentation.arcane_terraformer.name=Arcane Terraformer
+tile.thaumicaugmentation.rift_monitor.name=Extradimensional Monitor
 
 item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
 item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet
@@ -57,6 +58,7 @@ item.thaumicaugmentation.thaumostatic_harness_augment.gyroscope.name=Gyroscope U
 item.thaumicaugmentation.thaumostatic_harness_augment.girdle.name=Girdle Upgrade
 item.thaumicaugmentation.elytra_harness.name=Elytra Harness
 item.thaumicaugmentation.elytra_harness_augment.impetus_booster.name=Impetus Boost Upgrade
+item.thaumicaugmentation.autocaster_placer.name=Autocaster
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld
@@ -77,6 +79,7 @@ golem.prop.sight=Require Sight
 
 entity.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
 entity.thaumicaugmentation.shield_focus.name=Void Shield
+entity.thaumicaugmentation.autocaster.name=Autocaster
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
 itemGroup.thaumicaugmentation.biome_selector=TA: Biome Foci

@@ -34,6 +34,36 @@ public class FluxRiftReconstructor {
     protected float[] widths;
     protected AxisAlignedBB dimensions;
     
+    protected FluxRiftReconstructor(int riftSeed, int riftSize, Vec3d[] rPoints, float[] rWidths) {
+        seed = riftSeed;
+        size = riftSize;
+        points = rPoints;
+        widths = rWidths;
+        
+        double x1 = Double.MAX_VALUE;
+        double y1 = Double.MAX_VALUE;
+        double z1 = Double.MAX_VALUE;
+        double x2 = Double.MIN_VALUE;
+        double y2 = Double.MIN_VALUE;
+        double z2 = Double.MIN_VALUE;
+        for (Vec3d point : points) {
+            if (point.x < x1)
+                x1 = point.x;
+            if (point.y < y1)
+                y1 = point.y;
+            if (point.z < z1)
+                z1 = point.z;
+            if (point.x > x2)
+                x2 = point.x;
+            if (point.y > y2)
+                y2 = point.y;
+            if (point.z > z2)
+                z2 = point.z;
+        }
+        
+        dimensions = new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+    }
+    
     public FluxRiftReconstructor(int riftSeed, int riftSize) {
         seed = riftSeed;
         size = riftSize;
@@ -119,5 +149,21 @@ public class FluxRiftReconstructor {
     
     public AxisAlignedBB getBoundingBox() {
         return dimensions;
+    }
+    
+    public FluxRiftReconstructor onlyCenterPoints(int num) {
+        if (num < 0 || num > points.length)
+            throw new IndexOutOfBoundsException("Requested " + num + " rift points when max is " + points.length);
+        else if (num % 2 != 0)
+            throw new IllegalArgumentException("Point number must be multiple of 2");
+            
+        Vec3d[] newPoints = new Vec3d[num];
+        float[] newWidths = new float[num];
+        for (int i = 0; i < num; ++i) {
+            newPoints[i] = points[i + (points.length / 2 - num / 2)];
+            newWidths[i] = widths[i + (points.length / 2 - num / 2)];
+        }
+        
+        return new FluxRiftReconstructor(seed, size, newPoints, newWidths);
     }
 }

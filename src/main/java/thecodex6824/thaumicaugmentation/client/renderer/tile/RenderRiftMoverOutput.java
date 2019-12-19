@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer.tile;
 
+import com.sasmaster.glelwjgl.java.CoreGLE;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -37,6 +39,7 @@ public class RenderRiftMoverOutput extends TileEntitySpecialRenderer<TileRiftMov
     public void render(TileRiftMoverOutput te, double x, double y, double z, float partialTicks, int destroyStage,
             float alpha) {
         
+        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
         if (EntityUtils.hasGoggles(Minecraft.getMinecraft().player)) {
             Vec3d origin = te.findLocalRiftPos();
             if (origin != null) {
@@ -50,7 +53,7 @@ public class RenderRiftMoverOutput extends TileEntitySpecialRenderer<TileRiftMov
                         //if (dir != null)
                         //    GlStateManager.rotate(dir.getHorizontalAngle(), 0F, 1.0F, 0F);
                         
-                        ThaumicAugmentation.proxy.getRenderHelper().renderFluxRiftSolidLayer(jar.getRift(), 0, partialTicks, 6, 0.55F, 0.55F, 0.55F, 0.6F);
+                        ThaumicAugmentation.proxy.getRenderHelper().renderFluxRiftSolidLayer(jar.getRift(), 0, partialTicks, 6, 0.55F, 0.55F, 0.55F, 0.6F, true, CoreGLE.TUBE_JN_ANGLE);
                         GlStateManager.popMatrix();
                     }
                 }

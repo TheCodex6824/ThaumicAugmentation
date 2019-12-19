@@ -30,8 +30,8 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 
 public class GUIWardedChest extends GuiContainer {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/generic_54.png");
-    private InventoryPlayer inv;
+    protected static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/generic_54.png");
+    protected InventoryPlayer inv;
 
     public GUIWardedChest(Container c, InventoryPlayer i) {
         super(c);

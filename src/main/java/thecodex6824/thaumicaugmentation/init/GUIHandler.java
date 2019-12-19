@@ -31,7 +31,8 @@ public class GUIHandler implements IGuiHandler {
     public enum TAInventory {
 
         WARDED_CHEST(0),
-        ARCANE_TERRAFORMER(1);
+        ARCANE_TERRAFORMER(1),
+        AUTOCASTER(2);
 
         private int id;
 

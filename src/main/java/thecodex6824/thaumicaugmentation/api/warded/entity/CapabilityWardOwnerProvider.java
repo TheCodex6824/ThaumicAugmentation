@@ -18,22 +18,16 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded;
+package thecodex6824.thaumicaugmentation.api.warded.entity;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
-/**
- * Base ward (focus) storage interface. There is only a single method for determining if
- * a block is warded, as the representation held by the client and server is different.
- * @author TheCodex6824
- */
-public interface IWardStorage {
+public class CapabilityWardOwnerProvider {
+
+    private CapabilityWardOwnerProvider() {}
     
-    /**
-     * Returns if the block at the given position has a ward with any owner.
-     * @param pos The position of the block to check
-     * @return If the block at the position is warded
-     */
-    public boolean hasWard(BlockPos pos);
+    @CapabilityInject(IWardOwnerProvider.class)
+    public static final Capability<IWardOwnerProvider> WARD_OWNER = null;
     
 }

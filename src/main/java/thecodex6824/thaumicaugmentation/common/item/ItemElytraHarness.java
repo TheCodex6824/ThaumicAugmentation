@@ -47,7 +47,7 @@ import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 
 public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRechargable {
 
-    protected static final int VIS_MAX = 75;
+    protected static final int VIS_MAX = 50;
     
     public ItemElytraHarness() {
         super();
@@ -89,6 +89,8 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
             
         }, new BaubleItem(BaubleType.BODY) {
             
+            protected boolean sync;
+            
             @Override
             public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
                 AugmentEventHandler.onEquipmentChange(player);
@@ -101,17 +103,30 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
             
             @Override
             public void onWornTick(ItemStack stack, EntityLivingBase entity) {
-                if ((entity.getTicksElytraFlying() + 1) % 20 == 0) {
-                    if (RechargeHelper.getCharge(stack) > 0)
-                        RechargeHelper.consumeCharge(stack, entity, 1);
-                    else if (stack.getItemDamage() < stack.getMaxDamage() - 1)
-                        stack.damageItem(1, entity);
+                if (!entity.world.isRemote) {
+                    if ((entity.getTicksElytraFlying() + 1) % 20 == 0) {
+                        if (RechargeHelper.getCharge(stack) > 0)
+                            RechargeHelper.consumeCharge(stack, entity, 1);
+                        else if (stack.getItemDamage() < stack.getMaxDamage() - 1) {
+                            stack.damageItem(1, entity);
+                            sync = true;
+                        }
+                    }
+                    
+                    if (entity.ticksExisted % 60 == 0 && entity.onGround) {
+                        if (stack.getItemDamage() > 0) {
+                            stack.damageItem(-1, entity);
+                            sync = true;
+                        }
+                    }
                 }
-                
-                if (entity.ticksExisted % 60 == 0 && !entity.isElytraFlying()) {
-                    if (stack.getItemDamage() > 0)
-                        stack.damageItem(-1, entity);
-                }
+            }
+            
+            @Override
+            public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
+                boolean res = sync;
+                sync = false;
+                return res;
             }
         });
         
@@ -123,7 +138,7 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     
     @Override
     public int getMaxCharge(ItemStack stack, EntityLivingBase entity) {
-        if (entity.isElytraFlying())
+        if (!entity.onGround)
             return RechargeHelper.getCharge(stack);
         else
             return VIS_MAX;

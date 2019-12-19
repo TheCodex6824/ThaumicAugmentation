@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded;
+package thecodex6824.thaumicaugmentation.api.warded.storage;
 
 import java.util.Arrays;
 

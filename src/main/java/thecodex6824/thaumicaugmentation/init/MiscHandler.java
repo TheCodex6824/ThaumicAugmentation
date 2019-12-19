@@ -34,6 +34,7 @@ import thaumcraft.api.casters.FocusEngine;
 import thaumcraft.common.golems.seals.SealHandler;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
+import thecodex6824.thaumicaugmentation.api.entity.AutocasterFocusRegistry;
 import thecodex6824.thaumicaugmentation.common.golem.SealAttack;
 import thecodex6824.thaumicaugmentation.common.golem.SealAttackAdvanced;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectLight;
@@ -75,6 +76,9 @@ public final class MiscHandler {
             
             return Collections.<ItemStack>emptyList();
         });
+        
+        AutocasterFocusRegistry.registerMaxDistance("thaumcraft.BOLT", 16.0);
+        AutocasterFocusRegistry.registerMaxDistance("thaumcraft.TOUCH", 4.0);
     }
 
 }

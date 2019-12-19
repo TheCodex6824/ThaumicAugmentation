@@ -56,6 +56,7 @@ public final class TABlocks {
     public static final Block VOID_RECHARGE_PEDESTAL = null;
     public static final Block IMPETUS_MIRROR = null;
     public static final Block ARCANE_TERRAFORMER = null;
+    public static final Block RIFT_MONITOR = null;
 
     /**
      * Returns all blocks in the mod.
@@ -66,7 +67,7 @@ public final class TABlocks {
                ARCANE_DOOR_SILVERWOOD, TEMPORARY_LIGHT, STONE, ARCANE_TRAPDOOR_WOOD, ARCANE_TRAPDOOR_METAL, 
                ARCANE_TRAPDOOR_SILVERWOOD, TAINT_FLOWER, IMPETUS_DRAINER, IMPETUS_RELAY, IMPETUS_DIFFUSER,
                IMPETUS_MATRIX, IMPETUS_MATRIX_BASE, RIFT_FEEDER, RIFT_MOVER_INPUT, RIFT_MOVER_OUTPUT,
-               RIFT_JAR, VOID_RECHARGE_PEDESTAL, IMPETUS_MIRROR, ARCANE_TERRAFORMER};
+               RIFT_JAR, VOID_RECHARGE_PEDESTAL, IMPETUS_MIRROR, ARCANE_TERRAFORMER, RIFT_MONITOR};
     }
 
 }

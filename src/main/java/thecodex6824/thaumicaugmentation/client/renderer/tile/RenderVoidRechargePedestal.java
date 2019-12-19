@@ -37,6 +37,7 @@ public class RenderVoidRechargePedestal extends TileEntitySpecialRenderer<TileVo
     public void render(TileVoidRechargePedestal te, double x, double y, double z, float partialTicks, int destroyStage,
             float alpha) {
         
+        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
         IItemHandler inv = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         if (inv != null) {
             ItemStack stack = inv.getStackInSlot(0);

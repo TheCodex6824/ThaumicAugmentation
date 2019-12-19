@@ -89,15 +89,16 @@ import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
-import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageClient;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
+import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.ClientWardStorageValue;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageClient;
+import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageClient;
+import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
 import thecodex6824.thaumicaugmentation.client.model.BuiltInModel;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
@@ -105,18 +106,22 @@ import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
 import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderAutocaster;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
 import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftJar;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMonitor;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
+import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
@@ -141,6 +146,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
@@ -195,10 +201,16 @@ public class ClientProxy extends ServerProxy {
     }
     
     @Override
+    public boolean isPvPEnabled() {
+        return Minecraft.getMinecraft().getIntegratedServer() != null && Minecraft.getMinecraft().getIntegratedServer().isPVPEnabled();
+    }
+    
+    @Override
     public Object getClientGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (TAInventory.values()[ID]) {
             case WARDED_CHEST: return new GUIWardedChest(getServerGUIElement(ID, player, world, x, y, z), player.inventory);
             case ARCANE_TERRAFORMER: return new GUIArcaneTerraformer((ContainerArcaneTerraformer) getServerGUIElement(ID, player, world, x, y, z));
+            case AUTOCASTER: return new GUIAutocaster((ContainerAutocaster) getServerGUIElement(ID, player, world, x, y, z));
             default: return null;
         }
     }
@@ -569,6 +581,12 @@ public class ClientProxy extends ServerProxy {
                 return new RenderFocusShield(manager);
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntityAutocaster.class, new IRenderFactory<EntityAutocaster>() {
+            @Override
+            public Render<? super EntityAutocaster> createRenderFor(RenderManager manager) {
+                return new RenderAutocaster(manager);
+            }
+        });
         
         TAModelLoader loader = new TAModelLoader();
         loader.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/strength_provider"),
@@ -594,6 +612,7 @@ public class ClientProxy extends ServerProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftMoverOutput.class, new RenderRiftMoverOutput());
         ClientRegistry.bindTileEntitySpecialRenderer(TileVoidRechargePedestal.class, new RenderVoidRechargePedestal());
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusMirror.class, new RenderImpetusMirror());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileRiftMonitor.class, new RenderRiftMonitor());
         registerItemColorHandlers();
         registerBlockColorHandlers();
         for (RenderPlayer render : Minecraft.getMinecraft().getRenderManager().getSkinMap().values())

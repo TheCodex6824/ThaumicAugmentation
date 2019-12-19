@@ -26,11 +26,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.ClientWardStorageValue;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorageClient;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
+import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.ClientWardStorageValue;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageClient;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageServer;
 
 /**
  * Event fired for all ward-focus related things. Subscribing to this will notify the callback

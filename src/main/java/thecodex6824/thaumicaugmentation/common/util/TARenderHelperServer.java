@@ -42,11 +42,10 @@ public class TARenderHelperServer implements ITARenderHelper {
             boolean ignoreGoggles) {}
     
     @Override
-    public void renderFluxRiftOutline(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel) {}
+    public void renderFluxRiftOutline(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType) {}
 
     @Override
-    public void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel,
-            float r, float g, float b, float a) {}
+    public void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType) {}
     
     @Override
     public void renderWispyMotes(World world, double x, double y, double z, double dx, double dy, double dz, int age,
@@ -59,5 +58,15 @@ public class TARenderHelperServer implements ITARenderHelper {
     @Override
     public void renderSmokeSpiral(World world, double x, double y, double z, float rad, int start, int minY,
             int color) {}
+    
+    @Override
+    public boolean shadersAvailable() {
+        return false;
+    }
+    
+    @Override
+    public boolean stencilAvailable() {
+        return false;
+    }
     
 }

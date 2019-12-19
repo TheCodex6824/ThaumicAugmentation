@@ -139,8 +139,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         dataManager.set(OWNER_ID, Optional.of(newOwner.getPersistentID()));
         ownerRef = new WeakReference<>(newOwner);
         Vec3d lookVec = newOwner.getLookVec();
-        lookVec = lookVec.scale(1.75);
-        setLocationAndAngles(newOwner.posX + lookVec.x, newOwner.posY + lookVec.y, newOwner.posZ + lookVec.z, newOwner.getRotationYawHead(), newOwner.rotationPitch);
+        lookVec = lookVec.scale(1.25);
+        setLocationAndAngles(newOwner.posX + lookVec.x, newOwner.posY - newOwner.getEyeHeight() + lookVec.y, newOwner.posZ + lookVec.z, newOwner.getRotationYawHead(), newOwner.rotationPitch);
     }
     
     @Override
@@ -345,16 +345,16 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                     }
                     
                     Vec3d lookVec = owner.getLookVec();
-                    lookVec = lookVec.scale(1.75);
-                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
+                    lookVec = lookVec.scale(1.5);
+                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + owner.getEyeHeight() - height / 2.0, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
                     motionX = owner.motionX;
                     motionY = owner.motionY;
                     motionZ = owner.motionZ;
                 }
                 else {
                     Vec3d lookVec = owner.getLook(Minecraft.getMinecraft().getRenderPartialTicks());
-                    lookVec = lookVec.scale(1.75);
-                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
+                    lookVec = lookVec.scale(1.5);
+                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + owner.getEyeHeight() - height / 2.0, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
                     motionX = owner.motionX;
                     motionY = owner.motionY;
                     motionZ = owner.motionZ;

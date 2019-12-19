@@ -18,29 +18,22 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded;
+package thecodex6824.thaumicaugmentation.api.warded.storage;
 
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.util.math.BlockPos;
 
 /**
- * Inventory manager for warded inventories. The API is very similar to IItemHandler,
- * but it's a separate interface so that other things that are accessing IItemHandler capabilities
- * don't access warded inventories.
+ * Base ward (focus) storage interface. There is only a single method for determining if
+ * a block is warded, as the representation held by the client and server is different.
  * @author TheCodex6824
  */
-public interface IWardedInventory {
+public interface IWardStorage {
     
-    public ItemStack extractItem(int slot, int amount, boolean simulate);
-    
-    public int getSlotLimit(int slot);
-    
-    public int getSlots();
-    
-    public ItemStack getStackInSlot(int slot);
-    
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate);
-    
-    public IItemHandler getItemHandler();
+    /**
+     * Returns if the block at the given position has a ward with any owner.
+     * @param pos The position of the block to check
+     * @return If the block at the position is warded
+     */
+    public boolean hasWard(BlockPos pos);
     
 }

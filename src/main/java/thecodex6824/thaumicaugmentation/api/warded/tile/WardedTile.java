@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded;
+package thecodex6824.thaumicaugmentation.api.warded.tile;
 
 import java.lang.ref.WeakReference;
 
@@ -31,6 +31,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.event.WardedTilePermissionEvent;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
+import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
 
 /**
  * Default implementation of {@link IWardedTile}.

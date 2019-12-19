@@ -35,8 +35,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 
 public final class TAHooksCommon {

@@ -90,6 +90,10 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
     
     protected static final ResourceLocation ELYTRA_TEXTURE = new ResourceLocation("minecraft", "textures/entity/elytra.png");
     protected static final ModelElytra ELYTRA_MODEL_DEFAULT = new ModelElytra();
+    
+    protected static final ResourceLocation ELYTRA_BOOSTER_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/harness/elytra_booster.png"); 
+    protected static final ResourceLocation ELYTRA_BOOSTER_MODEL = new ResourceLocation(ThaumicAugmentationAPI.MODID, "models/entity/elytra_booster.obj");
+    
     protected static final ModelElytraBanner ELYTRA_MODEL_VANILLA_BANNER = new ModelElytraBanner(1.75F, 42, 48);
     protected static final ModelElytraBanner ELYTRA_MODEL_TC_BANNER = new ModelElytraBanner(2.0F, 48, 48);
     protected static final ResourceLocation VANILLA_BANNER_BASE = new ResourceLocation("minecraft", "textures/entity/banner_base.png");
@@ -107,12 +111,14 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
     protected RenderPlayer render;
     protected ModelBiped base;
     protected IModelCustom thaumostatic;
+    protected IModelCustom elytraBooster;
     protected HashMap<Block, EnumDyeColor> bannerReverseMap;
     
     public RenderLayerHarness(RenderPlayer renderer) {
         render = renderer;
         base = new ModelBiped(1.0F);
         thaumostatic = AdvancedModelLoader.loadModel(THAUMOSTATIC_MODEL);
+        elytraBooster = AdvancedModelLoader.loadModel(ELYTRA_BOOSTER_MODEL);
         bannerReverseMap = new HashMap<>();
         for (Map.Entry<EnumDyeColor, Block> entry : BlocksTC.banners.entrySet())
             bannerReverseMap.put(entry.getValue(), entry.getKey());
@@ -186,16 +192,27 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
                 GlStateManager.enableBlend();
                 GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
                 
+                boolean booster = false;
                 ItemStack cosmetic = ItemStack.EMPTY;
                 IAugmentableItem augmentable = harness.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
                 if (augmentable != null) {
                     for (ItemStack aug : augmentable.getAllAugments()) {
                         IAugment cap = aug.getCapability(CapabilityAugment.AUGMENT, null);
-                        if (cap instanceof IElytraHarnessAugment && ((IElytraHarnessAugment) cap).isCosmetic()) {
+                        if (cap instanceof IElytraHarnessAugment && ((IElytraHarnessAugment) cap).isCosmetic())
                             cosmetic = aug;
-                            break;
-                        }
+                        else if (cap instanceof IElytraHarnessAugment)
+                            booster = true;
                     }
+                }
+                
+                if (booster) {
+                    render.bindTexture(ELYTRA_BOOSTER_TEXTURE);
+                    GlStateManager.pushMatrix();
+                    GlStateManager.enableRescaleNormal();
+                    GlStateManager.translate(-0.5, 0.0, -0.5);
+                    elytraBooster.renderAll();
+                    GlStateManager.disableRescaleNormal();
+                    GlStateManager.popMatrix();
                 }
                 
                 int particleColor = Aspect.FLIGHT.getColor();

@@ -35,9 +35,9 @@ public interface ITARenderHelper {
     
     public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean ignoreGoggles);
 
-    public void renderFluxRiftOutline(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel);
+    public void renderFluxRiftOutline(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType);
     
-    public void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a);
+    public void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType);
     
     public void renderWispyMotes(World world, double x, double y, double z, double dx, double dy, double dz, int age, float r, float g, float b, float gravity);
 
@@ -45,4 +45,8 @@ public interface ITARenderHelper {
     
     public void renderSmokeSpiral(World world, double x, double y, double z, float rad, int start, int minY, int color);
 
+    public boolean shadersAvailable();
+    
+    public boolean stencilAvailable();
+    
 }

@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded;
+package thecodex6824.thaumicaugmentation.api.warded.storage;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -37,6 +37,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
+import thecodex6824.thaumicaugmentation.api.warded.WardSyncManager;
 
 /**
  * Default implementation of {@link IWardStorage} for servers.

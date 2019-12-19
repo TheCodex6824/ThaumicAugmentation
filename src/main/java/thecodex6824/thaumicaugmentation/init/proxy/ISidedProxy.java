@@ -34,7 +34,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public interface ISidedProxy {
@@ -62,6 +62,8 @@ public interface ISidedProxy {
     public boolean isSingleplayer();
     
     public boolean isJumpDown();
+    
+    public boolean isPvPEnabled();
     
     public void handlePacketClient(IMessage message, MessageContext context);
 

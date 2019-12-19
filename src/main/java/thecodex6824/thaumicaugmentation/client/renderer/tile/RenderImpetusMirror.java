@@ -175,6 +175,7 @@ public class RenderImpetusMirror extends TileEntitySpecialRenderer<TileImpetusMi
     public void render(TileImpetusMirror te, double x, double y, double z, float partialTicks, int destroyStage,
             float alpha) {
         
+        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
         EnumFacing facing = te.getWorld().getBlockState(te.getPos()).getValue(IDirectionalBlock.DIRECTION);
         Entity rv = Minecraft.getMinecraft().getRenderViewEntity();
         rv = rv != null ? rv : Minecraft.getMinecraft().player;

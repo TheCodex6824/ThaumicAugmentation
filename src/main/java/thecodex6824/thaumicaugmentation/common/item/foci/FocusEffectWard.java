@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.item.foci;
 
+import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
@@ -47,9 +49,11 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAConfig.TileWardMode;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
-import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
+import thecodex6824.thaumicaugmentation.api.warded.entity.CapabilityWardOwnerProvider;
+import thecodex6824.thaumicaugmentation.api.warded.entity.IWardOwnerProvider;
+import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -104,12 +108,20 @@ public class FocusEffectWard extends FocusEffect {
                     IWardStorage wardStorage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                     if (wardStorage instanceof IWardStorageServer) {
                         IWardStorageServer storage = (IWardStorageServer) wardStorage;
+                        UUID owner = getPackage().getCasterUUID();
+                        IWardOwnerProvider provider = getPackage().getCaster().getCapability(CapabilityWardOwnerProvider.WARD_OWNER, null);
+                        if (provider != null) {
+                            UUID maybe = provider.getWardOwnerUUID();
+                            if (maybe != null)
+                                owner = maybe;
+                        }
+                        
                         if (!storage.hasWard(pos)) {
-                            storage.setWard(world, pos, getPackage().getCasterUUID());
+                            storage.setWard(world, pos, owner);
                             TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.POOF, pos.getX(), pos.getY(), pos.getZ(), Aspect.PROTECT.getColor(), result.sideHit.getIndex()),
                                     new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
                         }
-                        else if (storage.getWard(pos).equals(getPackage().getCasterUUID())) {
+                        else if (storage.getWard(pos).equals(owner)) {
                             storage.clearWard(world, pos);
                             TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.POOF, pos.getX(), pos.getY(), pos.getZ(), Aspect.PROTECT.getColor(), result.sideHit.getIndex()),
                                     new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));

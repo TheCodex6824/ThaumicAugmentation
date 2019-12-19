@@ -51,10 +51,10 @@ import thaumcraft.api.golems.tasks.Task;
 import thaumcraft.common.entities.construct.EntityArcaneBore;
 import thaumcraft.common.golems.tasks.TaskHandler;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
-import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
+import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageServer;
 
 public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
 

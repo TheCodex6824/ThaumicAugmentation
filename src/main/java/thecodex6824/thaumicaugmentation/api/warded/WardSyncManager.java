@@ -31,6 +31,7 @@ import com.google.common.collect.MultimapBuilder;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageServer;
 
 /**
  * Handles syncing ward changes to clients.

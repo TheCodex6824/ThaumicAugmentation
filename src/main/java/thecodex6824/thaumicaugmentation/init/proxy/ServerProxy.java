@@ -38,6 +38,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thaumcraft.api.golems.seals.ISealEntity;
@@ -52,10 +53,12 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugmen
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
 import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
+import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.network.PacketElytraBoost;
 import thecodex6824.thaumicaugmentation.common.network.PacketInteractGUI;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
@@ -113,12 +116,18 @@ public class ServerProxy implements ISidedProxy {
     }
     
     @Override
+    public boolean isPvPEnabled() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().isPVPEnabled();
+    }
+    
+    @Override
     public Container getServerGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (TAInventory.values()[ID]) {
             case WARDED_CHEST: return new ContainerWardedChest(player.inventory, 
                 (TileWardedChest) world.getTileEntity(new BlockPos(x, y, z)));
             case ARCANE_TERRAFORMER: return new ContainerArcaneTerraformer(player.inventory, 
                     (TileArcaneTerraformer) world.getTileEntity(new BlockPos(x, y, z)));
+            case AUTOCASTER: return new ContainerAutocaster(player.inventory, (EntityAutocaster) world.getEntityByID(x));
             default: return null;
         }
     }
@@ -202,6 +211,28 @@ public class ServerProxy implements ISidedProxy {
                     terraformer.getTile().setRadius(Math.max(Math.min(message.getSelectionValue(), 32), 1));
                 else if (message.getComponentID() == 1)
                     terraformer.getTile().setCircle(message.getSelectionValue() != 0);
+            }
+        }
+        else if (sender != null && sender.openContainer instanceof ContainerAutocaster) {
+            EntityAutocaster autocaster = ((ContainerAutocaster) sender.openContainer).getEntity();
+            switch (message.getComponentID()) {
+                case 0: {
+                    autocaster.setTargetAnimals(message.getSelectionValue() > 0);
+                    break;
+                }
+                case 1: {
+                    autocaster.setTargetMobs(message.getSelectionValue() > 0);
+                    break;
+                }
+                case 2: {
+                    autocaster.setTargetPlayers(message.getSelectionValue() > 0);
+                    break;
+                }
+                case 3: {
+                    autocaster.setTargetFriendly(message.getSelectionValue() > 0);
+                    break;
+                }
+                default: break;
             }
         }
     }

@@ -42,8 +42,8 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
-import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardedTile;
-import thecodex6824.thaumicaugmentation.api.warded.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemKey extends ItemTABase implements IWardAuthenticator {

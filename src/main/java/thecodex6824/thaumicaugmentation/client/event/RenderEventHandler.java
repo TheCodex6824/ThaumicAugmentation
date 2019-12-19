@@ -36,6 +36,9 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import baubles.api.BaubleType;
+import baubles.api.cap.BaublesCapabilities;
+import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBiped.ArmPose;
@@ -54,6 +57,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -68,6 +72,7 @@ import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public class RenderEventHandler {
@@ -113,6 +118,17 @@ public class RenderEventHandler {
                 else
                     biped.leftArmPose = ArmPose.BOW_AND_ARROW;
             }
+        }
+    }
+    
+    @SubscribeEvent
+    @SuppressWarnings("deprecation")
+    public static void onRenderPlayerSpecials(RenderPlayerEvent.Specials.Pre event) {
+        IBaublesItemHandler baubles = event.getEntityPlayer().getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+        if (baubles != null) {
+            ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
+            if (stack.getItem() instanceof IElytraCompat)
+                event.setRenderCape(false);
         }
     }
     

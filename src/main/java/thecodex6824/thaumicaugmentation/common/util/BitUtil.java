@@ -39,6 +39,10 @@ public final class BitUtil {
     public static int setBit(int meta, int bit, boolean predicate) {
         return predicate ? meta |= (1 << bit) : meta;
     }
+    
+    public static int setOrClearBit(int meta, int bit, boolean predicate) {
+        return predicate ? meta |= (1 << bit) : meta & ~(1 << bit);
+    }
 
     public static int setBits(int meta, int start, int end, int number) {
         for (int i = start; i < end; ++i)

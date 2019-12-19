@@ -146,7 +146,7 @@ public class TARenderHelperClient implements ITARenderHelper {
         GL11.glPopMatrix();
     }
     
-    protected void renderFluxRiftSingleLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean disableDepth) {
+    protected void renderFluxRiftSingleLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean disableDepth, float r, float g, float b, float a, int joinType) {
         float stab = Math.max(Math.min(1.0F - stability / 50.0F, 1.5F), 0.0F);
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         if (disableDepth) {
@@ -178,7 +178,7 @@ public class TARenderHelperClient implements ITARenderHelper {
             }
             
             RIFT_RENDERER.set_POLYCYL_TESS(tessLevel);
-            RIFT_RENDERER.gleSetJoinStyle(CoreGLE.TUBE_JN_ANGLE);
+            RIFT_RENDERER.gleSetJoinStyle(joinType);
             RIFT_RENDERER.glePolyCone(points.length, points, colors, widths, 1.0F, 0.0F);
             GL11.glPopMatrix();
         }
@@ -192,13 +192,15 @@ public class TARenderHelperClient implements ITARenderHelper {
     }
     
     @Override
-    public void renderFluxRiftOutline(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel) {
+    public void renderFluxRiftOutline(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType) {
         GL11.glPushMatrix();
-        Minecraft.getMinecraft().renderEngine.bindTexture(RIFT_TEXTURE);
+        if (bindTexture)
+            Minecraft.getMinecraft().renderEngine.bindTexture(RIFT_TEXTURE);
+        
         GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
         GlStateManager.enableBlend();
         GlStateManager.disableCull();
-        renderFluxRiftSingleLayer(rift, stability, partialTicks, tessLevel, 1.0F, 1.0F, 1.0F, 1.0F, false);
+        renderFluxRiftSingleLayer(rift, stability, partialTicks, tessLevel, false, r, g, b, a, joinType);
         GlStateManager.enableCull();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
@@ -207,12 +209,14 @@ public class TARenderHelperClient implements ITARenderHelper {
     }
     
     @Override
-    public void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a) {
+    public void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType) {
         GL11.glPushMatrix();
-        Minecraft.getMinecraft().renderEngine.bindTexture(BLANK);
+        if (bindTexture)
+            Minecraft.getMinecraft().renderEngine.bindTexture(BLANK);
+        
         GlStateManager.enableBlend();
         GlStateManager.disableLighting();
-        renderFluxRiftSingleLayer(rift, stability, partialTicks, tessLevel, r, g, b, a, false);
+        renderFluxRiftSingleLayer(rift, stability, partialTicks, tessLevel, false, r, g, b, a, joinType);
         GlStateManager.enableLighting();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
@@ -238,6 +242,16 @@ public class TARenderHelperClient implements ITARenderHelper {
             int color) {
         
         FXDispatcher.INSTANCE.smokeSpiral(x, y, z, rad, start, minY, color);
+    }
+    
+    @Override
+    public boolean shadersAvailable() {
+        return TAShaderManager.shouldUseShaders();
+    }
+    
+    @Override
+    public boolean stencilAvailable() {
+        return GL11.glGetInteger(GL11.GL_STENCIL_BITS) > 0;
     }
 
 }

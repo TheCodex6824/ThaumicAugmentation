@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
@@ -64,14 +66,15 @@ import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.ImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.api.tile.RiftJar;
-import thecodex6824.thaumicaugmentation.api.warded.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.IWardedInventory;
-import thecodex6824.thaumicaugmentation.api.warded.IWardedTile;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageClient;
-import thecodex6824.thaumicaugmentation.api.warded.WardStorageServer;
-import thecodex6824.thaumicaugmentation.api.warded.WardedInventory;
-import thecodex6824.thaumicaugmentation.api.warded.WardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.entity.IWardOwnerProvider;
+import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageClient;
+import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer;
+import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.warded.tile.WardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.tile.WardedTile;
 import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
@@ -360,6 +363,27 @@ public final class CapabilityHandler {
             }
             
         }, ImpetusLinker::new);
+        
+        CapabilityManager.INSTANCE.register(IWardOwnerProvider.class, new IStorage<IWardOwnerProvider>() {
+            
+            @Override
+            public void readNBT(Capability<IWardOwnerProvider> capability, IWardOwnerProvider instance, EnumFacing side,
+                    NBTBase nbt) {}
+            
+            @Override
+            @Nullable
+            public NBTBase writeNBT(Capability<IWardOwnerProvider> capability, IWardOwnerProvider instance,
+                    EnumFacing side) {
+                return null;
+            }
+            
+        }, () -> new IWardOwnerProvider() {
+            @Override
+            @Nullable
+            public UUID getWardOwnerUUID() {
+                return null;
+            }
+        });
     }
     
     @SubscribeEvent

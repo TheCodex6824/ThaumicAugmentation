@@ -40,6 +40,7 @@ public class RenderRiftJar extends TileEntitySpecialRenderer<TileRiftJar> {
     public void render(TileRiftJar te, double x, double y, double z, float partialTicks, int destroyStage,
             float alpha) {
         
+        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
         IRiftJar jar = te.getCapability(CapabilityRiftJar.RIFT_JAR, null);
         if (jar != null) {
             int tess = 6;

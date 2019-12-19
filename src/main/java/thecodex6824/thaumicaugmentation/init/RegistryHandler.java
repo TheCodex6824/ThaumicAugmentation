@@ -64,6 +64,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftJar;
+import thecodex6824.thaumicaugmentation.common.block.BlockRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
@@ -72,10 +73,12 @@ import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
+import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
+import thecodex6824.thaumicaugmentation.common.item.ItemAutocasterPlacer;
 import thecodex6824.thaumicaugmentation.common.item.ItemBiomeSelector;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
@@ -116,6 +119,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
@@ -175,6 +179,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockVoidRechargePedestal(), "void_recharge_pedestal"));
         registry.register(setupBlock(new BlockImpetusMirror(), "impetus_mirror"));
         registry.register(setupBlock(new BlockArcaneTerraformer(), "arcane_terraformer"));
+        registry.register(setupBlock(new BlockRiftMonitor(), "rift_monitor"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -192,6 +197,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileVoidRechargePedestal.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "void_recharge_pedestal"));
         GameRegistry.registerTileEntity(TileImpetusMirror.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_mirror"));
         GameRegistry.registerTileEntity(TileArcaneTerraformer.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_terraformer"));
+        GameRegistry.registerTileEntity(TileRiftMonitor.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_monitor"));
     }
 
     @SubscribeEvent
@@ -224,6 +230,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemThaumostaticHarnessAugment(), "thaumostatic_harness_augment"));
         registry.register(setupItem(new ItemElytraHarness(), "elytra_harness"));
         registry.register(setupItem(new ItemElytraHarnessAugment(), "elytra_harness_augment"));
+        registry.register(setupItem(new ItemAutocasterPlacer(), "autocaster_placer"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }
@@ -274,6 +281,9 @@ public final class RegistryHandler {
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityFocusShield.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "shield_focus"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".shield_focus").tracker(512, 1, false).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityAutocaster.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "autocaster"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".autocaster").tracker(64, 3, false).build());
     }
     
     @SubscribeEvent
