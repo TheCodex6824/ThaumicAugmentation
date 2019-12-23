@@ -49,6 +49,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
 
     protected ImpetusNode node;
     protected DimensionalBlockPos linked;
+    protected int ticks;
     
     public TileImpetusMirror() {
         node = new ImpetusNode(2, 2) {
@@ -101,7 +102,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
     
     @Override
     public void update() {
-        if (!world.isRemote && world.getTotalWorldTime() % 100 == 0 && !linked.isInvalid() &&
+        if (!world.isRemote && ticks++ % 100 == 0 && !linked.isInvalid() &&
                 !node.getLocation().isInvalid() && node.getGraph().findNodeByPosition(linked) == null) {
                 
             World targetWorld = DimensionManager.getWorld(linked.getDimension());

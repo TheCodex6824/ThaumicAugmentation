@@ -70,6 +70,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
     protected float oldStability;
     protected EntityFluxRift rift;
     protected UUID loadedRiftUUID;
+    protected int ticks;
     
     protected EntityFluxRift findRift() {
         BlockPos pos1 = pos.add(-1, 1, -1);
@@ -143,7 +144,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
     @Override
     public void update() {
         if (operating) {
-            if (!world.isRemote && world.getTotalWorldTime() % 10 == 0) {
+            if (!world.isRemote && ticks++ % 10 == 0) {
                 TileEntity below = world.getTileEntity(pos.down());
                 if (rift == null || rift.isDead || rift.getRiftSize() < 1 || rift.getCollapse() ||
                         below == null || !below.hasCapability(CapabilityRiftJar.RIFT_JAR, null) ||
@@ -193,7 +194,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                     
                     loadedRiftUUID = null;
                 }
-                if (rift != null && world.getTotalWorldTime() % getParticleDelay(rift.getRiftSize()) == 0) {
+                if (rift != null && ticks % getParticleDelay(rift.getRiftSize()) == 0) {
                     Vec3d particlePos = RiftHelper.pickRandomPointOnRift(rift).add(rift.posX, rift.posY, rift.posZ);
                     Vec3d dir = particlePos.subtract(new Vec3d(pos).add(0.5, 0.5, 0.5)).normalize();
                     FXGeneric fx = new FXGeneric(world, particlePos.x, particlePos.y, particlePos.z, -dir.x * 0.25, -dir.y * 0.25, -dir.z * 0.25);
@@ -222,6 +223,8 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                         }
                     }
                 }
+                
+                ++ticks;
             }
         }
     }

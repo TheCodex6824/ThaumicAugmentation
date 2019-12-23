@@ -61,6 +61,7 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
 
     protected ItemStackHandler inventory;
     protected SimpleImpetusConsumer consumer;
+    protected int ticks;
     
     public TileVoidRechargePedestal() {
         inventory = new ItemStackHandler(1) {
@@ -109,7 +110,7 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
     
     @Override
     public void update() {
-        if (!world.isRemote && world.getTotalWorldTime() % 10 == 0 && !inventory.getStackInSlot(0).isEmpty()) {
+        if (!world.isRemote && ticks++ % 10 == 0 && !inventory.getStackInSlot(0).isEmpty()) {
             boolean sync = false;
             ArrayList<Deque<IImpetusNode>> transactions = new ArrayList<>();
             ItemStack stack = inventory.getStackInSlot(0);
@@ -143,8 +144,8 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
                 world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
                 NodeHelper.syncAllImpetusTransactions(transactions);
                 TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK,
-                        pos.getX() + 0.5 + world.rand.nextDouble() * 0.25, pos.getY() + 0.9  + world.rand.nextDouble() * 0.25,
-                        pos.getZ() + 0.5  + world.rand.nextDouble() * 0.25, 1.5, Aspect.ELDRITCH.getColor()),
+                        pos.getX() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, pos.getY() + 0.9 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
+                        pos.getZ() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, 1.5, Aspect.ELDRITCH.getColor()),
                         new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64.0));
             }
         }

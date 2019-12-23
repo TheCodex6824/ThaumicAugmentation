@@ -1,0 +1,32 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:stability_field_generator.obj",
+        "custom": { "flip-v": true }
+    },
+    "variants": {
+        "ta_enabled": {
+            "false": {
+                "textures": {
+                    "#Material": "thaumicaugmentation:blocks/stability_field_generator_off"
+                }
+            },
+            "true": {
+                "textures": {
+                    "#Material": "thaumicaugmentation:blocks/stability_field_generator_on"
+                }
+            }
+        },
+        "ta_direction": {
+            "south": {"x": 90, "y": 180},
+            "west": {"x": 90, "y": 270},
+            "north": {"x": 90, "y": 0},
+            "east": {"x": 90, "y": 90},
+            "down": {"x": 180},
+            "up": {"__nop": ""}
+        },
+        "inventory": {
+            "transform": "forge:default-block"
+        }
+    }
+}

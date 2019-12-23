@@ -32,7 +32,9 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.oredict.OreDictionary;
 import thaumcraft.api.items.IRechargable;
+import thaumcraft.api.items.ItemsTC;
 import thaumcraft.api.items.RechargeHelper;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
@@ -108,6 +110,7 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
                         if (RechargeHelper.getCharge(stack) > 0)
                             RechargeHelper.consumeCharge(stack, entity, 1);
                         else if (stack.getItemDamage() < stack.getMaxDamage() - 1) {
+                            // don't damage the stack in creative mode
                             stack.damageItem(1, entity);
                             sync = true;
                         }
@@ -115,7 +118,8 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
                     
                     if (entity.ticksExisted % 60 == 0 && entity.onGround) {
                         if (stack.getItemDamage() > 0) {
-                            stack.damageItem(-1, entity);
+                            // still repair the stack in creative
+                            stack.setItemDamage(stack.getItemDamage() - 1);
                             sync = true;
                         }
                     }
@@ -152,6 +156,12 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     @Override
     public boolean allowElytraFlight(EntityPlayer wearer, ItemStack stack) {
         return RechargeHelper.getCharge(stack) > 0 || stack.getItemDamage() < stack.getMaxDamage() - 1;
+    }
+    
+    @Override
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+        return toRepair.getItemDamage() > 0 && !repair.isEmpty() && 
+                OreDictionary.itemMatches(new ItemStack(ItemsTC.ingots, 1, 1), repair, false);
     }
     
     @Override

@@ -1,0 +1,8 @@
+# Blender MTL File: 'containment_field_model_only.blend'
+# Material Count: 1
+
+newmtl Material
+Kd 1.000000 1.000000 1.000000
+d 1.000000
+map_Ka thaumicaugmentation:blocks/stability_field_generator_off
+map_Kd thaumicaugmentation:blocks/stability_field_generator_off

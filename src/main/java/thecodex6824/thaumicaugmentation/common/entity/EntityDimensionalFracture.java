@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.entity;
 
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Optional;
 
 import net.minecraft.block.state.IBlockState;
@@ -34,12 +36,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -49,6 +53,7 @@ import thaumcraft.common.entities.projectile.EntityFocusCloud;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.api.entity.IPortalEntity;
@@ -62,14 +67,17 @@ import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 public class EntityDimensionalFracture extends Entity implements IDimensionalFracture, IPortalEntity {
 
     protected static final int OPEN_TIME = 360;
+    protected static final String NULL_BIOME = ThaumicAugmentationAPI.MODID + ":null";
     
-    protected static final DataParameter<Boolean> open = EntityDataManager.createKey(EntityDimensionalFracture.class, DataSerializers.BOOLEAN);
-    protected static final DataParameter<Optional<UUID>> timeOpened = EntityDataManager.createKey(EntityDimensionalFracture.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+    protected static final DataParameter<Boolean> OPEN = EntityDataManager.createKey(EntityDimensionalFracture.class, DataSerializers.BOOLEAN);
+    protected static final DataParameter<Optional<UUID>> TIME_OPENED = EntityDataManager.createKey(EntityDimensionalFracture.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+    protected static final DataParameter<String> LINKED_BIOME = EntityDataManager.createKey(EntityDimensionalFracture.class, DataSerializers.STRING);
     
     protected int linkedDim;
     protected BlockPos linkedTo;
     protected boolean linkLocated;
     protected boolean linkInvalid;
+    protected Biome linkedBiome;
     
     public EntityDimensionalFracture(World world) {
         super(world);
@@ -192,7 +200,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (!world.isRemote && getDataManager().get(open) && world.getTotalWorldTime() % 20 == 0 && world.getGameRules().getBoolean("doMobSpawning") && world.rand.nextInt(2000) < world.getDifficulty().getId()) {
+        if (!world.isRemote && getDataManager().get(OPEN) && world.getTotalWorldTime() % 20 == 0 && world.getGameRules().getBoolean("doMobSpawning") && world.rand.nextInt(2000) < world.getDifficulty().getId()) {
             if (world.isBlockNormalCube(getPosition().down(), false) || world.isBlockNormalCube(getPosition().down(2), false)) {
                 EntityEldritchGuardian guardian = new EntityEldritchGuardian(world);
                 guardian.setLocationAndAngles(posX, posY, posZ, world.rand.nextInt(360), 0);
@@ -238,8 +246,9 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     
     @Override
     protected void entityInit() {
-        getDataManager().register(open, false);
-        getDataManager().register(timeOpened, Optional.of(new UUID(0, Long.MAX_VALUE)));
+        dataManager.register(OPEN, false);
+        dataManager.register(TIME_OPENED, Optional.of(new UUID(0, Long.MAX_VALUE)));
+        dataManager.register(LINKED_BIOME, NULL_BIOME);
     }
     
     @Override
@@ -299,8 +308,8 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     
     @Override
     public void open(boolean skipTransition) {
-        getDataManager().set(open, true);
-        getDataManager().set(timeOpened, Optional.of(new UUID(0, world.getTotalWorldTime() - (skipTransition ? OPEN_TIME : 0))));
+        dataManager.set(OPEN, true);
+        dataManager.set(TIME_OPENED, Optional.of(new UUID(0, world.getTotalWorldTime() - (skipTransition ? OPEN_TIME : 0))));
     }
     
     @Override
@@ -310,22 +319,36 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     
     @Override
     public void close() {
-        getDataManager().set(open, false);
+        getDataManager().set(OPEN, false);
     }
 
     @Override
     public boolean isOpening() {
-        return getDataManager().get(open) && world.getTotalWorldTime() < getDataManager().get(timeOpened).get().getLeastSignificantBits() + OPEN_TIME;
+        return getDataManager().get(OPEN) && world.getTotalWorldTime() < getDataManager().get(TIME_OPENED).get().getLeastSignificantBits() + OPEN_TIME;
     }
     
     @Override
     public boolean isOpen() {
-        return getDataManager().get(open) && world.getTotalWorldTime() >= getDataManager().get(timeOpened).get().getLeastSignificantBits() + OPEN_TIME;
+        return getDataManager().get(OPEN) && world.getTotalWorldTime() >= getDataManager().get(TIME_OPENED).get().getLeastSignificantBits() + OPEN_TIME;
     }
     
     @Override
     public long getTimeOpened() {
-        return getDataManager().get(timeOpened).get().getLeastSignificantBits();
+        return getDataManager().get(TIME_OPENED).get().getLeastSignificantBits();
+    }
+    
+    @Override
+    @Nullable
+    public Biome getDestinationBiome() {
+        if (linkedBiome == null && world.isRemote)
+            linkedBiome = Biome.REGISTRY.getObject(new ResourceLocation(dataManager.get(LINKED_BIOME)));
+        
+        return linkedBiome;
+    }
+    
+    @Override
+    public void setDestinationBiome(@Nullable Biome biome) {
+        linkedBiome = biome;
     }
     
     @Override
@@ -336,8 +359,14 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
             linkedTo = new BlockPos(pos[0], pos[1], pos[2]);
             linkLocated = compound.getBoolean("linkLocated");
             linkInvalid = compound.getBoolean("linkInvalid");
-            getDataManager().set(open, compound.getBoolean("open"));
-            getDataManager().set(timeOpened, Optional.of(new UUID(0, compound.getLong("timeOpened"))));
+            dataManager.set(OPEN, compound.getBoolean("open"));
+            dataManager.set(TIME_OPENED, Optional.of(new UUID(0, compound.getLong("timeOpened"))));
+            String biome = compound.getString("linkedBiome");
+            biome = biome.isEmpty() ? NULL_BIOME : biome;
+            if (!biome.equals(NULL_BIOME))
+                linkedBiome = Biome.REGISTRY.getObject(new ResourceLocation(biome));
+            
+            dataManager.set(LINKED_BIOME, biome);
         }
     }
     
@@ -348,8 +377,9 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
             compound.setIntArray("linkedPos", new int[] {linkedTo.getX(), linkedTo.getY(), linkedTo.getZ()});
             compound.setBoolean("linkLocated", linkLocated);
             compound.setBoolean("linkInvalid", linkInvalid);
-            compound.setBoolean("open", getDataManager().get(open));
-            compound.setLong("timeOpened", getDataManager().get(timeOpened).get().getLeastSignificantBits());
+            compound.setBoolean("open", getDataManager().get(OPEN));
+            compound.setLong("timeOpened", getDataManager().get(TIME_OPENED).get().getLeastSignificantBits());
+            compound.setString("linkedBiome", linkedBiome != null ? linkedBiome.getRegistryName().toString() : NULL_BIOME);
         }
     }
     

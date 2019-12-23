@@ -70,6 +70,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     protected VariableValue actionTime;
     protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
     protected boolean lastState = false;
+    protected int ticks;
     
     public TileImpetusDrainer() {
         super();
@@ -122,11 +123,11 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     
     @Override
     public void update() {
-        if (!world.isRemote && (world.getTotalWorldTime() + delay) % 60 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED))
+        if (!world.isRemote && ticks++ % 60 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED))
             findRift();
         else if (!world.isRemote && !world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) && storage.isValid())
             storage.bind(null);
-        else if (world.isRemote && (world.getTotalWorldTime() + delay) % 5 == 0) {
+        else if (world.isRemote && (ticks++ + delay) % 5 == 0) {
             boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
             if (enabled != lastState) {
                 lastState = enabled;

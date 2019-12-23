@@ -28,6 +28,8 @@ tile.thaumicaugmentation.void_recharge_pedestal.name=Void Recharge Pedestal
 tile.thaumicaugmentation.impetus_mirror.name=Impetus Mirror
 tile.thaumicaugmentation.arcane_terraformer.name=Arcane Terraformer
 tile.thaumicaugmentation.rift_monitor.name=Extradimensional Monitor
+tile.thaumicaugmentation.impetus_generator.name=Impetus Generator
+tile.thaumicaugmentation.stability_field_generator.name=Stability Field Generator
 
 item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
 item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet

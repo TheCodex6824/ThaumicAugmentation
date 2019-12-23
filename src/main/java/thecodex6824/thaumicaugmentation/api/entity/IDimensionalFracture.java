@@ -20,7 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.api.entity;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.biome.Biome;
 
 /**
  * Interface implemented by Dimensional Fractures.
@@ -130,5 +133,10 @@ public interface IDimensionalFracture {
      * @return The world time the fracture was opened at
      */
     public long getTimeOpened();
+    
+    @Nullable
+    public Biome getDestinationBiome();
+    
+    public void setDestinationBiome(@Nullable Biome biome);
     
 }

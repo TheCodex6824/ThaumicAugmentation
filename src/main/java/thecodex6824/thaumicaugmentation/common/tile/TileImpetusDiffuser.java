@@ -73,6 +73,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     protected VariableValue actionTime;
     protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
     protected boolean lastState = false;
+    protected int ticks;
     
     public TileImpetusDiffuser() {
         super();
@@ -89,7 +90,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     
     @Override
     public void update() {
-        if (!world.isRemote && world.getTotalWorldTime() % 20 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED)) {
+        if (!world.isRemote && ticks++ % 20 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED)) {
             for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(7))) {
                 if (entity instanceof EntityPlayer) {
                     EntityPlayer player = (EntityPlayer) entity;
@@ -151,7 +152,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                 }
             }
         }
-        else if (world.isRemote && (world.getTotalWorldTime() + delay) % 5 == 0) {
+        else if (world.isRemote && (ticks++ + delay) % 5 == 0) {
             boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
             if (enabled != lastState) {
                 lastState = enabled;

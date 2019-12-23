@@ -1,6 +1,6 @@
 # Blender v2.80 (sub 75) OBJ File: 'containment_field_model_only.blend'
 # www.blender.org
-mtllib containment_field.mtl
+mtllib stability_field_generator.mtl
 o Arm_North_Cube.001
 v 0.625000 0.812500 0.187500
 v 0.625000 0.375000 0.187500

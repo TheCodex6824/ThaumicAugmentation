@@ -29,6 +29,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
@@ -46,7 +48,66 @@ public class TARenderHelperClient implements ITARenderHelper {
 
     protected static final ResourceLocation RIFT_TEXTURE = new ResourceLocation("minecraft", "textures/entity/end_portal.png");
     protected static final ResourceLocation BLANK = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/misc/white.png");
-    protected static final CoreGLE RIFT_RENDERER = new CoreGLE();
+    protected static final CoreGLE GLE = new CoreGLE();
+    protected static final ResourceLocation FRACTURE_TEXTURE_CLOSED = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
+    protected static final ResourceLocation FRACTURE_TEXTURE_OPEN = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
+    protected static final Vec3d[] FRACTURE_POINTS_CLOSED = new Vec3d[] {
+            new Vec3d(0.91, 1.99, 0.41),
+            new Vec3d(0.85, 1.97, 0.39),
+            new Vec3d(0.60, 1.77, 0.45),
+            new Vec3d(0.48, 1.35, 0.53),
+            new Vec3d(0.29, 1.10, 0.66),
+            new Vec3d(0.15, 0.80, 0.78),
+            new Vec3d(0.25, 0.45, 0.62),
+            new Vec3d(0.45, 0.10, 0.52),
+            new Vec3d(0.65, -0.25, 0.38),
+            new Vec3d(0.60, -0.55, 0.25),
+            new Vec3d(0.50, -0.85, 0.20),
+            new Vec3d(0.55, -0.90, 0.23)
+    };
+    protected static final Vec3d[] FRACTURE_POINTS_OPEN = new Vec3d[] {
+            new Vec3d(0.80, 1.99, 0.65),
+            new Vec3d(0.75, 1.97, 0.49),
+            new Vec3d(0.60, 1.77, 0.50),
+            new Vec3d(0.54, 1.35, 0.55),
+            new Vec3d(0.56, 1.10, 0.60),
+            new Vec3d(0.50, 0.80, 0.50),
+            new Vec3d(0.50, 0.15, 0.50),
+            new Vec3d(0.59, -0.10, 0.58),
+            new Vec3d(0.58, -0.45, 0.52),
+            new Vec3d(0.60, -0.75, 0.50),
+            new Vec3d(0.50, -0.95, 0.20),
+            new Vec3d(0.27, -0.98, 0.16)
+    };
+    
+    protected static final double[] FRACTURE_WIDTHS_CLOSED = new double[] {
+            0,
+            0.00052,
+            0.0051,
+            0.0056,
+            0.008,
+            0.009,
+            0.009,
+            0.0074,
+            0.0056,
+            0.0041,
+            0.00042,
+            0
+    };
+    protected static final double[] FRACTURE_WIDTHS_OPEN = new double[] {
+            0,
+            0.00052,
+            0.152,
+            0.279,
+            0.316,
+            0.350,
+            0.350,
+            0.328,
+            0.272,
+            0.152,
+            0.00052,
+            0
+    };
     
     @Override
     public void renderGlowingSphere(World world, double x, double y, double z, int color) {
@@ -117,9 +178,9 @@ public class TARenderHelperClient implements ITARenderHelper {
                             (layer < 3 ? 1.25 + 0.5 * layer : 1.0);
                 }
                 
-                RIFT_RENDERER.set_POLYCYL_TESS(tessLevel);
-                RIFT_RENDERER.gleSetJoinStyle(CoreGLE.TUBE_JN_ANGLE);
-                RIFT_RENDERER.glePolyCone(points.length, points, colors, widths, 1.0F, 0.0F);
+                GLE.set_POLYCYL_TESS(tessLevel);
+                GLE.gleSetJoinStyle(CoreGLE.TUBE_JN_ANGLE);
+                GLE.glePolyCone(points.length, points, colors, widths, 1.0F, 0.0F);
                 GL11.glPopMatrix();
             }
             
@@ -177,9 +238,9 @@ public class TARenderHelperClient implements ITARenderHelper {
                 widths[i] = rift.getWidths()[i] * (1.0 - Math.sin(time / 8.0) * 0.10000000149011612 * stab);
             }
             
-            RIFT_RENDERER.set_POLYCYL_TESS(tessLevel);
-            RIFT_RENDERER.gleSetJoinStyle(joinType);
-            RIFT_RENDERER.glePolyCone(points.length, points, colors, widths, 1.0F, 0.0F);
+            GLE.set_POLYCYL_TESS(tessLevel);
+            GLE.gleSetJoinStyle(joinType);
+            GLE.glePolyCone(points.length, points, colors, widths, 1.0F, 0.0F);
             GL11.glPopMatrix();
         }
         
@@ -217,6 +278,124 @@ public class TARenderHelperClient implements ITARenderHelper {
         GlStateManager.enableBlend();
         GlStateManager.disableLighting();
         renderFluxRiftSingleLayer(rift, stability, partialTicks, tessLevel, false, r, g, b, a, joinType);
+        GlStateManager.enableLighting();
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableBlend();
+        GL11.glPopMatrix();
+    }
+    
+    protected double lerp(double initial, double last, double currentTime, double timeOpened, double totalTime) {
+        double factor = MathHelper.clamp((currentTime - timeOpened) / totalTime, 0, 1.0);
+        return (1.0 - factor) * initial + factor * last;
+    }
+    
+    protected void renderDimensionalFractureSingleLayer(boolean open, long worldTime, long timeOpened, long openingDuration, float partialTicks, int tessLevel, float r, float g, float b, float a, int joinType) {
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.pushMatrix();
+        double[][] pointBuffer = new double[FRACTURE_POINTS_CLOSED.length][3];
+        float[][] colorBuffer = new float[FRACTURE_POINTS_CLOSED.length][4];
+        double[] radiusBuffer = new double[FRACTURE_POINTS_CLOSED.length];
+        for (int i = 0; i < FRACTURE_POINTS_CLOSED.length; ++i) {
+            double time = worldTime + partialTicks;
+            if (i > FRACTURE_POINTS_CLOSED.length / 2)
+                time -= i * 10;
+            else if (i < FRACTURE_POINTS_CLOSED.length / 2)
+                time += i * 10;
+
+            Vec3d rotatedClosed = FRACTURE_POINTS_CLOSED[i].add(-0.5, 1.0, -0.5);
+            Vec3d rotatedOpen = FRACTURE_POINTS_OPEN[i].add(-0.5, 1.0, -0.5);
+            pointBuffer[i][0] = lerp(rotatedClosed.x, rotatedOpen.x, worldTime, timeOpened, openingDuration) + Math.sin(time / 50) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
+            pointBuffer[i][1] = lerp(rotatedClosed.y, rotatedOpen.y, worldTime, timeOpened, openingDuration) + Math.sin(time / 60) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
+            pointBuffer[i][2] = lerp(rotatedClosed.z, rotatedOpen.z, worldTime, timeOpened, openingDuration) + Math.sin(time / 70) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
+            
+            colorBuffer[i][0] = r;
+            colorBuffer[i][1] = g;
+            colorBuffer[i][2] = b;
+            colorBuffer[i][3] = (float) lerp(a / 4.0, a, worldTime, timeOpened, openingDuration);
+
+            double widthMultiplier = 1.0 - Math.sin(time / 8) * 0.1;
+            radiusBuffer[i] = lerp(FRACTURE_WIDTHS_CLOSED[i], FRACTURE_WIDTHS_OPEN[i], worldTime, timeOpened, openingDuration) * widthMultiplier;
+        }
+
+        GLE.set_POLYCYL_TESS(tessLevel);
+        GLE.gleSetJoinStyle(joinType);
+        GLE.glePolyCone(pointBuffer.length, pointBuffer, colorBuffer, radiusBuffer, 1.0F, 0.0F);
+
+        GlStateManager.popMatrix();
+    }
+    
+    @Override
+    public void renderDimensionalFracture(boolean open, long worldTime, long timeOpened, long openingDuration, float partialTicks, int tessLevel, boolean ignoreGoggles, float r, float g, float b, float a) {
+        GlStateManager.pushMatrix();
+        boolean isRevealing = !ignoreGoggles && EntityUtils.hasGoggles(Minecraft.getMinecraft().getRenderViewEntity() != null ?
+                Minecraft.getMinecraft().getRenderViewEntity() : Minecraft.getMinecraft().player);
+        Minecraft.getMinecraft().renderEngine.bindTexture(open ? FRACTURE_TEXTURE_OPEN : FRACTURE_TEXTURE_CLOSED);
+        TAShaderManager.enableShader(TAShaders.FRACTURE, TAShaders.FRACTURE_SHADER_CALLBACK);
+        GlStateManager.enableBlend();
+        for (int layer = 0; layer < 4; ++layer) {
+            if (layer != 3) {
+                GlStateManager.depthMask(false);
+                if (layer == 0 && isRevealing)
+                    GlStateManager.disableDepth();
+            }
+
+            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, layer != 3 ? DestFactor.ONE : DestFactor.ONE_MINUS_SRC_ALPHA);
+
+            GlStateManager.pushMatrix();
+            double[][] pointBuffer = new double[FRACTURE_POINTS_CLOSED.length][3];
+            float[][] colorBuffer = new float[FRACTURE_POINTS_CLOSED.length][4];
+            double[] radiusBuffer = new double[FRACTURE_POINTS_CLOSED.length];
+            for (int i = 0; i < FRACTURE_POINTS_CLOSED.length; ++i) {
+                double time = worldTime + partialTicks;
+                if (i > FRACTURE_POINTS_CLOSED.length / 2)
+                    time -= i * 10;
+                else if (i < FRACTURE_POINTS_CLOSED.length / 2)
+                    time += i * 10;
+
+                Vec3d rotatedClosed = FRACTURE_POINTS_CLOSED[i].add(-0.5, 1.0, -0.5);
+                Vec3d rotatedOpen = FRACTURE_POINTS_OPEN[i].add(-0.5, 1.0, -0.5);
+                pointBuffer[i][0] = lerp(rotatedClosed.x, rotatedOpen.x, worldTime, timeOpened, openingDuration) + Math.sin(time / 50) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
+                pointBuffer[i][1] = lerp(rotatedClosed.y, rotatedOpen.y, worldTime, timeOpened, openingDuration) + Math.sin(time / 60) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
+                pointBuffer[i][2] = lerp(rotatedClosed.z, rotatedOpen.z, worldTime, timeOpened, openingDuration) + Math.sin(time / 70) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
+                
+                colorBuffer[i][0] = r;
+                colorBuffer[i][1] = g;
+                colorBuffer[i][2] = b;
+                colorBuffer[i][3] = (float) lerp(a / 4.0, a, worldTime, timeOpened, openingDuration);
+
+                double widthMultiplier = 1.0 - Math.sin(time / 8) * 0.1;
+                radiusBuffer[i] = lerp(FRACTURE_WIDTHS_CLOSED[i], FRACTURE_WIDTHS_OPEN[i], worldTime, timeOpened, openingDuration) * widthMultiplier * (layer != 3 ? 1.25 + 0.5 * layer : 1.0);
+            }
+
+            GLE.set_POLYCYL_TESS(tessLevel);
+            GLE.gleSetJoinStyle(CoreGLE.TUBE_JN_ANGLE);
+            GLE.glePolyCone(pointBuffer.length, pointBuffer, colorBuffer, radiusBuffer, 1.0F, 0.0F);
+
+            GlStateManager.popMatrix();
+            if (layer != 3) {
+                GlStateManager.depthMask(true);
+                if (layer == 0 && isRevealing)
+                    GlStateManager.enableDepth();
+            }
+        }
+
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableBlend();
+        TAShaderManager.disableShader();
+        GlStateManager.popMatrix();
+    }
+    
+    @Override
+    public void renderDimensionalFractureSolidLayer(boolean open, long worldTime, long timeOpened, long openingDuration, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType) {
+        GL11.glPushMatrix();
+        if (bindTexture)
+            Minecraft.getMinecraft().renderEngine.bindTexture(BLANK);
+        
+        GlStateManager.enableBlend();
+        GlStateManager.disableLighting();
+        renderDimensionalFractureSingleLayer(open, worldTime, timeOpened, openingDuration, partialTicks, tessLevel, r, g, b, a, joinType);
         GlStateManager.enableLighting();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();

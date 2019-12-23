@@ -137,6 +137,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     protected BufferedImpetusProsumer prosumer;
     protected IAnimationStateMachine asm;
     protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
+    protected int ticks;
     
     public TileImpetusMatrix() {
         buffer = new MatrixImpetusStorage();
@@ -152,7 +153,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     
     @Override
     public void update() {
-        if (!world.isRemote && (world.getTotalWorldTime() + delay) % 20 == 0) {
+        if (!world.isRemote && (ticks++ + delay) % 20 == 0) {
             ConsumeResult result = prosumer.consume(getTotalCells() * CELL_CAPACITY, false);
             if (result.energyConsumed > 0)
                 NodeHelper.syncAllImpetusTransactions(result.paths);

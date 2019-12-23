@@ -102,6 +102,7 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     protected Object2IntOpenHashMap<Aspect> essentia;
     protected HashSet<ChunkPos> chunks;
     protected boolean circle;
+    protected int ticks;
     
     public TileArcaneTerraformer() {
         super();
@@ -227,7 +228,7 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     
     @Override
     public void update() {
-        if (!world.isRemote && activeBiome != null && world.getTotalWorldTime() % 5 == 0) {
+        if (!world.isRemote && ticks++ % 5 == 0 && activeBiome != null) {
             ItemStack inv = inventory.getStackInSlot(0);
             if (inv.isEmpty() ||
                     !inv.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null).getBiomeID().equals(activeBiome)) {

@@ -94,6 +94,7 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                     fracture.setLocationAndAngles(placeAt.getX() + 0.5, placeAt.getY(), placeAt.getZ() + 0.5, rand.nextInt(360), 0.0F);
                     fracture.setLinkedDimension(dim.getDimensionID());
                     fracture.setLinkedPosition(scaled);
+                    fracture.setDestinationBiome(linkedBiome);
                     world.spawnEntity(fracture);
 
                     if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
@@ -120,6 +121,7 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                     fracture.setLocationAndAngles(placeAt.getX() + 0.5, placeAt.getY(), placeAt.getZ() + 0.5, rand.nextInt(360), 0.0F);
                     fracture.setLinkedDimension(dim.getDimensionID());
                     fracture.setLinkedPosition(scaled);
+                    fracture.setDestinationBiome(linkedBiome);
                     world.spawnEntity(fracture);
 
                     if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {

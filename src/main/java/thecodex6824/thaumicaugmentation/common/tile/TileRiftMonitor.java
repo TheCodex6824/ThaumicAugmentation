@@ -36,10 +36,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import thaumcraft.common.entities.EntityFluxRift;
+import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 
 public class TileRiftMonitor extends TileEntity implements ITickable {
 
-    // 0 = size, 1 = stability
+    // Rifts: 0 = size, 1 = stability
+    // Fractures: 0 = biome, 1 = opened
     protected boolean mode;
     protected int targetID;
     protected int timer;
@@ -59,11 +61,12 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     }
     
     public void cycleTarget() {
-        List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).grow(7), entity -> entity instanceof EntityFluxRift);
+        List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).grow(7), entity -> entity instanceof EntityFluxRift || entity instanceof IDimensionalFracture);
         if (!entities.isEmpty()) {
             if (target.get() == null) {
                 target = new WeakReference<>(entities.get(0));
                 world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+                markDirty();
             }
             else {
                 boolean found = false;
@@ -72,6 +75,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
                     if (found) {
                         target = new WeakReference<>(e);
                         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+                        markDirty();
                         set = true;
                         break;
                     }
@@ -82,6 +86,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
                 if (!found || (found && !set)) {
                     target = new WeakReference<>(entities.get(0));
                     world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+                    markDirty();
                 }
             }
         }
@@ -90,11 +95,13 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     public void cycleMode() {
         mode = !mode;
         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+        markDirty();
     }
     
     public void setMode(boolean newMode) {
         mode = newMode;
         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+        markDirty();
     }
     
     public boolean getMode() {
@@ -123,6 +130,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
             if (e != null) {
                 target = new WeakReference<>(e);
                 world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+                markDirty();
                 targetID = -1;
             }
             else if (!world.isRemote)
@@ -137,6 +145,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
                 if (!target.get().isEntityAlive()) {
                     target.clear();
                     world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+                    markDirty();
                 }
                 
                 int level = getComparatorOutput();
@@ -192,6 +201,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     public void handleUpdateTag(NBTTagCompound tag) {
         mode = tag.getBoolean("mode");
         targetID = tag.getInteger("targetID");
+        world.markBlockRangeForRenderUpdate(pos, pos);
     }
     
     @Override

@@ -39,11 +39,14 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.world.biome.Biome;
 import thaumcraft.client.lib.obj.AdvancedModelLoader;
 import thaumcraft.client.lib.obj.IModelCustom;
 import thaumcraft.common.entities.EntityFluxRift;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 
@@ -73,6 +76,7 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
             GlStateManager.pushMatrix();
             GlStateManager.translate(0.5, 0.875 + Math.sin((te.getWorld().getTotalWorldTime() + partialTicks) / 40.0) / 15.0, 0.5);
             GlStateManager.scale(0.25, 0.25, 0.25);
+            GlStateManager.rotate(te.getWorld().getTotalWorldTime() % 360 + partialTicks, 0.0F, 1.0F, 0.0F);
             bindTexture(MONITOR_BASE_TEXTURE);
             meter.renderPart("scanner");
             GlStateManager.enableBlend();
@@ -180,6 +184,61 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
         
             if (te.getMode())
                 GlStateManager.enableCull();
+        }
+        else if (target instanceof IDimensionalFracture) {
+            if (!te.getMode()) {
+                GlStateManager.translate(0.5, 0.05, 0.5);
+                Biome biome = ((IDimensionalFracture) target).getDestinationBiome();
+                if (biome != null) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.scale(0.0625, 0.0625, 0.0625);
+                    MutableBlockPos pos = new MutableBlockPos();
+                    for (int cubeZ = -3; cubeZ < 4; ++cubeZ) {
+                        for (int cubeX = -3; cubeX < 4; ++cubeX) {
+                            pos.setPos(cubeX, (int) y, cubeZ);
+                            int color = 0;
+                            if (Math.abs(cubeX) < 2 && Math.abs(cubeZ) < 2)
+                                color = biome.getGrassColorAtPos(pos);
+                            else if (Math.abs(cubeX) < 3 && Math.abs(cubeZ) < 3)
+                                color = biome.getFoliageColorAtPos(pos);
+                            else
+                                color = 0x3F76E4 & biome.getWaterColor();
+                            
+                            float cR = ((color >> 16) & 0xFF) / 255.0F, cG = ((color >> 8) & 0xFF) / 255.0F, cB = (color & 0xFF) / 255.0F;
+                            GlStateManager.color(cR, cG, cB, a);
+                            buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX);
+                            buffer.pos(cubeX - 0.5, 0.0, cubeZ + 0.5).tex(0.0, 0.0).endVertex();
+                            buffer.pos(cubeX + 0.5, 0.0, cubeZ + 0.5).tex(1.0, 0.0).endVertex();
+                            buffer.pos(cubeX - 0.5, 1.0, cubeZ + 0.5).tex(0.0, 1.0).endVertex();
+                            buffer.pos(cubeX + 0.5, 1.0, cubeZ + 0.5).tex(1.0, 1.0).endVertex();
+                            buffer.pos(cubeX + 0.5, 1.0, cubeZ - 0.5).tex(1.0, 0.0).endVertex();
+                            buffer.pos(cubeX + 0.5, 0.0, cubeZ + 0.5).tex(0.0, 1.0).endVertex();
+                            buffer.pos(cubeX + 0.5, 0.0, cubeZ - 0.5).tex(0.0, 0.0).endVertex();
+                            buffer.pos(cubeX - 0.5, 0.0, cubeZ + 0.5).tex(1.0, 1.0).endVertex();
+                            buffer.pos(cubeX - 0.5, 0.0, cubeZ - 0.5).tex(1.0, 0.0).endVertex();
+                            buffer.pos(cubeX - 0.5, 1.0, cubeZ + 0.5).tex(0.0, 1.0).endVertex();
+                            buffer.pos(cubeX - 0.5, 1.0, cubeZ - 0.5).tex(0.0, 0.0).endVertex();
+                            buffer.pos(cubeX + 0.5, 1.0, cubeZ - 0.5).tex(1.0, 0.0).endVertex();
+                            buffer.pos(cubeX - 0.5, 0.0, cubeZ - 0.5).tex(0.0, 1.0).endVertex();
+                            buffer.pos(cubeX + 0.5, 0.0, cubeZ - 0.5).tex(1.0, 1.0).endVertex();
+                            t.draw();
+                        }
+                    }
+                    GlStateManager.popMatrix();
+                }
+                GlStateManager.translate(0.0, 0.1, 0.0);
+                GlStateManager.scale(0.25, 0.25, 0.25);
+            }
+            else {
+                AxisAlignedBB box = target.getEntityBoundingBox().offset(target.getPositionVector().scale(-1.0));
+                GlStateManager.translate(0.5, 0.0, 0.5);
+                GlStateManager.scale(0.5 / Math.max(Math.abs(box.minX), Math.abs(box.maxX)), 1.0 / Math.max(Math.abs(box.minY), Math.abs(box.maxY)),
+                        0.5 / Math.max(Math.abs(box.minZ), Math.abs(box.maxZ)));
+            }
+            
+            IDimensionalFracture frac = (IDimensionalFracture) target;
+            ThaumicAugmentation.proxy.getRenderHelper().renderDimensionalFractureSolidLayer(frac.isOpen(), target.getEntityWorld().getTotalWorldTime(), frac.getTimeOpened(), frac.getOpeningDuration(),
+                    partialTicks, 6, r, g, b, a, false, CoreGLE.TUBE_JN_ANGLE);
         }
         
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);

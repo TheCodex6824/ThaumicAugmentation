@@ -58,6 +58,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.block.BlockImpetusGenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrixBase;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMirror;
@@ -67,6 +68,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverOutput;
+import thecodex6824.thaumicaugmentation.common.block.BlockStabilityFieldGenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
 import thecodex6824.thaumicaugmentation.common.block.BlockTaintFlower;
 import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
@@ -114,6 +116,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
@@ -122,6 +125,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
+import thecodex6824.thaumicaugmentation.common.tile.TileStabilityFieldGenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
@@ -180,6 +184,8 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockImpetusMirror(), "impetus_mirror"));
         registry.register(setupBlock(new BlockArcaneTerraformer(), "arcane_terraformer"));
         registry.register(setupBlock(new BlockRiftMonitor(), "rift_monitor"));
+        registry.register(setupBlock(new BlockImpetusGenerator(), "impetus_generator"));
+        registry.register(setupBlock(new BlockStabilityFieldGenerator(), "stability_field_generator"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -198,6 +204,8 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileImpetusMirror.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_mirror"));
         GameRegistry.registerTileEntity(TileArcaneTerraformer.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_terraformer"));
         GameRegistry.registerTileEntity(TileRiftMonitor.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_monitor"));
+        GameRegistry.registerTileEntity(TileImpetusGenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_generator"));
+        GameRegistry.registerTileEntity(TileStabilityFieldGenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "stability_field_generator"));
     }
 
     @SubscribeEvent

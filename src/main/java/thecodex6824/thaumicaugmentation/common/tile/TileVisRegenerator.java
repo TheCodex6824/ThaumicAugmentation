@@ -60,6 +60,7 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
     protected VariableValue actionTime;
     protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
     protected boolean lastState = false;
+    protected int ticks;
 
     public TileVisRegenerator() {
         super();
@@ -76,7 +77,7 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
 
     @Override
     public void update() {
-        if (!world.isRemote && (world.getTotalWorldTime() + delay) % DELAY == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) &&
+        if (!world.isRemote && ticks++ % DELAY == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) &&
                 AuraHelper.getVis(world, pos) + AuraHelper.getFlux(world, pos) < AuraHelper.getAuraBase(world, pos)) { 
 
             if (AuraHelper.getFlux(world, pos) > AuraHelper.getVis(world, pos)) {
@@ -90,7 +91,7 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
                         pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 48));
             }
         }
-        else if (world.isRemote && (world.getTotalWorldTime() + delay) % 5 == 0) {
+        else if (world.isRemote && (ticks++ + delay) % 5 == 0) {
             float aura = getAuraOffset();
             cycleLength.setValue(Math.min(1.0F / Math.max(aura, Float.MIN_VALUE), 15));
             boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
