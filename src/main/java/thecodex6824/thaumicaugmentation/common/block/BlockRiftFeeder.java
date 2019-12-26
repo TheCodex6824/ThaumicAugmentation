@@ -52,7 +52,7 @@ public class BlockRiftFeeder extends BlockTABase implements IDirectionalBlock, I
         setHardness(1.5F);
         setResistance(15.0F);
         setDefaultState(getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.UP).withProperty(
-                IEnabledBlock.ENABLED, false));
+                IEnabledBlock.ENABLED, true));
         setSoundType(SoundType.METAL);
     }
     
@@ -98,7 +98,7 @@ public class BlockRiftFeeder extends BlockTABase implements IDirectionalBlock, I
     
     protected void update(IBlockState state, World world, BlockPos pos) {
         boolean powered = world.isBlockPowered(pos);
-        if (powered != state.getValue(IEnabledBlock.ENABLED))
+        if (powered == state.getValue(IEnabledBlock.ENABLED))
             world.setBlockState(pos, state.cycleProperty(IEnabledBlock.ENABLED), 3);
     }
 

@@ -126,7 +126,7 @@ public final class BiomeUtil {
         }
     }
     
-    public static boolean generateNewAura(World world, BlockPos pos, boolean preserveAmounts) {
+    public static boolean generateNewAura(World world, BlockPos pos, boolean preserveFlux) {
         Biome biome = world.getBiome(pos);
         if (BiomeHandler.getBiomeBlacklist(Biome.getIdForBiome(biome)) != -1)
             return false;
@@ -154,7 +154,7 @@ public final class BiomeUtil {
         for (int i = 0; i < 1024 * 32; ++i) {
             double g = chunkRandom.nextGaussian();
             // the clamp means this may not be 100% accurate for auras outside that range, but it's better than nothing
-            if (MathHelper.clamp((short) ((float) (1.0 + g * 0.10000000149011612D) * life * 500.0F), 0, 500) == target) {
+            if (MathHelper.clamp((short) ((float) (1.0 + g * 0.10000000149011612) * life * 500.0F), 0, 500) == target) {
                 solutionFound = true;
                 break;
             }
@@ -165,12 +165,14 @@ public final class BiomeUtil {
             }
         }
         
-        AuraHandler.generateAura(world.getChunk(pos), copy);
-        if (preserveAmounts) {
-            float applyVis = Math.min(vis, AuraHelper.getVis(world, pos));
-            AuraHelper.drainVis(world, pos, AuraHelper.getVis(world, pos) - applyVis, false);
+        Chunk chunk = world.getChunk(pos);
+        AuraHandler.generateAura(chunk, copy);
+        chunk.markDirty();
+        float applyVis = Math.min(Math.min(vis, AuraHelper.getVis(world, pos)), AuraHelper.getAuraBase(world, pos));
+        AuraHelper.drainVis(world, pos, AuraHelper.getVis(world, pos) - applyVis, false);
+        if (preserveFlux)
             AuraHelper.polluteAura(world, pos, flux, false);
-        }
+        
         return solutionFound;
     }
     

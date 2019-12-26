@@ -109,7 +109,13 @@ public final class NodeHelper {
         
         ArrayList<IImpetusProvider> providers = new ArrayList<>(dest.getGraph().findDirectProviders(dest));
         if (!providers.isEmpty()) {
-            providers.sort((p1, p2) -> (int) Math.max(1, Math.min(-1, p1.provide(Long.MAX_VALUE, true) - p2.provide(Long.MAX_VALUE, true))));
+            providers.sort((p1, p2) -> Long.compare(p2.provide(Long.MAX_VALUE, true), p1.provide(Long.MAX_VALUE, true)));
+            if (amount < providers.size()) {
+                int remove = providers.size() - (int) amount;
+                for (int i = 0; i < remove; ++i)
+                    providers.remove(providers.size() - 1 - i);
+            }
+            
             ArrayList<Deque<IImpetusNode>> paths = new ArrayList<>(providers.size());
             for (IImpetusProvider p : providers) {
                 Deque<IImpetusNode> path = dest.getGraph().findPath(p, dest);

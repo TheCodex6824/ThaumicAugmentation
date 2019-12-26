@@ -72,18 +72,22 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
         Entity target = te.getTarget();
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
+        GlStateManager.enableBlend();
+        GlStateManager.pushMatrix();
         if (target != null) {
-            GlStateManager.pushMatrix();
             GlStateManager.translate(0.5, 0.875 + Math.sin((te.getWorld().getTotalWorldTime() + partialTicks) / 40.0) / 15.0, 0.5);
             GlStateManager.scale(0.25, 0.25, 0.25);
             GlStateManager.rotate(te.getWorld().getTotalWorldTime() % 360 + partialTicks, 0.0F, 1.0F, 0.0F);
-            bindTexture(MONITOR_BASE_TEXTURE);
-            meter.renderPart("scanner");
-            GlStateManager.enableBlend();
-            bindTexture(MONITOR_GLASS_TEXTURE);
-            meter.renderOnly("screen", "screen_back");
-            GlStateManager.popMatrix();
         }
+        else {
+            GlStateManager.translate(0.5, 0.875, 0.5);
+            GlStateManager.scale(0.25, 0.25, 0.25);
+        }
+        bindTexture(MONITOR_BASE_TEXTURE);
+        meter.renderPart("scanner");
+        bindTexture(MONITOR_GLASS_TEXTURE);
+        meter.renderOnly("screen", "screen_back");
+        GlStateManager.popMatrix();
         GlStateManager.translate(0.0, 1.0, 0.0);
         GlStateManager.disableLighting();
         float r = 1.0F, g = 1.0F, b = 1.0F, a = 1.0F;
@@ -174,8 +178,8 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
                 rift = rift.onlyCenterPoints(Math.min(rift.getPoints().length, 24));
                 AxisAlignedBB box = rift.getBoundingBox();
                 GlStateManager.translate(0.5, 0.5, 0.5);
-                GlStateManager.scale(0.5 / Math.max(Math.abs(box.minX), Math.abs(box.maxX)), 0.5 / Math.max(Math.abs(box.minY), Math.abs(box.maxY)),
-                        0.5 / Math.max(Math.abs(box.minZ), Math.abs(box.maxZ)));
+                GlStateManager.scale(0.25 / Math.max(Math.abs(box.minX), Math.abs(box.maxX)), 0.25 / Math.max(Math.abs(box.minY), Math.abs(box.maxY)),
+                        0.25 / Math.max(Math.abs(box.minZ), Math.abs(box.maxZ)));
                 GlStateManager.translate(-(box.maxX - Math.abs(box.minX)) / 2.0, -(box.maxY - Math.abs(box.minY)) / 2.0, -(box.maxZ - Math.abs(box.minZ)) / 2.0);
                 GlStateManager.disableCull();
             }

@@ -44,7 +44,7 @@ public class TileImpetusRelay extends TileEntity implements IBreakCallback {
     protected ImpetusNode node;
     
     public TileImpetusRelay() {
-        node = new ImpetusNode(2, 2) {
+        node = new ImpetusNode(3, 3) {
             @Override
             public Vec3d getBeamEndpoint() {
                 Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());

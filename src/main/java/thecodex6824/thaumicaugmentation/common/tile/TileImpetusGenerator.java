@@ -85,27 +85,29 @@ public class TileImpetusGenerator extends TileEntity implements IBreakCallback, 
                         NodeHelper.syncAllImpetusTransactions(result.paths);
                     }
                 }
-                
-                EnumFacing facing = state.getValue(IDirectionalBlock.DIRECTION);
-                TileEntity neighbor = world.getTileEntity(pos.offset(facing));
-                if (neighbor != null) {
-                    IEnergyStorage other = neighbor.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
-                    if (other != null && other.canReceive()) {
-                        int extract = Math.min(forgeEnergy.getEnergyStored(), 30);
-                        extract = other.receiveEnergy(extract, false);
-                        if (extract > 0) {
-                            forgeEnergy.extractEnergy(extract, false);
-                            markDirty();
-                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
-                        }
-                    }
-                }
             }
         }
         else if (world.isRemote && ticks++ % 10 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED)) {
             ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
                     pos.getY() + 0.9  + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
                     pos.getZ() + 0.5  + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, 1.5F, Aspect.ELDRITCH.getColor(), false);
+        }
+        
+        if (!world.isRemote) {
+            EnumFacing facing = world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION);
+            TileEntity neighbor = world.getTileEntity(pos.offset(facing));
+            if (neighbor != null) {
+                IEnergyStorage other = neighbor.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
+                if (other != null && other.canReceive()) {
+                    int extract = Math.min(forgeEnergy.getEnergyStored(), 30);
+                    extract = other.receiveEnergy(extract, false);
+                    if (extract > 0) {
+                        forgeEnergy.extractEnergy(extract, false);
+                        markDirty();
+                        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
+                    }
+                }
+            }
         }
     }
     

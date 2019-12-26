@@ -64,7 +64,7 @@ public class BlockImpetusGenerator extends BlockTABase implements IDirectionalBl
         setResistance(35.0F);
         setSoundType(SoundType.METAL);
         setDefaultState(getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.UP).withProperty(
-                IEnabledBlock.ENABLED, false));
+                IEnabledBlock.ENABLED, true));
     }
     
     @Override
@@ -90,7 +90,7 @@ public class BlockImpetusGenerator extends BlockTABase implements IDirectionalBl
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
             float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
 
-        EnumFacing direction = EnumFacing.getDirectionFromEntityLiving(pos, placer);
+        EnumFacing direction = EnumFacing.getDirectionFromEntityLiving(pos, placer).getOpposite();
         if (placer.isSneaking())
             direction = direction.getOpposite();
         
@@ -109,7 +109,7 @@ public class BlockImpetusGenerator extends BlockTABase implements IDirectionalBl
     
     protected void update(IBlockState state, World world, BlockPos pos) {
         boolean powered = world.isBlockPowered(pos);
-        if (powered != state.getValue(IEnabledBlock.ENABLED))
+        if (powered == state.getValue(IEnabledBlock.ENABLED))
             world.setBlockState(pos, state.cycleProperty(IEnabledBlock.ENABLED), 3);
     }
 

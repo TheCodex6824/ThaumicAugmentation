@@ -45,7 +45,6 @@ import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileStabilityFieldGenerator;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockStabilityFieldGenerator extends BlockTABase implements IDirectionalBlock, IEnabledBlock, IItemBlockProvider {
@@ -56,7 +55,7 @@ public class BlockStabilityFieldGenerator extends BlockTABase implements IDirect
         setResistance(35.0F);
         setSoundType(SoundType.METAL);
         setDefaultState(getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.UP).withProperty(
-                IEnabledBlock.ENABLED, false));
+                IEnabledBlock.ENABLED, true));
         
     }
     
@@ -102,7 +101,7 @@ public class BlockStabilityFieldGenerator extends BlockTABase implements IDirect
     
     protected void update(IBlockState state, World world, BlockPos pos) {
         boolean powered = world.isBlockPowered(pos);
-        if (powered != state.getValue(IEnabledBlock.ENABLED))
+        if (powered == state.getValue(IEnabledBlock.ENABLED))
             world.setBlockState(pos, state.cycleProperty(IEnabledBlock.ENABLED), 3);
     }
 
@@ -118,12 +117,20 @@ public class BlockStabilityFieldGenerator extends BlockTABase implements IDirect
     }
     
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof IBreakCallback)
-            ((IBreakCallback) tile).onBlockBroken();
+    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param) {
+        if (id != 0) {
+            if (!world.isRemote)
+                return true;
+            else {
+                TileEntity tile = world.getTileEntity(pos);
+                if (tile != null)
+                    return tile.receiveClientEvent(id, param);
+                else
+                    return false;
+            }
+        }
         
-        super.breakBlock(world, pos, state);
+        return false;
     }
     
     @Override

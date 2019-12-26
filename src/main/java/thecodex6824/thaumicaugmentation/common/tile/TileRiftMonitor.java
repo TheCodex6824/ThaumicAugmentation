@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.tile;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -43,14 +44,15 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     // Rifts: 0 = size, 1 = stability
     // Fractures: 0 = biome, 1 = opened
     protected boolean mode;
-    protected int targetID;
     protected int timer;
     protected int lastResult;
     protected WeakReference<Entity> target;
     
+    protected UUID serverTargetID;
+    protected int clientTargetID;
+    
     public TileRiftMonitor() {
         super();
-        targetID = -1;
         lastResult = -1;
         target = new WeakReference<>(null);
     }
@@ -63,7 +65,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     public void cycleTarget() {
         List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).grow(7), entity -> entity instanceof EntityFluxRift || entity instanceof IDimensionalFracture);
         if (!entities.isEmpty()) {
-            if (target.get() == null) {
+            if (target.get() == null || target.get().isDead) {
                 target = new WeakReference<>(entities.get(0));
                 world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                 markDirty();
@@ -123,26 +125,36 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
         return 0;
     }
     
+    protected void loadTargetFromID() {
+        if (!world.isRemote) {
+            List<Entity> list = world.getEntities(Entity.class, e -> e != null && e.getUniqueID().equals(serverTargetID));
+            if (!list.isEmpty()) {
+                target = new WeakReference<>(list.get(0));
+                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+            }
+            
+            serverTargetID = null;
+        }
+        else {
+            List<Entity> list = world.getEntities(Entity.class, e -> e != null && e.getEntityId() == clientTargetID);
+            if (!list.isEmpty()) {
+                target = new WeakReference<>(list.get(0));
+                clientTargetID = -1;
+            }
+        }
+    }
+    
     @Override
     public void update() {
-        if (target.get() == null && targetID != -1 && world.getTotalWorldTime() % 10 == 0) {
-            Entity e = world.getEntityByID(targetID);
-            if (e != null) {
-                target = new WeakReference<>(e);
-                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-                markDirty();
-                targetID = -1;
-            }
-            else if (!world.isRemote)
-                targetID = -1;
-        }
-        
         if (!world.isRemote) {
-            if (++timer % 20 == 0 && target.get() == null)
+            if (serverTargetID != null)
+                loadTargetFromID();
+            
+            if (timer++ % 20 == 0 && (target.get() == null || target.get().isDead))
                 cycleTarget();
             
             if (target.get() != null) {
-                if (!target.get().isEntityAlive()) {
+                if (target.get().isDead) {
                     target.clear();
                     world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                     markDirty();
@@ -159,6 +171,8 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
                 lastResult = 0;
             }
         }
+        else if (world.isRemote && clientTargetID != -1)
+            loadTargetFromID();
     }
     
     @Override
@@ -178,29 +192,38 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
         compound.setBoolean("mode", mode);
         Entity e = target.get();
         compound.setInteger("targetID", e != null ? e.getEntityId() : -1);
+        
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
     
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         mode = pkt.getNbtCompound().getBoolean("mode");
-        targetID = pkt.getNbtCompound().getInteger("targetID");
+        clientTargetID = pkt.getNbtCompound().getInteger("targetID");
+        if (clientTargetID != -1)
+            loadTargetFromID();
+        
         world.markBlockRangeForRenderUpdate(pos, pos);
     }
     
     @Override
     public NBTTagCompound getUpdateTag() {
-        NBTTagCompound compound = new NBTTagCompound();
+        NBTTagCompound compound = super.getUpdateTag();
         compound.setBoolean("mode", mode);
         Entity e = target.get();
         compound.setInteger("targetID", e != null ? e.getEntityId() : -1);
+        
         return compound;
     }
     
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
+        super.handleUpdateTag(tag);
         mode = tag.getBoolean("mode");
-        targetID = tag.getInteger("targetID");
+        clientTargetID = tag.getInteger("targetID");
+        if (clientTargetID != -1)
+            loadTargetFromID();
+        
         world.markBlockRangeForRenderUpdate(pos, pos);
     }
     
@@ -208,7 +231,9 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setBoolean("mode", mode);
         Entity e = target.get();
-        compound.setInteger("targetID", e != null ? e.getEntityId() : -1);
+        if (e != null)
+            compound.setUniqueId("target", e.getUniqueID());
+        
         return super.writeToNBT(compound);
     }
     
@@ -216,7 +241,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         mode = compound.getBoolean("mode");
-        targetID = compound.getInteger("targetID");
+        serverTargetID = compound.getUniqueId("target");
     }
     
 }

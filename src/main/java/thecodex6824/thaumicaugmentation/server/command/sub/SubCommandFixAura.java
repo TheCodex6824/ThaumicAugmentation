@@ -55,8 +55,8 @@ public class SubCommandFixAura implements ISubCommand {
                 }
                 else {
                     BlockPos pos = e.getPosition();
-                    x = pos.getX() >> 16;
-                    z = pos.getZ() >> 16;
+                    x = pos.getX() >> 4;
+                    z = pos.getZ() >> 4;
                     dim = e.dimension;
                 }
             }
@@ -66,8 +66,8 @@ public class SubCommandFixAura implements ISubCommand {
                 else {
                     Entity e = sender.getCommandSenderEntity();
                     BlockPos pos = e != null ? e.getPosition() : BlockPos.ORIGIN;
-                    x = (int) (CommandBase.parseCoordinate(pos.getX() >> 16, args[0], false).getResult());
-                    z = (int) (CommandBase.parseCoordinate(pos.getZ() >> 16, args[1], false).getResult());
+                    x = (int) (CommandBase.parseCoordinate(pos.getX() >> 4, args[0], false).getResult());
+                    z = (int) (CommandBase.parseCoordinate(pos.getZ() >> 4, args[1], false).getResult());
                     dim = (int) (CommandBase.parseCoordinate(e != null ? e.dimension : 0, args[2], false).getResult());
                     if (args.length == 4)
                         force = Boolean.parseBoolean(args[3]);
