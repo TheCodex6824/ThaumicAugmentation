@@ -78,7 +78,7 @@ public class GUIAutocaster extends GuiContainer {
                 TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, newState ? 1 : 0));
             }
         });
-        buttonList.add(new ButtonToggle(2, guiLeft + 80, guiTop + 55, 8, 8, e.getTargetFriendly()) {
+        buttonList.add(new ButtonToggle(3, guiLeft + 80, guiTop + 55, 8, 8, e.getTargetFriendly()) {
             @Override
             public String getLabel() {
                 return new TextComponentTranslation("button.turretfocus.4").getFormattedText();

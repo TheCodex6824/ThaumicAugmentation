@@ -136,24 +136,28 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     protected MatrixImpetusStorage buffer;
     protected BufferedImpetusProsumer prosumer;
     protected IAnimationStateMachine asm;
-    protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
     protected int ticks;
     
     public TileImpetusMatrix() {
         buffer = new MatrixImpetusStorage();
         prosumer = new BufferedImpetusProsumer(1, 1, buffer) {
             @Override
-            public void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {
-                markDirty();
+            public long onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {
+                if (!simulate)
+                    markDirty();
+                
+                return energy;
             }
         };
+        ticks = ThreadLocalRandom.current().nextInt(20);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_matrix.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(20), "delay", new VariableValue(delay)));
+                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(20), "delay", new VariableValue(ticks)));
     }
     
     @Override
     public void update() {
-        if (!world.isRemote && (ticks++ + delay) % 20 == 0) {
+        if (!world.isRemote && ticks++ % 20 == 0) {
+            NodeHelper.validateOutputs(world, prosumer);
             ConsumeResult result = prosumer.consume(getTotalCells() * CELL_CAPACITY, false);
             if (result.energyConsumed > 0)
                 NodeHelper.syncAllImpetusTransactions(result.paths);
@@ -266,6 +270,5 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         else
             return super.getCapability(capability, facing);
     }
-    
     
 }

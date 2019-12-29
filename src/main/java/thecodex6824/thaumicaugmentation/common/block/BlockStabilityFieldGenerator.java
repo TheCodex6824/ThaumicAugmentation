@@ -40,6 +40,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.Properties;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
@@ -61,7 +62,8 @@ public class BlockStabilityFieldGenerator extends BlockTABase implements IDirect
     
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, IDirectionalBlock.DIRECTION, IEnabledBlock.ENABLED);
+        return new BlockStateContainer.Builder(this).add(IDirectionalBlock.DIRECTION).add(IEnabledBlock.ENABLED).add(
+                Properties.AnimationProperty).add(Properties.StaticProperty).build();
     }
     
     @Override

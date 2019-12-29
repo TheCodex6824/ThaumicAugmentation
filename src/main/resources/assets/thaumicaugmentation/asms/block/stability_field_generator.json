@@ -1,0 +1,45 @@
+{
+    "parameters": {
+        "time": ["/", "#cycle_length"],
+        "end_anim": ["compose", ["+", "#cycle_length"], "#act_time"],
+        "trigger_end": ["-", "#end_anim"],
+        "anim_progress": ["-/mM", "#act_time", "#cycle_length", 1.0, 0.0]
+    },
+    "clips": {
+        "closed": [
+            "apply",
+            "thaumicaugmentation:block/stability_field_generator_anim@model",
+            0.0
+        ],
+        "open": [
+            "apply",
+            "thaumicaugmentation:block/stability_field_generator_anim@model",
+            0.5
+        ],
+        "opening": [
+            "trigger_positive",
+            ["apply", "thaumicaugmentation:block/stability_field_generator_anim@opening", "#anim_progress"],
+            "#trigger_end",
+            "!transition:open"
+        ],
+        "closing": [
+            "trigger_positive",
+            ["apply", "thaumicaugmentation:block/stability_field_generator_anim@closing", "#anim_progress"],
+            "#trigger_end",
+            "!transition:closed"
+        ]
+    },
+    "states": [
+        "closed",
+        "open",
+        "opening",
+        "closing"
+    ],
+    "transitions": {
+        "closed": ["opening", "open", "closing"],
+        "open": ["opening", "closed", "closing"],
+        "opening": ["closed", "open", "closing"],
+        "closing": ["opening", "open", "closed"]
+    },
+    "start_state": "closed"
+}

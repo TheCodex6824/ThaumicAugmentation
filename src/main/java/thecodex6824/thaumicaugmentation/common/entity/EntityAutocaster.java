@@ -148,6 +148,8 @@ public class EntityAutocaster extends EntityCreature implements IEntityOwnable {
                 targeting.addTargetSelector(TARGET_ANIMAL);
             else
                 targeting.removeTargetSelector(TARGET_ANIMAL);
+            
+            targeting.resetTask();
         }
     }
     
@@ -162,6 +164,8 @@ public class EntityAutocaster extends EntityCreature implements IEntityOwnable {
                 targeting.addTargetSelector(TARGET_MOB);
             else
                 targeting.removeTargetSelector(TARGET_MOB);
+            
+            targeting.resetTask();
         }
     }
     
@@ -176,6 +180,8 @@ public class EntityAutocaster extends EntityCreature implements IEntityOwnable {
                 targeting.addTargetSelector(TARGET_PLAYER);
             else
                 targeting.removeTargetSelector(TARGET_PLAYER);
+            
+            targeting.resetTask();
         }
     }
     
@@ -185,6 +191,8 @@ public class EntityAutocaster extends EntityCreature implements IEntityOwnable {
     
     public void setTargetFriendly(boolean target) {
         dataManager.set(TARGETS, (byte) BitUtil.setOrClearBit(dataManager.get(TARGETS), 3, target));
+        if (targeting != null)
+            targeting.resetTask();
     }
     
     @Override
@@ -294,8 +302,10 @@ public class EntityAutocaster extends EntityCreature implements IEntityOwnable {
     }
     
     protected double getMaxFocusDistanceSquared(ItemStack stack) {
-        if (cachedMaxDistanceSquared < 0)
-            cachedMaxDistanceSquared = AutocasterFocusRegistry.getMaxDistance(stack);
+        if (cachedMaxDistanceSquared < 0) {
+            double d = AutocasterFocusRegistry.getMaxDistance(stack);
+            cachedMaxDistanceSquared = d * d;
+        }
         
         return cachedMaxDistanceSquared;
     }
@@ -366,25 +376,6 @@ public class EntityAutocaster extends EntityCreature implements IEntityOwnable {
                 setDead();
                 player.swingArm(hand);
                 return true;
-            }
-            else if (hand != null && player.getHeldItem(hand) != null) {
-                ItemStack stack = player.getHeldItem(hand);
-                if (stack.getItem() instanceof ItemFocus) {
-                    ItemStack old = getHeldItemMainhand().copy();
-                    ItemStack copy = stack.copy();
-                    copy.setCount(1);
-                    setHeldItem(EnumHand.MAIN_HAND, copy);
-                    stack.shrink(1);
-                    
-                    if (!old.isEmpty())
-                        player.addItemStackToInventory(old);
-                    
-                    return true;
-                }
-                else {
-                    player.openGui(ThaumicAugmentation.instance, TAInventory.AUTOCASTER.getID(), world, getEntityId(), 0, 0);
-                    return true;
-                }
             }
             else {
                 player.openGui(ThaumicAugmentation.instance, TAInventory.AUTOCASTER.getID(), world, getEntityId(), 0, 0);
@@ -523,7 +514,7 @@ public class EntityAutocaster extends EntityCreature implements IEntityOwnable {
         @Override
         public boolean shouldContinueExecuting() {
             EntityLivingBase e = getAttackTarget();
-            double d = getTargetDistance();
+            double d = getTargetDistance() * 1.5;
             return e != null && e.isEntityAlive() && getDistanceSq(e) <= d * d;
         }
         
@@ -576,7 +567,7 @@ public class EntityAutocaster extends EntityCreature implements IEntityOwnable {
                 else if (myTeam != null && myTeam != theirTeam && getTargetFriendly())
                     return false;
                 else {
-                    double d = getTargetDistance();
+                    double d = getTargetDistance() * 1.5;
                     if (getDistanceSq(entity) > d * d)
                         return false;
                     else {

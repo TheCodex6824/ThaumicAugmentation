@@ -26,6 +26,8 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,22 +37,31 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.common.animation.Event;
+import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.model.animation.CapabilityAnimation;
+import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.beams.FXBeamBore;
 import thaumcraft.common.entities.EntityFluxRift;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
-public class TileStabilityFieldGenerator extends TileEntity implements ITickable {
+public class TileStabilityFieldGenerator extends TileEntity implements ITickable, IAnimatedTile {
 
     protected static class CustomEnergyStorage extends EnergyStorage {
         
@@ -72,10 +83,17 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     protected int clientLoadedID;
     protected boolean lastEnabledState;
     protected Object beam;
+    protected IAnimationStateMachine asm;
+    protected VariableValue cycleLength;
+    protected VariableValue actionTime;
     
     public TileStabilityFieldGenerator() {
         targetedRift = new WeakReference<>(null);
         energy = new CustomEnergyStorage(1000, 1000, 1000, 0);
+        cycleLength = new VariableValue(1.0F);
+        actionTime = new VariableValue(-1.0F);
+        asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/stability_field_generator.json"),
+                ImmutableMap.of("cycle_length", cycleLength, "act_time", actionTime));
     }
     
     protected double getDistForFace(EnumFacing face, Entity entity) {
@@ -140,9 +158,9 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
         if (!world.isRemote && ticks++ % 5 == 0) {
             IBlockState state = world.getBlockState(pos);
             if (state.getValue(IEnabledBlock.ENABLED)) {
-                int result = energy.extractEnergy(30, true);
-                if (result == 30) {
-                    energy.extractEnergy(30, false);
+                int result = energy.extractEnergy(60, true);
+                if (result == 60) {
+                    energy.extractEnergy(60, false);
                     EntityFluxRift rift = targetedRift.get();
                     if (rift == null || rift.isDead) {
                         if (serverLoadedID != null)
@@ -171,7 +189,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                             markDirty();
                         }
                         else if (rift.getRiftStability() < 100.0F) {
-                            float stab = Math.min(100.0F - rift.getRiftStability(), Math.min(energy.getEnergyStored() / 100.0F, 200));
+                            float stab = Math.min(100.0F - rift.getRiftStability(), Math.min(energy.getEnergyStored() / 100.0F, 150));
                             int cost = (int) (stab * 100);
                             if (cost > 0 && energy.extractEnergy(cost, true) == cost) {
                                 energy.extractEnergy(cost, false);
@@ -241,10 +259,18 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                         dest.x, dest.y, dest.z, 1, 0xFFBF00,
                         false, 0.05F, beam, 0);
                 ((FXBeamBore) beam).setMaxAge(Integer.MAX_VALUE);
+                actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
+                asm.transition("opening");
             }
         }
-        else if ((rift == null || !lastEnabledState) && beam != null)
+        else if ((rift == null || !lastEnabledState) && beam != null) {
+            if (((FXBeamBore) beam).isAlive()) {
+                actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
+                asm.transition("closing");
+            }
+            
             ((FXBeamBore) beam).setExpired();
+        }
     }
     
     @Override
@@ -261,6 +287,8 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION))
             return true;
+        else if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            return true;
         else
             return super.hasCapability(capability, facing);
     }
@@ -270,6 +298,8 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION))
             return CapabilityEnergy.ENERGY.cast(energy);
+        else if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
         else
             return super.getCapability(capability, facing);
     }
@@ -336,4 +366,13 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
         serverLoadedID = nbt.getUniqueId("rift");
         energy.setEnergy(nbt.getInteger("energy"));
     }
+    
+    @Override
+    public void handleEvents(float time, Iterable<Event> pastEvents) {}
+
+    @Override
+    public boolean hasFastRenderer() {
+        return true;
+    }
+    
 }

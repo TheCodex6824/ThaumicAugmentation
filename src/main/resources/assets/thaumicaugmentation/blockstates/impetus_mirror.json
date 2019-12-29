@@ -25,7 +25,7 @@
                     "glass": {
                         "model": "thaumicaugmentation:mirror_glass",
                         "textures": {
-                            "0": "thaumcraft:blocks/mirrorpanetrans"
+                            "0": "thaumicaugmentation:blocks/mirror_pane_trans"
                         }
                     }
                 }

@@ -202,6 +202,8 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
         clientTargetID = pkt.getNbtCompound().getInteger("targetID");
         if (clientTargetID != -1)
             loadTargetFromID();
+        else
+            target.clear();
         
         world.markBlockRangeForRenderUpdate(pos, pos);
     }
@@ -223,6 +225,8 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
         clientTargetID = tag.getInteger("targetID");
         if (clientTargetID != -1)
             loadTargetFromID();
+        else
+            target.clear();
         
         world.markBlockRangeForRenderUpdate(pos, pos);
     }

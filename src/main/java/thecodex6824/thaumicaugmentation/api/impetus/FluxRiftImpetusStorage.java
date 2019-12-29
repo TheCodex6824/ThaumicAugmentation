@@ -65,7 +65,6 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
         /*
          * f(x) = (1/2) (e^(-(x-172)^2 / 11250) * x)
          */
-        size = Math.min(size, MAX_SIZE);
         return (long) (0.5 * (Math.pow(Math.E, -Math.pow(size - 172, 2) / 11250.0) * size));
     }
     
@@ -90,7 +89,7 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
     public long extractEnergy(long maxToExtract, boolean simulate) {
         EntityFluxRift r = rift.get();
         if (r != null && r.getRiftSize() > 0) {
-            long toExtract = Math.min(calcEnergyThisSize(r.getRiftSize()), maxToExtract);
+            long toExtract = Math.min(calcEnergyThisSize(Math.min(r.getRiftSize(), MAX_SIZE)), maxToExtract);
             if (!simulate) {
                 r.setRiftSize(r.getRiftSize() - 1);
                 r.setRiftStability(r.getRiftStability() - 1.0F);

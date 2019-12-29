@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.tile;
 
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -106,6 +107,7 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
         };
         
         consumer = new SimpleImpetusConsumer(1, 0);
+        ticks = ThreadLocalRandom.current().nextInt(20);
     }
     
     @Override

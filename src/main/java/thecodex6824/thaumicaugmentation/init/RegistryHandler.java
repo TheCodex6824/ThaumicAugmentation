@@ -58,6 +58,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.block.BlockImpetusGate;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusGenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrixBase;
@@ -116,6 +117,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGate;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
@@ -186,6 +188,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockRiftMonitor(), "rift_monitor"));
         registry.register(setupBlock(new BlockImpetusGenerator(), "impetus_generator"));
         registry.register(setupBlock(new BlockStabilityFieldGenerator(), "stability_field_generator"));
+        registry.register(setupBlock(new BlockImpetusGate(), "impetus_gate"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -206,6 +209,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileRiftMonitor.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_monitor"));
         GameRegistry.registerTileEntity(TileImpetusGenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_generator"));
         GameRegistry.registerTileEntity(TileStabilityFieldGenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "stability_field_generator"));
+        GameRegistry.registerTileEntity(TileImpetusGate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_gate"));
     }
 
     @SubscribeEvent

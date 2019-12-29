@@ -147,6 +147,23 @@ public class BlockImpetusGenerator extends BlockTABase implements IDirectionalBl
     }
     
     @Override
+    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param) {
+        if (id != 0) {
+            if (!world.isRemote)
+                return true;
+            else {
+                TileEntity tile = world.getTileEntity(pos);
+                if (tile != null)
+                    return tile.receiveClientEvent(id, param);
+                else
+                    return false;
+            }
+        }
+        
+        return false;
+    }
+    
+    @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;
     }

@@ -20,10 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -84,7 +85,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
             @Override
             public Vec3d getBeamEndpoint() {
                 Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
-                switch (Minecraft.getMinecraft().world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION)) {
+                switch (world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION)) {
                     case DOWN:  return position.add(0.5, 0.98125, 0.5);
                     case EAST:  return position.add(0.01875, 0.5, 0.5);
                     case NORTH: return position.add(0.5, 0.5, 0.98125);
@@ -98,6 +99,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
         };
         
         linked = DimensionalBlockPos.INVALID;
+        ticks = ThreadLocalRandom.current().nextInt(20);
     }
     
     @Override
@@ -125,6 +127,9 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
                 }
             }
         }
+        
+        if (!world.isRemote && ticks % 20 == 0)
+            NodeHelper.validateOutputs(world, node);
     }
     
     @Override

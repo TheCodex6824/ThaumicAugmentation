@@ -8,12 +8,16 @@
         "ta_enabled": {
             "false": {
                 "textures": {
-                    "#Material": "thaumicaugmentation:blocks/stability_field_generator_off"
+                    "#Material": "thaumicaugmentation:blocks/stability_field_generator_off",
+                    "0": "thaumicaugmentation:blocks/stability_field_generator_off",
+                    "particle": "thaumicaugmentation:blocks/stability_field_generator_off"
                 }
             },
             "true": {
                 "textures": {
-                    "#Material": "thaumicaugmentation:blocks/stability_field_generator_on"
+                    "#Material": "thaumicaugmentation:blocks/stability_field_generator_on",
+                    "0": "thaumicaugmentation:blocks/stability_field_generator_on",
+                    "particle": "thaumicaugmentation:blocks/stability_field_generator_on"
                 }
             }
         },
@@ -24,6 +28,15 @@
             "east": {"x": 90, "y": 90},
             "down": {"x": 180},
             "up": {"__nop": ""}
+        },
+        "static": {
+            "true": {
+                "model": "thaumicaugmentation:stability_field_generator_static.obj",
+                "custom": { "flip-v": true }
+            },
+            "false": {
+                "model": "thaumicaugmentation:stability_field_generator_anim"
+            }
         },
         "inventory": {
             "transform": "forge:default-block"

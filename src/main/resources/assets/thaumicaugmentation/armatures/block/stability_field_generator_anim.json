@@ -1,0 +1,314 @@
+{
+    "joints": {
+        "arm_n": {
+            "0": [1.0],
+            "1": [1.0]
+        },
+        "arm_w": {
+            "2": [1.0],
+            "3": [1.0]
+        },
+        "arm_s": {
+            "4": [1.0],
+            "5": [1.0]
+        },
+        "arm_e": {
+            "6": [1.0],
+            "7": [1.0]
+        },
+        "corners": {
+            "8": [1.0],
+            "9": [1.0],
+            "10": [1.0],
+            "11": [1.0],
+            "12": [1.0],
+            "13": [1.0],
+            "14": [1.0],
+            "15": [1.0]
+        }
+    },
+    "clips": {
+        "model": {
+            "loop": false,
+            "joint_clips": {
+                "arm_n": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.0, 0.25]
+                    },
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.0, -45.0]
+                    }
+                ],
+                "arm_w": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.0, 0.25]
+                    },
+                    {
+                        "variable": "axis_z",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.0, 45.0]
+                    }
+                ],
+                "arm_s": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.0, 0.25]
+                    },
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.0, 45.0]
+                    }
+                ],
+                "arm_e": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.0, 0.25]
+                    },
+                    {
+                        "variable": "axis_z",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.0, -45.0]
+                    }
+                ],
+                "corners": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [0.0, -0.15]
+                    }
+                ]
+            },
+            "events": {}
+        },
+        "opening": {
+            "loop": false,
+            "joint_clips": {
+                "arm_n": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+                    },
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -7.5, -15.0, -22.5, -30.0, -37.5, -45.0]
+                    }
+                ],
+                "arm_w": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+                    },
+                    {
+                        "variable": "axis_z",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.5, 15.0, 22.5, 30.0, 37.5, 45.0]
+                    }
+                ],
+                "arm_s": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+                    },
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.5, 15.0, 22.5, 30.0, 37.5, 45.0]
+                    }
+                ],
+                "arm_e": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+                    },
+                    {
+                        "variable": "axis_z",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -7.5, -15.0, -22.5, -30.0, -37.5, -45.0]
+                    }
+                ],
+                "corners": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.0, -0.03, -0.06, -0.09, -0.12, -0.15, -0.15, -0.15, -0.15, -0.15, -0.15, -0.15]
+                    }
+                ]
+            },
+            "events": {}
+        },
+        "closing": {
+            "loop": false,
+            "joint_clips": {
+                "arm_n": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.2, 0.15, 0.1, 0.05, 0.0]
+                    },
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [-45.0, -37.5, -30.0, -22.5, -15.0, -7.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+                    }
+                ],
+                "arm_w": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.2, 0.15, 0.1, 0.05, 0.0]
+                    },
+                    {
+                        "variable": "axis_z",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [45.0, 37.5, 30.0, 22.5, 15.0, 7.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+                    }
+                ],
+                "arm_s": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.2, 0.15, 0.1, 0.05, 0.0]
+                    },
+                    {
+                        "variable": "axis_x",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [45.0, 37.5, 30.0, 22.5, 15.0, 7.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+                    }
+                ],
+                "arm_e": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.2, 0.15, 0.1, 0.05, 0.0]
+                    },
+                    {
+                        "variable": "axis_z",
+                        "type": "uniform",
+                        "interpolation": "nearest",
+                        "samples": [1.0]
+                    },
+                    {
+                        "variable": "angle",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [-45.0, -37.5, -30.0, -22.5, -15.0, -7.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+                    }
+                ],
+                "corners": [
+                    {
+                        "variable": "offset_y",
+                        "type": "uniform",
+                        "interpolation": "linear",
+                        "samples": [-0.15, -0.15, -0.15, -0.15, -0.15, -0.15, -0.15, -0.12, -0.09, -0.06, -0.03, 0.0]
+                    }
+                ]
+            },
+            "events": {}
+        }
+    }
+}

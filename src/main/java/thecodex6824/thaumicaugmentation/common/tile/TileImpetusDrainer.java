@@ -68,7 +68,6 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     protected WeakImpetusStorage storage;
     protected IAnimationStateMachine asm;
     protected VariableValue actionTime;
-    protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
     protected boolean lastState = false;
     protected int ticks;
     
@@ -78,7 +77,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
             @Override
             public long extractEnergy(long maxToExtract, boolean simulate) {
                 long result = super.extractEnergy(maxToExtract, simulate);
-                if (result > 0)
+                if (result > 0 && !simulate)
                     ImpetusAPI.createImpetusParticles(world, lastRiftPos, new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5));
                     
                 return result;
@@ -96,13 +95,18 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
             }
             
             @Override
-            public void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {
-                markDirty();
+            public long onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {
+                if (!simulate)
+                    markDirty();
+                
+                return energy;
             }
         };
+        
+        ticks = ThreadLocalRandom.current().nextInt(20);
         actionTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_drainer.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(1), "act_time", actionTime, "delay", new VariableValue(delay)));
+                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(1), "act_time", actionTime, "delay", new VariableValue(ticks)));
     }
     
     protected void findRift() {
@@ -127,7 +131,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
             findRift();
         else if (!world.isRemote && !world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) && storage.isValid())
             storage.bind(null);
-        else if (world.isRemote && (ticks++ + delay) % 5 == 0) {
+        else if (world.isRemote && ticks++ % 5 == 0) {
             boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
             if (enabled != lastState) {
                 lastState = enabled;
@@ -135,6 +139,9 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
                 asm.transition(lastState ? "starting" : "stopping");
             }
         }
+        
+        if (!world.isRemote && ticks % 20 == 0)
+            NodeHelper.validateOutputs(world, provider);
     }
     
     @Override

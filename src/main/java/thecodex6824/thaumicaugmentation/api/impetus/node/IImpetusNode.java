@@ -35,7 +35,9 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
     
     public Set<DimensionalBlockPos> getOutputLocations();
     
-    public default void onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {}
+    public default long onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {
+        return energy;
+    }
     
     public DimensionalBlockPos getLocation();
     
@@ -52,6 +54,8 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
     public boolean canRemoveNodeAsInput(IImpetusNode toRemove);
     
     public boolean canRemoveNodeAsOutput(IImpetusNode toRemove);
+    
+    public double getMaxConnectDistance(IImpetusNode toConnect);
     
     public void addInputLocation(DimensionalBlockPos toConnect);
     

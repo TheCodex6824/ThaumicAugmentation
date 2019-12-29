@@ -24,13 +24,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashSet;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
@@ -82,10 +86,19 @@ public final class NodeHelper {
                                 else if (node.getNumInputs() >= node.getMaxInputs())
                                     player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.impetus_link_limit_in"), true);
                                 else if (node.canConnectNodeAsInput(otherNode) && otherNode.canConnectNodeAsOutput(node)) {
-                                    node.addInput(otherNode);
-                                    provider.markDirty();
-                                    te.markDirty();
-                                    syncAddedImpetusNodeInput(node, origin);
+                                    double dist = node.getLocation().getPos().distanceSq(otherNode.getLocation().getPos());
+                                    double nodeMax = node.getMaxConnectDistance(otherNode);
+                                    double otherNodeMax = otherNode.getMaxConnectDistance(node);
+                                    if (dist > Math.min(nodeMax * nodeMax, otherNodeMax * otherNodeMax))
+                                        player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.impetus_link_too_far"), true);
+                                    else if (!nodesPassDefaultCollisionCheck(world, node, otherNode))
+                                        player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.impetus_link_blocked"), true);
+                                    else {
+                                        node.addInput(otherNode);
+                                        provider.markDirty();
+                                        te.markDirty();
+                                        syncAddedImpetusNodeInput(node, origin);
+                                    }
                                 }
                             }
                         }
@@ -129,21 +142,34 @@ public final class NodeHelper {
             ArrayList<Deque<IImpetusNode>> usedPaths = new ArrayList<>();
             for (int i = 0; i < providers.size(); ++i) {
                 IImpetusProvider p = providers.get(i);
-                long actuallyDrawn = p.provide(Math.min(step + (remain > 0 ? 1 : 0), amount - drawn), simulate);
-                drawn += actuallyDrawn;
-                if (actuallyDrawn < step && i < providers.size() - 1) {
-                    step = (amount - drawn) / (providers.size() - (i + 1));
-                    remain = (amount - drawn) % (providers.size() - (i + 1));
-                }
-                else
-                    --remain;
-                
+                long actuallyDrawn = p.provide(Math.min(step + (remain > 0 ? 1 : 0), amount - drawn), true);
                 if (actuallyDrawn > 0) {
                     Deque<IImpetusNode> nodes = paths.get(i);
-                    for (IImpetusNode n : nodes)
-                        n.onTransaction(dest, nodes, actuallyDrawn, simulate);
+                    for (IImpetusNode n : nodes) {
+                        actuallyDrawn = n.onTransaction(dest, nodes, actuallyDrawn, simulate);
+                        if (actuallyDrawn <= 0)
+                            break;
+                    }
                     
-                    usedPaths.add(nodes);
+                    if (actuallyDrawn > 0) {
+                        actuallyDrawn = p.provide(actuallyDrawn, false);
+                        usedPaths.add(nodes);
+                        drawn += actuallyDrawn;
+                        if (actuallyDrawn < step && i < providers.size() - 1) {
+                            step = (amount - drawn) / (providers.size() - (i + 1));
+                            remain = (amount - drawn) % (providers.size() - (i + 1));
+                        }
+                        else
+                            --remain;
+                    }
+                    else if (i < providers.size() - 1) {
+                        step = (amount - drawn) / (providers.size() - (i + 1));
+                        remain = (amount - drawn) % (providers.size() - (i + 1));
+                    }
+                }
+                else if (i < providers.size() - 1) {
+                    step = (amount - drawn) / (providers.size() - (i + 1));
+                    remain = (amount - drawn) % (providers.size() - (i + 1));
                 }
             }
             
@@ -151,6 +177,61 @@ public final class NodeHelper {
         }
         
         return new ConsumeResult(0, Collections.emptyList());
+    }
+    
+    public static boolean nodesPassDefaultCollisionCheck(World sharedWorld, IImpetusNode node1, IImpetusNode node2) {
+        Vec3d start = node1.getBeamEndpoint();
+        Vec3d target = node2.getBeamEndpoint();
+        boolean clear = true;
+        while (!start.equals(target)) {
+            RayTraceResult r = sharedWorld.rayTraceBlocks(start, target, false, true, false);
+            if (r == null || node2.getLocation().getPos().equals(r.getBlockPos()))
+                break;
+            else if (r.getBlockPos() != null) {
+                IBlockState state = sharedWorld.getBlockState(r.getBlockPos());
+                if (state.isOpaqueCube() || state.getLightOpacity(sharedWorld, r.getBlockPos()) > 0) {
+                    clear = false;
+                    break;
+                }
+                else {
+                    double dX = target.x - r.getBlockPos().getX();
+                    double dY = target.y - r.getBlockPos().getY();
+                    double dZ = target.z - r.getBlockPos().getZ();
+                    start = new Vec3d(r.getBlockPos().add(dX, dY, dZ));
+                }
+            }
+        }
+        
+        return clear;
+    }
+    
+    public static void validateOutputs(World sharedWorld, IImpetusNode node) {
+        HashSet<IImpetusNode> changed = new HashSet<>();
+        for (IImpetusNode output : node.getOutputs()) {
+            if (sharedWorld.provider.getDimension() == node.getLocation().getDimension() &&
+                    sharedWorld.provider.getDimension() == output.getLocation().getDimension()) {
+                
+                double dist = node.getLocation().getPos().distanceSq(output.getLocation().getPos());
+                if (dist > node.getMaxConnectDistance(output) * node.getMaxConnectDistance(output) ||
+                        dist > output.getMaxConnectDistance(node) * output.getMaxConnectDistance(node) ||
+                        !NodeHelper.nodesPassDefaultCollisionCheck(sharedWorld, node, output)) {
+                
+                    node.removeOutput(output);
+                    changed.add(node);
+                    changed.add(output);
+                    NodeHelper.syncRemovedImpetusNodeOutput(node, output.getLocation());
+                    NodeHelper.syncRemovedImpetusNodeInput(output, node.getLocation());
+                }
+            }
+        }
+        
+        for (IImpetusNode n : changed) {
+            if (n.getLocation().getDimension() == sharedWorld.provider.getDimension()) {
+                TileEntity tile = sharedWorld.getTileEntity(n.getLocation().getPos());
+                if (tile != null)
+                    tile.markDirty();
+            }
+        }
     }
     
     public static void syncImpetusTransaction(Deque<IImpetusNode> path) {

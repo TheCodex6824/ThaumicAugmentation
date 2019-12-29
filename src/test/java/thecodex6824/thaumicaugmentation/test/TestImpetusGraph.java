@@ -140,6 +140,35 @@ public class TestImpetusGraph {
     }
     
     @Test
+    public void testSmallTransfer() {
+        BufferedImpetusConsumer consumer = new BufferedImpetusConsumer(5, 5, new DimensionalBlockPos(0, 0, 0, 0), new ImpetusStorage(1000, 50));
+        BufferedImpetusProvider provider1 = new BufferedImpetusProvider(5, 5, new DimensionalBlockPos(0, 1, 0, 0), new ImpetusStorage(1000, 1000, 20));
+        BufferedImpetusProvider provider2 = new BufferedImpetusProvider(5, 5, new DimensionalBlockPos(0, 1, 1, 0), new ImpetusStorage(1000, 1000, 20));
+        BufferedImpetusProvider provider3 = new BufferedImpetusProvider(5, 5, new DimensionalBlockPos(1, 1, 1, 0), new ImpetusStorage(1000, 1000, 20));
+    
+        consumer.addInput(provider1);
+        consumer.addInput(provider2);
+        consumer.addInput(provider3);
+        
+        provider1.getProvider().receiveEnergy(Long.MAX_VALUE, false);
+        provider2.getProvider().receiveEnergy(Long.MAX_VALUE, false);
+        provider3.getProvider().receiveEnergy(Long.MAX_VALUE, false);
+        
+        consumer.consume(1, false);
+        assertEquals(1, consumer.getConsumer().getEnergyStored());
+        
+        int taken = 0;
+        if (provider1.getProvider().getEnergyStored() != provider1.getProvider().getMaxEnergyStored())
+            ++taken;
+        if (provider2.getProvider().getEnergyStored() != provider2.getProvider().getMaxEnergyStored())
+            ++taken;
+        if (provider3.getProvider().getEnergyStored() != provider3.getProvider().getMaxEnergyStored())
+            ++taken;
+        
+        assertEquals(taken, 1);
+    }
+    
+    @Test
     public void testSaving() {
         
         // TODO deserializing in testing is currently problematic because of the coupling with World

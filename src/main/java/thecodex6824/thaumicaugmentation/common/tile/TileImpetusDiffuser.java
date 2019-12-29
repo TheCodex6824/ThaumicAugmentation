@@ -71,7 +71,6 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     protected SimpleImpetusConsumer consumer;
     protected IAnimationStateMachine asm;
     protected VariableValue actionTime;
-    protected int delay = ThreadLocalRandom.current().nextInt(-5, 6);
     protected boolean lastState = false;
     protected int ticks;
     
@@ -83,9 +82,11 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                 return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.21875, pos.getZ() + 0.5);
             }
         };
+        
+        ticks = ThreadLocalRandom.current().nextInt(20);
         actionTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_diffuser.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(2), "act_time", actionTime, "delay", new VariableValue(delay)));
+                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(2), "act_time", actionTime, "delay", new VariableValue(ticks)));
     }
     
     @Override
@@ -152,7 +153,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                 }
             }
         }
-        else if (world.isRemote && (ticks++ + delay) % 5 == 0) {
+        else if (world.isRemote && ticks++ % 5 == 0) {
             boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
             if (enabled != lastState) {
                 lastState = enabled;

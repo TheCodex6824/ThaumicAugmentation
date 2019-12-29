@@ -349,6 +349,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     @Override
     public void setDestinationBiome(@Nullable Biome biome) {
         linkedBiome = biome;
+        dataManager.set(LINKED_BIOME, linkedBiome != null ? linkedBiome.getRegistryName().toString() : NULL_BIOME);
     }
     
     @Override

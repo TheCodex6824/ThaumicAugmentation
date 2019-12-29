@@ -156,6 +156,11 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     }
     
     @Override
+    public double getMaxConnectDistance(IImpetusNode toConnect) {
+        return 8.0;
+    }
+    
+    @Override
     public void addInputLocation(DimensionalBlockPos toConnect) {
         if (inputs.size() == maxInputs && !inputs.contains(toConnect))
             throw new IndexOutOfBoundsException("Exceeded maximum amount of inputs for node (" + inputs.size() + ")");

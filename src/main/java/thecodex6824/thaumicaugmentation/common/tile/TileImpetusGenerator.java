@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
@@ -30,6 +32,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -67,8 +70,28 @@ public class TileImpetusGenerator extends TileEntity implements IBreakCallback, 
     
     public TileImpetusGenerator() {
         super();
-        node = new SimpleImpetusConsumer(1, 0);
+        node = new SimpleImpetusConsumer(1, 0) {
+            @Override
+            public Vec3d getBeamEndpoint() {
+                Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
+                IBlockState state = world.getBlockState(pos);
+                if (state.getPropertyKeys().contains(IDirectionalBlock.DIRECTION)) {
+                    switch (state.getValue(IDirectionalBlock.DIRECTION)) {
+                        case DOWN:  return position.add(0.5, 0.9, 0.5);
+                        case EAST:  return position.add(0.1, 0.5, 0.5);
+                        case NORTH: return position.add(0.5, 0.5, 0.9);
+                        case SOUTH: return position.add(0.5, 0.5, 0.1);
+                        case WEST:  return position.add(0.9, 0.5, 0.5);
+                        case UP:
+                        default:    return position.add(0.5, 0.1, 0.5);
+                    }
+                }
+                
+                return position.add(0.5, 0.4375, 0.5);
+            }
+        };
         forgeEnergy = new CustomEnergyStorage(3000, 1500, 30, 0);
+        ticks = ThreadLocalRandom.current().nextInt(20);
     }
     
     @Override
@@ -82,15 +105,11 @@ public class TileImpetusGenerator extends TileEntity implements IBreakCallback, 
                         forgeEnergy.receiveEnergy(1500, false);
                         markDirty();
                         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
+                        world.addBlockEvent(pos, getBlockType(), 1, 0);
                         NodeHelper.syncAllImpetusTransactions(result.paths);
                     }
                 }
             }
-        }
-        else if (world.isRemote && ticks++ % 10 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED)) {
-            ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
-                    pos.getY() + 0.9  + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
-                    pos.getZ() + 0.5  + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, 1.5F, Aspect.ELDRITCH.getColor(), false);
         }
         
         if (!world.isRemote) {
@@ -105,6 +124,7 @@ public class TileImpetusGenerator extends TileEntity implements IBreakCallback, 
                         forgeEnergy.extractEnergy(extract, false);
                         markDirty();
                         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
+                        world.addBlockEvent(pos, getBlockType(), 1, 0);
                     }
                 }
             }
@@ -145,6 +165,15 @@ public class TileImpetusGenerator extends TileEntity implements IBreakCallback, 
         
         node.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
+    }
+    
+    @Override
+    public boolean receiveClientEvent(int id, int type) {
+        ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
+                pos.getY() + 0.9  + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
+                pos.getZ() + 0.5  + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, 1.5F, Aspect.ELDRITCH.getColor(), false);
+        
+        return true;
     }
     
     @Override

@@ -30,7 +30,6 @@ import javax.annotation.Nullable;
 import com.google.common.base.Optional;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -59,7 +58,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.network.fx.PacketFXShield;
@@ -74,9 +72,9 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     protected static final DataParameter<Optional<UUID>> OWNER_ID = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.OPTIONAL_UNIQUE_ID);
     protected static final DataParameter<Optional<UUID>> CASTER_ID = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.OPTIONAL_UNIQUE_ID);
     protected static final DataParameter<Integer> COLOR = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.VARINT);
+    protected static final DataParameter<Integer> LIFESPAN = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.VARINT);
     
     protected int timeAlive;
-    protected int totalLifespan;
     protected boolean reflect;
     protected int aloneTicks;
     protected WeakReference<Entity> ownerRef;
@@ -92,7 +90,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     
     public void setMaxHealth(float newMax) {
         getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(newMax);
-        totalLifespan = (int) (newMax * 300);
+        dataManager.set(LIFESPAN, (int) (newMax * 300));
     }
     
     public void resetTimeAlive() {
@@ -104,7 +102,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     }
     
     public int getTotalLifespan() {
-        return totalLifespan;
+        return dataManager.get(LIFESPAN);
     }
     
     public int getColor() {
@@ -121,6 +119,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         dataManager.register(OWNER_ID, Optional.absent());
         dataManager.register(CASTER_ID, Optional.absent());
         dataManager.register(COLOR, 0x5000C8);
+        dataManager.register(LIFESPAN, 1500);
     }
     
     @Override
@@ -139,8 +138,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         dataManager.set(OWNER_ID, Optional.of(newOwner.getPersistentID()));
         ownerRef = new WeakReference<>(newOwner);
         Vec3d lookVec = newOwner.getLookVec();
-        lookVec = lookVec.scale(1.25);
-        setLocationAndAngles(newOwner.posX + lookVec.x, newOwner.posY - newOwner.getEyeHeight() + lookVec.y, newOwner.posZ + lookVec.z, newOwner.getRotationYawHead(), newOwner.rotationPitch);
+        lookVec = lookVec.scale(1.5);
+        setLocationAndAngles(newOwner.posX + lookVec.x, newOwner.posY + lookVec.y + (newOwner.height / 2.0) - height / 2.0, newOwner.posZ + lookVec.z, newOwner.getRotationYawHead(), newOwner.rotationPitch);
     }
     
     @Override
@@ -185,8 +184,10 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                         fireball.accelerationY = -original.accelerationY;
                         fireball.accelerationZ = -original.accelerationZ;
                     }
-                    else if (newEntity instanceof EntityTippedArrow)
-                        ((EntityTippedArrow) newEntity).setPotionEffect(new ItemStack(Items.ARROW));
+                    else if (newEntity instanceof EntityTippedArrow) {
+                        ((EntityTippedArrow) newEntity).setPotionEffect(entity instanceof EntityTippedArrow ?
+                                ((EntityTippedArrow) entity).getArrowStack() : new ItemStack(Items.ARROW));
+                    }
                     
                     newEntity.velocityChanged = true;
                     newEntity.world.spawnEntity(newEntity);
@@ -226,7 +227,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     protected void collideWithEntity(Entity entity) {
         Entity owner = ownerRef.get();
         if (owner != null) {
-            if (entity.equals(owner) || (world.isRemote && entity.equals(Minecraft.getMinecraft().getRenderViewEntity())))
+            if (entity.equals(owner))
                 return;
             else if (entity instanceof EntityThrowable && owner.equals(((EntityThrowable) entity).getThrower()))
                 return;
@@ -243,7 +244,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     public void onCollideWithPlayer(EntityPlayer entity) {
         Entity owner = ownerRef.get();
         if (owner != null) {
-            if (entity.equals(owner) || (world.isRemote && entity.equals(Minecraft.getMinecraft().getRenderViewEntity())))
+            if (entity.equals(owner))
                 return;
         }
         
@@ -255,6 +256,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         Entity owner = ownerRef.get();
         if (owner != null) {
             if (entity.equals(owner) || (world.isRemote && entity.equals(Minecraft.getMinecraft().getRenderViewEntity())))
+                return;
+            else if (entity instanceof IEntityOwnable && owner.equals(((IEntityOwnable) entity).getOwner()))
                 return;
             else if (entity instanceof EntityThrowable && owner.equals(((EntityThrowable) entity).getThrower()))
                 return;
@@ -273,6 +276,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         Entity owner = ownerRef.get();
         if (owner != null) {
             if (entity.equals(owner))
+                return null;
+            else if (entity instanceof IEntityOwnable && owner.equals(((IEntityOwnable) entity).getOwner()))
                 return null;
             else if (entity instanceof EntityThrowable && owner.equals(((EntityThrowable) entity).getThrower()))
                 return null;
@@ -318,7 +323,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     public void onLivingUpdate() {
         
         ++timeAlive;
-        if (!world.isRemote && timeAlive > totalLifespan && isEntityAlive()) {
+        if (!world.isRemote && timeAlive > getTotalLifespan() && isEntityAlive()) {
             attackEntityFrom(DamageSource.OUT_OF_WORLD, 100000.0F);
             return;
         }
@@ -346,7 +351,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                     
                     Vec3d lookVec = owner.getLookVec();
                     lookVec = lookVec.scale(1.5);
-                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + owner.getEyeHeight() - height / 2.0, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
+                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + (owner.height / 2.0) - height / 2.0, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
                     motionX = owner.motionX;
                     motionY = owner.motionY;
                     motionZ = owner.motionZ;
@@ -354,7 +359,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                 else {
                     Vec3d lookVec = owner.getLook(Minecraft.getMinecraft().getRenderPartialTicks());
                     lookVec = lookVec.scale(1.5);
-                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + owner.getEyeHeight() - height / 2.0, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
+                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + (owner.height / 2.0) - height / 2.0, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
                     motionX = owner.motionX;
                     motionY = owner.motionY;
                     motionZ = owner.motionZ;
@@ -379,7 +384,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                 }
             }
         }
-        else if (!world.isRemote && aloneTicks >= 10)
+        else if (!world.isRemote && aloneTicks >= 20)
             setDead();
     }
     
@@ -427,7 +432,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
         compound.setInteger("timeAlive", timeAlive);
-        compound.setInteger("lifespan", totalLifespan);
+        compound.setInteger("lifespan", dataManager.get(LIFESPAN));
         compound.setBoolean("reflect", reflect);
         Entity owner = ownerRef.get();
         if (owner != null)
@@ -442,7 +447,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
         timeAlive = compound.getInteger("timeAlive");
-        totalLifespan = compound.getInteger("lifespan");
+        dataManager.set(LIFESPAN, compound.getInteger("lifespan"));
         reflect = compound.getBoolean("reflect");
         dataManager.set(OWNER_ID, Optional.fromNullable(compound.getUniqueId("owner")));
         dataManager.set(CASTER_ID, Optional.fromNullable(compound.getUniqueId("caster")));
@@ -471,19 +476,6 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     public void move(MoverType type, double x, double y, double z) {
         if (type == MoverType.SELF)
             super.move(type, x, y, z);
-    }
-    
-    @Override
-    public boolean canExplosionDestroyBlock(Explosion explosionIn, World worldIn, BlockPos pos,
-            IBlockState blockStateIn, float p_174816_5_) {
-        // TODO Auto-generated method stub
-        return super.canExplosionDestroyBlock(explosionIn, worldIn, pos, blockStateIn, p_174816_5_);
-    }
-    
-    @Override
-    public float getExplosionResistance(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn) {
-        // TODO Auto-generated method stub
-        return super.getExplosionResistance(explosionIn, worldIn, pos, blockStateIn);
     }
     
     @Override

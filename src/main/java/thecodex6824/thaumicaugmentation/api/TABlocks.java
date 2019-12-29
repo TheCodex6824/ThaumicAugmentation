@@ -59,6 +59,7 @@ public final class TABlocks {
     public static final Block RIFT_MONITOR = null;
     public static final Block IMPETUS_GENERATOR = null;
     public static final Block STABILITY_FIELD_GENERATOR = null;
+    public static final Block IMPETUS_GATE = null;
 
     /**
      * Returns all blocks in the mod.
@@ -70,7 +71,7 @@ public final class TABlocks {
                ARCANE_TRAPDOOR_SILVERWOOD, TAINT_FLOWER, IMPETUS_DRAINER, IMPETUS_RELAY, IMPETUS_DIFFUSER,
                IMPETUS_MATRIX, IMPETUS_MATRIX_BASE, RIFT_FEEDER, RIFT_MOVER_INPUT, RIFT_MOVER_OUTPUT,
                RIFT_JAR, VOID_RECHARGE_PEDESTAL, IMPETUS_MIRROR, ARCANE_TERRAFORMER, RIFT_MONITOR,
-               IMPETUS_GENERATOR, STABILITY_FIELD_GENERATOR};
+               IMPETUS_GENERATOR, STABILITY_FIELD_GENERATOR, IMPETUS_GATE};
     }
 
 }
