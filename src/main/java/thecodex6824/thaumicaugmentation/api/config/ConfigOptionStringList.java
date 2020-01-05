@@ -20,17 +20,19 @@
 
 package thecodex6824.thaumicaugmentation.api.config;
 
+import java.nio.charset.StandardCharsets;
+
 import io.netty.buffer.ByteBuf;
 
 /**
  * Config option class for int[] values.
  * @author TheCodex6824
  */
-public class ConfigOptionIntList extends ConfigOption<int[]> {
+public class ConfigOptionStringList extends ConfigOption<String[]> {
 
-    protected int[] value;
+    protected String[] value;
 
-    public ConfigOptionIntList(boolean enforceServer, int[] defaultValue) {
+    public ConfigOptionStringList(boolean enforceServer, String[] defaultValue) {
         super(enforceServer);
         value = defaultValue;
     }
@@ -38,25 +40,30 @@ public class ConfigOptionIntList extends ConfigOption<int[]> {
     @Override
     public void serialize(ByteBuf buf) {
         buf.writeInt(value.length);
-        for (int i : value)
-            buf.writeInt(i);
+        for (String i : value) {
+            byte[] encoded = i.getBytes(StandardCharsets.UTF_8);
+            buf.writeInt(encoded.length);
+            buf.writeBytes(encoded);
+        }
     }
 
     @Override
     public void deserialize(ByteBuf buf) {
         int size = buf.readInt();
-        value = new int[Math.min(size, 256)];
-        for (int i = 0; i < value.length; ++i)
-            value[i] = buf.readInt();
+        value = new String[Math.min(size, 256)];
+        for (int i = 0; i < value.length; ++i) {
+            byte[] data = new byte[Math.min(buf.readInt(), Short.MAX_VALUE)];
+            value[i] = new String(data, StandardCharsets.UTF_8);
+        }
     }
 
     @Override
-    public int[] getValue() {
+    public String[] getValue() {
         return value;
     }
 
     @Override
-    public void setValue(int[] value) {
+    public void setValue(String[] value) {
         this.value = value;
     }
 

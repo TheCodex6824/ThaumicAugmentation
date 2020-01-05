@@ -183,7 +183,7 @@ public class BlockStabilityFieldGenerator extends BlockTABase implements IDirect
 
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override

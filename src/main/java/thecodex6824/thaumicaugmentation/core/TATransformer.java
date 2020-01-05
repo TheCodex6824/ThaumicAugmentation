@@ -28,8 +28,11 @@ import org.objectweb.asm.tree.ClassNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationCustomTCArmor;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationVanilla;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCRobesElytraFlapping;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerUpdateElytra;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFireEncouragement;
@@ -64,6 +67,10 @@ public class TATransformer implements IClassTransformer {
         TRANSFORMERS.add(new TransformerElytraClientCheck());
         TRANSFORMERS.add(new TransformerElytraServerCheck());
         TRANSFORMERS.add(new TransformerUpdateElytra());
+        
+        TRANSFORMERS.add(new TransformerBipedRotationVanilla());
+        TRANSFORMERS.add(new TransformerBipedRotationCustomTCArmor());
+        TRANSFORMERS.add(new TransformerTCRobesElytraFlapping());
     }
     
     public TATransformer() {}
@@ -87,9 +94,12 @@ public class TATransformer implements IClassTransformer {
             ClassReader reader = new ClassReader(basicClass);
             reader.accept(node, 0);
             
+            boolean didSomething = false;
             for (ITransformer transformer : TRANSFORMERS) {
                 if (transformer.isTransformationNeeded(transformedName)) {
-                    if (!transformer.transform(node, name, transformedName)) {
+                    if (ThaumicAugmentationCore.getExcludedTransformers().contains(transformer.getClass().getName()))
+                        ThaumicAugmentationCore.getLogger().info("Excluding transformer {} due to config request", transformer.getClass().getName());
+                    else if (!transformer.transform(node, name, transformedName)) {
                         ThaumicAugmentationCore.getLogger().error("A class transformer has failed! This is probably very bad...");
                         ThaumicAugmentationCore.getLogger().error("Class: " + transformedName + ", Transformer: " + transformer.getClass());
                         if (transformer.getRaisedException() != null) {
@@ -99,13 +109,17 @@ public class TATransformer implements IClassTransformer {
                         else
                             throw new RuntimeException();
                     }
+                    else
+                        didSomething = true;
                 }
             }
             
-            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            node.accept(writer);
-            ThaumicAugmentationCore.getLogger().info("Successfully transformed class " + transformedName);
-            return writer.toByteArray();
+            if (didSomething) {
+                ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+                node.accept(writer);
+                ThaumicAugmentationCore.getLogger().info("Successfully transformed class " + transformedName);
+                return writer.toByteArray();
+            }
         }
         
         return basicClass;

@@ -29,6 +29,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.Comment;
+import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
 import net.minecraftforge.common.config.Config.RangeDouble;
 import net.minecraftforge.common.config.Config.RangeInt;
@@ -45,9 +46,11 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionBoolean;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionEnum;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionFloat;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
 import thecodex6824.thaumicaugmentation.api.config.IEnumSerializer;
 import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
@@ -58,17 +61,24 @@ import thecodex6824.thaumicaugmentation.common.network.TANetwork;
  * Holds configuration variables for Thaumic Augmentation.
  * @author TheCodex6824
  */
-@Config(modid = ThaumicAugmentationAPI.MODID)
+@Config(modid = ThaumicAugmentationAPI.MODID, category = "")
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class TAConfigHolder {
 
     private TAConfigHolder() {}
     
     // TODO localize all the strings here
-
+    
+    @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.general")
     public static GeneralOptions general = new GeneralOptions();
+    
+    @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.gameplay")
     public static GameplayOptions gameplay = new GameplayOptions();
+    
+    @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.world")
     public static WorldOptions world = new WorldOptions();
+    
+    @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.client")
     public static ClientOptions client = new ClientOptions();
     
     public static class GeneralOptions {
@@ -83,14 +93,29 @@ public final class TAConfigHolder {
         @RequiresMcRestart
         public boolean disableCoremod = false;
         
+        @Name("disabledTransformers")
+        @Comment({
+            "An optional list of coremod class transformers to disable.",
+            "For advanced users / modpack makers that encounter issues with only a subset of the coremod.",
+            "This takes the fully qualified class name of THE TRANSFORMER CLASS ITSELF, and only does anything if the coremod itself is enabled.",
+            "An example would be adding \"thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationCustomTCArmor\" without quotes",
+            "to disable the modifications to Thaumcraft's ModelCustomArmor.",
+            "If you do have to add exclusions here, reporting the issues as well would be greatly appreciated."
+        })
+        @RequiresMcRestart
+        public String[] disabledTransformers = new String[0];
+        
     }
     
     public static class GameplayOptions {
         
+        @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.ward")
         public WardOptions ward = new WardOptions();
-        public ImpetusCosts impetusCosts = new ImpetusCosts();
         
-        private static class WardOptions {
+        @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.impetus")
+        public Impetus impetus = new Impetus();
+        
+        public static class WardOptions {
             
             @Name("allowSingleplayerWardOverride")
             @Comment({
@@ -125,7 +150,10 @@ public final class TAConfigHolder {
             
         }
         
-        private static class ImpetusCosts {
+        public static class Impetus {
+            
+            @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.impulse_cannon")
+            public ImpulseCannon cannon = new ImpulseCannon();
             
             @Name("terraformerCost")
             @Comment({
@@ -140,6 +168,90 @@ public final class TAConfigHolder {
             })
             public int shieldFocusCost = 10;
             
+            public static class ImpulseCannon {
+                
+                @Name("beamDamage")
+                @Comment({
+                    "The amount of damage that the Impulse Cannon's beam attack does.",
+                    "The beam attack is the default attack with no augments.",
+                    "The beam does not reset the damage cooldowns of entities damaged by it,",
+                    "so while this damage can theoretically be seen per tick, in practice this is",
+                    "extremely unlikely and would take a large crowd and good aim to achieve."
+                })
+                public float beamDamage = 6.0F;
+                
+                @Name("beamCost")
+                @Comment({
+                    "The amount of Impetus used by the Impulse Cannon's beam attack per tick.",
+                    "This cost is paid even if nothing is being hit by the beam."
+                })
+                public int beamCost = 1;
+                
+                @Name("beamRange")
+                @Comment({
+                    "The range in meters of the Impulse Cannon's beam attack."
+                })
+                public double beamRange = 32.0;
+                
+                @Name("railgunDamage")
+                @Comment({
+                    "The amount of damage that the Impulse Cannon's railgun attack does.",
+                    "Note that the beam can pierce through multiple entities, but not blocks."
+                })
+                public float railgunDamage = 20.0F;
+                
+                @Name("railgunCost")
+                @Comment({
+                    "The amount of Impetus used by the Impulse Cannon's railgun attack per shot.",
+                    "This cost is paid even if nothing is being hit by the shot."
+                })
+                public int railgunCost = 5;
+                
+                @Name("railgunCooldown")
+                @Comment({
+                    "The cooldown in ticks between shots of the Impulse Cannon in railgun mode.",
+                    "Note that this will lock the player out of all Impulse Cannons in their inventory for",
+                    "this duration."
+                })
+                public int railgunCooldown = 100;
+                
+                @Name("railgunRange")
+                @Comment({
+                    "The range in meters of the Impulse Cannon's railgun attack."
+                })
+                public double railgunRange = 64.0;
+                
+                @Name("burstDamage")
+                @Comment({
+                    "The amount of damage that the Impulse Cannon's burst attack does per shot.",
+                    "Note that the damage cooldown of an entity hit by the first 2 rounds of the burst is reset",
+                    "to allow the other rounds to do damage.",
+                    "Since there are three shots fired by the burst, the effective damage is three times this value."
+                })
+                public float burstDamage = 4.0F;
+                
+                @Name("burstCost")
+                @Comment({
+                    "The amount of Impetus used by the Impulse Cannon's burst attack per shot.",
+                    "This cost is paid even if nothing is being hit by the shot."
+                })
+                public int burstCost = 2;
+                
+                @Name("burstCooldown")
+                @Comment({
+                    "The cooldown in ticks between shots of the Impulse Cannon in railgun mode.",
+                    "Note that this will lock the player out of all Impulse Cannons in their inventory for",
+                    "this duration."
+                })
+                public int burstCooldown = 20;
+                
+                @Name("burstRange")
+                @Comment({
+                    "The range in meters of the Impulse Cannon's burst attack."
+                })
+                public double burstRange = 24.0;
+                
+            }
         }
         
         @Name("gauntletVisDiscounts")
@@ -394,8 +506,22 @@ public final class TAConfigHolder {
         
         TAConfig.gauntletCastAnimation.setValue(client.gauntletCastAnimation, side);
         
-        TAConfig.terraformerImpetusCost.setValue((long) gameplay.impetusCosts.terraformerCost);
-        TAConfig.shieldFocusImpetusCost.setValue((long) gameplay.impetusCosts.shieldFocusCost);
+        TAConfig.terraformerImpetusCost.setValue((long) gameplay.impetus.terraformerCost);
+        TAConfig.shieldFocusImpetusCost.setValue((long) gameplay.impetus.shieldFocusCost);
+        
+        TAConfig.cannonBeamDamage.setValue(gameplay.impetus.cannon.beamDamage);
+        TAConfig.cannonBeamCost.setValue((long) gameplay.impetus.cannon.beamCost);
+        TAConfig.cannonBeamRange.setValue(gameplay.impetus.cannon.beamRange);
+        
+        TAConfig.cannonRailgunDamage.setValue(gameplay.impetus.cannon.railgunDamage);
+        TAConfig.cannonRailgunCost.setValue((long) gameplay.impetus.cannon.railgunCost);
+        TAConfig.cannonRailgunCooldown.setValue(gameplay.impetus.cannon.railgunCooldown);
+        TAConfig.cannonRailgunRange.setValue(gameplay.impetus.cannon.railgunRange);
+        
+        TAConfig.cannonBurstDamage.setValue(gameplay.impetus.cannon.burstDamage);
+        TAConfig.cannonBurstCost.setValue((long) gameplay.impetus.cannon.burstCost);
+        TAConfig.cannonBurstCooldown.setValue(gameplay.impetus.cannon.burstCooldown);
+        TAConfig.cannonBurstRange.setValue(gameplay.impetus.cannon.burstRange);
     }
 
     public static void syncLocally() {
@@ -467,11 +593,26 @@ public final class TAConfigHolder {
         TAConfig.disableEmptiness = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.disableEmptiness));
     
         TAConfig.disableCoremod = TAConfigManager.addOption(new ConfigOptionBoolean(false, general.disableCoremod));
+        TAConfig.disabledTransformers = TAConfigManager.addOption(new ConfigOptionStringList(false, general.disabledTransformers));
         
         TAConfig.gauntletCastAnimation = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.gauntletCastAnimation));
     
-        TAConfig.terraformerImpetusCost = TAConfigManager.addOption(new ConfigOptionLong(false, (long) gameplay.impetusCosts.terraformerCost));
-        TAConfig.shieldFocusImpetusCost = TAConfigManager.addOption(new ConfigOptionLong(false, (long) gameplay.impetusCosts.shieldFocusCost));
+        TAConfig.terraformerImpetusCost = TAConfigManager.addOption(new ConfigOptionLong(false, (long) gameplay.impetus.terraformerCost));
+        TAConfig.shieldFocusImpetusCost = TAConfigManager.addOption(new ConfigOptionLong(false, (long) gameplay.impetus.shieldFocusCost));
+    
+        TAConfig.cannonBeamDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannon.beamDamage));
+        TAConfig.cannonBeamCost = TAConfigManager.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannon.beamCost));
+        TAConfig.cannonBeamRange = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.beamRange));
+        
+        TAConfig.cannonRailgunDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannon.railgunDamage));
+        TAConfig.cannonRailgunCost = TAConfigManager.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannon.railgunCost));
+        TAConfig.cannonRailgunCooldown = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.impetus.cannon.railgunCooldown));
+        TAConfig.cannonRailgunRange = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.railgunRange));
+        
+        TAConfig.cannonBurstDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannon.burstDamage));
+        TAConfig.cannonBurstCost = TAConfigManager.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannon.burstCost));
+        TAConfig.cannonBurstCooldown = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.impetus.cannon.burstCooldown));
+        TAConfig.cannonBurstRange = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.burstRange));
     }
 
 }

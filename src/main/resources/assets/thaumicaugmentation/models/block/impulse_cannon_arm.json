@@ -1,0 +1,12 @@
+{
+    "overrides": [
+        {
+            "predicate": {"thaumicaugmentation:arm": 0},
+            "model": "thaumicaugmentation:block/impulse_cannon_arm_closed.obj"
+        },
+        {
+            "predicate": {"thaumicaugmentation:arm": 1},
+            "model": "thaumicaugmentation:block/impulse_cannon_arm_open.obj"
+        }
+    ]
+}

@@ -39,9 +39,15 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 public class ItemThaumostaticHarnessAugment extends ItemTABase {
 
     protected static abstract class HarnessAugment implements IThaumostaticHarnessAugment {
+        
         @Override
         public boolean canBeAppliedToItem(ItemStack augmentable) {
             return augmentable.getItem() == TAItems.THAUMOSTATIC_HARNESS;
+        }
+        
+        @Override
+        public boolean isCompatible(ItemStack otherAugment) {
+            return !(otherAugment.getCapability(CapabilityAugment.AUGMENT, null) instanceof HarnessAugment);
         }
     }
     

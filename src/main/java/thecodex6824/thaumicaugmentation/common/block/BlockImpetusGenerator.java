@@ -211,7 +211,7 @@ public class BlockImpetusGenerator extends BlockTABase implements IDirectionalBl
 
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override

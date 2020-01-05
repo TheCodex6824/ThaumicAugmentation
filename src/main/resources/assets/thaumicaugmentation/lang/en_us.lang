@@ -62,6 +62,9 @@ item.thaumicaugmentation.thaumostatic_harness_augment.girdle.name=Girdle Upgrade
 item.thaumicaugmentation.elytra_harness.name=Elytra Harness
 item.thaumicaugmentation.elytra_harness_augment.impetus_booster.name=Impetus Boost Upgrade
 item.thaumicaugmentation.autocaster_placer.name=Autocaster
+item.thaumicaugmentation.impulse_cannon.name=Impulse Cannon
+item.thaumicaugmentation.impulse_cannon_augment.railgun.name=Railgun Conversion
+item.thaumicaugmentation.impulse_cannon_augment.burst.name=Burst Fire Conversion
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld
@@ -129,6 +132,14 @@ thaumicaugmentation.text.terraformer_square=Square
 thaumicaugmentation.text.gate_manual=Impetus Restrictor mode: Manual Control
 thaumicaugmentation.text.gate_redstone=Impetus Restrictor mode: Redstone Control
 thaumicaugmentation.text.gate_cycle_limit=New manual Impetus Restrictor limit: %d
+
+thaumicaugmentation.text.config.general=General
+thaumicaugmentation.text.config.gameplay=Gameplay
+thaumicaugmentation.text.config.world=World
+thaumicaugmentation.text.config.client=Client
+thaumicaugmentation.text.config.ward=Ward Focus and Blocks
+thaumicaugmentation.text.config.impetus=Impetus
+thaumicaugmentation.text.config.impulse_cannon=Impulse Cannon
 
 thaumicaugmentation.command.not_entity=You must provide a location as you are not an entity in the world
 thaumicaugmentation.command.invalid_arg=Invalid argument

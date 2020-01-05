@@ -133,7 +133,7 @@ public class BlockRiftMoverOutput  extends BlockTABase implements IItemBlockProv
     
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override

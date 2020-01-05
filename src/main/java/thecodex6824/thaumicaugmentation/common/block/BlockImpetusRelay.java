@@ -180,7 +180,7 @@ public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock,
 
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override

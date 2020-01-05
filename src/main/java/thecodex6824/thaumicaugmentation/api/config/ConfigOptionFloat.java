@@ -23,40 +23,35 @@ package thecodex6824.thaumicaugmentation.api.config;
 import io.netty.buffer.ByteBuf;
 
 /**
- * Config option class for int[] values.
+ * Config option class for Float values.
  * @author TheCodex6824
  */
-public class ConfigOptionIntList extends ConfigOption<int[]> {
+public class ConfigOptionFloat extends ConfigOption<Float> {
 
-    protected int[] value;
+    protected float value;
 
-    public ConfigOptionIntList(boolean enforceServer, int[] defaultValue) {
+    public ConfigOptionFloat(boolean enforceServer, float defaultValue) {
         super(enforceServer);
         value = defaultValue;
     }
 
     @Override
     public void serialize(ByteBuf buf) {
-        buf.writeInt(value.length);
-        for (int i : value)
-            buf.writeInt(i);
+        buf.writeDouble(value);
     }
 
     @Override
     public void deserialize(ByteBuf buf) {
-        int size = buf.readInt();
-        value = new int[Math.min(size, 256)];
-        for (int i = 0; i < value.length; ++i)
-            value[i] = buf.readInt();
+        value = buf.readFloat();
     }
 
     @Override
-    public int[] getValue() {
+    public Float getValue() {
         return value;
     }
 
     @Override
-    public void setValue(int[] value) {
+    public void setValue(Float value) {
         this.value = value;
     }
 

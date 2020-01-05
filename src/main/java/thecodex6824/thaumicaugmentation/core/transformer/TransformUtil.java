@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.core.transformer;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -33,7 +34,7 @@ public final class TransformUtil {
     private TransformUtil() {}
     
     public static final String HOOKS_COMMON = "thecodex6824/thaumicaugmentation/common/internal/TAHooksCommon";
-    public static final String HOOKS_CLIENT = "thecodex6824/thaumicaugmentation/common/internal/TAHooksClient";
+    public static final String HOOKS_CLIENT = "thecodex6824/thaumicaugmentation/client/internal/TAHooksClient";
     
     public static String correctNameForRuntime(String deobf, String srg) {
         // "runtime deobf" refers to the srg names being used, not the dev ones
@@ -142,6 +143,17 @@ public final class TransformUtil {
         for (int i = endIndex - 1; i >= 0; --i) {
             AbstractInsnNode insn = node.instructions.get(i);
             if (insn instanceof LabelNode)
+                return i;
+        }
+        
+        return -1;
+    }
+    
+    public static int findLineNumber(MethodNode node, int number) {
+        
+        for (int i = 0; i < node.instructions.size(); ++i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn instanceof LineNumberNode && ((LineNumberNode) insn).line == number)
                 return i;
         }
         

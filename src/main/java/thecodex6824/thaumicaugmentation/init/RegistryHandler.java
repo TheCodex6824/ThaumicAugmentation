@@ -90,6 +90,8 @@ import thecodex6824.thaumicaugmentation.common.item.ItemElytraHarness;
 import thecodex6824.thaumicaugmentation.common.item.ItemElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpetusLinker;
+import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannon;
+import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannonAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemMorphicTool;
 import thecodex6824.thaumicaugmentation.common.item.ItemPrimalCutter;
@@ -243,6 +245,8 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemElytraHarness(), "elytra_harness"));
         registry.register(setupItem(new ItemElytraHarnessAugment(), "elytra_harness_augment"));
         registry.register(setupItem(new ItemAutocasterPlacer(), "autocaster_placer"));
+        registry.register(setupItem(new ItemImpulseCannon(), "impulse_cannon"));
+        registry.register(setupItem(new ItemImpulseCannonAugment(), "impulse_cannon_augment"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }

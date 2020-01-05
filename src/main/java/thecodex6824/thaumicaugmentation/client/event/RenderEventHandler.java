@@ -69,7 +69,6 @@ import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
@@ -90,8 +89,7 @@ public class RenderEventHandler {
     
     private static boolean isHoldingCaster(EntityLivingBase entity) {
         for (ItemStack stack : entity.getHeldEquipment()) {
-            if (stack.getItem() instanceof ICaster || stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null) &&
-                    stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().getItem() instanceof ICaster)
+            if (stack.getItem() instanceof ICaster)
                 return true;
         }
         

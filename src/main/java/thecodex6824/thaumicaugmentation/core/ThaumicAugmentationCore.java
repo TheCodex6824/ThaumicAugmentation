@@ -22,9 +22,12 @@ package thecodex6824.thaumicaugmentation.core;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.ImmutableSet;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
@@ -41,12 +44,14 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     private static Configuration config;
     private static boolean enabled;
     private static boolean deobf;
+    private static ImmutableSet<String> excludedTransformers;
     
     public ThaumicAugmentationCore() {
         if (config != null)
             throw new RuntimeException("Coremod loading twice (?)");
         
         config = new Configuration(new File("config", ThaumicAugmentationAPI.MODID + ".cfg"));
+        excludedTransformers = ImmutableSet.of();
     }
     
     public static Logger getLogger() {
@@ -59,6 +64,10 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
     public static Configuration getConfig() {
         return config;
+    }
+    
+    public static Set<String> getExcludedTransformers() {
+        return excludedTransformers;
     }
     
     public static boolean isRuntimeDeobfEnabled() {
@@ -88,7 +97,8 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     @Override
     public void injectData(Map<String, Object> data) {
         deobf = (Boolean) data.get("runtimeDeobfuscationEnabled");
-        enabled = !config.getBoolean("DisableCoremod", "general", false, "");
+        enabled = !config.getBoolean("disableCoremod", "general", false, "");
+        excludedTransformers = ImmutableSet.copyOf(config.getStringList("disabledTransformers", "general", new String[0], ""));
         if (enabled)
             ThaumicAugmentationAPI.setCoremodAvailable();
     }

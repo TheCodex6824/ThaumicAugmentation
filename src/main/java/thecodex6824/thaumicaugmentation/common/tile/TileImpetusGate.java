@@ -31,9 +31,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
@@ -57,6 +59,25 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
                     boolean simulate) {
                 
                 return energy >= getLimit() ? energy : 0;
+            }
+            
+            @Override
+            public Vec3d getBeamEndpoint() {
+                Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
+                IBlockState state = world.getBlockState(pos);
+                if (state.getPropertyKeys().contains(IDirectionalBlock.DIRECTION)) {
+                    switch (state.getValue(IDirectionalBlock.DIRECTION)) {
+                        case DOWN:  return position.add(0.5, 0.5625, 0.5);
+                        case EAST:  return position.add(0.4375, 0.5, 0.5);
+                        case NORTH: return position.add(0.5, 0.5, 0.5625);
+                        case SOUTH: return position.add(0.5, 0.5, 0.4375);
+                        case WEST:  return position.add(0.5625, 0.5, 0.5);
+                        case UP:
+                        default:    return position.add(0.5, 0.4375, 0.5);
+                    }
+                }
+                
+                return position.add(0.5, 0.4375, 0.5);
             }
         };
         

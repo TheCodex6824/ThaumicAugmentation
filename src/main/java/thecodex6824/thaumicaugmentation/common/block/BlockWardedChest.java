@@ -245,7 +245,7 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
 
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override

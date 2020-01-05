@@ -24,9 +24,11 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionBoolean;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionEnum;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionFloat;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
@@ -78,11 +80,26 @@ public final class TAConfig {
     public static ConfigOptionBoolean fracturesAlwaysTeleport;
     
     public static ConfigOptionBoolean disableCoremod;
+    public static ConfigOptionStringList disabledTransformers;
     
     public static ConfigOptionBoolean gauntletCastAnimation;
     
     public static ConfigOptionLong terraformerImpetusCost;
     public static ConfigOptionLong shieldFocusImpetusCost;
+    
+    public static ConfigOptionFloat cannonBeamDamage;
+    public static ConfigOptionLong cannonBeamCost;
+    public static ConfigOptionDouble cannonBeamRange;
+    
+    public static ConfigOptionFloat cannonRailgunDamage;
+    public static ConfigOptionLong cannonRailgunCost;
+    public static ConfigOptionInt cannonRailgunCooldown;
+    public static ConfigOptionDouble cannonRailgunRange;
+    
+    public static ConfigOptionFloat cannonBurstDamage;
+    public static ConfigOptionLong cannonBurstCost;
+    public static ConfigOptionInt cannonBurstCooldown;
+    public static ConfigOptionDouble cannonBurstRange;
     
     /**
      * Registers a callback to be notified when the config is synced or updated.

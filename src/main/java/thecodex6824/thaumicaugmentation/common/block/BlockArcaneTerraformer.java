@@ -237,7 +237,7 @@ public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraf
     
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override

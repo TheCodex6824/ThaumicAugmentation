@@ -160,7 +160,7 @@ public class BlockRiftFeeder extends BlockTABase implements IDirectionalBlock, I
 
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override

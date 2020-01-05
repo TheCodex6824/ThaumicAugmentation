@@ -23,7 +23,10 @@ package thecodex6824.thaumicaugmentation.api.impetus;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -177,6 +180,26 @@ public final class ImpetusAPI {
         } while (amount > 0 && oldAmount != amount);
         
         return amount <= 0;
+    }
+    
+    public static boolean causeImpetusDamage(EntityLivingBase source, Entity target, float totalDamage) {
+        DamageSource magic = (source instanceof EntityPlayer ? DamageSource.causePlayerDamage((EntityPlayer) source) :
+                DamageSource.causeMobDamage(source)).setDamageBypassesArmor();
+        DamageSource normal = source instanceof EntityPlayer ? DamageSource.causePlayerDamage((EntityPlayer) source) :
+                DamageSource.causeMobDamage(source);
+        
+        boolean result = target.attackEntityFrom(magic, totalDamage / 2.0F);
+        if (result) {
+            if (target instanceof EntityLivingBase) {
+                EntityLivingBase base = (EntityLivingBase) target;
+                base.hurtResistantTime = 0;
+                base.lastDamage = 0;
+            }
+            
+            target.attackEntityFrom(normal, totalDamage / 2.0F);
+        }
+        
+        return result;
     }
     
 }

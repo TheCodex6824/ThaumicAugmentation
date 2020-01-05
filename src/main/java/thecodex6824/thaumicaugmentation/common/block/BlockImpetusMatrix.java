@@ -125,7 +125,7 @@ public class BlockImpetusMatrix extends BlockTABase implements IItemBlockProvide
 
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override
