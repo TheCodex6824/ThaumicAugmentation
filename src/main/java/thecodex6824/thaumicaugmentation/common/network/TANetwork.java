@@ -50,6 +50,7 @@ public final class TANetwork {
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketBiomeUpdate.class, id++, Side.CLIENT);
         // this is a TC packet but the handler impl doesn't add a scheduled task
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFXShield.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketImpulseBeam.class, id++, Side.CLIENT);
         
         INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketInteractGUI.class, id++, Side.SERVER);
         INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketElytraBoost.class, id++, Side.SERVER);

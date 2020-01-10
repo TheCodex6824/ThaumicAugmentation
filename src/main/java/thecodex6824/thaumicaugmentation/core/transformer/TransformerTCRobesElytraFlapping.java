@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnNode;
@@ -28,7 +29,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.Entity;
 
 public class TransformerTCRobesElytraFlapping extends Transformer {
 
@@ -39,16 +40,13 @@ public class TransformerTCRobesElytraFlapping extends Transformer {
         return transformedName.equals(CLASS);
     }
     
-    protected void test(EntityLivingBase e) {
-        if (e.getTicksElytraFlying() > 4)
-            System.out.println("hi");
-    }
-    
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode render = TransformUtil.findMethod(classNode, "render", "func_78088_a");
-            int offset = TransformUtil.findFirstInstanceOfMethodCall(render, 0, "min", "min",
+            MethodNode render = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("thaumcraft/client/renderers/models/gear/ModelRobe", "func_78088_a",
+                    Type.VOID_TYPE, Type.getType(Entity.class), Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE,
+                    Type.FLOAT_TYPE, Type.FLOAT_TYPE), "(Lnet/minecraft/entity/Entity;FFFFFF)V");
+            int offset = TransformUtil.findFirstInstanceOfMethodCall(render, 0, "min",
                     "(FF)F", "java/lang/Math");
             if (offset != -1) {
                 AbstractInsnNode insertAfter = render.instructions.get(offset);

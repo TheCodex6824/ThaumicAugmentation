@@ -65,6 +65,7 @@ item.thaumicaugmentation.autocaster_placer.name=Autocaster
 item.thaumicaugmentation.impulse_cannon.name=Impulse Cannon
 item.thaumicaugmentation.impulse_cannon_augment.railgun.name=Railgun Conversion
 item.thaumicaugmentation.impulse_cannon_augment.burst.name=Burst Fire Conversion
+item.thaumicaugmentation.focus_eldritch.name=Eldritch Focus
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld
@@ -132,6 +133,7 @@ thaumicaugmentation.text.terraformer_square=Square
 thaumicaugmentation.text.gate_manual=Impetus Restrictor mode: Manual Control
 thaumicaugmentation.text.gate_redstone=Impetus Restrictor mode: Redstone Control
 thaumicaugmentation.text.gate_cycle_limit=New manual Impetus Restrictor limit: %d
+thaumicaugmentation.text.focus_eldritch=Eldritch Focus: %s
 
 thaumicaugmentation.text.config.general=General
 thaumicaugmentation.text.config.gameplay=Gameplay

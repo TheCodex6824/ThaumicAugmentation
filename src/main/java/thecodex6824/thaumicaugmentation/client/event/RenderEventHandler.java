@@ -63,6 +63,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.casters.ICaster;
+import thaumcraft.client.fx.FXDispatcher;
+import thaumcraft.client.fx.beams.FXBeamBore;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
@@ -71,6 +73,7 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
@@ -78,6 +81,8 @@ public class RenderEventHandler {
 
     private static final Cache<Integer, Boolean> CAST_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterWrite(
             3000, TimeUnit.MILLISECONDS).maximumSize(250).build();
+    private static final Cache<EntityLivingBase, FXBeamBore> IMPULSE_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterWrite(
+            5000, TimeUnit.MILLISECONDS).weakKeys().maximumSize(25).build();
     
     private static final HashMap<DimensionalBlockPos[], Long> TRANSACTIONS = new HashMap<>();
     
@@ -103,6 +108,22 @@ public class RenderEventHandler {
     
     public static void onImpetusTransaction(DimensionalBlockPos[] positions) {
         TRANSACTIONS.put(positions, Minecraft.getMinecraft().world.getTotalWorldTime());
+    }
+    
+    public static void onImpulseBeam(EntityLivingBase entity, boolean stop) {
+        if (stop)
+            IMPULSE_CACHE.invalidate(entity);
+        else {
+            FXBeamBore bore = IMPULSE_CACHE.getIfPresent(entity);
+            if (bore == null) {
+                Vec3d origin = entity.getPositionEyes(1.0F);
+                Vec3d dest = RaytraceHelper.raytracePosition(entity, TAConfig.cannonBeamRange.getValue());
+                IMPULSE_CACHE.put(entity, (FXBeamBore) FXDispatcher.INSTANCE.beamBore(origin.x, origin.y, origin.z,
+                        dest.x, dest.y, dest.z, 1, 0x404080, false, 0.01F, bore, 1));
+            }
+            else
+                IMPULSE_CACHE.put(entity, bore);
+        }
     }
     
     @SubscribeEvent
@@ -335,6 +356,12 @@ public class RenderEventHandler {
                     }
                 }
             }
+        }
+        
+        for (Map.Entry<EntityLivingBase, FXBeamBore> entry : IMPULSE_CACHE.asMap().entrySet()) {
+            Vec3d origin = entry.getKey().getPositionEyes(event.getPartialTicks());
+            Vec3d dest = RaytraceHelper.raytracePosition(entry.getKey(), TAConfig.cannonBeamRange.getValue());
+            entry.getValue().updateBeam(origin.x, origin.y, origin.z, dest.x, dest.y, dest.z);
         }
         
         GlStateManager.popMatrix();

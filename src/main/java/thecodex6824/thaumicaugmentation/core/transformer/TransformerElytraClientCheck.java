@@ -21,11 +21,15 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 
 public class TransformerElytraClientCheck extends Transformer {
 
@@ -39,8 +43,10 @@ public class TransformerElytraClientCheck extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode livingUpdate = TransformUtil.findMethod(classNode, "onLivingUpdate", "func_70636_d");
-            int ret = TransformUtil.findFirstInstanceOfMethodCall(livingUpdate, 0, "getItemStackFromSlot", "func_184582_a",
+            MethodNode livingUpdate = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/entity/EntityPlayerSP", "func_70636_d",
+                    Type.VOID_TYPE), "()V");
+            int ret = TransformUtil.findFirstInstanceOfMethodCall(livingUpdate, 0, TransformUtil.remapMethodName("net/minecraft/client/entity/EntityPlayerSP",
+                    "func_184582_a", Type.getType(ItemStack.class), Type.getType(EntityEquipmentSlot.class)),
                     "(Lnet/minecraft/inventory/EntityEquipmentSlot;)Lnet/minecraft/item/ItemStack;", "net/minecraft/client/entity/EntityPlayerSP");
             if (ret != -1) {
                 AbstractInsnNode insertAfter = livingUpdate.instructions.get(ret).getNext();

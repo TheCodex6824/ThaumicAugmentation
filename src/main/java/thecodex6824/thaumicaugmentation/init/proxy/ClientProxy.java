@@ -38,6 +38,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -122,6 +123,7 @@ import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
+import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
@@ -137,6 +139,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketFullImpetusNodeSync
 import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpetusNodeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpetusTransaction;
+import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBeam;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
@@ -257,6 +260,8 @@ public class ClientProxy extends ServerProxy {
             handleBiomeUpdatePacket((PacketBiomeUpdate) message, context);
         else if (message instanceof PacketFXShield)
             handleFXShieldPacket((PacketFXShield) message, context);
+        else if (message instanceof PacketImpulseBeam)
+            handleImpulseBeamPacket((PacketImpulseBeam) message, context);
         else
             ThaumicAugmentation.getLogger().warn("An unknown packet was received and will be dropped: " + message.getClass().toString());
     }
@@ -566,6 +571,12 @@ public class ClientProxy extends ServerProxy {
     protected void handleFXShieldPacket(PacketFXShield message, MessageContext context) {
         message.onMessage(message, context);
     }
+    
+    protected void handleImpulseBeamPacket(PacketImpulseBeam message, MessageContext context) {
+        Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
+        if (entity instanceof EntityLivingBase)
+            RenderEventHandler.onImpulseBeam((EntityLivingBase) entity, message.shouldStopBeam());
+    }
 
     @Override
     public void preInit() {
@@ -585,7 +596,13 @@ public class ClientProxy extends ServerProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityAutocaster.class, new IRenderFactory<EntityAutocaster>() {
             @Override
             public Render<? super EntityAutocaster> createRenderFor(RenderManager manager) {
-                return new RenderAutocaster(manager);
+                return new RenderAutocaster<>(manager, false);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityAutocasterEldritch.class, new IRenderFactory<EntityAutocasterEldritch>() {
+            @Override
+            public Render<? super EntityAutocasterEldritch> createRenderFor(RenderManager manager) {
+                return new RenderAutocaster<>(manager, true);
             }
         });
         

@@ -41,6 +41,8 @@ public interface IImpulseCannonAugment extends IAugment {
     
     public default void onCannonTick(EntityLivingBase user, int tickCount) {}
     
+    public default void onStopCannonTick(EntityLivingBase user, int tickCount) {}
+    
     public default long getImpetusCostPerUsage(EntityLivingBase user) {
         return 0;
     }

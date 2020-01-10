@@ -21,12 +21,17 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
 public class TransformerWardBlockResistance extends Transformer {
@@ -42,7 +47,8 @@ public class TransformerWardBlockResistance extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode resistance = TransformUtil.findMethod(classNode, "getExplosionResistance", "getExplosionResistance",
+            MethodNode resistance = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/block/Block", "getExplosionResistance", Type.FLOAT_TYPE,
+                    Type.getType(World.class), Type.getType(BlockPos.class), Type.getType(Entity.class), Type.getType(Explosion.class)),
                     "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/Entity;Lnet/minecraft/world/Explosion;)F");
             boolean found = false;
             int ret = 0;

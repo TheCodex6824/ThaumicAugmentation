@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.core.transformer;
 
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.LabelNode;
@@ -27,7 +28,7 @@ import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
+import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 
 public final class TransformUtil {
 
@@ -36,23 +37,29 @@ public final class TransformUtil {
     public static final String HOOKS_COMMON = "thecodex6824/thaumicaugmentation/common/internal/TAHooksCommon";
     public static final String HOOKS_CLIENT = "thecodex6824/thaumicaugmentation/client/internal/TAHooksClient";
     
-    public static String correctNameForRuntime(String deobf, String srg) {
-        // "runtime deobf" refers to the srg names being used, not the dev ones
-        return ThaumicAugmentationCore.isRuntimeDeobfEnabled() ? srg : deobf;
+    public static String remapFieldName(String internalName, String fieldName) {
+        String internal = FMLDeobfuscatingRemapper.INSTANCE.unmap(internalName);
+        return FMLDeobfuscatingRemapper.INSTANCE.mapFieldName(internal, fieldName, null);
     }
     
-    public static MethodNode findMethod(ClassNode classNode, String deobf, String srg) {
+    public static String remapMethodName(String internalName, String methodName, Type returnType, Type... parameterTypes) {
+        String internal = FMLDeobfuscatingRemapper.INSTANCE.unmap(internalName);
+        String desc = Type.getMethodDescriptor(returnType, parameterTypes);
+        return FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(internal, methodName, desc);
+    }
+    
+    public static MethodNode findMethod(ClassNode classNode, String name) {
         for (MethodNode m : classNode.methods) {
-            if (m.name.equals(srg) || m.name.equals(deobf))
+            if (m.name.equals(name))
                 return m;
         }
         
         return null;
     }
     
-    public static MethodNode findMethod(ClassNode classNode, String deobf, String srg, String desc) {
+    public static MethodNode findMethod(ClassNode classNode, String name, String desc) {
         for (MethodNode m : classNode.methods) {
-            if ((m.name.equals(srg) || m.name.equals(deobf)) && m.desc.equals(desc))
+            if (m.name.equals(name) && m.desc.equals(desc))
                 return m;
         }
         
@@ -83,7 +90,7 @@ public final class TransformUtil {
         return -1;
     }
     
-    public static int findFirstInstanceOfMethodCall(MethodNode node, int startIndex, String deobf, String srg, String desc,
+    public static int findFirstInstanceOfMethodCall(MethodNode node, int startIndex, String name, String desc,
             String owningClass) {
         
         if (startIndex < 0 || startIndex >= node.instructions.size())
@@ -93,7 +100,7 @@ public final class TransformUtil {
             AbstractInsnNode insn = node.instructions.get(i);
             if (insn instanceof MethodInsnNode) {
                 MethodInsnNode method = (MethodInsnNode) insn;
-                if ((method.name.equals(srg) || method.name.equals(deobf)) && method.desc.equals(desc) && 
+                if (method.name.equals(name) && method.desc.equals(desc) && 
                         method.owner.equals(owningClass))
                     return i;
             }
@@ -102,7 +109,7 @@ public final class TransformUtil {
         return -1;
     }
     
-    public static int findLastInstanceOfMethodCall(MethodNode node, int endIndex, String deobf, String srg, String desc,
+    public static int findLastInstanceOfMethodCall(MethodNode node, int endIndex, String name, String desc,
             String owningClass) {
         
         if ((endIndex - 1) < 0 || (endIndex - 1) >= node.instructions.size())
@@ -112,7 +119,7 @@ public final class TransformUtil {
             AbstractInsnNode insn = node.instructions.get(i);
             if (insn instanceof MethodInsnNode) {
                 MethodInsnNode method = (MethodInsnNode) insn;
-                if ((method.name.equals(srg) || method.name.equals(deobf)) && method.desc.equals(desc) && 
+                if (method.name.equals(name) && method.desc.equals(desc) && 
                         method.owner.equals(owningClass))
                     return i;
             }

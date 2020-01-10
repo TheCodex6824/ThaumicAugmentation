@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnNode;
@@ -40,7 +41,8 @@ public class TransformerThaumostaticHarnessSprintCheck extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode sprint = TransformUtil.findMethod(classNode, "setSprinting", "func_70031_b");
+            MethodNode sprint = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/entity/EntityPlayerSP", "func_70031_b",
+                    Type.VOID_TYPE, Type.BOOLEAN_TYPE), "(Z)V");
             int ret = TransformUtil.findFirstInstanceOfOpcode(sprint, 0, Opcodes.INVOKESPECIAL);
             if (ret != -1) {
                 AbstractInsnNode insertAfter = sprint.instructions.get(ret).getPrevious();

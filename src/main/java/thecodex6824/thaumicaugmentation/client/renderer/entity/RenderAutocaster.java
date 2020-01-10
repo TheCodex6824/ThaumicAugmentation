@@ -32,24 +32,26 @@ import thaumcraft.client.lib.obj.AdvancedModelLoader;
 import thaumcraft.client.lib.obj.IModelCustom;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
+import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterBase;
 
-public class RenderAutocaster extends Render<EntityAutocaster> {
+public class RenderAutocaster<T extends EntityAutocasterBase> extends Render<T> {
 
     protected static final ResourceLocation MODEL = new ResourceLocation(ThaumicAugmentationAPI.MODID, "models/entity/autocaster.obj");
     protected static final ResourceLocation TEXTURE_NORMAL = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/entities/autocaster.png");
     protected static final ResourceLocation TEXTURE_ELDRITCH = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/entities/autocaster_eldritch.png");
     
+    protected boolean eldritch;
     protected IModelCustom model;
     
-    public RenderAutocaster(RenderManager manager) {
+    public RenderAutocaster(RenderManager manager, boolean eldritchTexture) {
         super(manager);
+        eldritch = eldritchTexture;
         model = AdvancedModelLoader.loadModel(MODEL);
     }
     
     @Override
-    public void doRender(EntityAutocaster entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        bindTexture(TEXTURE_NORMAL);
+    public void doRender(EntityAutocasterBase entity, double x, double y, double z, float entityYaw, float partialTicks) {
+        bindTexture(eldritch ? TEXTURE_ELDRITCH : TEXTURE_NORMAL);
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
         GlStateManager.translate(x, y, z);
@@ -104,8 +106,8 @@ public class RenderAutocaster extends Render<EntityAutocaster> {
     
     @Override
     @Nullable
-    protected ResourceLocation getEntityTexture(EntityAutocaster entity) {
-        return TEXTURE_NORMAL;
+    protected ResourceLocation getEntityTexture(EntityAutocasterBase entity) {
+        return eldritch ? TEXTURE_ELDRITCH : TEXTURE_NORMAL;
     }
     
 }

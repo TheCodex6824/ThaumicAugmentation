@@ -21,12 +21,15 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
 public class TransformerWardBlockHardness extends Transformer {
@@ -42,7 +45,8 @@ public class TransformerWardBlockHardness extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode hardness = TransformUtil.findMethod(classNode, "getBlockHardness", "func_185887_b");
+            MethodNode hardness = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/block/state/BlockStateContainer$StateImplementation",
+                    "func_185887_b", Type.FLOAT_TYPE, Type.getType(World.class), Type.getType(BlockPos.class)), "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F");
             boolean found = false;
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(hardness, ret, Opcodes.FRETURN)) != -1) {

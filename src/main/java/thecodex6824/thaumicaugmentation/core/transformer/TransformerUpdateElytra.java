@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -39,7 +40,8 @@ public class TransformerUpdateElytra  extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode update = TransformUtil.findMethod(classNode, "updateElytra", "func_184616_r");
+            MethodNode update = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/EntityLivingBase", "func_184616_r",
+                    Type.VOID_TYPE), "()V");
             int con = TransformUtil.findFirstInstanceOfOpcode(update, 0, Opcodes.ICONST_0);
             int ret = TransformUtil.findFirstInstanceOfOpcode(update, con, Opcodes.ISTORE);
             if (con != -1 && ret != -1 && ret == con + 1) {

@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -28,6 +29,8 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
 public class TransformerWardBlockNoRabbitSnacking extends Transformer {
@@ -43,7 +46,8 @@ public class TransformerWardBlockNoRabbitSnacking extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode nom = TransformUtil.findMethod(classNode, "shouldMoveTo", "func_179488_a");
+            MethodNode nom = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/passive/EntityRabbit$AIRaidFarm", "func_179488_a",
+                    Type.BOOLEAN_TYPE, Type.getType(World.class), Type.getType(BlockPos.class)), "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z");
             boolean found = false;
             int ret = nom.instructions.size();
             while ((ret = TransformUtil.findLastInstanceOfOpcode(nom, ret, Opcodes.IFEQ)) != -1) {

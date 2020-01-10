@@ -30,6 +30,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -61,6 +62,8 @@ import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderImpulseCannon;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBeam;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public class ItemImpulseCannon extends ItemTABase {
 
@@ -140,6 +143,11 @@ public class ItemImpulseCannon extends ItemTABase {
             }
             else if (((aug != null && aug.isTickable(player)) || aug == null) && buffer != null) {
                 player.setActiveHand(hand);
+                PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), false);
+                TANetwork.INSTANCE.sendToAllTracking(packet, player);
+                if (player instanceof EntityPlayerMP)
+                    TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
+                    
                 return new ActionResult<>(EnumActionResult.SUCCESS, stack);
             }
             else
@@ -170,6 +178,13 @@ public class ItemImpulseCannon extends ItemTABase {
                     aug.onCannonTick(player, count);
                     aug.applyRecoil(player);
                 }
+                else {
+                    player.stopActiveHand();
+                    PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), true);
+                    TANetwork.INSTANCE.sendToAllTracking(packet, player);
+                    if (player instanceof EntityPlayerMP)
+                        TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
+                }
             }
             else if (buffer != null) {
                 long cost = TAConfig.cannonBeamCost.getValue();
@@ -178,6 +193,20 @@ public class ItemImpulseCannon extends ItemTABase {
                     Entity e = RaytraceHelper.raytraceEntity(player, TAConfig.cannonBeamRange.getValue());
                     if (e != null)
                         ImpetusAPI.causeImpetusDamage(player, e, TAConfig.cannonBeamDamage.getValue());
+                    
+                    if (player.ticksExisted % 20 == 0) {
+                        PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), false);
+                        TANetwork.INSTANCE.sendToAllTracking(packet, player);
+                        if (player instanceof EntityPlayerMP)
+                            TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
+                    }
+                }
+                else {
+                    player.stopActiveHand();
+                    PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), true);
+                    TANetwork.INSTANCE.sendToAllTracking(packet, player);
+                    if (player instanceof EntityPlayerMP)
+                        TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
                 }
             }
         }
@@ -187,6 +216,22 @@ public class ItemImpulseCannon extends ItemTABase {
                 if (buffer.canExtract() && buffer.extractEnergy(cost, true) == cost)
                     aug.applyRecoil(player);
             }
+        }
+    }
+    
+    
+    @Override
+    public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entity, int timeLeft) {
+        if (!world.isRemote) {
+            IImpulseCannonAugment aug = getAugment(stack);
+            if (aug == null) {
+                PacketImpulseBeam packet = new PacketImpulseBeam(entity.getEntityId(), true);
+                TANetwork.INSTANCE.sendToAllTracking(packet, entity);
+                if (entity instanceof EntityPlayerMP)
+                    TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);
+            }
+            else if (aug.isTickable(entity))
+                aug.onStopCannonTick(entity, timeLeft);
         }
     }
     

@@ -21,12 +21,17 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketEntityAction;
 
 public class TransformerElytraServerCheck extends Transformer {
 
@@ -40,8 +45,10 @@ public class TransformerElytraServerCheck extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode check = TransformUtil.findMethod(classNode, "processEntityAction", "func_147357_a");
-            int ret = TransformUtil.findFirstInstanceOfMethodCall(check, 3, "getItemStackFromSlot", "func_184582_a",
+            MethodNode check = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/network/NetHandlerPlayServer", "func_147357_a",
+                    Type.VOID_TYPE, Type.getType(CPacketEntityAction.class)), "(Lnet/minecraft/network/play/client/CPacketEntityAction;)V");
+            int ret = TransformUtil.findFirstInstanceOfMethodCall(check, 3, TransformUtil.remapMethodName("net/minecraft/entity/player/EntityPlayerMP", "func_184582_a",
+                    Type.getType(ItemStack.class), Type.getType(EntityEquipmentSlot.class)),
                     "(Lnet/minecraft/inventory/EntityEquipmentSlot;)Lnet/minecraft/item/ItemStack;", "net/minecraft/entity/player/EntityPlayerMP");
             if (ret != -1) {
                 AbstractInsnNode insertAfter = check.instructions.get(ret).getNext();
@@ -52,7 +59,7 @@ public class TransformerElytraServerCheck extends Transformer {
                         false
                 ));
                 check.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/network/NetHandlerPlayServer",
-                        TransformUtil.correctNameForRuntime("player", "field_147369_b"), "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+                        TransformUtil.remapFieldName("net/minecraft/network/NetHandlerPlayServer", "field_147369_b"), "Lnet/minecraft/entity/player/EntityPlayerMP;"));
                 check.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
                 check.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
             }

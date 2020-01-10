@@ -21,11 +21,14 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import net.minecraft.entity.Entity;
 
 public class TransformerBipedRotationVanilla extends Transformer {
 
@@ -39,7 +42,9 @@ public class TransformerBipedRotationVanilla extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode rot = TransformUtil.findMethod(classNode, "setRotationAngles", "func_78087_a");
+            MethodNode rot = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/model/ModelBiped", "func_78087_a",
+                    Type.VOID_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE,
+                    Type.getType(Entity.class)), "(FFFFFFLnet/minecraft/entity/Entity;)V");
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(rot, ret, Opcodes.RETURN)) != -1) {
                 AbstractInsnNode insertAfter = rot.instructions.get(ret).getPrevious();

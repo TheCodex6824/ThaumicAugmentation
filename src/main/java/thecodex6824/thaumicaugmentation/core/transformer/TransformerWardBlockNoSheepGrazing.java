@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -29,6 +30,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import net.minecraft.util.math.BlockPos;
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
 public class TransformerWardBlockNoSheepGrazing extends Transformer {
@@ -44,7 +46,8 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode nom = TransformUtil.findMethod(classNode, "shouldExecute", "func_75250_a");
+            MethodNode nom = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/ai/EntityAIEatGrass", "func_75250_a",
+                    Type.BOOLEAN_TYPE), "()Z");
             int tallGrass = TransformUtil.findLastInstanceOfOpcode(nom, nom.instructions.size(), Opcodes.IFEQ);
             int normalGrass = TransformUtil.findLastInstanceOfOpcode(nom, nom.instructions.size(), Opcodes.IF_ACMPNE);
             if (tallGrass != -1 && normalGrass != -1) {
@@ -59,7 +62,7 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
                 ));
                 nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 nom.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
-                        TransformUtil.correctNameForRuntime("entityWorld", "field_151501_c"), "Lnet/minecraft/world/World;"));
+                        TransformUtil.remapFieldName("net/minecraft/entity/ai/EntityAIEatGrass", "field_151501_c"), "Lnet/minecraft/world/World;"));
                 nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
                 
                 nom.instructions.insert(grassAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) grassAfter).label));
@@ -71,13 +74,13 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
                 ));
                 nom.instructions.insert(grassAfter, new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
                         "net/minecraft/util/math/BlockPos",
-                        TransformUtil.correctNameForRuntime("down", "func_177977_b"),
+                        TransformUtil.remapMethodName("net/minecraft/util/math/BlockPos", "func_177977_b", Type.getType(BlockPos.class)),
                         "()Lnet/minecraft/util/math/BlockPos;",
                         false
                 ));
                 nom.instructions.insert(grassAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 nom.instructions.insert(grassAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
-                        TransformUtil.correctNameForRuntime("entityWorld", "field_151501_c"), "Lnet/minecraft/world/World;"));
+                        TransformUtil.remapFieldName("net/minecraft/entity/ai/EntityAIEatGrass", "field_151501_c"), "Lnet/minecraft/world/World;"));
                 nom.instructions.insert(grassAfter, new VarInsnNode(Opcodes.ALOAD, 0));
             }
             else

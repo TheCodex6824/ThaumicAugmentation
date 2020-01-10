@@ -126,6 +126,24 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable 
                 return augment.getCapability(CapabilityAugment.AUGMENT, null) instanceof IThaumostaticHarnessAugment;
             }
             
+            @Override
+            public void setAugment(ItemStack augment, int slot) {
+                super.setAugment(augment, slot);
+                int difference = RechargeHelper.getCharge(stack) - getHarnessVisCapacity(stack);
+                if (difference > 0)
+                    RechargeHelper.consumeCharge(stack, null, difference);
+            }
+            
+            @Override
+            public ItemStack[] setAllAugments(ItemStack[] augs) {
+                ItemStack[] ret = super.setAllAugments(augs);
+                int difference = RechargeHelper.getCharge(stack) - getHarnessVisCapacity(stack);
+                if (difference > 0)
+                    RechargeHelper.consumeCharge(stack, null, difference);
+                
+                return ret;
+            }
+            
         }, new BaubleItem(BaubleType.BODY) {
             
             @Override

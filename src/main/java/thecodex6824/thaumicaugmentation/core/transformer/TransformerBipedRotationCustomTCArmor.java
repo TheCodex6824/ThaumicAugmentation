@@ -21,11 +21,14 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import net.minecraft.entity.Entity;
 
 /**
  * Patches the ModelCustomArmor class to call the super method in setRotationAngles to fix
@@ -44,7 +47,10 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode rot = TransformUtil.findMethod(classNode, "setRotationAngles", "func_78087_a");
+            String rotationAngles = TransformUtil.remapMethodName("thaumcraft/client/renderers/models/gear/ModelCustomArmor", "func_78087_a",
+                    Type.VOID_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE,
+                    Type.getType(Entity.class));
+            MethodNode rot = TransformUtil.findMethod(classNode, rotationAngles, "(FFFFFFLnet/minecraft/entity/Entity;)V");
             if (rot.instructions.size() != 1009 || rot.localVariables.size() != 15)
                 throw new TransformerException("setRotationAngles function is not the expected size, this transformer will almost certainly break it");
        
@@ -55,7 +61,7 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
             AbstractInsnNode insertAfter = rot.instructions.get(ret).getNext();
             rot.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESPECIAL,
                     "net/minecraft/client/model/ModelBiped",
-                    "setRotationAngles",
+                    rotationAngles,
                     "(FFFFFFLnet/minecraft/entity/Entity;)V",
                     false
             ));

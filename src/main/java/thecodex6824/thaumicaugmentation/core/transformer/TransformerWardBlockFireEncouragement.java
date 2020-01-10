@@ -42,7 +42,8 @@ public class TransformerWardBlockFireEncouragement extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode fire = TransformUtil.findMethod(classNode, "getFireSpreadSpeed", "getFireSpreadSpeed");
+            MethodNode fire = TransformUtil.findMethod(classNode, "getFireSpreadSpeed",
+                    "(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;)I");
             boolean found = false;
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(fire, ret, Opcodes.IRETURN)) != -1) {

@@ -115,7 +115,7 @@ public class TATransformer implements IClassTransformer {
             }
             
             if (didSomething) {
-                ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+                ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
                 node.accept(writer);
                 ThaumicAugmentationCore.getLogger().info("Successfully transformed class " + transformedName);
                 return writer.toByteArray();

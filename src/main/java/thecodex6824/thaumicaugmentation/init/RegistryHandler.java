@@ -77,6 +77,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
+import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
@@ -88,6 +89,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvid
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemElytraHarness;
 import thecodex6824.thaumicaugmentation.common.item.ItemElytraHarnessAugment;
+import thecodex6824.thaumicaugmentation.common.item.ItemFocusEldritch;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpetusLinker;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannon;
@@ -247,6 +249,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemAutocasterPlacer(), "autocaster_placer"));
         registry.register(setupItem(new ItemImpulseCannon(), "impulse_cannon"));
         registry.register(setupItem(new ItemImpulseCannonAugment(), "impulse_cannon_augment"));
+        registry.register(new ItemFocusEldritch()); // had to setup in constructor due to TC doing things to the item
         
         AugmentHandler.registerAugmentBuilderComponents();
     }
@@ -300,6 +303,9 @@ public final class RegistryHandler {
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityAutocaster.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "autocaster"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".autocaster").tracker(64, 3, false).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityAutocasterEldritch.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "autocaster_eldritch"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".autocaster_eldritch").tracker(64, 3, false).build());
     }
     
     @SubscribeEvent
