@@ -30,12 +30,16 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import net.minecraft.util.math.BlockPos;
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
 public class TransformerWardBlockNoSheepGrazing extends Transformer {
 
     private static final String CLASS = "net.minecraft.entity.ai.EntityAIEatGrass";
+    
+    @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -74,7 +78,7 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
                 ));
                 nom.instructions.insert(grassAfter, new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
                         "net/minecraft/util/math/BlockPos",
-                        TransformUtil.remapMethodName("net/minecraft/util/math/BlockPos", "func_177977_b", Type.getType(BlockPos.class)),
+                        TransformUtil.remapMethodName("net/minecraft/util/math/BlockPos", "func_177977_b", Type.getType("Lnet/minecraft/util/math/BlockPos;")),
                         "()Lnet/minecraft/util/math/BlockPos;",
                         false
                 ));

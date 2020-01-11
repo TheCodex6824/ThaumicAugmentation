@@ -95,6 +95,7 @@ public class TATransformer implements IClassTransformer {
             reader.accept(node, 0);
             
             boolean didSomething = false;
+            boolean computeFrames = false;
             for (ITransformer transformer : TRANSFORMERS) {
                 if (transformer.isTransformationNeeded(transformedName)) {
                     if (ThaumicAugmentationCore.getExcludedTransformers().contains(transformer.getClass().getName()))
@@ -109,13 +110,20 @@ public class TATransformer implements IClassTransformer {
                         else
                             throw new RuntimeException();
                     }
-                    else
+                    else {
                         didSomething = true;
+                        computeFrames |= transformer.needToComputeFrames();
+                    }
                 }
             }
             
             if (didSomething) {
-                ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+                ClassWriter writer = !computeFrames ? new ClassWriter(ClassWriter.COMPUTE_MAXS) : new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
+                    @Override
+                    protected String getCommonSuperClass(String type1, String type2) {
+                        return "java/lang/Object";
+                    }
+                };
                 node.accept(writer);
                 ThaumicAugmentationCore.getLogger().info("Successfully transformed class " + transformedName);
                 return writer.toByteArray();

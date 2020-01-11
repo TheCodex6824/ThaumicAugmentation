@@ -28,15 +28,16 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
 public class TransformerWardBlockResistance extends Transformer {
 
     private static final String CLASS = "net.minecraft.block.Block";
+    
+    @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -48,7 +49,7 @@ public class TransformerWardBlockResistance extends Transformer {
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode resistance = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/block/Block", "getExplosionResistance", Type.FLOAT_TYPE,
-                    Type.getType(World.class), Type.getType(BlockPos.class), Type.getType(Entity.class), Type.getType(Explosion.class)),
+                    Type.getType("Lnet/minecraft/world/World;"), Type.getType("Lnet/minecraft/util/math/BlockPos;"), Type.getType("Lnet/minecraft/entity/Entity;"), Type.getType("Lnet/minecraft/world/Explosion;")),
                     "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/Entity;Lnet/minecraft/world/Explosion;)F");
             boolean found = false;
             int ret = 0;

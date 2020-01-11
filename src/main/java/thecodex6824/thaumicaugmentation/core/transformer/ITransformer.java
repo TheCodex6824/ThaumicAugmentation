@@ -30,4 +30,6 @@ public interface ITransformer {
     
     public RuntimeException getRaisedException();
     
+    public boolean needToComputeFrames();
+    
 }

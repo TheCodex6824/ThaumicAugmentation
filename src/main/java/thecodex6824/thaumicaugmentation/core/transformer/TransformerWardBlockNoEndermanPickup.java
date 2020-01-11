@@ -36,6 +36,11 @@ public class TransformerWardBlockNoEndermanPickup extends Transformer {
     private static final String CLASS = "net.minecraft.entity.monster.EntityEnderman$AITakeBlock";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "") &&
                 transformedName.equals(CLASS);

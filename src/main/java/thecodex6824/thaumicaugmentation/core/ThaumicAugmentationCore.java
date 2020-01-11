@@ -31,12 +31,16 @@ import com.google.common.collect.ImmutableSet;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
-@IFMLLoadingPlugin.Name("Thaumic Augmentation Core Plugin")
-@IFMLLoadingPlugin.MCVersion("1.12.2")
-@IFMLLoadingPlugin.SortingIndex(1005)
-@IFMLLoadingPlugin.TransformerExclusions("thecodex6824.thaumicaugmentation.core")
+@Name("Thaumic Augmentation Core Plugin")
+@MCVersion("1.12.2")
+@SortingIndex(1005)
+@TransformerExclusions("thecodex6824.thaumicaugmentation.core")
 public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
     private static Logger log = LogManager.getLogger(ThaumicAugmentationAPI.MODID + "core");

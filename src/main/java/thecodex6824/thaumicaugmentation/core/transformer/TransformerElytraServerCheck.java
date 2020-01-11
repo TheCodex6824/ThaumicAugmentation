@@ -29,13 +29,14 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketEntityAction;
-
 public class TransformerElytraServerCheck extends Transformer {
 
     private static final String CLASS = "net.minecraft.network.NetHandlerPlayServer";
+    
+    @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -46,9 +47,9 @@ public class TransformerElytraServerCheck extends Transformer {
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode check = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/network/NetHandlerPlayServer", "func_147357_a",
-                    Type.VOID_TYPE, Type.getType(CPacketEntityAction.class)), "(Lnet/minecraft/network/play/client/CPacketEntityAction;)V");
+                    Type.VOID_TYPE, Type.getType("Lnet/minecraft/network/play/client/CPacketEntityAction;")), "(Lnet/minecraft/network/play/client/CPacketEntityAction;)V");
             int ret = TransformUtil.findFirstInstanceOfMethodCall(check, 3, TransformUtil.remapMethodName("net/minecraft/entity/player/EntityPlayerMP", "func_184582_a",
-                    Type.getType(ItemStack.class), Type.getType(EntityEquipmentSlot.class)),
+                    Type.getType("Lnet/minecraft/item/ItemStack;"), Type.getType("Lnet/minecraft/inventory/EntityEquipmentSlot;")),
                     "(Lnet/minecraft/inventory/EntityEquipmentSlot;)Lnet/minecraft/item/ItemStack;", "net/minecraft/entity/player/EntityPlayerMP");
             if (ret != -1) {
                 AbstractInsnNode insertAfter = check.instructions.get(ret).getNext();

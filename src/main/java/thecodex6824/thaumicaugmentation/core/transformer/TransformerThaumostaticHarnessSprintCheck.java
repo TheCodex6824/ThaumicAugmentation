@@ -34,6 +34,11 @@ public class TransformerThaumostaticHarnessSprintCheck extends Transformer {
     private static final String CLASS = "net.minecraft.client.entity.EntityPlayerSP";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }

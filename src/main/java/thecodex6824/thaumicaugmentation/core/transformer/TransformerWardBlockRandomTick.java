@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.core.transformer;
 
-import java.util.Random;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -34,14 +32,16 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
 public class TransformerWardBlockRandomTick extends Transformer {
 
     private static final String CLASS = "net.minecraft.world.WorldServer";
+    
+    @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -55,7 +55,7 @@ public class TransformerWardBlockRandomTick extends Transformer {
             MethodNode update = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/world/WorldServer", "func_147456_g", Type.VOID_TYPE),
                     "()V");
             int ret = TransformUtil.findFirstInstanceOfMethodCall(update, 0, TransformUtil.remapMethodName("net/minecraft/block/Block", "func_180645_a", Type.VOID_TYPE,
-                    Type.getType(World.class), Type.getType(BlockPos.class), Type.getType(IBlockState.class), Type.getType(Random.class)),
+                    Type.getType("Lnet/minecraft/world/World;"), Type.getType("Lnet/minecraft/util/math/BlockPos;"), Type.getType("Lnet/minecraft/block/state/IBlockState;"), Type.getType("Ljava/util/Random;")),
                     "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V",
                     "net/minecraft/block/Block");
             int blockpos = TransformUtil.findLastInstanceOfMethodCall(update, ret, "<init>", "(III)V", "net/minecraft/util/math/BlockPos");

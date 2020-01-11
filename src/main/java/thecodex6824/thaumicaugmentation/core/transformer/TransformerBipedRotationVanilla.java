@@ -28,11 +28,14 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import net.minecraft.entity.Entity;
-
 public class TransformerBipedRotationVanilla extends Transformer {
 
     private static final String CLASS = "net.minecraft.client.model.ModelBiped";
+    
+    @Override
+    public boolean needToComputeFrames() {
+        return true;
+    }
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -44,7 +47,7 @@ public class TransformerBipedRotationVanilla extends Transformer {
         try {
             MethodNode rot = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/model/ModelBiped", "func_78087_a",
                     Type.VOID_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE,
-                    Type.getType(Entity.class)), "(FFFFFFLnet/minecraft/entity/Entity;)V");
+                    Type.getType("Lnet/minecraft/entity/Entity;")), "(FFFFFFLnet/minecraft/entity/Entity;)V");
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(rot, ret, Opcodes.RETURN)) != -1) {
                 AbstractInsnNode insertAfter = rot.instructions.get(ret).getPrevious();

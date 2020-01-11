@@ -38,6 +38,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -110,6 +111,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     public EntityAutocaster(World world) {
         super(world);
         ownerRef = new WeakReference<>(null);
+        setDropChance(EntityEquipmentSlot.MAINHAND, 0.0F);
     }
     
     @Override
@@ -253,6 +255,11 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
         }
         else
             return super.processInteract(player, hand);
+    }
+    
+    @Override
+    protected boolean canDropLoot() {
+        return false;
     }
     
     protected void dropFocus() {

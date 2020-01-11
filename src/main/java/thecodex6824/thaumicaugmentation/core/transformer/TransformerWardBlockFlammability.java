@@ -34,6 +34,11 @@ public class TransformerWardBlockFlammability extends Transformer {
     private static final String CLASS = "net.minecraft.block.Block";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "") &&
                 transformedName.equals(CLASS);

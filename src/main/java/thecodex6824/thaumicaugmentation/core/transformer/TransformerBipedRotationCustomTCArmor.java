@@ -20,15 +20,16 @@
 
 package thecodex6824.thaumicaugmentation.core.transformer;
 
+import java.util.ArrayList;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
-
-import net.minecraft.entity.Entity;
 
 /**
  * Patches the ModelCustomArmor class to call the super method in setRotationAngles to fix
@@ -40,6 +41,11 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
     private static final String CLASS = "thaumcraft.client.renderers.models.gear.ModelCustomArmor";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }
@@ -49,8 +55,9 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
         try {
             String rotationAngles = TransformUtil.remapMethodName("thaumcraft/client/renderers/models/gear/ModelCustomArmor", "func_78087_a",
                     Type.VOID_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE,
-                    Type.getType(Entity.class));
+                    Type.getType("Lnet/minecraft/entity/Entity;"));
             MethodNode rot = TransformUtil.findMethod(classNode, rotationAngles, "(FFFFFFLnet/minecraft/entity/Entity;)V");
+            
             if (rot.instructions.size() != 1009 || rot.localVariables.size() != 15)
                 throw new TransformerException("setRotationAngles function is not the expected size, this transformer will almost certainly break it");
        
@@ -84,11 +91,13 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
             for (int i = 0; i < end - ret - 1; ++i)
                 rot.instructions.remove(rot.instructions.get(ret));
             
-            // strip now unused locals
-            for (int i = 0; i < 7; ++i)
-                rot.localVariables.remove(rot.localVariables.get(i));
+            ArrayList<LocalVariableNode> toRemove = new ArrayList<>();
+            for (LocalVariableNode local : rot.localVariables) {
+                if (local != null && local.index > 7)
+                    toRemove.add(local);
+            }
             
-            rot.maxLocals -= 7;
+            rot.localVariables.removeAll(toRemove);
             return true;
         }
         catch (Throwable anything) {

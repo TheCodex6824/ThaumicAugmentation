@@ -28,13 +28,16 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
 public class TransformerWardBlockHardness extends Transformer {
 
     private static final String CLASS = "net.minecraft.block.state.BlockStateContainer$StateImplementation";
+    
+    @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -46,7 +49,7 @@ public class TransformerWardBlockHardness extends Transformer {
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode hardness = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/block/state/BlockStateContainer$StateImplementation",
-                    "func_185887_b", Type.FLOAT_TYPE, Type.getType(World.class), Type.getType(BlockPos.class)), "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F");
+                    "func_185887_b", Type.FLOAT_TYPE, Type.getType("Lnet/minecraft/world/World;"), Type.getType("Lnet/minecraft/util/math/BlockPos;")), "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F");
             boolean found = false;
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(hardness, ret, Opcodes.FRETURN)) != -1) {

@@ -28,12 +28,14 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
-
 public class TransformerElytraClientCheck extends Transformer {
 
     private static final String CLASS = "net.minecraft.client.entity.EntityPlayerSP";
+    
+    @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -46,7 +48,7 @@ public class TransformerElytraClientCheck extends Transformer {
             MethodNode livingUpdate = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/entity/EntityPlayerSP", "func_70636_d",
                     Type.VOID_TYPE), "()V");
             int ret = TransformUtil.findFirstInstanceOfMethodCall(livingUpdate, 0, TransformUtil.remapMethodName("net/minecraft/client/entity/EntityPlayerSP",
-                    "func_184582_a", Type.getType(ItemStack.class), Type.getType(EntityEquipmentSlot.class)),
+                    "func_184582_a", Type.getType("Lnet/minecraft/item/ItemStack;"), Type.getType("Lnet/minecraft/inventory/EntityEquipmentSlot;")),
                     "(Lnet/minecraft/inventory/EntityEquipmentSlot;)Lnet/minecraft/item/ItemStack;", "net/minecraft/client/entity/EntityPlayerSP");
             if (ret != -1) {
                 AbstractInsnNode insertAfter = livingUpdate.instructions.get(ret).getNext();

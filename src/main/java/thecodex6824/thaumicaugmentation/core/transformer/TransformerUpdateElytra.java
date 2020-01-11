@@ -33,6 +33,11 @@ public class TransformerUpdateElytra  extends Transformer {
     private static final String CLASS = "net.minecraft.entity.EntityLivingBase";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }

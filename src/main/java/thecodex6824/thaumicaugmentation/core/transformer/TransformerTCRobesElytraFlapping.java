@@ -29,11 +29,14 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import net.minecraft.entity.Entity;
-
 public class TransformerTCRobesElytraFlapping extends Transformer {
 
     private static final String CLASS = "thaumcraft.client.renderers.models.gear.ModelRobe";
+    
+    @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
@@ -44,7 +47,7 @@ public class TransformerTCRobesElytraFlapping extends Transformer {
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode render = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("thaumcraft/client/renderers/models/gear/ModelRobe", "func_78088_a",
-                    Type.VOID_TYPE, Type.getType(Entity.class), Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE,
+                    Type.VOID_TYPE, Type.getType("Lnet/minecraft/entity/Entity;"), Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE,
                     Type.FLOAT_TYPE, Type.FLOAT_TYPE), "(Lnet/minecraft/entity/Entity;FFFFFF)V");
             int offset = TransformUtil.findFirstInstanceOfMethodCall(render, 0, "min",
                     "(FF)F", "java/lang/Math");
