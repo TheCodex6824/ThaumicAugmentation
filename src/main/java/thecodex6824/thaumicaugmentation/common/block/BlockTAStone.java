@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -38,6 +39,7 @@ import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -81,8 +83,18 @@ public class BlockTAStone extends BlockTABase implements ITAStoneType, IItemBloc
     }
     
     @Override
+    public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        return state.getValue(ITAStoneType.STONE_TYPE).getMapColor();
+    }
+    
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return state.getValue(ITAStoneType.STONE_TYPE).getLightLevel();
+    }
+    
+    @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.fromMeta(BitUtil.getBits(meta, 0, 2)));
+        return getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.fromMeta(BitUtil.getBits(meta, 0, 4)));
     }
     
     @Override

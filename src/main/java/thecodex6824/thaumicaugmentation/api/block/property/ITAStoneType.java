@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -43,25 +44,35 @@ import thecodex6824.thaumicaugmentation.common.util.QuadConsumer;
  * @see thecodex6824.thaumicaugmentation.api.TABlocks#STONE
  */
 public interface ITAStoneType {
-
+    
     public enum StoneType implements IStringSerializable {
-        STONE_VOID(0, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundType.STONE, (w, b, s, r) -> {}),
-        STONE_TAINT_NODECAY(1, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE, (w, b, s, r) -> {}),
+        
+        STONE_VOID(0, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.OBSIDIAN, 0),
+        STONE_TAINT_NODECAY(1, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE, (w, b, s, r) -> {}, MapColor.OBSIDIAN, 0),
         SOIL_STONE_TAINT_NODECAY(2, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE, (w, b, s, r) -> {
             if (w.getBlockState(b.up()).getLightOpacity(w, b.up()) > 2)
                 w.setBlockState(b, s.withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY));
-        });
+        }, MapColor.PURPLE, 0),
+        ANCIENT_RUNES(3, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BROWN, 0),
+        ANCIENT_GLYPHS(4, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BROWN, 0),
+        ANCIENT_BRICKS(5, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BROWN, 0),
+        STONE_CRUSTED(6, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.ADOBE, 0),
+        STONE_CRUSTED_GLOWING(7, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.ADOBE, 15);
         
         private int meta;
         private Supplier<Material> mat;
         private Supplier<SoundType> sound;
         private QuadConsumer<World, BlockPos, IBlockState, Random> randomTickFunc;
+        private MapColor color;
+        private int light;
         
-        private StoneType(int m, Supplier<Material> mt, Supplier<SoundType> s, QuadConsumer<World, BlockPos, IBlockState, Random> func) {
+        private StoneType(int m, Supplier<Material> mt, Supplier<SoundType> s, QuadConsumer<World, BlockPos, IBlockState, Random> func, MapColor c, int l) {
             meta = m;
             mat = mt;
             sound = s;
             randomTickFunc = func;
+            color = c;
+            light = l;
         }
         
         public int getMeta() {
@@ -78,6 +89,14 @@ public interface ITAStoneType {
         
         public void randomTick(World world, BlockPos pos, IBlockState state, Random random) {
             randomTickFunc.accept(world, pos, state, random);
+        }
+        
+        public MapColor getMapColor() {
+            return color;
+        }
+        
+        public int getLightLevel() {
+            return light;
         }
         
         @Override

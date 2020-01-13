@@ -734,6 +734,17 @@ public class ClientProxy extends ServerProxy {
             }
         };
         registerTo.registerItemColorHandler(biomeSelector, TAItems.BIOME_SELECTOR);
+        
+        IItemColor focus = new IItemColor() {
+            @Override
+            public int colorMultiplier(ItemStack stack, int tintIndex) {
+                if (tintIndex == 0 && stack.getItem() instanceof ItemFocus)
+                    return ((ItemFocus) stack.getItem()).getFocusColor(stack);
+                
+                return -1;
+            }
+        };
+        registerTo.registerItemColorHandler(focus, TAItems.FOCUS_ANCIENT);
     }
     
     private static void registerBlockColorHandlers() {

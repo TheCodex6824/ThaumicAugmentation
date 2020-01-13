@@ -8,6 +8,11 @@ tile.thaumicaugmentation.temporary_light.name=Casted Light
 tile.thaumicaugmentation.stone.stone_void.name=Void Stone
 tile.thaumicaugmentation.stone.stone_taint_nodecay.name=Tainted Void Stone
 tile.thaumicaugmentation.stone.soil_stone_taint_nodecay.name=Tainted Void Stone Soil
+tile.thaumicaugmentation.stone.ancient_runes.name=Ancient Runes
+tile.thaumicaugmentation.stone.ancient_glyphs.name=Ancient Glyphs
+tile.thaumicaugmentation.stone.ancient_bricks.name=Ancient Bricks
+tile.thaumicaugmentation.stone.stone_crusted=Crusted Stone
+tile.thaumicaugmentation.stone.stone_crusted_glowing=Glowing Crusted Stone
 tile.thaumicaugmentation.arcane_trapdoor_wood.name=Greatwood Arcane Trapdoor
 tile.thaumicaugmentation.arcane_trapdoor_metal.name=Thaumium Arcane Trapdoor
 tile.thaumicaugmentation.arcane_trapdoor_silverwood.name=Silverwood Arcane Trapdoor
@@ -31,6 +36,11 @@ tile.thaumicaugmentation.rift_monitor.name=Extradimensional Monitor
 tile.thaumicaugmentation.impetus_generator.name=Impetus Generator
 tile.thaumicaugmentation.stability_field_generator.name=Stability Field Generator
 tile.thaumicaugmentation.impetus_gate.name=Impetus Restrictor
+tile.thaumicaugmentation.stairs_ancient.name=Ancient Stone Stairs
+tile.thaumicaugmentation.stairs_eldritch_tile.name=Eldritch Stone Stairs
+tile.thaumicaugmentation.ancient_tile_slab.name=Ancient Stone Tile Slab
+
+tile.thaumcraft.stairs_ancient_tile.name=Ancient Stone Tile Stairs
 
 item.thaumicaugmentation.gauntlet.thaumium.name=Thaumium Caster's Gauntlet
 item.thaumicaugmentation.gauntlet.void.name=Voidseer Caster's Gauntlet
@@ -65,7 +75,7 @@ item.thaumicaugmentation.autocaster_placer.name=Autocaster
 item.thaumicaugmentation.impulse_cannon.name=Impulse Cannon
 item.thaumicaugmentation.impulse_cannon_augment.railgun.name=Railgun Conversion
 item.thaumicaugmentation.impulse_cannon_augment.burst.name=Burst Fire Conversion
-item.thaumicaugmentation.focus_eldritch.name=Eldritch Focus
+item.thaumicaugmentation.focus_ancient.name=Ancient Focus
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld
@@ -133,7 +143,6 @@ thaumicaugmentation.text.terraformer_square=Square
 thaumicaugmentation.text.gate_manual=Impetus Restrictor mode: Manual Control
 thaumicaugmentation.text.gate_redstone=Impetus Restrictor mode: Redstone Control
 thaumicaugmentation.text.gate_cycle_limit=New manual Impetus Restrictor limit: %d
-thaumicaugmentation.text.focus_eldritch=Eldritch Focus: %s
 
 thaumicaugmentation.text.config.general=General
 thaumicaugmentation.text.config.gameplay=Gameplay

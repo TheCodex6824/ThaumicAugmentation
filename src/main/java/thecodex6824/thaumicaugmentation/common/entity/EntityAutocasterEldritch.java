@@ -35,7 +35,6 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import thaumcraft.api.casters.FocusMediumRoot;
@@ -212,7 +211,7 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
             long zSeed = random.nextLong();
             random.setSeed((xSeed * (int) posX + ySeed * (int) posY + zSeed * (int) posZ) ^ world.getSeed());
             
-            ItemStack focus = new ItemStack(TAItems.FOCUS_ELDRITCH);
+            ItemStack focus = new ItemStack(TAItems.FOCUS_ANCIENT);
             FocusPackage core = new FocusPackage();
             FocusNode root = new FocusMediumRoot();
             core.addNode(root);
@@ -283,9 +282,7 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
             
             effect.setParent(medium);
             core.addNode(effect);
-            // this will localize on the server which is normally bad, but we need to generate the name server side
-            focus.setStackDisplayName(new TextComponentTranslation("thaumicaugmentation.text.focus_eldritch",
-                    getRandomFocusName(random)).getFormattedText());
+            focus.setStackDisplayName(getRandomFocusName(random));
            
             int complexity = 0;
             Object2IntOpenHashMap<String> nodeCounts = new Object2IntOpenHashMap<>(core.nodes.size());

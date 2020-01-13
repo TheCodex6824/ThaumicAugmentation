@@ -1,0 +1,20 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "minecraft:cube_all",
+        "transform": "forge:default-block"
+     },
+    "variants": {
+        "normal": [
+            { "textures": {"all": "thaumicaugmentation:blocks/ancient_rune_0"} },
+            { "textures": {"all": "thaumicaugmentation:blocks/ancient_rune_1"} },
+            { "textures": {"all": "thaumicaugmentation:blocks/ancient_rune_2"} },
+            { "textures": {"all": "thaumicaugmentation:blocks/ancient_rune_3"} }
+        ], "inventory": [
+            { "textures": {"all": "thaumicaugmentation:blocks/ancient_rune_0"} },
+            { "textures": {"all": "thaumicaugmentation:blocks/ancient_rune_1"} },
+            { "textures": {"all": "thaumicaugmentation:blocks/ancient_rune_2"} },
+            { "textures": {"all": "thaumicaugmentation:blocks/ancient_rune_3"} }
+        ]
+    }
+}

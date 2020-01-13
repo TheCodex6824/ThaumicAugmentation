@@ -72,6 +72,7 @@ dependencies {
     runtime "curse.maven:jei:2803400"
     runtime "curse.maven:thaumic-jei:2705304"
     runtime "curse.maven:the-one-probe:2667280"
+    runtime "curse.maven:ctm:2832564"
 }
 
 processResources {

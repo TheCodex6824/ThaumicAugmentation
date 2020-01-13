@@ -1,0 +1,8 @@
+{
+    "parent": "block/stairs",
+    "textures": {
+        "bottom": "thaumcraft:blocks/eldritch_stone_2",
+        "top": "thaumcraft:blocks/eldritch_stone_3",
+        "side": "thaumcraft:blocks/eldritch_stone_3"
+    }
+}

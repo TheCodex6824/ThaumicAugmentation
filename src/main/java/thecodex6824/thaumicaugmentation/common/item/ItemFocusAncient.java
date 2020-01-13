@@ -34,13 +34,13 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
-public class ItemFocusEldritch extends ItemFocus implements IModelProvider<Item> {
+public class ItemFocusAncient extends ItemFocus implements IModelProvider<Item> {
 
-    public ItemFocusEldritch() {
-        super("focus_eldritch", 35);
+    public ItemFocusAncient() {
+        super("focus_ancient", 35);
         
         // clean up after TC's base item class doing stuff
-        setTranslationKey(ThaumicAugmentationAPI.MODID + ".focus_eldritch");
+        setTranslationKey(ThaumicAugmentationAPI.MODID + ".focus_ancient");
         setCreativeTab(TAItems.CREATIVE_TAB);
         ConfigItems.ITEM_VARIANT_HOLDERS.remove(this);
     }

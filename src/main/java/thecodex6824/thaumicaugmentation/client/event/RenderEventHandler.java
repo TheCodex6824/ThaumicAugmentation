@@ -359,8 +359,14 @@ public class RenderEventHandler {
         }
         
         for (Map.Entry<EntityLivingBase, FXBeamBore> entry : IMPULSE_CACHE.asMap().entrySet()) {
-            Vec3d origin = entry.getKey().getPositionEyes(event.getPartialTicks());
-            Vec3d dest = RaytraceHelper.raytracePosition(entry.getKey(), TAConfig.cannonBeamRange.getValue());
+            EntityLivingBase entity = entry.getKey();
+            Vec3d origin = null;
+            if (entity.equals(rv))
+                origin = entity.getPositionEyes(event.getPartialTicks());
+            else
+                origin = entity.getPositionEyes(event.getPartialTicks());
+            
+            Vec3d dest = RaytraceHelper.raytracePosition(entity, TAConfig.cannonBeamRange.getValue());
             entry.getValue().updateBeam(origin.x, origin.y, origin.z, dest.x, dest.y, dest.z);
         }
         

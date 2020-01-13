@@ -28,8 +28,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.api.casters.FocusEngine;
 import thaumcraft.common.golems.seals.SealHandler;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -79,6 +81,15 @@ public final class MiscHandler {
         
         AutocasterFocusRegistry.registerMaxDistance("thaumcraft.BOLT", 16.0);
         AutocasterFocusRegistry.registerMaxDistance("thaumcraft.TOUCH", 4.0);
+        
+        BlocksTC.stairsAncient.setTranslationKey("thaumcraft.stairs_ancient_tile");
+        GameRegistry.addShapedRecipe(new ResourceLocation("thaumcraft", "StairsAncient"),
+                new ResourceLocation(""), new ItemStack(BlocksTC.stairsAncient, 4, 0), 
+                "S  ",
+                "SS ",
+                "SSS",
+                'S', BlocksTC.stoneAncientTile
+        );
     }
 
 }

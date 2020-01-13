@@ -36,6 +36,7 @@ import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
@@ -46,6 +47,7 @@ import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectEventProxy;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.AspectRegistryEvent;
+import thaumcraft.api.blocks.BlocksTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
@@ -70,6 +72,8 @@ import thecodex6824.thaumicaugmentation.common.block.BlockRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.block.BlockStabilityFieldGenerator;
+import thecodex6824.thaumicaugmentation.common.block.BlockTASlab;
+import thecodex6824.thaumicaugmentation.common.block.BlockTAStairs;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
 import thecodex6824.thaumicaugmentation.common.block.BlockTaintFlower;
 import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
@@ -89,7 +93,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvid
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemElytraHarness;
 import thecodex6824.thaumicaugmentation.common.item.ItemElytraHarnessAugment;
-import thecodex6824.thaumicaugmentation.common.item.ItemFocusEldritch;
+import thecodex6824.thaumicaugmentation.common.item.ItemFocusAncient;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpetusLinker;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannon;
@@ -193,6 +197,8 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockImpetusGenerator(), "impetus_generator"));
         registry.register(setupBlock(new BlockStabilityFieldGenerator(), "stability_field_generator"));
         registry.register(setupBlock(new BlockImpetusGate(), "impetus_gate"));
+        registry.register(setupBlock(new BlockTASlab.Half(), "slab"));
+        registry.register(setupBlock(new BlockTASlab.Double(), "slab_double"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -214,6 +220,13 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileImpetusGenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_generator"));
         GameRegistry.registerTileEntity(TileStabilityFieldGenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "stability_field_generator"));
         GameRegistry.registerTileEntity(TileImpetusGate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_gate"));
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void registerBlocksLater(RegistryEvent.Register<Block> event) {
+        IForgeRegistry<Block> registry = event.getRegistry();
+        registry.register(setupBlock(new BlockTAStairs(BlocksTC.stoneAncient.getDefaultState()), "stairs_ancient"));
+        registry.register(setupBlock(new BlockTAStairs(BlocksTC.stoneEldritchTile.getDefaultState()), "stairs_eldritch_tile"));
     }
 
     @SubscribeEvent
@@ -249,7 +262,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemAutocasterPlacer(), "autocaster_placer"));
         registry.register(setupItem(new ItemImpulseCannon(), "impulse_cannon"));
         registry.register(setupItem(new ItemImpulseCannonAugment(), "impulse_cannon_augment"));
-        registry.register(new ItemFocusEldritch()); // had to setup in constructor due to TC doing things to the item
+        registry.register(new ItemFocusAncient()); // had to setup in constructor due to TC doing things to the item
         
         AugmentHandler.registerAugmentBuilderComponents();
     }

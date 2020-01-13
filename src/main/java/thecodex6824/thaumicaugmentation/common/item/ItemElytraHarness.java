@@ -142,7 +142,7 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     
     @Override
     public int getMaxCharge(ItemStack stack, EntityLivingBase entity) {
-        if (!entity.onGround)
+        if (entity != null && !entity.onGround)
             return RechargeHelper.getCharge(stack);
         else
             return VIS_MAX;
