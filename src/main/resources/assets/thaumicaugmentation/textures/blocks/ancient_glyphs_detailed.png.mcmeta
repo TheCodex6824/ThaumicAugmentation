@@ -1,0 +1,12 @@
+{
+    "ctm":{
+        "ctm_version": 1,
+        "type":"CTM",
+        "textures":[
+            "thaumicaugmentation:blocks/ancient_glyphs_detailed_ctm"
+        ],
+        "extra":{
+            "ignore_states":"false"
+        }
+    }
+}

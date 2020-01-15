@@ -1,0 +1,36 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "VOID_RECHARGE_PEDESTAL",
+  "vis": 75,
+  "aspects": {
+    "perditio": 1,
+    "ignis": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    " R ",
+    "PTP",
+    "EEE"
+  ],
+  "key": {
+    "E": {
+      "item": "thaumcraft:stone_eldritch_tile",
+      "data": 0
+    },
+    "T": {
+      "type": "forge:ore_dict",
+      "ore": "quicksilver"
+    },
+    "R": {
+      "item": "#IMPETUS_RESONATOR"
+    },
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:void_recharge_pedestal",
+    "data": 0
+  }
+}

@@ -45,7 +45,7 @@ public class GUIAutocaster extends GuiContainer {
     public void initGui() {
         super.initGui();
         EntityAutocaster e = ((ContainerAutocaster) inventorySlots).getEntity();
-        buttonList.add(new ButtonToggle(0, guiLeft + 80, guiTop + 13, 8, 8, e.getTargetAnimals()) {
+        buttonList.add(new ButtonToggle(0, guiLeft + 80, guiTop, 8, 8, e.getTargetAnimals()) {
             @Override
             public String getLabel() {
                 return new TextComponentTranslation("button.turretfocus.1").getFormattedText();
@@ -56,7 +56,7 @@ public class GUIAutocaster extends GuiContainer {
                 TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, newState ? 1 : 0));
             }
         });
-        buttonList.add(new ButtonToggle(1, guiLeft + 80, guiTop + 27, 8, 8, e.getTargetMobs()) {
+        buttonList.add(new ButtonToggle(1, guiLeft + 80, guiTop + 14, 8, 8, e.getTargetMobs()) {
             @Override
             public String getLabel() {
                 return new TextComponentTranslation("button.turretfocus.2").getFormattedText();
@@ -67,7 +67,7 @@ public class GUIAutocaster extends GuiContainer {
                 TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, newState ? 1 : 0));
             }
         });
-        buttonList.add(new ButtonToggle(2, guiLeft + 80, guiTop + 41, 8, 8, e.getTargetPlayers()) {
+        buttonList.add(new ButtonToggle(2, guiLeft + 80, guiTop + 28, 8, 8, e.getTargetPlayers()) {
             @Override
             public String getLabel() {
                 return new TextComponentTranslation("button.turretfocus.3").getFormattedText();
@@ -78,10 +78,21 @@ public class GUIAutocaster extends GuiContainer {
                 TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, newState ? 1 : 0));
             }
         });
-        buttonList.add(new ButtonToggle(3, guiLeft + 80, guiTop + 55, 8, 8, e.getTargetFriendly()) {
+        buttonList.add(new ButtonToggle(3, guiLeft + 80, guiTop + 42, 8, 8, e.getTargetFriendly()) {
             @Override
             public String getLabel() {
                 return new TextComponentTranslation("button.turretfocus.4").getFormattedText();
+            }
+            
+            @Override
+            public void onToggle(boolean newState) {
+                TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, newState ? 1 : 0));
+            }
+        });
+        buttonList.add(new ButtonToggle(4, guiLeft + 80, guiTop + 56, 8, 8, e.getRedstoneControl()) {
+            @Override
+            public String getLabel() {
+                return new TextComponentTranslation(ThaumicAugmentationAPI.MODID + ".gui.redstone").getFormattedText();
             }
             
             @Override

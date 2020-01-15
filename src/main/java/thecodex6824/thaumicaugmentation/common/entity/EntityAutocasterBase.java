@@ -58,11 +58,12 @@ import thaumcraft.api.aura.AuraHelper;
 import thaumcraft.api.casters.FocusEngine;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.IFocusElement;
+import thaumcraft.api.items.ItemsTC;
+import thaumcraft.common.items.casters.ItemCaster;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.items.casters.foci.FocusMediumBolt;
 import thaumcraft.common.items.casters.foci.FocusMediumTouch;
 import thaumcraft.common.lib.SoundsTC;
-import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.entity.AutocasterFocusRegistry;
 import thecodex6824.thaumicaugmentation.api.event.CastEvent;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
@@ -116,14 +117,13 @@ public abstract class EntityAutocasterBase extends EntityCreature {
         returnToOriginalRotation();
     }
     
+    protected abstract void dropItemFromPlacement();
+    
     @Override
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
             rotationYaw = rotationYawHead;
-            if (getAttackTarget() != null && isOnSameTeam(getAttackTarget()))
-                setAttackTarget(null);
-            
             EnumFacing facing = dataManager.get(FACING);
             BlockPos checkPos = getPosition().offset(facing.getOpposite());
             if (!world.getBlockState(checkPos).isSideSolid(world, checkPos, facing.getOpposite())) {
@@ -139,7 +139,7 @@ public abstract class EntityAutocasterBase extends EntityCreature {
                 }
                 
                 if (!ok) {
-                    entityDropItem(new ItemStack(TAItems.AUTOCASTER_PLACER), 0.5F);
+                    dropItemFromPlacement();
                     setDead();
                 }
             }
@@ -191,16 +191,20 @@ public abstract class EntityAutocasterBase extends EntityCreature {
                 fixFoci(f);
                 f.setCasterUUID(this.getUniqueID());
                 float visCost = ((ItemFocus) held.getItem()).getVisCost(held);
-                // TODO maybe use a wrapper caster item for the events
-                CastEvent.Pre preEvent = new CastEvent.Pre(this, held, new FocusWrapper(f, 
+                ItemStack tempHold = new ItemStack(ItemsTC.casterBasic);
+                ((ItemCaster) tempHold.getItem()).setFocus(tempHold, held);
+                setHeldItem(EnumHand.MAIN_HAND, tempHold);
+                CastEvent.Pre preEvent = new CastEvent.Pre(this, tempHold, new FocusWrapper(f, 
                         (int) (((ItemFocus) held.getItem()).getActivationTime(held)), visCost));
                 MinecraftForge.EVENT_BUS.post(preEvent);
                 visCost = preEvent.getFocus().getVisCost();
                 if (!preEvent.isCanceled() && DoubleMath.fuzzyEquals(AuraHelper.drainVis(world, getPosition(), visCost, false), visCost, 0.00001)) {
                     FocusEngine.castFocusPackage(this, f, true);
                     cooldown = preEvent.getFocus().getCooldown();
-                    MinecraftForge.EVENT_BUS.post(new CastEvent.Post(this, held, preEvent.getFocus()));
+                    MinecraftForge.EVENT_BUS.post(new CastEvent.Post(this, tempHold, preEvent.getFocus()));
                 }
+                
+                setHeldItem(EnumHand.MAIN_HAND, ((ItemCaster) tempHold.getItem()).getFocusStack(tempHold));
             }
         }
     }
@@ -375,7 +379,7 @@ public abstract class EntityAutocasterBase extends EntityCreature {
                             return false;
                     }
 
-                    if (!selectors.stream().anyMatch(pred -> pred.test(target)))
+                    if (!canAttackClass(target.getClass()) || !selectors.stream().anyMatch(pred -> pred.test(target)))
                         return false;
                     else {
                         setAttackTarget(entity);

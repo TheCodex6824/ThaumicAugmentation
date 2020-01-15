@@ -1,0 +1,39 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "ARCANE_TERRAFORMER",
+  "vis": 150,
+  "aspects": {
+    "ignis": 1,
+    "aqua": 1,
+    "terra": 1,
+    "aer": 1,
+    "ordo": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "LPL",
+    "TIT",
+    "LTL"
+  ],
+  "key": {
+    "L": {
+      "type": "forge:ore_dict",
+      "ore": "plateThaumium"
+    },
+    "P": {
+      "item": "thaumcraft:potion_sprayer",
+      "data": 0
+    },
+    "T": {
+      "item": "thaumcraft:tube",
+      "data": 0
+    },
+    "I": {
+      "item": "#CELL"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:arcane_terraformer",
+    "data": 0
+  }
+}

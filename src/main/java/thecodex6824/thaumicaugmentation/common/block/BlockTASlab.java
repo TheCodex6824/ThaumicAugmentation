@@ -167,12 +167,12 @@ public abstract class BlockTASlab extends BlockSlab implements ITASlabType {
     
     @Override
     public Comparable<?> getTypeForItem(ItemStack stack) {
-        return false;
+        return SlabType.fromMeta(stack.getMetadata());
     }
     
     @Override
     public IProperty<?> getVariantProperty() {
-        return ITASlabType.DOUBLE;
+        return ITASlabType.SLAB_TYPE;
     }
     
 }

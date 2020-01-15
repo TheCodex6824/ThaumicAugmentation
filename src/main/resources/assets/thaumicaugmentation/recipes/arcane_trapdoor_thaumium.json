@@ -1,0 +1,34 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "ARCANE_DOOR",
+  "vis": 100,
+  "aspects": {
+    "ignis": 1,
+    "aqua": 1,
+    "terra": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "TTT",
+    "ISI",
+    "TTT"
+  ],
+  "key": {
+    "T": {
+      "type": "forge:ore_dict",
+      "ore": "plateThaumium"
+    },
+    "S": {
+      "item": "#SIGIL"
+    },
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "plateIron"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:arcane_trapdoor_metal",
+    "data": 0,
+    "count": 2
+  }
+}

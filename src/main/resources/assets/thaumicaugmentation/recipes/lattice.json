@@ -1,0 +1,32 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "VIS_REGENERATOR",
+  "vis": 25,
+  "aspects": {
+    "aer": 1,
+    "aqua": 1
+  },
+  "pattern": [
+    "SLS",
+    "LFL",
+    "SLS"
+  ],
+  "key": {
+    "S": {
+      "item": "thaumcraft:plank_silverwood",
+      "data": 0
+    },
+    "L": {
+      "item": "thaumcraft:leaves_silverwood",
+      "data": 0
+    },
+    "F": {
+      "item": "thaumcraft:filter",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:material",
+    "data": 0
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPETUS_TRANSPORT",
+  "vis": 50,
+  "aspects": {
+    "ignis": 1,
+    "ordo": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    " B ",
+    "VCV",
+    "VIV"
+  ],
+  "key": {
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "blockVoid"
+    },
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "C": {
+      "item": "#IMPETUS_RESONATOR"
+    },
+    "I": {
+      "item": "minecraft:iron_bars",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impetus_drainer",
+    "data": 0
+  }
+}

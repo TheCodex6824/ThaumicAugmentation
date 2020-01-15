@@ -232,6 +232,10 @@ public class ServerProxy implements ISidedProxy {
                     autocaster.setTargetFriendly(message.getSelectionValue() > 0);
                     break;
                 }
+                case 4: {
+                    autocaster.setRedstoneControl(message.getSelectionValue() > 0);
+                    break;
+                }
                 default: break;
             }
         }

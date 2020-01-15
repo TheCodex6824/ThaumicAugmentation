@@ -1,0 +1,41 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "ENTERING_FRACTURE@1",
+  "vis": 25,
+  "aspects": {
+    "aer": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "BCB",
+    "CEC",
+    "BCB"
+  ],
+  "key": {
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "plateBrass"
+    },
+    "C": {
+      "type": "minecraft:item_nbt",
+      "item": "thaumcraft:crystal_essence",
+      "data": 0,
+      "nbt": {
+        "aspects": [
+          {
+            "key": "void",
+            "amount": 1
+          }
+        ]
+      }
+    },
+    "E": {
+      "item": "thaumcraft:nugget",
+      "data": 10
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:fracture_locator",
+    "data": 0
+  }
+}

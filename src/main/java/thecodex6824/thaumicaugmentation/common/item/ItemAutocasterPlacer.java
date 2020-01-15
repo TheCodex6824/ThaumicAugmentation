@@ -32,13 +32,18 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
+import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterBase;
+import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemAutocasterPlacer extends ItemTABase {
 
     public ItemAutocasterPlacer() {
-        super();
+        super("normal", "eldritch");
+        setHasSubtypes(true);
     }
     
     @Override
@@ -58,17 +63,32 @@ public class ItemAutocasterPlacer extends ItemTABase {
             if (!occupied.isEmpty())
                 return EnumActionResult.PASS;
             
-            EntityAutocaster entity = new EntityAutocaster(world);
+            EntityAutocasterBase entity = null;
+            if (player.getHeldItem(hand).getMetadata() == 1) {
+                entity = new EntityAutocasterEldritch(world);
+            }
+            else {
+                entity = new EntityAutocaster(world);
+                ((EntityAutocaster) entity).setOwner(player);
+            }
+            
             entity.setPosition(Math.floor(x) + 0.5, Math.floor(y), Math.floor(z) + 0.5);
             entity.setFacing(side);
-            entity.setOwner(player);
-            if (world.spawnEntity(entity)) {
-                world.playSound(null, loc, SoundEvents.ENTITY_ARMORSTAND_PLACE, SoundCategory.BLOCKS, 0.75F, 0.8F);
-                player.getHeldItem(hand).shrink(1);
-                return EnumActionResult.SUCCESS;
+            boolean cancel = MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, (float) entity.posX, (float) entity.posY, (float) entity.posZ, null));
+            if (!cancel) {
+                if (entity instanceof EntityAutocasterEldritch)
+                    ((EntityAutocasterEldritch) entity).onInitialSpawn(world.getDifficultyForLocation(entity.getPosition()), null, true);
+                else
+                    entity.onInitialSpawn(world.getDifficultyForLocation(entity.getPosition()), null);
+                
+                if (world.spawnEntity(entity)) {
+                    world.playSound(null, loc, SoundEvents.ENTITY_ARMORSTAND_PLACE, SoundCategory.BLOCKS, 0.75F, 0.8F);
+                    player.getHeldItem(hand).shrink(1);
+                    return EnumActionResult.SUCCESS;
+                }
             }
-            else
-                return EnumActionResult.PASS;
+            
+            return EnumActionResult.PASS;
         }
     }
     

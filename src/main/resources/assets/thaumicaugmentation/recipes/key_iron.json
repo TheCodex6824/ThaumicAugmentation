@@ -1,0 +1,30 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "WARD_KEYS",
+  "vis": 5,
+  "aspects": {
+    "ignis": 1,
+    "aqua": 1,
+    "terra": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "  B",
+    " NN",
+    "NN "
+  ],
+  "key": {
+    "B": {
+      "item": "thaumcraft:brain",
+      "data": 0
+    },
+    "N": {
+      "type": "forge:ore_dict",
+      "ore": "nuggetIron"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:key",
+    "data": 0
+  }
+}

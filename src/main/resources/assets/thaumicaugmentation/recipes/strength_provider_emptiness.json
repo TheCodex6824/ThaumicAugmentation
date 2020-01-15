@@ -1,0 +1,27 @@
+{
+  "type": "thaumicaugmentation:arcane_shapeless",
+  "research": "EMPTINESS_MODIFIER",
+  "vis": 15,
+  "aspects": {
+    "terra": 1,
+    "perditio": 1
+  },
+  "ingredients": [
+    {
+      "item": "thaumcraft:vis_resonator",
+      "data": 0
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "stoneVoid"
+    },
+    {
+      "item": "thaumicaugmentation:stone",
+      "data": 1
+    }
+  ],
+  "result": {
+    "type": "thaumicaugmentation:strength_provider",
+    "id": "thaumicaugmentation:strength_emptiness"
+  }
+}

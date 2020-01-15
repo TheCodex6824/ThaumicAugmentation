@@ -1,0 +1,10 @@
+{
+  "recipes": {
+    "arcane_shaped": "thecodex6824.thaumicaugmentation.api.recipe.ShapedArcaneCraftingRecipeFactory",
+    "arcane_shapeless": "thecodex6824.thaumicaugmentation.api.recipe.ShapelessArcaneCraftingRecipeFactory"
+  },
+  "ingredients": {
+    "strength_provider": "thecodex6824.thaumicaugmentation.api.recipe.StrengthProviderIngredientFactory",
+    "effect_provider": "thecodex6824.thaumicaugmentation.api.recipe.EffectProviderIngredientFactory"
+  }
+}

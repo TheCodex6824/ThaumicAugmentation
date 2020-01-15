@@ -1,0 +1,33 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "WARDED_ARCANA@2",
+  "vis": 10,
+  "aspects": {
+    "ignis": 1,
+    "aqua": 1,
+    "terra": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    " T ",
+    "PBP",
+    " T "
+  ],
+  "key": {
+    "T": {
+      "item": "thaumcraft:tallow",
+      "data": 0
+    },
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "dyePurple"
+    },
+    "B": {
+      "item": "thaumcraft:brain",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "#SIGIL"
+  }
+}

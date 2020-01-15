@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "thaumcraft:stone_ancient",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:stairs_ancient",
+    "data": 0,
+    "count": 4
+  }
+}

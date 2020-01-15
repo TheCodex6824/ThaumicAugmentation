@@ -34,10 +34,10 @@
                 {
                     "text": "thaumicaugmentation.research.rift_studies.1",
                     "recipes": [
-                        "thaumicaugmentation:FluxSeed",
-                        "thaumicaugmentation:FluxSeedGrowthFake200",
-                        "thaumicaugmentation:FluxSeedGrowthFake300",
-                        "thaumicaugmentation:FluxSeedGrowthFake1000"
+                        "thaumicaugmentation:flux_seed",
+                        "thaumicaugmentation:flux_seed_growth_fake200",
+                        "thaumicaugmentation:flux_seed_growth_fake300",
+                        "thaumicaugmentation:flux_seed_growth_fake1000"
                     ]
                 }
             ]
@@ -49,7 +49,9 @@
                 "thaumicaugmentation:stone;1;0"
             ],
             "category": "THAUMIC_AUGMENTATION",
-            "parents": [],
+            "parents": [
+                "~UNLOCKELDRITCH"
+            ],
             "location": [
                 -4,
                 -3
@@ -112,7 +114,7 @@
                 {
                     "text": "thaumicaugmentation.research.void_stone_usage.1",
                     "recipes": [
-                        "thaumicaugmentation:EldritchStone"
+                        "thaumicaugmentation:eldritch_stone"
                     ]
                 }
             ]
@@ -155,16 +157,16 @@
                         "thaumicaugmentation:augment_caster_rift_energy_storage"
                     ],
                     "recipes": [
-                        "thaumicaugmentation:RiftEnergyCell",
-                        "thaumicaugmentation:AugmentGauntletRiftEnergyStorage"
+                        "thaumicaugmentation:rift_energy_cell",
+                        "thaumicaugmentation:augment_gauntlet_rift_energy_storage"
                     ],
                     "warp": 2
                 },
                 {
                     "text": "thaumicaugmentation.research.rift_power.2",
                     "recipes": [
-                        "thaumicaugmentation:RiftEnergyCell",
-                        "thaumicaugmentation:AugmentGauntletRiftEnergyStorage"
+                        "thaumicaugmentation:rift_energy_cell",
+                        "thaumicaugmentation:augment_gauntlet_rift_energy_storage"
                     ]
                 }
             ]
@@ -197,7 +199,7 @@
                 {
                     "text": "thaumicaugmentation.research.fracture_theory.1",
                     "recipes": [
-                        "thaumicaugmentation:FractureLocator"
+                        "thaumicaugmentation:fracture_locator"
                     ]
                 }
             ]

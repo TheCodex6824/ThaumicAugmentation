@@ -1,0 +1,30 @@
+{
+  "type": "thaumicaugmentation:arcane_shapeless",
+  "research": "EXPERIENCE_MODIFIER",
+  "vis": 15,
+  "aspects": {
+    "ordo": 1
+  },
+  "ingredients": [
+    {
+      "item": "thaumcraft:vis_resonator",
+      "data": 0
+    },
+    {
+      "item": "minecraft:emerald",
+      "data": 0
+    },
+    {
+      "item": "minecraft:emerald",
+      "data": 0
+    },
+    {
+      "item": "minecraft:dye",
+      "data": 4
+    }
+  ],
+  "result": {
+    "type": "thaumicaugmentation:strength_provider",
+    "id": "thaumicaugmentation:strength_experience"
+  }
+}

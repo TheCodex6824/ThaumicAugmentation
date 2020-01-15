@@ -33,7 +33,7 @@
                 {
                     "text": "thaumicaugmentation.research.gauntlet_thaumium.1",
                     "recipes": [
-                        "thaumicaugmentation:GauntletThaumium"
+                        "thaumicaugmentation:gauntlet_thaumium"
                     ]
                 }
             ]
@@ -85,7 +85,7 @@
                 {
                     "text": "thaumicaugmentation.research.gauntlet_void.2",
                     "recipes": [
-                        "thaumicaugmentation:GauntletVoid"
+                        "thaumicaugmentation:gauntlet_void"
                     ]
                 }
             ]
@@ -126,21 +126,21 @@
                         "thaumicaugmentation:augment_custom"
                     ],
                     "recipes": [
-                        "thaumicaugmentation:StrengthProviderElemental",
-                        "thaumicaugmentation:EffectProviderPower",
-                        "thaumicaugmentation:EffectProviderCastSpeed",
-                        "thaumicaugmentation:EffectProviderCost",
-                        "thaumicaugmentation:CustomAugmentExample"
+                        "thaumicaugmentation:strength_provider_elemental",
+                        "thaumicaugmentation:effect_provider_power",
+                        "thaumicaugmentation:effect_provider_cast_speed",
+                        "thaumicaugmentation:effect_provider_cost",
+                        "thaumicaugmentation:custom_augment_example"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.gauntlet_augmentation.2",
                     "recipes": [
-                        "thaumicaugmentation:StrengthProviderElemental",
-                        "thaumicaugmentation:EffectProviderPower",
-                        "thaumicaugmentation:EffectProviderCastSpeed",
-                        "thaumicaugmentation:EffectProviderCost",
-                        "thaumicaugmentation:CustomAugmentExample"
+                        "thaumicaugmentation:strength_provider_elemental",
+                        "thaumicaugmentation:effect_provider_power",
+                        "thaumicaugmentation:effect_provider_cast_speed",
+                        "thaumicaugmentation:effect_provider_cost",
+                        "thaumicaugmentation:custom_augment_example"
                     ]
                 }
             ]
@@ -177,9 +177,9 @@
                 {
                     "text": "thaumicaugmentation.research.dimensional_modifiers.1",
                     "recipes": [
-                        "thaumicaugmentation:StrengthProviderOverworld",
-                        "thaumicaugmentation:StrengthProviderNether",
-                        "thaumicaugmentation:StrengthProviderEnd"
+                        "thaumicaugmentation:strength_provider_overworld",
+                        "thaumicaugmentation:strength_provider_nether",
+                        "thaumicaugmentation:strength_provider_end"
                     ]
                 }
             ]
@@ -212,7 +212,7 @@
                 {
                     "text": "thaumicaugmentation.research.emptiness_modifier.1",
                     "recipes": [
-                        "thaumicaugmentation:StrengthProviderEmptiness"
+                        "thaumicaugmentation:strength_provider_emptiness"
                     ]
                 }
             ]
@@ -246,7 +246,7 @@
                 {
                     "text": "thaumicaugmentation.research.frenzy_modifier.1",
                     "recipes": [
-                        "thaumicaugmentation:StrengthProviderFrenzy"
+                        "thaumicaugmentation:strength_provider_frenzy"
                     ]
                 }
             ]
@@ -277,7 +277,7 @@
                 {
                     "text": "thaumicaugmentation.research.experience_modifier.1",
                     "recipes": [
-                        "thaumicaugmentation:StrengthProviderExperience"
+                        "thaumicaugmentation:strength_provider_experience"
                     ]
                 }
             ]

@@ -34,6 +34,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
@@ -42,6 +43,7 @@ import thaumcraft.api.casters.FocusNode;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.IFocusElement;
 import thaumcraft.api.entities.IEldritchMob;
+import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.entities.monster.EntityEldritchGuardian;
 import thaumcraft.common.entities.monster.boss.EntityEldritchGolem;
 import thaumcraft.common.entities.monster.boss.EntityEldritchWarden;
@@ -204,12 +206,22 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
     @Override
     @Nullable
     public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
+        return onInitialSpawn(difficulty, livingdata, false);
+    }
+    
+    @Nullable
+    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata, boolean randomFocus) {
         if (!world.isRemote) {
-            Random random = new Random(world.getSeed());
-            long xSeed = random.nextLong();
-            long ySeed = random.nextLong();
-            long zSeed = random.nextLong();
-            random.setSeed((xSeed * (int) posX + ySeed * (int) posY + zSeed * (int) posZ) ^ world.getSeed());
+            Random random = null;
+            if (!randomFocus) {
+                random = new Random(world.getSeed());
+                long xSeed = random.nextLong();
+                long ySeed = random.nextLong();
+                long zSeed = random.nextLong();
+                random.setSeed((xSeed * (int) posX + ySeed * (int) posY + zSeed * (int) posZ) ^ world.getSeed());
+            }
+            else
+                random = rand;
             
             ItemStack focus = new ItemStack(TAItems.FOCUS_ANCIENT);
             FocusPackage core = new FocusPackage();
@@ -317,6 +329,16 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
     @Override
     public boolean isOnSameTeam(Entity entity) {
         return entity instanceof IEldritchMob;
+    }
+    
+    @Override
+    protected void dropItemFromPlacement() {}
+    
+    @Override
+    public void onDeath(DamageSource cause) {
+        super.onDeath(cause);
+        if (!world.isRemote)
+            entityDropItem(new ItemStack(ItemsTC.plate, rand.nextInt(3) + 1, 3), 0.5F);
     }
 
 }

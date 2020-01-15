@@ -1,0 +1,27 @@
+{
+  "type": "thaumicaugmentation:arcane_shapeless",
+  "research": "FRENZY_MODIFIER",
+  "vis": 15,
+  "aspects": {
+    "ignis": 1,
+    "perditio": 1
+  },
+  "ingredients": [
+    {
+      "item": "thaumcraft:vis_resonator",
+      "data": 0
+    },
+    {
+      "item": "thaumcraft:module",
+      "data": 1
+    },
+    {
+      "item": "thaumcraft:mechanism_simple",
+      "data": 0
+    }
+  ],
+  "result": {
+    "type": "thaumicaugmentation:strength_provider",
+    "id": "thaumicaugmentation:strength_frenzy"
+  }
+}

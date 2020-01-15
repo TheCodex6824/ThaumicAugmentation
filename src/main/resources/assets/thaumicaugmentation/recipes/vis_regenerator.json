@@ -1,0 +1,39 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "VIS_REGENERATOR",
+  "vis": 100,
+  "aspects": {
+    "aer": 2
+  },
+  "pattern": [
+    "GIG",
+    "PLP",
+    "GEG"
+  ],
+  "key": {
+    "G": {
+      "item": "thaumcraft:plank_greatwood",
+      "data": 0
+    },
+    "I": {
+      "item": "minecraft:iron_bars",
+      "data": 0
+    },
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateIron"
+    },
+    "L": {
+      "item": "thaumicaugmentation:material",
+      "data": 0
+    },
+    "E": {
+      "item": "thaumcraft:mechanism_simple",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:vis_regenerator",
+    "data": 0
+  }
+}

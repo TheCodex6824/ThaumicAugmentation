@@ -43,14 +43,14 @@
                         "THEORY;ARTIFICE;1"
                     ],
                     "recipes": [
-                        "thaumicaugmentation:WardingSigil"
+                        "thaumicaugmentation:warding_sigil"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.warded_arcana.2",
                     "recipes": [
-                        "thaumicaugmentation:WardingSigil",
-                        "thaumicaugmentation:WardedChest"
+                        "thaumicaugmentation:warding_sigil",
+                        "thaumicaugmentation:warded_chest"
                     ]
                 }
             ]
@@ -86,12 +86,12 @@
                 {
                     "text": "thaumicaugmentation.research.arcane_door.1",
                     "recipes": [
-                        "thaumicaugmentation:ArcaneDoorGreatwood",
-                        "thaumicaugmentation:ArcaneDoorThaumium",
-                        "thaumicaugmentation:ArcaneDoorSilverwood",
-                        "thaumicaugmentation:ArcaneTrapdoorGreatwood",
-                        "thaumicaugmentation:ArcaneTrapdoorThaumium",
-                        "thaumicaugmentation:ArcaneTrapdoorSilverwood"
+                        "thaumicaugmentation:arcane_door_greatwood",
+                        "thaumicaugmentation:arcane_door_thaumium",
+                        "thaumicaugmentation:arcane_door_silverwood",
+                        "thaumicaugmentation:arcane_trapdoor_greatwood",
+                        "thaumicaugmentation:arcane_trapdoor_thaumium",
+                        "thaumicaugmentation:arcane_trapdoor_silverwood"
                     ]
                 }
             ]
@@ -123,9 +123,9 @@
                 {
                     "text": "thaumicaugmentation.research.ward_keys.1",
                     "recipes": [
-                        "thaumicaugmentation:KeyIron",
-                        "thaumicaugmentation:KeyBrass",
-                        "thaumicaugmentation:KeyThaumium"
+                        "thaumicaugmentation:key_iron",
+                        "thaumicaugmentation:key_brass",
+                        "thaumicaugmentation:key_thaumium"
                     ]
                 }
             ]

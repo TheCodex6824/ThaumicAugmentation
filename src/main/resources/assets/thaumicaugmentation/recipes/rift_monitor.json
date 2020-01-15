@@ -1,0 +1,36 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "RIFT_MONITOR",
+  "vis": 25,
+  "aspects": {
+    "aer": 1,
+    "terra": 1,
+    "perditio": 1,
+    "ignis": 1,
+    "ordo": 1,
+    "aqua": 1
+  },
+  "pattern": [
+    " S ",
+    "STS",
+    "EEE"
+  ],
+  "key": {
+    "S": {
+      "item": "thaumcraft:slab_eldritch",
+      "data": 0
+    },
+    "T": {
+      "item": "thaumcraft:thaumometer",
+      "data": 0
+    },
+    "E": {
+      "item": "thaumcraft:stone_eldritch_tile",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:rift_monitor",
+    "data": 0
+  }
+}

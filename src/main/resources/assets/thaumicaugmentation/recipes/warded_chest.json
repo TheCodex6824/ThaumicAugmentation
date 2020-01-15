@@ -1,0 +1,33 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "WARDED_ARCANA",
+  "vis": 75,
+  "aspects": {
+    "ignis": 1,
+    "aqua": 1,
+    "terra": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    " S ",
+    "TCT",
+    "TTT"
+  ],
+  "key": {
+    "S": {
+      "item": "#SIGIL"
+    },
+    "T": {
+      "type": "forge:ore_dict",
+      "ore": "plateThaumium"
+    },
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "chestWood"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:warded_chest",
+    "data": 0
+  }
+}

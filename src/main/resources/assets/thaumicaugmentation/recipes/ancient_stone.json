@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "thaumcraft:stone_ancient_tile",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "thaumcraft:stone_ancient",
+    "count": 4
+  }
+}
+

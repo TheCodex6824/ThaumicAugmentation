@@ -1,0 +1,30 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "RIFT_MOVING@2",
+  "vis": 25,
+  "aspects": {
+    "ordo": 1
+  },
+  "pattern": [
+    "S",
+    "J",
+    "V"
+  ],
+  "key": {
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "J": {
+      "item": "thaumcraft:jar_normal",
+      "data": 0
+    },
+    "S": {
+      "item": "#SIGIL"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:rift_jar",
+    "data": 0
+  }
+}

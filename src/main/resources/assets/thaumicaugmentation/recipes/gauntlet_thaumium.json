@@ -1,0 +1,40 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "GAUNTLET_THAUMIUM",
+  "vis": 250,
+  "aspects": {
+    "aer": 2,
+    "terra": 2,
+    "perditio": 2,
+    "ignis": 2,
+    "ordo": 2,
+    "aqua": 2
+  },
+  "pattern": [
+    "PPP",
+    "FRF",
+    "FTF"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateThaumium"
+    },
+    "F": {
+      "item": "thaumcraft:fabric",
+      "data": 0
+    },
+    "R": {
+      "item": "thaumcraft:vis_resonator",
+      "data": 0
+    },
+    "T": {
+      "item": "thaumcraft:thaumometer",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:gauntlet",
+    "data": 0
+  }
+}

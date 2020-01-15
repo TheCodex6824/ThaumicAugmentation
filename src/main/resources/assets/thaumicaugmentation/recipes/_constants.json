@@ -1,0 +1,23 @@
+[
+    {
+        "name": "SIGIL",
+        "ingredient": {
+            "item": "thaumicaugmentation:material",
+            "data": 1
+        }
+    },
+    {
+        "name": "CELL",
+        "ingredient": {
+            "item": "thaumicaugmentation:material",
+            "data": 3
+        }
+    },
+    {
+        "name": "IMPETUS_RESONATOR",
+        "ingredient": {
+            "item": "thaumicaugmentation:material",
+            "data": 5
+        }
+    }
+]

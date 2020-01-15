@@ -1,0 +1,27 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPETUS_TRANSPORT",
+  "vis": 25,
+  "aspects": {
+    "ignis": 1,
+    "ordo": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "C",
+    "V"
+  ],
+  "key": {
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "C": {
+      "item": "#IMPETUS_RESONATOR"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impetus_relay",
+    "data": 0
+  }
+}

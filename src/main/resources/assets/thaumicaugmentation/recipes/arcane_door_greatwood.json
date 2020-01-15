@@ -1,0 +1,33 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "ARCANE_DOOR",
+  "vis": 100,
+  "aspects": {
+    "ignis": 1,
+    "aqua": 1,
+    "terra": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "GBG",
+    "GSG",
+    "GBG"
+  ],
+  "key": {
+    "G": {
+      "item": "thaumcraft:plank_greatwood",
+      "data": 0
+    },
+    "S": {
+      "item": "#SIGIL"
+    },
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "plateBrass"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:arcane_door",
+    "data": 0
+  }
+}

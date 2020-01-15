@@ -1,0 +1,27 @@
+{
+  "type": "thaumicaugmentation:arcane_shapeless",
+  "research": "DIMENSIONAL_MODIFIERS",
+  "vis": 15,
+  "aspects": {
+    "ignis": 1,
+    "perditio": 1
+  },
+  "ingredients": [
+    {
+      "item": "thaumcraft:vis_resonator",
+      "data": 0
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "netherrack"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "glowstone"
+    }
+  ],
+  "result": {
+    "type": "thaumicaugmentation:strength_provider",
+    "id": "thaumicaugmentation:strength_nether"
+  }
+}

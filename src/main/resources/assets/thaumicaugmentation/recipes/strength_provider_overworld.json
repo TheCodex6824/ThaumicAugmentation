@@ -1,0 +1,27 @@
+{
+  "type": "thaumicaugmentation:arcane_shapeless",
+  "research": "DIMENSIONAL_MODIFIERS",
+  "vis": 15,
+  "aspects": {
+    "aqua": 1,
+    "terra": 1
+  },
+  "ingredients": [
+    {
+      "item": "thaumcraft:vis_resonator",
+      "data": 0
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "dirt"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "stone"
+    }
+  ],
+  "result": {
+    "type": "thaumicaugmentation:strength_provider",
+    "id": "thaumicaugmentation:strength_overworld"
+  }
+}

@@ -57,8 +57,8 @@
                 {
                     "text": "thaumicaugmentation.research.vis_regenerator.1",
                     "recipes": [
-                        "thaumicaugmentation:Lattice",
-                        "thaumicaugmentation:VisRegenerator"
+                        "thaumicaugmentation:lattice",
+                        "thaumicaugmentation:vis_regenerator"
                     ]
                 }
             ],
@@ -102,7 +102,7 @@
                 {
                     "text": "thaumicaugmentation.research.seal_copier.1",
                     "recipes": [
-                        "thaumicaugmentation:SealCopier"
+                        "thaumicaugmentation:seal_copier"
                     ]
                 }
             ]
@@ -139,7 +139,7 @@
                 {
                     "text": "thaumicaugmentation.research.boots_void.1",
                     "recipes": [
-                        "thaumicaugmentation:BootsVoid"
+                        "thaumicaugmentation:boots_void"
                     ]
                 }
             ]
@@ -170,7 +170,7 @@
                 {
                     "text": "thaumicaugmentation.research.seal_secure.1",
                     "recipes": [
-                        "thaumicaugmentation:SealSecure"
+                        "thaumicaugmentation:seal_secure"
                     ]
                 }
             ],
@@ -178,7 +178,7 @@
                 { 
                     "text": "thaumicaugmentation.research.seal_secure.2",  
                     "recipes": [
-                        "thaumicaugmentation:SealSecureAdvanced"
+                        "thaumicaugmentation:seal_secure_advanced"
                     ],  
                     "required_research":[
                         "MINDBIOTHAUMIC"
@@ -214,7 +214,7 @@
                 {
                     "text": "thaumicaugmentation.research.morphic_tool.1",
                     "recipes": [
-                        "thaumicaugmentation:MorphicToolBindingFake"
+                        "thaumicaugmentation:morphic_tool_binding_fake"
                     ]
                 }
             ]
@@ -248,7 +248,7 @@
                 {
                     "text": "thaumicaugmentation.research.primal_cutter.1",
                     "recipes": [
-                        "thaumicaugmentation:PrimalCutter"
+                        "thaumicaugmentation:primal_cutter"
                     ]
                 }
             ]

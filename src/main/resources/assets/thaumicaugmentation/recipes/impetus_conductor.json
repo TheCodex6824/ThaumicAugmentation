@@ -1,0 +1,23 @@
+{
+  "type": "thaumicaugmentation:arcane_shapeless",
+  "research": "RIFT_POWER@2",
+  "vis": 25,
+  "aspects": {
+    "aer": 1,
+    "ignis": 1,
+    "perditio": 1
+  },
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "plateThaumium"
+    },
+    {
+      "item": "#CELL"
+    }
+  ],
+  "result": {
+    "item": "thaumicaugmentation:augment_caster_rift_energy_storage",
+    "data": 0
+  }
+}
