@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.api.util;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;
 import thaumcraft.common.entities.EntityFluxRift;
 
@@ -43,6 +44,20 @@ public final class RiftHelper {
     
     public static Vec3d pickRandomPointOnRift(FluxRiftReconstructor rift) {
         return rift.getPoints()[ThreadLocalRandom.current().nextInt(rift.getPoints().length)];
+    }
+    
+    public static Vec3d pickRandomPointOnRiftWithInstability(EntityFluxRift rift, int ticks) {
+        int index = ThreadLocalRandom.current().nextInt(rift.points.size());
+        Vec3d point = rift.points.get(index);
+        float time = ticks + Minecraft.getMinecraft().getRenderPartialTicks();
+        if (index > rift.points.size() / 2)
+            time -= index * 10;
+        else if (index < rift.points.size() / 2)
+            time += index * 10;
+        
+        float stab = Math.max(Math.min(1.0F - rift.getRiftStability() / 50.0F, 1.5F), 0.0F);
+        return point.add(Math.sin(time / 50.0) * 0.10000000149011612 * stab, Math.sin(time / 60.0) * 0.10000000149011612 * stab,
+                Math.sin(time / 70.0) * 0.10000000149011612 * stab);
     }
     
     public static Vec3d pickRandomPointOnRiftWithInstability(EntityFluxRift rift, int ticks, float partialTicks) {

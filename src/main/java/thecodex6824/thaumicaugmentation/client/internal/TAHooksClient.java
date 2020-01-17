@@ -35,6 +35,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
+import thaumcraft.client.renderers.models.gear.ModelCustomArmor;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
@@ -138,6 +139,27 @@ public final class TAHooksClient {
         }
         
         return f;
+    }
+    
+    public static void correctCustomArmorRotationPoints(ModelCustomArmor model) {
+        if (model.isSneak) {
+            model.bipedRightLeg.rotationPointY = 13.0F;
+            model.bipedLeftLeg.rotationPointY = 13.0F;
+            model.bipedHead.rotationPointY = 4.5F;
+            
+            model.bipedBody.rotationPointY = 4.5F;
+            model.bipedRightArm.rotationPointY = 5.0F;
+            model.bipedLeftArm.rotationPointY = 5.0F;
+        }
+        else {
+            model.bipedBody.rotationPointY = 0.0F;
+            model.bipedRightArm.rotationPointY = 2.0F;
+            model.bipedLeftArm.rotationPointY = 2.0F;
+        }
+        
+        model.bipedHeadwear.rotationPointX = model.bipedHead.rotationPointX;
+        model.bipedHeadwear.rotationPointY = model.bipedHead.rotationPointY;
+        model.bipedHeadwear.rotationPointZ = model.bipedHead.rotationPointZ;
     }
     
 }

@@ -141,16 +141,20 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
             base.setLivingAnimations(player, limbSwing, limbSwingAmount, partialTicks);
             render.bindTexture(BASE_TEXTURE);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            base.render(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+            base.render(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale * 0.75F);
             if (harness.getItem() == TAItems.THAUMOSTATIC_HARNESS) {
                 render.bindTexture(THAUMOSTATIC_TEXTURE);
                 GlStateManager.pushMatrix();
                 GlStateManager.pushMatrix();
                 GlStateManager.enableBlend();
                 GlStateManager.enableRescaleNormal();
-                GlStateManager.scale(0.1F, 0.1F, 0.1F);
+                GlStateManager.scale(scale * 1.8F, scale * 1.8F, scale * 1.8F);
                 GlStateManager.rotate(90.0F, -1.0F, 0.0F, 0.0F);
-                GlStateManager.translate(0.0F, 0.33F, -3.7F);
+                GlStateManager.translate(0.0F, -5.0F, 1.7F);
+                if (render.getMainModel().isSneak)
+                    GlStateManager.rotate((float) Math.toDegrees(base.bipedBody.rotateAngleX), 1.0F, 0.0F, 0.0F);
+                
+                GlStateManager.translate(0.0F, 5.33F, -5.2F);
                 thaumostatic.renderAll();
                 GlStateManager.disableRescaleNormal();
                 GlStateManager.popMatrix();
@@ -209,7 +213,11 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
                     render.bindTexture(ELYTRA_BOOSTER_TEXTURE);
                     GlStateManager.pushMatrix();
                     GlStateManager.enableRescaleNormal();
-                    GlStateManager.translate(-0.5, 0.0, -0.5);
+                    GlStateManager.scale(scale * 16.0F, scale * 16.0F, scale * 16.0F);
+                    if (render.getMainModel().isSneak)
+                        GlStateManager.rotate((float) Math.toDegrees(base.bipedBody.rotateAngleX), 1.0F, 0.0F, 0.0F);
+                    
+                    GlStateManager.translate(-0.5F, 0.0F, -0.5F);
                     elytraBooster.renderAll();
                     GlStateManager.disableRescaleNormal();
                     GlStateManager.popMatrix();

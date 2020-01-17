@@ -47,8 +47,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aura.AuraHelper;
 import thaumcraft.api.casters.IInteractWithCaster;
-import thaumcraft.client.fx.ParticleEngine;
-import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
@@ -59,8 +57,8 @@ import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 public class TileRiftMoverInput extends TileEntity implements ITickable, IInteractWithCaster, IBreakCallback {
 
@@ -197,19 +195,8 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                 if (rift != null && ticks % getParticleDelay(rift.getRiftSize()) == 0) {
                     Vec3d particlePos = RiftHelper.pickRandomPointOnRift(rift).add(rift.posX, rift.posY, rift.posZ);
                     Vec3d dir = particlePos.subtract(new Vec3d(pos).add(0.5, 0.5, 0.5)).normalize();
-                    FXGeneric fx = new FXGeneric(world, particlePos.x, particlePos.y, particlePos.z, -dir.x * 0.25, -dir.y * 0.25, -dir.z * 0.25);
-                    fx.setMaxAge(12 + world.rand.nextInt(6));
-                    fx.setRBGColorF(0.044F, 0.036F, 0.063F);
-                    fx.setAlphaF(0.75F);
-                    fx.setGridSize(64);
-                    fx.setParticles(264, 8, 1);
-                    fx.setScale(2.0F);
-                    fx.setLayer(1);
-                    fx.setLoop(true);
-                    fx.setNoClip(false); // this is REALLY poorly named, it actually should be "setCollides", as that's what it does
-                    fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
-                    ParticleEngine.addEffect(world, fx);
-                    
+                    ThaumicAugmentation.proxy.getRenderHelper().renderRiftMoverParticle(world, particlePos.x,
+                            particlePos.y, particlePos.z, -dir.x * 0.25, -dir.y * 0.25, -dir.z * 0.25);
                     if (!TAConfig.reducedEffects.getValue()) {
                         particlePos = RiftHelper.pickRandomPointOnRift(rift).add(rift.posX, rift.posY, rift.posZ);
                         ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, particlePos.x, particlePos.y, particlePos.z, 5.0F + world.rand.nextFloat() * 7.5F,

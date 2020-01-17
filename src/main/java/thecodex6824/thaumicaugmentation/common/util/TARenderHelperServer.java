@@ -20,7 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.util;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 
 public class TARenderHelperServer implements ITARenderHelper {
@@ -67,6 +69,14 @@ public class TARenderHelperServer implements ITARenderHelper {
     @Override
     public void renderSmokeSpiral(World world, double x, double y, double z, float rad, int start, int minY,
             int color) {}
+    
+    @Override
+    public void renderTerraformerParticle(World world, double x, double y, double z, double vx, double vy, double vz,
+            BlockPos pos, Biome biome) {}
+    
+    @Override
+    public void renderRiftMoverParticle(World world, double x, double y, double z, double vx, double vy,
+            double vz) {}
     
     @Override
     public boolean shadersAvailable() {

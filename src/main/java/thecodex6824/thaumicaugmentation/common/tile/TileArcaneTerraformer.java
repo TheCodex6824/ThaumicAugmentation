@@ -65,8 +65,6 @@ import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.IEssentiaTransport;
 import thaumcraft.api.aura.AuraHelper;
 import thaumcraft.api.casters.IInteractWithCaster;
-import thaumcraft.client.fx.ParticleEngine;
-import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
@@ -79,8 +77,8 @@ import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
@@ -402,28 +400,9 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
             
             if (biome != null) {
                 Vec3d dir = new Vec3d(1.0, 0.5, 0.0).rotateYaw(world.getTotalWorldTime() % 20 / 20.0F * 360.0F).normalize();
-                FXGeneric fx = new FXGeneric(world, pos.getX() + 0.5, pos.getY() + 1.6, pos.getZ() + 0.5, dir.x * 0.25, dir.y * 0.25, dir.z * 0.25);
-                fx.setMaxAge(30 + world.rand.nextInt(12));
-                int color = world.rand.nextInt(3);
-                if (color == 0)
-                    color = biome.getGrassColorAtPos(pos);
-                else if (color == 1)
-                    color = biome.getFoliageColorAtPos(pos);
-                else
-                    color = biome.getWaterColor() & 0x3F76E4;
-                
-                fx.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
-                fx.setAlphaF(0.9F, 0.0F);
-                fx.setGridSize(16);
-                fx.setParticles(56, 1, 1);
-                fx.setScale(2.0F);
-                fx.setLayer(1);
-                fx.setLoop(true);
-                fx.setNoClip(false); // this is REALLY poorly named, it actually should be "setCollides", as that's what it does
-                fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
-                ParticleEngine.addEffect(world, fx);
-                
-                ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.5, pos.getY() + 1.25, pos.getZ() + 0.5, 5.0F, color, false);
+                ThaumicAugmentation.proxy.getRenderHelper().renderTerraformerParticle(world, pos.getX() + 0.5, pos.getY() + 1.6,
+                        pos.getZ() + 0.5, dir.x * 0.25, dir.y * 0.25, dir.z * 0.25, pos, biome);
+                ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.5, pos.getY() + 1.25, pos.getZ() + 0.5, 5.0F, Aspect.ELDRITCH.getColor(), false);
             }
         }
     }

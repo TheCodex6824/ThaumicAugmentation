@@ -222,7 +222,7 @@ public final class PlayerMovementAbilityManager {
         if (data != null) {
             player.capabilities.allowFlying = data.flyEnabled;
             player.capabilities.isFlying &= data.wasFlying;
-            player.capabilities.setFlySpeed(data.flySpeed);
+            player.capabilities.flySpeed = data.flySpeed;
             player.sendPlayerAbilities();
             return true;
         }

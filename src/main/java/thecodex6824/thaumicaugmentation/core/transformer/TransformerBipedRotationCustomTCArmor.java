@@ -33,8 +33,9 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 /**
  * Patches the ModelCustomArmor class to call the super method in setRotationAngles to fix
- * a whole lot of issues with other mods that hook into ModelBiped. For some reason, instead of calling the
- * super method, Azanor copied + pasted the code...
+ * a whole lot of issues with other mods that hook into ModelBiped. Azanor apparently wanted to change
+ * some rotation points on the model, which caused the copy+pasted code to be there instead of a super call.
+ * Since other mods just ASM into ModelBiped and not TC's class, calling the super method is important here.
  */
 public class TransformerBipedRotationCustomTCArmor extends Transformer {
 
@@ -66,6 +67,14 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
                 throw new TransformerException("Could not locate required instructions");
             
             AbstractInsnNode insertAfter = rot.instructions.get(ret).getNext();
+            rot.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                    TransformUtil.HOOKS_CLIENT,
+                    "correctCustomArmorRotationPoints",
+                    "(Lthaumcraft/client/renderers/models/gear/ModelCustomArmor;)V",
+                    false
+            ));
+            rot.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
+            
             rot.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESPECIAL,
                     "net/minecraft/client/model/ModelBiped",
                     rotationAngles,
@@ -80,7 +89,7 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
             rot.instructions.insert(insertAfter, new VarInsnNode(Opcodes.FLOAD, 2));
             rot.instructions.insert(insertAfter, new VarInsnNode(Opcodes.FLOAD, 1));
             rot.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
-            ret += 11;
+            ret += 13;
             
             // remove copied+pasted code that is now done in super call
             // PSA: DO NOT REMOVE INSTRUCTIONS UNLESS THERE IS NO OTHER OPTION, IT BREAKS EVERYTHING

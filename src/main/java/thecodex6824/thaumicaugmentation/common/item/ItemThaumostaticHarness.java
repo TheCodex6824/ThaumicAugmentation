@@ -156,7 +156,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable 
                         PlayerMovementAbilityManager.recordFlyState(player);
                         player.capabilities.allowFlying = true;
                         if (player.world.isRemote)
-                            player.capabilities.setFlySpeed(speed);
+                            player.capabilities.flySpeed = speed;
                         
                         player.sendPlayerAbilities();
                     }
@@ -186,7 +186,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable 
                                     player.capabilities.isFlying = false;
                                 }
                                 
-                                player.capabilities.setFlySpeed(0.05F);
+                                player.capabilities.flySpeed = 0.05F;
                                 player.sendPlayerAbilities();
                             }
                         }
@@ -204,16 +204,14 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable 
                                 player.capabilities.isFlying = false;
                             }
                             
-                            player.capabilities.setFlySpeed(0.05F);
+                            player.capabilities.flySpeed = 0.05F;
                             player.sendPlayerAbilities();
                         }
                     }
                     else if (!player.world.isRemote) {
                         PlayerMovementAbilityManager.recordFlyState(player);
                         player.capabilities.allowFlying = true;
-                        if (player.world.isRemote)
-                            player.capabilities.setFlySpeed(getHarnessFlySpeed(itemstack, player));
-                        
+                        player.capabilities.flySpeed = getHarnessFlySpeed(itemstack, player);
                         player.sendPlayerAbilities();
                     }
                 }
@@ -229,7 +227,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable 
                             player.capabilities.isFlying = false;
                         }
                         
-                        player.capabilities.setFlySpeed(0.05F);
+                        player.capabilities.flySpeed = 0.05F;
                         player.sendPlayerAbilities();
                     }
                 }

@@ -42,11 +42,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aura.AuraHelper;
 import thaumcraft.api.casters.IInteractWithCaster;
-import thaumcraft.client.fx.ParticleEngine;
-import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.config.ModConfig;
 import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.lib.SoundsTC;
@@ -236,26 +236,14 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                 if (rift != null && ticks % getParticleDelay(rift.getRiftSize()) == 0) {
                     Vec3d particleDest = RiftHelper.pickRandomPointOnRift(rift).add(rift.posX, rift.posY, rift.posZ);
                     Vec3d dir = particleDest.subtract(new Vec3d(pos).add(0.5, 0.5, 0.5)).normalize();
-                    FXGeneric fx = new FXGeneric(world, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, dir.x * 0.25, dir.y * 0.25, dir.z * 0.25);
-                    fx.setMaxAge(12 + world.rand.nextInt(6));
-                    fx.setRBGColorF(0.044F, 0.036F, 0.063F);
-                    fx.setAlphaF(0.75F);
-                    fx.setGridSize(64);
-                    fx.setParticles(264, 8, 1);
-                    fx.setScale(2.0F);
-                    fx.setLayer(1);
-                    fx.setLoop(true);
-                    fx.setNoClip(false); // this is REALLY poorly named, it actually should be "setCollides", as that's what it does
-                    fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
-                    ParticleEngine.addEffect(world, fx);
-                    
+                    ThaumicAugmentation.proxy.getRenderHelper().renderRiftMoverParticle(world,
+                            pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, dir.x * 0.25, dir.y * 0.25, dir.z * 0.25);
                     if (!TAConfig.reducedEffects.getValue()) {
                         particleDest = RiftHelper.pickRandomPointOnRift(rift).add(rift.posX, rift.posY, rift.posZ);
                         ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, particleDest.x, particleDest.y, particleDest.z, 5.0F + world.rand.nextFloat() * 7.5F,
                                 Aspect.ELDRITCH.getColor(), false);
                         if (world.rand.nextBoolean()) {
-                            particleDest = RiftHelper.pickRandomPointOnRiftWithInstability(rift, Minecraft.getMinecraft().player.ticksExisted,
-                                    Minecraft.getMinecraft().getRenderPartialTicks()).add(rift.posX, rift.posY, rift.posZ);
+                            particleDest = RiftHelper.pickRandomPointOnRiftWithInstability(rift, ticks).add(rift.posX, rift.posY, rift.posZ);
                             ThaumicAugmentation.proxy.getRenderHelper().renderArc(world, particleDest.x,
                                     particleDest.y, particleDest.z, pos.getX() + 0.5, pos.getY() + 0.75,
                                     pos.getZ() + 0.5, Aspect.ELDRITCH.getColor(), rift.height / 2);
@@ -335,6 +323,7 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         AxisAlignedBB normal = super.getRenderBoundingBox();
         if (EntityUtils.hasGoggles(Minecraft.getMinecraft().player)) {

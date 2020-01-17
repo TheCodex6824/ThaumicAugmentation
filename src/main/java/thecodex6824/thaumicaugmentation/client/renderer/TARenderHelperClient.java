@@ -29,9 +29,11 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXFireMote;
@@ -421,6 +423,50 @@ public class TARenderHelperClient implements ITARenderHelper {
             int color) {
         
         FXDispatcher.INSTANCE.smokeSpiral(x, y, z, rad, start, minY, color);
+    }
+    
+    @Override
+    public void renderTerraformerParticle(World world, double x, double y, double z, double vx, double vy, double vz,
+            BlockPos pos, Biome biome) {
+        
+        int color = world.rand.nextInt(3);
+        if (color == 0)
+            color = biome.getGrassColorAtPos(pos);
+        else if (color == 1)
+            color = biome.getFoliageColorAtPos(pos);
+        else
+            color = biome.getWaterColor() & 0x3F76E4;
+        
+        FXGeneric fx = new FXGeneric(world, x, y, z, vx, vy, vz);
+        fx.setMaxAge(30 + world.rand.nextInt(12));
+        fx.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
+        fx.setAlphaF(0.9F, 0.0F);
+        fx.setGridSize(16);
+        fx.setParticles(264, 8, 1);
+        fx.setScale(2.0F);
+        fx.setLayer(1);
+        fx.setLoop(true);
+        fx.setNoClip(false); // this is REALLY poorly named, it actually should be "setCollides", as that's what it does
+        fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
+        ParticleEngine.addEffect(world, fx);
+    }
+    
+    @Override
+    public void renderRiftMoverParticle(World world, double x, double y, double z, double vx, double vy,
+            double vz) {
+        
+        FXGeneric fx = new FXGeneric(world, x, y, z, vx, vy, vz);
+        fx.setMaxAge(12 + world.rand.nextInt(6));
+        fx.setRBGColorF(0.044F, 0.036F, 0.063F);
+        fx.setAlphaF(0.75F);
+        fx.setGridSize(64);
+        fx.setParticles(264, 8, 1);
+        fx.setScale(2.0F);
+        fx.setLayer(1);
+        fx.setLoop(true);
+        fx.setNoClip(false);
+        fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
+        ParticleEngine.addEffect(world, fx);
     }
     
     @Override
