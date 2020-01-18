@@ -125,11 +125,10 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     @Override
     public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
-            if (nbt.hasKey("item", NBT.TAG_COMPOUND))
-                stack.setTagCompound(nbt.getCompoundTag("item"));
-            
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
-                if (!stack.hasTagCompound())
+                if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+                    stack.setTagCompound(nbt.getCompoundTag("item"));
+                else if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));

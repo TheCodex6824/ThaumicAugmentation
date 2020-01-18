@@ -49,7 +49,7 @@ item.thaumicaugmentation.material.warding_sigil.name=Warding Sigil
 item.thaumicaugmentation.material.amalgamated_gear.name=Amalgamated Gear
 item.thaumicaugmentation.material.rift_energy_cell.name=Impetus Cell
 item.thaumicaugmentation.material.harness_base.name=Harness Base
-item.thaumicaugmentation.material.impetus_resonator.name=Impetus Resonator
+item.thaumicaugmentation.material.impetus_resonator.name=Impetus Jewel
 item.thaumicaugmentation.seal_copier.name=Seal Copier
 item.thaumicaugmentation.arcane_door.greatwood.name=Greatwood Arcane Door
 item.thaumicaugmentation.arcane_door.thaumium.name=Thaumium Arcane Door
@@ -99,6 +99,7 @@ golem.prop.sight=Require Sight
 entity.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
 entity.thaumicaugmentation.shield_focus.name=Void Shield
 entity.thaumicaugmentation.autocaster.name=Autocaster
+entity.thaumicaugmentation.autocaster_eldritch.name=Eldritch Autocaster
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
 itemGroup.thaumicaugmentation.biome_selector=TA: Biome Foci
@@ -186,6 +187,8 @@ focus.thaumicaugmentation.shield.health=Health
 focus.thaumicaugmentation.shield.reflect=Reflect Projectiles
 focus.thaumicaugmentation.shield.reflect_no=No
 focus.thaumicaugmentation.shield.reflect_yes=Yes
+focus.thaumicaugmentation.water.name=Hydration
+focus.thaumicaugmentation.water.text=Summons a torrent of water that can extinguish fires and water crops, in addition to possibly dealing a small amount of damage.
 
 tc.research_category.THAUMIC_AUGMENTATION=Thaumic Augmentation
 thaumicaugmentation.research.thaumic_augmentation_base.title=Thaumic Augmentation

@@ -119,6 +119,8 @@ public abstract class EntityAutocasterBase extends EntityCreature {
     
     protected abstract void dropItemFromPlacement();
     
+    protected abstract int getHealRate();
+    
     @Override
     public void onUpdate() {
         super.onUpdate();
@@ -144,7 +146,7 @@ public abstract class EntityAutocasterBase extends EntityCreature {
                 }
             }
             
-            if (ticksExisted % 40 == 0)
+            if (ticksExisted % getHealRate() == 0)
                 heal(1.0F);
             
             if (cooldown > 0)

@@ -89,6 +89,7 @@ import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
+import thecodex6824.thaumicaugmentation.api.tile.IImpetusGate;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.storage.ClientWardStorageValue;
@@ -414,6 +415,18 @@ public class ClientProxy extends ServerProxy {
                         fx.setLoop(true);
                         fx.setRotationSpeed(rand.nextFloat(), rand.nextBoolean() ? 1.0F : -1.0F);
                         ParticleEngine.addEffect(Minecraft.getMinecraft().world, fx);
+                    }
+                    
+                    break;
+                }
+                case SPLASH_BATCH: {
+                    if (d.length % 3 == 0) {
+                        for (int i = 0; i < d.length; i += 3) {
+                            double x = d[i], y = d[i + 1], z = d[i + 2];
+                            World world = Minecraft.getMinecraft().world;
+                            world.spawnParticle(EnumParticleTypes.WATER_SPLASH, false, x, y, z, (world.rand.nextFloat() - world.rand.nextFloat()) * 0.5,
+                                    (world.rand.nextFloat() - world.rand.nextFloat()) * 0.5, (world.rand.nextFloat() - world.rand.nextFloat()) * 0.5);
+                        }
                     }
                     
                     break;
@@ -778,6 +791,31 @@ public class ClientProxy extends ServerProxy {
             }
         };
         registerTo.registerBlockColorHandler(terraformer, TABlocks.ARCANE_TERRAFORMER);
+        
+        IBlockColor gate = new IBlockColor() {
+            @Override
+            public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos,
+                    int tintIndex) {
+                
+                if (tintIndex == 1 && world != null && pos != null) {
+                    TileEntity tile = world.getTileEntity(pos);
+                    if (tile instanceof IImpetusGate) {
+                        if (((IImpetusGate) tile).isInRedstoneMode())
+                            return 0xAA0000;
+                        else {
+                            int level = ((IImpetusGate) tile).getManualLimitLevel();
+                            if (level > -1 && level < 16) {
+                                int component = (int) (level / 15.0 * 255.0) & 0xFF;
+                                return (component << 16) | component;
+                            }
+                        }
+                    }
+                }
+                
+                return -1;
+            }
+        };
+        registerTo.registerBlockColorHandler(gate, TABlocks.IMPETUS_GATE);
     }
 
 }

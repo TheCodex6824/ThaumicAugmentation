@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.common.network;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import thaumcraft.common.lib.network.fx.PacketFXFocusPartImpact;
 import thaumcraft.common.lib.network.fx.PacketFXShield;
 import thaumcraft.common.lib.network.misc.PacketAuraToClient;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -51,6 +52,7 @@ public final class TANetwork {
         // this is a TC packet but the handler impl doesn't add a scheduled task
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFXShield.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketImpulseBeam.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketFXFocusPartImpact.class, PacketFXFocusPartImpact.class, id++, Side.CLIENT);
         
         INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketInteractGUI.class, id++, Side.SERVER);
         INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketElytraBoost.class, id++, Side.SERVER);

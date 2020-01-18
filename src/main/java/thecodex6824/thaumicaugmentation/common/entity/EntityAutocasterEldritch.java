@@ -335,6 +335,11 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
     protected void dropItemFromPlacement() {}
     
     @Override
+    protected int getHealRate() {
+        return 80;
+    }
+    
+    @Override
     public void onDeath(DamageSource cause) {
         super.onDeath(cause);
         if (!world.isRemote)

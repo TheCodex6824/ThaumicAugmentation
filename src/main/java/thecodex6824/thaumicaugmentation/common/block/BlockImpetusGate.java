@@ -37,11 +37,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.tile.IImpetusGate;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
@@ -120,13 +121,11 @@ public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, 
                 IImpetusGate gate = (IImpetusGate) tile;
                 if (player.isSneaking()) {
                     gate.cycleMode();
-                    player.sendStatusMessage(new TextComponentTranslation(
-                            gate.isInRedstoneMode() ? "thaumicaugmentation.text.gate_redstone" : "thaumicaugmentation.text.gate_manual"), false);
+                    world.playSound(null, pos, SoundsTC.tool, SoundCategory.PLAYERS, 1.0F, 1.0F);
                 }
-                else {
+                else if (!gate.isInRedstoneMode()) {
                     gate.cycleLimit();
-                    player.sendStatusMessage(new TextComponentTranslation(
-                            "thaumicaugmentation.text.gate_cycle_limit", gate.getLimit()), false);
+                    world.playSound(null, pos, SoundsTC.ticks, SoundCategory.PLAYERS, 1.0F, 1.0F);
                 }
                 
                 return true;

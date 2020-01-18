@@ -48,6 +48,7 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import thaumcraft.api.items.ItemsTC;
@@ -135,7 +136,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
         tasks.addTask(2, new EntityAIWatchClosest(this, EntityPlayer.class, 12.0F));
         tasks.addTask(3, new EntityAILookIdle(this));
         targetTasks.addTask(1, new EntityAIHurtByTarget(this, false, new Class[0]));
-        targeting = new EntityAINearestValidTarget(true, 5);
+        targeting = new EntityAINearestValidTarget(true, 2);
         targeting.addTargetSelector(this::mobTargetSelector);
         targetTasks.addTask(2, targeting);
     }
@@ -209,6 +210,17 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     }
     
     @Override
+    public void onUpdate() {
+        super.onUpdate();
+        if (!world.isRemote && isAIDisabled()) {
+            targeting.resetTask();
+            BlockPos base = getPosition().offset(dataManager.get(FACING).getOpposite());
+            lookHelper.setLookPosition(base.getX() + 0.5, base.getY() + 0.5, base.getZ() + 0.5, getHorizontalFaceSpeed(), getVerticalFaceSpeed());
+            lookHelper.onUpdateLook();
+        }
+    }
+    
+    @Override
     public int getTotalArmorValue() {
         return 4;
     }
@@ -270,6 +282,12 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     }
     
     @Override
+    public boolean isAIDisabled() {
+        return super.isAIDisabled() || (BitUtil.isBitSet(dataManager.get(TARGETS), 4) &&
+                world.getStrongPower(getPosition().offset(dataManager.get(FACING).getOpposite())) > 0);
+    }
+    
+    @Override
     protected boolean canDropLoot() {
         return false;
     }
@@ -278,6 +296,11 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     protected void dropItemFromPlacement() {
         dropFocus();
         entityDropItem(new ItemStack(TAItems.AUTOCASTER_PLACER), 0.5F);
+    }
+    
+    @Override
+    protected int getHealRate() {
+        return 100;
     }
     
     protected void dropFocus() {
@@ -292,6 +315,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
             dropFocus();
             entityDropItem(new ItemStack(ItemsTC.mechanismSimple), 0.5F);
             entityDropItem(new ItemStack(ItemsTC.morphicResonator), 0.5F);
+            entityDropItem(new ItemStack(ItemsTC.mind, 1, 1), 0.5F);
         }
     }
     
@@ -304,6 +328,8 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
         compound.setInteger("dir", dataManager.get(FACING).getIndex());
         compound.setInteger("cooldown", cooldown);
         compound.setByte("targets", dataManager.get(TARGETS));
+        
+        compound.setBoolean("NoAI", super.isAIDisabled());
     }
     
     @Override

@@ -27,6 +27,8 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -92,15 +94,18 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     
     @Override
     public void cycleLimit() {
-        if (limit == 16)
+        if (limit == 15)
             limit = 0;
         else
             ++limit;
+        
+        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
     }
     
     @Override
     public void cycleMode() {
         mode = !mode;
+        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
     }
     
     @Override
@@ -127,6 +132,11 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
             else
                 return (long) Math.pow(2, level);
         }
+    }
+    
+    @Override
+    public int getManualLimitLevel() {
+        return mode ? -1 : limit;
     }
     
     @Override
@@ -181,6 +191,22 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
         node.init(world);
+    }
+    
+    @Override
+    @Nullable
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setBoolean("mode", mode);
+        tag.setByte("limit", limit);
+        return new SPacketUpdateTileEntity(pos, 1, tag);
+    }
+    
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        mode = pkt.getNbtCompound().getBoolean("mode");
+        limit = pkt.getNbtCompound().getByte("limit");
+        world.markBlockRangeForRenderUpdate(pos, pos);
     }
     
     @Override

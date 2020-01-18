@@ -30,4 +30,6 @@ public interface IImpetusGate {
     
     public long getLimit();
     
+    public int getManualLimitLevel();
+    
 }

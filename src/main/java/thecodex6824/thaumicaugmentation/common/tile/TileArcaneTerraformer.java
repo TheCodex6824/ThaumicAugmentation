@@ -357,7 +357,7 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                             int y = world.getHeight(currentPos.getX(), currentPos.getZ());
                             TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, currentPos.getX(), y, currentPos.getZ(), 8.0, Aspect.EXCHANGE.getColor()),
                                     new TargetPoint(world.provider.getDimension(), currentPos.getX(), y, currentPos.getZ(), 64.0));
-                            world.playSound(null, pos, SoundsTC.hhoff, SoundCategory.BLOCKS, 0.35F, 1.0F);
+                            world.playSound(null, currentPos, SoundsTC.zap, SoundCategory.BLOCKS, 0.15F, 1.0F);
                             break;
                         }
                         
