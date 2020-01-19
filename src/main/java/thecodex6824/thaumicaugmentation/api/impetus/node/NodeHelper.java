@@ -209,7 +209,8 @@ public final class NodeHelper {
         HashSet<IImpetusNode> changed = new HashSet<>();
         for (IImpetusNode output : node.getOutputs()) {
             if (sharedWorld.provider.getDimension() == node.getLocation().getDimension() &&
-                    sharedWorld.provider.getDimension() == output.getLocation().getDimension()) {
+                    sharedWorld.provider.getDimension() == output.getLocation().getDimension() &&
+                    (node.shouldEnforceBeamLimitsWith(output) || output.shouldEnforceBeamLimitsWith(node))) {
                 
                 double dist = node.getLocation().getPos().distanceSq(output.getLocation().getPos());
                 if (dist > node.getMaxConnectDistance(output) * node.getMaxConnectDistance(output) ||

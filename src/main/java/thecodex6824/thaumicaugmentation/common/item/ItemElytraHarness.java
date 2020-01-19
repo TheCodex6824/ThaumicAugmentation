@@ -168,7 +168,7 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     public NBTTagCompound getNBTShareTag(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
         if (stack.hasTagCompound())
-            tag.setTag("item", stack.getTagCompound());
+            tag.setTag("item", stack.getTagCompound().copy());
         
         tag.setTag("cap", ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).serializeNBT());
         return tag;
@@ -177,8 +177,14 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     @Override
     public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
+            ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).deserializeNBT(nbt.getCompoundTag("cap"));
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
+            else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                nbt.removeTag("cap");
+                if (!nbt.isEmpty())
+                    stack.setTagCompound(nbt);
+            }
             
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!stack.hasTagCompound())
@@ -186,8 +192,6 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
                 
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
             }
-            
-            ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).deserializeNBT(nbt.getCompoundTag("cap"));
         }
     }
     

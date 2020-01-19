@@ -528,7 +528,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     public NBTTagCompound getNBTShareTag(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
         if (stack.hasTagCompound())
-            tag.setTag("item", stack.getTagCompound());
+            tag.setTag("item", stack.getTagCompound().copy());
         
         tag.setTag("cap", ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).serializeNBT());
         return tag;
@@ -537,17 +537,17 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     @Override
     public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
-            // the client is very wrong in creative mode - it will delete stack data
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
-                if (nbt.hasKey("item", NBT.TAG_COMPOUND))
-                    stack.setTagCompound(nbt.getCompoundTag("item"));
-                else if (!stack.hasTagCompound())
-                    stack.setTagCompound(new NBTTagCompound());
-                
-                stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
+            ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).deserializeNBT(nbt.getCompoundTag("cap"));
+            if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+                stack.setTagCompound(nbt.getCompoundTag("item"));
+            else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                nbt.removeTag("cap");
+                if (!nbt.isEmpty())
+                    stack.setTagCompound(nbt);
             }
             
-            ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).deserializeNBT(nbt.getCompoundTag("cap"));
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer())
+                stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
         }
     }
     

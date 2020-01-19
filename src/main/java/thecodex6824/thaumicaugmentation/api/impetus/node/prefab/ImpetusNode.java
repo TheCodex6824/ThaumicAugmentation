@@ -231,6 +231,11 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     }
     
     @Override
+    public boolean shouldEnforceBeamLimitsWith(IImpetusNode other) {
+        return true;
+    }
+    
+    @Override
     public void unload() {
         graph.removeNode(this);
     }

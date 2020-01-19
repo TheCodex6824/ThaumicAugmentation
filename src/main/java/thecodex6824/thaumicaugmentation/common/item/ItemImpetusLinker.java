@@ -81,7 +81,7 @@ public class ItemImpetusLinker extends ItemTABase {
     public NBTTagCompound getNBTShareTag(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
         if (stack.hasTagCompound())
-            tag.setTag("item", stack.getTagCompound());
+            tag.setTag("item", stack.getTagCompound().copy());
         
         tag.setTag("cap", ((ImpetusLinker) stack.getCapability(CapabilityImpetusLinker.IMPETUS_LINKER, null)).serializeNBT());
         return tag;
@@ -90,8 +90,14 @@ public class ItemImpetusLinker extends ItemTABase {
     @Override
     public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
+            ((ImpetusLinker) stack.getCapability(CapabilityImpetusLinker.IMPETUS_LINKER, null)).deserializeNBT(nbt.getCompoundTag("cap"));
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
+            else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                nbt.removeTag("cap");
+                if (!nbt.isEmpty())
+                    stack.setTagCompound(nbt);
+            }
             
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!stack.hasTagCompound())
@@ -99,8 +105,6 @@ public class ItemImpetusLinker extends ItemTABase {
                 
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
             }
-            
-            ((ImpetusLinker) stack.getCapability(CapabilityImpetusLinker.IMPETUS_LINKER, null)).deserializeNBT(nbt.getCompoundTag("cap"));
         }
     }
     

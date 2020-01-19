@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Biomes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
@@ -205,8 +206,12 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
                                 color = biome.getGrassColorAtPos(pos);
                             else if (Math.abs(cubeX) < 3 && Math.abs(cubeZ) < 3)
                                 color = biome.getFoliageColorAtPos(pos);
-                            else
-                                color = 0x3F76E4 & biome.getWaterColor();
+                            else {
+                                if (biome == Biomes.HELL)
+                                    color = 0xFF4500;
+                                else
+                                    color = 0x3F76E4 & biome.getWaterColor();
+                            }
                             
                             float cR = ((color >> 16) & 0xFF) / 255.0F, cG = ((color >> 8) & 0xFF) / 255.0F, cB = (color & 0xFF) / 255.0F;
                             GlStateManager.color(cR, cG, cB, a);

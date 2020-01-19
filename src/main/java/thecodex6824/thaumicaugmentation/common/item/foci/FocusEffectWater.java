@@ -27,11 +27,15 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockFarmland;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityBlaze;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
@@ -52,6 +56,7 @@ import thaumcraft.api.casters.NodeSetting;
 import thaumcraft.api.casters.NodeSetting.NodeSettingIntRange;
 import thaumcraft.api.casters.Trajectory;
 import thaumcraft.common.lib.network.fx.PacketFXFocusPartImpact;
+import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
@@ -93,7 +98,7 @@ public class FocusEffectWater extends FocusEffect {
     public boolean execute(RayTraceResult result, @Nullable Trajectory trajectory, float power, int something) {
         World world = getPackage().world;
         if (world.provider.doesWaterVaporize()) {
-            world.playSound(null, result.getBlockPos(), SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, SoundCategory.PLAYERS, 0.25F, 1.0F);
+            world.playSound(null, result.getBlockPos(), TASounds.FOCUS_WATER_IMPACT, SoundCategory.PLAYERS, 0.25F, 1.0F);
             return false;
         }
         
@@ -108,7 +113,7 @@ public class FocusEffectWater extends FocusEffect {
             rangeMod = 0.5;
             exclude = result.entityHit;
             pos = new MutableBlockPos(result.entityHit.getPosition());
-            if (result.entityHit instanceof EntityLivingBase && ((EntityLivingBase) result.entityHit).canBreatheUnderwater()) {
+            if ((result.entityHit instanceof EntityCreature || result.entityHit instanceof EntityPlayer) && ((EntityLivingBase) result.entityHit).canBreatheUnderwater()) {
                 EntityLivingBase base = (EntityLivingBase) result.entityHit;
                 base.setAir(Math.max(base.getAir(), 300));
             }
@@ -119,7 +124,7 @@ public class FocusEffectWater extends FocusEffect {
                 
                 if (result.entityHit.isBurning()) {
                     result.entityHit.extinguish();
-                    world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, result.entityHit.getSoundCategory(), 0.25F, 1.0F);
+                    world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, result.entityHit.getSoundCategory(), 0.25F, 1.0F);
                 }
             }
         } 
@@ -138,7 +143,7 @@ public class FocusEffectWater extends FocusEffect {
                 for (Entity e : entities) {
                     if (e.getDistanceSq(start) <= maxDist * maxDist) {
                         e.extinguish();
-                        world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, result.entityHit.getSoundCategory(), 0.25F, 1.0F);
+                        world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, result.entityHit.getSoundCategory(), 0.25F, 1.0F);
                         splashPositions.add(e.getPositionVector());
                     }
                 }
@@ -150,17 +155,25 @@ public class FocusEffectWater extends FocusEffect {
                             pos.setY(y + start.getY());
                             if (x * x + y * y + z * z <= maxDist * maxDist) {
                                 IBlockState state = world.getBlockState(pos);
-                                if (state.getMaterial() == Material.FIRE) {
+                                if (state.getMaterial() == Material.LAVA && x == 0 && y == 0 && z == 0) {
+                                    world.setBlockState(pos, state.getBlock() == BlockLiquid.getStaticBlock(Material.LAVA) ?
+                                            Blocks.OBSIDIAN.getDefaultState() : Blocks.COBBLESTONE.getDefaultState());
+                                    world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, SoundCategory.BLOCKS, 0.25F, 1.0F);
+                                    splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
+                                }
+                                else if (state.getMaterial() == Material.FIRE) {
                                     world.setBlockToAir(pos);
-                                    world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.25F, 1.0F);
+                                    world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, SoundCategory.BLOCKS, 0.25F, 1.0F);
                                     splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
                                 }
                                 else if (state.getPropertyKeys().contains(BlockFarmland.MOISTURE)) {
                                     world.setBlockState(pos, state.withProperty(BlockFarmland.MOISTURE, 7));
+                                    world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, SoundCategory.BLOCKS, 0.25F, 1.0F);
                                     splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
                                 }
                                 else if (state.getPropertyKeys().contains(BlockCauldron.LEVEL)) {
                                     world.setBlockState(pos, state.withProperty(BlockCauldron.LEVEL, Math.min(state.getValue(BlockCauldron.LEVEL) + 1, 3)));
+                                    world.playSound(null, pos, SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 0.25F, 1.0F);
                                     splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
                                 }
                             }
@@ -169,8 +182,8 @@ public class FocusEffectWater extends FocusEffect {
                 }
                 
                 List<Vec3d> list = splashPositions;
-                if (list.size() > PacketParticleEffect.maxPacketData)
-                    list = list.subList(0, PacketParticleEffect.maxPacketData);
+                if (list.size() * 3 > PacketParticleEffect.maxPacketData)
+                    list = list.subList(0, PacketParticleEffect.maxPacketData / 3);
                     
                 double[] coords = new double[list.size() * 3];
                 for (int i = 0; i < list.size(); ++i) {

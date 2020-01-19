@@ -28,6 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.init.Biomes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -343,7 +344,6 @@ public class TARenderHelperClient implements ITARenderHelper {
             }
 
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, layer != 3 ? DestFactor.ONE : DestFactor.ONE_MINUS_SRC_ALPHA);
-
             GlStateManager.pushMatrix();
             double[][] pointBuffer = new double[FRACTURE_POINTS_CLOSED.length][3];
             float[][] colorBuffer = new float[FRACTURE_POINTS_CLOSED.length][4];
@@ -434,16 +434,20 @@ public class TARenderHelperClient implements ITARenderHelper {
             color = biome.getGrassColorAtPos(pos);
         else if (color == 1)
             color = biome.getFoliageColorAtPos(pos);
-        else
-            color = biome.getWaterColor() & 0x3F76E4;
+        else {
+            if (biome == Biomes.HELL)
+                color = 0xFF4500;
+            else
+                color = biome.getWaterColor() & 0x3F76E4;
+        }
         
         FXGeneric fx = new FXGeneric(world, x, y, z, vx, vy, vz);
         fx.setMaxAge(30 + world.rand.nextInt(12));
         fx.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
         fx.setAlphaF(0.9F, 0.0F);
         fx.setGridSize(16);
-        fx.setParticles(264, 8, 1);
-        fx.setScale(2.0F);
+        fx.setParticles(56, 1, 1);
+        fx.setScale(4.0F);
         fx.setLayer(1);
         fx.setLoop(true);
         fx.setNoClip(false); // this is REALLY poorly named, it actually should be "setCollides", as that's what it does

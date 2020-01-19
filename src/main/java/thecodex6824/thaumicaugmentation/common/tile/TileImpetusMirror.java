@@ -83,17 +83,27 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
             }
             
             @Override
+            public boolean shouldEnforceBeamLimitsWith(IImpetusNode other) {
+                return !other.getLocation().equals(linked);
+            }
+            
+            @Override
             public Vec3d getBeamEndpoint() {
                 Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
-                switch (world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION)) {
-                    case DOWN:  return position.add(0.5, 0.98125, 0.5);
-                    case EAST:  return position.add(0.01875, 0.5, 0.5);
-                    case NORTH: return position.add(0.5, 0.5, 0.98125);
-                    case SOUTH: return position.add(0.5, 0.5, 0.01875);
-                    case WEST:  return position.add(0.98125, 0.5, 0.5);
-                    case UP:
-                    default:    return position.add(0.5, 0.01875, 0.5);
+                IBlockState state = world.getBlockState(pos);
+                if (state.getPropertyKeys().contains(IDirectionalBlock.DIRECTION)) {
+                    switch (world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION)) {
+                        case DOWN:  return position.add(0.5, 0.98125, 0.5);
+                        case EAST:  return position.add(0.01875, 0.5, 0.5);
+                        case NORTH: return position.add(0.5, 0.5, 0.98125);
+                        case SOUTH: return position.add(0.5, 0.5, 0.01875);
+                        case WEST:  return position.add(0.98125, 0.5, 0.5);
+                        case UP:
+                        default:    return position.add(0.5, 0.01875, 0.5);
+                    }
                 }
+                
+                return position.add(0.5, 0.01875, 0.5);
             }
             
         };
@@ -113,16 +123,16 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
                 if (tile != null) {
                     IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                     if (otherNode != null) {
-                        if (tile instanceof TileImpetusMirror)
+                        if (tile instanceof TileImpetusMirror) {
                             ((TileImpetusMirror) tile).setLink(node.getLocation());
-                        
-                        node.addInput(otherNode);
-                        node.addOutput(otherNode);
-                        markDirty();
-                        NodeHelper.syncAddedImpetusNodeInput(node, otherNode.getLocation());
-                        NodeHelper.syncAddedImpetusNodeInput(otherNode, node.getLocation());
-                        NodeHelper.syncAddedImpetusNodeOutput(node, otherNode.getLocation());
-                        NodeHelper.syncAddedImpetusNodeOutput(otherNode, node.getLocation());
+                            node.addInput(otherNode);
+                            node.addOutput(otherNode);
+                            markDirty();
+                            NodeHelper.syncAddedImpetusNodeInput(node, otherNode.getLocation());
+                            NodeHelper.syncAddedImpetusNodeInput(otherNode, node.getLocation());
+                            NodeHelper.syncAddedImpetusNodeOutput(node, otherNode.getLocation());
+                            NodeHelper.syncAddedImpetusNodeOutput(otherNode, node.getLocation());
+                        }
                     }
                 }
             }
@@ -186,16 +196,16 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
                         if (tile != null) {
                             IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                             if (otherNode != null) {
-                                if (tile instanceof TileImpetusMirror)
+                                if (tile instanceof TileImpetusMirror) {
                                     ((TileImpetusMirror) tile).setLink(node.getLocation());
-                                
-                                node.addInput(otherNode);
-                                node.addOutput(otherNode);
-                                markDirty();
-                                NodeHelper.syncAddedImpetusNodeInput(node, otherNode.getLocation());
-                                NodeHelper.syncAddedImpetusNodeInput(otherNode, node.getLocation());
-                                NodeHelper.syncAddedImpetusNodeOutput(node, otherNode.getLocation());
-                                NodeHelper.syncAddedImpetusNodeOutput(otherNode, node.getLocation());
+                                    node.addInput(otherNode);
+                                    node.addOutput(otherNode);
+                                    markDirty();
+                                    NodeHelper.syncAddedImpetusNodeInput(node, otherNode.getLocation());
+                                    NodeHelper.syncAddedImpetusNodeInput(otherNode, node.getLocation());
+                                    NodeHelper.syncAddedImpetusNodeOutput(node, otherNode.getLocation());
+                                    NodeHelper.syncAddedImpetusNodeOutput(otherNode, node.getLocation());
+                                }
                             }
                         }
                     }

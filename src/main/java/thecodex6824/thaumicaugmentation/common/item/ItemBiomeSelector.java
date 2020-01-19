@@ -39,8 +39,11 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.item.BiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
@@ -71,7 +74,6 @@ public class ItemBiomeSelector extends ItemTABase {
     
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        // can't do server side only as syncing the cap will be a total pain
         // in this case the client will be able to figure out the expected value on its own
         if (player != null && hand != null) {
             ItemStack stack = player.getHeldItem(hand);
@@ -89,6 +91,37 @@ public class ItemBiomeSelector extends ItemTABase {
         }
         
         return super.onItemRightClick(world, player, hand);
+    }
+    
+    @Override
+    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (stack.hasTagCompound())
+            tag.setTag("item", stack.getTagCompound().copy());
+        
+        tag.setTag("cap", ((BiomeSelector) stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null)).serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
+        if (nbt != null) {
+            ((BiomeSelector) stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null)).deserializeNBT(nbt.getCompoundTag("cap"));
+            if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+                stack.setTagCompound(nbt.getCompoundTag("item"));
+            else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                nbt.removeTag("cap");
+                if (!nbt.isEmpty())
+                    stack.setTagCompound(nbt);
+            }
+            
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
+                stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
+            }
+        }
     }
     
     @Override

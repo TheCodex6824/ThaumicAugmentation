@@ -74,7 +74,7 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
         BlockPos pos1 = pos.offset(face).add(1.0 - face.getXOffset(), 1.0 - face.getYOffset(), 1.0 - face.getZOffset());
         BlockPos pos2 = pos.offset(face, 10).add(1.0 + face.getXOffset(), 1.0 + face.getYOffset(), 1.0 + face.getZOffset());
         List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class, 
-                new AxisAlignedBB(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX() + 1, pos2.getY() + 1, pos2.getZ() + 1));
+                new AxisAlignedBB(pos1.getX() - 1, pos1.getY() - 1, pos1.getZ() - 1, pos2.getX() + 2, pos2.getY() + 2, pos2.getZ() + 2));
         if (!rifts.isEmpty()) {
             rifts.sort((rift1, rift2) -> Double.compare(getDistForFace(face, rift1), getDistForFace(face, rift2)));
             RayTraceResult trace = world.rayTraceBlocks(new Vec3d(pos.offset(face)), new Vec3d(pos.offset(face, 10)));

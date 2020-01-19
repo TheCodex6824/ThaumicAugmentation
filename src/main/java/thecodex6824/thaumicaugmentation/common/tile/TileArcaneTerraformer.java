@@ -51,7 +51,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -399,9 +398,8 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                 biome = Biome.REGISTRY.getObject(activeBiome);
             
             if (biome != null) {
-                Vec3d dir = new Vec3d(1.0, 0.5, 0.0).rotateYaw(world.getTotalWorldTime() % 20 / 20.0F * 360.0F).normalize();
                 ThaumicAugmentation.proxy.getRenderHelper().renderTerraformerParticle(world, pos.getX() + 0.5, pos.getY() + 1.6,
-                        pos.getZ() + 0.5, dir.x * 0.25, dir.y * 0.25, dir.z * 0.25, pos, biome);
+                        pos.getZ() + 0.5, (world.rand.nextFloat() - world.rand.nextFloat()) / 8.0, 0.125, (world.rand.nextFloat() - world.rand.nextFloat()) / 8.0, pos, biome);
                 ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.5, pos.getY() + 1.25, pos.getZ() + 0.5, 5.0F, Aspect.ELDRITCH.getColor(), false);
             }
         }

@@ -741,6 +741,8 @@ public class ClientProxy extends ServerProxy {
                     Biome biome = Biome.REGISTRY.getObject(selected.getBiomeID());
                     if (biome != null)
                         return biome.getGrassColorAtPos(Minecraft.getMinecraft().player.getPosition());
+                    else if (selected.getBiomeID().equals(IBiomeSelector.RESET))
+                        return 0xFF1493;
                 }
                 
                 return -1;

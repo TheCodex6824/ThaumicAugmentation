@@ -94,7 +94,7 @@ public class ItemElytraHarnessAugment extends ItemTABase {
                     if (user.world.isRemote && user instanceof EntityLivingBase) {
                         EntityLivingBase entity = (EntityLivingBase) user;
                         IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                        if (energy != null && entity.isElytraFlying() && entity.getTicksElytraFlying() >= 10 && ThaumicAugmentation.proxy.isJumpDown()) {
+                        if (energy != null && entity.isElytraFlying() && entity.getTicksElytraFlying() >= 2 && ThaumicAugmentation.proxy.isJumpDown()) {
                             // let the server send the updated energy value
                             if (energy.extractEnergy(1, true) == 1) {
                                 TANetwork.INSTANCE.sendToServer(new PacketElytraBoost());

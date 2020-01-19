@@ -187,7 +187,7 @@ focus.thaumicaugmentation.shield.health=Health
 focus.thaumicaugmentation.shield.reflect=Reflect Projectiles
 focus.thaumicaugmentation.shield.reflect_no=No
 focus.thaumicaugmentation.shield.reflect_yes=Yes
-focus.thaumicaugmentation.water.name=Hydration
+focus.thaumicaugmentation.water.name=Water
 focus.thaumicaugmentation.water.text=Summons a torrent of water that can extinguish fires and water crops, in addition to possibly dealing a small amount of damage.
 
 tc.research_category.THAUMIC_AUGMENTATION=Thaumic Augmentation

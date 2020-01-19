@@ -55,13 +55,19 @@ public final class TAHooksClient {
                 ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
                 IAugmentableItem augmentable = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
                 if (augmentable != null) {
-                    for (ItemStack augment : augmentable.getAllAugments()) {
-                        IAugment aug = augment.getCapability(CapabilityAugment.AUGMENT, null);
-                        if (aug instanceof IThaumostaticHarnessAugment) {
-                            if (!((IThaumostaticHarnessAugment) aug).shouldAllowSprintFly(player))
-                                return false;
+                    if (augmentable.getUsedAugmentSlots() > 0) {
+                        for (ItemStack augment : augmentable.getAllAugments()) {
+                            IAugment aug = augment.getCapability(CapabilityAugment.AUGMENT, null);
+                            if (aug instanceof IThaumostaticHarnessAugment) {
+                                if (!((IThaumostaticHarnessAugment) aug).shouldAllowSprintFly(player))
+                                    return false;
+                            }
                         }
+                        
+                        return sprint;
                     }
+                    else
+                        return false;
                 }
             }
         }

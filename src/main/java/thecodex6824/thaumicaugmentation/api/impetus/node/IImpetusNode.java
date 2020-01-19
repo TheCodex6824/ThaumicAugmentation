@@ -47,6 +47,8 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
     
     public boolean shouldDrawBeamTo(IImpetusNode other);
     
+    public boolean shouldEnforceBeamLimitsWith(IImpetusNode other);
+    
     public boolean canConnectNodeAsInput(IImpetusNode toConnect);
     
     public boolean canConnectNodeAsOutput(IImpetusNode toConnect);

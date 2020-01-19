@@ -63,5 +63,25 @@
                 "stream": false
             }
         ]
+    },
+    "focus_water_impact": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:foci/water1",
+                "subtitle": "thaumicaugmentation.subtitle.focus_water_impact",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:foci/water2",
+                "subtitle": "thaumicaugmentation.subtitle.focus_water_impact",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:foci/water3",
+                "subtitle": "thaumicaugmentation.subtitle.focus_water_impact",
+                "stream": false
+            }
+        ]
     }
 }
