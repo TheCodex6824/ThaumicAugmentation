@@ -54,7 +54,7 @@ public class AugmentHandler {
             public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
                 if (entity instanceof EntityPlayer) {
                     EntityPlayer player = (EntityPlayer) entity;
-                    return Math.max(Math.min((player.experienceLevel - 7.0) / 28.0, 2.0), 1.0);
+                    return Math.max(Math.min((player.experienceLevel - 2.0) / 28.0, 2.0), 1.0);
                 }
                 else
                     return 1.0;

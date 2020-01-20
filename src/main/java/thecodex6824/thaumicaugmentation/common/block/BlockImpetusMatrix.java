@@ -58,6 +58,20 @@ public class BlockImpetusMatrix extends BlockTABase implements IItemBlockProvide
     }
     
     @Override
+    public boolean hasComparatorInputOverride(IBlockState state) {
+        return true;
+    }
+    
+    @Override
+    public int getComparatorInputOverride(IBlockState blockState, World world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileImpetusMatrix)
+            return ((TileImpetusMatrix) tile).getComparatorOutput();
+        
+        return 0;
+    }
+    
+    @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;
     }

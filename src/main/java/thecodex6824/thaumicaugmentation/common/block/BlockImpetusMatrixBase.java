@@ -28,6 +28,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
@@ -44,6 +45,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.IImpetusCellInfo;
 import thecodex6824.thaumicaugmentation.api.block.property.IVerticallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 
 public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellInfo, IItemBlockProvider {
 
@@ -74,6 +76,27 @@ public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellI
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         return state.withProperty(IVerticallyDirectionalBlock.DIRECTION, 
                 world.getBlockState(pos.down()).getBlock() == TABlocks.IMPETUS_MATRIX ? EnumFacing.DOWN : EnumFacing.UP);
+    }
+    
+    @Override
+    public boolean hasComparatorInputOverride(IBlockState state) {
+        return true;
+    }
+    
+    @Override
+    public int getComparatorInputOverride(IBlockState blockState, World world, BlockPos pos) {
+        if (world.getBlockState(pos.down()).getBlock() == TABlocks.IMPETUS_MATRIX) {
+            TileEntity tile = world.getTileEntity(pos.down());
+            if (tile instanceof TileImpetusMatrix)
+                return ((TileImpetusMatrix) tile).getComparatorOutput();
+        }
+        else if (world.getBlockState(pos.up()).getBlock() == TABlocks.IMPETUS_MATRIX) {
+            TileEntity tile = world.getTileEntity(pos.up());
+            if (tile instanceof TileImpetusMatrix)
+                return ((TileImpetusMatrix) tile).getComparatorOutput();
+        }
+        
+        return 0;
     }
     
     @Override

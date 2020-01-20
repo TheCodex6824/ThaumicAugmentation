@@ -431,6 +431,15 @@ public class ClientProxy extends ServerProxy {
                     
                     break;
                 }
+                case SMOKE_LARGE: {
+                    if (d.length == 3) {
+                        double x = d[0], y = d[1], z = d[2];
+                        Minecraft.getMinecraft().world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, false,
+                                x, y, z, 0, 0.05, 0);
+                    }
+                    
+                    break;
+                }
              
                 default: {break;}
             }

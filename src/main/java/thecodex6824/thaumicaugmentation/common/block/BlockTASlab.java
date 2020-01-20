@@ -90,6 +90,10 @@ public abstract class BlockTASlab extends BlockSlab implements ITASlabType {
     
     public BlockTASlab() {
         super(Material.ROCK);
+        setHardness(2.0F);
+        setResistance(10.0F);
+        setSoundType(SoundType.STONE);
+        setHarvestLevel("pickaxe", 0);
         IBlockState state = getDefaultState().withProperty(ITASlabType.SLAB_TYPE, SlabType.ANCIENT_TILE).withProperty(ITASlabType.DOUBLE, isDouble());
         if (!isDouble())
             setDefaultState(state.withProperty(HALF, EnumBlockHalf.BOTTOM));

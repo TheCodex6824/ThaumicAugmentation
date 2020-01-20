@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#"
+  ],
+  "key": {
+    "#": {
+      "item": "thaumicaugmentation:stone",
+      "data": 8
+    }
+  },
+  "result": {
+    "item": "thaumcraft:slab_ancient",
+    "data": 0,
+    "count": 2
+  }
+}

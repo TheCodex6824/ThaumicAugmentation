@@ -1,0 +1,16 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "cube_bottom_top",
+        "transform": "forge:default-block",
+        "textures": {
+            "top": "thaumcraft:blocks/ancient_stone_0",
+            "side": "thaumicaugmentation:blocks/ancient_pillar",
+            "bottom": "thaumcraft:blocks/ancient_stone_0"
+        }
+    },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{}]
+    }
+}

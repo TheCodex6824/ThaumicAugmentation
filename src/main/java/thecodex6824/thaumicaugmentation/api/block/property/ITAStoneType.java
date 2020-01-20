@@ -57,7 +57,8 @@ public interface ITAStoneType {
         ANCIENT_GLYPHS(4, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BROWN, 0),
         ANCIENT_BRICKS(5, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BROWN, 0),
         STONE_CRUSTED(6, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.ADOBE, 0),
-        STONE_CRUSTED_GLOWING(7, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.ADOBE, 15);
+        STONE_CRUSTED_GLOWING(7, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.ADOBE, 15),
+        ANCIENT_PILLAR(8, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.ADOBE, 0);
         
         private int meta;
         private Supplier<Material> mat;

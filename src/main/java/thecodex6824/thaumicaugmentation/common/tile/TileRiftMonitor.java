@@ -63,7 +63,8 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     }
     
     public void cycleTarget() {
-        List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).grow(7), entity -> entity instanceof EntityFluxRift || entity instanceof IDimensionalFracture);
+        List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).grow(12), entity -> entity instanceof EntityFluxRift || entity instanceof IDimensionalFracture);
+        entities.sort((e1, e2) -> Double.compare(e1.getDistanceSq(pos), e2.getDistanceSq(pos)));
         if (!entities.isEmpty()) {
             if (target.get() == null || target.get().isDead) {
                 target = new WeakReference<>(entities.get(0));
@@ -72,20 +73,14 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
             }
             else {
                 boolean found = false;
-                boolean set = false;
                 for (Entity e : entities) {
-                    if (found) {
-                        target = new WeakReference<>(e);
-                        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-                        markDirty();
-                        set = true;
+                    if (e.equals(target.get())) {
+                        found = true;
                         break;
                     }
-                    else if (e.equals(target.get()))
-                        found = true;
                 }
                 
-                if (!found || (found && !set)) {
+                if (!found) {
                     target = new WeakReference<>(entities.get(0));
                     world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                     markDirty();

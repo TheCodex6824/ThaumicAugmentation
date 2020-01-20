@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.block;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
@@ -47,6 +48,10 @@ public class BlockVoidRechargePedestal extends BlockTABase implements IItemBlock
 
     public BlockVoidRechargePedestal() {
         super(Material.ROCK);
+        setHardness(2.0F);
+        setResistance(10.0F);
+        setSoundType(SoundType.STONE);
+        setHarvestLevel("pickaxe", 0);
     }
     
     @Override

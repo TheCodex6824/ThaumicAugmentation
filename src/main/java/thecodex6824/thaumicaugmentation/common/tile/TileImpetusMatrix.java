@@ -87,7 +87,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         @Override
         public long extractEnergy(long maxEnergy, boolean simulate) {
             if (canExtract()) {
-                long amount = Math.min(energy, Math.min(getTotalCells() * CELL_CAPACITY, maxEnergy));
+                long amount = Math.min(5 * getTotalCells(), Math.min(energy, Math.min(getTotalCells() * CELL_CAPACITY, maxEnergy)));
                 if (!simulate) {
                     energy -= amount;
                     onEnergyChanged();
@@ -137,6 +137,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     protected BufferedImpetusProsumer prosumer;
     protected IAnimationStateMachine asm;
     protected int ticks;
+    protected int lastResult;
     
     public TileImpetusMatrix() {
         buffer = new MatrixImpetusStorage();
@@ -152,6 +153,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         ticks = ThreadLocalRandom.current().nextInt(20);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_matrix.json"), 
                 ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(20), "delay", new VariableValue(ticks)));
+        lastResult = -1;
     }
     
     @Override
@@ -161,6 +163,14 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
             ConsumeResult result = prosumer.consume(getTotalCells() * CELL_CAPACITY, false);
             if (result.energyConsumed > 0)
                 NodeHelper.syncAllImpetusTransactions(result.paths);
+            
+            int level = getComparatorOutput();
+            if (level != lastResult) {
+                world.updateComparatorOutputLevel(pos, getBlockType());
+                world.updateComparatorOutputLevel(pos.down(), world.getBlockState(pos.down()).getBlock());
+                world.updateComparatorOutputLevel(pos.up(), world.getBlockState(pos.up()).getBlock());
+                lastResult = level;
+            }
         }
     }
     
@@ -175,6 +185,10 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
             total += IImpetusCellInfo.getNumberOfCells(state.getValue(IImpetusCellInfo.CELL_INFO));
         
         return total;
+    }
+    
+    public int getComparatorOutput() {
+        return (int) (buffer.getEnergyStored() / (double) buffer.getMaxEnergyStored() * 15.0);
     }
     
     @Override

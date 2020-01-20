@@ -184,6 +184,8 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound tag = super.getUpdateTag();
         tag.setTag("node", node.serializeNBT());
+        tag.setBoolean("mode", mode);
+        tag.setByte("limit", limit);
         return tag;
     }
     
@@ -191,6 +193,9 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
         node.init(world);
+        mode = tag.getBoolean("mode");
+        limit = tag.getByte("limit");
+        world.markBlockRangeForRenderUpdate(pos, pos);
     }
     
     @Override

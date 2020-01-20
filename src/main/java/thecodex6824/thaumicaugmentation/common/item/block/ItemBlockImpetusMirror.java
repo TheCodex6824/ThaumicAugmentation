@@ -61,7 +61,6 @@ public class ItemBlockImpetusMirror extends ItemBlock implements IModelProvider<
 
     public ItemBlockImpetusMirror() {
         super(TABlocks.IMPETUS_MIRROR);
-        setMaxStackSize(1);
         setHasSubtypes(true);
         addPropertyOverride(new ResourceLocation(ThaumicAugmentationAPI.MODID, "linked"), new IItemPropertyGetter() {
             @Override

@@ -34,6 +34,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityBlaze;
+import net.minecraft.entity.monster.EntityMagmaCube;
+import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
@@ -118,9 +121,20 @@ public class FocusEffectWater extends FocusEffect {
                 base.setAir(Math.max(base.getAir(), 300));
             }
             else {
-                float damageMultiplier = result.entityHit instanceof EntityBlaze ? 2.0F : 1.0F;
+                float damageMultiplier = 1.0F;
+                if (result.entityHit instanceof EntityBlaze || result.entityHit instanceof EntityMagmaCube)
+                    damageMultiplier = 2.0F;
+                else if (result.entityHit instanceof EntitySlime || result.entityHit instanceof EntityWitch)
+                    damageMultiplier = 1.5F;
+                
                 result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(result.entityHit != null ? result.entityHit : getPackage().getCaster(),
                         getPackage().getCaster()), getDamageForDisplay(power) * damageMultiplier);
+                if (damageMultiplier > 1.0F) {
+                    world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, result.entityHit.getSoundCategory(), Math.min(damageMultiplier - 1.0F, 1.0F), 1.0F);
+                    Vec3d eyes = result.entityHit.getPositionEyes(1.0F);
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SMOKE_LARGE,
+                            eyes.x, eyes.y, eyes.z), result.entityHit);
+                }
                 
                 if (result.entityHit.isBurning()) {
                     result.entityHit.extinguish();
@@ -155,9 +169,14 @@ public class FocusEffectWater extends FocusEffect {
                             pos.setY(y + start.getY());
                             if (x * x + y * y + z * z <= maxDist * maxDist) {
                                 IBlockState state = world.getBlockState(pos);
-                                if (state.getMaterial() == Material.LAVA && x == 0 && y == 0 && z == 0) {
-                                    world.setBlockState(pos, state.getBlock() == BlockLiquid.getStaticBlock(Material.LAVA) ?
-                                            Blocks.OBSIDIAN.getDefaultState() : Blocks.COBBLESTONE.getDefaultState());
+                                if (state.getMaterial() == Material.LAVA && state.getPropertyKeys().contains(BlockLiquid.LEVEL) && 
+                                        x == 0 && y == 0 && z == 0) {
+                                    
+                                    if (state.getValue(BlockLiquid.LEVEL) == 0)
+                                        world.setBlockState(pos, Blocks.OBSIDIAN.getDefaultState());
+                                    else
+                                        world.setBlockState(pos, Blocks.COBBLESTONE.getDefaultState());
+                                    
                                     world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, SoundCategory.BLOCKS, 0.25F, 1.0F);
                                     splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
                                 }
@@ -173,7 +192,7 @@ public class FocusEffectWater extends FocusEffect {
                                 }
                                 else if (state.getPropertyKeys().contains(BlockCauldron.LEVEL)) {
                                     world.setBlockState(pos, state.withProperty(BlockCauldron.LEVEL, Math.min(state.getValue(BlockCauldron.LEVEL) + 1, 3)));
-                                    world.playSound(null, pos, SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 0.25F, 1.0F);
+                                    world.playSound(null, pos, SoundEvents.ITEM_BOTTLE_EMPTY, SoundCategory.BLOCKS, 0.25F, 1.0F);
                                     splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
                                 }
                             }

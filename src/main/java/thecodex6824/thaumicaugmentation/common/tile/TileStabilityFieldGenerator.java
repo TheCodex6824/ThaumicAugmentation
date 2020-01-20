@@ -60,8 +60,9 @@ import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileStabilityFieldGenerator extends TileEntity implements ITickable, IAnimatedTile {
+public class TileStabilityFieldGenerator extends TileEntity implements ITickable, IBreakCallback, IAnimatedTile {
 
     protected static class CustomEnergyStorage extends EnergyStorage {
         
@@ -234,21 +235,21 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
             double offsetX = 0.0, offsetY = 0.0, offsetZ = 0.0;
             switch (face.getAxis()) {
                 case X: {
-                    offsetX = face.getXOffset() * 0.5;
+                    offsetX = face.getXOffset() > 0 ? 0.8125 : 0.1875;
                     offsetY = 0.5;
                     offsetZ = 0.5;
                     break;
                 }
                 case Y: {
                     offsetX = 0.5;
-                    offsetY = face.getYOffset() * 0.5;
+                    offsetY = face.getYOffset() > 0 ? 0.8125 : 0.1875;
                     offsetZ = 0.5;
                     break;
                 }
                 case Z: {
                     offsetX = 0.5;
                     offsetY = 0.5;
-                    offsetZ = face.getZOffset() * 0.5;
+                    offsetZ = face.getZOffset() > 0 ? 0.8125 : 0.1875;
                     break;
                 }
                 default: break;
@@ -281,6 +282,12 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
         }
         else
             return false;
+    }
+    
+    @Override
+    public void onBlockBroken() {
+        targetedRift = new WeakReference<>(null);
+        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
     }
     
     @Override
