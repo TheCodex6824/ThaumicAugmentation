@@ -36,6 +36,9 @@ import org.objectweb.asm.tree.VarInsnNode;
  * a whole lot of issues with other mods that hook into ModelBiped. Azanor apparently wanted to change
  * some rotation points on the model, which caused the copy+pasted code to be there instead of a super call.
  * Since other mods just ASM into ModelBiped and not TC's class, calling the super method is important here.
+ * This is done through adding the super call here, and in another transformer injecting a static method
+ * call to update rotation points. Sadly, just setting rotation points at the end or after it returns is too late
+ * for some mods that need accurate rotation points (like Quark's emotes).
  */
 public class TransformerBipedRotationCustomTCArmor extends Transformer {
 
@@ -59,6 +62,7 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
                     Type.getType("Lnet/minecraft/entity/Entity;"));
             MethodNode rot = TransformUtil.findMethod(classNode, rotationAngles, "(FFFFFFLnet/minecraft/entity/Entity;)V");
             
+            // since we are removing instructions, it's better to fail here than break everything later
             if (rot.instructions.size() != 1009 || rot.localVariables.size() != 15)
                 throw new TransformerException("setRotationAngles function is not the expected size, this transformer will almost certainly break it");
        
@@ -67,14 +71,6 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
                 throw new TransformerException("Could not locate required instructions");
             
             AbstractInsnNode insertAfter = rot.instructions.get(ret).getNext();
-            rot.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    TransformUtil.HOOKS_CLIENT,
-                    "correctCustomArmorRotationPoints",
-                    "(Lthaumcraft/client/renderers/models/gear/ModelCustomArmor;)V",
-                    false
-            ));
-            rot.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
-            
             rot.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESPECIAL,
                     "net/minecraft/client/model/ModelBiped",
                     rotationAngles,
@@ -89,7 +85,7 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
             rot.instructions.insert(insertAfter, new VarInsnNode(Opcodes.FLOAD, 2));
             rot.instructions.insert(insertAfter, new VarInsnNode(Opcodes.FLOAD, 1));
             rot.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
-            ret += 13;
+            ret += 11;
             
             // remove copied+pasted code that is now done in super call
             // PSA: DO NOT REMOVE INSTRUCTIONS UNLESS THERE IS NO OTHER OPTION, IT BREAKS EVERYTHING

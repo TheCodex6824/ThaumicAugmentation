@@ -31,6 +31,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import thaumcraft.api.items.IRechargable;
@@ -44,10 +45,13 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderHarness;
 import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
+import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
+import vazkii.botania.api.item.IPhantomInkable;
 
-public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRechargable {
+@Optional.Interface(iface = "vazkii.botania.api.item.IPhantomInkable", modid = IntegrationHandler.BOTANIA_MOD_ID)
+public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRechargable, IPhantomInkable {
 
     protected static final int VIS_MAX = 50;
     
@@ -96,6 +100,7 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
             @Override
             public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
                 AugmentEventHandler.onEquipmentChange(player);
+                sync = true;
             }
             
             @Override
@@ -162,6 +167,24 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
         return toRepair.getItemDamage() > 0 && !repair.isEmpty() && 
                 OreDictionary.itemMatches(new ItemStack(ItemsTC.ingots, 1, 1), repair, false);
+    }
+    
+    @Override
+    @Optional.Method(modid = IntegrationHandler.BOTANIA_MOD_ID)
+    public boolean hasPhantomInk(ItemStack stack) {
+        if (stack.hasTagCompound())
+            return stack.getTagCompound().getBoolean("phantomInk");
+        
+        return false;
+    }
+    
+    @Override
+    @Optional.Method(modid = IntegrationHandler.BOTANIA_MOD_ID)
+    public void setPhantomInk(ItemStack stack, boolean ink) {
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+        
+        stack.getTagCompound().setBoolean("phantomInk", ink);
     }
     
     @Override

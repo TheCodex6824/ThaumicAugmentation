@@ -125,7 +125,7 @@ public class WardEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onTrackChunk(ChunkWatchEvent.Watch event) {
-        if (event.getChunkInstance() != null && event.getChunkInstance().hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && 
+        if (event.getChunkInstance() != null && event.getPlayer() != null && event.getChunkInstance().hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && 
                 event.getChunkInstance().getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageServer) {
             IWardStorageServer storage = (IWardStorageServer) event.getChunkInstance().getCapability(CapabilityWardStorage.WARD_STORAGE, null);
             NBTTagCompound sync = storage.fullSyncToClient(event.getChunkInstance(), event.getPlayer().getUniqueID());

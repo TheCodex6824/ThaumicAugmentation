@@ -20,10 +20,24 @@
 
 package thecodex6824.thaumicaugmentation.api.augment.builder;
 
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
 public interface IElytraHarnessAugment extends IAugment {
 
     public boolean isCosmetic();
+    
+    @SideOnly(Side.CLIENT)
+    public default void render(ItemStack stack, RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing, float limbSwingAmount,
+            float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {}
+    
+    @SideOnly(Side.CLIENT)
+    public default void renderFlightParticles(ItemStack stack, RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing, float limbSwingAmount,
+            float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {}
     
 }

@@ -97,6 +97,8 @@ import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageClient;
 import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageClient;
 import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer;
+import thecodex6824.thaumicaugmentation.client.event.ClientEventHandler;
+import thecodex6824.thaumicaugmentation.client.event.ClientLivingEquipmentChangeEvent;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
@@ -141,6 +143,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpetusNodeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpetusTransaction;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBeam;
+import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
@@ -211,6 +214,11 @@ public class ClientProxy extends ServerProxy {
     }
     
     @Override
+    public boolean isEntityClientPlayer(Entity e) {
+        return e == Minecraft.getMinecraft().player;
+    }
+    
+    @Override
     public Object getClientGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (TAInventory.values()[ID]) {
             case WARDED_CHEST: return new GUIWardedChest(getServerGUIElement(ID, player, world, x, y, z), player.inventory);
@@ -263,6 +271,8 @@ public class ClientProxy extends ServerProxy {
             handleFXShieldPacket((PacketFXShield) message, context);
         else if (message instanceof PacketImpulseBeam)
             handleImpulseBeamPacket((PacketImpulseBeam) message, context);
+        else if (message instanceof PacketLivingEquipmentChange)
+            handleLivingEquipmentChangePacket((PacketLivingEquipmentChange) message, context);
         else
             ThaumicAugmentation.getLogger().warn("An unknown packet was received and will be dropped: " + message.getClass().toString());
     }
@@ -598,6 +608,14 @@ public class ClientProxy extends ServerProxy {
         Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
         if (entity instanceof EntityLivingBase)
             RenderEventHandler.onImpulseBeam((EntityLivingBase) entity, message.shouldStopBeam());
+    }
+    
+    protected void handleLivingEquipmentChangePacket(PacketLivingEquipmentChange message, MessageContext context) {
+        Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
+        if (entity instanceof EntityLivingBase) {
+            ClientEventHandler.onClientEquipmentChange(new ClientLivingEquipmentChangeEvent((EntityLivingBase) entity,
+                    message.getSlot(), message.getStack()));
+        }
     }
 
     @Override

@@ -26,12 +26,15 @@ import com.google.common.base.Predicates;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -44,6 +47,8 @@ import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
+import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class EntityEventHandler {
@@ -111,6 +116,18 @@ public class EntityEventHandler {
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == Phase.END)
             PortalStateManager.tick();
+    }
+    
+    @SubscribeEvent
+    public static void onLivingEquipmentChange(LivingEquipmentChangeEvent event) {
+        EntityLivingBase entity = event.getEntityLiving();
+        if (!entity.getEntityWorld().isRemote) {
+            PacketLivingEquipmentChange packet = new PacketLivingEquipmentChange(entity.getEntityId(),
+                    event.getSlot(), event.getTo());
+            TANetwork.INSTANCE.sendToAllTracking(packet, entity);
+            if (entity instanceof EntityPlayerMP)
+                TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);
+        }
     }
     
 }

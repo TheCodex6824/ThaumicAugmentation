@@ -101,6 +101,8 @@ public final class TAConfig {
     public static ConfigOptionInt cannonBurstCooldown;
     public static ConfigOptionDouble cannonBurstRange;
     
+    public static ConfigOptionFloat primalCutterDamage;
+    
     /**
      * Registers a callback to be notified when the config is synced or updated.
      * @param listener The callback

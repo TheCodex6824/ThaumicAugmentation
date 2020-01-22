@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.client.event;
 
 import java.util.LinkedList;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -58,6 +60,7 @@ import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage
 import thecodex6824.thaumicaugmentation.api.warded.storage.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageClient;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public final class ClientEventHandler {
@@ -93,8 +96,8 @@ public final class ClientEventHandler {
         if (event.getItemStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
             IAugmentableItem cap = event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
             if (cap.isAugmented()) {
-                event.getToolTip().add(new TextComponentTranslation("thaumicaugmentation.text.augmented", 
-                        cap.getUsedAugmentSlots(), cap.getTotalAugmentSlots()).getFormattedText());
+                event.getToolTip().add(ChatFormatting.RED + new TextComponentTranslation("thaumicaugmentation.text.augmented", 
+                        ChatFormatting.RESET, cap.getUsedAugmentSlots(), cap.getTotalAugmentSlots()).getFormattedText());
                 handleAugmentTooltips(event, cap);
             }
         }
@@ -196,6 +199,12 @@ public final class ClientEventHandler {
             for (Runnable r : TAConfigHolder.getListeners())
                 r.run();
         }
+    }
+    
+    public static void onClientEquipmentChange(ClientLivingEquipmentChangeEvent event) {
+        // will have already updated augment state in SP due to server check
+        if (!ThaumicAugmentation.proxy.isSingleplayer())
+            AugmentEventHandler.onEquipmentChange(event.getEntityLiving());
     }
     
 }

@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.api.impetus;
 
 import javax.annotation.Nullable;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,6 +71,23 @@ public final class ImpetusAPI {
             return ENERGY_STRONG;
         else
             return ENERGY_MAX;
+    }
+    
+    public static ChatFormatting getSuggestedChatColorForDescriptor(IImpetusStorage storage) {
+        if (storage.getEnergyStored() <= 0)
+            return ChatFormatting.DARK_RED;
+        else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.1)
+            return ChatFormatting.RED;
+        else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.25)
+            return ChatFormatting.GOLD;
+        else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.5)
+            return ChatFormatting.YELLOW;
+        else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.75)
+            return ChatFormatting.GREEN;
+        else if (storage.getEnergyStored() < storage.getMaxEnergyStored())
+            return ChatFormatting.GREEN;
+        else
+            return ChatFormatting.DARK_GREEN;
     }
     
     public static void createImpetusParticles(World world, Vec3d origin, Vec3d dest) {

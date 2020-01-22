@@ -130,11 +130,18 @@ public final class NodeHelper {
             }
             
             ArrayList<Deque<IImpetusNode>> paths = new ArrayList<>(providers.size());
+            HashSet<IImpetusProvider> removedProviders = new HashSet<>();
             for (IImpetusProvider p : providers) {
                 Deque<IImpetusNode> path = dest.getGraph().findPath(p, dest);
                 if (path != null)
                     paths.add(path);
+                else {
+                    validateFullGraph(p.getGraph());
+                    removedProviders.add(p);
+                }
             }
+            
+            providers.removeAll(removedProviders);
             
             long drawn = 0;
             long step = amount / providers.size();
@@ -203,6 +210,41 @@ public final class NodeHelper {
         }
         
         return clear;
+    }
+    
+    public static void validateFullGraph(IImpetusGraph graph) {
+        // check for nodes with invalid links
+        // i.e. an input with no corresponding output, or the other way around
+        HashSet<IImpetusNode> toRemove = new HashSet<>();
+        for (IImpetusNode node : graph.getNodes()) {
+            for (IImpetusNode input : node.getInputs()) {
+                if (!input.hasOutput(node))
+                    toRemove.add(input);
+            }
+            
+            for (IImpetusNode n : toRemove)
+                node.removeInput(n);
+            
+            toRemove.clear();
+            for (IImpetusNode output : node.getOutputs()) {
+                if (!output.hasInput(node))
+                    toRemove.add(output);
+            }
+            
+            for (IImpetusNode n : toRemove)
+                node.removeOutput(n);
+            
+            toRemove.clear();
+        }
+        
+        // clean up orphan nodes
+        for (IImpetusNode node : graph.getNodes()) {
+            if (node.getNumInputs() == 0 && node.getNumOutputs() == 0)
+                toRemove.add(node);
+        }
+        
+        for (IImpetusNode node : toRemove)
+            graph.removeNode(node);
     }
     
     public static void validateOutputs(World sharedWorld, IImpetusNode node) {

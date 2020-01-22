@@ -92,7 +92,7 @@ public final class FractureUtils {
             if (dim != null && dim.getMovementFactor() <= maxFactor + 0.00001)
                 return dim;
             else
-                currentPicker = dimPicker.removeChoice(dimID);
+                currentPicker = currentPicker.removeChoice(dimID);
         } while (!currentPicker.isEmpty());
 
         return null;
@@ -111,7 +111,7 @@ public final class FractureUtils {
     }
     
     public static double calcMaxSafeFactor(double moveFactor, int chunkX, int chunkZ) {
-        return Math.min(Math.abs(chunkX), Math.abs(chunkZ)) * moveFactor + moveFactor;
+        return Math.min(Math.abs(chunkX), Math.abs(chunkZ)) * moveFactor;
     }
 
     public static int scaleChunkCoord(int coord, double factor) {

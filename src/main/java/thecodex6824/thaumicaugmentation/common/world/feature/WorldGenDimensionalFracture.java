@@ -96,7 +96,6 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                     fracture.setLinkedPosition(scaled);
                     fracture.setDestinationBiome(linkedBiome);
                     world.spawnEntity(fracture);
-
                     if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
                         IFractureLocations loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
                         loc.addFractureLocation(placeAt);
@@ -123,7 +122,6 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                     fracture.setLinkedPosition(scaled);
                     fracture.setDestinationBiome(linkedBiome);
                     world.spawnEntity(fracture);
-
                     if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
                         IFractureLocations loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
                         loc.addFractureLocation(placeAt);

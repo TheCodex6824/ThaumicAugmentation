@@ -24,9 +24,12 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
@@ -34,6 +37,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
@@ -45,6 +49,7 @@ import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
+import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProviderNoSave;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
@@ -91,7 +96,7 @@ public class ItemElytraHarnessAugment extends ItemTABase {
                 
                 @Override
                 public void onTick(Entity user) {
-                    if (user.world.isRemote && user instanceof EntityLivingBase) {
+                    if (user.world.isRemote && ThaumicAugmentation.proxy.isEntityClientPlayer(user)) {
                         EntityLivingBase entity = (EntityLivingBase) user;
                         IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                         if (energy != null && entity.isElytraFlying() && entity.getTicksElytraFlying() >= 2 && ThaumicAugmentation.proxy.isJumpDown()) {
@@ -116,10 +121,21 @@ public class ItemElytraHarnessAugment extends ItemTABase {
                 public void appendAdditionalAugmentTooltip(List<String> tooltip) {
                     IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                     if (energy != null) {
-                        tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy", new TextComponentTranslation(
-                                ImpetusAPI.getEnergyAmountDescriptor(energy))).getFormattedText());
+                        tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy",
+                                ImpetusAPI.getSuggestedChatColorForDescriptor(energy) + new TextComponentTranslation(
+                                ImpetusAPI.getEnergyAmountDescriptor(energy)).getFormattedText()).getFormattedText());
                     }
                 }
+                
+                @Override
+                @SideOnly(Side.CLIENT)
+                public void render(ItemStack stack, RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing, 
+                        float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+                    
+                    AugmentRenderer.renderElytraBooster(renderer, base, player, limbSwing, limbSwingAmount,
+                            partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+                }
+                
             };
         }
         else {
@@ -166,12 +182,44 @@ public class ItemElytraHarnessAugment extends ItemTABase {
     }
     
     @Override
+    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (stack.hasTagCompound())
+            tag.setTag("item", stack.getTagCompound().copy());
+        
+        tag.setTag("cap", ((ImpetusStorage) stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)).serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
+        if (nbt != null) {
+            ((ImpetusStorage) stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)).deserializeNBT(nbt.getCompoundTag("cap"));
+            if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+                stack.setTagCompound(nbt.getCompoundTag("item"));
+            else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                nbt.removeTag("cap");
+                if (!nbt.isEmpty())
+                    stack.setTagCompound(nbt);
+            }
+            
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
+                stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
+            }
+        }
+    }
+    
+    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
         if (energy != null) {
-            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy", new TextComponentTranslation(
-                    ImpetusAPI.getEnergyAmountDescriptor(energy))).getFormattedText());
+            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy",
+                    ImpetusAPI.getSuggestedChatColorForDescriptor(energy) + new TextComponentTranslation(
+                    ImpetusAPI.getEnergyAmountDescriptor(energy)).getFormattedText()).getFormattedText());
         }
     }
     

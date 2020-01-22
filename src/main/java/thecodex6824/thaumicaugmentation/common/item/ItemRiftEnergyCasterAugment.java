@@ -146,8 +146,9 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             public void appendAdditionalAugmentTooltip(List<String> tooltip) {
                 IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                 if (energy != null) {
-                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy", new TextComponentTranslation(
-                            ImpetusAPI.getEnergyAmountDescriptor(energy))).getFormattedText());
+                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy",
+                            ImpetusAPI.getSuggestedChatColorForDescriptor(energy) + new TextComponentTranslation(
+                            ImpetusAPI.getEnergyAmountDescriptor(energy)).getFormattedText()).getFormattedText());
                 }
             }
             
@@ -221,8 +222,9 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
         if (energy != null) {
-            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy", new TextComponentTranslation(
-                    ImpetusAPI.getEnergyAmountDescriptor(energy))).getFormattedText());
+            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.stored_energy",
+                    ImpetusAPI.getSuggestedChatColorForDescriptor(energy) + new TextComponentTranslation(
+                    ImpetusAPI.getEnergyAmountDescriptor(energy)).getFormattedText()).getFormattedText());
         }
     }
     

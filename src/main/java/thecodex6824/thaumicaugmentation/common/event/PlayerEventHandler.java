@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.event;
 
 import java.util.WeakHashMap;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -82,7 +84,7 @@ public final class PlayerEventHandler {
                     !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
                 
                 ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERVOID");
-                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void"), true);
+                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void", ChatFormatting.DARK_PURPLE), true);
             }
         }
     }

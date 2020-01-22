@@ -20,14 +20,19 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.mojang.realmsclient.gui.ChatFormatting;
 
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -48,6 +53,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ISpecialArmor;
@@ -262,7 +269,7 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
     @Override
     public float getNewFallDamage(ItemStack stack, float origDamage, float distance) {
         if (RechargeHelper.getCharge(stack) > 0)
-            return origDamage / 12.0F - 1.0F;
+            return origDamage / 6.0F - 1.0F;
 
         return origDamage;
     }
@@ -292,6 +299,18 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
                 PlayerMovementAbilityManager.put(player, MOVEMENT_FUNC, CONTINUE_FUNC);
             else if (!apply && PlayerMovementAbilityManager.playerHasAbility(player, MOVEMENT_FUNC, CONTINUE_FUNC))
                 PlayerMovementAbilityManager.remove(player, MOVEMENT_FUNC, CONTINUE_FUNC);
+        }
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+        int color = getDyedColor(stack);
+        if (color != getDefaultDyedColorForMeta(stack.getMetadata())) {
+            if (flag.isAdvanced())
+                tooltip.add(new TextComponentTranslation("item.color", ChatFormatting.GRAY + String.format("#%06X", color)).getFormattedText());
+            else
+                tooltip.add(TextFormatting.ITALIC + new TextComponentTranslation("item.dyed").getFormattedText());
         }
     }
     

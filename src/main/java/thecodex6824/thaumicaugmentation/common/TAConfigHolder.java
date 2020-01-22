@@ -349,6 +349,14 @@ public final class TAConfigHolder {
         })
         public int defaultVoidBootsColor = 0x6A3880;
         
+        @Name("primalCutterDamage")
+        @Comment({
+            "The damage done by the Primal Cutter's material, NOT including the base damage.",
+            "In other words, its total damage will be this number + 4 (3 for being a \"sword\", and 1 as the minimum)"
+        })
+        @RequiresMcRestart
+        public float primalCutterDamage = 6.0F;
+        
     }
     
     public static class WorldOptions {
@@ -522,6 +530,8 @@ public final class TAConfigHolder {
         TAConfig.cannonBurstCost.setValue((long) gameplay.impetus.cannon.burstCost);
         TAConfig.cannonBurstCooldown.setValue(gameplay.impetus.cannon.burstCooldown);
         TAConfig.cannonBurstRange.setValue(gameplay.impetus.cannon.burstRange);
+        
+        TAConfig.primalCutterDamage.setValue(gameplay.primalCutterDamage);
     }
 
     public static void syncLocally() {
@@ -613,6 +623,8 @@ public final class TAConfigHolder {
         TAConfig.cannonBurstCost = TAConfigManager.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannon.burstCost));
         TAConfig.cannonBurstCooldown = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.impetus.cannon.burstCooldown));
         TAConfig.cannonBurstRange = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.burstRange));
+    
+        TAConfig.primalCutterDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.primalCutterDamage));
     }
 
 }

@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableMap;
 
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
@@ -118,6 +119,11 @@ public class ServerProxy implements ISidedProxy {
     @Override
     public boolean isPvPEnabled() {
         return FMLCommonHandler.instance().getMinecraftServerInstance().isPVPEnabled();
+    }
+    
+    @Override
+    public boolean isEntityClientPlayer(Entity e) {
+        return false;
     }
     
     @Override

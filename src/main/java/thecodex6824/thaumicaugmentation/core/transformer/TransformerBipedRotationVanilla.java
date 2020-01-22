@@ -48,7 +48,24 @@ public class TransformerBipedRotationVanilla extends Transformer {
             MethodNode rot = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/model/ModelBiped", "func_78087_a",
                     Type.VOID_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE,
                     Type.getType("Lnet/minecraft/entity/Entity;")), "(FFFFFFLnet/minecraft/entity/Entity;)V");
-            int ret = 0;
+            int ret = TransformUtil.findLastInstanceOfMethodCall(rot, rot.instructions.size(), TransformUtil.remapMethodName("net/minecraft/util/math/MathHelper",
+                    "func_76134_b", Type.FLOAT_TYPE, Type.FLOAT_TYPE), "(F)F", "net/minecraft/util/math/MathHelper");
+            ret = TransformUtil.findLastInstanceOfMethodCall(rot, ret, TransformUtil.remapMethodName("net/minecraft/util/math/MathHelper",
+                    "func_76134_b", Type.FLOAT_TYPE, Type.FLOAT_TYPE), "(F)F", "net/minecraft/util/math/MathHelper");
+            if (ret != -1) {
+                AbstractInsnNode insertAfter = rot.instructions.get(ret).getPrevious();
+                rot.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        TransformUtil.HOOKS_CLIENT,
+                        "correctRotationPoints",
+                        "(Lnet/minecraft/client/model/ModelBiped;)V",
+                        false
+                ));
+                rot.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
+            }
+            else
+                throw new TransformerException("Could not locate required instructions");
+            
+            ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(rot, ret, Opcodes.RETURN)) != -1) {
                 AbstractInsnNode insertAfter = rot.instructions.get(ret).getPrevious();
                 rot.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,

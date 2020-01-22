@@ -49,6 +49,7 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -71,6 +72,7 @@ import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.enchantment.EnumInfusionEnchantment;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
@@ -80,7 +82,7 @@ import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelProvider<Item> {
 
     public static final ToolMaterial MATERIAL = EnumHelper.addToolMaterial(
-            "PRIMAL_CUTTER", 5, 500, 8.0F, 8.0F, 20).setRepairItem(new ItemStack(ItemsTC.ingots, 1, 1));
+            "PRIMAL_CUTTER", 5, 500, 8.0F, TAConfig.primalCutterDamage.getValue(), 20).setRepairItem(new ItemStack(ItemsTC.ingots, 1, 1));
     
     private static final ImmutableSet<String> TOOL_CLASSES = ImmutableSet.of("sword", "axe");
     private static final ImmutableSet<Block> EFFECTIVE = new ImmutableSet.Builder<Block>().add(
@@ -106,6 +108,7 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     
     public ItemPrimalCutter() {
         super(3.0F, -2.4F, MATERIAL, EFFECTIVE);
+        setHasSubtypes(true);
     }
     
     @Override
@@ -134,7 +137,8 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
             target.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 120));
         }
         
-        return super.hitEntity(stack, target, attacker);
+        stack.damageItem(1, attacker);
+        return true;
     }
     
     @Override
@@ -154,20 +158,32 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
         return EnumAction.BOW;
     }
     
+    protected boolean preventDrawing(ItemStack stack) {
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+        
+        return stack.getTagCompound().getBoolean("drawingDisabled");
+    }
+    
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
-        return 72000;
+        return preventDrawing(stack) ? 0 : 72000;
     }
     
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        player.setActiveHand(hand);
-        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        ItemStack stack = player.getHeldItem(hand);
+        if (!preventDrawing(stack)) {
+            player.setActiveHand(hand);
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        }
+        else
+            return super.onItemRightClick(world, player, hand);
     }
     
     @Override
     public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
-        return oldStack.getItem() == newStack.getItem();
+        return oldStack.getItem() == newStack.getItem() && !preventDrawing(newStack);
     }
     
     @Override
@@ -177,7 +193,7 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return oldStack.getItem() != newStack.getItem();
+        return slotChanged || oldStack.getItem() != newStack.getItem();
     }
     
     @Override
@@ -227,6 +243,12 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
             EnumInfusionEnchantment.addInfusionEnchantment(stack, EnumInfusionEnchantment.ARCING, 2);
             EnumInfusionEnchantment.addInfusionEnchantment(stack, EnumInfusionEnchantment.BURROWING, 1);
             items.add(stack);
+            stack = stack.copy();
+            if (!stack.hasTagCompound())
+                stack.setTagCompound(new NBTTagCompound());
+            
+            stack.getTagCompound().setBoolean("drawingDisabled", true);
+            items.add(stack);
         }
     }
     
@@ -251,6 +273,8 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         tooltip.add(TextFormatting.GOLD + new TextComponentTranslation("enchantment.special.sapgreat").getFormattedText());
         super.addInformation(stack, world, tooltip, flag);
+        if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("drawingDisabled"))
+            tooltip.add(TextFormatting.RED + new TextComponentTranslation("thaumicaugmentation.text.drawing_disabled").getFormattedText());
     }
     
 }

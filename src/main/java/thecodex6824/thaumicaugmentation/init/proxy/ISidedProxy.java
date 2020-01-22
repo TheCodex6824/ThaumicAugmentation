@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 
 import com.google.common.collect.ImmutableMap;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
@@ -64,6 +65,8 @@ public interface ISidedProxy {
     public boolean isJumpDown();
     
     public boolean isPvPEnabled();
+    
+    public boolean isEntityClientPlayer(Entity e);
     
     public void handlePacketClient(IMessage message, MessageContext context);
 

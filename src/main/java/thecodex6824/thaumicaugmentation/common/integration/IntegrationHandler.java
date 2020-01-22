@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
@@ -32,6 +33,7 @@ public class IntegrationHandler {
 
     public static final String WIZARDRY_MOD_ID = "wizardry";
     public static final String JEID_MOD_ID = "jeid";
+    public static final String BOTANIA_MOD_ID = "botania";
     
     private static HashMap<String, IIntegrationHolder> integrations = new HashMap<>();
     
@@ -40,9 +42,15 @@ public class IntegrationHandler {
             integrations.put(WIZARDRY_MOD_ID, new IntegrationWizardry());
         if (Loader.isModLoaded(JEID_MOD_ID))
             integrations.put(JEID_MOD_ID, new IntegrationJEID());
+        if (Loader.isModLoaded(BOTANIA_MOD_ID))
+            integrations.put(BOTANIA_MOD_ID, new IntegrationBotania());
         
-        for (IIntegrationHolder holder : integrations.values())
+        for (IIntegrationHolder holder : integrations.values()) {
+            if (holder.registerEventBus())
+                MinecraftForge.EVENT_BUS.register(holder);
+            
             holder.preInit();
+        }
     }
     
     public static void init() {

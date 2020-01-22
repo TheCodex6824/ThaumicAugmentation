@@ -24,7 +24,10 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -39,6 +42,8 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.common.blocks.basic.BlockBannerTCItem;
 import thaumcraft.common.entities.EntityFluxRift;
@@ -78,6 +83,7 @@ import thecodex6824.thaumicaugmentation.api.warded.tile.WardedTile;
 import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
+import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProviderNoSave;
@@ -394,6 +400,27 @@ public final class CapabilityHandler {
                 public boolean isCosmetic() {
                     return true;
                 }
+                
+                @Override
+                @SideOnly(Side.CLIENT)
+                public void render(ItemStack stack, RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing,
+                        float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch,
+                        float scale) {
+                    
+                    AugmentRenderer.renderBanner(stack, renderer, base, player, limbSwing, limbSwingAmount,
+                            partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+                }
+                
+                @Override
+                @SideOnly(Side.CLIENT)
+                public void renderFlightParticles(ItemStack cosmetic, RenderPlayer renderer, ModelBiped base, EntityPlayer player,
+                        float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw,
+                        float headPitch, float scale) {
+                    
+                    AugmentRenderer.renderBannerParticle(cosmetic, renderer, base, player, limbSwing, limbSwingAmount,
+                            partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+                }
+                
             }, CapabilityAugment.AUGMENT));
         }
     }

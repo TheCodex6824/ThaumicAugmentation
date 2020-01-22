@@ -18,18 +18,32 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.integration;
+package thecodex6824.thaumicaugmentation.client.event;
 
-public interface IIntegrationHolder {
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.living.LivingEvent;
 
-    public void preInit();
-    
-    public void init();
-    
-    public void postInit();
-    
-    public default boolean registerEventBus() {
-        return false;
+public class ClientLivingEquipmentChangeEvent extends LivingEvent {
+   
+    protected EntityEquipmentSlot slot;
+    protected ItemStack to;
+
+    public ClientLivingEquipmentChangeEvent(EntityLivingBase entity, EntityEquipmentSlot equipmentSlot,
+            ItemStack toStack) {
+        
+        super(entity);
+        slot = equipmentSlot;
+        to = toStack;
+    }
+
+    public EntityEquipmentSlot getSlot() { 
+        return slot;
     }
     
+    public ItemStack getTo() { 
+        return to;
+    }
+
 }

@@ -31,6 +31,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.items.IRechargable;
 import thaumcraft.api.items.RechargeHelper;
@@ -43,9 +44,12 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderHarness;
+import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import vazkii.botania.api.item.IPhantomInkable;
 
-public class ItemThaumostaticHarness extends ItemTABase implements IRechargable {
+@Optional.Interface(iface = "vazkii.botania.api.item.IPhantomInkable", modid = IntegrationHandler.BOTANIA_MOD_ID)
+public class ItemThaumostaticHarness extends ItemTABase implements IRechargable, IPhantomInkable {
 
     protected static final int DEFAULT_VIS_CAPACITY = 200;
     protected static final int DEFAULT_VIS_COST = 2;
@@ -251,6 +255,24 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable 
     @Override
     public EnumChargeDisplay showInHud(ItemStack arg0, EntityLivingBase arg1) {
         return EnumChargeDisplay.NORMAL;
+    }
+    
+    @Override
+    @Optional.Method(modid = IntegrationHandler.BOTANIA_MOD_ID)
+    public boolean hasPhantomInk(ItemStack stack) {
+        if (stack.hasTagCompound())
+            return stack.getTagCompound().getBoolean("phantomInk");
+        
+        return false;
+    }
+    
+    @Override
+    @Optional.Method(modid = IntegrationHandler.BOTANIA_MOD_ID)
+    public void setPhantomInk(ItemStack stack, boolean ink) {
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+        
+        stack.getTagCompound().setBoolean("phantomInk", ink);
     }
     
     @Override
