@@ -142,45 +142,46 @@ public final class NodeHelper {
             }
             
             providers.removeAll(removedProviders);
-            
-            long drawn = 0;
-            long step = amount / providers.size();
-            long remain = amount % providers.size();
-            ArrayList<Deque<IImpetusNode>> usedPaths = new ArrayList<>();
-            for (int i = 0; i < providers.size(); ++i) {
-                IImpetusProvider p = providers.get(i);
-                long actuallyDrawn = p.provide(Math.min(step + (remain > 0 ? 1 : 0), amount - drawn), true);
-                if (actuallyDrawn > 0) {
-                    Deque<IImpetusNode> nodes = paths.get(i);
-                    for (IImpetusNode n : nodes) {
-                        actuallyDrawn = n.onTransaction(dest, nodes, actuallyDrawn, simulate);
-                        if (actuallyDrawn <= 0)
-                            break;
-                    }
-                    
+            if (providers.size() > 0) {
+                long drawn = 0;
+                long step = amount / providers.size();
+                long remain = amount % providers.size();
+                ArrayList<Deque<IImpetusNode>> usedPaths = new ArrayList<>();
+                for (int i = 0; i < providers.size(); ++i) {
+                    IImpetusProvider p = providers.get(i);
+                    long actuallyDrawn = p.provide(Math.min(step + (remain > 0 ? 1 : 0), amount - drawn), true);
                     if (actuallyDrawn > 0) {
-                        actuallyDrawn = p.provide(actuallyDrawn, false);
-                        usedPaths.add(nodes);
-                        drawn += actuallyDrawn;
-                        if (actuallyDrawn < step && i < providers.size() - 1) {
+                        Deque<IImpetusNode> nodes = paths.get(i);
+                        for (IImpetusNode n : nodes) {
+                            actuallyDrawn = n.onTransaction(dest, nodes, actuallyDrawn, simulate);
+                            if (actuallyDrawn <= 0)
+                                break;
+                        }
+                        
+                        if (actuallyDrawn > 0) {
+                            actuallyDrawn = p.provide(actuallyDrawn, false);
+                            usedPaths.add(nodes);
+                            drawn += actuallyDrawn;
+                            if (actuallyDrawn < step && i < providers.size() - 1) {
+                                step = (amount - drawn) / (providers.size() - (i + 1));
+                                remain = (amount - drawn) % (providers.size() - (i + 1));
+                            }
+                            else
+                                --remain;
+                        }
+                        else if (i < providers.size() - 1) {
                             step = (amount - drawn) / (providers.size() - (i + 1));
                             remain = (amount - drawn) % (providers.size() - (i + 1));
                         }
-                        else
-                            --remain;
                     }
                     else if (i < providers.size() - 1) {
                         step = (amount - drawn) / (providers.size() - (i + 1));
                         remain = (amount - drawn) % (providers.size() - (i + 1));
                     }
                 }
-                else if (i < providers.size() - 1) {
-                    step = (amount - drawn) / (providers.size() - (i + 1));
-                    remain = (amount - drawn) % (providers.size() - (i + 1));
-                }
+                
+                return new ConsumeResult(drawn, usedPaths);
             }
-            
-            return new ConsumeResult(drawn, usedPaths);
         }
         
         return new ConsumeResult(0, Collections.emptyList());
