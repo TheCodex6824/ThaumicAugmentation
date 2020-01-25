@@ -38,7 +38,7 @@ import org.objectweb.asm.tree.VarInsnNode;
  * Since other mods just ASM into ModelBiped and not TC's class, calling the super method is important here.
  * This is done through adding the super call here, and in another transformer injecting a static method
  * call to update rotation points. Sadly, just setting rotation points at the end or after it returns is too late
- * for some mods that need accurate rotation points (like Quark's emotes).
+ * for some mods that need accurate rotation points.
  */
 public class TransformerBipedRotationCustomTCArmor extends Transformer {
 

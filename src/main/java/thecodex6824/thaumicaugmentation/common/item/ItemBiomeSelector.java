@@ -115,12 +115,8 @@ public class ItemBiomeSelector extends ItemTABase {
                     stack.setTagCompound(nbt);
             }
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
-                if (!stack.hasTagCompound())
-                    stack.setTagCompound(new NBTTagCompound());
-                
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer())
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
-            }
         }
     }
     

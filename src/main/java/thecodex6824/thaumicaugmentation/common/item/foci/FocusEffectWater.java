@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.item.foci;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
@@ -37,9 +39,12 @@ import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.monster.EntityMagmaCube;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.monster.EntityWitch;
+import net.minecraft.entity.passive.EntityWaterMob;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
@@ -50,6 +55,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -59,14 +68,41 @@ import thaumcraft.api.casters.NodeSetting;
 import thaumcraft.api.casters.NodeSetting.NodeSettingIntRange;
 import thaumcraft.api.casters.Trajectory;
 import thaumcraft.common.lib.network.fx.PacketFXFocusPartImpact;
+import thaumcraft.common.tiles.TileThaumcraft;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.common.integration.IntegrationBotania;
+import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public class FocusEffectWater extends FocusEffect {
 
+    private static void invoke(Consumer<TileEntity> c, TileEntity t) {
+        c.accept(t);
+    }
+    
+    private static boolean invokePredicate(Predicate<TileEntity> c, TileEntity t) {
+        return c.test(t);
+    }
+    
+    private static final Predicate<TileEntity> IS_APOTHECARY = 
+        (tile) -> {
+            return invokePredicate((t) -> {
+                return ((IntegrationBotania) IntegrationHandler.getIntegration(IntegrationHandler.BOTANIA_MOD_ID)).isPetalApothecary(t);
+            }, 
+            tile);
+        };
+    
+    private static final Consumer<TileEntity> FILL_APOTHECARY = 
+        (tile) -> {
+            invoke((t) -> {
+                ((IntegrationBotania) IntegrationHandler.getIntegration(IntegrationHandler.BOTANIA_MOD_ID)).fillPetalApothecary(t);
+            }, 
+            tile);
+        };
+    
     @Override
     public Aspect getAspect() {
         return Aspect.WATER;
@@ -116,7 +152,8 @@ public class FocusEffectWater extends FocusEffect {
             rangeMod = 0.5;
             exclude = result.entityHit;
             pos = new MutableBlockPos(result.entityHit.getPosition());
-            if ((result.entityHit instanceof EntityCreature || result.entityHit instanceof EntityPlayer) && ((EntityLivingBase) result.entityHit).canBreatheUnderwater()) {
+            if ((result.entityHit instanceof EntityCreature || result.entityHit instanceof EntityWaterMob || result.entityHit instanceof EntityPlayer) &&
+                    ((EntityLivingBase) result.entityHit).canBreatheUnderwater()) {
                 EntityLivingBase base = (EntityLivingBase) result.entityHit;
                 base.setAir(Math.max(base.getAir(), 300));
             }
@@ -127,13 +164,17 @@ public class FocusEffectWater extends FocusEffect {
                 else if (result.entityHit instanceof EntitySlime || result.entityHit instanceof EntityWitch)
                     damageMultiplier = 1.5F;
                 
-                result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(result.entityHit != null ? result.entityHit : getPackage().getCaster(),
-                        getPackage().getCaster()), getDamageForDisplay(power) * damageMultiplier);
-                if (damageMultiplier > 1.0F) {
-                    world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, result.entityHit.getSoundCategory(), Math.min(damageMultiplier - 1.0F, 1.0F), 1.0F);
-                    Vec3d eyes = result.entityHit.getPositionEyes(1.0F);
-                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SMOKE_LARGE,
-                            eyes.x, eyes.y, eyes.z), result.entityHit);
+                if (result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(result.entityHit != null ? result.entityHit : getPackage().getCaster(),
+                        getPackage().getCaster()), getDamageForDisplay(power) * damageMultiplier)) {
+                    
+                    if (result.entityHit instanceof EntityWolf)
+                        ((EntityWolf) result.entityHit).isWet = true;
+                    if (damageMultiplier > 1.0F) {
+                        world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, result.entityHit.getSoundCategory(), Math.min(damageMultiplier - 1.0F, 1.0F), 1.0F);
+                        Vec3d eyes = result.entityHit.getPositionEyes(1.0F);
+                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SMOKE_LARGE,
+                                eyes.x, eyes.y, eyes.z), result.entityHit);
+                    }
                 }
                 
                 if (result.entityHit.isBurning()) {
@@ -151,14 +192,16 @@ public class FocusEffectWater extends FocusEffect {
                 BlockPos start = pos.toImmutable();
                 List<Entity> entities = world.getEntitiesInAABBexcluding(exclude, new AxisAlignedBB(start.getX() - maxDist / 2, start.getY() - maxDist / 2,
                         start.getZ() - maxDist / 2, start.getX() + Math.ceil(maxDist / 2.0), start.getY() + Math.ceil(maxDist / 2.0), start.getZ() + Math.ceil(maxDist / 2.0)),
-                        entity -> entity != null && entity.isBurning());
+                        entity -> entity != null && (entity.isBurning() || entity instanceof EntityWolf));
                 
                 ArrayList<Vec3d> splashPositions = new ArrayList<>();
                 for (Entity e : entities) {
                     if (e.getDistanceSq(start) <= maxDist * maxDist) {
                         e.extinguish();
-                        world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, result.entityHit.getSoundCategory(), 0.25F, 1.0F);
+                        world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, e.getSoundCategory(), 0.25F, 1.0F);
                         splashPositions.add(e.getPositionVector());
+                        if (e instanceof EntityWolf)
+                            ((EntityWolf) e).isWet = true;
                     }
                 }
                 
@@ -194,6 +237,23 @@ public class FocusEffectWater extends FocusEffect {
                                     world.setBlockState(pos, state.withProperty(BlockCauldron.LEVEL, Math.min(state.getValue(BlockCauldron.LEVEL) + 1, 3)));
                                     world.playSound(null, pos, SoundEvents.ITEM_BOTTLE_EMPTY, SoundCategory.BLOCKS, 0.25F, 1.0F);
                                     splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
+                                }
+                                else {
+                                    TileEntity tile = world.getTileEntity(pos);
+                                    if (tile != null) {
+                                        if (IntegrationHandler.isIntegrationPresent(IntegrationHandler.BOTANIA_MOD_ID) && IS_APOTHECARY.test(tile))
+                                            FILL_APOTHECARY.accept(tile);
+                                        else {
+                                            IFluidHandler fluid = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+                                            if (fluid != null) {
+                                                fluid.fill(new FluidStack(FluidRegistry.WATER, 334), true);
+                                                if (tile instanceof TileThaumcraft) {
+                                                    tile.markDirty();
+                                                    ((TileThaumcraft) tile).syncTile(false);
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

@@ -51,9 +51,9 @@ public interface IImpetusCellInfo {
         return Integer.bitCount(prop & 15);
     }
     
-    public static int setCellPresent(int prop, EnumFacing side) {
+    public static int setCellPresent(int prop, EnumFacing side, boolean present) {
         if (side.getHorizontalIndex() > -1)
-            return prop | (1 << side.getHorizontalIndex());
+            return present ? prop | (1 << side.getHorizontalIndex()) : prop & ~(1 << side.getHorizontalIndex());
         else
             return prop;
     }

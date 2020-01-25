@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -41,6 +42,7 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProviderNoSave;
 import vazkii.botania.api.item.IBaubleRender.RenderType;
+import vazkii.botania.api.item.IPetalApothecary;
 import vazkii.botania.api.item.IPhantomInkable;
 import vazkii.botania.common.item.equipment.bauble.ItemFlightTiara;
 
@@ -64,6 +66,18 @@ public class IntegrationBotania implements IIntegrationHolder {
         return stack.getItem() instanceof IPhantomInkable && ((IPhantomInkable) stack.getItem()).hasPhantomInk(stack);
     }
     
+    public boolean isPetalApothecary(TileEntity tile) {
+        return tile instanceof IPetalApothecary;
+    }
+    
+    public void fillPetalApothecary(TileEntity tile) {
+        if (tile instanceof IPetalApothecary) {
+            IPetalApothecary p = (IPetalApothecary) tile;
+            if (!p.hasWater())
+                p.setWater(true);
+        }
+    }
+    
     @SubscribeEvent
     public void onAttachCapabilityItemStack(AttachCapabilitiesEvent<ItemStack> event) {
         if (event.getObject().getItem() instanceof ItemFlightTiara) {
@@ -82,7 +96,7 @@ public class IntegrationBotania implements IIntegrationHolder {
                     ItemFlightTiara item = (ItemFlightTiara) stack.getItem();
                     boolean oldFly = player.capabilities.isFlying;
                     player.capabilities.isFlying = player.isElytraFlying();
-                    // most things render on BODY, Jibril's halo renders on anything else (but head makes the most sense)
+                    // most things render on BODY, Jibril's halo renders on anything else (but HEAD makes the most sense)
                     item.onPlayerBaubleRender(stack, player, RenderType.BODY, partialTicks);
                     float yaw = player.prevRotationYawHead + (player.rotationYawHead - player.prevRotationYawHead) * partialTicks;
                     float yawOffset = player.prevRenderYawOffset + (player.renderYawOffset - player.prevRenderYawOffset) * partialTicks;

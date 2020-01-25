@@ -413,7 +413,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
             old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).setFunctionalStack(innerResult.getResult());
             ActionResult<ItemStack> result = new ActionResult<>(innerResult.getType(), old);
             setStackWithoutAnnoyingNoise(playerIn, handIn, old);
-            if (result.getType() == EnumActionResult.SUCCESS) {
+            if (result.getType() == EnumActionResult.SUCCESS && playerIn.getActiveHand() != null) {
                 playerIn.resetActiveHand();
                 playerIn.setActiveHand(playerIn.getActiveHand());
             }
