@@ -33,6 +33,7 @@ import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 public class RaytraceHelper {
 
@@ -124,6 +125,12 @@ public class RaytraceHelper {
         }
 
         return ret;
+    }
+    
+    public static List<Entity> raytraceEntities(World world, Vec3d start, Vec3d end) {
+        return world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(start, end),
+                Predicates.and(EntitySelectors.NOT_SPECTATING, entity -> entity != null && entity.canBeCollidedWith()
+        ));
     }
     
 }

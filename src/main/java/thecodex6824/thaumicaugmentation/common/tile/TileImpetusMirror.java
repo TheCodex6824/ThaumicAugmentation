@@ -78,7 +78,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
             }
             
             @Override
-            public boolean shouldDrawBeamTo(IImpetusNode other) {
+            public boolean shouldPhysicalBeamLinkTo(IImpetusNode other) {
                 return !other.getLocation().equals(linked);
             }
             

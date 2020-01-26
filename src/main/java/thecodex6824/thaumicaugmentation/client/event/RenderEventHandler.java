@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Vector4d;
 
 import org.lwjgl.opengl.GL11;
@@ -41,7 +42,6 @@ import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelBiped.ArmPose;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -50,8 +50,10 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -66,12 +68,15 @@ import thaumcraft.api.casters.ICaster;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.beams.FXBeamBore;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
@@ -91,15 +96,6 @@ public class RenderEventHandler {
     private static final ResourceLocation FRAME = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/misc/frame_1x1_simple.png");
     
     private static final double TRANSACTION_DURATION = 60.0;
-    
-    private static boolean isHoldingCaster(EntityLivingBase entity) {
-        for (ItemStack stack : entity.getHeldEquipment()) {
-            if (stack.getItem() instanceof ICaster)
-                return true;
-        }
-        
-        return false;
-    }
     
     public static void onEntityCast(int id) {
         if (TAConfig.gauntletCastAnimation.getValue())
@@ -126,18 +122,100 @@ public class RenderEventHandler {
         }
     }
     
-    @SubscribeEvent
-    public static void onRenderLiving(RenderLivingEvent.Pre<EntityLivingBase> event) {
-        if (TAConfig.gauntletCastAnimation.getValue() && isHoldingCaster(event.getEntity())) {
-            Boolean value = CAST_CACHE.getIfPresent(event.getEntity().getEntityId());
-            if (value != null && event.getRenderer().getMainModel() instanceof ModelBiped) {
-                ModelBiped biped = (ModelBiped) event.getRenderer().getMainModel();
-                if (event.getEntity().getActiveHand() == EnumHand.MAIN_HAND)
-                    biped.rightArmPose = ArmPose.BOW_AND_ARROW;
-                else
-                    biped.leftArmPose = ArmPose.BOW_AND_ARROW;
+    @Nullable
+    private static EnumHand findCaster(EntityLivingBase entity) {
+        for (EnumHand hand : EnumHand.values()) {
+            ItemStack stack = entity.getHeldItem(hand);
+            if (stack.getItem() instanceof ICaster)
+                return hand;
+            else if (stack.getItem() == TAItems.MORPHIC_TOOL) {
+                IMorphicTool tool = stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+                if (tool != null) {
+                    EnumAction action = tool.getDisplayStack().getItemUseAction();
+                    if (tool.getFunctionalStack().getItem() instanceof ICaster &&
+                            (action == EnumAction.NONE || action == EnumAction.BOW))
+                        return hand;
+                }
             }
         }
+        
+        return null;
+    }
+    
+    @Nullable
+    private static EnumHand findImpulseCannon(EntityLivingBase entity) {
+        ItemStack stack = entity.getHeldItemMainhand();
+        if (stack.getItem() == TAItems.IMPULSE_CANNON)
+            return EnumHand.MAIN_HAND;
+        
+        stack = entity.getHeldItemOffhand();
+        if (stack.getItem() == TAItems.IMPULSE_CANNON)
+            return EnumHand.OFF_HAND;
+        
+        return null;
+    }
+    
+    public static void onRotationAngles(ModelBiped model, Entity entity) {
+        if (entity instanceof EntityLivingBase) {
+            EntityLivingBase living = (EntityLivingBase) entity;
+            if (TAConfig.gauntletCastAnimation.getValue() && CAST_CACHE.getIfPresent(living.getEntityId()) != null) {
+                EnumHand hand = findCaster(living);
+                if (hand != null && model instanceof ModelBiped) {
+                    EnumHandSide side = living.getPrimaryHand();
+                    if (hand == EnumHand.OFF_HAND)
+                        side = side.opposite();
+                    
+                    if (side == EnumHandSide.RIGHT) {
+                        model.bipedRightArm.rotateAngleX = -1.5707963F + model.bipedHead.rotateAngleX;
+                        model.bipedRightArm.rotateAngleY = model.bipedHead.rotateAngleY;
+                        model.bipedRightArm.rotateAngleZ = model.bipedHead.rotateAngleZ;
+                    }
+                    else {
+                        model.bipedLeftArm.rotateAngleX = -1.5707963F + model.bipedHead.rotateAngleX;
+                        model.bipedLeftArm.rotateAngleY = model.bipedHead.rotateAngleY;
+                        model.bipedLeftArm.rotateAngleZ = model.bipedHead.rotateAngleZ;
+                    }
+                    
+                    return;
+                }
+            }
+            
+            EnumHand hand = findImpulseCannon(living);
+            if (hand != null) {
+                EnumHand oppositeHand = hand == EnumHand.MAIN_HAND ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND;
+                EnumHandSide side = living.getPrimaryHand();
+                if (hand == EnumHand.OFF_HAND)
+                    side = side.opposite();
+                
+                if (side == EnumHandSide.RIGHT) {
+                    model.bipedRightArm.rotateAngleX = -1.5707963F + model.bipedHead.rotateAngleX;
+                    model.bipedRightArm.rotateAngleY = model.bipedHead.rotateAngleY;
+                    model.bipedRightArm.rotateAngleZ = model.bipedHead.rotateAngleZ;
+                    
+                    if (living.getHeldItem(oppositeHand).isEmpty()) {
+                        model.bipedLeftArm.rotateAngleX = -1.5707963F + model.bipedHead.rotateAngleX;
+                        model.bipedLeftArm.rotateAngleY = model.bipedHead.rotateAngleY + 0.62831853F;
+                        model.bipedLeftArm.rotateAngleZ = model.bipedHead.rotateAngleZ;
+                    }
+                }
+                else {
+                    model.bipedLeftArm.rotateAngleX = -1.5707963F + model.bipedHead.rotateAngleX;
+                    model.bipedLeftArm.rotateAngleY = model.bipedHead.rotateAngleY;
+                    model.bipedLeftArm.rotateAngleZ = model.bipedHead.rotateAngleZ;
+                    
+                    if (living.getHeldItem(oppositeHand).isEmpty()) {
+                        model.bipedRightArm.rotateAngleX = -1.5707963F + model.bipedHead.rotateAngleX;
+                        model.bipedRightArm.rotateAngleY = model.bipedHead.rotateAngleY - 0.62831853F;
+                        model.bipedRightArm.rotateAngleZ = model.bipedHead.rotateAngleZ;
+                    }
+                }
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onRenderLiving(RenderLivingEvent.Pre<EntityLivingBase> event) {
+        
     }
     
     @SubscribeEvent
@@ -300,7 +378,7 @@ public class RenderEventHandler {
             
             for (IImpetusNode node : renderNodes) {
                 for (IImpetusNode out : node.getOutputs()) {
-                    if (node.shouldDrawBeamTo(out) && out.shouldDrawBeamTo(node))
+                    if (node.shouldPhysicalBeamLinkTo(out) && out.shouldPhysicalBeamLinkTo(node))
                         renderNormalBeam(rv, event.getPartialTicks(), node.getBeamEndpoint(), out.getBeamEndpoint());
                 }
             }
@@ -315,7 +393,7 @@ public class RenderEventHandler {
             for (int i = 0; i < array.length - 1; ++i) {
                 IImpetusNode start = ImpetusRenderingManager.findNodeByPosition(array[i]);
                 IImpetusNode end = ImpetusRenderingManager.findNodeByPosition(array[i + 1]);
-                if (start != null && end != null && start.shouldDrawBeamTo(end) && end.shouldDrawBeamTo(start))
+                if (start != null && end != null && start.shouldPhysicalBeamLinkTo(end) && end.shouldPhysicalBeamLinkTo(start))
                     renderStrongLaser(rv, event.getPartialTicks(), eyePos, start.getBeamEndpoint(), end.getBeamEndpoint(), factor);
             }
             

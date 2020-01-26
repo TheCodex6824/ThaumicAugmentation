@@ -25,8 +25,10 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
@@ -106,22 +108,30 @@ public class FocusEffectVoidShield extends FocusEffect {
     public boolean execute(RayTraceResult result, @Nullable Trajectory trajectory, float finalPower, int whatever) {
         World world = getPackage().world;
         EntityLivingBase caster = getPackage().getCaster();
-        if (caster.getActiveHand() != null) {
-            ItemStack active = caster.getHeldItem(caster.getActiveHand());
-            IImpetusStorage storage = active.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-            if (storage == null) {
+        IImpetusStorage storage = null;
+        for (EnumHand hand : EnumHand.values()) {
+            ItemStack active = caster.getHeldItem(hand);
+            IImpetusStorage temp = active.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+            if (temp == null) {
                 IAugmentableItem item = active.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
                 if (item != null) {
                     for (ItemStack stack : item.getAllAugments()) {
                         IImpetusStorage test = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                         if (test != null && test.canExtract() && test.getEnergyStored() >= TAConfig.shieldFocusImpetusCost.getValue()) {
-                            storage = test;
+                            temp = test;
                             break;
                         }
                     }
                 }
             }
             
+            if (temp != null) {
+                storage = temp;
+                break;
+            }
+        }
+        
+        if (storage != null) {
             if (!world.isRemote && result.typeOfHit == Type.ENTITY) {
                 EntityFocusShield shield = null;
                 if (result.entityHit instanceof EntityFocusShield)
@@ -136,7 +146,8 @@ public class FocusEffectVoidShield extends FocusEffect {
                 if (shield != null) {
                     if (!caster.isSneaking() && storage != null) {
                         double prop = Math.max(shield.getHealth() / shield.getMaxHealth(), (double) shield.getTimeAlive() / shield.getTotalLifespan());
-                        if (ImpetusAPI.tryExtractFully(storage, (long) (prop * TAConfig.shieldFocusImpetusCost.getValue()))) {
+                        if ((caster instanceof EntityPlayer && ((EntityPlayer) caster).isCreative()) || ImpetusAPI.tryExtractFully(
+                                storage, (long) (prop * TAConfig.shieldFocusImpetusCost.getValue()))) {
                             shield.setHealth(shield.getMaxHealth());
                             shield.resetTimeAlive();
                             caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, 
@@ -160,7 +171,8 @@ public class FocusEffectVoidShield extends FocusEffect {
                     }
                 }
                 else if (storage != null) {
-                    if (ImpetusAPI.tryExtractFully(storage, TAConfig.shieldFocusImpetusCost.getValue())) {
+                    if ((caster instanceof EntityPlayer && ((EntityPlayer) caster).isCreative()) || ImpetusAPI.tryExtractFully(
+                            storage, TAConfig.shieldFocusImpetusCost.getValue())) {
                         shield = new EntityFocusShield(world);
                         shield.setOwner(result.entityHit);
                         shield.setCasterID(caster.getUniqueID());

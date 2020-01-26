@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -270,7 +271,10 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                                 ConsumeResult consume = consumer.consume(cost, true);
                                 if (consume.energyConsumed == cost) {
                                     consume = consumer.consume(cost, false);
-                                    NodeHelper.syncAllImpetusTransactions(consume.paths);
+                                    NodeHelper.syncAllImpetusTransactions(consume.paths.keySet());
+                                    for (Map.Entry<Deque<IImpetusNode>, Long> entry : consume.paths.entrySet())
+                                        NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+                                    
                                     impetusPaid = true;
                                     markDirty();
                                 }

@@ -45,7 +45,7 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
     
     public Vec3d getBeamEndpoint();
     
-    public boolean shouldDrawBeamTo(IImpetusNode other);
+    public boolean shouldPhysicalBeamLinkTo(IImpetusNode other);
     
     public boolean shouldEnforceBeamLimitsWith(IImpetusNode other);
     

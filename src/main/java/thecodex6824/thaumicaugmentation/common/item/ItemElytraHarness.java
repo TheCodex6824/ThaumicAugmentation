@@ -111,11 +111,11 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
             @Override
             public void onWornTick(ItemStack stack, EntityLivingBase entity) {
                 if (!entity.world.isRemote) {
-                    if ((entity.ticksElytraFlying + 1) % 20 == 0) {
+                    if (!(entity instanceof EntityPlayer) || (!((EntityPlayer) entity).isCreative()) &&
+                            (entity.ticksElytraFlying + 1) % 20 == 0) {
                         if (RechargeHelper.getCharge(stack) > 0)
                             RechargeHelper.consumeCharge(stack, entity, 1);
                         else if (stack.getItemDamage() < stack.getMaxDamage() - 1) {
-                            // don't damage the stack in creative mode
                             stack.damageItem(1, entity);
                             sync = true;
                         }

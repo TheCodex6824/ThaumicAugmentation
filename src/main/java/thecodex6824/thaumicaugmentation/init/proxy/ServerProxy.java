@@ -171,20 +171,21 @@ public class ServerProxy implements ISidedProxy {
     protected void handleElytraBoostPacket(PacketElytraBoost message, MessageContext context) {
         EntityPlayerMP entity = context.getServerHandler().player;
         ItemStack body = BaublesApi.getBaublesHandler(entity).getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
-        if (!body.isEmpty() && body.getItem() == TAItems.ELYTRA_HARNESS) {
+        if (!body.isEmpty() && body.getItem() == TAItems.ELYTRA_HARNESS && body.getItemDamage() < body.getMaxDamage()) {
             IAugmentableItem i = body.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
             if (i != null) {
                 ItemStack augment = ItemStack.EMPTY;
                 for (ItemStack stack : i.getAllAugments()) {
                     IAugment aug = stack.getCapability(CapabilityAugment.AUGMENT, null);
-                    if (aug instanceof IElytraHarnessAugment && !((IElytraHarnessAugment) aug).isCosmetic()) {
+                    if (stack.getItem() == TAItems.ELYTRA_HARNESS_AUGMENT &&
+                            aug instanceof IElytraHarnessAugment && !((IElytraHarnessAugment) aug).isCosmetic()) {
                         augment = stack;
                         break;
                     }
                 }
                 
                 IImpetusStorage energy = augment.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                if (energy != null && entity.isElytraFlying() && energy.extractEnergy(1, false) == 1) {
+                if (!augment.isEmpty() && energy != null && entity.isElytraFlying() && (entity.isCreative() || energy.extractEnergy(1, false) == 1)) {
                     Vec3d vec3d = entity.getLookVec();
                     entity.motionX += vec3d.x * 0.1 + (vec3d.x * 1.5 - entity.motionX) * 0.5;
                     entity.motionY += vec3d.y * 0.1 + (vec3d.y * 1.5 - entity.motionY) * 0.5;

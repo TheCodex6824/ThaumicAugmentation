@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.Deque;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
@@ -102,7 +104,9 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                             ConsumeResult result = consumer.consume(canReceive, false);
                             if (storage.receiveEnergy(result.energyConsumed, false) > 0) {
                                 ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), player.getPositionVector().add(0, player.height / 2, 0));
-                                NodeHelper.syncAllImpetusTransactions(result.paths);
+                                NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+                                for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+                                    NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
                             }
                         }
                         
@@ -115,7 +119,9 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                                     ConsumeResult result = consumer.consume(canReceive, false);
                                     if (augStorage.receiveEnergy(result.energyConsumed, false) > 0) {
                                         ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), player.getPositionVector().add(0, player.height / 2, 0));
-                                        NodeHelper.syncAllImpetusTransactions(result.paths);
+                                        NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+                                        for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+                                            NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
                                     }
                                 }
                             }
@@ -131,7 +137,9 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                             ConsumeResult result = consumer.consume(canReceive, false);
                             if (storage.receiveEnergy(result.energyConsumed, false) > 0) {
                                 ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), entity.getPositionVector());
-                                NodeHelper.syncAllImpetusTransactions(result.paths);
+                                NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+                                for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+                                    NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
                             }
                         }
                         
@@ -144,7 +152,9 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                                     ConsumeResult result = consumer.consume(canReceive, false);
                                     if (augStorage.receiveEnergy(result.energyConsumed, false) > 0) {
                                         ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), entity.getPositionVector());
-                                        NodeHelper.syncAllImpetusTransactions(result.paths);
+                                        NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+                                        for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+                                            NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
                                     }
                                 }
                             }

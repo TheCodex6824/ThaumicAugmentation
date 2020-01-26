@@ -32,6 +32,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotatio
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationVanilla;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCRobesElytraFlapping;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerUpdateElytra;
@@ -71,6 +72,8 @@ public class TATransformer implements IClassTransformer {
         TRANSFORMERS.add(new TransformerBipedRotationVanilla());
         TRANSFORMERS.add(new TransformerBipedRotationCustomTCArmor());
         TRANSFORMERS.add(new TransformerTCRobesElytraFlapping());
+        
+        TRANSFORMERS.add(new TransformerInfusionLeftoverItems());
     }
     
     public TATransformer() {}

@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.Deque;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
@@ -106,7 +108,9 @@ public class TileImpetusGenerator extends TileEntity implements IBreakCallback, 
                         markDirty();
                         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
                         world.addBlockEvent(pos, getBlockType(), 1, 0);
-                        NodeHelper.syncAllImpetusTransactions(result.paths);
+                        NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+                        for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+                            NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
                     }
                 }
             }
@@ -169,9 +173,8 @@ public class TileImpetusGenerator extends TileEntity implements IBreakCallback, 
     
     @Override
     public boolean receiveClientEvent(int id, int type) {
-        ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
-                pos.getY() + 0.9  + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
-                pos.getZ() + 0.5  + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, 1.5F, Aspect.ELDRITCH.getColor(), false);
+        ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + world.rand.nextFloat(),
+                pos.getY() + world.rand.nextFloat(), pos.getZ() + world.rand.nextFloat(), 1.5F, Aspect.ELDRITCH.getColor(), false);
         
         return true;
     }

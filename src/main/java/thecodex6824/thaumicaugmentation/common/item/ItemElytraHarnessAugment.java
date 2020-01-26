@@ -101,7 +101,8 @@ public class ItemElytraHarnessAugment extends ItemTABase {
                         IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                         if (energy != null && entity.isElytraFlying() && entity.getTicksElytraFlying() >= 2 && ThaumicAugmentation.proxy.isJumpDown()) {
                             // let the server send the updated energy value
-                            if (energy.extractEnergy(1, true) == 1) {
+                            if ((entity instanceof EntityPlayer && ((EntityPlayer) entity).isCreative()) ||
+                                    energy.extractEnergy(1, true) == 1) {
                                 TANetwork.INSTANCE.sendToServer(new PacketElytraBoost());
                                 Vec3d vec3d = entity.getLookVec();
                                 entity.motionX += vec3d.x * 0.1 + (vec3d.x * 1.5 - entity.motionX) * 0.5;

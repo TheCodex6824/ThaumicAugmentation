@@ -35,6 +35,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
@@ -113,6 +114,13 @@ public final class TAHooksCommon {
         }
         
         return false;
+    }
+    
+    public static ItemStack getLeftoverInfusionIngredientStack(ItemStack input, Object output) {
+        if (output instanceof ItemStack && ((ItemStack) output).getItem() == TAItems.MORPHIC_TOOL)
+            return ItemStack.EMPTY;
+        else
+            return input;
     }
     
 }

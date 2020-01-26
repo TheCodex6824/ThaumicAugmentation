@@ -230,6 +230,11 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                 updateBeam();
             }
             
+            if (world.rand.nextFloat() > maxStabilityPerOperation / MAX_STABILITY) {
+                ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + world.rand.nextFloat(),
+                        pos.getY() + world.rand.nextFloat(), pos.getZ() + world.rand.nextFloat(), 5.0F, 0xAA0000, false);
+            }
+            
             EntityFluxRift rift = targetedRift.get();
             if (on && (rift == null || rift.isDead) && clientLoadedID != -1)
                 loadTargetFromID();

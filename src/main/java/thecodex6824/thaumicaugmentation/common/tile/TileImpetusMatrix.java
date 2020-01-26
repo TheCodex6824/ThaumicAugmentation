@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.common.tile;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
@@ -209,6 +210,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         }
         
         float result = 0.0F;
+        ArrayList<BlockPos> issues = new ArrayList<>();
         MutableBlockPos negative = new MutableBlockPos();
         Object2IntOpenHashMap<Block> counts = new Object2IntOpenHashMap<>();
         for (BlockPos positive : positions) {
@@ -229,16 +231,28 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
                 stab2 = 0.1F;
             
             if (b1 == b2 && b1 != null && stab1 > 0.0F && DoubleMath.fuzzyEquals(stab1, stab2, 0.00001F)) {
-                if (b1 instanceof IInfusionStabiliserExt && ((IInfusionStabiliserExt) b1).hasSymmetryPenalty(world, positive, negative))
+                if (b1 instanceof IInfusionStabiliserExt && ((IInfusionStabiliserExt) b1).hasSymmetryPenalty(world, positive, negative)) {
                     result -= ((IInfusionStabiliserExt) b1).getSymmetryPenalty(world, positive);
+                    issues.add(positive);
+                }
                 else {
                     int current = counts.getInt(b1);
                     result += current > 0 ? stab1 * Math.pow(0.75, current) : stab1;
                     counts.addTo(b1, 1);
                 }
             }
-            else
+            else {
                 result -= Math.max(stab1, stab2);
+                issues.add(positive);
+                issues.add(negative.toImmutable());
+            }
+        }
+        
+        for (BlockPos p : issues) {
+            if (world.rand.nextInt(25) == 0) {
+                TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, p.getX(), p.getY(), p.getZ(),
+                        5.0F, Aspect.ELDRITCH.getColor()), new TargetPoint(world.provider.getDimension(), p.getX(), p.getY(), p.getZ(), 64));
+            }
         }
         
         return result;
@@ -250,8 +264,11 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
             if (ticks % 20 == 0) {
                 NodeHelper.validateOutputs(world, prosumer);
                 ConsumeResult result = prosumer.consume(getTotalCells() * CELL_CAPACITY, false);
-                if (result.energyConsumed > 0)
-                    NodeHelper.syncAllImpetusTransactions(result.paths);
+                if (result.energyConsumed > 0) {
+                    NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+                    for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+                        NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+                }
             }
             
             float oldGain = gain;

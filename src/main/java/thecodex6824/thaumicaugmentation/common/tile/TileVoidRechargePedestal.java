@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.tile;
 
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
@@ -55,8 +56,8 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusCon
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 public class TileVoidRechargePedestal extends TileEntity implements ITickable, IBreakCallback {
 
@@ -114,7 +115,7 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
     public void update() {
         if (!world.isRemote && ticks++ % 10 == 0 && !inventory.getStackInSlot(0).isEmpty()) {
             boolean sync = false;
-            ArrayList<Deque<IImpetusNode>> transactions = new ArrayList<>();
+            ArrayList<Map<Deque<IImpetusNode>, Long>> transactions = new ArrayList<>();
             ItemStack stack = inventory.getStackInSlot(0);
             IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
             if (storage != null) {
@@ -122,7 +123,7 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
                 ConsumeResult consume = consumer.consume(receivable, false);
                 if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
                     sync = true;
-                    transactions.addAll(consume.paths);
+                    transactions.add(consume.paths);
                 }
             }
             
@@ -135,7 +136,7 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
                         ConsumeResult consume = consumer.consume(receivable, false);
                         if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
                             sync = true;
-                            transactions.addAll(consume.paths);
+                            transactions.add(consume.paths);
                         }
                     }
                 }
@@ -144,7 +145,12 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable, I
             if (sync) {
                 markDirty();
                 world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
-                NodeHelper.syncAllImpetusTransactions(transactions);
+                for (Map<Deque<IImpetusNode>, Long> map : transactions) {
+                    NodeHelper.syncAllImpetusTransactions(map.keySet());
+                    for (Map.Entry<Deque<IImpetusNode>, Long> entry : map.entrySet())
+                        NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+                }
+                
                 TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK,
                         pos.getX() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, pos.getY() + 0.9 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
                         pos.getZ() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, 1.5, Aspect.ELDRITCH.getColor()),

@@ -20,15 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus.node;
 
-import java.util.Collection;
 import java.util.Deque;
+import java.util.Map;
 
 public class ConsumeResult {
 
     public final long energyConsumed;
-    public final Collection<Deque<IImpetusNode>> paths;
+    public final Map<Deque<IImpetusNode>, Long> paths;
     
-    public ConsumeResult(long l, Collection<Deque<IImpetusNode>> r) {
+    public ConsumeResult(long l, Map<Deque<IImpetusNode>, Long> r) {
         energyConsumed = l;
         paths = r;
     }
