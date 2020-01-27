@@ -47,7 +47,6 @@ public class WorldGenTaintFlower extends WorldGenerator {
                 setBlockAndNotifyAdequately(world, blockpos, TABlocks.TAINT_FLOWER.getDefaultState());
         }
 
-        world.getChunk(position).checkLight();
         return true;
     }
     

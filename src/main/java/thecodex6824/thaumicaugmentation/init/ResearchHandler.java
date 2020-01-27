@@ -75,6 +75,8 @@ public final class ResearchHandler {
         ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONETAINTEDSOIL", TABlocks.STONE.getDefaultState().withProperty(
                 ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY)));
         ScanningManager.addScannableThing(new ScanItem("!VOIDSTONE", new ItemStack(TABlocks.STONE)));
+        ScanningManager.addScannableThing(new ScanItem("!VOIDSTONETAINTED", new ItemStack(TABlocks.STONE, 1, StoneType.STONE_TAINT_NODECAY.getMeta())));
+        ScanningManager.addScannableThing(new ScanItem("!VOIDSTONETAINTEDSOIL", new ItemStack(TABlocks.STONE, 1, StoneType.SOIL_STONE_TAINT_NODECAY.getMeta())));
         
         ScanningManager.addScannableThing(new ScanTool("f_STRONGPICKAXE", "pickaxe", 3));
         ScanningManager.addScannableThing(new ScanItem("f_FLINTANDSTEEL", new ItemStack(Items.FLINT_AND_STEEL)));

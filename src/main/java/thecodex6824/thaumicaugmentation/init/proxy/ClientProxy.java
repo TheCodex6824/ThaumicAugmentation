@@ -645,6 +645,7 @@ public class ClientProxy extends ServerProxy {
     protected void handleBaubleChangePacket(PacketBaubleChange message, MessageContext context) {
         Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
         if (entity instanceof EntityLivingBase) {
+            // this is my internal code so faking args like this is fine (they are unused atm anyway)
             ClientEventHandler.onClientEquipmentChange(new ClientLivingEquipmentChangeEvent((EntityLivingBase) entity,
                     EntityEquipmentSlot.HEAD, ItemStack.EMPTY));
         }
