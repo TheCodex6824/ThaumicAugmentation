@@ -217,18 +217,20 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
                     }
                     
                     Random rand = player.getRNG();
-                    int particleColor = Aspect.FLIGHT.getColor();
-                    FXGeneric fx = new FXGeneric(Minecraft.getMinecraft().world, player.posX + (rand.nextFloat() - rand.nextFloat()),
-                            player.posY + rand.nextFloat(), player.posZ - (rand.nextFloat() - rand.nextFloat()), 0, 0, 0);
-                    fx.setRBGColorF(((particleColor >> 16) & 0xFF) / 255.0F, ((particleColor >> 8) & 0xFF) / 255.0F, (particleColor & 0xFF) / 255.0F);
-                    fx.setAlphaF(0.9F, 0.0F);
-                    fx.setGridSize(64);
-                    fx.setParticles(264, 8, 1);
-                    fx.setScale(1.0F);
-                    fx.setLayer(1);
-                    fx.setLoop(true);
-                    fx.setRotationSpeed(rand.nextFloat(), rand.nextBoolean() ? 1.0F : -1.0F);
-                    ParticleEngine.addEffect(Minecraft.getMinecraft().world, fx);
+                    if (player.isElytraFlying() && rand.nextBoolean()) {
+                        int particleColor = Aspect.FLIGHT.getColor();
+                        FXGeneric fx = new FXGeneric(Minecraft.getMinecraft().world, player.posX + (rand.nextFloat() - rand.nextFloat()),
+                                player.posY + rand.nextFloat(), player.posZ - (rand.nextFloat() - rand.nextFloat()), 0, 0, 0);
+                        fx.setRBGColorF(((particleColor >> 16) & 0xFF) / 255.0F, ((particleColor >> 8) & 0xFF) / 255.0F, (particleColor & 0xFF) / 255.0F);
+                        fx.setAlphaF(0.9F, 0.0F);
+                        fx.setGridSize(64);
+                        fx.setParticles(264, 8, 1);
+                        fx.setScale(1.0F);
+                        fx.setLayer(1);
+                        fx.setLoop(true);
+                        fx.setRotationSpeed(rand.nextFloat(), rand.nextBoolean() ? 1.0F : -1.0F);
+                        ParticleEngine.addEffect(Minecraft.getMinecraft().world, fx);
+                    }
                 }
             }
         }

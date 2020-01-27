@@ -128,7 +128,7 @@ public class RaytraceHelper {
     }
     
     public static List<Entity> raytraceEntities(World world, Vec3d start, Vec3d end) {
-        return world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(start, end),
+        return world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(start.x, start.y, start.z, end.x, end.y, end.z),
                 Predicates.and(EntitySelectors.NOT_SPECTATING, entity -> entity != null && entity.canBeCollidedWith()
         ));
     }

@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.internal;
 
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
@@ -38,7 +40,10 @@ import net.minecraft.world.chunk.Chunk;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
+import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public final class TAHooksCommon {
 
@@ -121,6 +126,16 @@ public final class TAHooksCommon {
             return ItemStack.EMPTY;
         else
             return input;
+    }
+    
+    public static void onBaubleChanged(@Nullable EntityLivingBase entity) {
+        if (entity != null && !entity.getEntityWorld().isRemote) {
+            AugmentEventHandler.onEquipmentChange(entity);
+            PacketBaubleChange pkt = new PacketBaubleChange(entity.getEntityId());
+            TANetwork.INSTANCE.sendToAllTracking(pkt, entity);
+            if (entity instanceof EntityPlayerMP)
+                TANetwork.INSTANCE.sendTo(pkt, (EntityPlayerMP) entity);
+        }
     }
     
 }

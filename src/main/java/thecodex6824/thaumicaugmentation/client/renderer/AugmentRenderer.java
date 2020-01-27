@@ -90,6 +90,10 @@ public class AugmentRenderer {
             bannerReverseMap.put(entry.getValue(), entry.getKey());
     }
     
+    public static EnumDyeColor colorFromThaumcraftBanner(Block bannerBlock) {
+        return bannerReverseMap.getOrDefault(bannerBlock, EnumDyeColor.WHITE);
+    }
+    
     public static void renderElytraBooster(RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing, float limbSwingAmount,
             float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         

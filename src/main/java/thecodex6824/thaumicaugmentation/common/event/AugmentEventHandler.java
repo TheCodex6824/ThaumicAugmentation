@@ -31,8 +31,10 @@ import com.google.common.collect.Iterables;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -40,6 +42,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -49,6 +52,7 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.event.AugmentEventHelper;
 import thecodex6824.thaumicaugmentation.api.event.CastEvent;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
@@ -68,33 +72,32 @@ public final class AugmentEventHandler {
                 oldItems.put(entity, new ArrayList<>(Collections.nCopies(Iterables.size(stacks), ItemStack.EMPTY)));
             else if (oldItems.get(entity).size() < totalIndex + Iterables.size(stacks) + 1)
                 oldItems.get(entity).addAll(Collections.nCopies(Iterables.size(stacks), ItemStack.EMPTY));
-            else {
-                int i = 0;
-                Iterator<ItemStack> iterator = stacks.iterator();
-                while (iterator.hasNext()) {
-                    ItemStack current = iterator.next();
-                    ArrayList<ItemStack> oldList = oldItems.get(entity);
-                    ItemStack old = oldList != null && oldList.size() > i ? oldList.get(i) : ItemStack.EMPTY;
-                    if (!ItemStack.areItemStacksEqual(current, old)) {
-                        if (old.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
-                            AugmentEventHelper.fireUnequipEvent(old.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), entity);
-                    
-                        if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                            AugmentEventHelper.fireEquipEvent(current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), entity);
-                            hasAugments.add(entity);
-                            if (!entity.getEntityWorld().isRemote) {
-                                TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(entity.getEntityId(), totalIndex, current.getCapability(
-                                        CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getSyncNBT()), entity);
-                            }
+            
+            int i = 0;
+            Iterator<ItemStack> iterator = stacks.iterator();
+            while (iterator.hasNext()) {
+                ItemStack current = iterator.next();
+                ArrayList<ItemStack> oldList = oldItems.get(entity);
+                ItemStack old = oldList != null && oldList.size() > i ? oldList.get(i) : ItemStack.EMPTY;
+                if (!ItemStack.areItemStacksEqual(current, old)) {
+                    if (old.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
+                        AugmentEventHelper.fireUnequipEvent(old.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), entity);
+                
+                    if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
+                        AugmentEventHelper.fireEquipEvent(current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), entity);
+                        hasAugments.add(entity);
+                        if (!entity.getEntityWorld().isRemote) {
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(entity.getEntityId(), totalIndex, current.getCapability(
+                                    CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getSyncNBT()), entity);
                         }
-                    
-                        if (oldList != null)
-                            oldList.set(i, current);
                     }
-                    
-                    ++i;
-                    ++totalIndex;
+                
+                    if (oldList != null)
+                        oldList.set(i, current);
                 }
+                
+                ++i;
+                ++totalIndex;
             }
         }
         
@@ -105,6 +108,18 @@ public final class AugmentEventHandler {
     @SubscribeEvent
     public static void onEquipmentChangeEvent(LivingEquipmentChangeEvent event) {
         onEquipmentChange(event.getEntityLiving());
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOW) // low priority to be after baubles syncs the items
+    public static void onJoinWorld(EntityJoinWorldEvent event) {
+        // force a check because baubles has no events
+        if (!event.getWorld().isRemote && event.getEntity() instanceof EntityPlayer) {
+            onEquipmentChange((EntityPlayer) event.getEntity());
+            PacketBaubleChange pkt = new PacketBaubleChange(event.getEntity().getEntityId());
+            TANetwork.INSTANCE.sendToAllTracking(pkt, event.getEntity());
+            if (event.getEntity() instanceof EntityPlayerMP)
+                TANetwork.INSTANCE.sendTo(pkt, (EntityPlayerMP) event.getEntity());
+        }
     }
     
     @SubscribeEvent

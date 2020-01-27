@@ -20,8 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
-import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 
 import baubles.api.BaubleType;
@@ -36,6 +40,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
@@ -74,6 +79,8 @@ import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 public class ServerProxy implements ISidedProxy {
 
     protected static ITARenderHelper renderHelper;
+    protected static Cache<UUID, Integer> invalidBoosts = CacheBuilder.newBuilder().concurrencyLevel(1).
+            expireAfterAccess(5, TimeUnit.MINUTES).build();
 
     @Override
     public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params) {
@@ -156,6 +163,11 @@ public class ServerProxy implements ISidedProxy {
     @Override
     public void handlePacketClient(IMessage message, MessageContext context) {
         ThaumicAugmentation.getLogger().warn("A packet was received on the wrong side: " + message.getClass().toString());
+        if (!isSingleplayer()) {
+            EntityPlayerMP player = context.getServerHandler().player;
+            ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: sent invalid client packet", player.getName(), player.getGameProfile().getId());
+            context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+        }
     }
     
     @Override
@@ -164,8 +176,14 @@ public class ServerProxy implements ISidedProxy {
             handleElytraBoostPacket((PacketElytraBoost) message, context);
         else if (message instanceof PacketInteractGUI)
             handleInteractGUIPacket((PacketInteractGUI) message, context);
-        else
+        else {
             ThaumicAugmentation.getLogger().warn("An unknown packet was received and will be dropped: " + message.getClass().toString());
+            if (!isSingleplayer()) {
+                EntityPlayerMP player = context.getServerHandler().player;
+                ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: sent unknown packet", player.getName(), player.getGameProfile().getId());
+                context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+            }
+        }
     }
     
     protected void handleElytraBoostPacket(PacketElytraBoost message, MessageContext context) {
@@ -190,23 +208,52 @@ public class ServerProxy implements ISidedProxy {
                     entity.motionX += vec3d.x * 0.1 + (vec3d.x * 1.5 - entity.motionX) * 0.5;
                     entity.motionY += vec3d.y * 0.1 + (vec3d.y * 1.5 - entity.motionY) * 0.5;
                     entity.motionZ += vec3d.z * 0.1 + (vec3d.z * 1.5 - entity.motionZ) * 0.5;
-                    Random rand = entity.world.rand;
-                    PacketParticleEffect packet = new PacketParticleEffect(ParticleEffect.FIRE,
-                            entity.posX + rand.nextFloat(), entity.posY + rand.nextFloat() * 2, entity.posZ + rand.nextFloat(),
-                            1.0, 0x101030);
+                    PacketParticleEffect packet = new PacketParticleEffect(ParticleEffect.FIRE_MULTIPLE_RAND,
+                            entity.posX, entity.posY + entity.height / 2.0, entity.posZ,
+                            5.0, 0x101030);
                     TANetwork.INSTANCE.sendTo(packet, entity);
                     TANetwork.INSTANCE.sendToAllTracking(packet, entity);
                     // we don't send a velocity update packet here as it makes the client's view of the player glitch out
                     // at this point the client is correct anyway, we only need to send one if they are wrong
                 }
+                else {
+                    if (!isSingleplayer()) {
+                        int fails = 5;
+                        try {
+                            fails = invalidBoosts.get(entity.getGameProfile().getId(), () -> 0);
+                        }
+                        catch (ExecutionException ex) {}
+                        
+                        if (fails >= 5) {
+                            ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: exceeded maximum acceptable incorrect elytra boost requests", entity.getName(), entity.getGameProfile().getId());
+                            context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+                        }
+                        else {
+                            invalidBoosts.put(entity.getGameProfile().getId(), fails + 1);
+                            entity.connection.sendPacket(new SPacketEntityVelocity(entity));
+                        }
+                    }
+                    else
+                        entity.connection.sendPacket(new SPacketEntityVelocity(entity));
+                }
+            }
+            else {
+                if (!isSingleplayer()) {
+                    ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: attempted elytra boost without augment", entity.getName(), entity.getGameProfile().getId());
+                    context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+                }
                 else
                     entity.connection.sendPacket(new SPacketEntityVelocity(entity));
+            }
+        }
+        else {
+            if (!isSingleplayer()) {
+                ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: attempted elytra boost without item", entity.getName(), entity.getGameProfile().getId());
+                context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
             }
             else
                 entity.connection.sendPacket(new SPacketEntityVelocity(entity));
         }
-        else
-            entity.connection.sendPacket(new SPacketEntityVelocity(entity));
     }
     
     protected void handleInteractGUIPacket(PacketInteractGUI message, MessageContext context) {
@@ -218,6 +265,10 @@ public class ServerProxy implements ISidedProxy {
                     terraformer.getTile().setRadius(Math.max(Math.min(message.getSelectionValue(), 32), 1));
                 else if (message.getComponentID() == 1)
                     terraformer.getTile().setCircle(message.getSelectionValue() != 0);
+                else if (!isSingleplayer()) {
+                    ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: invalid component ID", sender.getName(), sender.getGameProfile().getId());
+                    context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+                }
             }
         }
         else if (sender != null && sender.openContainer instanceof ContainerAutocaster) {
@@ -243,8 +294,18 @@ public class ServerProxy implements ISidedProxy {
                     autocaster.setRedstoneControl(message.getSelectionValue() > 0);
                     break;
                 }
-                default: break;
+                default: {
+                    if (!isSingleplayer()) {
+                        ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: invalid component ID", sender.getName(), sender.getGameProfile().getId());
+                        context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+                    }
+                    break;
+                }
             }
+        }
+        else if (!isSingleplayer()) {
+            ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: invalid container", sender.getName(), sender.getGameProfile().getId());
+            context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
         }
     }
 

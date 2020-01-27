@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -399,6 +400,19 @@ public final class CapabilityHandler {
                 @Override
                 public boolean isCosmetic() {
                     return true;
+                }
+                
+                @Override
+                @SideOnly(Side.CLIENT)
+                public int getCosmeticItemTint() {
+                    if (event.getObject().getItem() == Items.BANNER)
+                        return ItemBanner.getBaseColor(event.getObject()).getColorValue();
+                    else if (event.getObject().getItem() == ItemBlock.getItemFromBlock(BlocksTC.bannerCrimsonCult))
+                        return 0xFF0000;
+                    else if (event.getObject().getItem() instanceof BlockBannerTCItem)
+                        return AugmentRenderer.colorFromThaumcraftBanner(((BlockBannerTCItem) event.getObject().getItem()).getBlock()).getColorValue();
+                    else
+                        return -1;
                 }
                 
                 @Override

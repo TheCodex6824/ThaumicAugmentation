@@ -28,6 +28,7 @@ import org.objectweb.asm.tree.ClassNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerBaubleSlotChanged;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationCustomTCArmor;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationVanilla;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
@@ -74,6 +75,8 @@ public class TATransformer implements IClassTransformer {
         TRANSFORMERS.add(new TransformerTCRobesElytraFlapping());
         
         TRANSFORMERS.add(new TransformerInfusionLeftoverItems());
+        
+        TRANSFORMERS.add(new TransformerBaubleSlotChanged());
     }
     
     public TATransformer() {}

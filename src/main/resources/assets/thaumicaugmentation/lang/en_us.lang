@@ -148,6 +148,7 @@ thaumicaugmentation.text.gate_manual=Impetus Restrictor mode: Manual Control
 thaumicaugmentation.text.gate_redstone=Impetus Restrictor mode: Redstone Control
 thaumicaugmentation.text.gate_cycle_limit=New manual Impetus Restrictor limit: %d
 thaumicaugmentation.text.drawing_disabled=Drawing Ability Disabled
+thaumicaugmentation.text.network_kick=Kicked for protocol violation (cheating attempt?)
 
 thaumicaugmentation.text.config.general=General
 thaumicaugmentation.text.config.gameplay=Gameplay

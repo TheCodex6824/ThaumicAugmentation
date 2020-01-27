@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.integration;
 
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
@@ -30,6 +31,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -85,6 +87,32 @@ public class IntegrationBotania implements IIntegrationHolder {
                 @Override
                 public boolean isCosmetic() {
                     return true;
+                }
+                
+                @Override
+                public boolean hasAdditionalAugmentTooltip() {
+                    return true;
+                }
+                
+                @Override
+                public void appendAdditionalAugmentTooltip(List<String> tooltip) {
+                    tooltip.add(new TextComponentTranslation("botania.wings" + event.getObject().getMetadata()).getFormattedText());
+                }
+                
+                @Override
+                @SideOnly(Side.CLIENT)
+                public int getCosmeticItemTint() {
+                    switch (event.getObject().getMetadata()) {
+                        case 2: return 0x1A1A1A;
+                        case 3: return 0x0099FF;
+                        case 4: return 0xFF4D4D;
+                        case 5: return 0x4D004D;
+                        case 6: return 0x660000;
+                        case 7: return 0x339933;
+                        case 8: return 0xD9D933;
+                        case 9: return 0x00FF00;
+                        default: return -1;
+                    }
                 }
                 
                 @Override
