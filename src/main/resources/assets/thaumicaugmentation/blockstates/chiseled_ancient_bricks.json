@@ -1,0 +1,35 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "minecraft:cube_all",
+        "transform": "forge:default-block"
+     },
+    "variants": {
+        "normal": [
+            { "textures": {
+                "top": "thaumcraft:blocks/ancient_tile",
+                "west": "thaumicaugmentation:blocks/eb_1",
+                "east": "thaumicaugmentation:blocks/eb_2",
+                "north": "thaumicaugmentation:blocks/ebi_1",
+                "south": "thaumicaugmentation:blocks/ebi_2",
+                "bottom": "thaumicaugmentation:blocks/es_p"}
+			},
+            { "textures": {
+                "top": "thaumcraft:blocks/ancient_tile",
+                "west": "thaumicaugmentation:blocks/eb_2",
+                "east": "thaumicaugmentation:blocks/eb_3",
+                "north": "thaumicaugmentation:blocks/ebi_2",
+                "south": "thaumicaugmentation:blocks/ebi_3",
+                "bottom": "thaumicaugmentation:blocks/es_p"}
+			},
+            { "textures": {
+                "top": "thaumcraft:blocks/ancient_tile",
+                "west": "thaumicaugmentation:blocks/eb_1",
+                "east": "thaumicaugmentation:blocks/eb_3",
+                "north": "thaumicaugmentation:blocks/ebi_1",
+                "south": "thaumicaugmentation:blocks/ebi_3",
+                "bottom": "thaumicaugmentation:blocks/es_p"}
+			}
+        ], 
+    }
+}
