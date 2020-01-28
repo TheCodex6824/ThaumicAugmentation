@@ -31,5 +31,6 @@
                 "bottom": "thaumicaugmentation:blocks/es_p"}
 			}
         ], 
+        "inventory": [{}]		
     }
 }
