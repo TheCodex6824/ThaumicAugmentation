@@ -37,7 +37,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Biomes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
@@ -49,6 +48,8 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
+import thecodex6824.thaumicaugmentation.api.world.BiomeMonitorColors;
+import thecodex6824.thaumicaugmentation.api.world.BiomeMonitorColors.MonitorColors;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 
 public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor> {
@@ -74,6 +75,7 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
         GlStateManager.enableBlend();
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.pushMatrix();
         if (target != null) {
             GlStateManager.translate(0.5, 0.875 + Math.sin((te.getWorld().getTotalWorldTime() + partialTicks) / 40.0) / 15.0, 0.5);
@@ -93,22 +95,20 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
         GlStateManager.disableLighting();
         float r = 1.0F, g = 1.0F, b = 1.0F, a = 1.0F;
         if (!te.getMode()) {
-            r = 0.85F;
-            g = 0.9F;
-            b = 0.95F;
+            r = 0.7F;
+            g = 0.7F;
+            b = 0.9F;
             a = 1.0F;
         }
         else {
-            r = 0.85F;
-            g = 0.45F;
-            b = 0.95F;
+            r = 0.65F;
+            g = 0.75F;
+            b = 0.65F;
             a = 1.0F;
         }
         
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
-        
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
         GlStateManager.color(r, g, b, a);
         GlStateManager.disableCull();
         bindTexture(SIDE);
@@ -127,7 +127,6 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
         }
         
         bindTexture(GRID);
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(r / 2.0F, g / 2.0F, b / 2.0F, a);
         GlStateManager.depthMask(false);
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -179,8 +178,11 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
                 rift = rift.onlyCenterPoints(Math.min(rift.getPoints().length, 24));
                 AxisAlignedBB box = rift.getBoundingBox();
                 GlStateManager.translate(0.5, 0.5, 0.5);
-                GlStateManager.scale(0.25 / Math.max(Math.abs(box.minX), Math.abs(box.maxX)), 0.25 / Math.max(Math.abs(box.minY), Math.abs(box.maxY)),
-                        0.25 / Math.max(Math.abs(box.minZ), Math.abs(box.maxZ)));
+                double largestFactor = Math.max(Math.max(Math.abs(box.minX), Math.abs(box.maxX)),
+                        Math.max(Math.max(Math.abs(box.minY), Math.abs(box.maxY)), Math.max(Math.abs(box.minZ), Math.abs(box.maxZ))));
+                largestFactor = Math.max(largestFactor, Math.max(box.maxX - box.minX,
+                        Math.max(box.maxY - box.minY, box.maxZ - box.minZ)) + 1.0);
+                GlStateManager.scale(1.0 / largestFactor, 1.0 / largestFactor, 1.0 / largestFactor);
                 GlStateManager.translate(-(box.maxX - Math.abs(box.minX)) / 2.0, -(box.maxY - Math.abs(box.minY)) / 2.0, -(box.maxZ - Math.abs(box.minZ)) / 2.0);
                 GlStateManager.disableCull();
             }
@@ -195,6 +197,7 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
                 GlStateManager.translate(0.5, 0.05, 0.5);
                 Biome biome = ((IDimensionalFracture) target).getDestinationBiome();
                 if (biome != null) {
+                    MonitorColors colors = BiomeMonitorColors.getMonitorColors(biome);
                     GlStateManager.pushMatrix();
                     GlStateManager.scale(0.0625, 0.0625, 0.0625);
                     MutableBlockPos pos = new MutableBlockPos();
@@ -203,15 +206,11 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
                             pos.setPos(cubeX, (int) y, cubeZ);
                             int color = 0;
                             if (Math.abs(cubeX) < 2 && Math.abs(cubeZ) < 2)
-                                color = biome.getGrassColorAtPos(pos);
+                                color = (colors.getGrassColor() & 0xFF000000) != 0 ? biome.getGrassColorAtPos(pos) : colors.getGrassColor();
                             else if (Math.abs(cubeX) < 3 && Math.abs(cubeZ) < 3)
-                                color = biome.getFoliageColorAtPos(pos);
-                            else {
-                                if (biome == Biomes.HELL)
-                                    color = 0xFF4500;
-                                else
-                                    color = 0x3F76E4 & biome.getWaterColor();
-                            }
+                                color = (colors.getPlantColor() & 0xFF000000) != 0 ? biome.getFoliageColorAtPos(pos) : colors.getPlantColor();
+                            else
+                                color = (colors.getWaterColor() & 0xFF000000) != 0 ? (0x3F76E4 & biome.getWaterColor()) : colors.getWaterColor();
                             
                             float cR = ((color >> 16) & 0xFF) / 255.0F, cG = ((color >> 8) & 0xFF) / 255.0F, cB = (color & 0xFF) / 255.0F;
                             GlStateManager.color(cR, cG, cB, a);
@@ -241,8 +240,9 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
             else {
                 AxisAlignedBB box = target.getEntityBoundingBox().offset(target.getPositionVector().scale(-1.0));
                 GlStateManager.translate(0.5, 0.0, 0.5);
-                GlStateManager.scale(0.5 / Math.max(Math.abs(box.minX), Math.abs(box.maxX)), 1.0 / Math.max(Math.abs(box.minY), Math.abs(box.maxY)),
-                        0.5 / Math.max(Math.abs(box.minZ), Math.abs(box.maxZ)));
+                double largestFactor = Math.max(Math.max(Math.abs(box.minX), Math.abs(box.maxX)),
+                        Math.max(Math.max(Math.abs(box.minY), Math.abs(box.maxY)), Math.max(Math.abs(box.minZ), Math.abs(box.maxZ))));
+                GlStateManager.scale(1.0 / largestFactor, 1.0 / largestFactor, 1.0 / largestFactor);
             }
             
             IDimensionalFracture frac = (IDimensionalFracture) target;

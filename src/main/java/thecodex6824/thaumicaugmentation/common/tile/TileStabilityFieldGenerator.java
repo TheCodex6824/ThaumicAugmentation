@@ -172,18 +172,23 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                         if (serverLoadedID != null)
                             loadTargetFromID();
                         
-                        EnumFacing face = state.getValue(IDirectionalBlock.DIRECTION);
-                        rift = findClosestRift(face);
-                        if (rift != null) {
-                            targetedRift = new WeakReference<>(rift);
-                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
-                            markDirty();
+                        rift = targetedRift.get();
+                        if (rift == null || rift.isDead) {
+                            EnumFacing face = state.getValue(IDirectionalBlock.DIRECTION);
+                            rift = findClosestRift(face);
+                            if (rift != null) {
+                                targetedRift = new WeakReference<>(rift);
+                                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
+                                markDirty();
+                            }
+                            else {
+                                targetedRift.clear();
+                                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
+                                markDirty();
+                            }
                         }
-                        else {
-                            targetedRift.clear();
+                        else
                             world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
-                            markDirty();
-                        }
                     }
                     
                     if (rift != null && !rift.isDead) {
@@ -225,6 +230,9 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
         }
         else if (world.isRemote && ticks++ % 5 == 0) {
             boolean on = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
+            if (!on)
+                targetedRift.clear();
+            
             if (on != lastEnabledState) {
                 lastEnabledState = on;
                 updateBeam();
@@ -319,8 +327,8 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     
     @Override
     public void onBlockBroken() {
-        targetedRift = new WeakReference<>(null);
-        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
+        targetedRift.clear();
+        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
     }
     
     @Override

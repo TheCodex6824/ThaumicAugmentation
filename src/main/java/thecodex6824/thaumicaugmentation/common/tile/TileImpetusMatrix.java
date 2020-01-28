@@ -260,9 +260,10 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     
     @Override
     public void update() {
-        if (!world.isRemote && ticks++ % 10 == 0) {
+        if (!world.isRemote && ++ticks % 10 == 0) {
             if (ticks % 20 == 0) {
                 NodeHelper.validateOutputs(world, prosumer);
+                buffer.validateEnergy();
                 ConsumeResult result = prosumer.consume(getTotalCells() * CELL_CAPACITY, false);
                 if (result.energyConsumed > 0) {
                     NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
@@ -279,7 +280,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
             stability += gain;
             stability = Math.max(Math.min(stability, MAX_STABILITY), MIN_STABILITY);
             if (stability < 0.0F && world.rand.nextInt(1500) <= Math.abs(stability)) {
-                if (world.rand.nextInt(1) == 0) {
+                if (world.rand.nextInt(5) == 0) {
                     if (world.rand.nextBoolean()) {
                         IBlockState state = world.getBlockState(pos.up());
                         int info = state.getValue(IImpetusCellInfo.CELL_INFO);

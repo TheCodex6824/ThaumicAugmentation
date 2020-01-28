@@ -38,6 +38,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.Properties;
 import thaumcraft.api.blocks.BlocksTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.block.property.IImpetusCellInfo;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
@@ -95,10 +97,20 @@ public class BlockImpetusMatrix extends BlockTABase implements IItemBlockProvide
     
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        if (world.getBlockState(pos.down()).getBlock() == TABlocks.IMPETUS_MATRIX_BASE)
+        if (world.getBlockState(pos.down()).getBlock() == TABlocks.IMPETUS_MATRIX_BASE) {
+            int cellCount = IImpetusCellInfo.getNumberOfCells(world.getBlockState(pos.down()).getValue(IImpetusCellInfo.CELL_INFO));
+            if (cellCount > 0)
+                spawnAsEntity(world, pos.down(), new ItemStack(TAItems.MATERIAL, cellCount, 3));
+            
             world.setBlockState(pos.down(), BlocksTC.pedestalEldritch.getDefaultState());
-        if (world.getBlockState(pos.up()).getBlock() == TABlocks.IMPETUS_MATRIX_BASE)
+        }
+        if (world.getBlockState(pos.up()).getBlock() == TABlocks.IMPETUS_MATRIX_BASE) {
+            int cellCount = IImpetusCellInfo.getNumberOfCells(world.getBlockState(pos.up()).getValue(IImpetusCellInfo.CELL_INFO));
+            if (cellCount > 0)
+                spawnAsEntity(world, pos.up(), new ItemStack(TAItems.MATERIAL, cellCount, 3));
+            
             world.setBlockState(pos.up(), BlocksTC.pedestalEldritch.getDefaultState());
+        }
         
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IBreakCallback)

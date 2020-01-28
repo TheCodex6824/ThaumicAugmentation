@@ -14,6 +14,7 @@ import thaumcraft.common.world.biomes.BiomeHandler;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.world.BiomeMonitorColors;
 import thecodex6824.thaumicaugmentation.api.world.BiomeTerrainBlocks;
 import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 import thecodex6824.thaumicaugmentation.api.world.TABiomes;
@@ -103,6 +104,13 @@ public final class WorldHandler {
                 Blocks.NETHERRACK.getDefaultState());
         BiomeTerrainBlocks.registerBiomeOverride(Biomes.SKY, Blocks.END_STONE.getDefaultState(), 
                 Blocks.END_STONE.getDefaultState());
+        
+        BiomeMonitorColors.init();
+        BiomeMonitorColors.registerMonitorColorOverride(Biomes.HELL, 0x881100, 0xA0522D, 0xFF4500);
+        BiomeMonitorColors.registerMonitorColorOverride(Biomes.SKY, 0xFFF8DC, -1, -1);
+        BiomeMonitorColors.registerMonitorColorOverride(TABiomes.EMPTINESS, 0x5B005B, 0x3B003B, -1);
+        BiomeMonitorColors.registerMonitorColorOverride(TABiomes.EMPTINESS_HIGHLANDS, 0x3B003B, -1, -1);
+        BiomeMonitorColors.registerMonitorColorOverride(TABiomes.TAINTED_LANDS, 0x9B009B, 0xFF00FF, -1);
         
         for (Biome biome : TABiomes.getAllBiomes()) {
             if (biome instanceof IPurgeBiomeSpawns)

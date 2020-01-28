@@ -203,18 +203,22 @@ public class ServerProxy implements ISidedProxy {
                 }
                 
                 IImpetusStorage energy = augment.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                if (!augment.isEmpty() && energy != null && entity.isElytraFlying() && (entity.isCreative() || energy.extractEnergy(1, false) == 1)) {
-                    Vec3d vec3d = entity.getLookVec();
-                    entity.motionX += vec3d.x * 0.1 + (vec3d.x * 1.5 - entity.motionX) * 0.5;
-                    entity.motionY += vec3d.y * 0.1 + (vec3d.y * 1.5 - entity.motionY) * 0.5;
-                    entity.motionZ += vec3d.z * 0.1 + (vec3d.z * 1.5 - entity.motionZ) * 0.5;
-                    PacketParticleEffect packet = new PacketParticleEffect(ParticleEffect.FIRE_MULTIPLE_RAND,
-                            entity.posX, entity.posY + entity.height / 2.0, entity.posZ,
-                            5.0, 0x101030);
-                    TANetwork.INSTANCE.sendTo(packet, entity);
-                    TANetwork.INSTANCE.sendToAllTracking(packet, entity);
-                    // we don't send a velocity update packet here as it makes the client's view of the player glitch out
-                    // at this point the client is correct anyway, we only need to send one if they are wrong
+                if (!augment.isEmpty() && energy != null && (entity.isCreative() || energy.extractEnergy(1, false) == 1)) {
+                    // don't kick players that are otherwise legit for bad latency
+                    if (entity.isElytraFlying()) {
+                        Vec3d vec3d = entity.getLookVec();
+                        entity.motionX += vec3d.x * 0.1 + (vec3d.x * 1.5 - entity.motionX) * 0.5;
+                        entity.motionY += vec3d.y * 0.1 + (vec3d.y * 1.5 - entity.motionY) * 0.5;
+                        entity.motionZ += vec3d.z * 0.1 + (vec3d.z * 1.5 - entity.motionZ) * 0.5;
+                        Vec3d dir = entity.getLookVec();
+                        PacketParticleEffect packet = new PacketParticleEffect(ParticleEffect.FIRE_MULTIPLE_RAND,
+                                entity.posX - dir.x, entity.posY + entity.height / 2.0 - dir.y, entity.posZ - dir.z,
+                                5.0, 0x101030);
+                        TANetwork.INSTANCE.sendTo(packet, entity);
+                        TANetwork.INSTANCE.sendToAllTracking(packet, entity);
+                        // we don't send a velocity update packet here as it makes the client's view of the player glitch out
+                        // at this point the client is correct anyway, we only need to send one if they are wrong
+                    }
                 }
                 else {
                     if (!isSingleplayer()) {

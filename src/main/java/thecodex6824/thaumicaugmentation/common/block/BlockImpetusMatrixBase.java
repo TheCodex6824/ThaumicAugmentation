@@ -27,6 +27,7 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -35,6 +36,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -117,6 +119,7 @@ public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellI
                         stack.shrink(1);
                     
                     world.setBlockState(pos, state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(value, facing, true)));
+                    world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
                     return true;
                 }
             }
@@ -124,6 +127,7 @@ public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellI
                     hand != null && (player.getHeldItem(hand).isEmpty() || ItemStack.areItemsEqual(player.getHeldItem(hand), new ItemStack(TAItems.MATERIAL, 1, 3)))) {
                 
                 world.setBlockState(pos, state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(value, facing, false)));
+                world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 if (player.getHeldItem(hand).isEmpty())
                     player.setHeldItem(hand, new ItemStack(TAItems.MATERIAL, 1, 3));
                 else if (player.getHeldItem(hand).getCount() < player.getHeldItem(hand).getMaxStackSize())
@@ -163,13 +167,23 @@ public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellI
         
         if (world.getBlockState(pos.down()).getBlock() == TABlocks.IMPETUS_MATRIX) {
             world.setBlockState(pos.down(), BlocksTC.infusionMatrix.getDefaultState());
-            if (world.getBlockState(pos.down(2)).getBlock() == this)
+            if (world.getBlockState(pos.down(2)).getBlock() == this) {
+                int cellCount = IImpetusCellInfo.getNumberOfCells(world.getBlockState(pos.down(2)).getValue(IImpetusCellInfo.CELL_INFO));
+                if (cellCount > 0)
+                    spawnAsEntity(world, pos.down(2), new ItemStack(TAItems.MATERIAL, cellCount, 3));
+                
                 world.setBlockState(pos.down(2), BlocksTC.pedestalEldritch.getDefaultState());
+            }
         }
         else if (world.getBlockState(pos.up()).getBlock() == TABlocks.IMPETUS_MATRIX) {
             world.setBlockState(pos.up(), BlocksTC.infusionMatrix.getDefaultState());
-            if (world.getBlockState(pos.up(2)).getBlock() == this)
+            if (world.getBlockState(pos.up(2)).getBlock() == this) {
+                int cellCount = IImpetusCellInfo.getNumberOfCells(world.getBlockState(pos.up(2)).getValue(IImpetusCellInfo.CELL_INFO));
+                if (cellCount > 0)
+                    spawnAsEntity(world, pos.up(2), new ItemStack(TAItems.MATERIAL, cellCount, 3));
+                
                 world.setBlockState(pos.up(2), BlocksTC.pedestalEldritch.getDefaultState());
+            }
         }
         
         super.breakBlock(world, pos, state);
