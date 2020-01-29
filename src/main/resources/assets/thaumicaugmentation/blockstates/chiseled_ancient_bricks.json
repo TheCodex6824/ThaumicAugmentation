@@ -8,35 +8,36 @@
 			"east": "thaumicaugmentation:blocks/eb_2",
 			"north": "thaumicaugmentation:blocks/ebi_1",
 			"south": "thaumicaugmentation:blocks/ebi_2",
-            "bottom": "thaumcraft:blocks/ancient_tile",
-            "top": "thaumcraft:blocks/ancient_tile"
+            "down": "thaumcraft:blocks/ancient_tile",
+            "up": "thaumcraft:blocks/ancient_tile",
+            "particle": "thaumcraft:blocks/ancient_tile"
         }
     },
     "variants": {
         "normal": [
             { "textures": {
-                "top": "thaumcraft:blocks/ancient_tile",
+                "up": "thaumcraft:blocks/ancient_tile",
                 "west": "thaumicaugmentation:blocks/eb_1",
                 "east": "thaumicaugmentation:blocks/eb_2",
                 "north": "thaumicaugmentation:blocks/ebi_1",
                 "south": "thaumicaugmentation:blocks/ebi_2",
-                "bottom": "thaumicaugmentation:blocks/es_p"}
+                "down": "thaumicaugmentation:blocks/es_p"}
 			},
             { "textures": {
-                "top": "thaumcraft:blocks/ancient_tile",
+                "up": "thaumcraft:blocks/ancient_tile",
                 "west": "thaumicaugmentation:blocks/eb_2",
                 "east": "thaumicaugmentation:blocks/eb_3",
                 "north": "thaumicaugmentation:blocks/ebi_2",
                 "south": "thaumicaugmentation:blocks/ebi_3",
-                "bottom": "thaumicaugmentation:blocks/es_p"}
+                "down": "thaumicaugmentation:blocks/es_p"}
 			},
             { "textures": {
-                "top": "thaumcraft:blocks/ancient_tile",
+                "up": "thaumcraft:blocks/ancient_tile",
                 "west": "thaumicaugmentation:blocks/eb_1",
                 "east": "thaumicaugmentation:blocks/eb_3",
                 "north": "thaumicaugmentation:blocks/ebi_1",
                 "south": "thaumicaugmentation:blocks/ebi_3",
-                "bottom": "thaumicaugmentation:blocks/es_p"}
+                "down": "thaumicaugmentation:blocks/es_p"}
 			}
         ], 
         "inventory": [{}]
