@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.math.DoubleMath;
 
 import net.minecraft.util.math.BlockPos;
@@ -65,7 +66,8 @@ public final class FractureUtils {
         }
         
         possibleDims = new HashSet<>(map.keySet());
-        dimPicker = new WeightedRandom<>(map.keySet(), map.values());
+        dimPicker = new WeightedRandom<>(ImmutableList.copyOf(map.keySet()),
+                ImmutableList.copyOf(map.values()));
     }
     
     public static void initDimensionCache() {

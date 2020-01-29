@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -40,14 +41,11 @@ public class WeightedRandom<T extends Comparable<T>> {
         weight = calculatedWeights;
     }
     
-    public WeightedRandom(Collection<T> choices, Collection<Integer> weights) {
-        if (choices.size() != weights.size())
-            throw new IllegalArgumentException("Different amount of choices and weights");
-        
-        choice = new ImmutableList.Builder<T>().addAll(choices).build();
-        weight = new int[weights.size()];
-        ArrayList<Integer> tempWeights = new ArrayList<>(weights);
-        for (int i = 0; i < weights.size(); ++i)
+    public WeightedRandom(Map<T, Integer> pairs) {
+        choice = ImmutableList.copyOf(pairs.keySet());
+        weight = new int[pairs.size()];
+        ArrayList<Integer> tempWeights = new ArrayList<>(pairs.values());
+        for (int i = 0; i < pairs.size(); ++i)
             weight[i] = i > 0 ? weight[i - 1] + tempWeights.get(i) : tempWeights.get(i);
     }
     
@@ -55,14 +53,14 @@ public class WeightedRandom<T extends Comparable<T>> {
         if (choices.size() != weights.size())
             throw new IllegalArgumentException("Different amount of choices and weights");
         
-        choice = new ImmutableList.Builder<T>().addAll(choices).build();
+        choice = ImmutableList.copyOf(choices);
         weight = new int[weights.size()];
         for (int i = 0; i < weights.size(); ++i)
             weight[i] = i > 0 ? weight[i - 1] + weights.get(i) : weights.get(i);
     }
     
     public WeightedRandom(WeightedRandom<T> toCopy) {
-        choice = new ImmutableList.Builder<T>().addAll(toCopy.choice).build();
+        choice = ImmutableList.copyOf(toCopy.choice);
         weight = Arrays.copyOf(toCopy.weight, toCopy.weight.length);
     }
     

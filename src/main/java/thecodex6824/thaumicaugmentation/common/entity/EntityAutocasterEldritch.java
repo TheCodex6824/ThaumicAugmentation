@@ -20,7 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -68,7 +67,7 @@ import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
 
 public class EntityAutocasterEldritch extends EntityAutocasterBase implements IMob, IEldritchMob {
     
-    protected static final List<Integer> FOCUS_RANGE = IntStream.range(0, 7).boxed().collect(Collectors.toList());
+    protected static final ImmutableList<Integer> FOCUS_RANGE = ImmutableList.copyOf(IntStream.range(0, 7).boxed().collect(Collectors.toList()));
     
     // all words based on R'lyehian words on https://www.yog-sothoth.com/wiki/index.php/R'lyehian
     protected static final String[] PREFIXES = new String[] {

@@ -51,7 +51,7 @@ public class TransformerInfusionLeftoverItems extends Transformer {
             if (offset != -1) {
                 AbstractInsnNode insertAfter = finish.instructions.get(offset);
                 finish.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS_COMMON,
                         "getLeftoverInfusionIngredientStack",
                         "(Lnet/minecraft/item/ItemStack;Ljava/lang/Object;)Lnet/minecraft/item/ItemStack;",
                         false

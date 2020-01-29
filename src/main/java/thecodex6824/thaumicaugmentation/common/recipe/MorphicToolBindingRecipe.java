@@ -31,6 +31,7 @@ import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 
@@ -63,6 +64,14 @@ public class MorphicToolBindingRecipe extends InfusionRecipe {
                 else
                     quicksilverFound = true;
             }
+            
+            // Thaumcraft tries to leave container items behind, which normally is correct but presents
+            // an issue with morphic tools as it is possible to get the input items back
+            // Without any checks it would allow a partial dupe, letting the player keep both the normal item and
+            // container item, at the cost of doing the infusion.
+            // There is a coremod mitigation for this, but if it's disabled just stop it from being a problem
+            if (!ThaumicAugmentationAPI.isCoremodAvailable() && stack.getItem().hasContainerItem(stack))
+                return false;
         }
 
         return morphicFound && quicksilverFound;
