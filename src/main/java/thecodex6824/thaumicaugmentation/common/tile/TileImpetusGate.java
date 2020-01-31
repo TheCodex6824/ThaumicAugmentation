@@ -34,8 +34,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import thaumcraft.api.items.IGogglesDisplayExtended;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
@@ -47,7 +50,9 @@ import thecodex6824.thaumicaugmentation.api.tile.IImpetusGate;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusGate extends TileEntity implements ITickable, IBreakCallback, IImpetusGate {
+public class TileImpetusGate extends TileEntity implements ITickable, IBreakCallback, IImpetusGate, IGogglesDisplayExtended {
+    
+    protected static final Vec3d OFFSET = new Vec3d(0.0, 0.2, 0.0);
     
     protected ImpetusNode node;
     protected byte limit;
@@ -173,6 +178,29 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
         
         node.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
+    }
+    
+    @Override
+    public String[] getIGogglesText() {
+        if (mode) {
+            return new String[] {
+                    TextFormatting.GOLD + "" + TextFormatting.ITALIC + new TextComponentTranslation("thaumicaugmentation.text.gate_mode").getFormattedText() +
+                    TextFormatting.RED + new TextComponentTranslation("thaumicaugmentation.text.gate_mode_redstone").getFormattedText()
+            };
+        }
+        else {
+            return new String[] {
+                    TextFormatting.GOLD + "" + TextFormatting.ITALIC + new TextComponentTranslation("thaumicaugmentation.text.gate_mode").getFormattedText() +
+                    TextFormatting.WHITE + new TextComponentTranslation("thaumicaugmentation.text.gate_mode_manual").getFormattedText(),
+                    TextFormatting.GOLD + "" + TextFormatting.ITALIC + new TextComponentTranslation("thaumicaugmentation.text.gate_level").getFormattedText() +
+                    TextFormatting.WHITE + new TextComponentTranslation("thaumicaugmentation.text.gate_level_limit", limit).getFormattedText()
+            };
+        }
+    }
+    
+    @Override
+    public Vec3d getIGogglesTextOffset() {
+        return OFFSET;
     }
     
     @Override

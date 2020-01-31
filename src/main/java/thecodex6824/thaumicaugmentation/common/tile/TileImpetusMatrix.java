@@ -449,7 +449,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
                 TextFormatting.BOLD + new TextComponentTranslation(stabName).getFormattedText(),
                 TextFormatting.GOLD + "" + TextFormatting.ITALIC + STAB_FORMATTER.format(gain) + 
                     " " + new TextComponentTranslation("stability.gain").getFormattedText(),
-                TextFormatting.RED + new TextComponentTranslation("stability.range").getFormattedText() + TextFormatting.RED +
+                TextFormatting.RED + "" + TextFormatting.ITALIC + new TextComponentTranslation("stability.range").getFormattedText() + TextFormatting.RED +
                 TextFormatting.ITALIC + STAB_FORMATTER.format(loss) + " " + new TextComponentTranslation("stability.loss").getFormattedText()
             };
         }

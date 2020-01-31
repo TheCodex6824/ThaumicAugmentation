@@ -22,19 +22,18 @@ package thecodex6824.thaumicaugmentation.api.impetus;
 
 import javax.annotation.Nullable;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import thecodex6824.thaumicaugmentation.api.entity.DamageSourceImpetus;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -73,21 +72,21 @@ public final class ImpetusAPI {
             return ENERGY_MAX;
     }
     
-    public static ChatFormatting getSuggestedChatColorForDescriptor(IImpetusStorage storage) {
+    public static TextFormatting getSuggestedChatColorForDescriptor(IImpetusStorage storage) {
         if (storage.getEnergyStored() <= 0)
-            return ChatFormatting.DARK_RED;
+            return TextFormatting.DARK_RED;
         else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.1)
-            return ChatFormatting.RED;
+            return TextFormatting.RED;
         else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.25)
-            return ChatFormatting.GOLD;
+            return TextFormatting.GOLD;
         else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.5)
-            return ChatFormatting.YELLOW;
+            return TextFormatting.YELLOW;
         else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.75)
-            return ChatFormatting.GREEN;
+            return TextFormatting.GREEN;
         else if (storage.getEnergyStored() < storage.getMaxEnergyStored())
-            return ChatFormatting.GREEN;
+            return TextFormatting.GREEN;
         else
-            return ChatFormatting.DARK_GREEN;
+            return TextFormatting.DARK_GREEN;
     }
     
     public static void createImpetusParticles(World world, Vec3d origin, Vec3d dest) {
@@ -201,13 +200,8 @@ public final class ImpetusAPI {
         return amount <= 0;
     }
     
-    public static boolean causeImpetusDamage(EntityLivingBase source, Entity target, float totalDamage) {
-        DamageSource magic = (source instanceof EntityPlayer ? DamageSource.causePlayerDamage((EntityPlayer) source) :
-                DamageSource.causeMobDamage(source)).setDamageBypassesArmor();
-        DamageSource normal = source instanceof EntityPlayer ? DamageSource.causePlayerDamage((EntityPlayer) source) :
-                DamageSource.causeMobDamage(source);
-        
-        boolean result = target.attackEntityFrom(magic, totalDamage / 2.0F);
+    private static boolean doDamage(DamageSource source1, DamageSource source2, Entity target, float damage) {
+        boolean result = target.attackEntityFrom(source1, damage / 2.0F);
         if (result) {
             if (target instanceof EntityLivingBase) {
                 EntityLivingBase base = (EntityLivingBase) target;
@@ -215,10 +209,28 @@ public final class ImpetusAPI {
                 base.lastDamage = 0;
             }
             
-            target.attackEntityFrom(normal, totalDamage / 2.0F);
+            target.attackEntityFrom(source2, damage / 2.0F);
         }
         
         return result;
+    }
+    
+    public static boolean causeImpetusDamage(Entity target, float totalDamage) {
+        DamageSource magic = new DamageSourceImpetus(null).setDamageBypassesArmor().setMagicDamage();
+        DamageSource normal = new DamageSourceImpetus(null);
+        return doDamage(magic, normal, target, totalDamage);
+    }
+    
+    public static boolean causeImpetusDamage(Vec3d source, Entity target, float totalDamage) {
+        DamageSource magic = new DamageSourceImpetus(source).setDamageBypassesArmor().setMagicDamage();
+        DamageSource normal = new DamageSourceImpetus(source);
+        return doDamage(magic, normal, target, totalDamage);
+    }
+    
+    public static boolean causeImpetusDamage(Entity source, Entity target, float totalDamage) {
+        DamageSource magic = new DamageSourceImpetus(source, source.getPositionVector()).setDamageBypassesArmor().setMagicDamage();
+        DamageSource normal = new DamageSourceImpetus(source, source.getPositionVector());
+        return doDamage(magic, normal, target, totalDamage);
     }
     
 }

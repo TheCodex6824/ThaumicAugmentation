@@ -830,6 +830,16 @@ public class ClientProxy extends ServerProxy {
                 return -1;
             }
         }, TAItems.ELYTRA_HARNESS);
+        
+        registerTo.registerItemColorHandler(new IItemColor() {
+            @Override
+            public int colorMultiplier(ItemStack stack, int tintIndex) {
+                if (tintIndex == 1)
+                    return 0x990099;
+                
+                return -1;
+            }
+        }, TABlocks.IMPETUS_GATE);
     }
     
     private static void registerBlockColorHandlers() {
@@ -872,12 +882,16 @@ public class ClientProxy extends ServerProxy {
                 if (tintIndex == 1 && world != null && pos != null) {
                     TileEntity tile = world.getTileEntity(pos);
                     if (tile instanceof IImpetusGate) {
-                        if (((IImpetusGate) tile).isInRedstoneMode())
-                            return 0xAA0000;
+                        if (((IImpetusGate) tile).isInRedstoneMode()) {
+                            if (world instanceof World && ((World) world).isBlockPowered(pos))
+                                return 0xCC0000;
+                            else
+                                return 0x550000;
+                        }
                         else {
                             int level = ((IImpetusGate) tile).getManualLimitLevel();
                             if (level > -1 && level < 16) {
-                                int component = (int) (level / 15.0 * 255.0) & 0xFF;
+                                int component = (int) (level / 15.0 * 153.0) & 0xFF;
                                 return (component << 16) | component;
                             }
                         }

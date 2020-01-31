@@ -127,7 +127,7 @@ thaumicaugmentation.text.energy_weak=Weak
 thaumicaugmentation.text.energy_medium=Medium
 thaumicaugmentation.text.energy_strong=Strong
 thaumicaugmentation.text.energy_max=Maximum
-thaumicaugmentation.text.entered_void=%sYou have visited a vast Emptiness.
+thaumicaugmentation.text.entered_void=You have visited a vast Emptiness.
 thaumicaugmentation.text.stored_seal=Seal: %s
 thaumicaugmentation.text.strength_provider_any=Any Modifier
 thaumicaugmentation.text.effect_provider_any=Any Effect Crystal
@@ -150,6 +150,14 @@ thaumicaugmentation.text.gate_redstone=Impetus Restrictor mode: Redstone Control
 thaumicaugmentation.text.gate_cycle_limit=New manual Impetus Restrictor limit: %d
 thaumicaugmentation.text.drawing_disabled=Drawing Ability Disabled
 thaumicaugmentation.text.network_kick=Kicked for protocol violation (cheating attempt?)
+thaumicaugmentation.text.gate_mode=Mode: 
+thaumicaugmentation.text.gate_mode_redstone=Redstone
+thaumicaugmentation.text.gate_mode_manual=Manual Control
+thaumicaugmentation.text.gate_level=Level: 
+thaumicaugmentation.text.gate_level_limit=%d
+
+thaumicaugmentation.text.damage.impetus=%s was obliterated
+thaumicaugmentation.text.damage.impetus_attack=%s was obliterated by %s
 
 thaumicaugmentation.text.config.general=General
 thaumicaugmentation.text.config.gameplay=Gameplay

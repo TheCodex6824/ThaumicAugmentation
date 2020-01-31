@@ -141,7 +141,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     
     protected void loadTargetFromID() {
         if (!world.isRemote) {
-            List<EntityFluxRift> test = world.getEntities(EntityFluxRift.class, e -> e.getUniqueID().equals(serverLoadedID));
+            List<EntityFluxRift> test = world.getEntities(EntityFluxRift.class, e -> e != null && e.getUniqueID().equals(serverLoadedID));
             if (!test.isEmpty()) {
                 targetedRift = new WeakReference<>(test.get(0));
                 world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
@@ -150,7 +150,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
             serverLoadedID = null;
         }
         else {
-            List<EntityFluxRift> test = world.getEntities(EntityFluxRift.class, e -> e.getEntityId() == clientLoadedID);
+            List<EntityFluxRift> test = world.getEntities(EntityFluxRift.class, e -> e != null && e.getEntityId() == clientLoadedID);
             if (!test.isEmpty()) {
                 targetedRift = new WeakReference<>(test.get(0));
                 updateBeam();
@@ -176,47 +176,49 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                         if (rift == null || rift.isDead) {
                             EnumFacing face = state.getValue(IDirectionalBlock.DIRECTION);
                             rift = findClosestRift(face);
-                            if (rift != null) {
+                            if (rift != null)
                                 targetedRift = new WeakReference<>(rift);
-                                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
-                                markDirty();
-                            }
-                            else {
+                            else
                                 targetedRift.clear();
-                                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
-                                markDirty();
-                            }
+
+                            markDirty();
+                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                         }
                         else
-                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
+                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                     }
                     
                     if (rift != null && !rift.isDead) {
+                        boolean update = false;
                         if (rift.getCollapse()) {
                             BlockPos boom = pos.offset(state.getValue(IDirectionalBlock.DIRECTION));
                             world.createExplosion(null, boom.getX(), boom.getY(), boom.getZ(), 2.0F, true);
                             targetedRift.clear();
-                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
                             markDirty();
+                            update = true;
                         }
                         else if (rift.getRiftStability() < 100.0F && energy.extractEnergy(20, true) == 20) {
                             energy.extractEnergy(20, false);
                             rift.setRiftStability(rift.getRiftStability() + maxStabilityPerOperation);
-                            world.addBlockEvent(pos, getBlockType(), 1, 0);
+                            markDirty();
+                            update = true;
                         }
                         
                         float old = maxStabilityPerOperation;
                         maxStabilityPerOperation = Math.max(maxStabilityPerOperation * 0.95F, 0.05F);
                         if (!DoubleMath.fuzzyEquals(old, maxStabilityPerOperation, 0.00001F)) {
                             markDirty();
-                            world.addBlockEvent(pos, getBlockType(), 2, (int) (maxStabilityPerOperation * 10000.0F));
+                            update = true;
                         }
+                        
+                        if (update)
+                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                     }
                 }
                 else if (targetedRift.get() != null) {
                     targetedRift.clear();
                     markDirty();
-                    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
+                    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                 }
             }
             else {
@@ -224,7 +226,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                 maxStabilityPerOperation = Math.min(Math.max(0.05F, maxStabilityPerOperation * 1.025F), MAX_STABILITY);
                 if (!DoubleMath.fuzzyEquals(old, maxStabilityPerOperation, 0.00001F)) {
                     markDirty();
-                    world.addBlockEvent(pos, getBlockType(), 2, (int) (maxStabilityPerOperation * 10000.0F));
+                    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                 }
             }
         }
@@ -256,7 +258,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     
     protected void updateBeam() {
         EntityFluxRift rift = targetedRift.get();
-        if (rift != null && !rift.isDead && lastEnabledState) {
+        if (rift != null && !rift.isDead && lastEnabledState && (beam == null || !((FXBeamBore) beam).isAlive())) {
             Vec3d dest = RiftHelper.getRiftCenter(rift).add(rift.posX, rift.posY, rift.posZ);
             EnumFacing face = world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION);
             double offsetX = 0.0, offsetY = 0.0, offsetZ = 0.0;
@@ -282,18 +284,15 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                 default: break;
             }
             
-            if (beam == null || !((FXBeamBore) beam).isAlive()) {
-                float mod = maxStabilityPerOperation / 10000.0F;
-                int color = ((int) (0xFF * (mod / MAX_STABILITY)) << 16) | ((int) (0xBF * (mod / MAX_STABILITY)) << 8);
-                beam = FXDispatcher.INSTANCE.beamBore(pos.getX() + offsetX, pos.getY() + offsetY, pos.getZ() + offsetZ,
-                        dest.x, dest.y, dest.z, 1, color,
-                        false, 0.05F, beam, 0);
-                ((FXBeamBore) beam).setMaxAge(Integer.MAX_VALUE);
-                actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
-                asm.transition("opening");
-            }
-            
-            ((FXBeamBore) beam).setRBGColorF(maxStabilityPerOperation / MAX_STABILITY, 0.75F * (maxStabilityPerOperation / MAX_STABILITY), 0);
+            float mod = maxStabilityPerOperation / 10000.0F;
+            int color = ((int) (0xFF * (mod / MAX_STABILITY)) << 16) | ((int) (0xBF * (mod / MAX_STABILITY)) << 8);
+            beam = FXDispatcher.INSTANCE.beamBore(pos.getX() + offsetX, pos.getY() + offsetY, pos.getZ() + offsetZ,
+                    dest.x, dest.y, dest.z, 1, color,
+                    false, 0.05F, beam, 0);
+            ((FXBeamBore) beam).setMaxAge(Integer.MAX_VALUE);
+            updateBeamColor();
+            actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
+            asm.transition("opening");
         }
         else if ((rift == null || rift.isDead || !lastEnabledState) && beam != null) {
             if (((FXBeamBore) beam).isAlive()) {
@@ -305,24 +304,9 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
         }
     }
     
-    @Override
-    public boolean receiveClientEvent(int id, int type) {
-        if (id == 1) {
-            EntityFluxRift rift = targetedRift.get();
-            if (rift != null && !rift.isDead) {
-                updateBeam();
-                return true;
-            }
-            else
-                return false;
-        }
-        else if (id == 2) {
-            maxStabilityPerOperation = type / 10000.0F;
-            updateBeam();
-            return true;
-        }
-        
-        return false;
+    protected void updateBeamColor() {
+        if (beam != null && ((FXBeamBore) beam).isAlive())
+            ((FXBeamBore) beam).setRBGColorF(maxStabilityPerOperation / MAX_STABILITY, 0.75F * (maxStabilityPerOperation / MAX_STABILITY), 0);
     }
     
     @Override
@@ -384,6 +368,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
         Entity e = targetedRift.get();
         compound.setInteger("riftID", e != null ? e.getEntityId() : -1);
         compound.setInteger("energy", energy.getEnergyStored());
+        compound.setFloat("stabRegen", maxStabilityPerOperation);
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
     
@@ -398,6 +383,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
         }
         
         energy.setEnergy(pkt.getNbtCompound().getInteger("energy"));
+        maxStabilityPerOperation = pkt.getNbtCompound().getFloat("stabRegen");
     }
     
     @Override

@@ -56,6 +56,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -271,10 +272,10 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(TextFormatting.GOLD + new TextComponentTranslation("enchantment.special.sapgreat").getFormattedText());
+        tooltip.add(new TextComponentTranslation("enchantment.special.sapgreat").setStyle(new Style().setColor(TextFormatting.GOLD)).getFormattedText());
         super.addInformation(stack, world, tooltip, flag);
         if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("drawingDisabled"))
-            tooltip.add(TextFormatting.RED + new TextComponentTranslation("thaumicaugmentation.text.drawing_disabled").getFormattedText());
+            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.drawing_disabled").setStyle(new Style().setColor(TextFormatting.RED)).getFormattedText());
     }
     
 }

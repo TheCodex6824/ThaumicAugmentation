@@ -49,6 +49,9 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import thaumcraft.api.items.ItemsTC;
@@ -212,9 +215,9 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (!world.isRemote && isAIDisabled()) {
+        if (!world.isRemote && isDisabled()) {
             targeting.resetTask();
-            BlockPos base = getPosition().offset(dataManager.get(FACING).getOpposite());
+            BlockPos base = getPosition().down();
             lookHelper.setLookPosition(base.getX() + 0.5, base.getY() + 0.5, base.getZ() + 0.5, getHorizontalFaceSpeed(), getVerticalFaceSpeed());
             lookHelper.onUpdateLook();
         }
@@ -263,18 +266,25 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     
     @Override
     protected boolean processInteract(EntityPlayer player, EnumHand hand) {
-        if (!world.isRemote && player.equals(getOwner()) && !isDead) {
-            if (player.isSneaking()) {
-                playSound(SoundsTC.zap, 1.0F, 1.0F);
-                dropFocus();
-                entityDropItem(new ItemStack(TAItems.AUTOCASTER_PLACER), 0.5F);
-                setDead();
-                player.swingArm(hand);
-                return true;
+        if (!world.isRemote && !isDead) {
+            if (player.equals(getOwner())) {
+                if (player.isSneaking()) {
+                    playSound(SoundsTC.zap, 1.0F, 1.0F);
+                    dropFocus();
+                    entityDropItem(new ItemStack(TAItems.AUTOCASTER_PLACER), 0.5F);
+                    setDead();
+                    player.swingArm(hand);
+                    return true;
+                }
+                else {
+                    player.openGui(ThaumicAugmentation.instance, TAInventory.AUTOCASTER.getID(), world, getEntityId(), 0, 0);
+                    return true;
+                }
             }
             else {
-                player.openGui(ThaumicAugmentation.instance, TAInventory.AUTOCASTER.getID(), world, getEntityId(), 0, 0);
-                return true;
+                player.sendStatusMessage(new TextComponentTranslation("tc.notowned").setStyle(
+                        new Style().setColor(TextFormatting.DARK_PURPLE).setItalic(true)), true);
+                return false;
             }
         }
         else
@@ -282,9 +292,9 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     }
     
     @Override
-    public boolean isAIDisabled() {
-        return super.isAIDisabled() || (BitUtil.isBitSet(dataManager.get(TARGETS), 4) &&
-                world.getStrongPower(getPosition().offset(dataManager.get(FACING).getOpposite())) > 0);
+    protected boolean isDisabled() {
+        return BitUtil.isBitSet(dataManager.get(TARGETS), 4) &&
+                world.getStrongPower(getPosition().offset(dataManager.get(FACING).getOpposite())) > 0;
     }
     
     @Override
@@ -328,8 +338,6 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
         compound.setInteger("dir", dataManager.get(FACING).getIndex());
         compound.setInteger("cooldown", cooldown);
         compound.setByte("targets", dataManager.get(TARGETS));
-        
-        compound.setBoolean("NoAI", super.isAIDisabled());
     }
     
     @Override

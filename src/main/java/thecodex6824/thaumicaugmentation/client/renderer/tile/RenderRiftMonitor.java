@@ -95,15 +95,15 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
         GlStateManager.disableLighting();
         float r = 1.0F, g = 1.0F, b = 1.0F, a = 1.0F;
         if (!te.getMode()) {
-            r = 0.7F;
-            g = 0.7F;
+            r = 0.5F;
+            g = 0.5F;
             b = 0.9F;
             a = 1.0F;
         }
         else {
-            r = 0.65F;
+            r = 0.55F;
             g = 0.75F;
-            b = 0.65F;
+            b = 0.55F;
             a = 1.0F;
         }
         

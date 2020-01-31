@@ -212,7 +212,7 @@ public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, 
 
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override

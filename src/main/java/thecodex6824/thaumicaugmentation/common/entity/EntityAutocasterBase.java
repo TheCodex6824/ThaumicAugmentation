@@ -121,6 +121,14 @@ public abstract class EntityAutocasterBase extends EntityCreature {
     
     protected abstract int getHealRate();
     
+    protected abstract boolean isDisabled();
+    
+    @Override
+    protected void updateEntityActionState() {
+        if (!isDisabled())
+            super.updateEntityActionState();
+    }
+    
     @Override
     public void onUpdate() {
         super.onUpdate();
@@ -152,7 +160,7 @@ public abstract class EntityAutocasterBase extends EntityCreature {
             if (cooldown > 0)
                 --cooldown;
             
-            if (cooldown == 0 && getAttackTarget() != null)
+            if (cooldown == 0 && !isDisabled() && getAttackTarget() != null)
                 attackEntityWithFocus();
         }
     }
@@ -220,6 +228,11 @@ public abstract class EntityAutocasterBase extends EntityCreature {
     @Override
     public boolean canBeCollidedWith() {
         return true;
+    }
+    
+    @Override
+    public boolean canBeLeashedTo(EntityPlayer player) {
+        return false;
     }
     
     @Override

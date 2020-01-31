@@ -354,6 +354,13 @@ public final class RegistryHandler {
         proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 0), new AspectList().add(Aspect.EARTH, 5).add(Aspect.VOID, 5).add(Aspect.DARKNESS, 3));
         proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 1), new AspectList().add(Aspect.EARTH, 3).add(Aspect.VOID, 3).add(Aspect.DARKNESS, 3).add(Aspect.FLUX, 3));
         proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 2), new AspectList().add(Aspect.EARTH, 3).add(Aspect.VOID, 3).add(Aspect.DARKNESS, 3).add(Aspect.FLUX, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 3), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.MIND, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 4), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.MIND, 10));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 5), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.ORDER, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 6), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.ENTROPY, 3).add(Aspect.LIFE, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 7), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.ENTROPY, 3).add(Aspect.LIFE, 3).add(Aspect.LIGHT, 10));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 8), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.ORDER, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 9), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.ORDER, 3));
         proxy.registerObjectTag(new ItemStack(TABlocks.TAINT_FLOWER), new AspectList().add(Aspect.FLUX, 10).add(Aspect.PLANT, 5));
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.VIS_REGENERATOR), new AspectList().add(Aspect.AURA, 20).add(Aspect.MECHANISM, 15).add(Aspect.ENERGY, 5));
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.WARDED_CHEST), new AspectList().add(Aspect.PROTECT, 7));

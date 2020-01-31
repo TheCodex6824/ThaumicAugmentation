@@ -37,6 +37,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -51,6 +52,13 @@ import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockStabilityFieldGenerator extends BlockTABase implements IDirectionalBlock, IEnabledBlock, IItemBlockProvider {
 
+    protected static final AxisAlignedBB DOWN_BOX = new AxisAlignedBB(0.0, 0.1875, 0.0, 1.0, 1.0, 1.0);
+    protected static final AxisAlignedBB EAST_BOX = new AxisAlignedBB(0.0, 0.0, 0.0, 0.8125, 1.0, 1.0);
+    protected static final AxisAlignedBB NORTH_BOX = new AxisAlignedBB(0.0, 0.0, 0.1875, 1.0, 1.0, 1.0);
+    protected static final AxisAlignedBB SOUTH_BOX = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.8125);
+    protected static final AxisAlignedBB UP_BOX = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.8125, 1.0);
+    protected static final AxisAlignedBB WEST_BOX = new AxisAlignedBB(0.1875, 0.0, 0.0, 1.0, 1.0, 1.0);
+    
     public BlockStabilityFieldGenerator() {
         super(Material.IRON);
         setHardness(3.0F);
@@ -120,20 +128,16 @@ public class BlockStabilityFieldGenerator extends BlockTABase implements IDirect
     }
     
     @Override
-    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param) {
-        if (id != 0) {
-            if (!world.isRemote)
-                return true;
-            else {
-                TileEntity tile = world.getTileEntity(pos);
-                if (tile != null)
-                    return tile.receiveClientEvent(id, param);
-                else
-                    return false;
-            }
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        switch (state.getValue(IDirectionalBlock.DIRECTION)) {
+            case DOWN:  return DOWN_BOX;
+            case EAST:  return EAST_BOX;
+            case NORTH: return NORTH_BOX;
+            case SOUTH: return SOUTH_BOX;
+            case WEST:  return WEST_BOX;
+            case UP:
+            default:    return UP_BOX;
         }
-        
-        return false;
     }
     
     @Override

@@ -22,8 +22,6 @@ package thecodex6824.thaumicaugmentation.client.event;
 
 import java.util.LinkedList;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -35,6 +33,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -96,8 +95,8 @@ public final class ClientEventHandler {
         if (event.getItemStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
             IAugmentableItem cap = event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
             if (cap.isAugmented()) {
-                event.getToolTip().add(ChatFormatting.RED + new TextComponentTranslation("thaumicaugmentation.text.augmented", 
-                        ChatFormatting.RESET, cap.getUsedAugmentSlots(), cap.getTotalAugmentSlots()).getFormattedText());
+                event.getToolTip().add(TextFormatting.RED + new TextComponentTranslation("thaumicaugmentation.text.augmented", 
+                        TextFormatting.RESET, cap.getUsedAugmentSlots(), cap.getTotalAugmentSlots()).getFormattedText());
                 handleAugmentTooltips(event, cap);
             }
         }

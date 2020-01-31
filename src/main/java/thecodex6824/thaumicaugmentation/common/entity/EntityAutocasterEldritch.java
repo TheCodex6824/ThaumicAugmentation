@@ -355,6 +355,11 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
     }
     
     @Override
+    protected boolean isDisabled() {
+        return false;
+    }
+    
+    @Override
     public void onDeath(DamageSource cause) {
         super.onDeath(cause);
         if (!world.isRemote)
