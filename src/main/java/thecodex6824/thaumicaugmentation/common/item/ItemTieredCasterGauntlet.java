@@ -546,8 +546,12 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
                     stack.setTagCompound(nbt);
             }
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer())
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
+            }
         }
     }
     

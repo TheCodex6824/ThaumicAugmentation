@@ -97,16 +97,21 @@ public class ItemCustomCasterAugment extends ItemTABase {
     @Override
     public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
+            ((AugmentCasterCustom) stack.getCapability(CapabilityAugment.AUGMENT, null)).deserializeNBT(nbt.getCompoundTag("cap"));
+            if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+                stack.setTagCompound(nbt.getCompoundTag("item"));
+            else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                nbt.removeTag("cap");
+                if (!nbt.isEmpty())
+                    stack.setTagCompound(nbt);
+            }
+            
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
-                if (nbt.hasKey("item", NBT.TAG_COMPOUND))
-                    stack.setTagCompound(nbt.getCompoundTag("item"));
-                else if (!stack.hasTagCompound())
+                if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
             }
-            
-            ((AugmentCasterCustom) stack.getCapability(CapabilityAugment.AUGMENT, null)).deserializeNBT(nbt.getCompoundTag("cap"));
         }
     }
     
