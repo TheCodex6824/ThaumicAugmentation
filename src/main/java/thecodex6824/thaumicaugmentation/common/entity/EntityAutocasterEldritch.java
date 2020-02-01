@@ -164,6 +164,7 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
     
     public EntityAutocasterEldritch(World world) {
         super(world);
+        experienceValue = 15;
     }
     
     @Override

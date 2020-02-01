@@ -146,8 +146,6 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                 targetedRift = new WeakReference<>(test.get(0));
                 world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 1);
             }
-            
-            serverLoadedID = null;
         }
         else {
             List<EntityFluxRift> test = world.getEntities(EntityFluxRift.class, e -> e != null && e.getEntityId() == clientLoadedID);
@@ -176,10 +174,14 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                         if (rift == null || rift.isDead) {
                             EnumFacing face = state.getValue(IDirectionalBlock.DIRECTION);
                             rift = findClosestRift(face);
-                            if (rift != null)
+                            if (rift != null) {
                                 targetedRift = new WeakReference<>(rift);
-                            else
+                                serverLoadedID = rift.getPersistentID();
+                            }
+                            else {
                                 targetedRift.clear();
+                                serverLoadedID = null;
+                            }
 
                             markDirty();
                             world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
@@ -194,6 +196,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                             BlockPos boom = pos.offset(state.getValue(IDirectionalBlock.DIRECTION));
                             world.createExplosion(null, boom.getX(), boom.getY(), boom.getZ(), 2.0F, true);
                             targetedRift.clear();
+                            serverLoadedID = null;
                             markDirty();
                             update = true;
                         }
@@ -217,6 +220,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                 }
                 else if (targetedRift.get() != null) {
                     targetedRift.clear();
+                    serverLoadedID = null;
                     markDirty();
                     world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                 }
@@ -388,9 +392,8 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        EntityFluxRift rift = targetedRift.get();
-        if (rift != null && !rift.isDead)
-            tag.setUniqueId("rift", rift.getUniqueID());
+        if (serverLoadedID != null)
+            tag.setUniqueId("rift", serverLoadedID);
         
         tag.setInteger("energy", energy.getEnergyStored());
         tag.setFloat("stabRegen", maxStabilityPerOperation);
