@@ -25,6 +25,7 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -176,85 +177,88 @@ public class RenderImpetusMirror extends TileEntitySpecialRenderer<TileImpetusMi
             float alpha) {
         
         super.render(te, x, y, z, partialTicks, destroyStage, alpha);
-        EnumFacing facing = te.getWorld().getBlockState(te.getPos()).getValue(IDirectionalBlock.DIRECTION);
-        Entity rv = Minecraft.getMinecraft().getRenderViewEntity();
-        rv = rv != null ? rv : Minecraft.getMinecraft().player;
-        double dist = rv.getPositionEyes(partialTicks).squareDistanceTo(te.getPos().getX() + 0.5,
-                te.getPos().getY() + 0.25, te.getPos().getZ() + 0.5);
-        if (facing != null && !te.getLink().isInvalid() && dist < 64 * 64) {
-            Random random = new Random(31100);
-            Tessellator t = Tessellator.getInstance();
-            BufferBuilder buffer = t.getBuffer();
-            GlStateManager.pushMatrix();
-            GlStateManager.disableLighting();
-            for (int i = 0; i < 16; ++i) {
-                setupLayer(x, y, z, facing, i);
-                float colorMod, red, green, blue;
-                if (i == 0) {
-                    colorMod = 0.1F;
-                    red = 1.0F;
-                    green = 1.0F;
-                    blue = 1.0F;
+        IBlockState state = te.getWorld().getBlockState(te.getPos());
+        if (state.getPropertyKeys().contains(IDirectionalBlock.DIRECTION)) {
+            EnumFacing facing = state.getValue(IDirectionalBlock.DIRECTION);
+            Entity rv = Minecraft.getMinecraft().getRenderViewEntity();
+            rv = rv != null ? rv : Minecraft.getMinecraft().player;
+            double dist = rv.getPositionEyes(partialTicks).squareDistanceTo(te.getPos().getX() + 0.5,
+                    te.getPos().getY() + 0.25, te.getPos().getZ() + 0.5);
+            if (facing != null && !te.getLink().isInvalid() && dist < 64 * 64) {
+                Random random = new Random(31100);
+                Tessellator t = Tessellator.getInstance();
+                BufferBuilder buffer = t.getBuffer();
+                GlStateManager.pushMatrix();
+                GlStateManager.disableLighting();
+                for (int i = 0; i < 16; ++i) {
+                    setupLayer(x, y, z, facing, i);
+                    float colorMod, red, green, blue;
+                    if (i == 0) {
+                        colorMod = 0.1F;
+                        red = 1.0F;
+                        green = 1.0F;
+                        blue = 1.0F;
+                    }
+                    else {
+                        colorMod = 1.0F / (16 - i + 1.0F);
+                        red = random.nextFloat() * 0.5F + 0.1F;
+                        green = random.nextFloat() * 0.5F + 0.4F;
+                        blue = random.nextFloat() * 0.5F + 0.5F;
+                    }
+                    buffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+                    switch (facing) {
+                        case UP:
+                            buffer.pos(x + 0.1875, y + LAYER_OFFSET, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.1875, y + LAYER_OFFSET, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.8125, y + LAYER_OFFSET, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.8125, y + LAYER_OFFSET, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            break;
+                        case WEST:
+                            buffer.pos(x + (1.0 - LAYER_OFFSET), y + 0.1875, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + (1.0 - LAYER_OFFSET), y + 0.1875, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + (1.0 - LAYER_OFFSET), y + 0.8125, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + (1.0 - LAYER_OFFSET), y + 0.8125, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            break;
+                        case EAST:
+                            buffer.pos(x + LAYER_OFFSET, y + 0.8125, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + LAYER_OFFSET, y + 0.8125, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + LAYER_OFFSET, y + 0.1875, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + LAYER_OFFSET, y + 0.1875, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            break;
+                        case NORTH:
+                            buffer.pos(x + 0.1875, y + 0.1875, z + (1.0 - LAYER_OFFSET)).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.1875, y + 0.8125, z + (1.0 - LAYER_OFFSET)).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.8125, y + 0.8125, z + (1.0 - LAYER_OFFSET)).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.8125, y + 0.1875, z + (1.0 - LAYER_OFFSET)).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            break;
+                        case SOUTH:
+                            buffer.pos(x + 0.1875, y + 0.8125, z + LAYER_OFFSET).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.1875, y + 0.1875, z + LAYER_OFFSET).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.8125, y + 0.1875, z + LAYER_OFFSET).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.8125, y + 0.8125, z + LAYER_OFFSET).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            break;
+                        case DOWN:
+                        default:
+                            buffer.pos(x + 0.1875, y + (1.0 - LAYER_OFFSET), z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.1875, y + (1.0 - LAYER_OFFSET), z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.8125, y + (1.0 - LAYER_OFFSET), z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            buffer.pos(x + 0.8125, y + (1.0 - LAYER_OFFSET), z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
+                            break;
+                    }
+                    t.draw();
+                    GlStateManager.popMatrix();
+                    GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                 }
-                else {
-                    colorMod = 1.0F / (16 - i + 1.0F);
-                    red = random.nextFloat() * 0.5F + 0.1F;
-                    green = random.nextFloat() * 0.5F + 0.4F;
-                    blue = random.nextFloat() * 0.5F + 0.5F;
-                }
-                buffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-                switch (facing) {
-                    case UP:
-                        buffer.pos(x + 0.1875, y + LAYER_OFFSET, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.1875, y + LAYER_OFFSET, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.8125, y + LAYER_OFFSET, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.8125, y + LAYER_OFFSET, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        break;
-                    case WEST:
-                        buffer.pos(x + (1.0 - LAYER_OFFSET), y + 0.1875, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + (1.0 - LAYER_OFFSET), y + 0.1875, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + (1.0 - LAYER_OFFSET), y + 0.8125, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + (1.0 - LAYER_OFFSET), y + 0.8125, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        break;
-                    case EAST:
-                        buffer.pos(x + LAYER_OFFSET, y + 0.8125, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + LAYER_OFFSET, y + 0.8125, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + LAYER_OFFSET, y + 0.1875, z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + LAYER_OFFSET, y + 0.1875, z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        break;
-                    case NORTH:
-                        buffer.pos(x + 0.1875, y + 0.1875, z + (1.0 - LAYER_OFFSET)).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.1875, y + 0.8125, z + (1.0 - LAYER_OFFSET)).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.8125, y + 0.8125, z + (1.0 - LAYER_OFFSET)).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.8125, y + 0.1875, z + (1.0 - LAYER_OFFSET)).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        break;
-                    case SOUTH:
-                        buffer.pos(x + 0.1875, y + 0.8125, z + LAYER_OFFSET).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.1875, y + 0.1875, z + LAYER_OFFSET).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.8125, y + 0.1875, z + LAYER_OFFSET).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.8125, y + 0.8125, z + LAYER_OFFSET).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        break;
-                    case DOWN:
-                    default:
-                        buffer.pos(x + 0.1875, y + (1.0 - LAYER_OFFSET), z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.1875, y + (1.0 - LAYER_OFFSET), z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.8125, y + (1.0 - LAYER_OFFSET), z + 0.1875).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        buffer.pos(x + 0.8125, y + (1.0 - LAYER_OFFSET), z + 0.8125).color(red * colorMod, green * colorMod, blue * colorMod, 1.0F).endVertex();
-                        break;
-                }
-                t.draw();
+                
+                GlStateManager.disableTexGenCoord(TexGen.S);
+                GlStateManager.disableTexGenCoord(TexGen.T);
+                GlStateManager.disableTexGenCoord(TexGen.R);
+                GlStateManager.disableTexGenCoord(TexGen.Q);
+                GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+                GlStateManager.disableBlend();
+                GlStateManager.enableLighting();
                 GlStateManager.popMatrix();
-                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             }
-            
-            GlStateManager.disableTexGenCoord(TexGen.S);
-            GlStateManager.disableTexGenCoord(TexGen.T);
-            GlStateManager.disableTexGenCoord(TexGen.R);
-            GlStateManager.disableTexGenCoord(TexGen.Q);
-            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-            GlStateManager.disableBlend();
-            GlStateManager.enableLighting();
-            GlStateManager.popMatrix();
         }
     }
     

@@ -97,7 +97,8 @@ public class ItemCustomCasterAugment extends ItemTABase {
     @Override
     public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
-            ((AugmentCasterCustom) stack.getCapability(CapabilityAugment.AUGMENT, null)).deserializeNBT(nbt.getCompoundTag("cap"));
+            if (nbt.hasKey("cap", NBT.TAG_COMPOUND))
+                ((AugmentCasterCustom) stack.getCapability(CapabilityAugment.AUGMENT, null)).deserializeNBT(nbt.getCompoundTag("cap"));
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
             else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {

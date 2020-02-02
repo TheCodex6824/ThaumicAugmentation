@@ -55,6 +55,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
         super();
         lastResult = -1;
         target = new WeakReference<>(null);
+        clientTargetID = -1;
     }
     
     @Nullable
@@ -200,7 +201,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
         else
             target.clear();
         
-        world.markBlockRangeForRenderUpdate(pos, pos);
+        world.markBlockRangeForRenderUpdate(pos, pos.up());
     }
     
     @Override
@@ -223,7 +224,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
         else
             target.clear();
         
-        world.markBlockRangeForRenderUpdate(pos, pos);
+        world.markBlockRangeForRenderUpdate(pos, pos.up());
     }
     
     @Override

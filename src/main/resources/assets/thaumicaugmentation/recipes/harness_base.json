@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "P",
+    "C",
+    "B"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateBrass"
+    },
+    "C": {
+      "item": "minecraft:leather_chestplate",
+      "data": 0
+    },
+    "B": {
+      "item": "thaumcraft:baubles",
+      "data": 2
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:material",
+    "data": 4
+  }
+}

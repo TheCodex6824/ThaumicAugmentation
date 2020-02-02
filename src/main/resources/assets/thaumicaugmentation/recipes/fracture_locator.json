@@ -21,9 +21,9 @@
       "item": "thaumcraft:crystal_essence",
       "data": 0,
       "nbt": {
-        "aspects": [
+        "Aspects": [
           {
-            "key": "void",
+            "key": "vacuos",
             "amount": 1
           }
         ]

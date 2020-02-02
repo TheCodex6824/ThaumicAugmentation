@@ -1,7 +1,7 @@
 {
   "type": "thaumicaugmentation:arcane_shaped",
   "research": "RIFT_MONITOR",
-  "vis": 25,
+  "vis": 50,
   "aspects": {
     "aer": 1,
     "terra": 1,

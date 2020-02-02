@@ -161,8 +161,72 @@ public final class RecipeHandler {
             ));
             
             ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_resonator"), new InfusionRecipe(
-                    "IMPETUS_TRANSPORT", new ItemStack(TAItems.MATERIAL, 1, 5), 5, new AspectList().add(Aspect.ORDER, 25).add(Aspect.ENERGY, 10), ItemsTC.voidSeed, new Object[] {
+                    "IMPETUS_TRANSPORT", new ItemStack(TAItems.MATERIAL, 2, 5), 8, new AspectList().add(Aspect.ORDER, 25).add(Aspect.ENERGY, 10), ItemsTC.voidSeed, new Object[] {
                             ItemsTC.quicksilver, Items.DIAMOND
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_mirror"), new InfusionRecipe(
+                    "IMPETUS_MIRROR", new ItemStack(TAItems.IMPETUS_MIRROR), 4, new AspectList().add(Aspect.MOTION, 25).add(Aspect.EXCHANGE, 25).add(Aspect.ENERGY, 25), ItemsTC.mirroredGlass, new Object[] {
+                            Items.ENDER_PEARL, BlocksTC.stoneEldritchTile, new ItemStack(TAItems.MATERIAL, 1, 5), "plateVoid"
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_mover_input"), new InfusionRecipe(
+                    "RIFT_TRANSPORT", new ItemStack(TABlocks.RIFT_MOVER_INPUT), 6, new AspectList().add(Aspect.FLUX, 25).add(Aspect.ELDRITCH, 20).add(Aspect.TRAP, 50).add(
+                            Aspect.EXCHANGE, 10).add(Aspect.MECHANISM, 30).add(Aspect.VOID, 30), "blockAmber", new Object[] {
+                            "plateIron", BlocksTC.stoneArcane, "plateVoid", ItemsTC.mechanismComplex, "plateBrass", BlocksTC.stoneArcane, "plateVoid", ItemsTC.voidSeed
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_mover_output"), new InfusionRecipe(
+                    "RIFT_TRANSPORT", new ItemStack(TABlocks.RIFT_MOVER_OUTPUT), 6, new AspectList().add(Aspect.FLUX, 25).add(Aspect.ELDRITCH, 20).add(Aspect.ENTROPY, 50).add(
+                            Aspect.EXCHANGE, 10).add(Aspect.MECHANISM, 30).add(Aspect.VOID, 30), ItemsTC.alumentum, new Object[] {
+                            ItemsTC.mechanismSimple, "plateVoid", BlocksTC.stoneEldritchTile, "plateBrass", "plateVoid", ItemsTC.voidSeed
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_feeder"), new InfusionRecipe(
+                    "RIFT_FEEDER", new ItemStack(TABlocks.RIFT_FEEDER), 5, new AspectList().add(Aspect.FLUX, 30).add(Aspect.ELDRITCH, 10).add(Aspect.MECHANISM, 50).add(Aspect.VOID, 5),
+                    BlocksTC.essentiaTransportOutput, new Object[] {
+                            ItemsTC.mechanismSimple, "plateBrass", BlocksTC.tube, ItemsTC.morphicResonator, BlocksTC.plankGreatwood, BlocksTC.tube
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumostatic_harness"), new InfusionRecipe(
+                    "THAUMOSTATIC_HARNESS", new ItemStack(TAItems.THAUMOSTATIC_HARNESS), 6, new AspectList().add(Aspect.MECHANISM, 50).add(Aspect.MOTION, 25).add(Aspect.ENERGY, 50).add(Aspect.FLIGHT, 50),
+                    new ItemStack(TAItems.MATERIAL, 1, 4), new Object[] {
+                            ThaumcraftApiHelper.makeCrystal(Aspect.AIR), ThaumcraftApiHelper.makeCrystal(Aspect.AIR), BlocksTC.levitator, BlocksTC.plankGreatwood, BlocksTC.plankGreatwood,
+                            ItemsTC.morphicResonator
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumostatic_gyroscope"), new InfusionRecipe(
+                    "THAUMOSTATIC_HARNESS", new ItemStack(TAItems.THAUMOSTATIC_HARNESS_AUGMENT, 1, 0), 5, new AspectList().add(Aspect.TRAP, 35).add(Aspect.AIR, 25).add(Aspect.FLIGHT, 25),
+                    new ItemStack(ItemsTC.baubles, 1, 2), new Object[] {
+                            "dustRedstone", "plateThaumium", ThaumcraftApiHelper.makeCrystal(Aspect.FLIGHT), "plateThaumium"
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumostatic_girdle"), new InfusionRecipe(
+                    "THAUMOSTATIC_HARNESS", new ItemStack(TAItems.THAUMOSTATIC_HARNESS_AUGMENT, 1, 1), 8, new AspectList().add(Aspect.AIR, 50).add(Aspect.MOTION, 25).add(Aspect.FLIGHT, 25),
+                    new ItemStack(ItemsTC.baubles, 1, 2), new Object[] {
+                            "feather", ThaumcraftApiHelper.makeCrystal(Aspect.FLIGHT), "ingotGold", "feather", ThaumcraftApiHelper.makeCrystal(Aspect.AIR), "ingotGold"
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "elytra_harness"), new InfusionRecipe(
+                    "ELYTRA_HARNESS", new ItemStack(TAItems.ELYTRA_HARNESS), 9, new AspectList().add(Aspect.MOTION, 75).add(Aspect.ENERGY, 50).add(Aspect.FLIGHT, 50),
+                    new ItemStack(TAItems.MATERIAL, 1, 4), new Object[] {
+                            "plateVoid", ItemsTC.visResonator, "feather", Items.ELYTRA
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "elytra_booster"), new InfusionRecipe(
+                    "ELYTRA_BOOSTER", new ItemStack(TAItems.ELYTRA_HARNESS_AUGMENT, 1, 0), 11, new AspectList().add(Aspect.MOTION, 75).add(Aspect.ENERGY, 50).add(Aspect.FLIGHT, 45).add(Aspect.ELDRITCH, 25),
+                    new ItemStack(ItemsTC.baubles, 1, 2), new Object[] {
+                            new ItemStack(TAItems.MATERIAL, 1, 3), ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH), "plateVoid", new ItemStack(TAItems.MATERIAL, 1, 5),
+                            ThaumcraftApiHelper.makeCrystal(Aspect.VOID), "plateVoid"
                     }
             ));
     }

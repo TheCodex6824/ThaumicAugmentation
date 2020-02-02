@@ -106,7 +106,8 @@ public class ItemBiomeSelector extends ItemTABase {
     @Override
     public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
-            ((BiomeSelector) stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null)).deserializeNBT(nbt.getCompoundTag("cap"));
+            if (nbt.hasKey("cap", NBT.TAG_COMPOUND))
+                ((BiomeSelector) stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null)).deserializeNBT(nbt.getCompoundTag("cap"));
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
             else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
@@ -149,17 +150,39 @@ public class ItemBiomeSelector extends ItemTABase {
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab == TAItems.BIOME_SELECTOR_CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
+            boolean capWorkaround = FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer();
+            
             ItemStack stack = new ItemStack(this);
             stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null).setBiomeID(IBiomeSelector.EMPTY);
+            if (capWorkaround) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
+                stack.getTagCompound().setTag("cap", ((BiomeSelector) stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null)).serializeNBT());
+            }
             items.add(stack);
+            
             stack = new ItemStack(this);
             stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null).setBiomeID(IBiomeSelector.RESET);
+            if (capWorkaround) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
+                stack.getTagCompound().setTag("cap", ((BiomeSelector) stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null)).serializeNBT());
+            }
             items.add(stack);
+            
             Iterator<Biome> i = Biome.REGISTRY.iterator();
             while (i.hasNext()) {
                 Biome b = i.next();
                 stack = new ItemStack(this);
                 stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null).setBiomeID(b.getRegistryName());
+                if (capWorkaround) {
+                    if (!stack.hasTagCompound())
+                        stack.setTagCompound(new NBTTagCompound());
+                    
+                    stack.getTagCompound().setTag("cap", ((BiomeSelector) stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null)).serializeNBT());
+                }
                 items.add(stack);
             }
         }

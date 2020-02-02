@@ -1,36 +1,31 @@
 {
   "type": "thaumicaugmentation:arcane_shaped",
   "research": "IMPETUS_TRANSPORT",
-  "vis": 50,
+  "vis": 125,
   "aspects": {
-    "ignis": 1,
     "ordo": 1,
     "perditio": 1
   },
   "pattern": [
-    "I I",
-    "VCV",
-    "SVS"
+    "PP",
+    "RP",
+    "S "
   ],
   "key": {
-    "V": {
+    "P": {
       "type": "forge:ore_dict",
       "ore": "plateVoid"
     },
-    "I": {
-      "type": "forge:ore_dict",
-      "ore": "plateIron"
-    },
-    "C": {
+    "R": {
       "item": "#IMPETUS_RESONATOR"
     },
     "S": {
-      "item": "thaumcraft:stone_arcane",
+      "item": "minecraft:stick",
       "data": 0
     }
   },
   "result": {
-    "item": "thaumicaugmentation:impetus_diffuser",
+    "item": "thaumicaugmentation:impetus_linker",
     "data": 0
   }
 }

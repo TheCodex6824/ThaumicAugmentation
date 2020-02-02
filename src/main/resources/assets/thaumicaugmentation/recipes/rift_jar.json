@@ -8,12 +8,12 @@
   "pattern": [
     "S",
     "J",
-    "V"
+    "P"
   ],
   "key": {
-    "V": {
+    "P": {
       "type": "forge:ore_dict",
-      "ore": "plateVoid"
+      "ore": "plateIron"
     },
     "J": {
       "item": "thaumcraft:jar_normal",

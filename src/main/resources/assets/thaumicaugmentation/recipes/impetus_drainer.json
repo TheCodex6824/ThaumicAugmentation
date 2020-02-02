@@ -8,9 +8,9 @@
     "perditio": 1
   },
   "pattern": [
-    " B ",
+    "VBV",
     "VCV",
-    "VIV"
+    "SIS"
   ],
   "key": {
     "B": {
@@ -26,6 +26,10 @@
     },
     "I": {
       "item": "minecraft:iron_bars",
+      "data": 0
+    },
+    "S": {
+      "item": "thaumcraft:stone_eldritch_tile",
       "data": 0
     }
   },

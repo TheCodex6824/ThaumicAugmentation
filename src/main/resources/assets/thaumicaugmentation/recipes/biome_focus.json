@@ -1,7 +1,7 @@
 {
   "type": "thaumicaugmentation:arcane_shaped",
   "research": "ARCANE_TERRAFORMER",
-  "vis": 150,
+  "vis": 25,
   "aspects": {
     "ignis": 1,
     "aqua": 1,
@@ -11,29 +11,26 @@
     "perditio": 1
   },
   "pattern": [
-    "LPL",
-    "TRT",
-    "LTL"
+    "BTB",
+    "TFT",
+    "BTB"
   ],
   "key": {
-    "L": {
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "plateBrass"
+    },
+    "T": {
       "type": "forge:ore_dict",
       "ore": "plateThaumium"
     },
-    "P": {
-      "item": "thaumcraft:potion_sprayer",
+    "F": {
+      "item": "thaumcraft:focus_1",
       "data": 0
-    },
-    "T": {
-      "item": "thaumcraft:tube",
-      "data": 0
-    },
-    "R": {
-      "item": "#IMPETUS_RESONATOR"
     }
   },
   "result": {
-    "item": "thaumicaugmentation:arcane_terraformer",
+    "item": "thaumicaugmentation:biome_selector",
     "data": 0
   }
 }

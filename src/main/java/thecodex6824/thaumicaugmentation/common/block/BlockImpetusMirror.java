@@ -119,9 +119,9 @@ public class BlockImpetusMirror extends BlockTABase implements IDirectionalBlock
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
         EnumFacing dir = state.getValue(IDirectionalBlock.DIRECTION).getOpposite();
-        if (!world.getBlockState(pos.offset(dir)).isSideSolid(world, pos.offset(dir), dir)) {
-            dropBlockAsItem(world, pos, state, 0);
+        if (!world.getBlockState(pos.offset(dir)).isSideSolid(world, pos.offset(dir), dir.getOpposite())) {
             world.setBlockToAir(pos);
+            dropBlockAsItem(world, pos, state, 0);
         }
     }
     

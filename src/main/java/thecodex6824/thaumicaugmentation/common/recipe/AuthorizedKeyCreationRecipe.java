@@ -61,15 +61,15 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
-        ItemStack ironKey = null;
-        ItemStack brassKey = null;
+        ItemStack ironKey = ItemStack.EMPTY;
+        ItemStack brassKey = ItemStack.EMPTY;
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof ItemKey) {
-                    if (stack.getMetadata() == 0 && ironKey == null)
+                    if (stack.getMetadata() == 0 && ironKey.isEmpty())
                         ironKey = stack;
-                    else if (stack.getMetadata() == 1 && brassKey == null)
+                    else if (stack.getMetadata() == 1 && brassKey.isEmpty())
                         brassKey = stack;
                     else
                         return ItemStack.EMPTY;
@@ -79,7 +79,7 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
             }
         }
 
-        if (ironKey != null && brassKey != null) {
+        if (!ironKey.isEmpty() && !brassKey.isEmpty()) {
             ItemStack output = brassKey.copy();
             output.setItemDamage(0);
 

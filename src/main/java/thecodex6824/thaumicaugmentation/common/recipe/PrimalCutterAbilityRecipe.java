@@ -57,12 +57,12 @@ public class PrimalCutterAbilityRecipe extends IForgeRegistryEntry.Impl<IRecipe>
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
-        ItemStack cutter = null;
+        ItemStack cutter = ItemStack.EMPTY;
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof ItemPrimalCutter) {
-                    if (cutter == null)
+                    if (cutter.isEmpty())
                         cutter = stack;
                     else
                         return ItemStack.EMPTY;
@@ -72,7 +72,7 @@ public class PrimalCutterAbilityRecipe extends IForgeRegistryEntry.Impl<IRecipe>
             }
         }
 
-        if (cutter != null) {
+        if (!cutter.isEmpty()) {
             ItemStack output = cutter.copy();
             if (!output.hasTagCompound())
                 output.setTagCompound(new NBTTagCompound());

@@ -1,0 +1,36 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPETUS_GATE",
+  "vis": 50,
+  "aspects": {
+    "terra": 1,
+    "ordo": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    " S ",
+    "PRP",
+    " C "
+  ],
+  "key": {
+    "S": {
+      "item": "#SIGIL"
+    },
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "R": {
+      "item": "thaumicaugmentation:impetus_relay",
+      "data": 0
+    },
+    "C": {
+      "item": "minecraft:comparator",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impetus_gate",
+    "data": 0
+  }
+}

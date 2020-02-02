@@ -8,7 +8,7 @@
     "ordo": 1
   },
   "pattern": [
-    " R ",
+    "CRC",
     "PTP",
     "EEE"
   ],
@@ -27,6 +27,19 @@
     "P": {
       "type": "forge:ore_dict",
       "ore": "plateVoid"
+    },
+    "C": {
+      "type": "minecraft:item_nbt",
+      "item": "thaumcraft:crystal_essence",
+      "data": 0,
+      "nbt": {
+        "Aspects": [
+          {
+            "key": "alienis",
+            "amount": 1
+          }
+        ]
+      }
     }
   },
   "result": {

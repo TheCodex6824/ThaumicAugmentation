@@ -1,0 +1,45 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "STABILITY_FIELD_GENERATOR",
+  "vis": 250,
+  "aspects": {
+    "terra": 1,
+    "aer": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    "BQB",
+    "SMS",
+    "ARA"
+  ],
+  "key": {
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "plateBrass"
+    },
+    "Q": {
+      "type": "forge:ore_dict",
+      "ore": "blockAmber"
+    },
+    "M": {
+      "item": "thaumcraft:mechanism_complex",
+      "data": 0
+    },
+    "S": {
+      "item": "thaumcraft:slab_arcane_stone",
+      "data": 0
+    },
+    "A": {
+      "item": "thaumcraft:stone_arcane",
+      "data": 0
+    },
+    "R": {
+      "type": "forge:ore_dict",
+      "ore": "dustRedstone"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:stability_field_generator",
+    "data": 0
+  }
+}

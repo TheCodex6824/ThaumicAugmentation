@@ -1,0 +1,41 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPETUS_GENERATOR",
+  "vis": 100,
+  "aspects": {
+    "ignis": 1,
+    "aer": 1,
+    "ordo": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "SRS",
+    "EPE",
+    "SJS"
+  ],
+  "key": {
+    "S": {
+      "item": "thaumcraft:stone_eldritch_tile",
+      "data": 0
+    },
+    "R": {
+      "item": "minecraft:redstone",
+      "data": 0
+    },
+    "E": {
+      "item": "thaumcraft:nugget",
+      "data": 10
+    },
+    "P": {
+      "item": "minecraft:piston",
+      "data": 0
+    },
+    "J": {
+      "item": "#IMPETUS_RESONATOR"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impetus_generator",
+    "data": 0
+  }
+}

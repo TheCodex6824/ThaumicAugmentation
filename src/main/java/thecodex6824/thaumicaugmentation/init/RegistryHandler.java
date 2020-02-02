@@ -114,6 +114,7 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.recipe.AugmentAdditionRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.AugmentRemovalRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.AuthorizedKeyCreationRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.BiomeSelectorSpecialResetRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.CustomAugmentCreationRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.DyeableItemRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ElementChangeRecipe;
@@ -267,6 +268,12 @@ public final class RegistryHandler {
         
         AugmentHandler.registerAugmentBuilderComponents();
     }
+    
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void registerOreDict(RegistryEvent.Register<Item> event) {
+        OreDictionary.registerOre("blockAmber", BlocksTC.amberBlock);
+        OreDictionary.registerOre("blockAmber", BlocksTC.amberBrick);
+    }
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
@@ -286,6 +293,7 @@ public final class RegistryHandler {
         event.getRegistry().register(new CustomAugmentCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "custom_augment")));
         event.getRegistry().register(new MorphicToolUnbindingRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_tool_unbinding")));
         event.getRegistry().register(new PrimalCutterAbilityRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "primal_cutter_ability")));
+        event.getRegistry().register(new BiomeSelectorSpecialResetRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "biome_selector_special_reset")));
     }
 
     @SubscribeEvent
