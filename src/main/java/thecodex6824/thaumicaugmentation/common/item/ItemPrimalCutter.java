@@ -33,6 +33,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IProjectile;
@@ -235,6 +237,11 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
             ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, player.posX, player.posY, player.posZ, player.width / 2.0F, 
                     player.getEntityWorld().rand.nextInt(360), (int) player.posY - 1, 0x221F2F);
         }
+    }
+    
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return enchantment.type == EnumEnchantmentType.WEAPON || super.canApplyAtEnchantingTable(stack, enchantment);
     }
     
     @Override

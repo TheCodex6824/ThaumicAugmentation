@@ -67,44 +67,38 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing Side, float hitX,
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
             float hitY, float hitZ, EnumHand hand) {
 
         if (!world.isRemote) {
-            if (!player.isSneaking()) {
-                ItemStack held = player.getHeldItem(hand);
-                RayTraceResult result = player.rayTrace(10.0F, 1.0F);
-                // seals don't seem to actually exist in a physical state, so raytracing and events don't work (directly)
-                ISealEntity seal = SealHandler.getSealEntity(world.provider.getDimension(), new SealPos(result.getBlockPos(), result.sideHit));
-                if (seal != null) {
-                    if (held.hasTagCompound() && held.getTagCompound().hasKey("seal", NBT.TAG_COMPOUND)) {
-                        if (held.getTagCompound().getString("sealType").equals(seal.getSeal().getKey()) && (!seal.isLocked() || 
-                                seal.getOwner().isEmpty() || seal.getOwner().equals(player.getUniqueID().toString()))) {
+            ItemStack held = player.getHeldItem(hand);
+            RayTraceResult result = player.rayTrace(10.0F, 1.0F);
+            // seals don't seem to actually exist in a physical state, so raytracing and events don't work (directly)
+            ISealEntity seal = SealHandler.getSealEntity(world.provider.getDimension(), new SealPos(result.getBlockPos(), result.sideHit));
+            if (seal != null) {
+                if (held.hasTagCompound() && held.getTagCompound().hasKey("seal", NBT.TAG_COMPOUND)) {
+                    if (held.getTagCompound().getString("sealType").equals(seal.getSeal().getKey()) && (!seal.isLocked() || 
+                            seal.getOwner().isEmpty() || seal.getOwner().equals(player.getUniqueID().toString()))) {
 
-                            SealPos oldPos = seal.getSealPos();
-                            seal.readNBT(held.getTagCompound().getCompoundTag("seal"));
-                            seal.getSealPos().face = oldPos.face;
-                            seal.getSealPos().pos = oldPos.pos;
-                            return EnumActionResult.SUCCESS;
-                        }
-                    }
-                    else if (!seal.isLocked() || seal.getOwner().isEmpty() || seal.getOwner().equals(player.getUniqueID().toString())) {
-                        NBTTagCompound newCompound = new NBTTagCompound();
-                        newCompound.setTag("seal", seal.writeNBT());
-                        // so we don't have to depend on Thaumcraft's internals for the type check
-                        newCompound.setString("sealType", seal.getSeal().getKey());
-                        held.setTagCompound(newCompound);
+                        SealPos oldPos = seal.getSealPos();
+                        seal.readNBT(held.getTagCompound().getCompoundTag("seal"));
+                        seal.getSealPos().face = oldPos.face;
+                        seal.getSealPos().pos = oldPos.pos;
                         return EnumActionResult.SUCCESS;
                     }
                 }
-            }
-            else {
-                player.getHeldItem(hand).setTagCompound(null);
-                return EnumActionResult.SUCCESS;
+                else if (!seal.isLocked() || seal.getOwner().isEmpty() || seal.getOwner().equals(player.getUniqueID().toString())) {
+                    NBTTagCompound newCompound = new NBTTagCompound();
+                    newCompound.setTag("seal", seal.writeNBT());
+                    // so we don't have to depend on Thaumcraft's internals for the type check
+                    newCompound.setString("sealType", seal.getSeal().getKey());
+                    held.setTagCompound(newCompound);
+                    return EnumActionResult.SUCCESS;
+                }
             }
         }
 
-        return EnumActionResult.PASS;
+        return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
     }
 
     @Override
@@ -113,8 +107,8 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
             player.getHeldItem(hand).setTagCompound(null);
             return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
         }
-
-        return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
+        else
+            return super.onItemRightClick(world, player, hand);
     }
     
     @Override

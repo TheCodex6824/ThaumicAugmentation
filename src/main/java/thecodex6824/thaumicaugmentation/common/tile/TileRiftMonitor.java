@@ -132,9 +132,9 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
             }
         }
         else {
-            List<Entity> list = world.getEntities(Entity.class, e -> e != null && e.getEntityId() == clientTargetID);
-            if (!list.isEmpty()) {
-                target = new WeakReference<>(list.get(0));
+            Entity e = world.getEntityByID(clientTargetID);
+            if (e != null) {
+                target = new WeakReference<>(e);
                 clientTargetID = -1;
             }
         }
@@ -143,11 +143,13 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     @Override
     public void update() {
         if (!world.isRemote) {
-            if (serverTargetID != null && (target.get() == null || target.get().isDead))
-                loadTargetFromID();
-            
-            if (timer++ % 20 == 0 && (target.get() == null || target.get().isDead))
-                cycleTarget();
+            if (timer++ % 20 == 0 && (target.get() == null || target.get().isDead)) {
+                if (serverTargetID != null)
+                    loadTargetFromID();
+                
+                if (target.get() == null || target.get().isDead)
+                    cycleTarget();
+            }
             
             if (target.get() != null) {
                 if (target.get().isDead) {
