@@ -72,6 +72,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.block.BlockStabilityFieldGenerator;
+import thecodex6824.thaumicaugmentation.common.block.BlockTABars;
 import thecodex6824.thaumicaugmentation.common.block.BlockTASlab;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStairs;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
@@ -201,6 +202,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockImpetusGate(), "impetus_gate"));
         registry.register(setupBlock(new BlockTASlab.Half(), "slab"));
         registry.register(setupBlock(new BlockTASlab.Double(), "slab_double"));
+        registry.register(setupBlock(new BlockTABars(), "bars"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));

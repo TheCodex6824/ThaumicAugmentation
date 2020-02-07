@@ -27,8 +27,10 @@ import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
@@ -39,7 +41,11 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.IImpulseCannonAugmen
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProviderNoSave;
+import thecodex6824.thaumicaugmentation.common.event.ScheduledEventHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBurst;
+import thecodex6824.thaumicaugmentation.common.network.PacketImpulseRailgunProjectile;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public class ItemImpulseCannonAugment extends ItemTABase {
 
@@ -93,19 +99,14 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                     for (Entity e : ents)
                         ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonRailgunDamage.getValue());
                     
-                    if (user instanceof EntityPlayer)
+                    Vec3d v = user.getLookVec().scale(7.5);
+                    PacketImpulseRailgunProjectile packet = new PacketImpulseRailgunProjectile(user.getEntityId(), v);
+                    TANetwork.INSTANCE.sendToAllTracking(packet, user);
+                    if (user instanceof EntityPlayer) {
                         ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonRailgunCooldown.getValue());
-                }
-                
-                @Override
-                public void applyRecoil(EntityLivingBase user) {
-                    float recoil = 30.0F;
-                    if (user.getHeldItemMainhand().getItem() == TAItems.IMPULSE_CANNON && user.getHeldItemOffhand().isEmpty())
-                        recoil = 15.0F;
-                    else if (user.getHeldItemOffhand().getItem() == TAItems.IMPULSE_CANNON && user.getHeldItemMainhand().isEmpty())
-                        recoil = 15.0F;
-                    
-                    user.rotationPitch = Math.max(user.rotationPitch - recoil, -90.0F);
+                        if (user instanceof EntityPlayerMP)
+                            TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);
+                    }
                 }
                 
             };
@@ -125,40 +126,41 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                 
                 @Override
                 public boolean isTickable(EntityLivingBase user) {
-                    return true;
+                    return false;
                 }
                 
                 @Override
-                public long getImpetusCostPerTick(EntityLivingBase user, int tickCount) {
-                    return tickCount % 2 == 1 ? TAConfig.cannonBurstCost.getValue() : 0;
+                public long getImpetusCostPerUsage(EntityLivingBase user) {
+                    return TAConfig.cannonBurstCost.getValue();
                 }
                 
-                @Override
-                public void onCannonTick(EntityLivingBase user, int tickCount) {
-                    if (tickCount % 2 == 1) {
-                        Entity e = RaytraceHelper.raytraceEntity(user, TAConfig.cannonBurstRange.getValue());
-                        if (e != null && ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonBurstDamage.getValue()) && tickCount != 1 &&
-                                    e instanceof EntityLivingBase) {
-                                
-                            EntityLivingBase base = (EntityLivingBase) e;
-                            base.hurtResistantTime = Math.min(base.hurtResistantTime, 1);
-                            base.lastDamage = 0.0F;
-                        }
-                        
-                        if (tickCount == 1 && user instanceof EntityPlayer)
-                            ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonBurstCooldown.getValue());
+                private boolean tick(EntityLivingBase user, int num) {
+                    Entity e = RaytraceHelper.raytraceEntity(user, TAConfig.cannonBurstRange.getValue());
+                    if (e != null && ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonBurstDamage.getValue()) && num < 2
+                            && e instanceof EntityLivingBase) {
+                            
+                        EntityLivingBase base = (EntityLivingBase) e;
+                        base.hurtResistantTime = Math.min(base.hurtResistantTime, 1);
+                        base.lastDamage = 0.0F;
                     }
+                    
+                    if (num < 2)
+                        ScheduledEventHandler.registerTask(() -> tick(user, num + 1));
+                    
+                    return false;
                 }
                 
                 @Override
-                public void applyRecoil(EntityLivingBase user) {
-                    float recoil = 4.0F;
-                    if (user.getHeldItemMainhand().getItem() == TAItems.IMPULSE_CANNON && user.getHeldItemOffhand().isEmpty())
-                        recoil = 2.0F;
-                    else if (user.getHeldItemOffhand().getItem() == TAItems.IMPULSE_CANNON && user.getHeldItemMainhand().isEmpty())
-                        recoil = 2.0F;
-                    
-                    user.rotationPitch = Math.max(user.rotationPitch - recoil, -90.0F);
+                public void onCannonUsage(EntityLivingBase user) {
+                    ScheduledEventHandler.registerTask(() -> tick(user, 0));
+                    Vec3d v = user.getLookVec().scale(7.5);
+                    PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), v);
+                    TANetwork.INSTANCE.sendToAllTracking(packet, user);
+                    if (user instanceof EntityPlayer) {
+                        ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonBurstCooldown.getValue());
+                        if (user instanceof EntityPlayerMP)
+                            TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);
+                    }
                 }
                 
             };

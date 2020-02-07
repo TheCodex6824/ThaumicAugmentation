@@ -1,0 +1,27 @@
+{
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"textures": {
+        "particle": "thaumicaugmentation:blocks/ancient_bars",
+        "bars": "thaumicaugmentation:blocks/ancient_bars",
+        "edge": "thaumicaugmentation:blocks/ancient_bars"
+    },
+	"elements": [
+		{
+			"from": [8, 0, 7],
+			"to": [8, 16, 9],
+			"faces": {
+				"east": {"uv": [11, 0, 9, 16], "texture": "#bars"},
+				"west": {"uv": [9, 0, 11, 16], "texture": "#bars"}
+			}
+		},
+		{
+			"from": [7, 0, 8],
+			"to": [9, 16, 8],
+			"faces": {
+				"north": {"uv": [9, 0, 11, 16], "texture": "#bars"},
+				"south": {"uv": [11, 0, 9, 16], "texture": "#bars"}
+			}
+		}
+	]
+}

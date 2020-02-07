@@ -34,6 +34,7 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.ITABarsType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITASlabType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
@@ -53,6 +54,7 @@ public final class ModelRegistryHandler {
         ModelLoader.setCustomStateMapper(TABlocks.STONE, new StateMap.Builder().withName(ITAStoneType.STONE_TYPE).build());
         ModelLoader.setCustomStateMapper(TABlocks.SLAB, new StateMap.Builder().withName(ITASlabType.SLAB_TYPE).ignore(ITASlabType.DOUBLE).withSuffix("_slab").build());
         ModelLoader.setCustomStateMapper(TABlocks.SLAB_DOUBLE, new StateMap.Builder().withName(ITASlabType.SLAB_TYPE).ignore(ITASlabType.DOUBLE).ignore(BlockSlab.HALF).withSuffix("_slab_double").build());
+        ModelLoader.setCustomStateMapper(TABlocks.BARS, new StateMap.Builder().withName(ITABarsType.BARS_TYPE).build());
         
         for (Block b : TABlocks.getAllBlocks()) {
             if (b instanceof IModelProvider<?>)

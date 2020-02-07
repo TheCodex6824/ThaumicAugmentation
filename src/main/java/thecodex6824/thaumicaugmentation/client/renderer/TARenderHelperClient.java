@@ -20,15 +20,28 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer;
 
+import javax.annotation.Nullable;
+
 import org.lwjgl.opengl.GL11;
 
 import com.sasmaster.glelwjgl.java.CoreGLE;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelBox;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Biomes;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -40,6 +53,7 @@ import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXFireMote;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.lib.utils.EntityUtils;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.client.fx.FXArcCustom;
@@ -471,6 +485,70 @@ public class TARenderHelperClient implements ITARenderHelper {
         fx.setNoClip(false);
         fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
         ParticleEngine.addEffect(world, fx);
+    }
+    
+    @Nullable
+    private static EnumHand findImpulseCannon(EntityLivingBase entity) {
+        ItemStack stack = entity.getHeldItemMainhand();
+        if (stack.getItem() == TAItems.IMPULSE_CANNON)
+            return EnumHand.MAIN_HAND;
+        
+        stack = entity.getHeldItemOffhand();
+        if (stack.getItem() == TAItems.IMPULSE_CANNON)
+            return EnumHand.OFF_HAND;
+        
+        return null;
+    }
+    
+    @Override
+    public Vec3d estimateImpulseCannonFiringPoint(EntityLivingBase entity, float partialTicks) {
+        Vec3d origin = null;
+        Entity rv = Minecraft.getMinecraft().getRenderViewEntity() != null ? Minecraft.getMinecraft().getRenderViewEntity() :
+            Minecraft.getMinecraft().player;
+        Render<? extends Entity> r = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entity);
+        if (r instanceof RenderLivingBase<?>) {
+            ModelBase model = ((RenderLivingBase<?>) r).getMainModel();
+            if (model instanceof ModelBiped) {
+                ModelBiped biped = (ModelBiped) model;
+                EnumHand hand = findImpulseCannon(entity);
+                EnumHandSide side = hand == EnumHand.MAIN_HAND ? entity.getPrimaryHand() : entity.getPrimaryHand().opposite();
+                ModelRenderer arm = side == EnumHandSide.RIGHT ? biped.bipedRightArm : biped.bipedLeftArm;
+                boolean firstPerson = entity.equals(rv) && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0;
+                float armLength = 0.0F;
+                if (!arm.cubeList.isEmpty()) {
+                    ModelBox box = arm.cubeList.get(0);
+                    armLength = box.posY2 / 16.0F + (firstPerson ? -0.25F : 0.75F);
+                }
+                else
+                    armLength = 0.625F + (firstPerson ? -0.25F : 0.75F);
+                
+                double lerpX = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
+                double lerpY = entity.prevPosY + (entity.posY - entity.prevPosY) * partialTicks;
+                double lerpZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
+                float lerpPitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+                float lerpYaw = entity.prevRotationYawHead + (entity.rotationYawHead - entity.prevRotationYawHead) * partialTicks;
+                origin = new Vec3d((firstPerson ? 0.125 : 0.325) * (side == EnumHandSide.RIGHT ? -1.0F : 1.0F), 0.0, armLength).rotatePitch(
+                        (float) -Math.toRadians(lerpPitch)).rotateYaw((float) -Math.toRadians(lerpYaw)).add(
+                                lerpX, lerpY, lerpZ).add(0.0, firstPerson ? 1.525F : entity.getEyeHeight(), 0.0);
+            }
+        }
+        
+        if (origin == null) {
+            if (entity.equals(rv)) {
+                double lerpX = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
+                double lerpY = entity.prevPosY + (entity.posY - entity.prevPosY) * partialTicks;
+                double lerpZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
+                origin = new Vec3d(lerpX, lerpY, lerpZ).add(0.0, entity.height / 2.0F, 0.0);
+            }
+            else {
+                double lerpX = rv.prevPosX + (rv.posX - rv.prevPosX) * partialTicks;
+                double lerpY = rv.prevPosY + (rv.posY - rv.prevPosY) * partialTicks;
+                double lerpZ = rv.prevPosZ + (rv.posZ - rv.prevPosZ) * partialTicks;
+                origin = new Vec3d(lerpX, lerpY, lerpZ).add(0.0, rv.height / 2.0F, 0.0);
+            }
+        }
+        
+        return origin;
     }
     
     @Override

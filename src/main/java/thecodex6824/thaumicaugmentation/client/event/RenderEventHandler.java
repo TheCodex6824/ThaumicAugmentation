@@ -41,11 +41,16 @@ import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelBox;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -58,7 +63,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -112,10 +116,12 @@ public class RenderEventHandler {
         else {
             FXBeamBore bore = IMPULSE_CACHE.getIfPresent(entity);
             if (bore == null) {
-                Vec3d origin = entity.getPositionEyes(1.0F);
+                Vec3d origin = entity.getPositionEyes(Minecraft.getMinecraft().getRenderPartialTicks());
                 Vec3d dest = RaytraceHelper.raytracePosition(entity, TAConfig.cannonBeamRange.getValue());
-                IMPULSE_CACHE.put(entity, (FXBeamBore) FXDispatcher.INSTANCE.beamBore(origin.x, origin.y, origin.z,
-                        dest.x, dest.y, dest.z, 1, 0x404080, false, 0.01F, bore, 1));
+                bore = (FXBeamBore) FXDispatcher.INSTANCE.beamBore(origin.x, origin.y, origin.z,
+                        dest.x, dest.y, dest.z, 1, 0x6060B0, false, 0.01F, bore, Integer.MAX_VALUE);
+                bore.setPulse(true);
+                IMPULSE_CACHE.put(entity, bore);
             }
             else
                 IMPULSE_CACHE.put(entity, bore);
@@ -211,11 +217,6 @@ public class RenderEventHandler {
                 }
             }
         }
-    }
-    
-    @SubscribeEvent
-    public static void onRenderLiving(RenderLivingEvent.Pre<EntityLivingBase> event) {
-        
     }
     
     @SubscribeEvent
@@ -439,12 +440,50 @@ public class RenderEventHandler {
         for (Map.Entry<EntityLivingBase, FXBeamBore> entry : IMPULSE_CACHE.asMap().entrySet()) {
             EntityLivingBase entity = entry.getKey();
             Vec3d origin = null;
-            if (entity.equals(rv))
-                origin = entity.getPositionEyes(event.getPartialTicks());
-            else
-                origin = entity.getPositionEyes(event.getPartialTicks());
+            Render<? extends Entity> r = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entity);
+            if (r instanceof RenderLivingBase<?>) {
+                ModelBase model = ((RenderLivingBase<?>) r).getMainModel();
+                if (model instanceof ModelBiped) {
+                    ModelBiped biped = (ModelBiped) model;
+                    EnumHand hand = findImpulseCannon(entity);
+                    EnumHandSide side = hand == EnumHand.MAIN_HAND ? entity.getPrimaryHand() : entity.getPrimaryHand().opposite();
+                    ModelRenderer arm = side == EnumHandSide.RIGHT ? biped.bipedRightArm : biped.bipedLeftArm;
+                    boolean firstPerson = entity.equals(rv) && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0;
+                    float armLength = 0.0F;
+                    if (!arm.cubeList.isEmpty()) {
+                        ModelBox box = arm.cubeList.get(0);
+                        armLength = box.posY2 / 16.0F + (firstPerson ? -0.25F : 0.75F);
+                    }
+                    else
+                        armLength = 0.625F + (firstPerson ? -0.25F : 0.75F);
+                    
+                    double lerpX = entity.prevPosX + (entity.posX - entity.prevPosX) * event.getPartialTicks();
+                    double lerpY = entity.prevPosY + (entity.posY - entity.prevPosY) * event.getPartialTicks();
+                    double lerpZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * event.getPartialTicks();
+                    float lerpPitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * event.getPartialTicks();
+                    float lerpYaw = entity.prevRotationYawHead + (entity.rotationYawHead - entity.prevRotationYawHead) * event.getPartialTicks();
+                    origin = new Vec3d((firstPerson ? 0.125 : 0.325) * (side == EnumHandSide.RIGHT ? -1.0F : 1.0F), 0.0, armLength).rotatePitch(
+                            (float) -Math.toRadians(lerpPitch)).rotateYaw((float) -Math.toRadians(lerpYaw)).add(
+                                    lerpX, lerpY, lerpZ).add(0.0, firstPerson ? 1.525F : entity.getEyeHeight(), 0.0);
+                }
+            }
             
-            Vec3d dest = RaytraceHelper.raytracePosition(entity, TAConfig.cannonBeamRange.getValue());
+            if (origin == null) {
+                if (entity.equals(rv)) {
+                    double lerpX = entity.prevPosX + (entity.posX - entity.prevPosX) * event.getPartialTicks();
+                    double lerpY = entity.prevPosY + (entity.posY - entity.prevPosY) * event.getPartialTicks();
+                    double lerpZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * event.getPartialTicks();
+                    origin = new Vec3d(lerpX, lerpY, lerpZ).add(0.0, entity.height / 2.0F, 0.0);
+                }
+                else {
+                    double lerpX = rv.prevPosX + (rv.posX - rv.prevPosX) * event.getPartialTicks();
+                    double lerpY = rv.prevPosY + (rv.posY - rv.prevPosY) * event.getPartialTicks();
+                    double lerpZ = rv.prevPosZ + (rv.posZ - rv.prevPosZ) * event.getPartialTicks();
+                    origin = new Vec3d(lerpX, lerpY, lerpZ).add(0.0, rv.height / 2.0F, 0.0);
+                }
+            }
+            
+            Vec3d dest = RaytraceHelper.raytracePosition(entity, TAConfig.cannonBeamRange.getValue(), event.getPartialTicks());
             entry.getValue().updateBeam(origin.x, origin.y, origin.z, dest.x, dest.y, dest.z);
         }
         

@@ -37,6 +37,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -72,7 +73,10 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
 
         if (!world.isRemote) {
             ItemStack held = player.getHeldItem(hand);
-            RayTraceResult result = player.rayTrace(10.0F, 1.0F);
+            Vec3d eyes = player.getPositionEyes(1.0F);
+            Vec3d dir = player.getLookVec();
+            Vec3d extended = eyes.add(dir.x * 10.0F, dir.y * 10.0F, dir.z * 10.0F);
+            RayTraceResult result = world.rayTraceBlocks(eyes, extended, false, false, true);
             // seals don't seem to actually exist in a physical state, so raytracing and events don't work (directly)
             ISealEntity seal = SealHandler.getSealEntity(world.provider.getDimension(), new SealPos(result.getBlockPos(), result.sideHit));
             if (seal != null) {

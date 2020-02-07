@@ -52,6 +52,8 @@ public final class TANetwork {
         // this is a TC packet but the handler impl doesn't add a scheduled task
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFXShield.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketImpulseBeam.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketImpulseBurst.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketImpulseRailgunProjectile.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(PacketFXFocusPartImpact.class, PacketFXFocusPartImpact.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketLivingEquipmentChange.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketBaubleChange.class, id++, Side.CLIENT);

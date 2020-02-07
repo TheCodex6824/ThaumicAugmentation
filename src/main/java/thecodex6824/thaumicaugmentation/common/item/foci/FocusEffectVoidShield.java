@@ -25,7 +25,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -146,8 +145,7 @@ public class FocusEffectVoidShield extends FocusEffect {
                 if (shield != null) {
                     if (!caster.isSneaking() && storage != null) {
                         double prop = Math.max(shield.getHealth() / shield.getMaxHealth(), (double) shield.getTimeAlive() / shield.getTotalLifespan());
-                        if ((caster instanceof EntityPlayer && ((EntityPlayer) caster).isCreative()) || ImpetusAPI.tryExtractFully(
-                                storage, (long) (prop * TAConfig.shieldFocusImpetusCost.getValue()))) {
+                        if (ImpetusAPI.tryExtractFully(storage, (long) (prop * TAConfig.shieldFocusImpetusCost.getValue()), caster)) {
                             shield.setHealth(shield.getMaxHealth());
                             shield.resetTimeAlive();
                             caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, 
@@ -171,8 +169,7 @@ public class FocusEffectVoidShield extends FocusEffect {
                     }
                 }
                 else if (storage != null) {
-                    if ((caster instanceof EntityPlayer && ((EntityPlayer) caster).isCreative()) || ImpetusAPI.tryExtractFully(
-                            storage, TAConfig.shieldFocusImpetusCost.getValue())) {
+                    if (ImpetusAPI.tryExtractFully(storage, TAConfig.shieldFocusImpetusCost.getValue(), caster)) {
                         shield = new EntityFocusShield(world);
                         shield.setOwner(result.entityHit);
                         shield.setCasterID(caster.getUniqueID());

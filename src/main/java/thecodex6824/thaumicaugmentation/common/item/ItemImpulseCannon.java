@@ -116,7 +116,7 @@ public class ItemImpulseCannon extends ItemTABase {
     
     @Override
     public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
-        return ItemStack.areItemStacksEqual(oldStack, newStack);
+        return ItemStack.areItemsEqual(oldStack, newStack);
     }
     
     @Override
@@ -132,38 +132,30 @@ public class ItemImpulseCannon extends ItemTABase {
         if (!world.isRemote) {
             if (aug != null && !aug.isTickable(player) && buffer != null) {
                 long cost = aug.getImpetusCostPerUsage(player);
-                if (buffer.canExtract() && buffer.extractEnergy(cost, true) == cost) {
-                    buffer.extractEnergy(cost, false);
+                if (ImpetusAPI.tryExtractFully(buffer, cost, player)) {
                     aug.onCannonUsage(player);
-                    aug.applyRecoil(player);
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                 }
-                else
-                    return new ActionResult<>(EnumActionResult.FAIL, stack);
             }
             else if (((aug != null && aug.isTickable(player)) || aug == null) && buffer != null) {
-                player.setActiveHand(hand);
-                PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), false);
-                TANetwork.INSTANCE.sendToAllTracking(packet, player);
-                if (player instanceof EntityPlayerMP)
-                    TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
-                    
-                return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+                long cost = aug != null ? aug.getImpetusCostPerTick(player, -1) : TAConfig.cannonBeamCost.getValue();
+                if (buffer.canExtract() && buffer.getEnergyStored() >= cost) {
+                    player.setActiveHand(hand);
+                    if (aug == null) {
+                        PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), false);
+                        TANetwork.INSTANCE.sendToAllTracking(packet, player);
+                        if (player instanceof EntityPlayerMP)
+                            TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
+                    }
+                        
+                    return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+                }
             }
-            else
-                return new ActionResult<>(EnumActionResult.FAIL, stack);
+            
+            return new ActionResult<>(EnumActionResult.FAIL, stack);
         }
-        else {
-            if (aug != null && !aug.isTickable(player) && buffer != null) {
-                long cost = aug.getImpetusCostPerUsage(player);
-                if (buffer.canExtract() && buffer.extractEnergy(cost, true) == cost)
-                    aug.applyRecoil(player);
-            }
-            else if (((aug != null && aug.isTickable(player)) || aug == null) && buffer != null)
-                player.setActiveHand(hand);
-               
+        else
             return super.onItemRightClick(world, player, hand);
-        }
     }
     
     @Override
@@ -172,24 +164,15 @@ public class ItemImpulseCannon extends ItemTABase {
         IImpulseCannonAugment aug = getAugment(stack);
         if (!player.getEntityWorld().isRemote) {
             if (aug != null && buffer != null) {
-                long cost = aug.getImpetusCostPerTick(player, count);
-                if (buffer.canExtract() && buffer.extractEnergy(cost, true) == cost) {
-                    buffer.extractEnergy(cost, false);
+                if (ImpetusAPI.tryExtractFully(buffer, aug.getImpetusCostPerTick(player, count), player))
                     aug.onCannonTick(player, count);
-                    aug.applyRecoil(player);
-                }
                 else {
                     player.stopActiveHand();
-                    PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), true);
-                    TANetwork.INSTANCE.sendToAllTracking(packet, player);
-                    if (player instanceof EntityPlayerMP)
-                        TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
+                    aug.onStopCannonTick(player, count);
                 }
             }
             else if (buffer != null) {
-                long cost = TAConfig.cannonBeamCost.getValue();
-                if (buffer.canExtract() && buffer.extractEnergy(cost, true) == cost) {
-                    buffer.extractEnergy(cost, false);
+                if (ImpetusAPI.tryExtractFully(buffer, TAConfig.cannonBeamCost.getValue(), player)) {
                     Entity e = RaytraceHelper.raytraceEntity(player, TAConfig.cannonBeamRange.getValue());
                     if (e != null)
                         ImpetusAPI.causeImpetusDamage(player, e, TAConfig.cannonBeamDamage.getValue());
@@ -210,15 +193,7 @@ public class ItemImpulseCannon extends ItemTABase {
                 }
             }
         }
-        else {
-            if (aug != null && buffer != null) {
-                long cost = aug.getImpetusCostPerTick(player, count);
-                if (buffer.canExtract() && buffer.extractEnergy(cost, true) == cost)
-                    aug.applyRecoil(player);
-            }
-        }
     }
-    
     
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entity, int timeLeft) {

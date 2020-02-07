@@ -20,7 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.util;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
@@ -54,6 +56,8 @@ public interface ITARenderHelper {
     public void renderTerraformerParticle(World world, double x, double y, double z, double vx, double vy, double vz, BlockPos pos, Biome biome);
     
     public void renderRiftMoverParticle(World world, double x, double y, double z, double vx, double vy, double vz);
+    
+    public Vec3d estimateImpulseCannonFiringPoint(EntityLivingBase entity, float partialTicks);
     
     public boolean shadersAvailable();
     

@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -198,6 +199,13 @@ public final class ImpetusAPI {
         } while (amount > 0 && oldAmount != amount);
         
         return amount <= 0;
+    }
+    
+    public static boolean tryExtractFully(IImpetusStorage storage, long amount, EntityLivingBase user) {
+        if (user instanceof EntityPlayer && ((EntityPlayer) user).isCreative())
+            return true;
+        else
+            return tryExtractFully(storage, amount);
     }
     
     private static boolean doDamage(DamageSource source1, DamageSource source2, Entity target, float damage) {

@@ -20,13 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockPane;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -39,84 +39,67 @@ import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
-import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.block.property.ITABarsType;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
-import thecodex6824.thaumicaugmentation.common.util.BitUtil;
+import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
-public class BlockTAStone extends BlockTABase implements ITAStoneType, IItemBlockProvider {
+public class BlockTABars extends BlockPane implements ITABarsType, IModelProvider<Block>, IItemBlockProvider {
 
-    public BlockTAStone() {
-        super(Material.ROCK);
-        setDefaultState(getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID));
+    public BlockTABars() {
+        super(Material.IRON, true);
         setHardness(2.0F);
         setResistance(10.0F);
-        setSoundType(SoundType.STONE);
+        setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 0);
-        setTickRandomly(true);
+        setDefaultState(getDefaultState().withProperty(ITABarsType.BARS_TYPE, BarsType.BARS_ANCIENT));
     }
     
     @Override
     public ItemBlock createItemBlock() {
-        return new ItemMultiTexture(this, null, ITAStoneType.STONE_TYPE.getAllowedValues().stream().map(
-                ITAStoneType.STONE_TYPE::getName).collect(Collectors.toList()).toArray(new String[ITAStoneType.STONE_TYPE.getAllowedValues().size()]));
+        return new ItemMultiTexture(this, null, ITABarsType.BARS_TYPE.getAllowedValues().stream().map(
+                ITABarsType.BARS_TYPE::getName).collect(Collectors.toList()).toArray(new String[ITABarsType.BARS_TYPE.getAllowedValues().size()]));
     }
     
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, ITAStoneType.STONE_TYPE);
+        return new BlockStateContainer(this, NORTH, EAST, WEST, SOUTH, ITABarsType.BARS_TYPE);
     }
     
     @Override
     public Material getMaterial(IBlockState state) {
-        return state.getValue(ITAStoneType.STONE_TYPE).getMaterial();
+        return state.getValue(ITABarsType.BARS_TYPE).getMaterial();
     }
     
     @Override
     public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
-        return state.getValue(ITAStoneType.STONE_TYPE).getSoundType();
-    }
-    
-    @Override
-    public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        return state.getValue(ITAStoneType.STONE_TYPE).getMapColor();
-    }
-    
-    @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return state.getValue(ITAStoneType.STONE_TYPE).getLightLevel();
-    }
-    
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.fromMeta(BitUtil.getBits(meta, 0, 4)));
+        return state.getValue(ITABarsType.BARS_TYPE).getSoundType();
     }
     
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(ITAStoneType.STONE_TYPE).getMeta();
+        return state.getValue(ITABarsType.BARS_TYPE).getMeta();
+    }
+    
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(ITABarsType.BARS_TYPE, BarsType.fromMeta(meta));
     }
     
     @Override
     public int damageDropped(IBlockState state) {
-        return state.getValue(ITAStoneType.STONE_TYPE).getMeta();
-    }
-    
-    @Override
-    public void randomTick(World world, BlockPos pos, IBlockState state, Random random) {
-        state.getValue(ITAStoneType.STONE_TYPE).randomTick(world, pos, state, random);
+        return state.getValue(ITABarsType.BARS_TYPE).getMeta();
     }
     
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
-            for (StoneType type : StoneType.values())
+            for (BarsType type : BarsType.values())
                 items.add(new ItemStack(this, 1, type.getMeta()));
         }
     }
@@ -124,9 +107,9 @@ public class BlockTAStone extends BlockTABase implements ITAStoneType, IItemBloc
     @Override
     @SideOnly(Side.CLIENT)
     public void registerModels() {
-        for (StoneType type : StoneType.values()) {
+        for (BarsType type : BarsType.values()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), type.getMeta(), new ModelResourceLocation(
-                    getRegistryName().getNamespace() + ":" + type.getName(), "inventory"));
+                    ThaumicAugmentationAPI.MODID + ":" + type.getName(), "inventory"));
         }
     }
     

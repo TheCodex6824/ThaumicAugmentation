@@ -53,6 +53,4 @@ public interface IImpulseCannonAugment extends IAugment {
     
     public int getMaxUsageDuration();
     
-    public void applyRecoil(EntityLivingBase user);
-    
 }

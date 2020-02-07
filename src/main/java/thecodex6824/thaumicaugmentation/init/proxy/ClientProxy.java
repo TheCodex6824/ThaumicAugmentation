@@ -48,6 +48,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -148,6 +149,8 @@ import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpetusNodeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpetusTransaction;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBeam;
+import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBurst;
+import thecodex6824.thaumicaugmentation.common.network.PacketImpulseRailgunProjectile;
 import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
@@ -276,6 +279,10 @@ public class ClientProxy extends ServerProxy {
             handleFXShieldPacket((PacketFXShield) message, context);
         else if (message instanceof PacketImpulseBeam)
             handleImpulseBeamPacket((PacketImpulseBeam) message, context);
+        else if (message instanceof PacketImpulseBurst)
+            handleImpulseBurstPacket((PacketImpulseBurst) message, context);
+        else if (message instanceof PacketImpulseRailgunProjectile)
+            handleImpulseRailgunPacket((PacketImpulseRailgunProjectile) message, context);
         else if (message instanceof PacketLivingEquipmentChange)
             handleLivingEquipmentChangePacket((PacketLivingEquipmentChange) message, context);
         else if (message instanceof PacketBaubleChange)
@@ -632,6 +639,53 @@ public class ClientProxy extends ServerProxy {
         Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
         if (entity instanceof EntityLivingBase)
             RenderEventHandler.onImpulseBeam((EntityLivingBase) entity, message.shouldStopBeam());
+    }
+    
+    protected void handleImpulseBurstPacket(PacketImpulseBurst message, MessageContext context) {
+        World world = Minecraft.getMinecraft().world;
+        Entity entity = world.getEntityByID(message.getEntityID());
+        if (entity instanceof EntityLivingBase) {
+            Vec3d p = getRenderHelper().estimateImpulseCannonFiringPoint((EntityLivingBase) entity,
+                    Minecraft.getMinecraft().getRenderPartialTicks());
+            Vec3d v = message.getVelocity();
+            for (int i = 0; i < 3; ++i) {
+                FXGeneric fx = new FXGeneric(world, p.x, p.y, p.z, v.x, v.y, v.z);
+                fx.setMaxAge(10);
+                fx.setRBGColorF(0.35F, 0.35F, 0.65F);
+                fx.setAlphaF(0.85F);
+                fx.setGridSize(64);
+                fx.setParticles(264, 8, 1);
+                fx.setScale(1.0F);
+                fx.setLayer(1);
+                fx.setLoop(true);
+                fx.setNoClip(false);
+                fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
+                ParticleEngine.addEffect(world, fx);
+                p = p.add(v);
+            }
+        }
+    }
+    
+    protected void handleImpulseRailgunPacket(PacketImpulseRailgunProjectile message, MessageContext context) {
+        World world = Minecraft.getMinecraft().world;
+        Entity entity = world.getEntityByID(message.getEntityID());
+        if (entity instanceof EntityLivingBase) {
+            Vec3d p = getRenderHelper().estimateImpulseCannonFiringPoint((EntityLivingBase) entity,
+                    Minecraft.getMinecraft().getRenderPartialTicks());
+            Vec3d v = message.getVelocity();
+            FXGeneric fx = new FXGeneric(world, p.x, p.y, p.z, v.x, v.y, v.z);
+            fx.setMaxAge(10);
+            fx.setRBGColorF(0.35F, 0.35F, 0.65F);
+            fx.setAlphaF(0.85F);
+            fx.setGridSize(64);
+            fx.setParticles(264, 8, 1);
+            fx.setScale(2.5F);
+            fx.setLayer(1);
+            fx.setLoop(true);
+            fx.setNoClip(false);
+            fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
+            ParticleEngine.addEffect(world, fx);
+        }
     }
     
     protected void handleLivingEquipmentChangePacket(PacketLivingEquipmentChange message, MessageContext context) {

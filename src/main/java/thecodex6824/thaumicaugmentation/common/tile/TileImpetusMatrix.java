@@ -487,7 +487,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         super.handleUpdateTag(tag);
         prosumer.init(world);
         gain = tag.getFloat("gain");
-        stability = tag.getFloat("stability");
+        stability = tag.getFloat("stab");
     }
     
     @Override

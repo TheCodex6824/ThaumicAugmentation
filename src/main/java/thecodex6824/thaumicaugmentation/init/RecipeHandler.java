@@ -188,7 +188,7 @@ public final class RecipeHandler {
             
             ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_feeder"), new InfusionRecipe(
                     "RIFT_FEEDER", new ItemStack(TABlocks.RIFT_FEEDER), 5, new AspectList().add(Aspect.FLUX, 30).add(Aspect.ELDRITCH, 10).add(Aspect.MECHANISM, 50).add(Aspect.VOID, 5),
-                    BlocksTC.essentiaTransportOutput, new Object[] {
+                    BlocksTC.essentiaTransportInput, new Object[] {
                             ItemsTC.mechanismSimple, "plateBrass", BlocksTC.tube, ItemsTC.morphicResonator, BlocksTC.plankGreatwood, BlocksTC.tube
                     }
             ));
