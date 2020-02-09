@@ -92,6 +92,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemBiomeSelector;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
+import thecodex6824.thaumicaugmentation.common.item.ItemEldritchLockKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemElytraHarness;
 import thecodex6824.thaumicaugmentation.common.item.ItemElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemFocusAncient;
@@ -267,6 +268,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemImpulseCannon(), "impulse_cannon"));
         registry.register(setupItem(new ItemImpulseCannonAugment(), "impulse_cannon_augment"));
         registry.register(new ItemFocusAncient()); // had to setup in constructor due to TC doing things to the item
+        registry.register(setupItem(new ItemEldritchLockKey(), "eldritch_lock_key"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }

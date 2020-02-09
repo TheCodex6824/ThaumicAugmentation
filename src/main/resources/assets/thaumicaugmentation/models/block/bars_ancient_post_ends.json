@@ -2,10 +2,9 @@
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
 	"textures": {
-        "particle": "thaumicaugmentation:blocks/ancient_bars",
-        "bars": "thaumicaugmentation:blocks/ancient_bars",
-        "edge": "thaumicaugmentation:blocks/ancient_bars"
-    },
+		"edge": "thaumicaugmentation:blocks/ancient_bars",
+		"particle": "thaumicaugmentation:blocks/ancient_bars"
+	},
 	"elements": [
 		{
 			"from": [7, 0.001, 7],

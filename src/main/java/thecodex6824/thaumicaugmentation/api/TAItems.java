@@ -61,6 +61,7 @@ public final class TAItems {
     public static final Item IMPULSE_CANNON = null;
     public static final Item IMPULSE_CANNON_AUGMENT = null;
     public static final Item FOCUS_ANCIENT = null;
+    public static final Item ELDRITCH_LOCK_KEY = null;
 
     public static CreativeTabs CREATIVE_TAB = new CreativeTabs(ThaumicAugmentationAPI.MODID) {
         @Override
@@ -94,7 +95,7 @@ public final class TAItems {
                 FRACTURE_LOCATOR, AUGMENT_BUILDER_POWER, AUGMENT_BUILDER_EFFECT, AUGMENT_CUSTOM, MORPHIC_TOOL,
                 PRIMAL_CUTTER, RIFT_JAR, IMPETUS_MIRROR, IMPETUS_LINKER, BIOME_SELECTOR, THAUMOSTATIC_HARNESS, THAUMOSTATIC_HARNESS_AUGMENT,
                 ELYTRA_HARNESS, ELYTRA_HARNESS_AUGMENT, AUTOCASTER_PLACER, IMPULSE_CANNON, IMPULSE_CANNON_AUGMENT,
-                FOCUS_ANCIENT};
+                FOCUS_ANCIENT, ELDRITCH_LOCK_KEY};
     }
 
 }
