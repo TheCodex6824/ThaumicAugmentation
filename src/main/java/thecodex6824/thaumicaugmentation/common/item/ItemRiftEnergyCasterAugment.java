@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -41,6 +43,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.common.lib.SoundsTC;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
@@ -160,29 +163,35 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
     public NBTTagCompound getNBTShareTag(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
         if (stack.hasTagCompound())
-            tag.setTag("item", stack.getTagCompound());
+            tag.setTag("item", stack.getTagCompound().copy());
         
         tag.setTag("cap", new NBTTagCompound());
-        tag.getCompoundTag("cap").setTag("augment", stack.getCapability(CapabilityAugment.AUGMENT, null).serializeNBT());
-        tag.getCompoundTag("cap").setTag("energy", stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null).serializeNBT());
+        tag.getCompoundTag("cap").setTag("augment", ((Augment) stack.getCapability(CapabilityAugment.AUGMENT, null)).serializeNBT());
+        tag.getCompoundTag("cap").setTag("energy", ((RiftEnergyStorage) stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)).serializeNBT());
         return tag;
     }
     
     @Override
-    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+    public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
+            if (nbt.hasKey("cap", NBT.TAG_COMPOUND)) {
+                ((Augment) stack.getCapability(CapabilityAugment.AUGMENT, null)).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("augment"));
+                ((RiftEnergyStorage) stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null)).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("energy"));
+            }
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
+            else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                nbt.removeTag("cap");
+                if (!nbt.isEmpty())
+                    stack.setTagCompound(nbt);
+            }
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
             }
-            
-            stack.getCapability(CapabilityAugment.AUGMENT, null).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("augment"));
-            stack.getCapability(CapabilityRiftEnergyStorage.RIFT_ENERGY_STORAGE, null).deserializeNBT(nbt.getCompoundTag("cap").getCompoundTag("energy"));
         }
     }
     

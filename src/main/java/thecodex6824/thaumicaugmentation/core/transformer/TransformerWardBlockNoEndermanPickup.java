@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -35,6 +36,11 @@ public class TransformerWardBlockNoEndermanPickup extends Transformer {
     private static final String CLASS = "net.minecraft.entity.monster.EntityEnderman$AITakeBlock";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "general", false, "") &&
                 transformedName.equals(CLASS);
@@ -43,14 +49,15 @@ public class TransformerWardBlockNoEndermanPickup extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode pickup = TransformUtil.findMethod(classNode, "updateTask", "func_75246_d");
+            MethodNode pickup = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/monster/EntityEnderman$AITakeBlock", "func_75246_d", Type.VOID_TYPE),
+                    "()V");
             boolean found = false;
             int ret = pickup.instructions.size();
             while ((ret = TransformUtil.findLastInstanceOfOpcode(pickup, ret, Opcodes.IFEQ)) != -1) {
                 AbstractInsnNode insertAfter = pickup.instructions.get(ret);
                 pickup.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
                 pickup.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS,
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false

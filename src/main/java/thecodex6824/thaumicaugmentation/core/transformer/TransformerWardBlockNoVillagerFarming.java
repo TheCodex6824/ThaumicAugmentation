@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -35,6 +36,11 @@ public class TransformerWardBlockNoVillagerFarming extends Transformer {
     private static final String CLASS = "net.minecraft.entity.ai.EntityAIHarvestFarmland";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "general", false, "") &&
                 transformedName.equals(CLASS);
@@ -43,14 +49,15 @@ public class TransformerWardBlockNoVillagerFarming extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode farm = TransformUtil.findMethod(classNode, "shouldMoveTo", "func_179488_a");
+            MethodNode farm = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/ai/EntityAIHarvestFarmland", "func_179488_a",
+                    Type.BOOLEAN_TYPE, Type.getType("Lnet/minecraft/world/World;"), Type.getType("Lnet/minecraft/util/math/BlockPos;")), "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z");
             int plant = TransformUtil.findLastInstanceOfOpcode(farm, farm.instructions.size(), Opcodes.IFGE);
             int harvest = TransformUtil.findLastInstanceOfOpcode(farm, plant, Opcodes.IFGE);
             if (plant != -1 && harvest != -1) {
                 AbstractInsnNode insertAfter = farm.instructions.get(plant);
                 farm.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
                 farm.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS,
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false
@@ -61,7 +68,7 @@ public class TransformerWardBlockNoVillagerFarming extends Transformer {
                 insertAfter = farm.instructions.get(harvest);
                 farm.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
                 farm.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS,
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false

@@ -21,18 +21,16 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
+public class TransformerInfusionLeftoverItems extends Transformer {
 
-public class TransformerWardBlockResistance extends Transformer {
-
-    private static final String CLASS = "net.minecraft.block.Block";
+    private static final String CLASS = "thaumcraft.common.tiles.crafting.TileInfusionMatrix";
     
     @Override
     public boolean needToComputeFrames() {
@@ -41,33 +39,28 @@ public class TransformerWardBlockResistance extends Transformer {
     
     @Override
     public boolean isTransformationNeeded(String transformedName) {
-        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "general", false, "") &&
-                transformedName.equals(CLASS);
+        return transformedName.equals(CLASS);
     }
     
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode resistance = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/block/Block", "getExplosionResistance", Type.FLOAT_TYPE,
-                    Type.getType("Lnet/minecraft/world/World;"), Type.getType("Lnet/minecraft/util/math/BlockPos;"), Type.getType("Lnet/minecraft/entity/Entity;"), Type.getType("Lnet/minecraft/world/Explosion;")),
-                    "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/Entity;Lnet/minecraft/world/Explosion;)F");
-            boolean found = false;
-            int ret = 0;
-            while ((ret = TransformUtil.findFirstInstanceOfOpcode(resistance, ret, Opcodes.FRETURN)) != -1) {
-                AbstractInsnNode insertAfter = resistance.instructions.get(ret).getPrevious();
-                resistance.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+            MethodNode finish = TransformUtil.findMethod(classNode, "craftCycle", "()V");
+            int offset = TransformUtil.findLastInstanceOfMethodCall(finish, finish.instructions.size(), "getContainerItem",
+                    "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;", "net/minecraft/item/Item");
+            if (offset != -1) {
+                AbstractInsnNode insertAfter = finish.instructions.get(offset);
+                finish.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
                         TransformUtil.HOOKS,
-                        "checkWardResistance",
-                        "(FLnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F",
+                        "getLeftoverInfusionIngredientStack",
+                        "(Lnet/minecraft/item/ItemStack;Ljava/lang/Object;)Lnet/minecraft/item/ItemStack;",
                         false
                 ));
-                resistance.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
-                resistance.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
-                ret += 4;
-                found = true;
+                finish.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD, "thaumcraft/common/tiles/crafting/TileInfusionMatrix",
+                        "recipeOutput", "Ljava/lang/Object;"));
+                finish.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
             }
-            
-            if (!found)
+            else
                 throw new TransformerException("Could not locate required instructions");
             
             return true;

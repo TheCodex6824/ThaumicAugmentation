@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.api;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionBoolean;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionFloat;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
@@ -69,6 +70,8 @@ public final class TAConfig {
     public static ConfigOptionBoolean disableCoremod;
     
     public static ConfigOptionBoolean gauntletCastAnimation;
+    
+    public static ConfigOptionFloat primalCutterDamage;
     
     /**
      * Registers a callback to be notified when the config is synced or updated.

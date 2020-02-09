@@ -18,18 +18,41 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.core.transformer;
+package thecodex6824.thaumicaugmentation.api.config;
 
-import org.objectweb.asm.tree.ClassNode;
+import io.netty.buffer.ByteBuf;
 
-public interface ITransformer {
+/**
+ * Config option class for Integer values.
+ * @author TheCodex6824
+ */
+public class ConfigOptionFloat extends ConfigOption<Float> {
 
-    public boolean isTransformationNeeded(String transformedName);
-    
-    public boolean transform(ClassNode classNode, String name, String transformedName);
-    
-    public RuntimeException getRaisedException();
-    
-    public boolean needToComputeFrames();
-    
+    protected float value;
+
+    public ConfigOptionFloat(boolean enforceServer, float defaultValue) {
+        super(enforceServer);
+        value = defaultValue;
+    }
+
+    @Override
+    public void serialize(ByteBuf buf) {
+        buf.writeDouble(value);
+    }
+
+    @Override
+    public void deserialize(ByteBuf buf) {
+        value = buf.readFloat();
+    }
+
+    @Override
+    public Float getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(Float value) {
+        this.value = value;
+    }
+
 }

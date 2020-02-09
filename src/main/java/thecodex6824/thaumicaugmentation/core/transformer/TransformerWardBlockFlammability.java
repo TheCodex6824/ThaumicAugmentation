@@ -34,6 +34,11 @@ public class TransformerWardBlockFlammability extends Transformer {
     private static final String CLASS = "net.minecraft.block.Block";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "general", false, "") &&
                 transformedName.equals(CLASS);
@@ -42,13 +47,14 @@ public class TransformerWardBlockFlammability extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode fire = TransformUtil.findMethod(classNode, "getFlammability", "func_176532_c");
+            MethodNode fire = TransformUtil.findMethod(classNode, "getFlammability",
+                    "(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;)I");
             boolean found = false;
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(fire, ret, Opcodes.IRETURN)) != -1) {
                 AbstractInsnNode insertAfter = fire.instructions.get(ret).getPrevious();
                 fire.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS,
                         "checkWardFlammability",
                         "(ILnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)I",
                         false

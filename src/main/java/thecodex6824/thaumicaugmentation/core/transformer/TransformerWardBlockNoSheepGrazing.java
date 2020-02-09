@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -36,6 +37,11 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
     private static final String CLASS = "net.minecraft.entity.ai.EntityAIEatGrass";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "general", false, "") &&
                 transformedName.equals(CLASS);
@@ -44,7 +50,8 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode nom = TransformUtil.findMethod(classNode, "shouldExecute", "func_75250_a");
+            MethodNode nom = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/ai/EntityAIEatGrass", "func_75250_a",
+                    Type.BOOLEAN_TYPE), "()Z");
             int tallGrass = TransformUtil.findLastInstanceOfOpcode(nom, nom.instructions.size(), Opcodes.IFEQ);
             int normalGrass = TransformUtil.findLastInstanceOfOpcode(nom, nom.instructions.size(), Opcodes.IF_ACMPNE);
             if (tallGrass != -1 && normalGrass != -1) {
@@ -52,32 +59,32 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
                 AbstractInsnNode grassAfter = nom.instructions.get(normalGrass);
                 nom.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
                 nom.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS,
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false
                 ));
                 nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 nom.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
-                        TransformUtil.correctNameForRuntime("entityWorld", "field_151501_c"), "Lnet/minecraft/world/World;"));
+                        TransformUtil.remapFieldName("net/minecraft/entity/ai/EntityAIEatGrass", "field_151501_c"), "Lnet/minecraft/world/World;"));
                 nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
                 
                 nom.instructions.insert(grassAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) grassAfter).label));
                 nom.instructions.insert(grassAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS,
                         "checkWardGeneric",
                         "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
                         false
                 ));
                 nom.instructions.insert(grassAfter, new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
                         "net/minecraft/util/math/BlockPos",
-                        TransformUtil.correctNameForRuntime("down", "func_177977_b"),
+                        TransformUtil.remapMethodName("net/minecraft/util/math/BlockPos", "func_177977_b", Type.getType("Lnet/minecraft/util/math/BlockPos;")),
                         "()Lnet/minecraft/util/math/BlockPos;",
                         false
                 ));
                 nom.instructions.insert(grassAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 nom.instructions.insert(grassAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
-                        TransformUtil.correctNameForRuntime("entityWorld", "field_151501_c"), "Lnet/minecraft/world/World;"));
+                        TransformUtil.remapFieldName("net/minecraft/entity/ai/EntityAIEatGrass", "field_151501_c"), "Lnet/minecraft/world/World;"));
                 nom.instructions.insert(grassAfter, new VarInsnNode(Opcodes.ALOAD, 0));
             }
             else

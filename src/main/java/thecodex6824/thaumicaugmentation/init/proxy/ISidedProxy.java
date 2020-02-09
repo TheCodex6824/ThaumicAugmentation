@@ -48,4 +48,6 @@ public interface ISidedProxy {
 
     public void postInit();
 
+    public boolean isSingleplayer();
+    
 }

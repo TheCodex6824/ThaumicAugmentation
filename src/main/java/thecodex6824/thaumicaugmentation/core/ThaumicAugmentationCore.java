@@ -21,6 +21,8 @@
 package thecodex6824.thaumicaugmentation.core;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,25 +30,29 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
-@IFMLLoadingPlugin.Name("Thaumic Augmentation Core Plugin")
-@IFMLLoadingPlugin.MCVersion("1.12.2")
-@IFMLLoadingPlugin.SortingIndex(1005)
-@IFMLLoadingPlugin.TransformerExclusions("thecodex6824.thaumicaugmentation.core")
+@Name("Thaumic Augmentation Core Plugin")
+@MCVersion("1.12.2")
+@SortingIndex(1005)
+@TransformerExclusions("thecodex6824.thaumicaugmentation.core")
 public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
     private static Logger log = LogManager.getLogger(ThaumicAugmentationAPI.MODID + "core");
     
     private static Configuration config;
     private static boolean enabled;
-    private static boolean deobf;
     
     public ThaumicAugmentationCore() {
         if (config != null)
             throw new RuntimeException("Coremod loading twice (?)");
         
         config = new Configuration(new File("config", ThaumicAugmentationAPI.MODID + ".cfg"));
+        enabled = !config.getBoolean("disableCoremod", "general", false, "");
     }
     
     public static Logger getLogger() {
@@ -59,10 +65,6 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
     public static Configuration getConfig() {
         return config;
-    }
-    
-    public static boolean isRuntimeDeobfEnabled() {
-        return deobf;
     }
     
     @Override
@@ -87,8 +89,33 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
     @Override
     public void injectData(Map<String, Object> data) {
-        deobf = (Boolean) data.get("runtimeDeobfuscationEnabled");
-        enabled = !config.getBoolean("DisableCoremod", "general", false, "");
+        /* 
+         * This is here because GradleStart sets the sys_paths to null.
+         * It expects it to be repopulated by the JVM, which was the behavior until java 8 version 242.
+         * Starting with version 242 it just asserts that it's not null, and does not repopulate it.
+         * This will make any native library loading attempt crash, which for me manifests as LWJGL crashing when loading AWT.
+         * See the change in openjdk source here: https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/rev/1d666f78532a
+        */
+        Object deobf = data.get("runtimeDeobfuscationEnabled");
+        if (deobf instanceof Boolean && (Boolean) deobf == false) {
+            String[] versions = System.getProperty("java.version").split("_");
+            if (versions.length >= 2 && Integer.parseInt(versions[versions.length - 1]) >= 242) {
+                log.info("Java version 1.8.0_242 or greater detected in dev env, working around native loading crash...");
+                try {
+                    Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
+                    sysPathsField.setAccessible(true);
+                    if (sysPathsField.get(null) == null) {
+                        Method init = ClassLoader.class.getDeclaredMethod("initLibraryPaths");
+                        init.setAccessible(true);
+                        init.invoke(null);
+                    }
+                }
+                catch(Exception ex) {
+                    log.error("Failed to apply native loading hack, the game will probably crash very soon...", ex);
+                }
+            }
+        }
+        
         if (enabled)
             ThaumicAugmentationAPI.setCoremodAvailable();
     }

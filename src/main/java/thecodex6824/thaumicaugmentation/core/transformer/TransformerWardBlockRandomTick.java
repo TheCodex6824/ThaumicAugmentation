@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -38,6 +39,11 @@ public class TransformerWardBlockRandomTick extends Transformer {
     private static final String CLASS = "net.minecraft.world.WorldServer";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "general", false, "") &&
                 transformedName.equals(CLASS);
@@ -46,10 +52,13 @@ public class TransformerWardBlockRandomTick extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode update = TransformUtil.findMethod(classNode, "updateBlocks", "func_147456_g");
-            int ret = TransformUtil.findFirstInstanceOfMethodCall(update, 0, "randomTick", "func_180645_a", "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V",
+            MethodNode update = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/world/WorldServer", "func_147456_g", Type.VOID_TYPE),
+                    "()V");
+            int ret = TransformUtil.findFirstInstanceOfMethodCall(update, 0, TransformUtil.remapMethodName("net/minecraft/block/Block", "func_180645_a", Type.VOID_TYPE,
+                    Type.getType("Lnet/minecraft/world/World;"), Type.getType("Lnet/minecraft/util/math/BlockPos;"), Type.getType("Lnet/minecraft/block/state/IBlockState;"), Type.getType("Ljava/util/Random;")),
+                    "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V",
                     "net/minecraft/block/Block");
-            int blockpos = TransformUtil.findLastInstanceOfMethodCall(update, ret, "<init>", "<init>", "(III)V", "net/minecraft/util/math/BlockPos");
+            int blockpos = TransformUtil.findLastInstanceOfMethodCall(update, ret, "<init>", "(III)V", "net/minecraft/util/math/BlockPos");
             // this is complex enough that looping to find more places to insert calls placed by other ASM
             // would be a really bad idea
             if (ret != -1 && blockpos != -1) {
@@ -60,7 +69,7 @@ public class TransformerWardBlockRandomTick extends Transformer {
                 update.instructions.insert(blockPosInit, new VarInsnNode(Opcodes.ALOAD, 19));
                 update.instructions.insert(blockPosInit, new VarInsnNode(Opcodes.ASTORE, 19));
                 update.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/WorldServer",
-                        TransformUtil.correctNameForRuntime("rand", "field_73012_v"), "Ljava/util/Random;"));
+                        TransformUtil.remapFieldName("net/minecraft/world/WorldServer", "field_73012_v"), "Ljava/util/Random;"));
                 update.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
                 update.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 17));
                 update.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 19));
@@ -71,7 +80,7 @@ public class TransformerWardBlockRandomTick extends Transformer {
                 update.instructions.insert(insertAfter, new InsnNode(Opcodes.POP));
                 update.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ISTORE, 20));
                 update.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS,
                         "checkWardRandomTick",
                         "(Lnet/minecraft/world/WorldServer;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)Z",
                         false

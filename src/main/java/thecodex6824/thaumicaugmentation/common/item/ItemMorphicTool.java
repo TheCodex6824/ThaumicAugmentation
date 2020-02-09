@@ -23,11 +23,12 @@ package thecodex6824.thaumicaugmentation.common.item;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -56,6 +57,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.items.IWarpingGear;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderMorphicTool;
@@ -114,26 +116,31 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     public NBTTagCompound getNBTShareTag(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
         if (stack.hasTagCompound())
-            tag.setTag("item", stack.getTagCompound());
+            tag.setTag("item", stack.getTagCompound().copy());
         
         tag.setTag("cap", stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).serializeNBT());
         return tag;
     }
     
     @Override
-    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+    public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
+            if (nbt.hasKey("cap", NBT.TAG_COMPOUND))
+                stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).deserializeNBT(nbt.getCompoundTag("cap"));
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
+            else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                nbt.removeTag("cap");
+                if (!nbt.isEmpty())
+                    stack.setTagCompound(nbt);
+            }
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
             }
-            
-            stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).deserializeNBT(nbt.getCompoundTag("cap"));
         }
     }
     
@@ -406,7 +413,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
             old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).setFunctionalStack(innerResult.getResult());
             ActionResult<ItemStack> result = new ActionResult<>(innerResult.getType(), old);
             setStackWithoutAnnoyingNoise(playerIn, handIn, old);
-            if (result.getType() == EnumActionResult.SUCCESS) {
+            if (result.getType() == EnumActionResult.SUCCESS && playerIn.getActiveHand() != null) {
                 playerIn.resetActiveHand();
                 playerIn.setActiveHand(playerIn.getActiveHand());
             }

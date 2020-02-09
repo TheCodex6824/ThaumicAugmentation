@@ -44,6 +44,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionBoolean;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionFloat;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
@@ -255,6 +256,14 @@ public final class TAConfigHolder {
     })
     public static boolean gauntletCastAnimation = true;
     
+    @Name("primalCutterDamage")
+    @Comment({
+        "The damage done by the Primal Cutter's material, NOT including the base damage.",
+        "In other words, its total damage will be this number + 4 (3 for being a \"sword\", and 1 as the minimum)"
+    })
+    @RequiresMcRestart
+    public static float primalCutterDamage = 6.0F;
+    
     static {
         // vanilla
         fractureDimList.put("0", 35);
@@ -336,6 +345,8 @@ public final class TAConfigHolder {
         TAConfig.fracturesAlwaysTeleport.setValue(fracturesAlwaysTeleport, side);
         
         TAConfig.gauntletCastAnimation.setValue(gauntletCastAnimation, side);
+        
+        TAConfig.primalCutterDamage.setValue(primalCutterDamage);
     }
 
     public static void syncLocally() {
@@ -395,6 +406,8 @@ public final class TAConfigHolder {
         TAConfig.disableCoremod = TAConfigManager.addOption(new ConfigOptionBoolean(false, disableCoremod));
         
         TAConfig.gauntletCastAnimation = TAConfigManager.addOption(new ConfigOptionBoolean(false, gauntletCastAnimation));
+    
+        TAConfig.primalCutterDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, primalCutterDamage));
     }
 
 }

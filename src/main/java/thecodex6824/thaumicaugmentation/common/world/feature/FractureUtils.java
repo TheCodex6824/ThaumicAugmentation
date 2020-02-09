@@ -92,7 +92,7 @@ public final class FractureUtils {
             if (dim != null && dim.getMovementFactor() <= maxFactor + 0.00001)
                 return dim;
             else
-                currentPicker = dimPicker.removeChoice(dimID);
+                currentPicker = currentPicker.removeChoice(dimID);
         } while (!currentPicker.isEmpty());
 
         return null;

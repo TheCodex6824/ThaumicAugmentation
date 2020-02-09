@@ -22,7 +22,8 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
+import javax.annotation.Nullable;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -38,6 +39,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
@@ -88,24 +90,29 @@ public class ItemCustomCasterAugment extends ItemTABase {
         if (stack.hasTagCompound())
             tag.setTag("item", stack.getTagCompound());
         
-        tag.setTag("cap", stack.getCapability(CapabilityAugment.AUGMENT, null).serializeNBT());
+        tag.setTag("cap", ((AugmentCasterCustom) stack.getCapability(CapabilityAugment.AUGMENT, null)).serializeNBT());
         return tag;
     }
     
     @Override
-    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+    public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
+            if (nbt.hasKey("cap", NBT.TAG_COMPOUND))
+                ((AugmentCasterCustom) stack.getCapability(CapabilityAugment.AUGMENT, null)).deserializeNBT(nbt.getCompoundTag("cap"));
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
+            else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                nbt.removeTag("cap");
+                if (!nbt.isEmpty())
+                    stack.setTagCompound(nbt);
+            }
             
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !Minecraft.getMinecraft().isSingleplayer()) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
                 stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
             }
-            
-            stack.getCapability(CapabilityAugment.AUGMENT, null).deserializeNBT(nbt.getCompoundTag("cap"));
         }
     }
     

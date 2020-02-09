@@ -234,6 +234,11 @@ public class ClientProxy extends CommonProxy {
             TAShaders.EMPTINESS_SKY = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_sky"));
         }
     }
+    
+    @Override
+    public boolean isSingleplayer() {
+        return Minecraft.getMinecraft().isSingleplayer();
+    }
 
     private static void registerItemColorHandlers() {
         ItemColors registerTo = Minecraft.getMinecraft().getItemColors();

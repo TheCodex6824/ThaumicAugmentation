@@ -28,6 +28,7 @@ import org.objectweb.asm.tree.ClassNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFireEncouragement;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFlammability;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockHardness;
@@ -55,6 +56,8 @@ public class TATransformer implements IClassTransformer {
         TRANSFORMERS.add(new TransformerWardBlockNoRabbitSnacking());
         TRANSFORMERS.add(new TransformerWardBlockNoSheepGrazing());
         TRANSFORMERS.add(new TransformerWardBlockNoVillagerFarming());
+        
+        TRANSFORMERS.add(new TransformerInfusionLeftoverItems());
     }
     
     public TATransformer() {}

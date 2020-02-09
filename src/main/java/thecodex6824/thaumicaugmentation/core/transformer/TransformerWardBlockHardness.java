@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -34,6 +35,11 @@ public class TransformerWardBlockHardness extends Transformer {
     private static final String CLASS = "net.minecraft.block.state.BlockStateContainer$StateImplementation";
     
     @Override
+    public boolean needToComputeFrames() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "general", false, "") &&
                 transformedName.equals(CLASS);
@@ -42,13 +48,14 @@ public class TransformerWardBlockHardness extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode hardness = TransformUtil.findMethod(classNode, "getBlockHardness", "func_185887_b");
+            MethodNode hardness = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/block/state/BlockStateContainer$StateImplementation",
+                    "func_185887_b", Type.FLOAT_TYPE, Type.getType("Lnet/minecraft/world/World;"), Type.getType("Lnet/minecraft/util/math/BlockPos;")), "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F");
             boolean found = false;
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(hardness, ret, Opcodes.FRETURN)) != -1) {
                 AbstractInsnNode insertAfter = hardness.instructions.get(ret).getPrevious();
                 hardness.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "thecodex6824/thaumicaugmentation/common/internal/TAHooks",
+                        TransformUtil.HOOKS,
                         "checkWardHardness",
                         "(FLnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F",
                         false

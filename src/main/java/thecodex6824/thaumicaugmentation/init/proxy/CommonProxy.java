@@ -72,6 +72,11 @@ public class CommonProxy implements ISidedProxy {
     
     @Override
     public void handleWardUpdatePacket(PacketWardUpdate message) {}
+    
+    @Override
+    public boolean isSingleplayer() {
+        return false;
+    }
 
     @Override
     public void preInit() {
