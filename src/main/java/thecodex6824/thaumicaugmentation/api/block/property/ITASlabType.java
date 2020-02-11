@@ -88,7 +88,7 @@ public interface ITASlabType {
         }
     }
     
-    public static PropertyEnum<SlabType> SLAB_TYPE = PropertyEnum.create("ta_slab_type", SlabType.class);
-    public static PropertyBool DOUBLE = PropertyBool.create("ta_slab_double");
+    public static final PropertyEnum<SlabType> SLAB_TYPE = PropertyEnum.create("ta_slab_type", SlabType.class);
+    public static final PropertyBool DOUBLE = PropertyBool.create("ta_slab_double");
     
 }

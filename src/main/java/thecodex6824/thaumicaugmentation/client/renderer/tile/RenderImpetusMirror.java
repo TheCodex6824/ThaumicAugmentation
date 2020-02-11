@@ -40,16 +40,13 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 
 public class RenderImpetusMirror extends TileEntitySpecialRenderer<TileImpetusMirror> {
 
-    protected static final ResourceLocation TUNNEL = new ResourceLocation("thaumcraft", "textures/misc/tunnel.png");
-    protected static final ResourceLocation PARTICLES = new ResourceLocation("thaumcraft", "textures/misc/particlefield.png");
-    
     protected static final double LAYER_OFFSET = 0.01;
     
     protected static final FloatBuffer BUFFER_X = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(1.0F).put(0.0F).put(0.0F).put(0.0F).flip();
@@ -67,14 +64,14 @@ public class RenderImpetusMirror extends TileEntitySpecialRenderer<TileImpetusMi
         float layer = (16 - index);
         float scaleFactor = 0.0625F;
         if (index == 0) {
-            Minecraft.getMinecraft().renderEngine.bindTexture(TUNNEL);
+            Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.TUNNEL);
             layer = 65.0F;
             scaleFactor = 0.125F;
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         }
         else if (index == 1) {
-            Minecraft.getMinecraft().renderEngine.bindTexture(PARTICLES);
+            Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.PARTICLES);
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(SourceFactor.ONE, DestFactor.ONE);
             scaleFactor = 0.5F;

@@ -58,6 +58,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
+import thecodex6824.thaumicaugmentation.common.block.BlockFortifiedGlass;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusGate;
@@ -72,6 +73,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.block.BlockStabilityFieldGenerator;
+import thecodex6824.thaumicaugmentation.common.block.BlockStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.block.BlockTABars;
 import thecodex6824.thaumicaugmentation.common.block.BlockTASlab;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStairs;
@@ -140,6 +142,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverInput;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.tile.TileStabilityFieldGenerator;
+import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
@@ -204,6 +207,8 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockTASlab.Half(), "slab"));
         registry.register(setupBlock(new BlockTASlab.Double(), "slab_double"));
         registry.register(setupBlock(new BlockTABars(), "bars"));
+        registry.register(setupBlock(new BlockFortifiedGlass(), "fortified_glass"));
+        registry.register(setupBlock(new BlockStarfieldGlass(), "starfield_glass"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -225,6 +230,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileImpetusGenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_generator"));
         GameRegistry.registerTileEntity(TileStabilityFieldGenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "stability_field_generator"));
         GameRegistry.registerTileEntity(TileImpetusGate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_gate"));
+        GameRegistry.registerTileEntity(TileStarfieldGlass.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "starfield_glass"));
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)

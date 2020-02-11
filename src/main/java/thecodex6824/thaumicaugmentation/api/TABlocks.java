@@ -65,6 +65,8 @@ public final class TABlocks {
     public static final Block SLAB_DOUBLE = null;
     public static final Block STAIRS_ELDRITCH_TILE = null;
     public static final Block BARS = null;
+    public static final Block FORTIFIED_GLASS = null;
+    public static final Block STARFIELD_GLASS = null;
 
     /**
      * Returns all blocks in the mod.
@@ -77,7 +79,7 @@ public final class TABlocks {
                IMPETUS_MATRIX, IMPETUS_MATRIX_BASE, RIFT_FEEDER, RIFT_MOVER_INPUT, RIFT_MOVER_OUTPUT,
                RIFT_JAR, VOID_RECHARGE_PEDESTAL, IMPETUS_MIRROR, ARCANE_TERRAFORMER, RIFT_MONITOR,
                IMPETUS_GENERATOR, STABILITY_FIELD_GENERATOR, IMPETUS_GATE, STAIRS_ANCIENT, SLAB, SLAB_DOUBLE,
-               STAIRS_ELDRITCH_TILE, BARS};
+               STAIRS_ELDRITCH_TILE, BARS, FORTIFIED_GLASS, STARFIELD_GLASS};
     }
 
 }

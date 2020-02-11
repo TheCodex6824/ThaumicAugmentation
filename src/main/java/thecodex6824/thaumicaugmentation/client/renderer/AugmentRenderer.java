@@ -58,12 +58,12 @@ import thaumcraft.client.lib.obj.IModelCustom;
 import thaumcraft.common.blocks.basic.BlockBannerTCItem;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.client.model.ModelElytraBanner;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TCBannerToElytraTexture;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.VanillaBannerToElytraTexture;
 
 public class AugmentRenderer {
 
-    protected static final ResourceLocation ELYTRA_BOOSTER_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/harness/elytra_booster.png"); 
     protected static final ResourceLocation ELYTRA_BOOSTER_MODEL = new ResourceLocation(ThaumicAugmentationAPI.MODID, "models/entity/elytra_booster.obj");
     
     protected static IModelCustom elytraBooster;
@@ -71,9 +71,6 @@ public class AugmentRenderer {
     
     protected static final ModelElytraBanner ELYTRA_MODEL_VANILLA_BANNER = new ModelElytraBanner(1.75F, 42, 48);
     protected static final ModelElytraBanner ELYTRA_MODEL_TC_BANNER = new ModelElytraBanner(2.0F, 48, 48);
-    protected static final ResourceLocation VANILLA_BANNER_BASE = new ResourceLocation("minecraft", "textures/entity/banner_base.png");
-    protected static final ResourceLocation TC_BANNER = new ResourceLocation("thaumcraft", "textures/models/banner_blank.png");
-    protected static final ResourceLocation CRIMSON_BANNER = new ResourceLocation("thaumcraft", "textures/models/banner_cultist.png");
     protected static final Cache<ItemStack, ResourceLocation> BANNER_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterAccess(10, TimeUnit.SECONDS).removalListener(new RemovalListener<ItemStack, ResourceLocation>() {
         
         @Override
@@ -97,7 +94,7 @@ public class AugmentRenderer {
     public static void renderElytraBooster(RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing, float limbSwingAmount,
             float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         
-        renderer.bindTexture(ELYTRA_BOOSTER_TEXTURE);
+        renderer.bindTexture(TATextures.ELYTRA_BOOSTER_TEXTURE);
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
         GlStateManager.scale(scale * 16.0F, scale * 16.0F, scale * 16.0F);
@@ -134,7 +131,7 @@ public class AugmentRenderer {
                     }
                     
                     ResourceLocation textureID = new ResourceLocation(ThaumicAugmentationAPI.MODID, "banner_cache" + ref.hashCode());
-                    Minecraft.getMinecraft().getTextureManager().loadTexture(textureID, new VanillaBannerToElytraTexture(VANILLA_BANNER_BASE, patterns, colors));
+                    Minecraft.getMinecraft().getTextureManager().loadTexture(textureID, new VanillaBannerToElytraTexture(TATextures.VANILLA_BANNER_BASE, patterns, colors));
                     return textureID;
                 }));
                 model = ELYTRA_MODEL_VANILLA_BANNER;
@@ -148,7 +145,7 @@ public class AugmentRenderer {
                 final ItemStack ref = cosmetic;
                 renderer.bindTexture(BANNER_CACHE.get(cosmetic, () -> {
                     ResourceLocation textureID = new ResourceLocation(ThaumicAugmentationAPI.MODID, "banner_cache" + ref.hashCode());
-                    Minecraft.getMinecraft().getTextureManager().loadTexture(textureID, new TCBannerToElytraTexture(CRIMSON_BANNER));
+                    Minecraft.getMinecraft().getTextureManager().loadTexture(textureID, new TCBannerToElytraTexture(TATextures.CRIMSON_BANNER));
                     return textureID;
                 }));
                 model = ELYTRA_MODEL_TC_BANNER;
@@ -165,7 +162,7 @@ public class AugmentRenderer {
                     if (ref.hasTagCompound())
                        aspect = Aspect.getAspect(ref.getTagCompound().getString("aspect"));
                     ResourceLocation textureID = new ResourceLocation(ThaumicAugmentationAPI.MODID, "banner_cache" + ref.hashCode());
-                    Minecraft.getMinecraft().getTextureManager().loadTexture(textureID, new TCBannerToElytraTexture(TC_BANNER,
+                    Minecraft.getMinecraft().getTextureManager().loadTexture(textureID, new TCBannerToElytraTexture(TATextures.TC_BANNER,
                             aspect, bannerReverseMap.get(((ItemBlock) ref.getItem()).getBlock()).getColorValue()));
                     return textureID;
                 }));

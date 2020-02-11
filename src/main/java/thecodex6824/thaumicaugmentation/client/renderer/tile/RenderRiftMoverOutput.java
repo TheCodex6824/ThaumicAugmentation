@@ -28,18 +28,16 @@ import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
 import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
 
 public class RenderRiftMoverOutput extends TileEntitySpecialRenderer<TileRiftMoverOutput> {
 
-    protected static final ResourceLocation GRID = new ResourceLocation("thaumcraft", "textures/misc/gridblock.png");
-    
     @Override
     public void render(TileRiftMoverOutput te, double x, double y, double z, float partialTicks, int destroyStage,
             float alpha) {
@@ -57,7 +55,7 @@ public class RenderRiftMoverOutput extends TileEntitySpecialRenderer<TileRiftMov
                         GlStateManager.translate(x + origin.x, y + origin.y, z + origin.z);
                         //if (dir != null)
                         //    GlStateManager.rotate(dir.getHorizontalAngle(), 0F, 1.0F, 0F);
-                        bindTexture(GRID);
+                        bindTexture(TATextures.GRID);
                         GlStateManager.depthMask(false);
                         GlStateManager.enableBlend();
                         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);

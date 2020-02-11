@@ -35,22 +35,10 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 
 public class RenderFocusShield extends Render<EntityFocusShield> {
-
-    protected static final ResourceLocation[] BASE_LAYERS = new ResourceLocation[] {
-            new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/void_shield_base_layer1.png"),
-            new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/void_shield_base_layer2.png"),
-            new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/void_shield_base_layer3.png")
-    };
-    
-    protected static final ResourceLocation[] RUNE_LAYERS = new ResourceLocation[] {
-            new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/void_shield_runes_layer1.png"),
-            new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/void_shield_runes_layer2.png"),
-            new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/void_shield_runes_layer3.png")
-    };
     
     protected static final double[] ALPHA_STRETCH = new double[] {
             180.0 / (Math.PI / 2.0),
@@ -96,7 +84,7 @@ public class RenderFocusShield extends Render<EntityFocusShield> {
         if (entity.getTotalLifespan() - entity.getTimeAlive() <= 100)
             baseAlpha = entity.getTimeAlive() % 8 < 4 ? 0.0F : baseAlpha; 
         if (baseAlpha > 0.000001F) {
-            for (ResourceLocation loc : BASE_LAYERS) {
+            for (ResourceLocation loc : TATextures.BASE_LAYERS) {
                 bindTexture(loc);
                 buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
                 buffer.pos(0.0, 0.0, 0.0).tex(0.0, 1.0).color(r, g, b, baseAlpha).endVertex();
@@ -105,9 +93,9 @@ public class RenderFocusShield extends Render<EntityFocusShield> {
                 buffer.pos(1.0, 0.0, 0.0).tex(1.0, 1.0).color(r, g, b, baseAlpha).endVertex();
                 t.draw();
             }
-            for (int i = 0; i < RUNE_LAYERS.length; ++i) {
+            for (int i = 0; i < TATextures.RUNE_LAYERS.length; ++i) {
                 float alpha = getAlpha(entity, i, baseAlpha, partialTicks);
-                bindTexture(RUNE_LAYERS[i]);
+                bindTexture(TATextures.RUNE_LAYERS[i]);
                 buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
                 buffer.pos(0.0, 0.0, 0.0).tex(0.0, 1.0).color(r, g, b, alpha).endVertex();
                 buffer.pos(0.0, 1.0, 0.0).tex(0.0, 0.0).color(r, g, b, alpha).endVertex();

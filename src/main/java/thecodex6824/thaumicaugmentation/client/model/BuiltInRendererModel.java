@@ -55,11 +55,11 @@ import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
-public class BuiltInModel implements IModel {
+public class BuiltInRendererModel implements IModel {
 
     protected IModel wrap;
     
-    protected BuiltInModel(@Nullable IModel wrapped) {
+    protected BuiltInRendererModel(@Nullable IModel wrapped) {
         wrap = wrapped;
     }
     
@@ -100,7 +100,7 @@ public class BuiltInModel implements IModel {
                 throw new Exception("Resource locations must be ModelResourceLocation instances, as a variant is needed");
                 
             String component = modelLocation.getPath().split(":", 2)[1];
-            return new BuiltInModel(ModelLoaderRegistry.getModel(new ModelResourceLocation(component, ((ModelResourceLocation) modelLocation).getVariant())));
+            return new BuiltInRendererModel(ModelLoaderRegistry.getModel(new ModelResourceLocation(component, ((ModelResourceLocation) modelLocation).getVariant())));
         }
         
         @Override
@@ -120,7 +120,7 @@ public class BuiltInModel implements IModel {
                 TransformType.GROUND, create(0, 3, 0, 0, 0, 0, 0.25F)).put(
                 TransformType.GUI, create(0, 0, 0, 30, 225, 0, 0.625F)).put(
                 TransformType.THIRD_PERSON_RIGHT_HAND, create(0, 2.5F, 0, 75, 45, 0, 0.375F)).put(
-                TransformType.THIRD_PERSON_LEFT_HAND, create(0, 2.5F, 0, 135, 45, 0, 0.375F)).put(
+                TransformType.THIRD_PERSON_LEFT_HAND, create(0, 2.5F, 0, 75, 45, 0, 0.375F)).put(
                 TransformType.FIRST_PERSON_RIGHT_HAND, create(0, 0, 0, 0, 45, 0, 0.4F)).put(
                 TransformType.FIRST_PERSON_LEFT_HAND, create(0, 0, 0, 0, 225, 0, 0.4F)).put(
                 TransformType.FIXED, create(0, 0, 0, 0, 0, 0, 0.5F)).build();
@@ -137,6 +137,7 @@ public class BuiltInModel implements IModel {
         };
         
         protected IBakedModel wrapped;
+        protected TransformType lastTransform;
         
         protected BakedModel(@Nullable IBakedModel toWrap) {
             wrapped = toWrap;
@@ -179,7 +180,16 @@ public class BuiltInModel implements IModel {
         
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
+            lastTransform = cameraTransformType;
             return PerspectiveMapWrapper.handlePerspective(this, TRANSFORMS, cameraTransformType);
+        }
+        
+        public IBakedModel getWrappedModel() {
+            return wrapped;
+        }
+        
+        public TransformType getLastTransformType() {
+            return lastTransform;
         }
         
     }

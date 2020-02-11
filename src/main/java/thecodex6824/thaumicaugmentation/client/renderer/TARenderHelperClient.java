@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer;
 
+import java.nio.FloatBuffer;
+
 import javax.annotation.Nullable;
 
 import org.lwjgl.opengl.GL11;
@@ -31,6 +33,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
@@ -66,6 +69,12 @@ public class TARenderHelperClient implements ITARenderHelper {
     protected static final ResourceLocation RIFT_TEXTURE = new ResourceLocation("minecraft", "textures/entity/end_portal.png");
     protected static final ResourceLocation BLANK = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/misc/white.png");
     protected static final CoreGLE GLE = new CoreGLE();
+    
+    protected static final FloatBuffer BUFFER_X = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(1.0F).put(0.0F).put(0.0F).put(0.0F).flip();
+    protected static final FloatBuffer BUFFER_Y = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(0.0F).put(1.0F).put(0.0F).put(0.0F).flip();
+    protected static final FloatBuffer BUFFER_Z = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(0.0F).put(0.0F).put(1.0F).put(0.0F).flip();
+    protected static final FloatBuffer BUFFER_W = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(0.0F).put(0.0F).put(0.0F).put(1.0F).flip();
+    
     protected static final ResourceLocation FRACTURE_TEXTURE_CLOSED = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
     protected static final ResourceLocation FRACTURE_TEXTURE_OPEN = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
     protected static final Vec3d[] FRACTURE_POINTS_CLOSED = new Vec3d[] {
@@ -215,7 +224,7 @@ public class TARenderHelperClient implements ITARenderHelper {
     public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean ignoreGoggles) {
         GL11.glPushMatrix();
         Minecraft.getMinecraft().renderEngine.bindTexture(RIFT_TEXTURE);
-        TAShaderManager.enableShader(TAShaders.FLUX_RIFT, TAShaders.FLUX_RIFT_SHADER_CALLBACK);
+        TAShaderManager.enableShader(TAShaders.FLUX_RIFT, TAShaders.SHADER_CALLBACK_GENERIC_SPHERE);
         GlStateManager.enableBlend();
         renderFluxRiftShared(rift, stability, partialTicks, tessLevel, !ignoreGoggles && EntityUtils.hasGoggles(Minecraft.getMinecraft().player));
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -348,7 +357,7 @@ public class TARenderHelperClient implements ITARenderHelper {
         boolean isRevealing = !ignoreGoggles && EntityUtils.hasGoggles(Minecraft.getMinecraft().getRenderViewEntity() != null ?
                 Minecraft.getMinecraft().getRenderViewEntity() : Minecraft.getMinecraft().player);
         Minecraft.getMinecraft().renderEngine.bindTexture(open ? FRACTURE_TEXTURE_OPEN : FRACTURE_TEXTURE_CLOSED);
-        TAShaderManager.enableShader(TAShaders.FRACTURE, TAShaders.FRACTURE_SHADER_CALLBACK);
+        TAShaderManager.enableShader(TAShaders.FRACTURE, TAShaders.SHADER_CALLBACK_GENERIC_SPHERE);
         GlStateManager.enableBlend();
         for (int layer = 0; layer < 4; ++layer) {
             if (layer != 3) {

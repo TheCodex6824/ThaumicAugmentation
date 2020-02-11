@@ -117,6 +117,6 @@ public interface ITAStoneType {
         }
     }
     
-    public static PropertyEnum<StoneType> STONE_TYPE = PropertyEnum.create("ta_stone_type", StoneType.class);
+    public static final PropertyEnum<StoneType> STONE_TYPE = PropertyEnum.create("ta_stone_type", StoneType.class);
     
 }

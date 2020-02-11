@@ -25,13 +25,10 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 
 public class RenderDimensionalFracture extends Render<EntityDimensionalFracture> {
-
-    protected static final ResourceLocation FRACTURE_TEXTURE_CLOSED = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
-    protected static final ResourceLocation FRACTURE_TEXTURE_OPEN = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
 
     public RenderDimensionalFracture(RenderManager manager) {
         super(manager);
@@ -40,7 +37,7 @@ public class RenderDimensionalFracture extends Render<EntityDimensionalFracture>
 
     @Override
     protected ResourceLocation getEntityTexture(EntityDimensionalFracture entity) {
-        return entity.isOpen() ? FRACTURE_TEXTURE_OPEN : FRACTURE_TEXTURE_CLOSED;
+        return TATextures.EMPTINESS_SKY;
     }
 
     @Override

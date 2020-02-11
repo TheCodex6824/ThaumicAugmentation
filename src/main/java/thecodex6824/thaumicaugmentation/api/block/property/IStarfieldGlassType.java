@@ -20,48 +20,27 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import java.util.function.Supplier;
-
 import javax.annotation.Nullable;
 
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 
-public interface ITABarsType {
+public interface IStarfieldGlassType {
 
-    public enum BarsType implements IStringSerializable {
+    public enum GlassType implements IStringSerializable {
         
-        BARS_ANCIENT(0, () -> Material.ROCK, () -> SoundType.STONE, MapColor.ADOBE);
+        GLASS_RIFT(0),
+        GLASS_FRACTURE(1),
+        GLASS_MIRROR(2);
         
         private int meta;
-        private Supplier<Material> mat;
-        private Supplier<SoundType> sound;
-        private MapColor color;
         
-        private BarsType(int m, Supplier<Material> mt, Supplier<SoundType> s, MapColor c) {
+        private GlassType(int m) {
             meta = m;
-            mat = mt;
-            sound = s;
-            color = c;
         }
         
         public int getMeta() {
             return meta;
-        }
-        
-        public Material getMaterial() {
-            return mat.get();
-        }
-        
-        public SoundType getSoundType() {
-            return sound.get();
-        }
-        
-        public MapColor getMapColor() {
-            return color;
         }
         
         @Override
@@ -70,16 +49,17 @@ public interface ITABarsType {
         }
         
         @Nullable
-        public static BarsType fromMeta(int id) {
-            for (BarsType type : values()) {
+        public static GlassType fromMeta(int id) {
+            for (GlassType type : values()) {
                 if (type.getMeta() == id)
                     return type;
             }
             
             return null;
         }
+        
     }
     
-    public static final PropertyEnum<BarsType> BARS_TYPE = PropertyEnum.create("ta_bars_type", BarsType.class);
+    public static final PropertyEnum<GlassType> GLASS_TYPE = PropertyEnum.create("ta_glass_type", GlassType.class);
     
 }

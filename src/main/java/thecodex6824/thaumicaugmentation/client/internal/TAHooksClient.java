@@ -121,4 +121,8 @@ public final class TAHooksClient {
         }
     }
     
+    public static void onRenderEntities(int pass) {
+        RenderEventHandler.onRenderEntities(pass);
+    }
+    
 }

@@ -109,7 +109,7 @@ import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
-import thecodex6824.thaumicaugmentation.client.model.BuiltInModel;
+import thecodex6824.thaumicaugmentation.client.model.BuiltInRendererModel;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
 import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
 import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
@@ -119,11 +119,13 @@ import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderAutocaster;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
 import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftJar;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMonitor;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMoverOutput;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderStarfieldGlass;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
@@ -164,6 +166,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
 import thecodex6824.thaumicaugmentation.common.tile.TileStabilityFieldGenerator;
+import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
@@ -740,7 +743,7 @@ public class ClientProxy extends ServerProxy {
                 () -> CasterAugmentBuilder.getAllEffectProviders(), stack -> ItemCustomCasterEffectProvider.getProviderID(stack)));
         loader.registerLoader(new CustomCasterAugmentModel.Loader());
         loader.registerLoader(new MorphicToolModel.Loader());
-        loader.registerLoader(new BuiltInModel.Loader());
+        loader.registerLoader(new BuiltInRendererModel.Loader());
         ModelLoaderRegistry.registerLoader(loader);
     }
 
@@ -759,6 +762,7 @@ public class ClientProxy extends ServerProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusMirror.class, new RenderImpetusMirror());
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftMonitor.class, new RenderRiftMonitor());
         ClientRegistry.bindTileEntitySpecialRenderer(TileStabilityFieldGenerator.class, new ListeningAnimatedTESR<>());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileStarfieldGlass.class, new RenderStarfieldGlass());
         registerItemColorHandlers();
         registerBlockColorHandlers();
         for (RenderPlayer render : Minecraft.getMinecraft().getRenderManager().getSkinMap().values())
@@ -768,10 +772,12 @@ public class ClientProxy extends ServerProxy {
     @Override
     public void postInit() {
         super.postInit();
+        TATextures.setupTextures();
         if (TAShaderManager.shouldUseShaders()) {
             TAShaders.FRACTURE = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture"));
             TAShaders.EMPTINESS_SKY = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_sky"));
             TAShaders.FLUX_RIFT = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ender"));
+            TAShaders.MIRROR = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "mirror"));
         }
     }
 

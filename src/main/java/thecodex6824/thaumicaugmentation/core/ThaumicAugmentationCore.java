@@ -108,7 +108,7 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
         Object deobf = data.get("runtimeDeobfuscationEnabled");
         if (deobf instanceof Boolean && (Boolean) deobf == false) {
             String[] versions = System.getProperty("java.version").split("_");
-            if (versions.length >= 2 && Integer.parseInt(versions[versions.length - 1]) >= 242) {
+            if (versions.length >= 2 && versions[0].equals("1.8.0") && Integer.parseInt(versions[versions.length - 1]) >= 242) {
                 log.info("Java version 1.8.0_242 or greater detected in dev env, working around native loading crash...");
                 try {
                     Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
@@ -120,7 +120,7 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
                     }
                 }
                 catch(Exception ex) {
-                    log.error("Failed to apply native loading hack, the game will probably crash very soon...", ex);
+                    // just ignore it, this JVM is probably unaffected
                 }
             }
         }

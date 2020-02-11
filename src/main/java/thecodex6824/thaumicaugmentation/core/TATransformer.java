@@ -34,6 +34,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotatio
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderEntities;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCRobesElytraFlapping;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerUpdateElytra;
@@ -49,33 +50,58 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockRes
 
 public class TATransformer implements IClassTransformer {
 
-    private static final ArrayList<ITransformer> TRANSFORMERS = new ArrayList<>(11);
+    private static final ArrayList<ITransformer> TRANSFORMERS = new ArrayList<>();
     
     static {
+        // required as there is no generic hardness hook for calls outside of player breaking
         TRANSFORMERS.add(new TransformerWardBlockHardness());
+        // required as there is no generic resistance hook for calls outside of player breaking and explosions
         TRANSFORMERS.add(new TransformerWardBlockResistance());
+        // required to make fire not linger on warded blocks
         TRANSFORMERS.add(new TransformerWardBlockFlammability());
+        // required to make fire not make warded blocks catch on fire
         TRANSFORMERS.add(new TransformerWardBlockFireEncouragement());
+        // required to cancel random updates for warded blocks
+        // scheduled and neighbor updates are handled in event handlers
         TRANSFORMERS.add(new TransformerWardBlockRandomTick());
         
-        // sadly EntityMobGriefingEvent does not provide a blockpos, so it can't be used
-        // the position is also not determined and put into the AI fields until the event has already passed
+        // required as EntityMobGriefingEvent does not provide a blockpos
+        // the position is also not determined and put into the AI fields until the event has already passed, so no reflection
         TRANSFORMERS.add(new TransformerWardBlockNoEndermanPickup());
+        // same
         TRANSFORMERS.add(new TransformerWardBlockNoRabbitSnacking());
+        // same
         TRANSFORMERS.add(new TransformerWardBlockNoSheepGrazing());
+        // same
         TRANSFORMERS.add(new TransformerWardBlockNoVillagerFarming());
         
+        // required to cancel sprinting client side immediately
+        // using events allows 1-tick sprints, and holding down sprint will allow constant sprinting
         TRANSFORMERS.add(new TransformerThaumostaticHarnessSprintCheck());
+        
+        // required to allow clients to recognize they are wearing elytra
         TRANSFORMERS.add(new TransformerElytraClientCheck());
+        // required to allow the server to recognize players are wearing elytra
         TRANSFORMERS.add(new TransformerElytraServerCheck());
+        // required to maintain the elytra flying flag for custom elytra
         TRANSFORMERS.add(new TransformerUpdateElytra());
         
+        // required to have custom arm rotations for things like the impulse cannon
         TRANSFORMERS.add(new TransformerBipedRotationVanilla());
+        // required to make any ModelBiped transformers work on TC armor at all
         TRANSFORMERS.add(new TransformerBipedRotationCustomTCArmor());
+        // fixes annoying robe legging flapping (as if the player is walking) while elytra flying
         TRANSFORMERS.add(new TransformerTCRobesElytraFlapping());
+        // required to hook render pass 0 for batch rendering of TEs with shaders
+        // RenderWorldLastEvent almost works but it is after render pass 0, so it will draw over transparent blocks
+        TRANSFORMERS.add(new TransformerRenderEntities());
         
+        // required to fix morphic tool recipe dupe while also allowing container items to be used
+        // backup non-coremod mitigation disables container items, which players expressed a desire to keep
         TRANSFORMERS.add(new TransformerInfusionLeftoverItems());
         
+        // required to have augments on baubles detected properly without having to loop over them all every tick
+        // performance with the looping method is terrible, and a change event should really have been added...
         TRANSFORMERS.add(new TransformerBaubleSlotChanged());
     }
     

@@ -42,7 +42,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.client.fx.FXDispatcher;
@@ -51,24 +50,17 @@ import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.client.lib.obj.AdvancedModelLoader;
 import thaumcraft.client.lib.obj.IModelCustom;
 import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationBotania;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 
 public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
 
-    protected static final ResourceLocation BASE_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/harness/harness_base.png");
-    
-    protected static final ResourceLocation THAUMOSTATIC_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/harness/thaumostatic_module.png"); 
-    protected static final ResourceLocation THAUMOSTATIC_MODEL = new ResourceLocation(ThaumicAugmentationAPI.MODID, "models/entity/thaumostatic_module.obj");
-    protected static final ResourceLocation LIGHTNING_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/harness/lightning_ring.png");
-    
-    protected static final ResourceLocation ELYTRA_TEXTURE = new ResourceLocation("minecraft", "textures/entity/elytra.png");
     protected static final ModelElytra ELYTRA_MODEL_DEFAULT = new ModelElytra();
     
     private static boolean invoke(Predicate<ItemStack> p, ItemStack stack) {
@@ -90,7 +82,7 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
     public RenderLayerHarness(RenderPlayer renderer) {
         render = renderer;
         base = new ModelBiped(1.0F);
-        thaumostatic = AdvancedModelLoader.loadModel(THAUMOSTATIC_MODEL);
+        thaumostatic = AdvancedModelLoader.loadModel(TATextures.THAUMOSTATIC_MODEL);
     }
     
     @Override
@@ -110,13 +102,13 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
             if (!invis) {
                 base.setModelAttributes(render.getMainModel());
                 base.setLivingAnimations(player, limbSwing, limbSwingAmount, partialTicks);
-                render.bindTexture(BASE_TEXTURE);
+                render.bindTexture(TATextures.HARNESS_BASE_TEXTURE);
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 base.render(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale * 0.75F);
             }
             if (harness.getItem() == TAItems.THAUMOSTATIC_HARNESS) {
                 if (!invis) {
-                    render.bindTexture(THAUMOSTATIC_TEXTURE);
+                    render.bindTexture(TATextures.THAUMOSTATIC_TEXTURE);
                     GlStateManager.pushMatrix();
                     GlStateManager.pushMatrix();
                     GlStateManager.enableBlend();
@@ -131,7 +123,7 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
                     thaumostatic.renderAll();
                     GlStateManager.disableRescaleNormal();
                     GlStateManager.popMatrix();
-                    render.bindTexture(LIGHTNING_TEXTURE);
+                    render.bindTexture(TATextures.LIGHTNING_TEXTURE);
                     GlStateManager.scale(1.5F, 1.5F, 1.0F);
                     GlStateManager.pushMatrix();
                     GlStateManager.translate(-0.5F, -0.35F, 0.5F);
@@ -203,10 +195,10 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
                             else if (abs.hasPlayerInfo() && abs.getLocationCape() != null && abs.isWearing(EnumPlayerModelParts.CAPE))
                                 render.bindTexture(abs.getLocationCape());
                             else
-                                render.bindTexture(ELYTRA_TEXTURE);
+                                render.bindTexture(TATextures.ELYTRA_TEXTURE);
                         }
                         else
-                            render.bindTexture(ELYTRA_TEXTURE);
+                            render.bindTexture(TATextures.ELYTRA_TEXTURE);
                         
                         GlStateManager.pushMatrix();
                         GlStateManager.translate(0.0F, 0.0F, 0.125F);

@@ -45,19 +45,15 @@ import thaumcraft.client.lib.obj.AdvancedModelLoader;
 import thaumcraft.client.lib.obj.IModelCustom;
 import thaumcraft.common.entities.EntityFluxRift;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.api.world.BiomeMonitorColors;
 import thecodex6824.thaumicaugmentation.api.world.BiomeMonitorColors.MonitorColors;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 
 public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor> {
 
-    protected static final ResourceLocation GRID = new ResourceLocation("thaumcraft", "textures/misc/gridblock.png");
-    protected static final ResourceLocation SIDE = new ResourceLocation("thaumcraft", "textures/models/dioptra_side.png");
-    protected static final ResourceLocation MONITOR_BASE_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/blocks/rift_monitor_meter.png");
-    protected static final ResourceLocation MONITOR_GLASS_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/blocks/rift_monitor_glass.png");
     protected static final Cache<Integer, FluxRiftReconstructor> RIFTS = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterAccess(5, TimeUnit.SECONDS).build();
   
     protected IModelCustom meter;
@@ -86,9 +82,9 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
             GlStateManager.translate(0.5, 0.875, 0.5);
             GlStateManager.scale(0.25, 0.25, 0.25);
         }
-        bindTexture(MONITOR_BASE_TEXTURE);
+        bindTexture(TATextures.MONITOR_BASE_TEXTURE);
         meter.renderPart("scanner");
-        bindTexture(MONITOR_GLASS_TEXTURE);
+        bindTexture(TATextures.MONITOR_GLASS_TEXTURE);
         meter.renderOnly("screen", "screen_back");
         GlStateManager.popMatrix();
         GlStateManager.translate(0.0, 1.0, 0.0);
@@ -111,7 +107,7 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
         BufferBuilder buffer = t.getBuffer();
         GlStateManager.color(r, g, b, a);
         GlStateManager.disableCull();
-        bindTexture(SIDE);
+        bindTexture(TATextures.SIDE);
         for (int i = 0; i < 4; ++i) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(0.5, 0.5, 0.5);
@@ -126,7 +122,7 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
             GlStateManager.popMatrix();
         }
         
-        bindTexture(GRID);
+        bindTexture(TATextures.GRID);
         GlStateManager.color(r / 2.0F, g / 2.0F, b / 2.0F, a);
         GlStateManager.depthMask(false);
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);

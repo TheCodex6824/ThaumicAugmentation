@@ -31,16 +31,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IRenderHandler;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager.Shader;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 
 public class RenderHandlerEmptinessSky extends IRenderHandler {
-
-    protected static final ResourceLocation END_SKY_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
     
     protected static final Consumer<Shader> SHADER_CALLBACK = shader -> {
         Minecraft mc = Minecraft.getMinecraft();
@@ -64,7 +61,7 @@ public class RenderHandlerEmptinessSky extends IRenderHandler {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.depthMask(false);
-        mc.getTextureManager().bindTexture(END_SKY_TEXTURE);
+        mc.getTextureManager().bindTexture(TATextures.EMPTINESS_SKY);
         TAShaderManager.enableShader(TAShaders.EMPTINESS_SKY, SHADER_CALLBACK);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();

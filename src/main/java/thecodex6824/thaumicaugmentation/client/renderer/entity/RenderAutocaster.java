@@ -32,13 +32,12 @@ import thaumcraft.client.lib.obj.AdvancedModelLoader;
 import thaumcraft.client.lib.obj.IModelCustom;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterBase;
 
 public class RenderAutocaster<T extends EntityAutocasterBase> extends Render<T> {
 
     protected static final ResourceLocation MODEL = new ResourceLocation(ThaumicAugmentationAPI.MODID, "models/entity/autocaster.obj");
-    protected static final ResourceLocation TEXTURE_NORMAL = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/entities/autocaster.png");
-    protected static final ResourceLocation TEXTURE_ELDRITCH = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/entities/autocaster_eldritch.png");
     
     protected boolean eldritch;
     protected IModelCustom model;
@@ -51,7 +50,7 @@ public class RenderAutocaster<T extends EntityAutocasterBase> extends Render<T> 
     
     @Override
     public void doRender(EntityAutocasterBase entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        bindTexture(eldritch ? TEXTURE_ELDRITCH : TEXTURE_NORMAL);
+        bindTexture(getEntityTexture(entity));
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
         GlStateManager.translate(x, y, z);
@@ -121,7 +120,7 @@ public class RenderAutocaster<T extends EntityAutocasterBase> extends Render<T> 
     @Override
     @Nullable
     protected ResourceLocation getEntityTexture(EntityAutocasterBase entity) {
-        return eldritch ? TEXTURE_ELDRITCH : TEXTURE_NORMAL;
+        return eldritch ? TATextures.AUTOCASTER_ELDRITCH : TATextures.AUTOCASTER_NORMAL;
     }
     
 }
