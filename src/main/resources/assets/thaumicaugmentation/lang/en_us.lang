@@ -43,7 +43,7 @@ tile.thaumicaugmentation.stairs_eldritch_tile.name=Eldritch Stone Stairs
 tile.thaumicaugmentation.ancient_tile_slab.name=Ancient Stone Tile Slab
 tile.thaumicaugmentation.bars.bars_ancient.name=Ancient Bars
 tile.thaumicaugmentation.fortified_glass.name=Fortified Glass
-tile.thaumicaugmentation.starfield_glass.glass_rift.name=Starfield Glass (Flux Rift)
+tile.thaumicaugmentation.starfield_glass.glass_rift.name=Starfield Glass (Rift)
 tile.thaumicaugmentation.starfield_glass.glass_fracture.name=Starfield Glass (Dimensional Fracture)
 tile.thaumicaugmentation.starfield_glass.glass_mirror.name=Starfield Glass (Magic Mirror)
 
