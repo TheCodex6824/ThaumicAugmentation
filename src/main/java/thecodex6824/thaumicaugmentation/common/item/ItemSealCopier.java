@@ -48,6 +48,7 @@ import thaumcraft.api.golems.ISealDisplayer;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.api.golems.seals.SealPos;
 import thaumcraft.api.items.ItemsTC;
+import thaumcraft.common.golems.seals.SealEntity;
 import thaumcraft.common.golems.seals.SealHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
@@ -85,9 +86,11 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
                             seal.getOwner().isEmpty() || seal.getOwner().equals(player.getUniqueID().toString()))) {
 
                         SealPos oldPos = seal.getSealPos();
+                        SealHandler.removeSealEntity(world, oldPos, true);
                         seal.readNBT(held.getTagCompound().getCompoundTag("seal"));
                         seal.getSealPos().face = oldPos.face;
                         seal.getSealPos().pos = oldPos.pos;
+                        SealHandler.addSealEntity(world, (SealEntity) seal);
                         return EnumActionResult.SUCCESS;
                     }
                 }
