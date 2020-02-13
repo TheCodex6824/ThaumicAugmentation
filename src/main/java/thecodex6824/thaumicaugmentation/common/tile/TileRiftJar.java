@@ -54,7 +54,7 @@ public class TileRiftJar extends TileEntity implements ITickable {
         @Nonnull
         @SuppressWarnings("null")
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            setRiftStability(Math.max(stability - stack.getCount() * 2, -200));
+            setRiftStability(Math.max(stability - stack.getCount() * 3, -200));
             return ItemStack.EMPTY;
         }
         
@@ -108,7 +108,7 @@ public class TileRiftJar extends TileEntity implements ITickable {
     @Override
     public void update() {
         if (world.getTotalWorldTime() - lastStabilityUpdate >= 100)
-            setRiftStability(Math.min(0, (int) (stability + lastStabilityUpdate / 100 * 3)));
+            setRiftStability(Math.min(0, (int) (stability + lastStabilityUpdate / 100)));
     }
     
     public void setRiftStability(int newStability) {

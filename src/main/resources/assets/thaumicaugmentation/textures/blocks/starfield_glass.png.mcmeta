@@ -6,7 +6,11 @@
             "thaumicaugmentation:blocks/starfield_glass_ctm"
         ],
         "extra":{
-            "ignore_states":"false"
+            "ignore_states":"false",
+            "light": {
+                "block": 0,
+                "sky": 10
+            }
         }
     }
 }

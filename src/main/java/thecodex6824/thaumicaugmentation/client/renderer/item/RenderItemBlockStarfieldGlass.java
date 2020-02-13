@@ -32,6 +32,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
+import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.client.model.BuiltInRendererModel;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
@@ -39,14 +40,16 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 
 public class RenderItemBlockStarfieldGlass extends TileEntityItemStackRenderer {
 
-    protected BuiltInRendererModel.BakedModel glass;
+    protected IBakedModel glassBlock;
+    protected BuiltInRendererModel.BakedModel glassItem;
     
     @Override
     public void renderByItem(ItemStack stack) {
-        if (glass == null) {
+        if (glassBlock == null || glassItem == null) {
+            glassBlock = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(TABlocks.STARFIELD_GLASS.getDefaultState());
             IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(stack, null, null);
             if (model instanceof BuiltInRendererModel.BakedModel)
-                glass = (BuiltInRendererModel.BakedModel) model;
+                glassItem = (BuiltInRendererModel.BakedModel) model;
             else
                 throw new IllegalArgumentException("Item model doesn't belong to us");
         }
@@ -84,7 +87,7 @@ public class RenderItemBlockStarfieldGlass extends TileEntityItemStackRenderer {
             }
         }
         
-        if (glass.getLastTransformType() == TransformType.FIXED)
+        if (glassItem.getLastTransformType() == TransformType.FIXED)
             GlStateManager.disableCull();
         
         Tessellator t = Tessellator.getInstance();
@@ -106,7 +109,7 @@ public class RenderItemBlockStarfieldGlass extends TileEntityItemStackRenderer {
         buffer.pos(0.999, 0.999, 0.001).tex(1, 1).endVertex();
         t.draw();
         
-        if (glass.getLastTransformType() == TransformType.FIXED)
+        if (glassItem.getLastTransformType() == TransformType.FIXED)
             GlStateManager.enableCull();
    
         if (TAShaderManager.shouldUseShaders())
@@ -118,7 +121,7 @@ public class RenderItemBlockStarfieldGlass extends TileEntityItemStackRenderer {
         GlStateManager.enableLighting();
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.5, 0.5, 0.5);
-        Minecraft.getMinecraft().getRenderItem().renderItem(stack, glass.getWrappedModel());
+        Minecraft.getMinecraft().getRenderItem().renderItem(stack, glassBlock.getOverrides().handleItemState(glassBlock, stack, null, null));
         GlStateManager.popMatrix();
     }
     

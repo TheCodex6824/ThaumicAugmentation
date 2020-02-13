@@ -381,6 +381,7 @@ public class RenderEventHandler {
             double rZ = rv.lastTickPosZ + (rv.posZ - rv.lastTickPosZ) * pt;
             if (renderGlass) {
                 GlStateManager.disableLighting();
+                GlStateManager.enableCull();
                 for (int i = 0; i < GLASS_RENDERS.size(); ++i) {
                     ArrayList<TileStarfieldGlass> toRender = GLASS_RENDERS.get(i);
                     if (!toRender.isEmpty()) {
@@ -490,6 +491,7 @@ public class RenderEventHandler {
                 }
                 
                 Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+                GlStateManager.disableCull();
                 GlStateManager.enableLighting();
                 renderGlass = false;
             }

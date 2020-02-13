@@ -43,11 +43,8 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -125,17 +122,6 @@ public class BuiltInRendererModel implements IModel {
                 TransformType.FIRST_PERSON_LEFT_HAND, create(0, 0, 0, 0, 225, 0, 0.4F)).put(
                 TransformType.FIXED, create(0, 0, 0, 0, 0, 0, 0.5F)).build();
         
-        private static final ItemOverrideList IDENTITY = new ItemOverrideList(Collections.emptyList()) {
-            
-            @Override
-            public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world,
-                    @Nullable EntityLivingBase entity) {
-                
-                return originalModel;
-            }
-            
-        };
-        
         protected IBakedModel wrapped;
         protected TransformType lastTransform;
         
@@ -150,7 +136,7 @@ public class BuiltInRendererModel implements IModel {
         
         @Override
         public ItemOverrideList getOverrides() {
-            return IDENTITY;
+            return wrapped.getOverrides();
         }
         
         @Override
