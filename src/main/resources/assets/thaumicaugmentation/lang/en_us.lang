@@ -207,6 +207,12 @@ focus.thaumicaugmentation.shield.reflect_yes=Yes
 focus.thaumicaugmentation.water.name=Water
 focus.thaumicaugmentation.water.text=Summons a torrent of water that can extinguish fires and water crops, in addition to possibly dealing a small amount of damage.
 
+thaumicaugmentation.research.card.rift_jar.title=Rift in a Jar
+thaumicaugmentation.research.card.rift_jar.text=Gazing at the rift floating harmlessly in the nearby jar reminds you that combining multiple facets of Thaumaturgy can turn what could have once been insurmountable obstacles into new opportunities. Gain a random amount of progress in 3 random, non-rejected categories, and 2 additional categories will gain the full bonus upon completion.
+
+thaumicaugmentation.research.card.rift_monitor.title=Extradimensional Monitor
+thaumicaugmentation.research.card.rift_monitor.text=The Extradimensional Monitor's vibrant holograms allow you to study the Eldritch from afar and with a greater clarity than before. Gain 20 to 40 Eldritch progress, with no chance of obtaining any warp.
+
 tc.research_category.THAUMIC_AUGMENTATION=Thaumic Augmentation
 thaumicaugmentation.research.thaumic_augmentation_base.title=Thaumic Augmentation
 thaumicaugmentation.research.thaumic_augmentation_base.0=I'll dedicate this section of the Thaumonomicon to any miscellaneous discoveries I make. Who knows what I may come up with?

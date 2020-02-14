@@ -50,6 +50,7 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionFloat;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringArray;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
 import thecodex6824.thaumicaugmentation.api.config.IEnumSerializer;
@@ -357,6 +358,21 @@ public final class TAConfigHolder {
         @RequiresMcRestart
         public float primalCutterDamage = 6.0F;
         
+        @Name("blacklistedResearchCategories")
+        @Comment({
+            "The list of research categories that Thaumic Augmentation will never willingly give research in.",
+            "Sadly Thaumcraft makes all addons have a research category, even if they don't intend on using it.",
+            "This is why cards like \"experiment\" can give categories that never appear otherwise."
+        })
+        public String[] blacklistedCategories = new String[] {
+                "THAUMIC_AUGMENTATION",
+                "THAUMIC_TINKERER",
+                "THAUMIC_WONDERS",
+                "RUSTIC_THAUMATURGY",
+                "PERIPHERY",
+                "ENGINEERED_GOLEMS"
+        };
+        
     }
     
     public static class WorldOptions {
@@ -532,6 +548,8 @@ public final class TAConfigHolder {
         TAConfig.cannonBurstRange.setValue(gameplay.impetus.cannon.burstRange);
         
         TAConfig.primalCutterDamage.setValue(gameplay.primalCutterDamage);
+        
+        TAConfig.blacklistedCategories.setValue(gameplay.blacklistedCategories);
     }
 
     public static void syncLocally() {
@@ -625,6 +643,8 @@ public final class TAConfigHolder {
         TAConfig.cannonBurstRange = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.burstRange));
     
         TAConfig.primalCutterDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.primalCutterDamage));
+    
+        TAConfig.blacklistedCategories = TAConfigManager.addOption(new ConfigOptionStringArray(true, gameplay.blacklistedCategories));
     }
 
 }

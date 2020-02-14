@@ -34,6 +34,7 @@ import thaumcraft.api.research.ScanBlockState;
 import thaumcraft.api.research.ScanEntity;
 import thaumcraft.api.research.ScanItem;
 import thaumcraft.api.research.ScanningManager;
+import thaumcraft.api.research.theorycraft.TheorycraftManager;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -42,6 +43,10 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneTyp
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.research.ScanEntityWithPeacefulFallback;
 import thecodex6824.thaumicaugmentation.common.research.ScanTool;
+import thecodex6824.thaumicaugmentation.common.research.theorycraft.ResearchAidRiftJar;
+import thecodex6824.thaumicaugmentation.common.research.theorycraft.ResearchAidRiftMonitor;
+import thecodex6824.thaumicaugmentation.common.research.theorycraft.ResearchCardRiftJar;
+import thecodex6824.thaumicaugmentation.common.research.theorycraft.ResearchCardRiftMonitor;
 
 public final class ResearchHandler {
 
@@ -82,6 +87,12 @@ public final class ResearchHandler {
         ScanningManager.addScannableThing(new ScanItem("f_FLINTANDSTEEL", new ItemStack(Items.FLINT_AND_STEEL)));
         ScanningManager.addScannableThing(new ScanEntityWithPeacefulFallback("m_CREEPER", new ScanEntity("m_CREEPER", EntityCreeper.class, true),
                 new ScanItem("m_CREEPER", new ItemStack(Items.GUNPOWDER))));
+        
+        TheorycraftManager.registerCard(ResearchCardRiftJar.class);
+        TheorycraftManager.registerCard(ResearchCardRiftMonitor.class);
+        
+        TheorycraftManager.registerAid(new ResearchAidRiftJar());
+        TheorycraftManager.registerAid(new ResearchAidRiftMonitor());
     }
 
 }

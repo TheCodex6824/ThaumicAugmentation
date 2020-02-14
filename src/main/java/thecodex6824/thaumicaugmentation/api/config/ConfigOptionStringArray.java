@@ -21,57 +21,53 @@
 package thecodex6824.thaumicaugmentation.api.config;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
 
 import io.netty.buffer.ByteBuf;
 
-/**
- * Config option class for Map{@literal <}String, Integer{@literal >} values.
- * @author TheCodex6824
- */
-public class ConfigOptionStringToIntMap extends ConfigOption<Map<String, Integer>>{
+public class ConfigOptionStringArray extends ConfigOption<String[]> {
 
-    protected ImmutableMap<String, Integer> value;
-    
-    public ConfigOptionStringToIntMap(boolean enforceServer, Map<String, Integer> map) {
+    protected String[] value;
+
+    public ConfigOptionStringArray(boolean enforceServer, String[] defaultValue) {
         super(enforceServer);
-        value = ImmutableMap.copyOf(map);
+        value = new String[defaultValue.length];
+        System.arraycopy(defaultValue, 0, value, 0, value.length);
     }
-    
+
     @Override
     public void serialize(ByteBuf buf) {
-        buf.writeInt(value.size());
-        value.forEach((String k, Integer v) -> {
-            byte[] data = k.getBytes(StandardCharsets.UTF_8);
+        buf.writeInt(value.length);
+        for (String s : value) {
+            byte[] data = s.getBytes(StandardCharsets.UTF_8);
             buf.writeInt(data.length);
             buf.writeBytes(data);
-            buf.writeInt(v);
-        });
+        }
     }
 
     @Override
     public void deserialize(ByteBuf buf) {
-        ImmutableMap.Builder<String, Integer> builder = ImmutableMap.builder();
+        ArrayList<String> list = new ArrayList<>();
         int entries = buf.readInt();
         for (int i = 0; i < entries; ++i) {
-            byte[] name = new byte[Math.min(buf.readInt(), 2097152)];
-            buf.readBytes(name);
-            builder.put(new String(name, StandardCharsets.UTF_8), buf.readInt());
+            byte[] str = new byte[Math.min(buf.readInt(), 2097152)];
+            buf.readBytes(str);
+            list.add(new String(str, StandardCharsets.UTF_8));
         }
         
-        value = builder.build();
+        value = list.toArray(new String[list.size()]);
     }
 
     @Override
-    public Map<String, Integer> getValue() {
+    public String[] getValue() {
         return value;
     }
 
     @Override
-    public void setValue(Map<String, Integer> value) {
-        this.value = ImmutableMap.copyOf(value);
+    public void setValue(String[] value) {
+        this.value = new String[value.length];
+        System.arraycopy(value, 0, this.value, 0, this.value.length);
     }
+
     
 }
