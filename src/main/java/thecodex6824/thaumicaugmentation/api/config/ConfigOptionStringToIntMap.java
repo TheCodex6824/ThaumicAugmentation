@@ -42,8 +42,9 @@ public class ConfigOptionStringToIntMap extends ConfigOption<Map<String, Integer
     public void serialize(ByteBuf buf) {
         buf.writeInt(value.size());
         value.forEach((String k, Integer v) -> {
-            buf.writeInt(k.length());
-            buf.writeBytes(k.getBytes(StandardCharsets.UTF_8));
+            byte[] data = k.getBytes(StandardCharsets.UTF_8);
+            buf.writeInt(data.length);
+            buf.writeBytes(data);
             buf.writeInt(v);
         });
     }
@@ -52,7 +53,7 @@ public class ConfigOptionStringToIntMap extends ConfigOption<Map<String, Integer
     public void deserialize(ByteBuf buf) {
         int entries = buf.readInt();
         for (int i = 0; i < entries; ++i) {
-            byte[] name = new byte[buf.readInt()];
+            byte[] name = new byte[Math.min(buf.readInt(), 2097152)];
             buf.readBytes(name);
             value.put(new String(name, StandardCharsets.UTF_8), buf.readInt());
         }

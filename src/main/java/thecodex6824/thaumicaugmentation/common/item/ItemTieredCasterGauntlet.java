@@ -310,9 +310,8 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
             FocusPackage fPackage = ItemFocus.getPackage(getFocusStack(stack));
             if (fPackage != null) {
                 for (IFocusElement element : fPackage.nodes) {
-                    if (element instanceof IArchitect) {
+                    if (element instanceof IArchitect)
                         return ((IArchitect) element).showAxis(stack, world, player, side, axis);
-                    }
                 }
             } 
         }
@@ -429,9 +428,10 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
                 ((IInteractWithCaster) tile).onCasterRightClick(world, stack, player, pos, side, hand))
             return EnumActionResult.PASS;
 
-        if (CasterTriggerRegistry.hasTrigger(state))
+        if (CasterTriggerRegistry.hasTrigger(state)) {
             return CasterTriggerRegistry.performTrigger(world, stack, player, pos, side, state) ? 
                     EnumActionResult.SUCCESS : EnumActionResult.FAIL;
+        }
 
         if (isStoringFocus(stack)) {
             ItemStack focus = getFocusStack(stack);
@@ -442,7 +442,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
                         if (!world.isRemote) {
                             ItemStack toStore = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
                             try {
-                                if (state.getBlock() != Blocks.AIR) {
+                                if (!state.getBlock().isAir(state, world, pos)) {
                                     ItemStack toCopy = BlockUtils.getSilkTouchDrop(state);
                                     if (toCopy != null && !toCopy.isEmpty())
                                         toStore = toCopy.copy();
