@@ -82,22 +82,22 @@ public class FocusEffectExchangeCompat extends FocusEffectExchange {
     public boolean execute(RayTraceResult target, Trajectory trajectory, float finalPower, int something) {
         if (target.typeOfHit == RayTraceResult.Type.BLOCK) {
             ItemStack casterStack = ItemStack.EMPTY;
-            if ((getPackage().getCaster().getHeldItemMainhand() != null) && ((getPackage().getCaster().getHeldItemMainhand().getItem() instanceof ICaster)))
+            if (getPackage().getCaster().getHeldItemMainhand() != null && getPackage().getCaster().getHeldItemMainhand().getItem() instanceof ICaster)
                 casterStack = getPackage().getCaster().getHeldItemMainhand();
-            else if ((getPackage().getCaster().getHeldItemOffhand() != null) && ((getPackage().getCaster().getHeldItemOffhand().getItem() instanceof ICaster)))
+            else if (getPackage().getCaster().getHeldItemOffhand() != null && getPackage().getCaster().getHeldItemOffhand().getItem() instanceof ICaster)
                 casterStack = getPackage().getCaster().getHeldItemOffhand();
 
             if (casterStack.isEmpty())
                 return false;
 
-            boolean silk = getSettingValue("silk") > 0;
-            int fortune = getSettingValue("fortune");
-            if (getPackage().getCaster() instanceof EntityPlayer && ((ICaster)casterStack.getItem()).getPickedBlock(casterStack) != null && 
-                    !((ICaster)casterStack.getItem()).getPickedBlock(casterStack).isEmpty()) {
+            boolean silk = wrapped.getSettingValue("silk") > 0;
+            int fortune = wrapped.getSettingValue("fortune");
+            if (getPackage().getCaster() instanceof EntityPlayer && ((ICaster) casterStack.getItem()).getPickedBlock(casterStack) != null && 
+                    !((ICaster) casterStack.getItem()).getPickedBlock(casterStack).isEmpty()) {
 
                 ServerEvents.addSwapper(getPackage().world, target.getBlockPos(), 
-                        getPackage().world.getBlockState(target.getBlockPos()), ((ICaster)casterStack.getItem()).getPickedBlock(casterStack), true, 0, 
-                        (EntityPlayer)getPackage().getCaster(), true, false, 8038177, true, silk, fortune, 
+                        getPackage().world.getBlockState(target.getBlockPos()), ((ICaster) casterStack.getItem()).getPickedBlock(casterStack), true, 0, 
+                        (EntityPlayer) getPackage().getCaster(), true, false, 8038177, true, silk, fortune, 
                         ServerEvents.DEFAULT_PREDICATE, 0.25F + (silk ? 0.25F : 0.0F) + fortune * 0.1F);
             }
 
