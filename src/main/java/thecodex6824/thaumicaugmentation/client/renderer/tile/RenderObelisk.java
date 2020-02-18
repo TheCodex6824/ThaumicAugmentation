@@ -18,31 +18,21 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.tile;
+package thecodex6824.thaumicaugmentation.client.renderer.tile;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
+import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
-public class TileStarfieldGlass extends TileEntity implements IShaderRenderingCallback {
+public class RenderObelisk extends TileEntitySpecialRenderer<TileObelisk> {
     
     @Override
-    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        return oldState.getBlock() != newState.getBlock();
-    }
-    
-    @Override
-    public double getMaxRenderDistanceSquared() {
-        return 16384.0;
-    }
-    
-    @Override
-    public void render(ShaderType type, double pX, double pY, double pZ) {
-        ThaumicAugmentation.proxy.getRenderHelper().renderStarfieldGlass(type, this, pX, pY, pZ);
+    public void render(TileObelisk te, double x, double y, double z, float partialTicks, int destroyStage,
+            float alpha) {
+        
+        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
+        RenderEventHandler.onRenderShaderTile(ShaderType.RIFT, te);
     }
     
 }

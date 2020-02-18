@@ -28,7 +28,7 @@ import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 
 public class RenderStarfieldGlass extends TileEntitySpecialRenderer<TileStarfieldGlass> {
-
+    
     @Override
     public void render(TileStarfieldGlass te, double x, double y, double z, float partialTicks, int destroyStage,
             float alpha) {
@@ -37,7 +37,7 @@ public class RenderStarfieldGlass extends TileEntitySpecialRenderer<TileStarfiel
         World world = te.getWorld();
         IBlockState state = world.getBlockState(te.getPos());
         if (state.getPropertyKeys().contains(IStarfieldGlassType.GLASS_TYPE))
-            RenderEventHandler.onRenderStarfieldGlass(state.getValue(IStarfieldGlassType.GLASS_TYPE), te);
+            RenderEventHandler.onRenderShaderTile(state.getValue(IStarfieldGlassType.GLASS_TYPE).getShaderType(), te);
     }
     
 }

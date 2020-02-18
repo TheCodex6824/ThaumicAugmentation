@@ -26,6 +26,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
+import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
+import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 
 public interface ITARenderHelper {
 
@@ -56,6 +58,14 @@ public interface ITARenderHelper {
     public void renderTerraformerParticle(World world, double x, double y, double z, double vx, double vy, double vz, BlockPos pos, Biome biome);
     
     public void renderRiftMoverParticle(World world, double x, double y, double z, double vx, double vy, double vz);
+    
+    public void renderObeliskParticles(World world, double x, double y, double z);
+    
+    public void renderObeliskConnection(World world, double x, double y, double z, double vx, double vy, double vz);
+    
+    public void renderStarfieldGlass(ShaderType type, TileStarfieldGlass tile, double pX, double pY, double pZ);
+    
+    public void renderObelisk(ShaderType type, TileObelisk tile, double pX, double pY, double pZ);
     
     public Vec3d estimateImpulseCannonFiringPoint(EntityLivingBase entity, float partialTicks);
     

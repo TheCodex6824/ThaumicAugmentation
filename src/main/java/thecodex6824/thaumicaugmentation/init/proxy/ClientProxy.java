@@ -122,6 +122,7 @@ import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObelisk;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftJar;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMonitor;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMoverOutput;
@@ -162,6 +163,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
+import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
@@ -763,6 +765,7 @@ public class ClientProxy extends ServerProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftMonitor.class, new RenderRiftMonitor());
         ClientRegistry.bindTileEntitySpecialRenderer(TileStabilityFieldGenerator.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileStarfieldGlass.class, new RenderStarfieldGlass());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileObelisk.class, new RenderObelisk());
         registerItemColorHandlers();
         registerBlockColorHandlers();
         for (RenderPlayer render : Minecraft.getMinecraft().getRenderManager().getSkinMap().values())

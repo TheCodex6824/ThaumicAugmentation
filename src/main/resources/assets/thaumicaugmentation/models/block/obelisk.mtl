@@ -1,0 +1,7 @@
+# Blender MTL File: 'obelisk_side.blend'
+# Material Count: 1
+
+newmtl Material
+Kd 1.000000 1.000000 1.000000
+d 1.000000
+map_Kd thaumcraft:models/obelisk_side

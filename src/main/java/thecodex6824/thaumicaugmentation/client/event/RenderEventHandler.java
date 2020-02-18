@@ -41,7 +41,6 @@ import com.google.common.cache.CacheBuilder;
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
@@ -60,7 +59,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -77,7 +75,6 @@ import thaumcraft.client.fx.beams.FXBeamBore;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType.GlassType;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
@@ -91,7 +88,8 @@ import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
-import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
+import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
+import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public class RenderEventHandler {
@@ -103,14 +101,14 @@ public class RenderEventHandler {
     
     private static final HashMap<DimensionalBlockPos[], Long> TRANSACTIONS = new HashMap<>();
     
-    private static boolean renderGlass = false;
-    private static final ArrayList<ArrayList<TileStarfieldGlass>> GLASS_RENDERS = new ArrayList<>(GlassType.values().length);
+    private static boolean renderShaders = false;
+    private static final ArrayList<ArrayList<IShaderRenderingCallback>> SHADER_RENDERS = new ArrayList<>(ShaderType.values().length);
     
     private static final double TRANSACTION_DURATION = 60.0;
     
     static {
-        for (int i = 0; i < GlassType.values().length; ++i)
-            GLASS_RENDERS.add(new ArrayList<>());
+        for (int i = 0; i < ShaderType.values().length; ++i)
+            SHADER_RENDERS.add(new ArrayList<>());
     }
     
     public static void onEntityCast(int id) {
@@ -122,9 +120,9 @@ public class RenderEventHandler {
         TRANSACTIONS.put(positions, Minecraft.getMinecraft().world.getTotalWorldTime());
     }
     
-    public static void onRenderStarfieldGlass(GlassType type, TileStarfieldGlass tile) {
-        GLASS_RENDERS.get(type.getMeta()).add(tile);
-        renderGlass = true;
+    public static void onRenderShaderTile(ShaderType type, IShaderRenderingCallback tile) {
+        SHADER_RENDERS.get(type.getIndex()).add(tile);
+        renderShaders = true;
     }
     
     public static void onImpulseBeam(EntityLivingBase entity, boolean stop) {
@@ -375,17 +373,17 @@ public class RenderEventHandler {
             float pt = Minecraft.getMinecraft().getRenderPartialTicks();
             Entity rv = Minecraft.getMinecraft().getRenderViewEntity() != null ? Minecraft.getMinecraft().getRenderViewEntity() :
                 Minecraft.getMinecraft().player;
-            WorldClient world = Minecraft.getMinecraft().world;
+            
             double rX = rv.lastTickPosX + (rv.posX - rv.lastTickPosX) * pt;
             double rY = rv.lastTickPosY + (rv.posY - rv.lastTickPosY) * pt;
             double rZ = rv.lastTickPosZ + (rv.posZ - rv.lastTickPosZ) * pt;
-            if (renderGlass) {
+            if (renderShaders) {
                 GlStateManager.disableLighting();
                 GlStateManager.enableCull();
-                for (int i = 0; i < GLASS_RENDERS.size(); ++i) {
-                    ArrayList<TileStarfieldGlass> toRender = GLASS_RENDERS.get(i);
+                for (ShaderType type : ShaderType.values()) {
+                    ArrayList<IShaderRenderingCallback> toRender = SHADER_RENDERS.get(type.getIndex());
                     if (!toRender.isEmpty()) {
-                        switch (i) {
+                        switch (type.getIndex()) {
                             case 0: {
                                 if (TAShaderManager.shouldUseShaders())
                                     TAShaderManager.enableShader(TAShaders.FLUX_RIFT, TAShaders.SHADER_CALLBACK_GENERIC_SPHERE);
@@ -417,69 +415,8 @@ public class RenderEventHandler {
                             }
                         }
                         
-                        for (TileStarfieldGlass tile : toRender) {
-                            BlockPos pos = tile.getPos();
-                            IBlockState state = world.getBlockState(pos);
-                            GlStateManager.pushMatrix();
-                            GlStateManager.translate(pos.getX() - rX, pos.getY() - rY, pos.getZ() - rZ);
-                            Tessellator t = Tessellator.getInstance();
-                            BufferBuilder buffer = t.getBuffer();
-                            for (EnumFacing face : EnumFacing.VALUES) {
-                                if (state.shouldSideBeRendered(world, pos, face)) {
-                                    buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-                                    switch (face) {
-                                        case DOWN: {
-                                            buffer.pos(0.0, 0.001, 0.0).tex(0, 0).endVertex();
-                                            buffer.pos(1.0, 0.001, 0.0).tex(1, 0).endVertex();
-                                            buffer.pos(1.0, 0.001, 1.0).tex(1, 1).endVertex();
-                                            buffer.pos(0.0, 0.001, 1.0).tex(1, 0).endVertex();
-                                            break;
-                                        }
-                                        case UP: {
-                                            buffer.pos(0.0, 0.999, 0.0).tex(0, 0).endVertex();
-                                            buffer.pos(0.0, 0.999, 1.0).tex(1, 0).endVertex();
-                                            buffer.pos(1.0, 0.999, 1.0).tex(1, 1).endVertex();
-                                            buffer.pos(1.0, 0.999, 0.0).tex(1, 0).endVertex();
-                                            break;
-                                        }
-                                        case EAST: {
-                                            buffer.pos(0.999, 0.0, 0.0).tex(0, 0).endVertex();
-                                            buffer.pos(0.999, 1.0, 0.0).tex(1, 0).endVertex();
-                                            buffer.pos(0.999, 1.0, 1.0).tex(1, 1).endVertex();
-                                            buffer.pos(0.999, 0.0, 1.0).tex(1, 0).endVertex();
-                                            break;
-                                        }
-                                        case WEST: {
-                                            buffer.pos(0.001, 0.0, 0.0).tex(0, 0).endVertex();
-                                            buffer.pos(0.001, 0.0, 1.0).tex(1, 0).endVertex();
-                                            buffer.pos(0.001, 1.0, 1.0).tex(1, 1).endVertex();
-                                            buffer.pos(0.001, 1.0, 0.0).tex(1, 0).endVertex();
-                                            break;
-                                        }
-                                        case SOUTH: {
-                                            buffer.pos(0.0, 0.0, 0.999).tex(0, 0).endVertex();
-                                            buffer.pos(1.0, 0.0, 0.999).tex(1, 0).endVertex();
-                                            buffer.pos(1.0, 1.0, 0.999).tex(1, 1).endVertex();
-                                            buffer.pos(0.0, 1.0, 0.999).tex(1, 0).endVertex();
-                                            break;
-                                        }
-                                        case NORTH: {
-                                            buffer.pos(0.0, 0.0, 0.001).tex(0, 0).endVertex();
-                                            buffer.pos(0.0, 1.0, 0.001).tex(1, 0).endVertex();
-                                            buffer.pos(1.0, 1.0, 0.001).tex(0, 1).endVertex();
-                                            buffer.pos(1.0, 0.0, 0.001).tex(1, 1).endVertex();
-                                            break;
-                                        }
-                                        
-                                        default: break;
-                                    }
-                                    
-                                    t.draw();
-                                }
-                            }
-           
-                            GlStateManager.popMatrix();
-                        }
+                        for (IShaderRenderingCallback tile : toRender)
+                            tile.render(type, rX, rY, rZ);
                         
                         if (TAShaderManager.shouldUseShaders())
                             TAShaderManager.disableShader();
@@ -493,7 +430,7 @@ public class RenderEventHandler {
                 Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                 GlStateManager.disableCull();
                 GlStateManager.enableLighting();
-                renderGlass = false;
+                renderShaders = false;
             }
         }
     }

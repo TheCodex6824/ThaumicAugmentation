@@ -1,0 +1,47 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "ta_obelisk_part": {
+            "middle": {
+                "model": "minecraft:cube_all"
+            },
+            "inner": {
+                "model": "thaumicaugmentation:cube_all_1"
+            },
+            "cap": {
+                "model": "thaumicaugmentation:obelisk_cap.obj",
+                "custom": {
+                    "flip-v": true
+                }
+            }
+        },
+        "ta_obelisk_type": {
+            "eldritch": {
+                "textures": {
+                    "all": "thaumicaugmentation:blocks/obelisk_middle_eldritch",
+                    "all1": "thaumicaugmentation:blocks/obelisk_inner_eldritch",
+                    "#Material": "thaumcraft:models/obelisk_cap",
+                    "particle": "thaumcraft:models/obelisk_cap"
+                }
+            },
+            "ancient": {
+                "textures": {
+                    "all": "thaumicaugmentation:blocks/obelisk_middle_ancient",
+                    "all1": "thaumicaugmentation:blocks/obelisk_inner_ancient",
+                    "#Material": "thaumcraft:models/obelisk_cap_2",
+                    "particle": "thaumcraft:models/obelisk_cap_2"
+                }
+            }
+        },
+        "ta_direction": {
+            "down": {
+                "x": 180
+            },
+            "up": {},
+            "north": {},
+            "south": {},
+            "east": {},
+            "west": {}
+        }
+    }
+}

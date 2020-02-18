@@ -28,21 +28,26 @@ import org.lwjgl.opengl.GL11;
 
 import com.sasmaster.glelwjgl.java.CoreGLE;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Biomes;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
@@ -62,7 +67,10 @@ import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.client.fx.FXArcCustom;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
+import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
+import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
+import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 public class TARenderHelperClient implements ITARenderHelper {
 
@@ -496,6 +504,41 @@ public class TARenderHelperClient implements ITARenderHelper {
         ParticleEngine.addEffect(world, fx);
     }
     
+    @Override
+    public void renderObeliskParticles(World world, double x, double y, double z) {
+        FXGeneric fx = new FXGeneric(world, x, y, z, 0.0, 0.0, 0.0);
+        fx.setMaxAge(80 + world.rand.nextInt(20));
+        fx.setRBGColorF(0.05F, 0.05F, 0.05F);
+        fx.setAlphaF(0.0F, 0.75F, 0.0F);
+        fx.setGridSize(64);
+        fx.setParticles(264, 8, 1);
+        fx.setScale(2.0F);
+        fx.setLayer(1);
+        fx.setLoop(true);
+        fx.setNoClip(false);
+        fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
+        ParticleEngine.addEffect(world, fx);
+    }
+    
+    @Override
+    public void renderObeliskConnection(World world, double x, double y, double z, double vx, double vy, double vz) {
+        for (int i = 0; i < 2 + world.rand.nextInt(4); ++i) {
+            FXGeneric fx = new FXGeneric(world, x + world.rand.nextFloat() * 1.5F, y + world.rand.nextFloat() * 1.5F,
+                    z + world.rand.nextFloat() * 1.5F, vx, vy, vz);
+            fx.setMaxAge(80 + world.rand.nextInt(20));
+            fx.setRBGColorF(0.05F, 0.05F, 0.05F);
+            fx.setAlphaF(0.0F, 0.75F, 0.0F);
+            fx.setGridSize(64);
+            fx.setParticles(264, 8, 1);
+            fx.setScale(2.0F);
+            fx.setLayer(1);
+            fx.setLoop(true);
+            fx.setNoClip(false);
+            fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
+            ParticleEngine.addEffect(world, fx);
+        }
+    }
+    
     @Nullable
     private static EnumHand findImpulseCannon(EntityLivingBase entity) {
         ItemStack stack = entity.getHeldItemMainhand();
@@ -507,6 +550,123 @@ public class TARenderHelperClient implements ITARenderHelper {
             return EnumHand.OFF_HAND;
         
         return null;
+    }
+    
+    @Override
+    public void renderStarfieldGlass(ShaderType type, TileStarfieldGlass tile, double pX, double pY, double pZ) {
+        BlockPos pos = tile.getPos();
+        IBlockState state = tile.getWorld().getBlockState(pos);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(pos.getX() - pX, pos.getY() - pY, pos.getZ() - pZ);
+        Tessellator t = Tessellator.getInstance();
+        BufferBuilder buffer = t.getBuffer();
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (state.shouldSideBeRendered(tile.getWorld(), pos, face)) {
+                buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+                switch (face) {
+                    case DOWN: {
+                        buffer.pos(0.0, 0.001, 0.0).tex(0, 0).endVertex();
+                        buffer.pos(1.0, 0.001, 0.0).tex(1, 0).endVertex();
+                        buffer.pos(1.0, 0.001, 1.0).tex(1, 1).endVertex();
+                        buffer.pos(0.0, 0.001, 1.0).tex(1, 0).endVertex();
+                        break;
+                    }
+                    case UP: {
+                        buffer.pos(0.0, 0.999, 0.0).tex(0, 0).endVertex();
+                        buffer.pos(0.0, 0.999, 1.0).tex(1, 0).endVertex();
+                        buffer.pos(1.0, 0.999, 1.0).tex(1, 1).endVertex();
+                        buffer.pos(1.0, 0.999, 0.0).tex(1, 0).endVertex();
+                        break;
+                    }
+                    case EAST: {
+                        buffer.pos(0.999, 0.0, 0.0).tex(0, 0).endVertex();
+                        buffer.pos(0.999, 1.0, 0.0).tex(1, 0).endVertex();
+                        buffer.pos(0.999, 1.0, 1.0).tex(1, 1).endVertex();
+                        buffer.pos(0.999, 0.0, 1.0).tex(1, 0).endVertex();
+                        break;
+                    }
+                    case WEST: {
+                        buffer.pos(0.001, 0.0, 0.0).tex(0, 0).endVertex();
+                        buffer.pos(0.001, 0.0, 1.0).tex(1, 0).endVertex();
+                        buffer.pos(0.001, 1.0, 1.0).tex(1, 1).endVertex();
+                        buffer.pos(0.001, 1.0, 0.0).tex(1, 0).endVertex();
+                        break;
+                    }
+                    case SOUTH: {
+                        buffer.pos(0.0, 0.0, 0.999).tex(0, 0).endVertex();
+                        buffer.pos(1.0, 0.0, 0.999).tex(1, 0).endVertex();
+                        buffer.pos(1.0, 1.0, 0.999).tex(1, 1).endVertex();
+                        buffer.pos(0.0, 1.0, 0.999).tex(1, 0).endVertex();
+                        break;
+                    }
+                    case NORTH: {
+                        buffer.pos(0.0, 0.0, 0.001).tex(0, 0).endVertex();
+                        buffer.pos(0.0, 1.0, 0.001).tex(1, 0).endVertex();
+                        buffer.pos(1.0, 1.0, 0.001).tex(0, 1).endVertex();
+                        buffer.pos(1.0, 0.0, 0.001).tex(1, 1).endVertex();
+                        break;
+                    }
+                    
+                    default: break;
+                }
+                
+                t.draw();
+            }
+        }
+
+        GlStateManager.popMatrix();
+    }
+    
+    @Override
+    public void renderObelisk(ShaderType type, TileObelisk tile, double pX, double pY, double pZ) {
+        BlockPos pos = tile.getPos();
+        IBlockState state = tile.getWorld().getBlockState(pos);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(pos.getX() - pX, pos.getY() - pY, pos.getZ() - pZ);
+        Tessellator t = Tessellator.getInstance();
+        BufferBuilder buffer = t.getBuffer();
+        for (EnumFacing face : EnumFacing.HORIZONTALS) {
+            if (state.shouldSideBeRendered(tile.getWorld(), pos, face) || state.shouldSideBeRendered(tile.getWorld(), pos.up(), face) ||
+                    state.shouldSideBeRendered(tile.getWorld(), pos.down(), face)) {
+                buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+                switch (face) {
+                    case EAST: {
+                        buffer.pos(0.999, -1.0, 0.0).tex(0, 0).endVertex();
+                        buffer.pos(0.999, 2.0, 0.0).tex(1, 0).endVertex();
+                        buffer.pos(0.999, 2.0, 1.0).tex(1, 1).endVertex();
+                        buffer.pos(0.999, -1.0, 1.0).tex(1, 0).endVertex();
+                        break;
+                    }
+                    case WEST: {
+                        buffer.pos(0.001, -1.0, 0.0).tex(0, 0).endVertex();
+                        buffer.pos(0.001, -1.0, 1.0).tex(1, 0).endVertex();
+                        buffer.pos(0.001, 2.0, 1.0).tex(1, 1).endVertex();
+                        buffer.pos(0.001, 2.0, 0.0).tex(1, 0).endVertex();
+                        break;
+                    }
+                    case SOUTH: {
+                        buffer.pos(0.0, -1.0, 0.999).tex(0, 0).endVertex();
+                        buffer.pos(1.0, -1.0, 0.999).tex(1, 0).endVertex();
+                        buffer.pos(1.0, 2.0, 0.999).tex(1, 1).endVertex();
+                        buffer.pos(0.0, 2.0, 0.999).tex(1, 0).endVertex();
+                        break;
+                    }
+                    case NORTH: {
+                        buffer.pos(0.0, -1.0, 0.001).tex(0, 0).endVertex();
+                        buffer.pos(0.0, 2.0, 0.001).tex(1, 0).endVertex();
+                        buffer.pos(1.0, 2.0, 0.001).tex(0, 1).endVertex();
+                        buffer.pos(1.0, -1.0, 0.001).tex(1, 1).endVertex();
+                        break;
+                    }
+                    
+                    default: break;
+                }
+                
+                t.draw();
+            }
+        }
+
+        GlStateManager.popMatrix();
     }
     
     @Override

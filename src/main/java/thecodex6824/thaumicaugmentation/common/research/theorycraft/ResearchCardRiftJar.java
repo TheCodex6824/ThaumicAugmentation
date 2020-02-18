@@ -21,7 +21,7 @@
 package thecodex6824.thaumicaugmentation.common.research.theorycraft;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -56,7 +56,7 @@ public class ResearchCardRiftJar extends TheorycraftCard {
         ArrayList<String> choices = data.getAvailableCategories(player);
         CardHelper.removeBlacklistedCategories(choices);
         choices.removeAll(data.categoriesBlocked);
-        WeightedRandom<String> picker = new WeightedRandom<>(choices, choices.stream().map(str -> 1).collect(Collectors.toList()));
+        WeightedRandom<String> picker = new WeightedRandom<>(choices, Collections.nCopies(choices.size(), 1));
         for (int i = 0; i < Math.min(choices.size(), 3); ++i) {
             String key = picker.get(player.getRNG());
             data.categoryTotals.put(key, data.categoryTotals.getOrDefault(key, 0) + player.getRNG().nextInt(21) + 10);

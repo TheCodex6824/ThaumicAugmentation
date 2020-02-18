@@ -85,6 +85,8 @@ item.thaumicaugmentation.impulse_cannon.name=Impulse Cannon
 item.thaumicaugmentation.impulse_cannon_augment.railgun.name=Railgun Conversion
 item.thaumicaugmentation.impulse_cannon_augment.burst.name=Burst Fire Conversion
 item.thaumicaugmentation.focus_ancient.name=Ancient Focus
+item.thaumicaugmentation.obelisk_placer.eldritch.name=Eldritch Obelisk
+item.thaumicaugmentation.obelisk_placer.ancient.name=Ancient Obelisk
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld

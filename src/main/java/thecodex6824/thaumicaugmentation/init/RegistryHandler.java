@@ -67,6 +67,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrixBase;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusRelay;
+import thecodex6824.thaumicaugmentation.common.block.BlockObelisk;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMonitor;
@@ -104,6 +105,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannon;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannonAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemMorphicTool;
+import thecodex6824.thaumicaugmentation.common.item.ItemObeliskPlacer;
 import thecodex6824.thaumicaugmentation.common.item.ItemPrimalCutter;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
@@ -136,6 +138,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
+import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
@@ -209,6 +212,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockTABars(), "bars"));
         registry.register(setupBlock(new BlockFortifiedGlass(), "fortified_glass"));
         registry.register(setupBlock(new BlockStarfieldGlass(), "starfield_glass"));
+        registry.register(setupBlock(new BlockObelisk(), "obelisk"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -231,6 +235,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileStabilityFieldGenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "stability_field_generator"));
         GameRegistry.registerTileEntity(TileImpetusGate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_gate"));
         GameRegistry.registerTileEntity(TileStarfieldGlass.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "starfield_glass"));
+        GameRegistry.registerTileEntity(TileObelisk.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "obelisk"));
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)
@@ -275,6 +280,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemImpulseCannonAugment(), "impulse_cannon_augment"));
         registry.register(new ItemFocusAncient()); // had to setup in constructor due to TC doing things to the item
         registry.register(setupItem(new ItemEldritchLockKey(), "eldritch_lock_key"));
+        registry.register(setupItem(new ItemObeliskPlacer(), "obelisk_placer"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }

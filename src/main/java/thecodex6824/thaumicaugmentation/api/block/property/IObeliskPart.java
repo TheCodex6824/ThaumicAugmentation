@@ -24,19 +24,18 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
-import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
-public interface IStarfieldGlassType {
+public interface IObeliskPart {
 
-    public enum GlassType implements IStringSerializable {
+    public enum ObeliskPart implements IStringSerializable {
         
-        GLASS_RIFT(0),
-        GLASS_FRACTURE(1),
-        GLASS_MIRROR(2);
+        MIDDLE(0),
+        INNER(1),
+        CAP(2);
         
         private int meta;
         
-        private GlassType(int m) {
+        private ObeliskPart(int m) {
             meta = m;
         }
         
@@ -50,19 +49,9 @@ public interface IStarfieldGlassType {
         }
         
         @Nullable
-        public static GlassType fromMeta(int id) {
-            for (GlassType type : values()) {
+        public static ObeliskPart fromMeta(int id) {
+            for (ObeliskPart type : values()) {
                 if (type.getMeta() == id)
-                    return type;
-            }
-            
-            return null;
-        }
-        
-        @Nullable
-        public ShaderType getShaderType() {
-            for (ShaderType type : ShaderType.values()) {
-                if (type.getIndex() == meta)
                     return type;
             }
             
@@ -71,6 +60,6 @@ public interface IStarfieldGlassType {
         
     }
     
-    public static final PropertyEnum<GlassType> GLASS_TYPE = PropertyEnum.create("ta_glass_type", GlassType.class);
+    public static final PropertyEnum<ObeliskPart> OBELISK_PART = PropertyEnum.create("ta_obelisk_part", ObeliskPart.class);
     
 }
