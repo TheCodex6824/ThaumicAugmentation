@@ -69,6 +69,7 @@ import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
+import thaumcraft.client.renderers.models.entity.ModelEldritchGuardian;
 import thaumcraft.common.golems.client.gui.SealBaseGUI;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.lib.events.EssentiaHandler;
@@ -118,6 +119,7 @@ import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderAutocaster;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
@@ -137,6 +139,8 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
+import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
+import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
@@ -229,6 +233,16 @@ public class ClientProxy extends ServerProxy {
     @Override
     public boolean isEntityClientPlayer(Entity e) {
         return e == Minecraft.getMinecraft().player;
+    }
+    
+    @Override
+    public boolean isEntityRenderView(Entity e) {
+        return e == Minecraft.getMinecraft().getRenderViewEntity();
+    }
+    
+    @Override
+    public float getPartialTicks() {
+        return Minecraft.getMinecraft().getRenderPartialTicks();
     }
     
     @Override
@@ -737,6 +751,19 @@ public class ClientProxy extends ServerProxy {
                 return new RenderAutocaster<>(manager, true);
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntityTAEldritchGuardian.class, new IRenderFactory<EntityTAEldritchGuardian>() {
+            @Override
+            public Render<? super EntityTAEldritchGuardian> createRenderFor(RenderManager manager) {
+                return new RenderTAEldritchGuardian(manager, new ModelEldritchGuardian(), 0.6F);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityTAEldritchWarden.class, new IRenderFactory<EntityTAEldritchWarden>() {
+            @Override
+            public Render<? super EntityTAEldritchWarden> createRenderFor(RenderManager manager) {
+                return new RenderTAEldritchGuardian(manager, new ModelEldritchGuardian(), 0.6F);
+            }
+        });
+        
         
         TAModelLoader loader = new TAModelLoader();
         loader.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/strength_provider"),

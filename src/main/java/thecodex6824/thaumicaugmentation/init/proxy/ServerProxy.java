@@ -134,6 +134,16 @@ public class ServerProxy implements ISidedProxy {
     }
     
     @Override
+    public boolean isEntityRenderView(Entity e) {
+        return false;
+    }
+    
+    @Override
+    public float getPartialTicks() {
+        return 1.0F;
+    }
+    
+    @Override
     public Container getServerGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (TAInventory.values()[ID]) {
             case WARDED_CHEST: return new ContainerWardedChest(player.inventory, 

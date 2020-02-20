@@ -35,6 +35,8 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 
@@ -59,6 +61,14 @@ public class RenderFocusShield extends Render<EntityFocusShield> {
             return Math.max((float) (Math.sin((entity.ticksExisted + partialTicks) / (60.0 / (Math.PI / 2.0))) + 1.0F) / 2.0F, Math.min(baseAlpha + 0.1F, 1.0F));
     }
     
+    protected Vec3d getEntityLookVector(float yaw, float pitch) {
+        float f = MathHelper.cos(-yaw * 0.017453292F - (float) Math.PI);
+        float f1 = MathHelper.sin(-yaw * 0.017453292F - (float) Math.PI);
+        float f2 = -MathHelper.cos(-pitch * 0.017453292F);
+        float f3 = MathHelper.sin(-pitch * 0.017453292F);
+        return new Vec3d(f1 * f2, f3, f * f2);
+    }
+    
     @Override
     public void doRender(EntityFocusShield entity, double x, double y, double z, float entityYaw, float partialTicks) {
         Entity rv = Minecraft.getMinecraft().getRenderViewEntity();
@@ -81,7 +91,7 @@ public class RenderFocusShield extends Render<EntityFocusShield> {
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
         float baseAlpha = 0.25F;
-        if (entity.getTotalLifespan() - entity.getTimeAlive() <= 100)
+        if (entity.getTotalLifespan() > 0 && entity.getTotalLifespan() - entity.getTimeAlive() <= 100)
             baseAlpha = entity.getTimeAlive() % 8 < 4 ? 0.0F : baseAlpha; 
         if (baseAlpha > 0.000001F) {
             for (ResourceLocation loc : TATextures.BASE_LAYERS) {

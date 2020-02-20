@@ -89,6 +89,8 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
+import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
+import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemAutocasterPlacer;
 import thecodex6824.thaumicaugmentation.common.item.ItemBiomeSelector;
@@ -345,6 +347,14 @@ public final class RegistryHandler {
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityAutocasterEldritch.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "autocaster_eldritch"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".autocaster_eldritch").tracker(64, 3, false).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityTAEldritchGuardian.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "eldritch_guardian"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".eldritch_guardian").tracker(64, 3, true).egg(
+                        0x808080, 0x880000).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityTAEldritchWarden.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "eldritch_warden"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".eldritch_warden").tracker(64, 3, true).egg(
+                        0x383882, 0x880000).build());
     }
     
     @SubscribeEvent

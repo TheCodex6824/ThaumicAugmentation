@@ -68,6 +68,10 @@ public interface ISidedProxy {
     
     public boolean isEntityClientPlayer(Entity e);
     
+    public boolean isEntityRenderView(Entity e);
+    
+    public float getPartialTicks();
+    
     public void handlePacketClient(IMessage message, MessageContext context);
 
     public void handlePacketServer(IMessage message, MessageContext context);

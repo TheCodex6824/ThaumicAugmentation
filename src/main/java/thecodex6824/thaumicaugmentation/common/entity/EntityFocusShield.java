@@ -57,6 +57,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import thaumcraft.common.lib.SoundsTC;
@@ -73,6 +74,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     protected static final DataParameter<Optional<UUID>> CASTER_ID = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.OPTIONAL_UNIQUE_ID);
     protected static final DataParameter<Integer> COLOR = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.VARINT);
     protected static final DataParameter<Integer> LIFESPAN = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.VARINT);
+    protected static final DataParameter<Float> YAW_OFFSET = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.FLOAT);
+    protected static final DataParameter<Boolean> ROTATE = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.BOOLEAN);
     
     protected int timeAlive;
     protected boolean reflect;
@@ -89,8 +92,17 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     }
     
     public void setMaxHealth(float newMax) {
+        setMaxHealth(newMax, true);
+    }
+    
+    public void setMaxHealth(float newMax, boolean updateLifespan) {
         getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(newMax);
-        dataManager.set(LIFESPAN, (int) (newMax * 300));
+        if (updateLifespan)
+            dataManager.set(LIFESPAN, (int) (newMax * 300));
+    }
+    
+    public void setInfiniteLifespan() {
+        dataManager.set(LIFESPAN, -1);
     }
     
     public void resetTimeAlive() {
@@ -113,6 +125,22 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         dataManager.set(COLOR, newColor);
     }
     
+    public void setYawOffset(float yaw) {
+        dataManager.set(YAW_OFFSET, yaw);
+    }
+    
+    public float getYawOffset() {
+        return dataManager.get(YAW_OFFSET);
+    }
+    
+    public void setRotate(boolean shouldRotate) {
+        dataManager.set(ROTATE, shouldRotate);
+    }
+    
+    public boolean getRotate() {
+        return dataManager.get(ROTATE);
+    }
+    
     @Override
     protected void entityInit() {
         super.entityInit();
@@ -120,6 +148,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         dataManager.register(CASTER_ID, Optional.absent());
         dataManager.register(COLOR, 0x5000C8);
         dataManager.register(LIFESPAN, 1500);
+        dataManager.register(YAW_OFFSET, 0.0F);
+        dataManager.register(ROTATE, false);
     }
     
     @Override
@@ -134,12 +164,26 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         return dataManager.get(OWNER_ID).get();
     }
     
-    public void setOwner(Entity newOwner) {
-        dataManager.set(OWNER_ID, Optional.of(newOwner.getPersistentID()));
-        ownerRef = new WeakReference<>(newOwner);
-        Vec3d lookVec = newOwner.getLookVec();
-        lookVec = lookVec.scale(1.5);
-        setLocationAndAngles(newOwner.posX + lookVec.x, newOwner.posY + lookVec.y + (newOwner.height / 2.0) - height / 2.0, newOwner.posZ + lookVec.z, newOwner.getRotationYawHead(), newOwner.rotationPitch);
+    public void setOwner(@Nullable Entity newOwner) {
+        if (newOwner != null) {
+            dataManager.set(OWNER_ID, Optional.of(newOwner.getPersistentID()));
+            ownerRef = new WeakReference<>(newOwner);
+            float lYaw = 0.0F;
+            if (newOwner instanceof EntityLivingBase) {
+                EntityLivingBase living = (EntityLivingBase) newOwner;
+                lYaw = living.rotationYawHead + getYawOffset();
+            }
+            else
+                lYaw = newOwner.rotationYaw + getYawOffset();
+            
+            Vec3d lookVec = getEntityLookVector(lYaw, newOwner.rotationPitch).scale(1.5);
+            setLocationAndAngles(newOwner.posX + lookVec.x, newOwner.posY + lookVec.y + (newOwner.height / 2.0) - height / 2.0,
+                    newOwner.posZ + lookVec.z, lYaw, newOwner.rotationPitch);
+        }
+        else {
+            dataManager.set(OWNER_ID, Optional.absent());
+            ownerRef = new WeakReference<>(null);
+        }
     }
     
     @Override
@@ -255,7 +299,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     public void applyEntityCollision(Entity entity) {
         Entity owner = ownerRef.get();
         if (owner != null) {
-            if (entity.equals(owner) || (world.isRemote && entity.equals(Minecraft.getMinecraft().getRenderViewEntity())))
+            if (entity.equals(owner))
                 return;
             else if (entity instanceof IEntityOwnable && owner.equals(((IEntityOwnable) entity).getOwner()))
                 return;
@@ -290,7 +334,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         return getEntityBoundingBox();
     }
     
-    protected void resetBoundingBoxes() {
+    public void resetBoundingBoxes() {
         double heightOffset = Math.abs(rotationPitch) / 90.0;
         Vec3d pos1 = new Vec3d(-width / 2.0, -heightOffset, -0.0625);
         Vec3d pos2 = new Vec3d(width / 2.0, height - heightOffset, 0.0625);
@@ -319,13 +363,24 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         rotationYawHead = rotationYaw;
     }
     
+    protected Vec3d getEntityLookVector(float yaw, float pitch) {
+        float f = MathHelper.cos(-yaw * 0.017453292F - (float) Math.PI);
+        float f1 = MathHelper.sin(-yaw * 0.017453292F - (float) Math.PI);
+        float f2 = -MathHelper.cos(-pitch * 0.017453292F);
+        float f3 = MathHelper.sin(-pitch * 0.017453292F);
+        return new Vec3d(f1 * f2, f3, f * f2);
+    }
+    
     @Override
     public void onLivingUpdate() {
         
-        ++timeAlive;
-        if (!world.isRemote && timeAlive > getTotalLifespan() && isEntityAlive()) {
-            attackEntityFrom(DamageSource.OUT_OF_WORLD, 100000.0F);
-            return;
+        int lifespan = getTotalLifespan();
+        if (lifespan > 0) {
+            ++timeAlive;
+            if (!world.isRemote && timeAlive > lifespan && isEntityAlive()) {
+                attackEntityFrom(DamageSource.OUT_OF_WORLD, 100000.0F);
+                return;
+            }
         }
         
         if (ownerRef.get() == null && dataManager.get(OWNER_ID).isPresent()) {
@@ -343,31 +398,51 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
             if (!owner.isEntityAlive())
                 setDead();
             else {
+                if (getRotate())
+                    setYawOffset(getYawOffset() + 2.0F);
+                
                 if (!world.isRemote) {
                     if (owner.dimension != dimension) {
                         changeDimension(owner.dimension);
                         return;
                     }
                     
-                    Vec3d lookVec = owner.getLookVec();
-                    lookVec = lookVec.scale(1.5);
-                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + (owner.height / 2.0) - height / 2.0, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
+                    float lYaw = 0.0F;
+                    if (owner instanceof EntityLivingBase) {
+                        EntityLivingBase living = (EntityLivingBase) owner;
+                        lYaw = living.rotationYawHead + getYawOffset();
+                    }
+                    else
+                        lYaw = owner.rotationYaw + getYawOffset();
+                    
+                    Vec3d lookVec = getEntityLookVector(lYaw, owner.rotationPitch).scale(1.5);
+                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + (owner.height / 2.0) - height / 2.0,
+                            owner.posZ + lookVec.z, lYaw, owner.rotationPitch);
                     motionX = owner.motionX;
                     motionY = owner.motionY;
                     motionZ = owner.motionZ;
+                    resetBoundingBoxes();
+                    collideWithNearbyEntities();
                 }
                 else {
-                    Vec3d lookVec = owner.getLook(Minecraft.getMinecraft().getRenderPartialTicks());
-                    lookVec = lookVec.scale(1.5);
-                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + (owner.height / 2.0) - height / 2.0, owner.posZ + lookVec.z, owner.getRotationYawHead(), owner.rotationPitch);
+                    float pt = ThaumicAugmentation.proxy.getPartialTicks();
+                    float lPitch = owner.prevRotationPitch + (owner.rotationPitch - owner.prevRotationPitch) * pt;
+                    float lYaw = 0.0F;
+                    if (owner instanceof EntityLivingBase) {
+                        EntityLivingBase living = (EntityLivingBase) owner;
+                        lYaw = living.prevRotationYawHead + (living.rotationYawHead - living.prevRotationYawHead) * pt + getYawOffset();
+                    }
+                    else
+                        lYaw = owner.prevRotationYaw + (owner.rotationYaw - owner.prevRotationYaw) * pt + getYawOffset();
+                    
+                    Vec3d lookVec = getEntityLookVector(lYaw, lPitch).scale(1.5);
+                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + (owner.height / 2.0) - height / 2.0,
+                            owner.posZ + lookVec.z, lYaw, lPitch);
                     motionX = owner.motionX;
                     motionY = owner.motionY;
                     motionZ = owner.motionZ;
-                }
-                
-                resetBoundingBoxes();
-                collideWithNearbyEntities();
-                if (world.isRemote) {
+                    resetBoundingBoxes();
+                    
                     AxisAlignedBB box = getEntityBoundingBox();
                     double xDiff = box.maxX - box.minX;
                     double yDiff = box.maxY - box.minY;
@@ -440,7 +515,9 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         if (getCasterID() != null)
             compound.setUniqueId("caster", getCasterID());
         
-        compound.setInteger("color", dataManager.get(COLOR));
+        compound.setInteger("color", getColor());
+        compound.setFloat("offset", getYawOffset());
+        compound.setBoolean("rotate", getRotate());
     }
     
     @Override
@@ -450,8 +527,10 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         dataManager.set(LIFESPAN, compound.getInteger("lifespan"));
         reflect = compound.getBoolean("reflect");
         dataManager.set(OWNER_ID, Optional.fromNullable(compound.getUniqueId("owner")));
-        dataManager.set(CASTER_ID, Optional.fromNullable(compound.getUniqueId("caster")));
-        dataManager.set(COLOR, compound.getInteger("color"));
+        setCasterID(compound.getUniqueId("caster"));
+        setColor(compound.getInteger("color"));
+        setYawOffset(compound.getFloat("offset"));
+        setRotate(compound.getBoolean("rotate"));
     }
 
     @Override

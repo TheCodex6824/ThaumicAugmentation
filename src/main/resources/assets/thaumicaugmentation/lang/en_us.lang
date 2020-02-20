@@ -109,6 +109,8 @@ entity.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
 entity.thaumicaugmentation.shield_focus.name=Void Shield
 entity.thaumicaugmentation.autocaster.name=Autocaster
 entity.thaumicaugmentation.autocaster_eldritch.name=Eldritch Autocaster
+entity.thaumicaugmentation.eldritch_guardian.name=Eldritch Guardian
+entity.thaumicaugmentation.eldritch_warden.name=Eldritch Warden
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
 itemGroup.thaumicaugmentation.biome_selector=TA: Biome Foci
@@ -162,6 +164,7 @@ thaumicaugmentation.text.gate_mode_redstone=Redstone
 thaumicaugmentation.text.gate_mode_manual=Manual Control
 thaumicaugmentation.text.gate_level=Level: 
 thaumicaugmentation.text.gate_level_limit=%d
+thaumicaugmentation.text.entity.eldritch_warden=%s the %s
 
 thaumicaugmentation.text.damage.impetus=%s was obliterated
 thaumicaugmentation.text.damage.impetus_attack=%s was obliterated by %s
@@ -173,6 +176,21 @@ thaumicaugmentation.text.config.client=Client
 thaumicaugmentation.text.config.ward=Ward Focus and Blocks
 thaumicaugmentation.text.config.impetus=Impetus
 thaumicaugmentation.text.config.impulse_cannon=Impulse Cannon
+
+champion.mod.bold=Bold
+champion.mod.spine=Spined
+champion.mod.armor=Armored
+champion.mod.mighty=Mighty
+champion.mod.grim=Grim
+champion.mod.warded=Warded
+champion.mod.warp=Warped
+champion.mod.undying=Undying
+champion.mod.fiery=Fiery
+champion.mod.sickly=Sickly
+champion.mod.venomous=Venomous
+champion.mod.vampiric=Vampiric
+champion.mod.infested=Infested
+champion.mod.tainted=Tainted
 
 thaumicaugmentation.gui.redstone=Enable Redstone Control
 
