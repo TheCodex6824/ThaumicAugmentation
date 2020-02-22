@@ -141,6 +141,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
+import thecodex6824.thaumicaugmentation.common.tile.TileObeliskVisual;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
@@ -238,6 +239,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileImpetusGate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_gate"));
         GameRegistry.registerTileEntity(TileStarfieldGlass.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "starfield_glass"));
         GameRegistry.registerTileEntity(TileObelisk.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "obelisk"));
+        GameRegistry.registerTileEntity(TileObeliskVisual.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "obelisk_visual"));
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)

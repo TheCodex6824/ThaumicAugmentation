@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.util;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -93,6 +94,9 @@ public class TARenderHelperServer implements ITARenderHelper {
     
     @Override
     public void renderObelisk(ShaderType type, TileObelisk tile, double pX, double pY, double pZ) {}
+    
+    @Override
+    public void renderWisp(double x, double y, double z, Entity target) {}
     
     @Override
     public Vec3d estimateImpulseCannonFiringPoint(EntityLivingBase entity, float partialTicks) {

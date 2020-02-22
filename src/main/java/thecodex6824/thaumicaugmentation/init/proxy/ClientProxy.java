@@ -69,7 +69,6 @@ import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
-import thaumcraft.client.renderers.models.entity.ModelEldritchGuardian;
 import thaumcraft.common.golems.client.gui.SealBaseGUI;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.lib.events.EssentiaHandler;
@@ -112,6 +111,7 @@ import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
 import thecodex6824.thaumicaugmentation.client.model.BuiltInRendererModel;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
+import thecodex6824.thaumicaugmentation.client.model.ModelEldritchGuardianFixed;
 import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
 import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
@@ -125,6 +125,7 @@ import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObelisk;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObeliskVisual;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftJar;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMonitor;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMoverOutput;
@@ -168,6 +169,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
+import thecodex6824.thaumicaugmentation.common.tile.TileObeliskVisual;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
@@ -754,13 +756,13 @@ public class ClientProxy extends ServerProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityTAEldritchGuardian.class, new IRenderFactory<EntityTAEldritchGuardian>() {
             @Override
             public Render<? super EntityTAEldritchGuardian> createRenderFor(RenderManager manager) {
-                return new RenderTAEldritchGuardian(manager, new ModelEldritchGuardian(), 0.6F);
+                return new RenderTAEldritchGuardian(manager, new ModelEldritchGuardianFixed(), 0.5F);
             }
         });
         RenderingRegistry.registerEntityRenderingHandler(EntityTAEldritchWarden.class, new IRenderFactory<EntityTAEldritchWarden>() {
             @Override
             public Render<? super EntityTAEldritchWarden> createRenderFor(RenderManager manager) {
-                return new RenderTAEldritchGuardian(manager, new ModelEldritchGuardian(), 0.6F);
+                return new RenderTAEldritchGuardian(manager, new ModelEldritchGuardianFixed(), 0.6F);
             }
         });
         
@@ -793,6 +795,7 @@ public class ClientProxy extends ServerProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileStabilityFieldGenerator.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileStarfieldGlass.class, new RenderStarfieldGlass());
         ClientRegistry.bindTileEntitySpecialRenderer(TileObelisk.class, new RenderObelisk());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileObeliskVisual.class, new RenderObeliskVisual());
         registerItemColorHandlers();
         registerBlockColorHandlers();
         for (RenderPlayer render : Minecraft.getMinecraft().getRenderManager().getSkinMap().values())

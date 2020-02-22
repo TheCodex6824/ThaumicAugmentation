@@ -188,7 +188,7 @@ public class TARenderHelperClient implements ITARenderHelper {
             
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, layer != 3 ? DestFactor.ONE : DestFactor.ONE_MINUS_SRC_ALPHA);
             if (rift.getPoints().length > 2) {
-                GL11.glPushMatrix();
+                GlStateManager.pushMatrix();
                 double[][] points = new double[rift.getPoints().length][3];
                 float[][] colors = new float[rift.getPoints().length][4];
                 double[] widths = new double[rift.getPoints().length];
@@ -215,7 +215,7 @@ public class TARenderHelperClient implements ITARenderHelper {
                 GLE.set_POLYCYL_TESS(tessLevel);
                 GLE.gleSetJoinStyle(CoreGLE.TUBE_JN_ANGLE);
                 GLE.glePolyCone(points.length, points, colors, widths, 1.0F, 0.0F);
-                GL11.glPopMatrix();
+                GlStateManager.popMatrix();
             }
             
             if (layer < 3) {
@@ -225,12 +225,13 @@ public class TARenderHelperClient implements ITARenderHelper {
             }
         }
         
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
     
     @Override
     public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean ignoreGoggles) {
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         Minecraft.getMinecraft().renderEngine.bindTexture(RIFT_TEXTURE);
         TAShaderManager.enableShader(TAShaders.FLUX_RIFT, TAShaders.SHADER_CALLBACK_GENERIC_SPHERE);
         GlStateManager.enableBlend();
@@ -238,7 +239,7 @@ public class TARenderHelperClient implements ITARenderHelper {
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
         TAShaderManager.disableShader();
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
     
     protected void renderFluxRiftSingleLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean disableDepth, float r, float g, float b, float a, int joinType) {
@@ -249,7 +250,7 @@ public class TARenderHelperClient implements ITARenderHelper {
             GlStateManager.disableDepth();
         }
         if (rift.getPoints().length > 2) {
-            GL11.glPushMatrix();
+            GlStateManager.pushMatrix();
             double[][] points = new double[rift.getPoints().length][3];
             float[][] colors = new float[rift.getPoints().length][4];
             double[] widths = new double[rift.getPoints().length];
@@ -275,7 +276,7 @@ public class TARenderHelperClient implements ITARenderHelper {
             GLE.set_POLYCYL_TESS(tessLevel);
             GLE.gleSetJoinStyle(joinType);
             GLE.glePolyCone(points.length, points, colors, widths, 1.0F, 0.0F);
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
         }
         
         if (disableDepth) {
@@ -283,12 +284,13 @@ public class TARenderHelperClient implements ITARenderHelper {
             GlStateManager.depthMask(true);
         }
         
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
     
     @Override
     public void renderFluxRiftOutline(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType) {
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         if (bindTexture)
             Minecraft.getMinecraft().renderEngine.bindTexture(RIFT_TEXTURE);
         
@@ -300,12 +302,12 @@ public class TARenderHelperClient implements ITARenderHelper {
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
         GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
     
     @Override
     public void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType) {
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         if (bindTexture)
             Minecraft.getMinecraft().renderEngine.bindTexture(BLANK);
         
@@ -315,7 +317,7 @@ public class TARenderHelperClient implements ITARenderHelper {
         GlStateManager.enableLighting();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
     
     protected double lerp(double initial, double last, double currentTime, double timeOpened, double totalTime) {
@@ -324,8 +326,6 @@ public class TARenderHelperClient implements ITARenderHelper {
     }
     
     protected void renderDimensionalFractureSingleLayer(boolean open, long worldTime, long timeOpened, long openingDuration, float partialTicks, int tessLevel, float r, float g, float b, float a, int joinType) {
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.pushMatrix();
         double[][] pointBuffer = new double[FRACTURE_POINTS_CLOSED.length][3];
         float[][] colorBuffer = new float[FRACTURE_POINTS_CLOSED.length][4];
@@ -413,6 +413,8 @@ public class TARenderHelperClient implements ITARenderHelper {
             }
         }
 
+        // the GLE stuff above changes the color but MC still thinks it was not changed
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
@@ -422,17 +424,18 @@ public class TARenderHelperClient implements ITARenderHelper {
     
     @Override
     public void renderDimensionalFractureSolidLayer(boolean open, long worldTime, long timeOpened, long openingDuration, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType) {
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         if (bindTexture)
             Minecraft.getMinecraft().renderEngine.bindTexture(BLANK);
         
         GlStateManager.enableBlend();
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableLighting();
         renderDimensionalFractureSingleLayer(open, worldTime, timeOpened, openingDuration, partialTicks, tessLevel, r, g, b, a, joinType);
         GlStateManager.enableLighting();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
     
     @Override
@@ -530,13 +533,18 @@ public class TARenderHelperClient implements ITARenderHelper {
             fx.setAlphaF(0.0F, 0.75F, 0.0F);
             fx.setGridSize(64);
             fx.setParticles(264, 8, 1);
-            fx.setScale(2.0F);
+            fx.setScale(2.0F, 1.0F);
             fx.setLayer(1);
             fx.setLoop(true);
             fx.setNoClip(false);
             fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
             ParticleEngine.addEffect(world, fx);
         }
+    }
+    
+    @Override
+    public void renderWisp(double x, double y, double z, Entity target) {
+        FXDispatcher.INSTANCE.wispFXEG(x, y, z, target);
     }
     
     @Nullable
@@ -621,8 +629,11 @@ public class TARenderHelperClient implements ITARenderHelper {
     public void renderObelisk(ShaderType type, TileObelisk tile, double pX, double pY, double pZ) {
         BlockPos pos = tile.getPos();
         IBlockState state = tile.getWorld().getBlockState(pos);
+        double offset = Minecraft.getMinecraft().isGamePaused() && Minecraft.getMinecraft().isSingleplayer() ? 0.0 :
+            Minecraft.getMinecraft().getRenderPartialTicks();
         GlStateManager.pushMatrix();
-        GlStateManager.translate(pos.getX() - pX, pos.getY() - pY, pos.getZ() - pZ);
+        GlStateManager.translate(pos.getX() - pX, pos.getY() - pY +
+                Math.sin((Minecraft.getMinecraft().player.ticksExisted + offset) / 20.0) / 4.0, pos.getZ() - pZ);
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
         for (EnumFacing face : EnumFacing.HORIZONTALS) {

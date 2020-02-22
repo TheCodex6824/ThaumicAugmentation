@@ -32,8 +32,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -46,13 +46,11 @@ import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart;
 import thecodex6824.thaumicaugmentation.api.block.property.IObeliskType;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
+import thecodex6824.thaumicaugmentation.common.tile.TileObeliskVisual;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockObelisk extends BlockTABase implements IObeliskType, IObeliskPart {
 
-    protected static final AxisAlignedBB CAP_AABB_UP = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.8, 1.0);
-    protected static final AxisAlignedBB CAP_AABB_DOWN = new AxisAlignedBB(0.0, 0.2, 0.0, 1.0, 1.0, 1.0);
-    
     public BlockObelisk() {
         super(Material.ROCK);
         setHardness(-1.0F);
@@ -131,56 +129,38 @@ public class BlockObelisk extends BlockTABase implements IObeliskType, IObeliskP
     }
     
     @Override
-    @SuppressWarnings("deprecation")
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        if (state.getValue(IObeliskPart.OBELISK_PART) == ObeliskPart.CAP) {
-            IBlockState up = source.getBlockState(pos.up());
-            if (up.getBlock() == TABlocks.OBELISK && up.getValue(IObeliskPart.OBELISK_PART) == ObeliskPart.INNER)
-                return CAP_AABB_DOWN;
-            else
-                return CAP_AABB_UP;
-        }
-        else
-            return super.getBoundingBox(state, source, pos);
-    }
-    
-    @Override
     public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
         return false;
     }
     
     @Override
     public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
-        if (state.getValue(IObeliskPart.OBELISK_PART) == ObeliskPart.MIDDLE ||
-                state.getValue(IObeliskPart.OBELISK_PART) == ObeliskPart.INNER)
-            return BlockFaceShape.SOLID;
-        else
-            return BlockFaceShape.UNDEFINED;
+       return BlockFaceShape.UNDEFINED;
     }
     
     @Override
     public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return state.getValue(IObeliskPart.OBELISK_PART) != ObeliskPart.CAP;
+        return false;
     }
     
     @Override
     public boolean isBlockNormalCube(IBlockState state) {
-        return state.getValue(IObeliskPart.OBELISK_PART) != ObeliskPart.CAP;
+        return false;
     }
     
     @Override
     public boolean isOpaqueCube(IBlockState state) {
-        return state.getValue(IObeliskPart.OBELISK_PART) != ObeliskPart.CAP;
+        return false;
     }
     
     @Override
     public boolean isFullBlock(IBlockState state) {
-        return state.getValue(IObeliskPart.OBELISK_PART) != ObeliskPart.CAP;
+        return false;
     }
     
     @Override
     public boolean isFullCube(IBlockState state) {
-        return state.getValue(IObeliskPart.OBELISK_PART) != ObeliskPart.CAP;
+        return false;
     }
     
     @Override
@@ -195,7 +175,7 @@ public class BlockObelisk extends BlockTABase implements IObeliskType, IObeliskP
     
     @Override
     public boolean hasTileEntity(IBlockState state) {
-        return state.getValue(IObeliskPart.OBELISK_PART) == ObeliskPart.MIDDLE;
+        return true;
     }
     
     @Override
@@ -203,8 +183,13 @@ public class BlockObelisk extends BlockTABase implements IObeliskType, IObeliskP
     public TileEntity createTileEntity(World world, IBlockState state) {
         if (state.getValue(IObeliskPart.OBELISK_PART) == ObeliskPart.MIDDLE)
             return new TileObelisk();
-        
-        return null;
+        else
+            return new TileObeliskVisual();
+    }
+    
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
     
     @Override

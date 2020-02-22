@@ -37,9 +37,13 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
 import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
@@ -136,6 +140,13 @@ public final class TAHooksCommon {
             if (entity instanceof EntityPlayerMP)
                 TANetwork.INSTANCE.sendTo(pkt, (EntityPlayerMP) entity);
         }
+    }
+    
+    public static boolean isInOuterLands(EntityLivingBase entity) {
+        EntityInOuterLandsEvent event = new EntityInOuterLandsEvent(entity);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() == Result.ALLOW || (event.getResult() == Result.DEFAULT &&
+                entity.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId());
     }
     
 }

@@ -4,4 +4,4 @@
 newmtl Material
 Kd 1.000000 1.000000 1.000000
 d 1.000000
-map_Kd thaumcraft:models/obelisk_side
+map_Kd thaumcraft:models/obelisk_middle_eldritch

@@ -20,48 +20,34 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer.tile;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
-import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
-import thecodex6824.thaumicaugmentation.common.util.ShaderType;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.animation.FastTESR;
+import thecodex6824.thaumicaugmentation.common.tile.TileObeliskVisual;
 
-public class RenderObelisk extends TileEntitySpecialRenderer<TileObelisk> {
+public class RenderObeliskVisual extends FastTESR<TileObeliskVisual> {
     
     @Override
-    public void render(TileObelisk te, double x, double y, double z, float partialTicks, int destroyStage,
-            float alpha) {
+    public void renderTileEntityFast(TileObeliskVisual te, double x, double y, double z, float partialTicks, int destroyStage,
+            float partial, BufferBuilder buffer) {
         
-        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
         BlockPos pos = te.getPos();
-        IBlockAccess world = te.getWorld();
-        IBlockState state = te.getWorld().getBlockState(pos).getActualState(world, pos);
+        IBlockAccess world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
+        IBlockState state = world.getBlockState(pos).getActualState(world, pos);
         IBakedModel blockModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state);
         state = state.getBlock().getExtendedState(state, world, pos);
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder buffer = t.getBuffer();
         double oldX = buffer.xOffset, oldY = buffer.yOffset, oldZ = buffer.zOffset;
         double offset = Minecraft.getMinecraft().isGamePaused() && Minecraft.getMinecraft().isSingleplayer() ? 0.0 : partialTicks;
         buffer.setTranslation(x - pos.getX(), y - pos.getY() + Math.sin((Minecraft.getMinecraft().player.ticksExisted + offset) / 20.0) / 4.0,
                 z - pos.getZ());
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        RenderHelper.disableStandardItemLighting();
         Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world,
                 blockModel, state, pos, buffer, false);
-        t.draw();
         buffer.setTranslation(oldX, oldY, oldZ);
-        RenderHelper.enableStandardItemLighting();
-        RenderEventHandler.onRenderShaderTile(ShaderType.RIFT, te);
     }
     
 }

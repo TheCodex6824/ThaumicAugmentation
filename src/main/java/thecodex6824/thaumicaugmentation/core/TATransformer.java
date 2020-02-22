@@ -31,6 +31,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBaubleSlotChanged;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationCustomTCArmor;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationVanilla;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerEldritchGuardianFog;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
@@ -103,6 +104,11 @@ public class TATransformer implements IClassTransformer {
         // required to have augments on baubles detected properly without having to loop over them all every tick
         // performance with the looping method is terrible, and a change event should really have been added...
         TRANSFORMERS.add(new TransformerBaubleSlotChanged());
+        
+        // required because TC always creates fog near eldritch guardians if not in the outer lands
+        // but since the outer lands don't exist they always do it
+        // even if it did exist its hardcodedness is problematic
+        TRANSFORMERS.add(new TransformerEldritchGuardianFog());
     }
     
     public TATransformer() {}

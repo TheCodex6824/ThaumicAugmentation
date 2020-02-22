@@ -22,7 +22,17 @@ package thecodex6824.thaumicaugmentation.common.entity;
 
 import java.util.Random;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.entity.ai.EntityAIAttackMelee;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -36,7 +46,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import thaumcraft.api.ThaumcraftApiHelper;
+import thaumcraft.common.entities.ai.combat.AILongRangeAttack;
 import thaumcraft.common.entities.monster.boss.EntityEldritchWarden;
+import thaumcraft.common.entities.monster.cult.EntityCultist;
 import thaumcraft.common.entities.monster.mods.ChampionModifier;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
@@ -72,6 +84,20 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
     public EntityTAEldritchWarden(World world) {
         super(world);
         setSize(0.8F, 2.25F);
+    }
+    
+    @Override
+    protected void initEntityAI() {
+        tasks.addTask(0, new EntityAISwimming(this));
+        tasks.addTask(2, new AILongRangeAttack(this, 2.5, 1.0, 20, 40, 24.0F));
+        tasks.addTask(3, new EntityAIAttackMelee(this, 1.1, false));
+        tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.8));
+        tasks.addTask(7, new EntityAIWander(this, 1.0));
+        tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        tasks.addTask(8, new EntityAILookIdle(this));
+        targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+        targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+        targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityCultist.class, true));
     }
     
     @Override
@@ -113,7 +139,7 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
                     EntityFocusShield shield = new EntityFocusShield(world);
                     shield.setOwner(this);
                     shield.setCasterID(getPersistentID());
-                    shield.setColor(0x555555);
+                    shield.setColor(0x606060);
                     shield.setMaxHealth(150.0F, false);
                     shield.setInfiniteLifespan();
                     shield.setReflect(true);
@@ -129,7 +155,7 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
                 EntityFocusShield shield = new EntityFocusShield(world);
                 shield.setOwner(this);
                 shield.setCasterID(getPersistentID());
-                shield.setColor(0x555555);
+                shield.setColor(0x606060);
                 shield.setMaxHealth(100.0F, false);
                 shield.setInfiniteLifespan();
                 shield.setReflect(true);
@@ -142,7 +168,7 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
                 EntityFocusShield shield = new EntityFocusShield(world);
                 shield.setOwner(this);
                 shield.setCasterID(getPersistentID());
-                shield.setColor(0x555555);
+                shield.setColor(0x606060);
                 shield.setMaxHealth(50.0F, false);
                 shield.setInfiniteLifespan();
                 shield.setHealth(shield.getMaxHealth());
@@ -154,8 +180,20 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
     }
     
     @Override
+    public boolean isOnSameTeam(Entity entity) {
+        return super.isOnSameTeam(entity) || isOnScoreboardTeam(entity.getTeam());
+    }
+    
+    @Override
+    public void writeEntityToNBT(NBTTagCompound nbt) {
+        super.writeEntityToNBT(nbt);
+        nbt.setBoolean("transparent", dataManager.get(TRANSPARENT));
+    }
+    
+    @Override
     public void readEntityFromNBT(NBTTagCompound nbt) {
         super.readEntityFromNBT(nbt);
+        dataManager.set(TRANSPARENT, nbt.getBoolean("transparent"));
         bossInfo.setName(getDisplayName());
     }
     

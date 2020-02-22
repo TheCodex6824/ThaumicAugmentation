@@ -71,7 +71,7 @@ public class RenderTAEldritchGuardian extends RenderLiving<EntityLiving> {
             if (dist < 256.0)
                 alpha = 0.6F;
             else
-                alpha = (float) (1.0F - Math.min(maxDist - distThreshold, dist - distThreshold) / maxDist - distThreshold) * 0.6F;
+                alpha = (float) (1.0F - Math.min(maxDist - distThreshold, dist - distThreshold) / (maxDist - distThreshold)) * 0.6F;
         }
         
         GlStateManager.color(1.0F, 1.0F, 1.0F, alpha);
@@ -80,9 +80,15 @@ public class RenderTAEldritchGuardian extends RenderLiving<EntityLiving> {
             ry -= entity.height * (((EntityEldritchWarden) entity).getSpawnTimer() / 150.0);
             
         super.doRender(entity, x, ry, z, entityYaw, partialTicks);
+        
+        // force GL state changes since TC doesn't use GlStateManager
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        GL11.glDisable(GL11.GL_BLEND);
         GlStateManager.disableBlend();
     }
     
