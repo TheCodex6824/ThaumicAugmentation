@@ -53,7 +53,7 @@ private static final String CLASS = "thaumcraft.common.entities.monster.EntityEl
                 check.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
                         TransformUtil.HOOKS_COMMON,
                         "isInOuterLands",
-                        "(Lnet/minecraft/entity/EntityLivingBase;)Z",
+                        "(Lnet/minecraft/entity/Entity;)Z",
                         false
                 ));
                 check.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));

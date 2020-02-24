@@ -57,7 +57,7 @@ public class RenderObelisk extends TileEntitySpecialRenderer<TileObelisk> {
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         RenderHelper.disableStandardItemLighting();
         Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world,
-                blockModel, state, pos, buffer, false);
+                blockModel, state, pos, buffer, true);
         t.draw();
         buffer.setTranslation(oldX, oldY, oldZ);
         RenderHelper.enableStandardItemLighting();

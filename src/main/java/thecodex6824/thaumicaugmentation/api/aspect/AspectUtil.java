@@ -20,9 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.api.aspect;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import net.minecraft.util.text.TextFormatting;
@@ -37,6 +39,7 @@ public final class AspectUtil {
     private AspectUtil() {}
     
     private static final HashMap<TextFormatting, Integer> CHAT_COLORS;
+    private static ArrayList<String> ASPECT_KEYS;
     
     static {
         CHAT_COLORS = new HashMap<>();
@@ -99,6 +102,16 @@ public final class AspectUtil {
             
             return color;
         }
+    }
+    
+    public static Aspect getRandomAspect(Random rand) {
+        if (ASPECT_KEYS == null)
+            ASPECT_KEYS = new ArrayList<>(Aspect.aspects.keySet());
+        
+        if (!ASPECT_KEYS.isEmpty())
+            return Aspect.getAspect(ASPECT_KEYS.get(rand.nextInt(ASPECT_KEYS.size())));
+        else
+            return Aspect.ORDER;
     }
     
 }

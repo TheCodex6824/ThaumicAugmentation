@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.common.entity;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -60,6 +61,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import thaumcraft.api.casters.FocusEffect;
+import thaumcraft.api.casters.FocusPackage;
+import thaumcraft.api.casters.IFocusElement;
+import thaumcraft.common.entities.projectile.EntityFocusCloud;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.network.fx.PacketFXShield;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
@@ -76,6 +81,18 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     protected static final DataParameter<Integer> LIFESPAN = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.VARINT);
     protected static final DataParameter<Float> YAW_OFFSET = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.FLOAT);
     protected static final DataParameter<Boolean> ROTATE = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.BOOLEAN);
+    
+    protected static final Field CLOUD_FOCUS;
+    
+    static {
+        try {
+            CLOUD_FOCUS = EntityFocusCloud.class.getDeclaredField("focusPackage");
+            CLOUD_FOCUS.setAccessible(true);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
     
     protected int timeAlive;
     protected boolean reflect;
@@ -98,7 +115,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     public void setMaxHealth(float newMax, boolean updateLifespan) {
         getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(newMax);
         if (updateLifespan)
-            dataManager.set(LIFESPAN, (int) (newMax * 300));
+            dataManager.set(LIFESPAN, (int) (newMax * 150));
     }
     
     public void setInfiniteLifespan() {
@@ -205,6 +222,24 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         return reflect;
     }
     
+    protected float getCloudPower(EntityFocusCloud cloud) {
+        FocusPackage p = null;
+        try {
+            p = (FocusPackage) CLOUD_FOCUS.get(cloud);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        
+        float power = 0.0F;
+        for (IFocusElement node : p.nodes) {
+            if (node instanceof FocusEffect)
+                power += ((FocusEffect) node).getDamageForDisplay(1.0F);
+        }
+        
+        return power;
+    }
+    
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (source == DamageSource.FALL)
@@ -234,7 +269,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                     }
                     
                     newEntity.velocityChanged = true;
-                    newEntity.world.spawnEntity(newEntity);
+                    if (newEntity.world.spawnEntity(newEntity))
+                        entity.setDead();
                 }
             }
         }
@@ -395,8 +431,12 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         
         Entity owner = ownerRef.get();
         if (owner != null) {
-            if (!owner.isEntityAlive())
-                setDead();
+            if (!owner.isEntityAlive()) {
+                if (!world.isRemote)
+                    setDead();
+                else
+                    ownerRef.clear();
+            }
             else {
                 if (getRotate())
                     setYawOffset(getYawOffset() + 2.0F);
@@ -423,6 +463,13 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                     motionZ = owner.motionZ;
                     resetBoundingBoxes();
                     collideWithNearbyEntities();
+                    
+                    if (canReflect()) {
+                        for (EntityFocusCloud e : world.getEntitiesWithinAABB(EntityFocusCloud.class, owner.getEntityBoundingBox().grow(1.0))) {
+                            damageEntity(DamageSource.causeIndirectDamage(e, e.getOwner()), getCloudPower(e) / 2.0F);
+                            e.setDead();
+                        }
+                    }
                 }
                 else {
                     float pt = ThaumicAugmentation.proxy.getPartialTicks();
@@ -473,6 +520,13 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                         posX, posY, posZ, 1.0, dataManager.get(COLOR)), this);
             }
         }
+    }
+    
+    @Override
+    public void notifyDataManagerChange(DataParameter<?> key) {
+        super.notifyDataManagerChange(key);
+        if (key == OWNER_ID)
+            ownerRef.clear();
     }
     
     @Override

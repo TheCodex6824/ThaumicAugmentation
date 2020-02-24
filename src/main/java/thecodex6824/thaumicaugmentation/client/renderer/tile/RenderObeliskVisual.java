@@ -46,7 +46,7 @@ public class RenderObeliskVisual extends FastTESR<TileObeliskVisual> {
         buffer.setTranslation(x - pos.getX(), y - pos.getY() + Math.sin((Minecraft.getMinecraft().player.ticksExisted + offset) / 20.0) / 4.0,
                 z - pos.getZ());
         Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world,
-                blockModel, state, pos, buffer, false);
+                blockModel, state, pos, buffer, true);
         buffer.setTranslation(oldX, oldY, oldZ);
     }
     

@@ -24,6 +24,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -77,10 +79,9 @@ public class ItemBlockImpetusMirror extends ItemBlock implements IModelProvider<
         
         if (world.isRemote) {
             player.swingArm(hand);
-            // if we use PASS as the result the item code will try to place the block, fail, and not send a packet :/
-            return EnumActionResult.SUCCESS;
+            return EnumActionResult.PASS;
         }
-        else if (!world.isRemote && world.isBlockModifiable(player, pos)){
+        else if (world.isBlockModifiable(player, pos)){
             TileEntity target = world.getTileEntity(pos);
             if (target instanceof TileImpetusMirror) {
                 TileImpetusMirror mirror = (TileImpetusMirror) target;
@@ -121,6 +122,32 @@ public class ItemBlockImpetusMirror extends ItemBlock implements IModelProvider<
         }
         
         return placed;
+    }
+    
+    @Override
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+            EnumFacing facing, float hitX, float hitY, float hitZ) {
+        
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+        if (!block.isReplaceable(world, pos))
+            pos = pos.offset(facing);
+
+        ItemStack stack = player.getHeldItem(hand);
+        if (!stack.isEmpty() && player.canPlayerEdit(pos, facing, stack) && world.mayPlace(this.block, pos, false, facing, player)) {
+            int meta = getMetadata(stack.getMetadata());
+            IBlockState placedState = this.block.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, player, hand);
+            if (placeBlockAt(stack, player, world, pos, facing, hitX, hitY, hitZ, placedState)) {
+                placedState = world.getBlockState(pos);
+                SoundType soundtype = placedState.getBlock().getSoundType(placedState, world, pos, player);
+                world.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+                stack.shrink(1);
+            }
+
+            return EnumActionResult.SUCCESS;
+        }
+        else
+            return EnumActionResult.FAIL;
     }
     
     @Override

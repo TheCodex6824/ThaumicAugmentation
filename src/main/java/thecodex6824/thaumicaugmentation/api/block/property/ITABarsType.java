@@ -34,7 +34,7 @@ public interface ITABarsType {
 
     public enum BarsType implements IStringSerializable {
         
-        BARS_ANCIENT(0, () -> Material.ROCK, () -> SoundType.STONE, MapColor.ADOBE);
+        BARS_ANCIENT(0, () -> Material.ROCK, () -> SoundType.METAL, MapColor.ADOBE);
         
         private int meta;
         private Supplier<Material> mat;

@@ -28,6 +28,7 @@ import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -142,7 +143,7 @@ public final class TAHooksCommon {
         }
     }
     
-    public static boolean isInOuterLands(EntityLivingBase entity) {
+    public static boolean isInOuterLands(Entity entity) {
         EntityInOuterLandsEvent event = new EntityInOuterLandsEvent(entity);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult() == Result.ALLOW || (event.getResult() == Result.DEFAULT &&

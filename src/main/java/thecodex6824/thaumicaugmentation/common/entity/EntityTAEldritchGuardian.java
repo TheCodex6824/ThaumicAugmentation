@@ -20,7 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
+import java.lang.reflect.Field;
+
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
@@ -32,20 +35,29 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import thaumcraft.api.ThaumcraftApi;
+import thaumcraft.api.capabilities.IPlayerWarp.EnumWarpType;
 import thaumcraft.common.entities.ai.combat.AILongRangeAttack;
 import thaumcraft.common.entities.monster.EntityEldritchGuardian;
 import thaumcraft.common.entities.monster.cult.EntityCultist;
+import thaumcraft.common.entities.projectile.EntityEldritchOrb;
+import thaumcraft.common.lib.SoundsTC;
+import thaumcraft.common.lib.network.PacketHandler;
+import thaumcraft.common.lib.network.fx.PacketFXSonic;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 
@@ -53,6 +65,18 @@ public class EntityTAEldritchGuardian extends EntityEldritchGuardian {
 
     protected static final DataParameter<Boolean> TRANSPARENT = EntityDataManager.createKey(EntityTAEldritchGuardian.class,
             DataSerializers.BOOLEAN);
+    
+    protected static final Field LAST_BLAST;
+    
+    static {
+        try {
+            LAST_BLAST = EntityEldritchGuardian.class.getDeclaredField("lastBlast");
+            LAST_BLAST.setAccessible(true);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
     
     public EntityTAEldritchGuardian(World world) {
         super(world);
@@ -93,6 +117,8 @@ public class EntityTAEldritchGuardian extends EntityEldritchGuardian {
             float absorbAmount = (float) getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue() / 2.0F * difficultyMod;
             setAbsorptionAmount(getAbsorptionAmount() + absorbAmount);
         }
+        else
+            dataManager.set(TRANSPARENT, true);
         
         return d;
     }
@@ -108,6 +134,52 @@ public class EntityTAEldritchGuardian extends EntityEldritchGuardian {
                 if (getAbsorptionAmount() < bh)
                     setAbsorptionAmount(getAbsorptionAmount() + 1.0F);
             }
+        }
+    }
+    
+    protected void setLastBlast(boolean newValue) {
+        try {
+            LAST_BLAST.setBoolean(this, newValue);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    protected boolean getLastBlast() {
+        try {
+            return LAST_BLAST.getBoolean(this);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    @Override
+    public void attackEntityWithRangedAttack(EntityLivingBase target, float distanceFactor) {
+        if (rand.nextFloat() > 0.15F) {
+            EntityEldritchOrb blast = new EntityEldritchOrb(world, this);
+            blast.ignoreEntity = this;
+            boolean newBlast = !getLastBlast();
+            setLastBlast(newBlast);
+            world.setEntityState(this, (byte) (newBlast ? 16 : 15));
+            int rr = newBlast ? 90 : 180;
+            double xx = Math.cos((rotationYaw + rr) % 360.0 / 180.0 * Math.PI) * 0.5;
+            double zz = Math.sin((rotationYaw + rr) % 360.0 / 180.0 * Math.PI) * 0.5;
+            blast.setPosition(blast.posX - xx, blast.posY, blast.posZ - zz);
+            Vec3d v = target.getPositionVector().add(target.motionX * 10.0, target.motionY * 10.0,
+                    target.motionZ * 10.0).subtract(getPositionVector()).normalize();
+            blast.shoot(v.x, v.y, v.z, 1.25F, 1.5F);
+            playSound(SoundsTC.egattack, 2.0F, 1.0F + rand.nextFloat() * 0.1F);
+            world.spawnEntity(blast);
+        }
+        else if (canEntityBeSeen(target)) {
+            target.addPotionEffect(new PotionEffect(MobEffects.WITHER, 400, 0));
+            if (target instanceof EntityPlayer)
+                ThaumcraftApi.internalMethods.addWarpToPlayer((EntityPlayer) target, 1 + rand.nextInt(3), EnumWarpType.TEMPORARY); 
+          
+            playSound(SoundsTC.egscreech, 3.0F, 1.0F + rand.nextFloat() * 0.1F);
+            PacketHandler.INSTANCE.sendToAllTracking(new PacketFXSonic(getEntityId()), this);
         }
     }
     

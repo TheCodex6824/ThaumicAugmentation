@@ -22,15 +22,22 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -90,6 +97,12 @@ public class ItemAutocasterPlacer extends ItemTABase {
             
             return EnumActionResult.PASS;
         }
+    }
+    
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        if (stack.getMetadata() == 1)
+            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
     }
     
 }

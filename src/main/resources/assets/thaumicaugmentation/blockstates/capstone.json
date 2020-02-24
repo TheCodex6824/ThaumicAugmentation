@@ -1,0 +1,62 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:obelisk_cap.obj",
+        "transform": "forge:default-block",
+        "custom": {
+            "flip-v": true
+        }
+    },
+    "variants": {
+        "ta_obelisk_type": {
+            "eldritch": {
+                "textures": {
+                    "#Material": "thaumcraft:models/obelisk_cap",
+                    "#Material_eye": "thaumicaugmentation:blocks/eldritch_eye",
+                    "particle": "thaumcraft:models/obelisk_cap"
+                }
+            },
+            "ancient": {
+                "textures": {
+                    "#Material": "thaumcraft:models/obelisk_cap_2",
+                    "#Material_eye": "thaumicaugmentation:blocks/eldritch_eye",
+                    "particle": "thaumcraft:models/obelisk_cap_2"
+                }
+            }
+        },
+        "ta_altar": {
+            "true": {
+                "submodel": {
+                    "rot0": {
+                        "model": "thaumicaugmentation:altar_eye.obj",
+                        "custom": {
+                            "flip-v": true
+                        }
+                    },
+                    "rot90": {
+                        "model": "thaumicaugmentation:altar_eye.obj",
+                        "custom": {
+                            "flip-v": true
+                        },
+                        "y": 90
+                    },
+                    "rot180": {
+                        "model": "thaumicaugmentation:altar_eye.obj",
+                        "custom": {
+                            "flip-v": true
+                        },
+                        "y": 180
+                    },
+                    "rot270": {
+                        "model": "thaumicaugmentation:altar_eye.obj",
+                        "custom": {
+                            "flip-v": true
+                        },
+                        "y": 270
+                    }
+                }
+            },
+            "false": {}
+        }
+    }
+}

@@ -35,12 +35,14 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.golems.GolemHelper;
@@ -50,7 +52,11 @@ import thaumcraft.api.golems.seals.SealPos;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.golems.seals.SealEntity;
 import thaumcraft.common.golems.seals.SealHandler;
+import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
 
@@ -78,8 +84,9 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
             Vec3d dir = player.getLookVec();
             Vec3d extended = eyes.add(dir.x * 10.0F, dir.y * 10.0F, dir.z * 10.0F);
             RayTraceResult result = world.rayTraceBlocks(eyes, extended, false, false, true);
+            BlockPos p = result.getBlockPos();
             // seals don't seem to actually exist in a physical state, so raytracing and events don't work (directly)
-            ISealEntity seal = SealHandler.getSealEntity(world.provider.getDimension(), new SealPos(result.getBlockPos(), result.sideHit));
+            ISealEntity seal = SealHandler.getSealEntity(world.provider.getDimension(), new SealPos(p, result.sideHit));
             if (seal != null) {
                 if (held.hasTagCompound() && held.getTagCompound().hasKey("seal", NBT.TAG_COMPOUND)) {
                     if (held.getTagCompound().getString("sealType").equals(seal.getSeal().getKey()) && (!seal.isLocked() || 
@@ -91,6 +98,10 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
                         seal.getSealPos().face = oldPos.face;
                         seal.getSealPos().pos = oldPos.pos;
                         SealHandler.addSealEntity(world, (SealEntity) seal);
+                        world.playSound(null, result.getBlockPos(), SoundsTC.scan, SoundCategory.PLAYERS, 0.75F, 0.95F);
+                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.BLOCK_RUNES, p.getX(),
+                                p.getY(), p.getZ()), new TargetPoint(world.provider.getDimension(),
+                                        p.getX(), p.getY(), p.getZ(), 64.0));
                         return EnumActionResult.SUCCESS;
                     }
                 }
@@ -100,6 +111,10 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
                     // so we don't have to depend on Thaumcraft's internals for the type check
                     newCompound.setString("sealType", seal.getSeal().getKey());
                     held.setTagCompound(newCompound);
+                    world.playSound(null, p, SoundsTC.scan, SoundCategory.PLAYERS, 0.75F, 1.0F);
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.BLOCK_RUNES, p.getX(),
+                            p.getY(), p.getZ()), new TargetPoint(world.provider.getDimension(),
+                                    p.getX(), p.getY(), p.getZ(), 64.0));
                     return EnumActionResult.SUCCESS;
                 }
             }
@@ -112,6 +127,7 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (player.isSneaking()) {
             player.getHeldItem(hand).setTagCompound(null);
+            world.playSound(null, player.getPosition().up(), SoundsTC.scan, SoundCategory.PLAYERS, 0.75F, 0.75F);
             return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
         }
         else

@@ -40,7 +40,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -145,6 +147,8 @@ public class ItemRiftSeed extends ItemTABase {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         if (stack.hasTagCompound()) {
             if (stack.getMetadata() == 0) {
+                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
+                        new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
                 tooltip.add(new TextComponentTranslation(
                         "thaumicaugmentation.text.rift_seed_size", stack.getTagCompound().getInteger("riftSize")).getFormattedText());
             }

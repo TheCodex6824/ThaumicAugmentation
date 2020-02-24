@@ -46,6 +46,11 @@ tile.thaumicaugmentation.fortified_glass.name=Fortified Glass
 tile.thaumicaugmentation.starfield_glass.glass_rift.name=Starfield Glass (Rift)
 tile.thaumicaugmentation.starfield_glass.glass_fracture.name=Starfield Glass (Dimensional Fracture)
 tile.thaumicaugmentation.starfield_glass.glass_mirror.name=Starfield Glass (Magic Mirror)
+tile.thaumicaugmentation.capstone.capstone_eldritch.name=Eldritch Capstone
+tile.thaumicaugmentation.capstone.altar_eldritch.name=Eldritch Altar
+tile.thaumicaugmentation.capstone.capstone_ancient.name=Ancient Capstone
+tile.thaumicaugmentation.capstone.altar_ancient.name=Ancient Altar
+tile.thaumicaugmentation.strange_crystal.name=Strange Crystal Cluster
 
 tile.thaumcraft.stairs_ancient_tile.name=Ancient Stone Tile Stairs
 
@@ -165,6 +170,7 @@ thaumicaugmentation.text.gate_mode_manual=Manual Control
 thaumicaugmentation.text.gate_level=Level: 
 thaumicaugmentation.text.gate_level_limit=%d
 thaumicaugmentation.text.entity.eldritch_warden=%s the %s
+thaumicaugmentation.text.creative_only=Creative Only
 
 thaumicaugmentation.text.damage.impetus=%s was obliterated
 thaumicaugmentation.text.damage.impetus_attack=%s was obliterated by %s

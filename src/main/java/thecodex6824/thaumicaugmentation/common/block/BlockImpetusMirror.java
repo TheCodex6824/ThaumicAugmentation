@@ -73,10 +73,7 @@ public class BlockImpetusMirror extends BlockTABase implements IDirectionalBlock
     
     @Override
     public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
-        if (blockSoundType == null)
-            setSoundType(SoundsTC.JAR);
-        
-        return super.getSoundType(state, world, pos, entity);
+        return SoundsTC.JAR;
     }
     
     @Override

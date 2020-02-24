@@ -111,8 +111,10 @@ import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
 import thecodex6824.thaumicaugmentation.client.model.BuiltInRendererModel;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
+import thecodex6824.thaumicaugmentation.client.model.DirectionalRetexturingModel;
 import thecodex6824.thaumicaugmentation.client.model.ModelEldritchGuardianFixed;
 import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
+import thecodex6824.thaumicaugmentation.client.model.OBJTintedModel;
 import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
@@ -502,6 +504,17 @@ public class ClientProxy extends ServerProxy {
                     
                     break;
                 }
+                case BLOCK_RUNES: {
+                    if (d.length == 3) {
+                        double x = d[0], y = d[1], z = d[2];
+                        for (int i = 0; i < 10; i++) {
+                            FXDispatcher.INSTANCE.blockRunes(x, y + 0.25, z, 0.3F + rand.nextFloat() * 0.7F, 0.0F,
+                                    0.3F + rand.nextFloat() * 0.7F, 15, 0.03F);
+                       } 
+                    }
+                    
+                    break;
+                }
              
                 default: {break;}
             }
@@ -775,6 +788,8 @@ public class ClientProxy extends ServerProxy {
         loader.registerLoader(new CustomCasterAugmentModel.Loader());
         loader.registerLoader(new MorphicToolModel.Loader());
         loader.registerLoader(new BuiltInRendererModel.Loader());
+        loader.registerLoader(new OBJTintedModel.Loader());
+        loader.registerLoader(new DirectionalRetexturingModel.Loader());
         ModelLoaderRegistry.registerLoader(loader);
     }
 
@@ -933,6 +948,16 @@ public class ClientProxy extends ServerProxy {
                 return -1;
             }
         }, TABlocks.IMPETUS_GATE);
+        
+        registerTo.registerItemColorHandler(new IItemColor() {
+            @Override
+            public int colorMultiplier(ItemStack stack, int tintIndex) {
+                if (tintIndex == 1)
+                    return 0xEEEEEE;
+                else
+                    return -1;
+            }
+        }, TABlocks.STRANGE_CRYSTAL);
     }
     
     private static void registerBlockColorHandlers() {
@@ -995,6 +1020,19 @@ public class ClientProxy extends ServerProxy {
             }
         };
         registerTo.registerBlockColorHandler(gate, TABlocks.IMPETUS_GATE);
+        
+        IBlockColor crystal = new IBlockColor() {
+            @Override
+            public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos,
+                    int tintIndex) {
+                
+                if (tintIndex == 1)
+                    return 0xEEEEEE;
+                else
+                    return -1;
+            }
+        };
+        registerTo.registerBlockColorHandler(crystal, TABlocks.STRANGE_CRYSTAL);
     }
 
 }

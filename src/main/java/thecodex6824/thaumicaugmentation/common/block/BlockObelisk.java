@@ -34,6 +34,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -165,7 +166,7 @@ public class BlockObelisk extends BlockTABase implements IObeliskType, IObeliskP
     
     @Override
     public boolean isTranslucent(IBlockState state) {
-        return true;
+        return state.getValue(IObeliskPart.OBELISK_PART) != ObeliskPart.CAP;
     }
     
     @Override
@@ -196,6 +197,18 @@ public class BlockObelisk extends BlockTABase implements IObeliskType, IObeliskP
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.TRANSLUCENT;
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    @SuppressWarnings("deprecation")
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos,
+            EnumFacing side) {
+        
+        if (side.getAxis() == Axis.Y && state.getValue(IObeliskPart.OBELISK_PART) != ObeliskPart.CAP)
+            return false;
+        else
+            return super.shouldSideBeRendered(state, world, pos, side);
     }
     
 }

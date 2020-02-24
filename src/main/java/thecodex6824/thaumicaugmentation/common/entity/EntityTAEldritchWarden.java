@@ -20,9 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
+import java.lang.reflect.Field;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
@@ -33,11 +35,13 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
@@ -45,11 +49,17 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
+import thaumcraft.api.capabilities.IPlayerWarp.EnumWarpType;
 import thaumcraft.common.entities.ai.combat.AILongRangeAttack;
 import thaumcraft.common.entities.monster.boss.EntityEldritchWarden;
 import thaumcraft.common.entities.monster.cult.EntityCultist;
 import thaumcraft.common.entities.monster.mods.ChampionModifier;
+import thaumcraft.common.entities.projectile.EntityEldritchOrb;
+import thaumcraft.common.lib.SoundsTC;
+import thaumcraft.common.lib.network.PacketHandler;
+import thaumcraft.common.lib.network.fx.PacketFXSonic;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
@@ -58,6 +68,18 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
 
     protected static final DataParameter<Boolean> TRANSPARENT = EntityDataManager.createKey(EntityTAEldritchWarden.class,
             DataSerializers.BOOLEAN);
+    
+    protected static final Field LAST_BLAST;
+    
+    static {
+        try {
+            LAST_BLAST = EntityEldritchWarden.class.getDeclaredField("lastBlast");
+            LAST_BLAST.setAccessible(true);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
     
     protected static final String[] NAMES = new String[] {
             "Aphoom-Zhah", 
@@ -84,6 +106,11 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
     public EntityTAEldritchWarden(World world) {
         super(world);
         setSize(0.8F, 2.25F);
+    }
+    
+    @Override
+    public float getEyeHeight() {
+        return 2.1F;
     }
     
     @Override
@@ -176,6 +203,67 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
                 world.playSound(null, shield.getPosition(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, 
                         SoundCategory.HOSTILE, 1.0F, 1.2F);
             }
+        }
+    }
+    
+    @Override
+    protected void updateEntityActionState() {
+        if (getSpawnTimer() == 0)
+            super.updateEntityActionState();
+    }
+    
+    @Override
+    protected void updateAITasks() {
+        super.updateAITasks();
+        bossInfo2.setPercent(Math.min(bossInfo2.getPercent(), 1.0F));
+    }
+    
+    protected void setLastBlast(boolean newValue) {
+        try {
+            LAST_BLAST.setBoolean(this, newValue);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    protected boolean getLastBlast() {
+        try {
+            return LAST_BLAST.getBoolean(this);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    @Override
+    public void attackEntityWithRangedAttack(EntityLivingBase target, float distanceFactor) {
+        if (rand.nextFloat() > 0.2F) {
+            EntityEldritchOrb blast = new EntityEldritchOrb(world, this);
+            blast.ignoreEntity = this;
+            boolean newBlast = !getLastBlast();
+            setLastBlast(newBlast);
+            world.setEntityState(this, (byte) (newBlast ? 16 : 15));
+            int rr = newBlast ? 90 : 180;
+            double xx = Math.cos((rotationYaw + rr) % 360.0 / 180.0 * Math.PI) * 0.5;
+            double zz = Math.sin((rotationYaw + rr) % 360.0 / 180.0 * Math.PI) * 0.5;
+            blast.setPosition(blast.posX - xx, blast.posY, blast.posZ - zz);
+            double x = target.posX + target.motionX - posX;
+            double y = target.posY + target.motionY - posY - (target.height / 2.0F);
+            double z = target.posZ + target.motionZ - posZ;
+            blast.shoot(x, y, z, 2.0F, 0.25F);
+            playSound(SoundsTC.egattack, 2.0F, 1.0F + rand.nextFloat() * 0.1F);
+            world.spawnEntity(blast);
+        }
+        else if (canEntityBeSeen(target)) {
+            target.addVelocity(-Math.sin(rotationYaw * Math.PI / 180.0) * 1.5, 0.1, Math.cos(rotationYaw * Math.PI / 180.0) * 1.5);
+            target.addPotionEffect(new PotionEffect(MobEffects.WITHER, 400, 0));
+            target.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 400, 0));
+            if (target instanceof EntityPlayer)
+                ThaumcraftApi.internalMethods.addWarpToPlayer((EntityPlayer) target, 3 + rand.nextInt(3), EnumWarpType.TEMPORARY); 
+          
+            playSound(SoundsTC.egscreech, 4.0F, 1.0F + rand.nextFloat() * 0.1F);
+            PacketHandler.INSTANCE.sendToAllTracking(new PacketFXSonic(getEntityId()), this);
         }
     }
     

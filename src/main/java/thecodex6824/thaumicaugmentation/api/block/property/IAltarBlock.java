@@ -18,17 +18,12 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.event;
+package thecodex6824.thaumicaugmentation.api.block.property;
 
-import net.minecraft.entity.Entity;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
+import net.minecraft.block.properties.PropertyBool;
 
-@HasResult
-public class EntityInOuterLandsEvent extends EntityEvent {
+public interface IAltarBlock {
 
-    public EntityInOuterLandsEvent(Entity entity) {
-        super(entity);
-    }
+    public static final PropertyBool ALTAR = PropertyBool.create("ta_altar");
     
 }
