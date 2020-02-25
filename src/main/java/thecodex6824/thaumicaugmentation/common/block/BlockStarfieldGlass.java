@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.block;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -30,12 +32,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
+import thecodex6824.thaumicaugmentation.common.block.trait.IRenderableSides;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 
@@ -53,7 +61,8 @@ public class BlockStarfieldGlass extends BlockFortifiedGlass implements IStarfie
     
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, IStarfieldGlassType.GLASS_TYPE);
+        return new BlockStateContainer.Builder(this).add(IStarfieldGlassType.GLASS_TYPE).add(
+                IRenderableSides.SIDES).build();
     }
     
     @Override
@@ -64,6 +73,33 @@ public class BlockStarfieldGlass extends BlockFortifiedGlass implements IStarfie
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(IStarfieldGlassType.GLASS_TYPE, GlassType.fromMeta(meta));
+    }
+    
+    @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        IExtendedBlockState ext = (IExtendedBlockState) super.getExtendedState(state, world, pos);
+        IBlockState clean = ext.getClean();
+        ImmutableList.Builder<EnumFacing> faces = ImmutableList.builder();
+        MutableBlockPos work = new MutableBlockPos();
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (state.shouldSideBeRendered(world, pos, face))
+                faces.add(face);
+            else {
+                for (EnumFacing otherFace : EnumFacing.VALUES) {
+                    if (otherFace != face.getOpposite()) {
+                        // check for corners to prevent seams
+                        work.setPos(pos.offset(otherFace));
+                        IBlockState check = world.getBlockState(work);
+                        if (check == clean && check.shouldSideBeRendered(world, work, face)) {
+                            faces.add(face);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return ext.withProperty(IRenderableSides.SIDES, faces.build());
     }
     
     @Override

@@ -101,6 +101,11 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
     }
     
     @Override
+    public boolean hasFastRenderer() {
+        return true;
+    }
+    
+    @Override
     public void render(ShaderType type, double pX, double pY, double pZ) {
         ThaumicAugmentation.proxy.getRenderHelper().renderObelisk(type, this, pX, pY, pZ);
     }
