@@ -4,5 +4,4 @@
 newmtl Material
 Kd 1.000000 1.000000 1.000000
 d 1.000000
-map_Ka thaumicaugmentation:blocks/arcane_terraformer
 map_Kd thaumicaugmentation:blocks/arcane_terraformer

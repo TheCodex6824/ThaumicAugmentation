@@ -7,13 +7,13 @@
         "ta_direction": {
             "up": {"x": 270},
             "down": {"x": 90},
-            "north": {"__nop": ""},
+            "north": {},
             "east": {"y": 90},
             "south": {"y": 180},
             "west": {"y": 270}
         },
         "ta_enabled": {
-            "false": {"__nop": ""},
+            "false": {},
             "true": {
                 "textures": {
                     "3": "thaumicaugmentation:blocks/rift_feeder_on"

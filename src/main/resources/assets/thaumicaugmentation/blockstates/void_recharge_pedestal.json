@@ -4,9 +4,7 @@
         "model": "thaumicaugmentation:void_recharge_pedestal"
     },
     "variants": {
-        "normal": {
-            "__nop": ""
-        },
+        "normal": [{}],
         "inventory": {
             "transform": "forge:default-block"
         }

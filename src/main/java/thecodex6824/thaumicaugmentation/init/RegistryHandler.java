@@ -59,6 +59,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCapstone;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
+import thecodex6824.thaumicaugmentation.common.block.BlockCrabVent;
 import thecodex6824.thaumicaugmentation.common.block.BlockFortifiedGlass;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
@@ -136,6 +137,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
+import thecodex6824.thaumicaugmentation.common.tile.TileCrabVent;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGate;
@@ -221,6 +223,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockObelisk(), "obelisk"));
         registry.register(setupBlock(new BlockCapstone(), "capstone"));
         registry.register(setupBlock(new BlockStrangeCrystal(), "strange_crystal"));
+        registry.register(setupBlock(new BlockCrabVent(), "crab_vent"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -246,6 +249,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileObelisk.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "obelisk"));
         GameRegistry.registerTileEntity(TileObeliskVisual.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "obelisk_visual"));
         GameRegistry.registerTileEntity(TileAltar.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "altar"));
+        GameRegistry.registerTileEntity(TileCrabVent.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "crab_vent"));
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)

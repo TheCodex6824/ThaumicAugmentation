@@ -99,6 +99,9 @@ public class TARenderHelperServer implements ITARenderHelper {
     public void renderWisp(double x, double y, double z, Entity target) {}
     
     @Override
+    public void renderVent(double x, double y, double z, double vx, double vy, double vz, int color, float scale) {}
+    
+    @Override
     public Vec3d estimateImpulseCannonFiringPoint(EntityLivingBase entity, float partialTicks) {
         return Vec3d.ZERO;
     }

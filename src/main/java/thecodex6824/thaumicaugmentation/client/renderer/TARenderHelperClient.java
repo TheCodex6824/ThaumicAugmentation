@@ -526,8 +526,8 @@ public class TARenderHelperClient implements ITARenderHelper {
     @Override
     public void renderObeliskConnection(World world, double x, double y, double z, double vx, double vy, double vz) {
         for (int i = 0; i < 2 + world.rand.nextInt(4); ++i) {
-            FXGeneric fx = new FXGeneric(world, x + world.rand.nextFloat() * 1.5F, y + world.rand.nextFloat() * 1.5F,
-                    z + world.rand.nextFloat() * 1.5F, vx, vy, vz);
+            FXGeneric fx = new FXGeneric(world, x + (world.rand.nextFloat() - world.rand.nextFloat()) / 2.0, y + (world.rand.nextFloat() - world.rand.nextFloat()) / 2.0,
+                    z + (world.rand.nextFloat() - world.rand.nextFloat()) / 2.0, vx, vy, vz);
             fx.setMaxAge(80 + world.rand.nextInt(20));
             fx.setRBGColorF(0.05F, 0.05F, 0.05F);
             fx.setAlphaF(0.0F, 0.75F, 0.0F);
@@ -545,6 +545,11 @@ public class TARenderHelperClient implements ITARenderHelper {
     @Override
     public void renderWisp(double x, double y, double z, Entity target) {
         FXDispatcher.INSTANCE.wispFXEG(x, y, z, target);
+    }
+    
+    @Override
+    public void renderVent(double x, double y, double z, double vx, double vy, double vz, int color, float scale) {
+        FXDispatcher.INSTANCE.drawVentParticles(x, y, z, vx, vy, vz, color, scale);
     }
     
     @Nullable

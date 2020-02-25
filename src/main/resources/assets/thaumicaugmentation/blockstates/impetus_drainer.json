@@ -5,8 +5,8 @@
     },
     "variants": {
         "ta_enabled": {
-            "false": {"__nop": ""},
-            "true": {"__nop": ""}
+            "false": {},
+            "true": {}
         },
         "static": {
             "true": {

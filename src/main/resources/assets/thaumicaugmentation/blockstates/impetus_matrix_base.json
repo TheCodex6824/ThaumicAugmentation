@@ -5,11 +5,11 @@
     },
     "variants": {
         "ta_direction_v": {
-            "up": {"__nop": ""},
+            "up": {},
             "down": {"x": 180}
         },
         "ta_cell_info": {
-            "0": {"__nop": ""},
+            "0": {},
             "1": {
                 "submodel": {
                     "south": {"model": "thaumicaugmentation:impetus_matrix_base_cell", "y": 180}

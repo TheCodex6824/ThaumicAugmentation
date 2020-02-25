@@ -20,23 +20,21 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
-import java.util.Random;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
@@ -44,50 +42,52 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import thaumcraft.api.ThaumcraftApiHelper;
-import thaumcraft.api.items.ItemsTC;
-import thaumcraft.client.fx.ParticleEngine;
-import thaumcraft.client.fx.particles.FXGeneric;
-import thaumcraft.common.lib.SoundsTC;
-import thecodex6824.thaumicaugmentation.api.TABlocks;
-import thecodex6824.thaumicaugmentation.api.aspect.AspectUtil;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
-import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
-import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
-import thecodex6824.thaumicaugmentation.common.block.trait.IStoredBlockstate;
+import thecodex6824.thaumicaugmentation.common.tile.TileCrabVent;
 
-public class BlockStrangeCrystal extends BlockTABase implements IDirectionalBlock, IItemBlockProvider {
+public class BlockCrabVent extends BlockTABase implements IDirectionalBlock, IItemBlockProvider {
 
-    protected static final AxisAlignedBB DOWN_BOX = new AxisAlignedBB(0.125, 0.25, 0.125, 0.875, 1.0, 0.875);
-    protected static final AxisAlignedBB EAST_BOX = new AxisAlignedBB(0.0, 0.125, 0.125, 0.75, 0.875, 0.875);
-    protected static final AxisAlignedBB NORTH_BOX = new AxisAlignedBB(0.125, 0.125, 0.25, 0.875, 0.875, 1.0);
-    protected static final AxisAlignedBB SOUTH_BOX = new AxisAlignedBB(0.125, 0.125, 0.0, 0.875, 0.875, 0.75);
-    protected static final AxisAlignedBB UP_BOX = new AxisAlignedBB(0.125, 0.0, 0.125, 0.875, 0.75, 0.875);
-    protected static final AxisAlignedBB WEST_BOX = new AxisAlignedBB(0.25, 0.125, 0.125, 1.0, 0.875, 0.875);
+    protected static final AxisAlignedBB DOWN_BOX = new AxisAlignedBB(0.0, 0.75, 0.0, 1.0, 1.0, 1.0);
+    protected static final AxisAlignedBB EAST_BOX = new AxisAlignedBB(0.0, 0.0, 0.0, 0.25, 1.0, 1.0);
+    protected static final AxisAlignedBB NORTH_BOX = new AxisAlignedBB(0.0, 0.0, 0.75, 1.0, 1.0, 1.0);
+    protected static final AxisAlignedBB SOUTH_BOX = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.25);
+    protected static final AxisAlignedBB UP_BOX = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.25, 1.0);
+    protected static final AxisAlignedBB WEST_BOX = new AxisAlignedBB(0.75, 0.0, 0.0, 1.0, 1.0, 1.0);
     
-    public BlockStrangeCrystal() {
-        super(Material.GLASS);
-        setHardness(0.25F);
+    public BlockCrabVent() {
+        super(Material.ROCK);
+        setHardness(10.0F);
+        setResistance(30.0F);
+        setHarvestLevel("pickaxe", 0);
         setDefaultState(getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.UP));
     }
     
     @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(IDirectionalBlock.DIRECTION).add(
-                IStoredBlockstate.BLOCKSTATE).build();
+    public ItemBlock createItemBlock() {
+        return new ItemBlock(this) {
+            @Override
+            @SideOnly(Side.CLIENT)
+            public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip,
+                    ITooltipFlag flagIn) {
+                
+                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
+                        new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
+            }
+        };
     }
     
     @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.byIndex(meta));
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, IDirectionalBlock.DIRECTION);
     }
     
     @Override
@@ -96,13 +96,8 @@ public class BlockStrangeCrystal extends BlockTABase implements IDirectionalBloc
     }
     
     @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        BlockPos check = pos.offset(state.getValue(IDirectionalBlock.DIRECTION).getOpposite());
-        IBlockState toStore = world.getBlockState(check);
-        return ((IExtendedBlockState) state).withProperty(IStoredBlockstate.BLOCKSTATE,
-                toStore.getBlock().isAir(toStore, world, check) ? 
-                TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_CRUSTED) :
-                toStore);
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.byIndex(meta));
     }
     
     @Override
@@ -147,13 +142,27 @@ public class BlockStrangeCrystal extends BlockTABase implements IDirectionalBloc
     }
     
     @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return 15;
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
     }
     
     @Override
-    public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return 0;
+    @Nullable
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new TileCrabVent();
+    }
+    
+    @Override
+    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param) {
+        if (!world.isRemote)
+            return true;
+        else {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile != null)
+                return tile.receiveClientEvent(id, param);
+            else
+                return false;
+        }
     }
     
     @Override
@@ -193,27 +202,13 @@ public class BlockStrangeCrystal extends BlockTABase implements IDirectionalBloc
     }
     
     @Override
-    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
-        return SoundsTC.CRYSTAL;
-    }
-    
-    @Override
     public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }
     
     @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
-            int fortune) {
-        
-        Random rand = world instanceof World ? ((World) world).rand : RANDOM;
-        for (int i = 0; i < rand.nextInt(3) + (fortune > 0 ? rand.nextInt(fortune) : 0) + 1; ++i)
-            drops.add(ThaumcraftApiHelper.makeCrystal(AspectUtil.getRandomAspect(rand)));
-        
-        int special = (int) (rand.nextFloat() * (fortune + 1) + 0.1F);
-        for (int i = 0; i < special; ++i)
-            drops.add(new ItemStack(ItemsTC.curio, 1, 0));
-    }
+            int fortune) {}
     
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
@@ -222,44 +217,6 @@ public class BlockStrangeCrystal extends BlockTABase implements IDirectionalBloc
             world.setBlockToAir(pos);
             dropBlockAsItem(world, pos, state, 0);
         }
-        else if (fromPos.equals(pos.offset(dir)))
-            world.markBlockRangeForRenderUpdate(pos, pos);
-    }
-    
-    @Override
-    public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-        return true;
-    }
-    
-    @Override
-    protected ItemStack getSilkTouchDrop(IBlockState state) {
-        return new ItemStack(Item.getItemFromBlock(this), 1, 0);
-    }
-    
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerModels() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
-                "ta_special:directional_retexture:ta_special:obj_tinted:" + getRegistryName(), "inventory"));
-    }
-    
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
-        FXGeneric fx = new FXGeneric(world, pos.getX() + rand.nextFloat(),
-                pos.getY() + rand.nextFloat(), pos.getZ() + rand.nextFloat(), 0.0, 0.0, 0.0);
-        fx.setMaxAge(40 + rand.nextInt(21));
-        fx.setRBGColorF(0.8F, 0.8F, 0.8F);
-        fx.setAlphaF(0.0F, 0.6F, 0.6F, 0.0F);
-        fx.setGridSize(64);
-        fx.setParticles(512, 16, 1);
-        fx.setScale(1.0F, 0.5F);
-        fx.setLoop(true);
-        fx.setNoClip(false);
-        fx.setWind(0.001D);
-        fx.setGravity(0.03F);
-        fx.setRandomMovementScale(0.0025F, 0.0F, 0.0025F);
-        ParticleEngine.addEffect(world, fx);
     }
     
 }

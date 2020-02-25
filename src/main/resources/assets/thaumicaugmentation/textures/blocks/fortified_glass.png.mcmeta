@@ -6,7 +6,8 @@
             "thaumicaugmentation:blocks/fortified_glass_ctm"
         ],
         "extra":{
-            "ignore_states":"false"
+            "ignore_states": false,
+            "connect_inside": true
         }
     }
 }

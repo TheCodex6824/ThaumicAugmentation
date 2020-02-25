@@ -50,34 +50,32 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
     
     @Override
     public void update() {
-        if (++ticks % getHealCycleLength() == 0) {
-            if (!world.isRemote) {
-                boolean hard = world.getDifficulty() == EnumDifficulty.HARD;
-                for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(6.0))) {
-                    if (entity instanceof IEldritchMob) {
-                        entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, hard ? 1 : 0, true, true));
-                        entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, hard ? 1 : 0, true, true));
-                    }
+        if (!world.isRemote && ++ticks % getHealCycleLength() == 0) {
+            boolean hard = world.getDifficulty() == EnumDifficulty.HARD;
+            for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(6.0))) {
+                if (entity instanceof IEldritchMob) {
+                    entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, hard ? 1 : 0, true, true));
+                    entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, hard ? 1 : 0, true, true));
                 }
             }
-            else {
-                boolean particles = false;
-                for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(6.0))) {
-                    if (entity instanceof IEldritchMob) {
-                        Vec3d sub = entity.getPositionVector().subtract(new Vec3d(pos));
-                        Vec3d dir = sub.normalize();
-                        double speed = sub.length() / 20.0;
-                        ThaumicAugmentation.proxy.getRenderHelper().renderObeliskConnection(world, pos.getX(), pos.getY(), pos.getZ(),
-                                dir.x * speed, dir.y * speed, dir.z * speed);
-                        ThaumicAugmentation.proxy.getRenderHelper().renderWisp(entity.posX, entity.posY + world.rand.nextFloat(), entity.posZ, entity);
-                        particles = true;
-                    }
+        }
+        else if (world.isRemote && ++ticks % 5 == 0) {
+            boolean particles = false;
+            for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(6.0))) {
+                if (entity instanceof IEldritchMob) {
+                    Vec3d sub = entity.getPositionVector().subtract(new Vec3d(pos));
+                    Vec3d dir = sub.normalize();
+                    double speed = sub.length() / 20.0;
+                    ThaumicAugmentation.proxy.getRenderHelper().renderObeliskConnection(world, pos.getX(), pos.getY(), pos.getZ(),
+                            dir.x * speed, dir.y * speed, dir.z * speed);
+                    ThaumicAugmentation.proxy.getRenderHelper().renderWisp(entity.posX, entity.posY + world.rand.nextFloat(), entity.posZ, entity);
+                    particles = true;
                 }
-                
-                if (particles) {
-                    ThaumicAugmentation.proxy.getRenderHelper().renderObeliskParticles(world, pos.getX() + world.rand.nextFloat() * 1.5F,
-                            pos.getY() + world.rand.nextFloat() * 1.5F, pos.getZ() + world.rand.nextFloat() * 1.5F);
-                }
+            }
+            
+            if (particles) {
+                ThaumicAugmentation.proxy.getRenderHelper().renderObeliskParticles(world, pos.getX() + world.rand.nextFloat() * 1.5F,
+                        pos.getY() + world.rand.nextFloat() * 1.5F, pos.getZ() + world.rand.nextFloat() * 1.5F);
             }
         }
     }

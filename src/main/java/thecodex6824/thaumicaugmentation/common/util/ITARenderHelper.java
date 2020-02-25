@@ -70,6 +70,8 @@ public interface ITARenderHelper {
     
     public void renderWisp(double x, double y, double z, Entity target);
     
+    public void renderVent(double x, double y, double z, double vx, double vy, double vz, int color, float scale);
+    
     public Vec3d estimateImpulseCannonFiringPoint(EntityLivingBase entity, float partialTicks);
     
     public boolean shadersAvailable();

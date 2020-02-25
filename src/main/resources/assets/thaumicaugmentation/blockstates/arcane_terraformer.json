@@ -6,8 +6,8 @@
     },
     "variants": {
         "ta_terraformer_half": {
-            "lower": {"__nop": ""},
-            "upper": {"__nop": ""}
+            "lower": {},
+            "upper": {}
         },
         "ta_enabled": {
             "true": {
@@ -17,7 +17,7 @@
                     }
                 }
             },
-            "false": {"__nop": ""}
+            "false": {}
         },
         "inventory": [{
             "transform": {

@@ -51,6 +51,7 @@ tile.thaumicaugmentation.capstone.altar_eldritch.name=Eldritch Altar
 tile.thaumicaugmentation.capstone.capstone_ancient.name=Ancient Capstone
 tile.thaumicaugmentation.capstone.altar_ancient.name=Ancient Altar
 tile.thaumicaugmentation.strange_crystal.name=Strange Crystal Cluster
+tile.thaumicaugmentation.crab_vent.name=Crusted Opening
 
 tile.thaumcraft.stairs_ancient_tile.name=Ancient Stone Tile Stairs
 
@@ -172,8 +173,8 @@ thaumicaugmentation.text.gate_level_limit=%d
 thaumicaugmentation.text.entity.eldritch_warden=%s the %s
 thaumicaugmentation.text.creative_only=Creative Only
 
-thaumicaugmentation.text.damage.impetus=%s was obliterated
-thaumicaugmentation.text.damage.impetus_attack=%s was obliterated by %s
+thaumicaugmentation.text.damage.impetus=%s was annihilated
+thaumicaugmentation.text.damage.impetus_attack=%s was annihilated by %s
 
 thaumicaugmentation.text.config.general=General
 thaumicaugmentation.text.config.gameplay=Gameplay

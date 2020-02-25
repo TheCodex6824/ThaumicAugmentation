@@ -6,7 +6,7 @@
     },
     "variants": {
         "ta_connected": {
-            "false": {"__nop": true},
+            "false": {},
             "true": {
                 "submodel": {
                     "connector": {
