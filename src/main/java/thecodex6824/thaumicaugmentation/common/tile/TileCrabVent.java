@@ -45,6 +45,7 @@ public class TileCrabVent extends TileEntity implements ITickable {
     protected int clientVenting;
     
     public TileCrabVent() {
+        super();
         ticks = -1;
         clientVenting = -1;
     }

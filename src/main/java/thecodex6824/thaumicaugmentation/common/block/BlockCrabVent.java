@@ -224,7 +224,7 @@ public class BlockCrabVent extends BlockTABase implements IDirectionalBlock, IIt
     @Override
     public int getExpDrop(IBlockState state, IBlockAccess world, BlockPos pos, int fortune) {
         Random rand = world instanceof World ? ((World) world).rand : RANDOM;
-        return 15 + rand.nextInt(15) + rand.nextInt(15) + fortune > 0 ? rand.nextInt(fortune * 3) : 0;
+        return 15 + rand.nextInt(15) + rand.nextInt(15) + (fortune > 0 ? rand.nextInt(fortune * 3) : 0);
     }
     
     @Override
