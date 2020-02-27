@@ -41,7 +41,7 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.item.ImpetusLinker;
-import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
+import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemImpetusLinker extends ItemTABase {

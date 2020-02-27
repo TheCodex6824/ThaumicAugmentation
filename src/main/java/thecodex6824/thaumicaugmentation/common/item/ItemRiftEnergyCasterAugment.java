@@ -53,7 +53,7 @@ import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
-import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderAugmentRiftEnergyStorage;
+import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderAugmentRiftEnergyStorage;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;

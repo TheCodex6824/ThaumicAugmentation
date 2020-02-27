@@ -46,7 +46,7 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 import thecodex6824.thaumicaugmentation.common.capability.AugmentCasterCustom;
-import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
+import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemCustomCasterAugment extends ItemTABase {

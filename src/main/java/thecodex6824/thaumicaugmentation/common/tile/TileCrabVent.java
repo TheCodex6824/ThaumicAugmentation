@@ -69,6 +69,14 @@ public class TileCrabVent extends TileEntity implements ITickable {
                 face.getZOffset() * 0.25, 0x9988AA, 2.0F);
     }
     
+    protected int getBaseSpawnDelay() {
+        switch (world.getDifficulty()) {
+            case HARD: return 120;
+            case NORMAL: return 150;
+            default: return 200;
+        }
+    }
+    
     @Override
     public void update() {
         if (!world.isRemote) {
@@ -79,11 +87,11 @@ public class TileCrabVent extends TileEntity implements ITickable {
             boolean canSpawn = canSpawnCrab();
             if (ticks == 15 && canSpawn) {
                 world.addBlockEvent(pos, getBlockType(), 1, 0);
-                world.playSound(null, pos, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 0.5F, 1.1F);
+                world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 1.1F);
             }
             else if (ticks == 0) {
                 if (canSpawn) {
-                    ticks = 300 / Math.max(world.getDifficulty().getId(), 1) + world.rand.nextInt(101);
+                    ticks = getBaseSpawnDelay() + world.rand.nextInt(61);
                     EnumFacing face = world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION);
                     EntityEldritchCrab crab = new EntityEldritchCrab(world);
                     double offsetX = face.getAxis() == Axis.X ? face.getXOffset() * 0.33 : 0.5;
@@ -95,19 +103,20 @@ public class TileCrabVent extends TileEntity implements ITickable {
                     crab.motionY = face.getYOffset() * 0.2F;
                     crab.motionZ = face.getZOffset() * 0.2F;
                     crab.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-                    crab.setHelm(false);
-                    if (world.rand.nextInt(1000 / Math.max((int) (world.getDifficulty().getId() + 
-                            world.getDifficultyForLocation(pos).getAdditionalDifficulty()), 1)) == 0) {
+                    int difficulty = Math.max((int) (world.getDifficulty().getId() + 
+                            world.getDifficultyForLocation(pos).getAdditionalDifficulty()), 1);
+                    crab.setHelm(world.rand.nextInt(100 / difficulty) == 0);
+                    if (world.rand.nextInt(1000 / difficulty) == 0)
                         EntityUtils.makeChampion(crab, false);
-                    }
                     
                     if (world.spawnEntity(crab))
                         world.playSound(null, pos, SoundsTC.gore, SoundCategory.BLOCKS, 0.5F, 1.0F);
                 }
                 else
-                    ticks = 20 + world.rand.nextInt(101);
+                    ticks = 60 + world.rand.nextInt(101);
             }
-            
+            else if (ticks % 5 == 0 && world.rand.nextInt(20) == 0)
+                world.playSound(null, pos, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 0.5F, 0.65F);
         }
         else {
             if (clientVenting > 0) {

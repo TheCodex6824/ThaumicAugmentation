@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.common.block;
 
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Nullable;
 
@@ -49,6 +50,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
@@ -65,8 +67,8 @@ public class BlockCrabVent extends BlockTABase implements IDirectionalBlock, IIt
     
     public BlockCrabVent() {
         super(Material.ROCK);
-        setHardness(10.0F);
-        setResistance(30.0F);
+        setHardness(7.0F);
+        setResistance(20.0F);
         setHarvestLevel("pickaxe", 0);
         setDefaultState(getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.UP));
     }
@@ -208,7 +210,22 @@ public class BlockCrabVent extends BlockTABase implements IDirectionalBlock, IIt
     
     @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
-            int fortune) {}
+            int fortune) {
+        
+        Random rand = world instanceof World ? ((World) world).rand : RANDOM;
+        int chance = 100;
+        if (fortune > 0)
+            chance /= fortune;
+        
+        if (rand.nextInt(Math.max(chance, 1)) == 0)
+            drops.add(new ItemStack(ItemsTC.curio, 1, 1));
+    }
+    
+    @Override
+    public int getExpDrop(IBlockState state, IBlockAccess world, BlockPos pos, int fortune) {
+        Random rand = world instanceof World ? ((World) world).rand : RANDOM;
+        return 15 + rand.nextInt(15) + rand.nextInt(15) + fortune > 0 ? rand.nextInt(fortune * 3) : 0;
+    }
     
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {

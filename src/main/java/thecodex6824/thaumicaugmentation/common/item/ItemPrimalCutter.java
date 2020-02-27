@@ -57,6 +57,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -112,6 +113,11 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     public ItemPrimalCutter() {
         super(3.0F, -2.4F, MATERIAL, EFFECTIVE);
         setHasSubtypes(true);
+    }
+    
+    @Override
+    public boolean canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player) {
+        return false;
     }
     
     @Override

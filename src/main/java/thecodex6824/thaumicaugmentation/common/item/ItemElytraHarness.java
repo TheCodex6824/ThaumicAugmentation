@@ -43,7 +43,7 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
-import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderHarness;
+import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderHarness;
 import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;

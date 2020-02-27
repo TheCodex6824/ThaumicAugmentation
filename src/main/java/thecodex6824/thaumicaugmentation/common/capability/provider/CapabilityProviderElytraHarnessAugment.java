@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.capability;
+package thecodex6824.thaumicaugmentation.common.capability.provider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

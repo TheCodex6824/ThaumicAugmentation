@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.capability;
+package thecodex6824.thaumicaugmentation.common.capability.provider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,47 +27,38 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
-import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 
-public class CapabilityProviderImpulseCannon implements ICapabilitySerializable<NBTTagCompound> {
+public class SimpleCapabilityProvider<C> implements ICapabilitySerializable<NBTTagCompound> {
 
-    private AugmentableItem augmentable;
-    private ImpetusStorage energy;
+    protected C instance;
+    protected Capability<C> cap;
     
-    public CapabilityProviderImpulseCannon(AugmentableItem aug, ImpetusStorage e) {
-        augmentable = aug;
-        energy = e;
+    public SimpleCapabilityProvider(C inst, Capability<C> c) {
+        cap = c;
+        instance = inst;
     }
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        augmentable.deserializeNBT(nbt.getCompoundTag("augments"));
-        energy.deserializeNBT(nbt.getCompoundTag("energy"));
+        cap.readNBT(instance, null, nbt);
     }
     
     @Override
     public NBTTagCompound serializeNBT() {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setTag("augments", augmentable.serializeNBT());
-        tag.setTag("energy", energy.serializeNBT());
-        return tag;
+        return (NBTTagCompound) cap.writeNBT(instance, null);
     }
     
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        return capability == CapabilityAugmentableItem.AUGMENTABLE_ITEM || capability == CapabilityImpetusStorage.IMPETUS_STORAGE;
+        return capability == cap;
     }
     
     @Override
     @Nullable
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityAugmentableItem.AUGMENTABLE_ITEM)
-            return CapabilityAugmentableItem.AUGMENTABLE_ITEM.cast(augmentable);
-        else if (capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
-            return CapabilityImpetusStorage.IMPETUS_STORAGE.cast(energy);
+        // in case some mod decides to query caps before they were set up
+        if (cap != null && capability == cap)
+            return cap.cast(instance);
         
         return null;
     }

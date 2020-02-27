@@ -42,7 +42,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
-import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProviderNoSave;
+import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
 import vazkii.botania.api.item.IBaubleRender.RenderType;
 import vazkii.botania.api.item.IPetalApothecary;
 import vazkii.botania.api.item.IPhantomInkable;

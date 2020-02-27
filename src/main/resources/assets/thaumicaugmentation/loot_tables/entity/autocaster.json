@@ -1,0 +1,44 @@
+{
+	"type": "entity",
+	"pools": [
+		{
+			"name": "autocaster_mechanism",
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "thaumcraft:mechanism_simple",
+                    "weight": 1
+                }
+            ]
+		},
+        {
+            "name": "autocaster_resonator",
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "thaumcraft:morphic_resonator",
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "name": "autocaster_mind",
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "thaumcraft:mind",
+                    "weight": 1,
+                    "functions": [
+                        {
+                            "function": "minecraft:set_data",
+                            "data": 1
+                        }
+                    ]
+                }
+            ]
+        }
+	]
+}

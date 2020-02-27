@@ -48,7 +48,7 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.item.BiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
-import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
+import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemBiomeSelector extends ItemTABase {

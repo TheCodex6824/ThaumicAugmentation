@@ -29,6 +29,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -39,6 +40,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
@@ -50,6 +52,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -60,8 +63,8 @@ import thaumcraft.api.items.IWarpingGear;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
-import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderMorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
+import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderMorphicTool;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
@@ -227,9 +230,28 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     }
     
     @Override
+    @Nullable
+    public FontRenderer getFontRenderer(ItemStack stack) {
+        ItemStack display = getTool(stack).getDisplayStack();
+        return display.getItem().getFontRenderer(display);
+    }
+    
+    @Override
+    public IRarity getForgeRarity(ItemStack stack) {
+        ItemStack display = getTool(stack).getDisplayStack();
+        return display.getItem().getForgeRarity(display);
+    }
+    
+    @Override
     public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
         ItemStack func = getTool(stack).getFunctionalStack();
         return func.getItem().getHarvestLevel(func, toolClass, player, blockState);
+    }
+    
+    @Override
+    public String getHighlightTip(ItemStack stack, String displayName) {
+        ItemStack display = getTool(stack).getDisplayStack();
+        return display.getItem().getHighlightTip(display, displayName);
     }
     
     @Override
@@ -272,6 +294,19 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     public int getMaxItemUseDuration(ItemStack stack) {
         ItemStack func = getTool(stack).getFunctionalStack();
         return func.getItem().getMaxItemUseDuration(func);
+    }
+    
+    @Override
+    public int getMetadata(ItemStack stack) {
+        ItemStack func = getTool(stack).getFunctionalStack();
+        return func.getItem().getMetadata(func);
+    }
+    
+    @Override
+    @SuppressWarnings("deprecation")
+    public EnumRarity getRarity(ItemStack stack) {
+        ItemStack display = getTool(stack).getDisplayStack();
+        return display.getItem().getRarity(display);
     }
     
     @Override

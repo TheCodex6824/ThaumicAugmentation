@@ -93,7 +93,7 @@ import thecodex6824.thaumicaugmentation.api.event.CastEvent;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.item.ITieredCaster;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
-import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
+import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectExchangeCompat;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;

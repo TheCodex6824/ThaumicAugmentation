@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.entity;
 
 import java.lang.reflect.Field;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
@@ -42,6 +44,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
@@ -58,6 +61,7 @@ import thaumcraft.common.entities.projectile.EntityEldritchOrb;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.network.PacketHandler;
 import thaumcraft.common.lib.network.fx.PacketFXSonic;
+import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 
@@ -193,6 +197,12 @@ public class EntityTAEldritchGuardian extends EntityEldritchGuardian {
     @Override
     public boolean isOnSameTeam(Entity entity) {
         return super.isOnSameTeam(entity) || isOnScoreboardTeam(entity.getTeam());
+    }
+    
+    @Override
+    @Nullable
+    protected ResourceLocation getLootTable() {
+        return TALootTables.ELDRITCH_GUARDIAN;
     }
     
     @Override

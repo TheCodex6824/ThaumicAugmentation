@@ -210,8 +210,11 @@ public class BlockStrangeCrystal extends BlockTABase implements IDirectionalBloc
         for (int i = 0; i < rand.nextInt(3) + (fortune > 0 ? rand.nextInt(fortune) : 0) + 1; ++i)
             drops.add(ThaumcraftApiHelper.makeCrystal(AspectUtil.getRandomAspect(rand)));
         
-        int special = (int) (rand.nextFloat() * (fortune + 1) + 0.1F);
-        for (int i = 0; i < special; ++i)
+        int special = 50;
+        if (fortune > 0)
+            special /= fortune;
+        
+        if (rand.nextInt(Math.max(special, 1)) == 0)
             drops.add(new ItemStack(ItemsTC.curio, 1, 0));
     }
     

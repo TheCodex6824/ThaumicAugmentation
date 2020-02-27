@@ -40,7 +40,7 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IImpulseCannonAugment;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
-import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProviderNoSave;
+import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
 import thecodex6824.thaumicaugmentation.common.event.ScheduledEventHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBurst;

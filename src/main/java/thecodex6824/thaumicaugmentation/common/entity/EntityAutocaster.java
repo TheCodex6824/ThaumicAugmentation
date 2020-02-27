@@ -48,16 +48,17 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.warded.entity.CapabilityWardOwnerProvider;
 import thecodex6824.thaumicaugmentation.api.warded.entity.WardOwnerProviderOwnable;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
@@ -298,8 +299,9 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     }
     
     @Override
-    protected boolean canDropLoot() {
-        return false;
+    @Nullable
+    protected ResourceLocation getLootTable() {
+        return TALootTables.AUTOCASTER;
     }
     
     @Override
@@ -321,12 +323,8 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     @Override
     public void onDeath(DamageSource cause) {
         super.onDeath(cause);
-        if (!world.isRemote) {
+        if (!world.isRemote)
             dropFocus();
-            entityDropItem(new ItemStack(ItemsTC.mechanismSimple), 0.5F);
-            entityDropItem(new ItemStack(ItemsTC.morphicResonator), 0.5F);
-            entityDropItem(new ItemStack(ItemsTC.mind, 1, 1), 0.5F);
-        }
     }
     
     @Override

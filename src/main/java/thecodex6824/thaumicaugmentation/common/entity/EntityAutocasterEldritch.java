@@ -38,8 +38,8 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import thaumcraft.api.casters.FocusMediumRoot;
@@ -47,7 +47,6 @@ import thaumcraft.api.casters.FocusNode;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.IFocusElement;
 import thaumcraft.api.entities.IEldritchMob;
-import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.entities.monster.EntityEldritchGuardian;
 import thaumcraft.common.entities.monster.boss.EntityEldritchGolem;
 import thaumcraft.common.entities.monster.boss.EntityEldritchWarden;
@@ -62,6 +61,7 @@ import thaumcraft.common.items.casters.foci.FocusEffectFrost;
 import thaumcraft.common.items.casters.foci.FocusMediumBolt;
 import thaumcraft.common.items.casters.foci.FocusMediumProjectile;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWater;
 import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
 
@@ -361,10 +361,9 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
     }
     
     @Override
-    public void onDeath(DamageSource cause) {
-        super.onDeath(cause);
-        if (!world.isRemote)
-            entityDropItem(new ItemStack(ItemsTC.plate, rand.nextInt(3) + 1, 3), 0.5F);
+    @Nullable
+    protected ResourceLocation getLootTable() {
+        return TALootTables.AUTOCASTER_ELDRITCH;
     }
 
 }

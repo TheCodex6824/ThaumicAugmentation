@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.capability;
+package thecodex6824.thaumicaugmentation.common.capability.provider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,45 +27,45 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import thecodex6824.thaumicaugmentation.api.augment.Augment;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 
-public class CapabilityProviderAugmentRiftEnergyStorage implements ICapabilitySerializable<NBTTagCompound> {
+public class CapabilityProviderImpulseCannon implements ICapabilitySerializable<NBTTagCompound> {
 
-    private Augment augment;
+    private AugmentableItem augmentable;
     private ImpetusStorage energy;
     
-    public CapabilityProviderAugmentRiftEnergyStorage(Augment aug, ImpetusStorage e) {
-        augment = aug;
+    public CapabilityProviderImpulseCannon(AugmentableItem aug, ImpetusStorage e) {
+        augmentable = aug;
         energy = e;
     }
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        augment.deserializeNBT(nbt.getCompoundTag("augment"));
+        augmentable.deserializeNBT(nbt.getCompoundTag("augments"));
         energy.deserializeNBT(nbt.getCompoundTag("energy"));
     }
     
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setTag("augment", augment.serializeNBT());
+        tag.setTag("augments", augmentable.serializeNBT());
         tag.setTag("energy", energy.serializeNBT());
         return tag;
     }
     
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        return capability == CapabilityAugment.AUGMENT || capability == CapabilityImpetusStorage.IMPETUS_STORAGE;
+        return capability == CapabilityAugmentableItem.AUGMENTABLE_ITEM || capability == CapabilityImpetusStorage.IMPETUS_STORAGE;
     }
     
     @Override
     @Nullable
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityAugment.AUGMENT)
-            return CapabilityAugment.AUGMENT.cast(augment);
+        if (capability == CapabilityAugmentableItem.AUGMENTABLE_ITEM)
+            return CapabilityAugmentableItem.AUGMENTABLE_ITEM.cast(augmentable);
         else if (capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
             return CapabilityImpetusStorage.IMPETUS_STORAGE.cast(energy);
         

@@ -71,9 +71,8 @@ public class ItemAutocasterPlacer extends ItemTABase {
                 return EnumActionResult.PASS;
             
             EntityAutocasterBase entity = null;
-            if (player.getHeldItem(hand).getMetadata() == 1) {
+            if (player.getHeldItem(hand).getMetadata() == 1)
                 entity = new EntityAutocasterEldritch(world);
-            }
             else {
                 entity = new EntityAutocaster(world);
                 ((EntityAutocaster) entity).setOwner(player);
@@ -90,7 +89,9 @@ public class ItemAutocasterPlacer extends ItemTABase {
                 
                 if (world.spawnEntity(entity)) {
                     world.playSound(null, loc, SoundEvents.ENTITY_ARMORSTAND_PLACE, SoundCategory.BLOCKS, 0.75F, 0.8F);
-                    player.getHeldItem(hand).shrink(1);
+                    if (!player.isCreative())
+                        player.getHeldItem(hand).shrink(1);
+                    
                     return EnumActionResult.SUCCESS;
                 }
             }

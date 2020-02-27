@@ -43,7 +43,7 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
-import thecodex6824.thaumicaugmentation.common.capability.CapabilityProviderHarness;
+import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderHarness;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import vazkii.botania.api.item.IPhantomInkable;

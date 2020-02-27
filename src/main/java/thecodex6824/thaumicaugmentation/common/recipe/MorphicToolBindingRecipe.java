@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.common.recipe;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import thaumcraft.api.aspects.Aspect;
@@ -46,7 +47,7 @@ public class MorphicToolBindingRecipe extends InfusionRecipe {
     @SuppressWarnings("null")
     public boolean matches(List<ItemStack> input, ItemStack central, World world, EntityPlayer player) {
         if (input.size() != 3 || central.getItem() == TAItems.MORPHIC_TOOL || central.getItem() == ItemsTC.primordialPearl ||
-                !ThaumcraftCapabilities.knowsResearch(player, research))
+                central.getItem() instanceof ItemArmor || !ThaumcraftCapabilities.knowsResearch(player, research))
             return false;
 
         boolean morphicFound = false;
@@ -71,6 +72,8 @@ public class MorphicToolBindingRecipe extends InfusionRecipe {
             // container item, at the cost of doing the infusion.
             // There is a coremod mitigation for this, but if it's disabled just stop it from being a problem
             if (!ThaumicAugmentationAPI.isCoremodAvailable() && stack.getItem().hasContainerItem(stack))
+                return false;
+            else if (stack.getItem() instanceof ItemArmor)
                 return false;
         }
 

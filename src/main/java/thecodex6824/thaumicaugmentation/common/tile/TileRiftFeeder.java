@@ -88,25 +88,25 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
     
     @Override
     public void update() {
-        if (world.getTotalWorldTime() % 5 == 0) {
+        if (!world.isRemote) {
             IBlockState state = world.getBlockState(pos);
-            if (!world.isRemote) {
-                for (EnumFacing facing : EnumFacing.VALUES) {
-                    if (facing != state.getValue(IDirectionalBlock.DIRECTION)) {
-                        TileEntity tile = ThaumcraftApiHelper.getConnectableTile(world, pos, facing);
-                        if (tile != null) {
-                            IEssentiaTransport t = (IEssentiaTransport) tile;
-                            if (t.canOutputTo(facing.getOpposite()) && t.getEssentiaType(facing) == Aspect.FLUX) {
-                                if (t.getEssentiaAmount(facing.getOpposite()) > 0 && t.getSuctionAmount(facing.getOpposite()) < getSuctionAmount(facing) &&
-                                        getSuctionAmount(facing) >= t.getMinimumSuction()) {
-                                    
-                                    addEssentiaDirect(t.takeEssentia(Aspect.FLUX, 1, facing.getOpposite()));
-                                }
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                if (facing != state.getValue(IDirectionalBlock.DIRECTION)) {
+                    TileEntity tile = ThaumcraftApiHelper.getConnectableTile(world, pos, facing);
+                    if (tile != null) {
+                        IEssentiaTransport t = (IEssentiaTransport) tile;
+                        if (t.canOutputTo(facing.getOpposite()) && t.getEssentiaType(facing) == Aspect.FLUX) {
+                            if (t.getEssentiaAmount(facing.getOpposite()) > 0 && t.getSuctionAmount(facing.getOpposite()) < getSuctionAmount(facing) &&
+                                    getSuctionAmount(facing) >= t.getMinimumSuction()) {
+                                
+                                addEssentiaDirect(t.takeEssentia(Aspect.FLUX, 1, facing.getOpposite()));
                             }
                         }
                     }
                 }
-                
+            }
+            
+            if (world.getTotalWorldTime() % 5 == 0) {
                 if (storedEssentia > 0 && state.getValue(IEnabledBlock.ENABLED)) {
                     EntityFluxRift rift = findClosestRift(state.getValue(IDirectionalBlock.DIRECTION));
                     if (rift != null && rift.getRiftSize() < 200 && !rift.getCollapse()) {

@@ -48,6 +48,7 @@ import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
 import thecodex6824.thaumicaugmentation.init.GUIHandler;
+import thecodex6824.thaumicaugmentation.init.LootHandler;
 import thecodex6824.thaumicaugmentation.init.MiscHandler;
 import thecodex6824.thaumicaugmentation.init.ResearchHandler;
 import thecodex6824.thaumicaugmentation.init.WorldHandler;
@@ -77,6 +78,7 @@ public class ThaumicAugmentation {
         NetworkRegistry.INSTANCE.registerGuiHandler(ThaumicAugmentation.instance, new GUIHandler());
         TAInternals.setInternalMethodProvider(new InternalMethodProvider());
         MiscHandler.preInit();
+        LootHandler.preInit();
         IntegrationHandler.preInit();
         
         if (!TAConfig.disableWardFocus.getValue()) {

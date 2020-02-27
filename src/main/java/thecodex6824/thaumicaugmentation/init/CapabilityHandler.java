@@ -86,8 +86,8 @@ import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
-import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProvider;
-import thecodex6824.thaumicaugmentation.common.capability.SimpleCapabilityProviderNoSave;
+import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
+import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)

@@ -28,7 +28,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
-import thecodex6824.thaumicaugmentation.common.item.ItemMorphicTool;
 
 public class MorphicToolUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
@@ -43,7 +42,7 @@ public class MorphicToolUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecipe
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof ItemMorphicTool) {
+                if (stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
                     if (!itemFound)
                         itemFound = true;
                     else
@@ -63,7 +62,7 @@ public class MorphicToolUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecipe
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof ItemMorphicTool) {
+                if (stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
                     if (item.isEmpty())
                         item = stack;
                     else
@@ -89,7 +88,7 @@ public class MorphicToolUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecipe
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof ItemMorphicTool) {
+                if (stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
                     if (item.isEmpty()) {
                         item = stack;
                         itemIndex = i;

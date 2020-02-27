@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.capability;
+package thecodex6824.thaumicaugmentation.common.capability.provider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +28,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
+import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
 
 public class CapabilityProviderMorphicTool implements ICapabilitySerializable<NBTTagCompound> {
 
