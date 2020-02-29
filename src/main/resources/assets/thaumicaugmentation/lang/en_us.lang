@@ -15,6 +15,7 @@ tile.thaumicaugmentation.stone.stone_crusted.name=Crusted Stone
 tile.thaumicaugmentation.stone.stone_crusted_glowing.name=Glowing Crusted Stone
 tile.thaumicaugmentation.stone.ancient_pillar.name=Ancient Pillar
 tile.thaumicaugmentation.stone.chiseled_ancient_bricks.name=Smooth Ancient Brick
+tile.thaumicaugmentation.stone.ancient_cobblestone.name=Ancient Cobblestone
 tile.thaumicaugmentation.arcane_trapdoor_wood.name=Greatwood Arcane Trapdoor
 tile.thaumicaugmentation.arcane_trapdoor_metal.name=Thaumium Arcane Trapdoor
 tile.thaumicaugmentation.arcane_trapdoor_silverwood.name=Silverwood Arcane Trapdoor
@@ -52,6 +53,8 @@ tile.thaumicaugmentation.capstone.capstone_ancient.name=Ancient Capstone
 tile.thaumicaugmentation.capstone.altar_ancient.name=Ancient Altar
 tile.thaumicaugmentation.strange_crystal.name=Strange Crystal Cluster
 tile.thaumicaugmentation.crab_vent.name=Crusted Opening
+tile.thaumicaugmentation.eldritch_lock.name=Eldritch Lock
+tile.thaumicaugmentation.rift_barrier.name=Ancient Barrier
 
 tile.thaumcraft.stairs_ancient_tile.name=Ancient Stone Tile Stairs
 
@@ -91,6 +94,10 @@ item.thaumicaugmentation.impulse_cannon.name=Impulse Cannon
 item.thaumicaugmentation.impulse_cannon_augment.railgun.name=Railgun Conversion
 item.thaumicaugmentation.impulse_cannon_augment.burst.name=Burst Fire Conversion
 item.thaumicaugmentation.focus_ancient.name=Ancient Focus
+item.thaumicaugmentation.eldritch_lock_key.labyrinth.name=Runed Tablet
+item.thaumicaugmentation.eldritch_lock_key.prison.name=Spiked Sigil
+item.thaumicaugmentation.eldritch_lock_key.library.name=Tome of Forbidden Knowledge
+item.thaumicaugmentation.eldritch_lock_key.boss.name=Sinister Blade
 item.thaumicaugmentation.obelisk_placer.eldritch.name=Eldritch Obelisk
 item.thaumicaugmentation.obelisk_placer.ancient.name=Ancient Obelisk
 
@@ -172,6 +179,8 @@ thaumicaugmentation.text.gate_level=Level:
 thaumicaugmentation.text.gate_level_limit=%d
 thaumicaugmentation.text.entity.eldritch_warden=%s the %s
 thaumicaugmentation.text.creative_only=Creative Only
+thaumicaugmentation.text.eldritch_lock_key_lore=It seems to be a part of something larger...
+thaumicaugmentation.text.eldritch_lock_type=Key: %s
 
 thaumicaugmentation.text.damage.impetus=%s was annihilated
 thaumicaugmentation.text.damage.impetus_attack=%s was annihilated by %s

@@ -71,6 +71,8 @@ public final class TABlocks {
     public static final Block CAPSTONE = null;
     public static final Block STRANGE_CRYSTAL = null;
     public static final Block CRAB_VENT = null;
+    public static final Block ELDRITCH_LOCK = null;
+    public static final Block RIFT_BARRIER = null;
 
     /**
      * Returns all blocks in the mod.
@@ -84,7 +86,7 @@ public final class TABlocks {
                RIFT_JAR, VOID_RECHARGE_PEDESTAL, IMPETUS_MIRROR, ARCANE_TERRAFORMER, RIFT_MONITOR,
                IMPETUS_GENERATOR, STABILITY_FIELD_GENERATOR, IMPETUS_GATE, STAIRS_ANCIENT, SLAB, SLAB_DOUBLE,
                STAIRS_ELDRITCH_TILE, BARS, FORTIFIED_GLASS, STARFIELD_GLASS, OBELISK, CAPSTONE, STRANGE_CRYSTAL,
-               CRAB_VENT};
+               CRAB_VENT, ELDRITCH_LOCK, RIFT_BARRIER};
     }
 
 }

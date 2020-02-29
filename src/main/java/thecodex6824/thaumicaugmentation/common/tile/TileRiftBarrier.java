@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.common.tile;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -28,7 +29,21 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
-public class TileStarfieldGlass extends TileEntity implements IShaderRenderingCallback {
+public class TileRiftBarrier extends TileEntity implements IShaderRenderingCallback {
+
+    protected BlockPos lock;
+    
+    public TileRiftBarrier() {
+        lock = BlockPos.ORIGIN;
+    }
+    
+    public void setLock(BlockPos pos) {
+        lock = pos.toImmutable();
+    }
+    
+    public BlockPos getLock() {
+        return lock;
+    }
     
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
@@ -36,18 +51,27 @@ public class TileStarfieldGlass extends TileEntity implements IShaderRenderingCa
     }
     
     @Override
-    public double getMaxRenderDistanceSquared() {
-        return 16384.0;
-    }
-    
-    @Override
     public void renderWithShader(ShaderType type, double pX, double pY, double pZ) {
-        ThaumicAugmentation.proxy.getRenderHelper().renderStarfieldGlass(type, this, pX, pY, pZ);
+        ThaumicAugmentation.proxy.getRenderHelper().renderRiftBarrier(type, this, pX, pY, pZ);
     }
     
     @Override
     public boolean hasFastRenderer() {
         return true;
+    }
+    
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        compound.setIntArray("lockPos", new int[] {pos.getX(), pos.getY(), pos.getZ()});
+        return super.writeToNBT(compound);
+    }
+    
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        int[] coord = compound.getIntArray("lockPos");
+        if (coord.length == 3)
+            lock = new BlockPos(coord[0], coord[1], coord[2]);
     }
     
 }

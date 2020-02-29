@@ -172,7 +172,7 @@ public class CustomCasterAugmentModel implements IModel {
         
         protected BakedModel(IBakedModel wrappedModel) {
             wrappedFallback = wrappedModel;
-            cache = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterAccess(300, TimeUnit.SECONDS).build();
+            cache = CacheBuilder.newBuilder().expireAfterAccess(300, TimeUnit.SECONDS).build();
         }
         
         @Override

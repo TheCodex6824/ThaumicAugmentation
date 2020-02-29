@@ -33,6 +33,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
@@ -40,6 +41,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.aspects.Aspect;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.event.RiftJarVoidItemEvent;
 import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
 import thecodex6824.thaumicaugmentation.api.tile.RiftJar;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
@@ -54,8 +56,14 @@ public class TileRiftJar extends TileEntity implements ITickable {
         @Nonnull
         @SuppressWarnings("null")
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            setRiftStability(Math.max(stability - stack.getCount() * 3, -200));
-            return ItemStack.EMPTY;
+            RiftJarVoidItemEvent event = new RiftJarVoidItemEvent(stack, rift, world, pos);
+            MinecraftForge.EVENT_BUS.post(event);
+            if (!event.isCanceled()) {
+                setRiftStability(Math.max(stability - stack.getCount() * 3, -200));
+                return ItemStack.EMPTY;
+            }
+            else
+                return stack;
         }
         
         @Override

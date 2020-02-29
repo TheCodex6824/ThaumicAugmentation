@@ -64,6 +64,7 @@ import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -87,6 +88,7 @@ import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
+import thecodex6824.thaumicaugmentation.common.block.trait.INoBlockOutline;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
@@ -242,6 +244,15 @@ public class RenderEventHandler {
             ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
             if (stack.getItem() instanceof IElytraCompat)
                 event.setRenderCape(false);
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onRenderBlockOutline(DrawBlockHighlightEvent event) {
+        if (event.getTarget().getBlockPos() != null && event.getPlayer().getEntityWorld().getBlockState(
+                event.getTarget().getBlockPos()).getBlock() instanceof INoBlockOutline) {
+            
+            event.setCanceled(true);
         }
     }
     
@@ -416,7 +427,7 @@ public class RenderEventHandler {
                         }
                         
                         for (IShaderRenderingCallback tile : toRender)
-                            tile.render(type, rX, rY, rZ);
+                            tile.renderWithShader(type, rX, rY, rZ);
                         
                         if (TAShaderManager.shouldUseShaders())
                             TAShaderManager.disableShader();

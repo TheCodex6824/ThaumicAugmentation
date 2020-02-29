@@ -69,6 +69,8 @@ public class TATextures {
     public static final ResourceLocation RIFT = new ResourceLocation("minecraft", "textures/entity/end_portal.png");
     public static final ResourceLocation MIRROR = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/mirror_field.png");
     
+    public static final ResourceLocation ELDRITCH_CUBE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/blocks/eldritch_cube.png");
+    
     public static void setupTextures() {
         SimpleTexture tex = new SimpleTexture(MIRROR);
         if (Minecraft.getMinecraft().getTextureManager().loadTexture(MIRROR, tex))

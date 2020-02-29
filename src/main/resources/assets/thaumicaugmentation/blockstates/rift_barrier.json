@@ -1,0 +1,18 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "minecraft:cube_all",
+        "textures": {
+            "all": "thaumcraft:blocks/eldritch_stone_1",
+            "particle": "thaumcraft:blocks/eldritch_stone_1"
+        }
+    },
+    "variants": {
+        "ta_direction_h": {
+            "south": {},
+            "west": {},
+            "north": {},
+            "east": {}
+        }
+    }
+}

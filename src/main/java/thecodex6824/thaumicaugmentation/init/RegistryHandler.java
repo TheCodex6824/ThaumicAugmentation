@@ -60,6 +60,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockCapstone;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
 import thecodex6824.thaumicaugmentation.common.block.BlockCrabVent;
+import thecodex6824.thaumicaugmentation.common.block.BlockEldritchLock;
 import thecodex6824.thaumicaugmentation.common.block.BlockFortifiedGlass;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
@@ -70,6 +71,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrixBase;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.block.BlockObelisk;
+import thecodex6824.thaumicaugmentation.common.block.BlockRiftBarrier;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftMonitor;
@@ -138,6 +140,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileCrabVent;
+import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGate;
@@ -147,6 +150,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
 import thecodex6824.thaumicaugmentation.common.tile.TileObeliskVisual;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftFeeder;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
@@ -224,6 +228,8 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockCapstone(), "capstone"));
         registry.register(setupBlock(new BlockStrangeCrystal(), "strange_crystal"));
         registry.register(setupBlock(new BlockCrabVent(), "crab_vent"));
+        registry.register(setupBlock(new BlockEldritchLock(), "eldritch_lock"));
+        registry.register(setupBlock(new BlockRiftBarrier(), "rift_barrier"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -250,6 +256,8 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileObeliskVisual.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "obelisk_visual"));
         GameRegistry.registerTileEntity(TileAltar.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "altar"));
         GameRegistry.registerTileEntity(TileCrabVent.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "crab_vent"));
+        GameRegistry.registerTileEntity(TileEldritchLock.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "eldritch_lock"));
+        GameRegistry.registerTileEntity(TileRiftBarrier.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_barrier"));
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)

@@ -18,11 +18,12 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.util;
+package thecodex6824.thaumicaugmentation.common.block.trait;
 
-@FunctionalInterface
-public interface IShaderRenderingCallback {
+import net.minecraft.block.properties.PropertyBool;
 
-    public void renderWithShader(ShaderType type, double pX, double pY, double pZ);
+public interface ILockClosed {
+
+    public static final PropertyBool CLOSED = PropertyBool.create("ta_lock_closed");
     
 }

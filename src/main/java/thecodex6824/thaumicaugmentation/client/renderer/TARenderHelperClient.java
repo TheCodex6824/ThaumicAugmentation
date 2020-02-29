@@ -66,12 +66,14 @@ import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.client.fx.FXArcCustom;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.common.block.trait.IRenderableSides;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
 import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
@@ -698,6 +700,84 @@ public class TARenderHelperClient implements ITARenderHelper {
         }
 
         GlStateManager.popMatrix();
+    }
+    
+    @Override
+    public void renderRiftBarrier(ShaderType type, TileRiftBarrier tile, double pX, double pY, double pZ) {
+        BlockPos pos = tile.getPos();
+        IBlockState state = tile.getWorld().getBlockState(pos);
+        EnumFacing face = state.getValue(IHorizontallyDirectionalBlock.DIRECTION);
+        if (state.shouldSideBeRendered(tile.getWorld(), pos, face) || state.shouldSideBeRendered(tile.getWorld(), pos, face.getOpposite())) {
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(pos.getX() - pX, pos.getY() - pY, pos.getZ() - pZ);
+            GlStateManager.disableCull();
+            Tessellator t = Tessellator.getInstance();
+            BufferBuilder buffer = t.getBuffer();
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            switch (face) {
+                case EAST: {
+                    buffer.pos(0.5, 0.0, 0.0).tex(0, 0).endVertex();
+                    buffer.pos(0.5, 1.0, 0.0).tex(1, 0).endVertex();
+                    buffer.pos(0.5, 1.0, 1.0).tex(1, 1).endVertex();
+                    buffer.pos(0.5, 0.0, 1.0).tex(1, 0).endVertex();
+                    break;
+                }
+                case WEST: {
+                    buffer.pos(0.5, 0.0, 0.0).tex(0, 0).endVertex();
+                    buffer.pos(0.5, 0.0, 1.0).tex(1, 0).endVertex();
+                    buffer.pos(0.5, 1.0, 1.0).tex(1, 1).endVertex();
+                    buffer.pos(0.5, 1.0, 0.0).tex(1, 0).endVertex();
+                    break;
+                }
+                case SOUTH: {
+                    buffer.pos(0.0, 0.0, 0.5).tex(0, 0).endVertex();
+                    buffer.pos(1.0, 0.0, 0.5).tex(1, 0).endVertex();
+                    buffer.pos(1.0, 1.0, 0.5).tex(1, 1).endVertex();
+                    buffer.pos(0.0, 1.0, 0.5).tex(1, 0).endVertex();
+                    break;
+                }
+                case NORTH: {
+                    buffer.pos(0.0, 0.0, 0.5).tex(0, 0).endVertex();
+                    buffer.pos(0.0, 1.0, 0.5).tex(1, 0).endVertex();
+                    buffer.pos(1.0, 1.0, 0.5).tex(0, 1).endVertex();
+                    buffer.pos(1.0, 0.0, 0.5).tex(1, 1).endVertex();
+                    break;
+                }
+                
+                default: break;
+            }
+            
+            t.draw();
+            GlStateManager.enableCull();
+            GlStateManager.popMatrix();
+        }
+    }
+    
+    @Override
+    public void drawCube() {
+        drawCube(0.0, 1.0);
+    }
+    
+    @Override
+    public void drawCube(double min, double max) {
+        Tessellator t = Tessellator.getInstance();
+        BufferBuilder buffer = t.getBuffer();
+        buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX);
+        buffer.pos(min, min, max).tex(0.0, 0.0).endVertex();
+        buffer.pos(max, min, max).tex(1.0, 0.0).endVertex();
+        buffer.pos(min, max, max).tex(0.0, 1.0).endVertex();
+        buffer.pos(max, max, max).tex(1.0, 1.0).endVertex();
+        buffer.pos(max, max, min).tex(1.0, 0.0).endVertex();
+        buffer.pos(max, min, max).tex(0.0, 1.0).endVertex();
+        buffer.pos(max, min, min).tex(0.0, 0.0).endVertex();
+        buffer.pos(min, min, max).tex(1.0, 1.0).endVertex();
+        buffer.pos(min, min, min).tex(1.0, 0.0).endVertex();
+        buffer.pos(min, max, max).tex(0.0, 1.0).endVertex();
+        buffer.pos(min, max, min).tex(0.0, 0.0).endVertex();
+        buffer.pos(max, max, min).tex(1.0, 0.0).endVertex();
+        buffer.pos(min, min, min).tex(0.0, 1.0).endVertex();
+        buffer.pos(max, min, min).tex(1.0, 1.0).endVertex();
+        t.draw();
     }
     
     @Override

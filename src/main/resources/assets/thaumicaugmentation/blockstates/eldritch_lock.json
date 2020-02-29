@@ -1,0 +1,56 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "minecraft:orientable",
+        "transform": "forge:default-block",
+        "textures": {
+            "side": "thaumicaugmentation:blocks/eldritch_lock_side",
+            "top": "thaumicaugmentation:blocks/eldritch_lock_side",
+            "particle": "thaumicaugmentation:blocks/eldritch_lock_side"
+        }
+    },
+    "variants": {
+        "ta_lock_type": {
+            "labyrinth": {
+                "textures": {
+                    "front": "thaumicaugmentation:blocks/eldritch_lock_labyrinth",
+                    "key": "thaumicaugmentation:items/eldritch_lock_key_labyrinth"
+                }
+            },
+            "prison": {
+                "textures": {
+                    "front": "thaumicaugmentation:blocks/eldritch_lock_prison",
+                    "key": "thaumicaugmentation:items/eldritch_lock_key_prison"
+                }
+            },
+            "library": {
+                "textures": {
+                    "front": "thaumicaugmentation:blocks/eldritch_lock_library",
+                    "key": "thaumicaugmentation:items/eldritch_lock_key_library"
+                }
+            },
+            "boss": {
+                "textures": {
+                    "front": "thaumicaugmentation:blocks/eldritch_lock_boss",
+                    "key": "thaumicaugmentation:items/eldritch_lock_key_boss"
+                }
+            }
+        },
+        "ta_direction_h": {
+            "south": {"y": 180},
+            "west": {"y": 270},
+            "north": {"y": 0},
+            "east": {"y": 90}
+        },
+        "ta_lock_closed": {
+            "true": {},
+            "false": {
+                "submodel": {
+                    "key": {
+                        "model": "thaumicaugmentation:key_overlay"
+                    }
+                }
+            }
+        }
+    }
+}

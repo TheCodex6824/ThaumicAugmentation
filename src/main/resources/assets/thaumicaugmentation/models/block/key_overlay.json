@@ -1,0 +1,14 @@
+{
+    "textures": {
+        "key": "thaumicaugmentation:items/eldritch_lock_key_labyrinth"
+    },
+    "elements": [
+        {
+            "from": [4, 4, -0.02],
+            "to": [12, 12, 0.98],
+            "faces": {
+                "north": {"uv": [0, 0, 16, 16], "texture": "#key"}
+            }
+        }
+    ]
+}

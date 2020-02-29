@@ -20,6 +20,20 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemEldritchLockKey extends ItemTABase {
@@ -28,6 +42,24 @@ public class ItemEldritchLockKey extends ItemTABase {
         super("labyrinth", "prison", "library", "boss");
         setMaxStackSize(1);
         setHasSubtypes(true);
+    }
+    
+    @Override
+    @Nullable
+    public Entity createEntity(World world, Entity location, ItemStack itemstack) {
+        EntityItem item = new EntityItem(world, location.posX, location.posY, location.posZ, itemstack);
+        item.setEntityInvulnerable(true);
+        item.setNoDespawn();
+        return item;
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.eldritch_lock_key_lore").setStyle(new Style()
+                .setItalic(true)
+                .setColor(TextFormatting.LIGHT_PURPLE))
+            .getFormattedText());
     }
     
 }

@@ -125,9 +125,11 @@ import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchG
 import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderEldritchLock;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObelisk;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObeliskVisual;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftBarrier;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftJar;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMonitor;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMoverOutput;
@@ -166,12 +168,14 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
 import thecodex6824.thaumicaugmentation.common.tile.TileObeliskVisual;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
@@ -515,6 +519,24 @@ public class ClientProxy extends ServerProxy {
                     
                     break;
                 }
+                case FLUX: {
+                    if (d.length == 3) {
+                        int x = (int) d[0], y = (int) d[1], z = (int) d[2];
+                        FXDispatcher.INSTANCE.drawPollutionParticles(new BlockPos(x, y, z));
+                    }
+                    
+                    break;
+                }
+                case FLUX_BATCH: {
+                    if (d.length % 3 == 0) {
+                        for (int i = 0; i < d.length; i += 3) {
+                            int x = (int) d[i], y = (int) d[i + 1], z = (int) d[i + 2];
+                            FXDispatcher.INSTANCE.drawPollutionParticles(new BlockPos(x, y, z));
+                        }
+                    }
+                    
+                    break;
+                }
              
                 default: {break;}
             }
@@ -811,6 +833,8 @@ public class ClientProxy extends ServerProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileStarfieldGlass.class, new RenderStarfieldGlass());
         ClientRegistry.bindTileEntitySpecialRenderer(TileObelisk.class, new RenderObelisk());
         ClientRegistry.bindTileEntitySpecialRenderer(TileObeliskVisual.class, new RenderObeliskVisual());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEldritchLock.class, new RenderEldritchLock());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileRiftBarrier.class, new RenderRiftBarrier());
         registerItemColorHandlers();
         registerBlockColorHandlers();
         for (RenderPlayer render : Minecraft.getMinecraft().getRenderManager().getSkinMap().values())

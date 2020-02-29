@@ -46,7 +46,9 @@ public class PacketParticleEffect implements IMessage {
         SPLASH_BATCH(12),
         SMOKE_LARGE(13),
         FIRE_MULTIPLE_RAND(14),
-        BLOCK_RUNES(15);
+        BLOCK_RUNES(15),
+        FLUX(16),
+        FLUX_BATCH(17);
         
         private int id;
         

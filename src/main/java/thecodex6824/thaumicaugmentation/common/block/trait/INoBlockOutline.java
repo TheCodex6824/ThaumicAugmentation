@@ -18,11 +18,6 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.util;
+package thecodex6824.thaumicaugmentation.common.block.trait;
 
-@FunctionalInterface
-public interface IShaderRenderingCallback {
-
-    public void renderWithShader(ShaderType type, double pX, double pY, double pZ);
-    
-}
+public interface INoBlockOutline {}

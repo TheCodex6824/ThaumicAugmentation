@@ -28,6 +28,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
 import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 
 public class TARenderHelperServer implements ITARenderHelper {
@@ -96,10 +97,19 @@ public class TARenderHelperServer implements ITARenderHelper {
     public void renderObelisk(ShaderType type, TileObelisk tile, double pX, double pY, double pZ) {}
     
     @Override
+    public void renderRiftBarrier(ShaderType type, TileRiftBarrier tile, double pX, double pY, double pZ) {}
+    
+    @Override
     public void renderWisp(double x, double y, double z, Entity target) {}
     
     @Override
     public void renderVent(double x, double y, double z, double vx, double vy, double vz, int color, float scale) {}
+    
+    @Override
+    public void drawCube() {}
+    
+    @Override
+    public void drawCube(double min, double max) {}
     
     @Override
     public Vec3d estimateImpulseCannonFiringPoint(EntityLivingBase entity, float partialTicks) {

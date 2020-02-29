@@ -20,24 +20,19 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer.tile;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.FastTESR;
-import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
-import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
+import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
-public class RenderStarfieldGlass extends FastTESR<TileStarfieldGlass> {
+public class RenderRiftBarrier extends FastTESR<TileRiftBarrier> {
     
     @Override
-    public void renderTileEntityFast(TileStarfieldGlass te, double x, double y, double z, float partialTicks,
+    public void renderTileEntityFast(TileRiftBarrier te, double x, double y, double z, float partialTicks,
             int destroyStage, float partial, BufferBuilder buffer) {
         
-        World world = te.getWorld();
-        IBlockState state = world.getBlockState(te.getPos());
-        if (state.getPropertyKeys().contains(IStarfieldGlassType.GLASS_TYPE))
-            RenderEventHandler.onRenderShaderTile(state.getValue(IStarfieldGlassType.GLASS_TYPE).getShaderType(), te);
+        RenderEventHandler.onRenderShaderTile(ShaderType.RIFT, te);
     }
     
 }

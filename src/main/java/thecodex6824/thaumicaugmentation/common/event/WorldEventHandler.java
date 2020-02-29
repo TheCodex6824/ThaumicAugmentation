@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.common.event;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -33,7 +34,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.common.lib.events.ServerEvents;
 import thaumcraft.common.world.aura.AuraHandler;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.event.RiftJarVoidItemEvent;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
@@ -74,6 +77,16 @@ public class WorldEventHandler {
         if (!TAConfig.disableEmptiness.getValue() && event.side == Side.SERVER && event.phase == Phase.END && 
                 event.world.provider.getDimension() == TADimensions.EMPTINESS.getId() && getTCEventHandlerServerTicks() % 20 == 0)
             AuraHandler.riftTrigger.remove(TADimensions.EMPTINESS.getId());
+    }
+    
+    @SubscribeEvent
+    public static void onItemVoid(RiftJarVoidItemEvent event) {
+        if (event.getItemStack().getItem() == TAItems.ELDRITCH_LOCK_KEY) {
+            BlockPos pos = event.getPosition();
+            event.getWorld().destroyBlock(pos, false);
+            event.getWorld().createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
+            event.setCanceled(true);
+        }
     }
     
 }
