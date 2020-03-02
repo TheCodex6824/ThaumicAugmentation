@@ -34,6 +34,7 @@ public class TAShaders {
     public static Shader EMPTINESS_SKY;
     public static Shader FLUX_RIFT;
     public static Shader MIRROR;
+    public static Shader FLUX_RIFT_HUD;
     
     public static final Consumer<Shader> SHADER_CALLBACK_GENERIC_SPHERE = shader -> {
         Minecraft mc = Minecraft.getMinecraft();
@@ -48,6 +49,9 @@ public class TAShaders {
         
         int z = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "pitch");
         ARBShaderObjects.glUniform1fARB(z, (float) (pitch * 2.0F * Math.PI / 360.0));
+        
+        int zoom = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "zoom");
+        ARBShaderObjects.glUniform1fARB(zoom, 1.0F);
     };
     
     public static final Consumer<Shader> SHADER_CALLBACK_CONSTANT_SPHERE = shader -> {
@@ -56,6 +60,20 @@ public class TAShaders {
         
         int z = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "pitch");
         ARBShaderObjects.glUniform1fARB(z, 0.0F);
+        
+        int zoom = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "zoom");
+        ARBShaderObjects.glUniform1fARB(zoom, 1.0F);
+    };
+    
+    public static final Consumer<Shader> SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED = shader -> {
+        int x = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "yaw");
+        ARBShaderObjects.glUniform1fARB(x, 0.0F);
+        
+        int z = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "pitch");
+        ARBShaderObjects.glUniform1fARB(z, 0.0F);
+        
+        int zoom = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "zoom");
+        ARBShaderObjects.glUniform1fARB(zoom, 20.0F);
     };
     
 }

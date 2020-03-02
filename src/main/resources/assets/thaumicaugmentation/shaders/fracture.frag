@@ -9,6 +9,7 @@ uniform int time;
 
 uniform float yaw;
 uniform float pitch;
+uniform float zoom;
 
 varying vec3 position;
 
@@ -66,7 +67,7 @@ void main() {
 		float v = 0.5 + (asin(ray.y)/M_PI);
 		
 		// get UV scaled for layers and offset by time;
-		float scale = mult*0.5 + 2.75;
+		float scale = (mult * 0.5 + 2.75) * zoom;
 		vec2 tex = vec2( u * scale, (v + time * 0.00006) * scale * 0.6 );
 		
 		// sample the texture

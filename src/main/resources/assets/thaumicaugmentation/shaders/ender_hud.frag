@@ -27,7 +27,7 @@ mat4 rotationMatrix(vec3 axis, float angle)
 
 void main() {
     // background colour
-    vec4 col = vec4(0.069, 0.025, 0.095, 1);
+    vec4 col = vec4(0.022,0.018,0.0315,1);
     
     // get ray from camera to fragment
     vec4 dir = normalize(vec4( -position, 0));
@@ -44,11 +44,11 @@ void main() {
 	vec4 ray;
 	
 	// draw the layers
-	for (int i=0; i<16; i++) {
-		int mult = 16-i;
+	for (int i=0; i<8; i++) {
+		int mult = 8-i;
 	
 		// get semi-random stuff
-		int j = i + 7;
+		int j = i + 3;
 		float rand1 = (j * j * 4321 + j * 8) * 2.0F;
 		int k = j + 1;
 		float rand2 = (k * k * k * 239 + k * 37) * 3.6F;
@@ -66,18 +66,18 @@ void main() {
 		
 		// get UV scaled for layers and offset by time;
 		float scale = (mult * 0.5 + 2.75) * zoom;
-		vec2 tex = vec2( u * scale, (v + time * 0.0001) * scale * 0.6 );
+		vec2 tex = vec2( u * scale, (v + time * 0.00006) * scale * 0.6 );
 		
 		// sample the texture
 		vec4 tcol = texture2D(texture, tex);
 		
 		// set the alpha, blending out at the bunched ends
-		float a = tcol.r * (0.15 + (1.0/mult)) * (1-smoothstep(0.15, 0.48, abs(v-0.5)));
+		float a = tcol.b * (0.05 + (1.0/mult) * 0.65) * (1-smoothstep(0.15, 0.48, abs(v-0.5)));
 		
-		// get random colors
-		float r = (mod(rand1, 21.0)/21.0) * 0.5 + 0.1;
-    	float g = (mod(rand2, 25.0)/35.0) * 0.5 + 0.4;
-    	float b = (mod(rand1, 17.0)/17.0) * 0.5 + 0.5;
+		// get end-portal-y colours
+		float r = (mod(rand1, 29.0)/29.0) + 0.1;
+    	float g = (mod(rand2, 35.0)/35.0) + 0.4;
+    	float b = (mod(rand1, 17.0)/17.0) + 0.5;
 		
 		// mix the colours
 		col = col*(1-a) + vec4(r,g,b,1)*a;

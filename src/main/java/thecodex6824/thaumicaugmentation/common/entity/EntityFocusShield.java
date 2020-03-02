@@ -456,7 +456,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                         lYaw = owner.rotationYaw + getYawOffset();
                     
                     Vec3d lookVec = getEntityLookVector(lYaw, owner.rotationPitch).scale(1.5);
-                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + (owner.height / 2.0) - height / 2.0,
+                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + (owner.height / 1.5) - height / 2.0,
                             owner.posZ + lookVec.z, lYaw, owner.rotationPitch);
                     motionX = owner.motionX;
                     motionY = owner.motionY;
@@ -483,7 +483,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                         lYaw = owner.prevRotationYaw + (owner.rotationYaw - owner.prevRotationYaw) * pt + getYawOffset();
                     
                     Vec3d lookVec = getEntityLookVector(lYaw, lPitch).scale(1.5);
-                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + (owner.height / 2.0) - height / 2.0,
+                    setLocationAndAngles(owner.posX + lookVec.x, owner.posY + lookVec.y + (owner.height / 1.5) - height / 2.0,
                             owner.posZ + lookVec.z, lYaw, lPitch);
                     motionX = owner.motionX;
                     motionY = owner.motionY;

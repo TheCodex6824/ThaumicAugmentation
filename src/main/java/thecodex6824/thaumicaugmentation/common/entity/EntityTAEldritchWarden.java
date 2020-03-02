@@ -146,6 +146,8 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
         MinecraftForge.EVENT_BUS.post(event);
         if (event.getResult() == Result.ALLOW || (event.getResult() == Result.DEFAULT && world.provider.getDimension() == TADimensions.EMPTINESS.getId()))
             dataManager.set(TRANSPARENT, false);
+        else
+            dataManager.set(TRANSPARENT, true);
         
         return d;
     }

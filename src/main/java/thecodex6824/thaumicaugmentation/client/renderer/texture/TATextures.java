@@ -70,6 +70,9 @@ public class TATextures {
     public static final ResourceLocation MIRROR = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/mirror_field.png");
     
     public static final ResourceLocation ELDRITCH_CUBE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/blocks/eldritch_cube.png");
+    public static final ResourceLocation ELDRITCH_PORTAL = new ResourceLocation("thaumcraft", "textures/misc/eldritch_portal.png");
+    
+    public static final ResourceLocation TC_HUD = new ResourceLocation("thaumcraft", "textures/gui/hud.png");
     
     public static void setupTextures() {
         SimpleTexture tex = new SimpleTexture(MIRROR);

@@ -202,14 +202,14 @@ public final class RecipeHandler {
             ));
             
             ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumostatic_gyroscope"), new InfusionRecipe(
-                    "THAUMOSTATIC_HARNESS", new ItemStack(TAItems.THAUMOSTATIC_HARNESS_AUGMENT, 1, 0), 5, new AspectList().add(Aspect.TRAP, 35).add(Aspect.AIR, 25).add(Aspect.FLIGHT, 25),
+                    "HARNESS_AUGMENTATION", new ItemStack(TAItems.THAUMOSTATIC_HARNESS_AUGMENT, 1, 0), 5, new AspectList().add(Aspect.TRAP, 35).add(Aspect.AIR, 25).add(Aspect.FLIGHT, 25),
                     new ItemStack(ItemsTC.baubles, 1, 2), new Object[] {
-                            "dustRedstone", "plateThaumium", ThaumcraftApiHelper.makeCrystal(Aspect.FLIGHT), "plateThaumium"
+                            "dustRedstone", "plateThaumium", ThaumcraftApiHelper.makeCrystal(Aspect.TRAP), "plateThaumium"
                     }
             ));
             
             ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumostatic_girdle"), new InfusionRecipe(
-                    "THAUMOSTATIC_HARNESS", new ItemStack(TAItems.THAUMOSTATIC_HARNESS_AUGMENT, 1, 1), 8, new AspectList().add(Aspect.AIR, 50).add(Aspect.MOTION, 25).add(Aspect.FLIGHT, 25),
+                    "HARNESS_AUGMENTATION", new ItemStack(TAItems.THAUMOSTATIC_HARNESS_AUGMENT, 1, 1), 8, new AspectList().add(Aspect.AIR, 50).add(Aspect.MOTION, 25).add(Aspect.FLIGHT, 25),
                     new ItemStack(ItemsTC.baubles, 1, 2), new Object[] {
                             "feather", ThaumcraftApiHelper.makeCrystal(Aspect.FLIGHT), "ingotGold", "feather", ThaumcraftApiHelper.makeCrystal(Aspect.AIR), "ingotGold"
                     }

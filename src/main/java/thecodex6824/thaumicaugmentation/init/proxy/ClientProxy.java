@@ -125,6 +125,7 @@ import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchG
 import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderAltar;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderEldritchLock;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObelisk;
@@ -167,6 +168,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChan
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
+import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
@@ -833,6 +835,7 @@ public class ClientProxy extends ServerProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileStarfieldGlass.class, new RenderStarfieldGlass());
         ClientRegistry.bindTileEntitySpecialRenderer(TileObelisk.class, new RenderObelisk());
         ClientRegistry.bindTileEntitySpecialRenderer(TileObeliskVisual.class, new RenderObeliskVisual());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileAltar.class, new RenderAltar());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEldritchLock.class, new RenderEldritchLock());
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftBarrier.class, new RenderRiftBarrier());
         registerItemColorHandlers();
@@ -850,6 +853,7 @@ public class ClientProxy extends ServerProxy {
             TAShaders.EMPTINESS_SKY = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_sky"));
             TAShaders.FLUX_RIFT = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ender"));
             TAShaders.MIRROR = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "mirror"));
+            TAShaders.FLUX_RIFT_HUD = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ender_hud"));
         }
     }
 
