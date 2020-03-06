@@ -95,7 +95,7 @@ public class ItemElytraHarnessAugment extends ItemTABase {
                 }
                 
                 @Override
-                public void onTick(Entity user) {
+                public boolean onTick(Entity user) {
                     if (user.world.isRemote && ThaumicAugmentation.proxy.isEntityClientPlayer(user)) {
                         EntityLivingBase entity = (EntityLivingBase) user;
                         IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
@@ -111,6 +111,8 @@ public class ItemElytraHarnessAugment extends ItemTABase {
                             }
                         }
                     }
+                    
+                    return super.onTick(user);
                 }   
                 
                 @Override

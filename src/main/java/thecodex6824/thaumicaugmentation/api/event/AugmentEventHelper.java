@@ -55,11 +55,14 @@ public final class AugmentEventHelper {
         }
     }
     
-    public static void fireCastPreEvent(IAugmentableItem cap, ItemStack caster, FocusWrapper focusPackage, Entity entity) {
+    public static boolean fireCastPreEvent(IAugmentableItem cap, ItemStack caster, FocusWrapper focusPackage, Entity entity) {
+        boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onCastPre(caster, focusPackage, entity);
+                res |= a.getCapability(CapabilityAugment.AUGMENT, null).onCastPre(caster, focusPackage, entity);
         }
+        
+        return res;
     }
     
     public static void fireCastPostEvent(IAugmentableItem cap, ItemStack caster, FocusWrapper focusPackage, Entity entity) {
@@ -69,67 +72,94 @@ public final class AugmentEventHelper {
         }
     }
     
-    public static void fireHurtEntityEvent(IAugmentableItem cap, Entity attacker, Entity attacked) {
+    public static boolean fireHurtEntityEvent(IAugmentableItem cap, Entity attacker, Entity attacked) {
+        boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onHurtEntity(attacker, attacked);
+                res |= a.getCapability(CapabilityAugment.AUGMENT, null).onHurtEntity(attacker, attacked);
         }
+        
+        return res;
     }
     
-    public static void fireHurtByEntityEvent(IAugmentableItem cap, Entity attacked, Entity attacker) {
+    public static boolean fireHurtByEntityEvent(IAugmentableItem cap, Entity attacked, Entity attacker) {
+        boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onHurt(attacked, attacker);
+                res |= a.getCapability(CapabilityAugment.AUGMENT, null).onHurt(attacked, attacker);
         }
+        
+        return res;
     }
     
-    public static void fireDamageEntityEvent(IAugmentableItem cap, Entity attacker, Entity attacked) {
+    public static boolean fireDamageEntityEvent(IAugmentableItem cap, Entity attacker, Entity attacked) {
+        boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onDamagedEntity(attacker, attacked);
+                res |= a.getCapability(CapabilityAugment.AUGMENT, null).onDamagedEntity(attacker, attacked);
         }
+        
+        return res;
     }
     
-    public static void fireDamagedByEntityEvent(IAugmentableItem cap, Entity attacked, Entity attacker) {
+    public static boolean fireDamagedByEntityEvent(IAugmentableItem cap, Entity attacked, Entity attacker) {
+        boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onDamaged(attacked, attacker);
+                res |= a.getCapability(CapabilityAugment.AUGMENT, null).onDamaged(attacked, attacker);
         }
+        
+        return res;
     }
     
-    public static void fireInteractEntityEvent(IAugmentableItem cap, Entity user, ItemStack used, Entity target, EnumHand hand) {
+    public static boolean fireInteractEntityEvent(IAugmentableItem cap, Entity user, ItemStack used, Entity target, EnumHand hand) {
+        boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onInteractEntity(user, used, target, hand);
+                res |= a.getCapability(CapabilityAugment.AUGMENT, null).onInteractEntity(user, used, target, hand);
         }
+        
+        return res;
     }
     
-    public static void fireInteractBlockEvent(IAugmentableItem cap, Entity user, ItemStack used, BlockPos target, EnumFacing face, EnumHand hand) {
+    public static boolean fireInteractBlockEvent(IAugmentableItem cap, Entity user, ItemStack used, BlockPos target, EnumFacing face, EnumHand hand) {
+        boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onInteractBlock(user, used, target, face, hand);
+                res |= a.getCapability(CapabilityAugment.AUGMENT, null).onInteractBlock(user, used, target, face, hand);
         }
+        
+        return res;
     }
     
-    public static void fireInteractAirEvent(IAugmentableItem cap, Entity user, ItemStack used, EnumHand hand) {
+    public static boolean fireInteractAirEvent(IAugmentableItem cap, Entity user, ItemStack used, EnumHand hand) {
+        boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onInteractAir(user, used, hand);
+                res |= a.getCapability(CapabilityAugment.AUGMENT, null).onInteractAir(user, used, hand);
         }
+        
+        return res;
     }
     
-    public static void fireUseItemEvent(IAugmentableItem cap, Entity user, ItemStack used) {
+    public static boolean fireUseItemEvent(IAugmentableItem cap, Entity user, ItemStack used) {
+        boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onUseItem(user, used);
+                res |= a.getCapability(CapabilityAugment.AUGMENT, null).onUseItem(user, used);
         }
+        
+        return res;
     }
     
-    public static void fireTickEvent(IAugmentableItem cap, Entity entity) {
+    public static boolean fireTickEvent(IAugmentableItem cap, Entity entity) {
+        boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             if (a.hasCapability(CapabilityAugment.AUGMENT, null))
-                a.getCapability(CapabilityAugment.AUGMENT, null).onTick(entity);
+                res |= a.getCapability(CapabilityAugment.AUGMENT, null).onTick(entity);
         }
+        
+        return res;
     }
     
     public static void handleSync(IAugmentableItem cap, Entity entity, int index) {

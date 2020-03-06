@@ -42,7 +42,6 @@ import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBox;
@@ -50,8 +49,6 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
@@ -68,8 +65,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -81,11 +76,7 @@ import thaumcraft.client.fx.beams.FXBeamBore;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
-import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
-import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
@@ -587,81 +578,6 @@ public class RenderEventHandler {
         }
         
         GlStateManager.popMatrix();
-    }
-    
-    protected static void renderHeldImpetusLevel(IImpetusStorage storage, ScaledResolution res) {
-        float height = 60.0F * (float) (Math.ceil((double) storage.getEnergyStored() / storage.getMaxEnergyStored() * 10.0) / 10.0);
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(30.0, 6.0, 0.0);
-        GlStateManager.scale(0.5, 0.5, 0.5);
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder buffer = t.getBuffer();
-        if (TAShaderManager.shouldUseShaders()) {
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            GlStateManager.disableBlend();
-            Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.RIFT);
-            TAShaderManager.enableShader(TAShaders.FLUX_RIFT_HUD, TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED);
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            buffer.pos(-43.0, 59.5, 0.0).tex(1.0, 0.0).endVertex();
-            buffer.pos(-56.0 + height, 59.5, 0.0).tex(0.0, 0.0).endVertex();
-            buffer.pos(-56.0 + height, 50.5, 0.0).tex(0.0, 1.0).endVertex();
-            buffer.pos(-43.0, 50.5, 0.0).tex(1.0, 1.0).endVertex();
-            t.draw();
-            TAShaderManager.disableShader();
-            GlStateManager.enableBlend();
-            Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.TC_HUD);
-        }
-        else {
-            GlStateManager.color(0.4F, 0.4F, 0.5F, 0.8F);
-            Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.TC_HUD);
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            buffer.pos(-43.0, 59.5, 0.0).tex(0.40625, 0.1171875).endVertex();
-            buffer.pos(-56.0 + height, 59.5, 0.0).tex(0.40625, 0.0).endVertex();
-            buffer.pos(-56.0 + height, 50.5, 0.0).tex(0.4375, 0.0).endVertex();
-            buffer.pos(-43.0, 50.5, 0.0).tex(0.4375, 0.1171875).endVertex();
-            t.draw();
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        }
-        
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos(-49.0 + height, 47.0, 0.0).tex(0.28125, 0.0078125).endVertex();
-        buffer.pos(-49.0, 47.0, 0.0).tex(0.28125, 0.16796875).endVertex();
-        buffer.pos(-49.0, 63.0, 0.0).tex(0.34375, 0.16796875).endVertex();
-        buffer.pos(-49.0 + height, 63.0, 0.0).tex(0.34375, 0.0078125).endVertex();
-        t.draw();
-        GlStateManager.popMatrix();
-    }
-    
-    @Nullable
-    protected static IImpetusStorage findStorage(ItemStack stack) {
-        IImpetusStorage s = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-        if (s == null) {
-            IAugmentableItem item = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-            if (item != null) {
-                for (ItemStack a : item.getAllAugments()) {
-                    s = a.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                    if (s != null)
-                        return s;
-                }
-            }
-        }
-        
-        return s;
-    }
-    
-    @SubscribeEvent
-    public static void onRenderHUD(RenderGameOverlayEvent event) {
-        Minecraft mc = Minecraft.getMinecraft();
-        if (event.getType() == ElementType.TEXT && mc.inGameHasFocus && Minecraft.isGuiEnabled()) {
-            IImpetusStorage storage = findStorage(mc.player.getHeldItemMainhand());
-            if (storage == null)
-                storage = findStorage(mc.player.getHeldItemOffhand());
-        
-            if (storage != null)
-                renderHeldImpetusLevel(storage, event.getResolution());
-        }
     }
     
 }

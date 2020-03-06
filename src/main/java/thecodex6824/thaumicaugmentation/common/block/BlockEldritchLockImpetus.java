@@ -20,50 +20,72 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import java.util.List;
+
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IEldritchLock;
-import thecodex6824.thaumicaugmentation.common.block.trait.INoBlockOutline;
-import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
+import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
+import thecodex6824.thaumicaugmentation.common.block.trait.ILockClosed;
+import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
 
-public class BlockRiftBarrier extends BlockTABase implements IHorizontallyDirectionalBlock, INoBlockOutline {
+public class BlockEldritchLockImpetus extends BlockTABase implements IHorizontallyDirectionalBlock, IEldritchLock, IItemBlockProvider {
 
-    protected static final AxisAlignedBB BOX_X = new AxisAlignedBB(0.35, 0.0, 0.0, 0.65, 1.0, 1.0);
-    protected static final AxisAlignedBB BOX_Z = new AxisAlignedBB(0.0, 0.0, 0.35, 1.0, 1.0, 0.65);
-    
-    public BlockRiftBarrier() {
-        super(Material.PORTAL);
+    public BlockEldritchLockImpetus() {
+        super(Material.ROCK);
         setHardness(-1.0F);
         setResistance(6000000.0F);
         setDefaultState(getDefaultState().withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.NORTH));
     }
     
     @Override
+    public ItemBlock createItemBlock() {
+        return new ItemBlock(this) {
+            @Override
+            @SideOnly(Side.CLIENT)
+            public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip,
+                    ITooltipFlag flagIn) {
+                
+                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.eldritch_lock_type", new TextComponentTranslation(
+                        "thaumicaugmentation.text.impetus")).getFormattedText());
+                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
+                        new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
+            }
+        };
+    }
+    
+    @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, IHorizontallyDirectionalBlock.DIRECTION);
+        return new BlockStateContainer(this, IHorizontallyDirectionalBlock.DIRECTION,
+                ILockClosed.CLOSED);
     }
     
     @Override
@@ -77,6 +99,24 @@ public class BlockRiftBarrier extends BlockTABase implements IHorizontallyDirect
     }
     
     @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        boolean closed = true;
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEldritchLock)
+            closed = ((TileEldritchLock) tile).isClosed();
+        
+        return state.withProperty(ILockClosed.CLOSED, closed);
+    }
+    
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
+            float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+
+        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(
+                IHorizontallyDirectionalBlock.DIRECTION, placer.getHorizontalFacing().getOpposite());
+    }
+    
+    @Override
     public IBlockState withRotation(IBlockState state, Rotation rot) {
         return state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, rot.rotate(state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
     }
@@ -84,11 +124,6 @@ public class BlockRiftBarrier extends BlockTABase implements IHorizontallyDirect
     @Override
     public IBlockState withMirror(IBlockState state, Mirror mirror) {
         return state.withRotation(mirror.toRotation(state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));
-    }
-    
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getAxis() == Axis.X ? BOX_X : BOX_Z;
     }
     
     @Override
@@ -101,18 +136,6 @@ public class BlockRiftBarrier extends BlockTABase implements IHorizontallyDirect
             int fortune) {}
     
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
-        if (!world.isRemote) {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileRiftBarrier) {
-                BlockPos lockPos = ((TileRiftBarrier) tile).getLock();
-                if (world.isBlockLoaded(lockPos) && !(world.getBlockState(lockPos).getBlock() instanceof IEldritchLock))
-                    world.setBlockToAir(pos);
-            }
-        }
-    }
-    
-    @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;
     }
@@ -120,58 +143,22 @@ public class BlockRiftBarrier extends BlockTABase implements IHorizontallyDirect
     @Override
     @Nullable
     public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileRiftBarrier();
-    }
-    
-    @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return 12;
-    }
-    
-    @Override
-    public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return 0;
-    }
-    
-    @Override
-    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return false;
-    }
-    
-    @Override
-    public boolean isBlockNormalCube(IBlockState state) {
-        return false;
-    }
-    
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-    
-    @Override
-    public boolean isFullBlock(IBlockState state) {
-        return false;
-    }
-    
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-    
-    @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
-        return BlockFaceShape.UNDEFINED;
-    }
-    
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+        return new TileEldritchLock();
     }
     
     @Override
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.SOLID;
+        return BlockRenderLayer.CUTOUT;
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        String var = IHorizontallyDirectionalBlock.DIRECTION.getName() + "=" + EnumFacing.EAST.getName() + 
+                "," + ILockClosed.CLOSED.getName() + "=true";
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
+                getRegistryName().toString(), var));
     }
     
 }

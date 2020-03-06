@@ -59,12 +59,13 @@ import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
+import thecodex6824.thaumicaugmentation.common.block.trait.IEldritchLock;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.block.trait.ILockClosed;
 import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
-public class BlockEldritchLock extends BlockTABase implements IHorizontallyDirectionalBlock, IEldritchLockType, IItemBlockProvider {
+public class BlockEldritchLock extends BlockTABase implements IHorizontallyDirectionalBlock, IEldritchLockType, IEldritchLock, IItemBlockProvider {
 
     public BlockEldritchLock() {
         super(Material.ROCK);
@@ -90,8 +91,8 @@ public class BlockEldritchLock extends BlockTABase implements IHorizontallyDirec
                 
                 LockType type = LockType.fromMeta(stack.getMetadata());
                 if (type != null) {
-                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.eldritch_lock_type", new TextComponentTranslation(
-                        type.getKey().getTranslationKey() + ".name")).getFormattedText());
+                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.eldritch_lock_type", new TextComponentTranslation(
+                            type.getKey().getTranslationKey() + ".name")).getFormattedText());
                 }
                 
                 tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(

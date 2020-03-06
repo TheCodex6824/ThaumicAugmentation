@@ -29,9 +29,12 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -43,6 +46,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
@@ -58,6 +62,7 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
 
 public class ItemRiftEnergyCasterAugment extends ItemTABase {
 
@@ -83,17 +88,19 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             }
             
             @Override
-            public void onCastPre(ItemStack caster, FocusWrapper focusPackage, Entity user) {
+            public boolean onCastPre(ItemStack caster, FocusWrapper focusPackage, Entity user) {
                 if (stack.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
                     IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                     // not actually removing energy is intentional
                     if (energy.extractEnergy(10, true) == 10)
                         focusPackage.setFocusPower(focusPackage.getFocusPower() * 1.1F);
                 }
+                
+                return super.onCastPre(caster, focusPackage, user);
             }
             
             @Override
-            public void onTick(Entity user) {
+            public boolean onTick(Entity user) {
                 if (!user.getEntityWorld().isRemote && user.getEntityWorld().getTotalWorldTime() % 20 == 0) {
                     IImpetusStorage stackStorage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                     if (stackStorage.canReceive() && stackStorage.getEnergyStored() < stackStorage.getMaxEnergyStored()) {
@@ -106,16 +113,32 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                         }
                     }
                 }
+                
+                return super.onTick(user);
             }
             
             @Override
-            public void onInteractEntity(Entity user, ItemStack used, Entity target, EnumHand hand) {
+            public boolean onInteractBlock(Entity user, ItemStack used, BlockPos target, EnumFacing face, EnumHand hand) {
+                World world = user.getEntityWorld();
+                if (!world.isRemote && world.getBlockState(target).getBlock() == TABlocks.ELDRITCH_LOCK_IMPETUS) {
+                    TileEntity tile = world.getTileEntity(target);
+                    IImpetusStorage stackStorage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                    if (tile instanceof TileEldritchLock && ImpetusAPI.tryExtractFully(stackStorage, 30, user)) {
+                        ((TileEldritchLock) tile).open();
+                        world.playSound(null, target, TASounds.RIFT_ENERGY_ZAP, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    }
+                }
+                
+                return super.onInteractBlock(user, used, target, face, hand);
+            }
+            
+            @Override
+            public boolean onInteractEntity(Entity user, ItemStack used, Entity target, EnumHand hand) {
                 if (!user.getEntityWorld().isRemote && target instanceof IDimensionalFracture) {
                     IDimensionalFracture fracture = (IDimensionalFracture) target;
                     if (!fracture.isOpening() && !fracture.isOpen()) {
                         IImpetusStorage stackStorage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                        if (stackStorage.canExtract() && stackStorage.extractEnergy(15, true) == 15) {
-                            stackStorage.extractEnergy(15, false);
+                        if (ImpetusAPI.tryExtractFully(stackStorage, 15, user)) {
                             fracture.open();
                             target.playSound(TASounds.RIFT_ENERGY_ZAP, 0.5F + target.getEntityWorld().rand.nextFloat() / 5.0F,
                                     0.75F + target.getEntityWorld().rand.nextFloat() / 2.0F);
@@ -128,6 +151,8 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                         }
                     }
                 }
+                
+                return super.onInteractEntity(user, used, target, hand);
             }
             
             @Override

@@ -69,51 +69,63 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
     }
     
     @Override
-    public void onCastPre(ItemStack caster, FocusWrapper focus, Entity user) {
+    public boolean onCastPre(ItemStack caster, FocusWrapper focus, Entity user) {
         if (!strength.isEmpty() && !effect.isEmpty() && strengthLoc != null && effectLoc != null) {
             CasterAugmentBuilder.getEffectProvider(effectLoc).apply(this, user, caster, focus,
                     CasterAugmentBuilder.getStrengthProvider(strengthLoc).calculateStrength(this, focus, user));
         }
+        
+        return super.onCastPre(caster, focus, user);
     }
     
     @Override
-    public void onDamaged(Entity user, @Nullable Entity attacker) {
+    public boolean onDamaged(Entity user, @Nullable Entity attacker) {
         if (!strength.isEmpty() && strengthLoc != null)
             CasterAugmentBuilder.getStrengthProvider(strengthLoc).onDamaged(this, user, attacker);
         if (!effect.isEmpty() && effectLoc != null)
             CasterAugmentBuilder.getEffectProvider(effectLoc).onDamaged(this, user, attacker);
+        
+        return super.onDamaged(user, attacker);
     }
     
     @Override
-    public void onHurt(Entity user, @Nullable Entity attacker) {
+    public boolean onHurt(Entity user, @Nullable Entity attacker) {
         if (!strength.isEmpty() && strengthLoc != null)
             CasterAugmentBuilder.getStrengthProvider(strengthLoc).onHurt(this, user, attacker);
         if (!effect.isEmpty() && effectLoc != null)
             CasterAugmentBuilder.getEffectProvider(effectLoc).onHurt(this, user, attacker);
+        
+        return super.onHurt(user, attacker);
     }
     
     @Override
-    public void onDamagedEntity(Entity user, Entity attacked) {
+    public boolean onDamagedEntity(Entity user, Entity attacked) {
         if (!strength.isEmpty() && strengthLoc != null)
             CasterAugmentBuilder.getStrengthProvider(strengthLoc).onDamagedEntity(this, user, attacked);
         if (!effect.isEmpty() && effectLoc != null)
             CasterAugmentBuilder.getEffectProvider(effectLoc).onDamagedEntity(this, user, attacked);
+        
+        return super.onDamagedEntity(user, attacked);
     }
     
     @Override
-    public void onHurtEntity(Entity user, Entity attacked) {
+    public boolean onHurtEntity(Entity user, Entity attacked) {
         if (!strength.isEmpty() && strengthLoc != null)
             CasterAugmentBuilder.getStrengthProvider(strengthLoc).onHurtEntity(this, user, attacked);
         if (!effect.isEmpty() && effectLoc != null)
             CasterAugmentBuilder.getEffectProvider(effectLoc).onHurtEntity(this, user, attacked);
+        
+        return super.onHurtEntity(user, attacked);
     }
     
     @Override
-    public void onTick(Entity user) {
+    public boolean onTick(Entity user) {
         if (!strength.isEmpty() && strengthLoc != null)
             CasterAugmentBuilder.getStrengthProvider(strengthLoc).onTick(this, user);
         if (!effect.isEmpty() && effectLoc != null)
             CasterAugmentBuilder.getEffectProvider(effectLoc).onTick(this, user);
+        
+        return super.onTick(user);
     }
     
     @Override

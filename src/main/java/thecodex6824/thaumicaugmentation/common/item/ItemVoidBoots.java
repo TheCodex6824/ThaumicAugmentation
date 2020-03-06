@@ -130,7 +130,7 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
 
     @Override
     public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
-        return damageReduceAmount;
+        return 0;
     }
 
     @Override

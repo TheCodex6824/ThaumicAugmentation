@@ -49,7 +49,8 @@ public class RenderEldritchLock extends TileEntitySpecialRenderer<TileEldritchLo
         
         IBlockState state = te.getWorld().getBlockState(te.getPos());
         EnumFacing face = state.getValue(IHorizontallyDirectionalBlock.DIRECTION);
-        LockType type = state.getValue(IEldritchLockType.LOCK_TYPE);
+        LockType type = state.getPropertyKeys().contains(IEldritchLockType.LOCK_TYPE) ?
+                state.getValue(IEldritchLockType.LOCK_TYPE) : LockType.BOSS;
         ITARenderHelper renderer = ThaumicAugmentation.proxy.getRenderHelper();
         bindTexture(TATextures.ELDRITCH_CUBE);
         GlStateManager.pushMatrix();

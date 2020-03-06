@@ -172,7 +172,7 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
                             GL11.glColor3ub((byte) 255, (byte) 255, (byte) 255);
                             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                             IElytraHarnessAugment e = (IElytraHarnessAugment) cap;
-                            if (!invis)
+                            if (!invis || e.isCosmetic())
                                 e.render(aug, render, base, player, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
                             if (e.isCosmetic()) {
                                 cosmeticRendered = true;
@@ -187,26 +187,24 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
                 }
                 
                 if (!cosmeticRendered) {
-                    if (!invis) {
-                        if (player instanceof AbstractClientPlayer) {
-                            AbstractClientPlayer abs = (AbstractClientPlayer) player;
-                            if (abs.isPlayerInfoSet() && abs.getLocationElytra() != null)
-                                render.bindTexture(abs.getLocationElytra());
-                            else if (abs.hasPlayerInfo() && abs.getLocationCape() != null && abs.isWearing(EnumPlayerModelParts.CAPE))
-                                render.bindTexture(abs.getLocationCape());
-                            else
-                                render.bindTexture(TATextures.ELYTRA_TEXTURE);
-                        }
+                    if (player instanceof AbstractClientPlayer) {
+                        AbstractClientPlayer abs = (AbstractClientPlayer) player;
+                        if (abs.isPlayerInfoSet() && abs.getLocationElytra() != null)
+                            render.bindTexture(abs.getLocationElytra());
+                        else if (abs.hasPlayerInfo() && abs.getLocationCape() != null && abs.isWearing(EnumPlayerModelParts.CAPE))
+                            render.bindTexture(abs.getLocationCape());
                         else
                             render.bindTexture(TATextures.ELYTRA_TEXTURE);
-                        
-                        GlStateManager.pushMatrix();
-                        GlStateManager.translate(0.0F, 0.0F, 0.125F);
-                        model.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, player);
-                        model.render(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
-                        GlStateManager.disableBlend();
-                        GlStateManager.popMatrix();
                     }
+                    else
+                        render.bindTexture(TATextures.ELYTRA_TEXTURE);
+                    
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(0.0F, 0.0F, 0.125F);
+                    model.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, player);
+                    model.render(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+                    GlStateManager.disableBlend();
+                    GlStateManager.popMatrix();
                     
                     Random rand = player.getRNG();
                     if (player.isElytraFlying() && rand.nextBoolean()) {

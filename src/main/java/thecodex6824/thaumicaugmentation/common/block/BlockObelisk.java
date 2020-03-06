@@ -126,7 +126,12 @@ public class BlockObelisk extends BlockTABase implements IObeliskType, IObeliskP
     
     @Override
     public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return state.getValue(IObeliskPart.OBELISK_PART) == ObeliskPart.CAP ? 0 : super.getLightOpacity(state, world, pos);
+        return 0;
+    }
+    
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return state.getValue(IObeliskPart.OBELISK_PART) == ObeliskPart.CAP ? 0 : 9;
     }
     
     @Override

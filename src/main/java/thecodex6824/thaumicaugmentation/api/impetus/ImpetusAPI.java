@@ -192,16 +192,28 @@ public final class ImpetusAPI {
         if (!storage.canExtract())
             return false;
         
+        long total = amount;
         long oldAmount = amount;
         do {
             oldAmount = amount;
-            amount -= storage.extractEnergy(amount, false);
+            amount -= storage.extractEnergy(amount, true);
         } while (amount > 0 && oldAmount != amount);
         
-        return amount <= 0;
+        if (amount <= 0) {
+            oldAmount = total;
+            amount = total;
+            do {
+                oldAmount = amount;
+                amount -= storage.extractEnergy(amount, false);
+            } while (amount > 0 && oldAmount != amount);
+            
+            return amount <= 0;
+        }
+        else
+            return false;
     }
     
-    public static boolean tryExtractFully(IImpetusStorage storage, long amount, EntityLivingBase user) {
+    public static boolean tryExtractFully(IImpetusStorage storage, long amount, Entity user) {
         if (user instanceof EntityPlayer && ((EntityPlayer) user).isCreative())
             return true;
         else

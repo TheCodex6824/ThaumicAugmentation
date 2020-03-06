@@ -63,9 +63,9 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
     
     protected long calcEnergyThisSize(int size) {
         /*
-         * f(x) = (1/2) (e^(-(x-172)^2 / 11250) * x)
+         * f(x) = (1/2) (e^(-(x-172)^2 / 11250) * x) + 1
          */
-        return (long) (0.5 * (Math.pow(Math.E, -Math.pow(size - 172, 2) / 11250.0) * size));
+        return (long) Math.round((0.5 * (Math.pow(Math.E, -Math.pow(size - 172, 2) / 11250.0) * size))) + 1;
     }
     
     @Override

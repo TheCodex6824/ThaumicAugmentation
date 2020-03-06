@@ -212,7 +212,7 @@ public final class NodeHelper {
                     double dX = Math.max(-1, Math.min(1, target.x - r.getBlockPos().getX()));
                     double dY = Math.max(-1, Math.min(1, target.y - r.getBlockPos().getY()));
                     double dZ = Math.max(-1, Math.min(1, target.z - r.getBlockPos().getZ()));
-                    start = new Vec3d(r.getBlockPos().add(dX, dY, dZ));
+                    start = start.add(dX, dY, dZ);
                 }
             }
         }

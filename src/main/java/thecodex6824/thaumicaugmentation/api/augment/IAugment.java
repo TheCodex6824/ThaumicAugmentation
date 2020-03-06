@@ -59,7 +59,9 @@ public interface IAugment {
      * @param focus The FocusWrapper that is being used by the caster
      * @param user The entity that has this augment and is casting
      */
-    public default void onCastPre(ItemStack caster, FocusWrapper focus, Entity user) {}
+    public default boolean onCastPre(ItemStack caster, FocusWrapper focus, Entity user) {
+        return false;
+    }
     
     /**
      * Called when the owning entity successfully uses a focus using a Thaumcraft caster. Note that this requires support from
@@ -76,35 +78,45 @@ public interface IAugment {
      * Called when the owning entity is ticked. This is called on both the client and server sides.
      * @param user The entity that has this augment
      */
-    public default void onTick(Entity user) {}
+    public default boolean onTick(Entity user) {
+        return false;
+    }
     
     /**
      * Called when the user hurts another entity.
      * @param user The entity that has this augment
      * @param attacked The entity that was attacked
      */
-    public default void onHurtEntity(Entity user, Entity attacked) {}
+    public default boolean onHurtEntity(Entity user, Entity attacked) {
+        return false;
+    }
     
     /**
      * Called when the user damages another entity.
      * @param user The entity that has this augment
      * @param attacked The entity that was damages
      */
-    public default void onDamagedEntity(Entity user, Entity attacked) {}
+    public default boolean onDamagedEntity(Entity user, Entity attacked) {
+        return false;
+    }
     
     /**
      * Called when the user is hurt by another entity.
      * @param user The entity that has this augment
      * @param attacker The entity that attacked the user
      */
-    public default void onHurt(Entity user, @Nullable Entity attacker) {}
+    public default boolean onHurt(Entity user, @Nullable Entity attacker) {
+        return false;
+    }
     
     /**
      * Called when the user is damaged by another entity.
      * @param user The entity that has this augment
      * @param attacker The entity that damaged the user
      */
-    public default void onDamaged(Entity user, @Nullable Entity attacker) {}
+    public default boolean onDamaged(Entity user, @Nullable Entity attacker) {
+        return false;
+    }
     
     /**
      * Called when the user interacts with an entity while holding the augmentable item.
@@ -113,7 +125,9 @@ public interface IAugment {
      * @param target The entity that was interacted with
      * @param hand The hand that the user used for the interaction
      */
-    public default void onInteractEntity(Entity user, ItemStack used, Entity target, EnumHand hand) {}
+    public default boolean onInteractEntity(Entity user, ItemStack used, Entity target, EnumHand hand) {
+        return false;
+    }
     
     /**
      * Called when the user interacts with a block while holding the augmentable item.
@@ -123,7 +137,9 @@ public interface IAugment {
      * @param face The face of the block that was interacted with
      * @param hand The hand that the user used for the interaction
      */
-    public default void onInteractBlock(Entity user, ItemStack used, BlockPos target, EnumFacing face, EnumHand hand) {}  
+    public default boolean onInteractBlock(Entity user, ItemStack used, BlockPos target, EnumFacing face, EnumHand hand) {
+        return false;
+    }  
     
     /**
      * Called when the user interacts with the air (no block or entity in range) while holding the augmentable item.
@@ -131,14 +147,18 @@ public interface IAugment {
      * @param used The stack of the augmentable item used with the interaction
      * @param hand The hand that the user used for the interaction
      */
-    public default void onInteractAir(Entity user, ItemStack used, EnumHand hand) {}
+    public default boolean onInteractAir(Entity user, ItemStack used, EnumHand hand) {
+        return false;
+    }
     
     /**
      * Called when the augmentable item is used, regardless of the type of usage.
      * @param user The entity that has this augment
      * @param used The stack of the augmentable item used
      */
-    public default void onUseItem(Entity user, ItemStack used) {}
+    public default boolean onUseItem(Entity user, ItemStack used) {
+        return false;
+    }
     
     /**
      * Returns if this augment can coexist on the same augmentable item as the passed augment.

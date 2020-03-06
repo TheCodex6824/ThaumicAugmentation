@@ -55,6 +55,7 @@ tile.thaumicaugmentation.strange_crystal.name=Strange Crystal Cluster
 tile.thaumicaugmentation.crab_vent.name=Crusted Opening
 tile.thaumicaugmentation.eldritch_lock.name=Eldritch Lock
 tile.thaumicaugmentation.rift_barrier.name=Ancient Barrier
+tile.thaumicaugmentation.eldritch_lock_impetus.name=Eldritch Lock
 
 tile.thaumcraft.stairs_ancient_tile.name=Ancient Stone Tile Stairs
 
@@ -181,6 +182,7 @@ thaumicaugmentation.text.entity.eldritch_warden=%s the %s
 thaumicaugmentation.text.creative_only=Creative Only
 thaumicaugmentation.text.eldritch_lock_key_lore=It seems to be a part of something larger...
 thaumicaugmentation.text.eldritch_lock_type=Key: %s
+thaumicaugmentation.text.impetus=Impetus
 
 thaumicaugmentation.text.damage.impetus=%s was annihilated
 thaumicaugmentation.text.damage.impetus_attack=%s was annihilated by %s

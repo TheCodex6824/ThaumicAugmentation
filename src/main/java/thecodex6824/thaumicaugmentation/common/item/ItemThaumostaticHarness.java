@@ -254,7 +254,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
     
     @Override
     public EnumChargeDisplay showInHud(ItemStack arg0, EntityLivingBase arg1) {
-        return EnumChargeDisplay.NORMAL;
+        return EnumChargeDisplay.PERIODIC;
     }
     
     @Override

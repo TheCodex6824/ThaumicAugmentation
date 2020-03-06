@@ -107,7 +107,7 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
                 if (world.spawnEntity(boss)) {
                     world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F, 1.0F);
                     TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION, pos.getX() + 0.5,
-                            pos.getY(), pos.getZ() + 0.5), boss); 
+                            pos.getY(), pos.getZ() + 0.5), boss);
                 }
                 
                 world.destroyBlock(pos, false);
@@ -118,6 +118,10 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
                 if (state.getBlock() == TABlocks.CAPSTONE && state.getValue(IAltarBlock.ALTAR) == false)
                     world.destroyBlock(check, false);
             }
+            else if (openTicks == 175)
+                world.playSound(null, pos, SoundsTC.shock, SoundCategory.BLOCKS, 1.0F, 0.35F);
+            else if (openTicks == 250)
+                world.playSound(null, pos, SoundsTC.evilportal, SoundCategory.BLOCKS, 1.0F, 1.0F);
         }
     }
     

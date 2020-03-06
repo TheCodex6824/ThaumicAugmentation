@@ -155,7 +155,7 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     
     @Override
     public EnumChargeDisplay showInHud(ItemStack arg0, EntityLivingBase arg1) {
-        return EnumChargeDisplay.NORMAL;
+        return EnumChargeDisplay.PERIODIC;
     }
     
     @Override

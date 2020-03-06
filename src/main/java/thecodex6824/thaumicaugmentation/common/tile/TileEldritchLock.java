@@ -26,11 +26,14 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
@@ -40,6 +43,7 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import thaumcraft.api.casters.IInteractWithCaster;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType;
@@ -49,7 +53,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-public class TileEldritchLock extends TileEntity implements ITickable {
+public class TileEldritchLock extends TileEntity implements ITickable, IInteractWithCaster {
 
     protected int ticks;
     protected int openTicks;
@@ -124,7 +128,9 @@ public class TileEldritchLock extends TileEntity implements ITickable {
     }
     
     protected boolean shouldPlayRetractSound() {
-        LockType type = world.getBlockState(pos).getValue(IEldritchLockType.LOCK_TYPE);
+        IBlockState state = world.getBlockState(pos);
+        LockType type = state.getPropertyKeys().contains(IEldritchLockType.LOCK_TYPE) ?
+                state.getValue(IEldritchLockType.LOCK_TYPE) : LockType.BOSS;
         switch (type) {
             case LABYRINTH: return openTicks > 20 && openTicks % 20 == 0;
             case PRISON: return openTicks > 15 && (openTicks + 5) % 10 == 0;
@@ -157,6 +163,14 @@ public class TileEldritchLock extends TileEntity implements ITickable {
                 }
             }
         }
+    }
+    
+    @Override
+    public boolean onCasterRightClick(World paramWorld, ItemStack paramItemStack, EntityPlayer paramEntityPlayer,
+            BlockPos paramBlockPos, EnumFacing paramEnumFacing, EnumHand paramEnumHand) {
+  
+        // so people don't cloud themselves when opening the lock
+        return true;
     }
     
     @Override

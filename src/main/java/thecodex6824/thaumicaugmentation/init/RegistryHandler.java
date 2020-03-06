@@ -61,6 +61,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockCapstone;
 import thecodex6824.thaumicaugmentation.common.block.BlockCastedLight;
 import thecodex6824.thaumicaugmentation.common.block.BlockCrabVent;
 import thecodex6824.thaumicaugmentation.common.block.BlockEldritchLock;
+import thecodex6824.thaumicaugmentation.common.block.BlockEldritchLockImpetus;
 import thecodex6824.thaumicaugmentation.common.block.BlockFortifiedGlass;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
@@ -230,6 +231,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockCrabVent(), "crab_vent"));
         registry.register(setupBlock(new BlockEldritchLock(), "eldritch_lock"));
         registry.register(setupBlock(new BlockRiftBarrier(), "rift_barrier"));
+        registry.register(setupBlock(new BlockEldritchLockImpetus(), "eldritch_lock_impetus"));
 
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
