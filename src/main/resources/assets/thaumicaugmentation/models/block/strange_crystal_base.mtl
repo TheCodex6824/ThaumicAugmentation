@@ -1,0 +1,9 @@
+# Blender MTL File: 'strange_crystal.blend'
+# Material Count: 1
+
+newmtl Default_OBJ
+Kd 1.000000 1.000000 1.000000
+d 1.000000
+
+# We use a copy of the texture to avoid CTM's model messing with the retexture
+map_Kd thaumicaugmentation:blocks/crust_noctm

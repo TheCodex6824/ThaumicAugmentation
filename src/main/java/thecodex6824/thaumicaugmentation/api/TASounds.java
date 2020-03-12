@@ -40,13 +40,18 @@ public final class TASounds {
     public static final SoundEvent EMPTINESS_MUSIC = create("e_music");
     public static final SoundEvent RIFT_ENERGY_ZAP = create("rift_energy_zap");
     public static final SoundEvent FOCUS_WATER_IMPACT = create("focus_water_impact");
+    public static final SoundEvent RIFT_MOVER_INPUT_LOOP = create("rift_mover_input_loop");
+    public static final SoundEvent RIFT_MOVER_OUTPUT_LOOP = create("rift_mover_output_loop");
+    public static final SoundEvent ALTAR_SUMMON_START = create("altar_summon_start");
+    public static final SoundEvent ALTAR_SUMMON = create("altar_summon");
     
     /**
      * Returns all of the sounds in the mod.
      * @return All the sounds
      */
     public static SoundEvent[] getAllSounds() {
-        return new SoundEvent[] {EMPTINESS_AMBIENCE, EMPTINESS_MUSIC, RIFT_ENERGY_ZAP, FOCUS_WATER_IMPACT};
+        return new SoundEvent[] {EMPTINESS_AMBIENCE, EMPTINESS_MUSIC, RIFT_ENERGY_ZAP, FOCUS_WATER_IMPACT,
+                RIFT_MOVER_INPUT_LOOP, RIFT_MOVER_OUTPUT_LOOP, ALTAR_SUMMON_START, ALTAR_SUMMON};
     }
     
 }

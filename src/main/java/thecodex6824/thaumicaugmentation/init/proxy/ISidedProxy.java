@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
+import java.util.function.Supplier;
+
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.entity.Entity;
@@ -27,7 +29,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
@@ -36,6 +41,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
 public interface ISidedProxy {
@@ -71,6 +77,9 @@ public interface ISidedProxy {
     public boolean isEntityRenderView(Entity e);
     
     public float getPartialTicks();
+    
+    public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Supplier<Vec3d> tick,
+            float x, float y, float z, float vol, float pitch);
     
     public void handlePacketClient(IMessage message, MessageContext context);
 

@@ -47,7 +47,7 @@ public class TAModelLoader implements ICustomModelLoader {
                 return loader.loadModel(modelLocation);
         }
         
-        throw new Exception("Model had the ta_special namespace, but no loaders were able to load it");
+        throw new Exception("Model had the ta_special namespace, but no loaders were able to load it: " + modelLocation.toString());
     }
     
     @Override

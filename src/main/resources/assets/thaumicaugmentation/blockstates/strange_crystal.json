@@ -1,22 +1,84 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "thaumicaugmentation:strange_crystal.obj",
+        "model": "ta_special:directional_retexture:thaumicaugmentation:block/strange_crystal_base.obj",
         "custom": {
             "flip-v": true
         }
     },
     "variants": {
         "ta_direction": {
-            "south": {"x": 90, "y": 180},
-            "west": {"x": 90, "y": 270},
-            "north": {"x": 90, "y": 0},
-            "east": {"x": 90, "y": 90},
-            "down": {"x": 180},
-            "up": {}
+            "south": {"x": 90, "y": 180,
+                "submodel": {
+                    "crystal": {
+                        "model": "thaumicaugmentation:strange_crystal.obj",
+                        "custom": {
+                            "flip-v": true
+                        }
+                    }
+                }
+            },
+            "west": {"x": 90, "y": 270,
+                "submodel": {
+                    "crystal": {
+                        "model": "thaumicaugmentation:strange_crystal.obj",
+                        "custom": {
+                            "flip-v": true
+                        }
+                    }
+                }
+            },
+            "north": {"x": 90, "y": 0,
+                "submodel": {
+                    "crystal": {
+                        "model": "thaumicaugmentation:strange_crystal.obj",
+                        "custom": {
+                            "flip-v": true
+                        }
+                    }
+                }
+            },
+            "east": {"x": 90, "y": 90,
+                "submodel": {
+                    "crystal": {
+                        "model": "thaumicaugmentation:strange_crystal.obj",
+                        "custom": {
+                            "flip-v": true
+                        }
+                    }
+                }
+            },
+            "down": {"x": 180,
+                "submodel": {
+                    "crystal": {
+                        "model": "thaumicaugmentation:strange_crystal.obj",
+                        "custom": {
+                            "flip-v": true
+                        }
+                    }
+                }
+            },
+            "up": {
+                "submodel": {
+                    "crystal": {
+                        "model": "thaumicaugmentation:strange_crystal.obj",
+                        "custom": {
+                            "flip-v": true
+                        }
+                    }
+                }
+            }
         },
         "inventory": {
-            "transform": "forge:default-block"
+            "transform": "forge:default-block",
+            "submodel": {
+                "crystal": {
+                    "model": "thaumicaugmentation:strange_crystal.obj",
+                    "custom": {
+                        "flip-v": true
+                    }
+                }
+            }
         }
     }
 }

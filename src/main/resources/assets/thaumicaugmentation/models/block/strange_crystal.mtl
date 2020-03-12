@@ -1,15 +1,7 @@
 # Blender MTL File: 'strange_crystal.blend'
-# Material Count: 2
+# Material Count: 1
 
-# This texture MUST be 2nd to last, as it is assumed it gets a tint index of 1
-newmtl Crystal
+newmtl Material
 Kd 1.000000 1.000000 1.000000
 d 1.000000
 map_Kd thaumcraft:models/vcrystal
-
-newmtl Base
-Kd 1.000000 1.000000 1.000000
-d 1.000000
-
-# We use a copy of the texture to avoid CTM's model messing with the retexture
-map_Kd thaumicaugmentation:blocks/crust_noctm

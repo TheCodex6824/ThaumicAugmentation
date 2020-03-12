@@ -83,5 +83,45 @@
                 "stream": false
             }
         ]
+    },
+    "rift_mover_input_loop": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:block/rift_mover_input_loop",
+                "subtitle": "thaumicaugmentation.subtitle.rift_mover_input_loop",
+                "stream": false
+            }
+        ]
+    },
+    "rift_mover_output_loop": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:block/rift_mover_output_loop",
+                "subtitle": "thaumicaugmentation.subtitle.rift_mover_output_loop",
+                "stream": false
+            }
+        ]
+    },
+    "altar_summon_start": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:block/altar_buildup",
+                "subtitle": "thaumicaugmentation.subtitle.altar_summon_start",
+                "stream": false
+            }
+        ]
+    },
+    "altar_summon": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:block/altar_hit",
+                "subtitle": "thaumicaugmentation.subtitle.altar_summon",
+                "stream": false
+            }
+        ]
     }
 }

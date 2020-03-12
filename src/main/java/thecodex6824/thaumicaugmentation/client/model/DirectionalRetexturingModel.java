@@ -92,16 +92,16 @@ public class DirectionalRetexturingModel implements IModel {
         
         @Override
         public boolean accepts(ResourceLocation loc) {
-            return loc.getNamespace().equals("ta_special") && loc.getPath().startsWith("directional_retexture:");
+            return loc.getNamespace().equals("ta_special") && (loc.getPath().startsWith("directional_retexture:") || loc.getPath().startsWith("models/block/directional_retexture:"));
         }
         
         @Override
-        public IModel loadModel(ResourceLocation modelLocation) throws Exception {
-            if (!(modelLocation instanceof ModelResourceLocation))
-                throw new Exception("Resource locations must be ModelResourceLocation instances, as a variant is needed");
-                
+        public IModel loadModel(ResourceLocation modelLocation) throws Exception { 
             String component = modelLocation.getPath().split(":", 2)[1];
-            return new DirectionalRetexturingModel(ModelLoaderRegistry.getModel(new ModelResourceLocation(component, ((ModelResourceLocation) modelLocation).getVariant())));
+            if (modelLocation instanceof ModelResourceLocation)
+                return new DirectionalRetexturingModel(ModelLoaderRegistry.getModel(new ModelResourceLocation(component, ((ModelResourceLocation) modelLocation).getVariant())));
+            else
+                return new DirectionalRetexturingModel(ModelLoaderRegistry.getModel(new ResourceLocation(component)));
         }
         
         @Override
@@ -137,7 +137,6 @@ public class DirectionalRetexturingModel implements IModel {
                 IExtendedBlockState extended = (IExtendedBlockState) state;
                 IBlockState sitting = extended.getValue(IStoredBlockstate.BLOCKSTATE);
                 IBakedModel blockModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(sitting);
-                TextureAtlasSprite toRetexture = quads.get(0).getSprite();
                 TextureAtlasSprite newTexture = blockModel.getParticleTexture();
                 if (newTexture.equals(Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite())) {
                     newTexture = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(
@@ -145,12 +144,8 @@ public class DirectionalRetexturingModel implements IModel {
                 }
                 
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                for (BakedQuad old : quads) {
-                    if (old.getSprite().equals(toRetexture))
-                        builder.add(new BakedQuadRetextured(old, newTexture));
-                    else
-                        builder.add(old);
-                }
+                for (BakedQuad old : quads)
+                    builder.add(new BakedQuadRetextured(old, newTexture));
                 
                 return builder.build();
             }

@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -38,6 +39,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -72,6 +75,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.Part
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
+import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperServer;
 import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
@@ -168,6 +172,13 @@ public class ServerProxy implements ISidedProxy {
     @Override
     public Object getSealGUI(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal) {
         throw new UnsupportedOperationException("Cannot get client GUI element on the server side!");
+    }
+    
+    @Override
+    public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Supplier<Vec3d> tick, float x,
+            float y, float z, float vol, float pitch) {
+        
+        return new ISoundHandle.Noop();
     }
     
     @Override

@@ -90,6 +90,23 @@ public final class ImpetusAPI {
             return TextFormatting.DARK_GREEN;
     }
     
+    public static int getSuggestedColorForDescriptor(IImpetusStorage storage) {
+        if (storage.getEnergyStored() <= 0)
+            return 0xAA0000;
+        else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.1)
+            return 0xFF5555;
+        else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.25)
+            return 0xFFAA00;
+        else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.5)
+            return 0xFFFF55;
+        else if (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() <= 0.75)
+            return 0x55FF55;
+        else if (storage.getEnergyStored() < storage.getMaxEnergyStored())
+            return 0x55FF55;
+        else
+            return 0x00AA00;
+    }
+    
     public static void createImpetusParticles(World world, Vec3d origin, Vec3d dest) {
         TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
                 origin.x, origin.y, origin.z, dest.x, dest.y, dest.z, 0.04F), 

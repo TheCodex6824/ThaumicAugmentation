@@ -69,6 +69,7 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IImpetusCellInfo;
+import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
@@ -479,6 +480,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         tag.setTag("node", prosumer.serializeNBT());
         tag.setFloat("gain", gain);
         tag.setFloat("stab", stability);
+        tag.setLong("energy", buffer.getEnergyStored());
         return tag;
     }
     
@@ -488,6 +490,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         prosumer.init(world);
         gain = tag.getFloat("gain");
         stability = tag.getFloat("stab");
+        buffer.energy = tag.getLong("energy");
     }
     
     @Override
@@ -496,6 +499,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         NBTTagCompound tag = new NBTTagCompound();
         tag.setFloat("gain", gain);
         tag.setFloat("stab", stability);
+        tag.setLong("energy", buffer.getEnergyStored());
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
     
@@ -503,6 +507,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         gain = pkt.getNbtCompound().getFloat("gain");
         stability = pkt.getNbtCompound().getFloat("stab");
+        buffer.energy = pkt.getNbtCompound().getLong("energy");
     }
     
     @Override
@@ -531,7 +536,8 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE || capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+        if (capability == CapabilityImpetusNode.IMPETUS_NODE || capability == CapabilityImpetusStorage.IMPETUS_STORAGE ||
+                capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             return true;
         else
             return super.hasCapability(capability, facing);
@@ -541,6 +547,8 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityImpetusNode.IMPETUS_NODE)
             return CapabilityImpetusNode.IMPETUS_NODE.cast(prosumer);
+        else if (capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
+            return CapabilityImpetusStorage.IMPETUS_STORAGE.cast(buffer);
         else if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
         else

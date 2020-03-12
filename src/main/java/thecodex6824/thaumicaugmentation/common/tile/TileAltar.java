@@ -42,6 +42,7 @@ import net.minecraft.world.World;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.block.property.IAltarBlock;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
@@ -105,7 +106,8 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
                 boss.renderYawOffset = boss.rotationYaw;
                 boss.onInitialSpawn(world.getDifficultyForLocation(pos), null);
                 if (world.spawnEntity(boss)) {
-                    world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F, 1.0F);
+                    world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    world.playSound(null, pos, TASounds.ALTAR_SUMMON, SoundCategory.BLOCKS, 1.5F, 1.0F);
                     TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION, pos.getX() + 0.5,
                             pos.getY(), pos.getZ() + 0.5), boss);
                 }
@@ -119,9 +121,9 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
                     world.destroyBlock(check, false);
             }
             else if (openTicks == 175)
-                world.playSound(null, pos, SoundsTC.shock, SoundCategory.BLOCKS, 1.0F, 0.35F);
+                world.playSound(null, pos, SoundsTC.shock, SoundCategory.BLOCKS, 0.5F, 0.85F);
             else if (openTicks == 250)
-                world.playSound(null, pos, SoundsTC.evilportal, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                world.playSound(null, pos, SoundsTC.evilportal, SoundCategory.BLOCKS, 0.25F, 1.0F);
         }
     }
     
@@ -132,6 +134,7 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
         if (!world.isRemote) {
             open();
             world.playSound(null, pos, SoundsTC.wand, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            world.playSound(null, pos, TASounds.ALTAR_SUMMON_START, SoundCategory.BLOCKS, 1.5F, 1.0F);
         }
         
         return true;

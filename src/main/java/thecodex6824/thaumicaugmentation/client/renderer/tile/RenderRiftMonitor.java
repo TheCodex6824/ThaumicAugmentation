@@ -93,7 +93,7 @@ public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor
         if (!te.getMode()) {
             r = 0.5F;
             g = 0.5F;
-            b = 0.9F;
+            b = 1.0F;
             a = 1.0F;
         }
         else {

@@ -21,12 +21,18 @@
 package thecodex6824.thaumicaugmentation.client.event;
 
 import java.util.LinkedList;
+import java.util.WeakHashMap;
 
+import baubles.api.BaubleType;
+import baubles.api.cap.BaublesCapabilities;
+import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -35,6 +41,7 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -46,10 +53,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IFocusElement;
+import thaumcraft.api.items.RechargeHelper;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.items.casters.ItemFocus;
+import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
@@ -64,6 +74,8 @@ import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public final class ClientEventHandler {
 
+    private static final WeakHashMap<EntityPlayer, Boolean> CREATIVE_FLIGHT = new WeakHashMap<>();
+    
     private ClientEventHandler() {}
     
     private static void handleAugmentTooltips(ItemTooltipEvent event, IAugmentableItem cap) {
@@ -182,6 +194,45 @@ public final class ClientEventHandler {
                                 mc.getRenderPartialTicks()));
                     }
                 }
+            }
+        }
+    }
+    
+    protected static void onFlightChange(EntityPlayer player) {
+        IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+        if (baubles != null) {
+            for (int slot : BaubleType.BODY.getValidSlots()) {
+                ItemStack body = baubles.getStackInSlot(slot);
+                if (body.getItem() == TAItems.THAUMOSTATIC_HARNESS && RechargeHelper.getCharge(body) > 0) {
+                    if (player.capabilities.isFlying) {
+                        player.getEntityWorld().playSound(null, player.getPosition(), SoundsTC.hhon, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                        final int id = player.getEntityId();
+                        ThaumicAugmentation.proxy.playSpecialSound(SoundsTC.jacobs, SoundCategory.PLAYERS,
+                                () -> {
+                                    Entity entity = Minecraft.getMinecraft().world.getEntityByID(id);
+                                    if (entity instanceof EntityPlayer && !entity.isDead && ((EntityPlayer) entity).capabilities.isFlying)
+                                        return entity.getPositionVector();
+                                    else
+                                        return null;
+                                }, (float) player.posX, (float) player.posY, (float) player.posZ, 1.0F, 1.0F);
+                    }
+                    else
+                        player.getEntityWorld().playSound(null, player.getPosition(), SoundsTC.hhoff, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                        
+                    break;
+                }
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onTick(LivingEvent.LivingUpdateEvent event) {
+        if (event.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getEntity();
+            Boolean fly = Boolean.valueOf(player.capabilities.isFlying);
+            if (!fly.equals(CREATIVE_FLIGHT.get(player))) {
+                onFlightChange(player);
+                CREATIVE_FLIGHT.put(player, fly);
             }
         }
     }

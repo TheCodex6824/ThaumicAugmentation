@@ -35,6 +35,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -126,6 +127,8 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                     if (tile instanceof TileEldritchLock && ImpetusAPI.tryExtractFully(stackStorage, 30, user)) {
                         ((TileEldritchLock) tile).open();
                         world.playSound(null, target, TASounds.RIFT_ENERGY_ZAP, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        for (int i = 0; i < 4; ++i)
+                            ImpetusAPI.createImpetusParticles(world, user.getPositionVector().add(0, user.height / 2, 0), new Vec3d(target));
                     }
                 }
                 

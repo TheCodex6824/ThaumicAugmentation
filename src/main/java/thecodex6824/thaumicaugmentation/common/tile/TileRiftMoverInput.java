@@ -51,6 +51,7 @@ import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
 import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
@@ -59,6 +60,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
+import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 
 public class TileRiftMoverInput extends TileEntity implements ITickable, IInteractWithCaster, IBreakCallback {
 
@@ -69,6 +71,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
     protected EntityFluxRift rift;
     protected UUID loadedRiftUUID;
     protected int ticks;
+    protected ISoundHandle loop;
     
     protected EntityFluxRift findRift() {
         BlockPos pos1 = pos.add(-1, 1, -1);
@@ -189,6 +192,14 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                     rift = findRift();
                     if (!rift.getUniqueID().equals(loadedRiftUUID))
                         rift = null;
+                    else if (rift != null) {
+                        if (loop != null)
+                            loop.stop();
+                        
+                        loop = ThaumicAugmentation.proxy.playSpecialSound(TASounds.RIFT_MOVER_INPUT_LOOP, SoundCategory.BLOCKS,
+                                () -> operating && rift != null ? new Vec3d(pos).add(0.5, 0.5, 0.5) : null, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
+                                4.0F, 1.0F);
+                    }
                     
                     loadedRiftUUID = null;
                 }
@@ -240,6 +251,17 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
             operating = false;
             world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
         }
+        else if (world.isRemote) {
+            if (loop != null)
+                loop.stop();
+        }
+    }
+    
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (loop != null)
+            loop.stop();
     }
     
     @Override
@@ -263,8 +285,15 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
         operating = pkt.getNbtCompound().getBoolean("operating");
         if (operating) {
             EntityFluxRift check = findRift();
-            if (check != null && check.getUniqueID().equals(pkt.getNbtCompound().getUniqueId("rift")))
+            if (check != null && check.getUniqueID().equals(pkt.getNbtCompound().getUniqueId("rift"))) {
                 rift = check;
+                if (loop != null)
+                    loop.stop();
+                
+                loop = ThaumicAugmentation.proxy.playSpecialSound(TASounds.RIFT_MOVER_INPUT_LOOP, SoundCategory.BLOCKS,
+                        () -> operating && rift != null ? new Vec3d(pos).add(0.5, 0.5, 0.5) : null, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
+                        4.0F, 1.0F);
+            }
         }
     }
     

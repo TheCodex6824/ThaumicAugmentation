@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 
 import java.util.Random;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -47,6 +48,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
@@ -88,6 +91,9 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugment
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
+import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
@@ -114,7 +120,6 @@ import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
 import thecodex6824.thaumicaugmentation.client.model.DirectionalRetexturingModel;
 import thecodex6824.thaumicaugmentation.client.model.ModelEldritchGuardianFixed;
 import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
-import thecodex6824.thaumicaugmentation.client.model.OBJTintedModel;
 import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
@@ -139,6 +144,8 @@ import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderVoidRechargeP
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
+import thecodex6824.thaumicaugmentation.client.sound.MovingSoundRecord;
+import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
@@ -186,6 +193,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
+import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
@@ -268,6 +276,15 @@ public class ClientProxy extends ServerProxy {
     @Override
     public Object getSealGUI(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal) {
         return new SealBaseGUI(player.inventory, world, seal);
+    }
+    
+    @Override
+    public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Supplier<Vec3d> tick, float x, float y,
+            float z, float vol, float pitch) {
+        
+        MovingSoundRecord audio = new MovingSoundRecord(sound, category, tick, x, y, z, vol, pitch);
+        Minecraft.getMinecraft().getSoundHandler().playSound(audio);
+        return new SoundHandleSpecialSound(audio);
     }
     
     @Override
@@ -812,7 +829,6 @@ public class ClientProxy extends ServerProxy {
         loader.registerLoader(new CustomCasterAugmentModel.Loader());
         loader.registerLoader(new MorphicToolModel.Loader());
         loader.registerLoader(new BuiltInRendererModel.Loader());
-        loader.registerLoader(new OBJTintedModel.Loader());
         loader.registerLoader(new DirectionalRetexturingModel.Loader());
         ModelLoaderRegistry.registerLoader(loader);
     }
@@ -980,17 +996,17 @@ public class ClientProxy extends ServerProxy {
         registerTo.registerItemColorHandler(new IItemColor() {
             @Override
             public int colorMultiplier(ItemStack stack, int tintIndex) {
-                if (tintIndex == 1)
-                    return 0xEEEEEE;
+                if (tintIndex == 0)
+                    return 0x000000;
                 else
                     return -1;
             }
-        }, TABlocks.STRANGE_CRYSTAL);
+        }, TABlocks.IMPETUS_MATRIX);
     }
     
     private static void registerBlockColorHandlers() {
         BlockColors registerTo = Minecraft.getMinecraft().getBlockColors();
-        IBlockColor terraformer = new IBlockColor() {
+        registerTo.registerBlockColorHandler(new IBlockColor() {
             @Override
             public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos,
                     int tintIndex) {
@@ -1017,10 +1033,9 @@ public class ClientProxy extends ServerProxy {
                 
                 return -1;
             }
-        };
-        registerTo.registerBlockColorHandler(terraformer, TABlocks.ARCANE_TERRAFORMER);
+        }, TABlocks.ARCANE_TERRAFORMER);
         
-        IBlockColor gate = new IBlockColor() {
+        registerTo.registerBlockColorHandler(new IBlockColor() {
             @Override
             public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos,
                     int tintIndex) {
@@ -1046,21 +1061,32 @@ public class ClientProxy extends ServerProxy {
                 
                 return -1;
             }
-        };
-        registerTo.registerBlockColorHandler(gate, TABlocks.IMPETUS_GATE);
+        }, TABlocks.IMPETUS_GATE);
         
-        IBlockColor crystal = new IBlockColor() {
+        registerTo.registerBlockColorHandler(new IBlockColor() {
             @Override
             public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos,
                     int tintIndex) {
+               
+                if (world != null && pos != null && tintIndex == 0) {
+                    TileEntity tile = world.getTileEntity(pos);
+                    if (tile instanceof TileImpetusMatrix) {
+                        IImpetusStorage s = tile.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                        if (s != null) {
+                            int base = ImpetusAPI.getSuggestedColorForDescriptor(s);
+                            double brightness = (double) s.getEnergyStored() / s.getMaxEnergyStored();
+                            brightness *= (Math.sin(Minecraft.getSystemTime() / 1000.0 + pos.hashCode()) + 1.0) / 2.0;
+                            int r = (int) (((base >> 16) & 0xFF) * brightness) << 16;
+                            int g = (int) (((base >> 8) & 0xFF) * brightness) << 8;
+                            int b = (int) ((base & 0xFF) * brightness);
+                            return r | g | b;
+                        }
+                    }
+                }
                 
-                if (tintIndex == 1)
-                    return 0xEEEEEE;
-                else
-                    return -1;
+                return -1;
             }
-        };
-        registerTo.registerBlockColorHandler(crystal, TABlocks.STRANGE_CRYSTAL);
+        }, TABlocks.IMPETUS_MATRIX);
     }
 
 }
