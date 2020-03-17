@@ -65,7 +65,7 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
                 if (entity instanceof IEldritchMob) {
                     Vec3d sub = entity.getPositionVector().subtract(new Vec3d(pos));
                     Vec3d dir = sub.normalize();
-                    double speed = sub.length() / 20.0;
+                    double speed = sub.length() / 40.0;
                     ThaumicAugmentation.proxy.getRenderHelper().renderObeliskConnection(world, pos.getX(), pos.getY(), pos.getZ(),
                             dir.x * speed, dir.y * speed, dir.z * speed);
                     ThaumicAugmentation.proxy.getRenderHelper().renderWisp(entity.posX, entity.posY + world.rand.nextFloat(), entity.posZ, entity);

@@ -24,6 +24,7 @@ import java.util.Random;
 
 import net.minecraft.block.BlockFlower.EnumFlowerType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -60,6 +61,7 @@ public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFlux
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintCrawler.class, 100, 3, 5));
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacleSmall.class, 75, 1, 2));
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacle.class, 50, 1, 1));
+        spawnableMonsterList.add(new SpawnListEntry(EntityEnderman.class, 1, 2, 2));
         
         spawnableWaterCreatureList.clear();
         spawnableCaveCreatureList.clear();

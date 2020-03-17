@@ -2,24 +2,13 @@
     "forge_marker": 1,
     "defaults": {
         "model": "minecraft:cube_all",
-        "transform": "forge:default-block"
+        "transform": "forge:default-block",
+        "textures": {
+            "all": "thaumicaugmentation:blocks/ancient_bricks_0"
+        }
      },
     "variants": {
-        "normal": [
-            { "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_0"} },
-            { "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_1"} },
-            { "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_2"} }//,
-            //{ "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_3"} },
-            //{ "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_4"} },
-            //{ "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_5"} }
-        ], 
-        "inventory": [
-            { "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_0"} },
-            { "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_1"} },
-            { "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_2"} }//,
-            //{ "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_3"} },
-            //{ "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_4"} },
-            //{ "textures": {"all": "thaumicaugmentation:blocks/ancient_bricks_5"} }
-        ]
+        "normal": [{}], 
+        "inventory": [{}]
     }
 }

@@ -561,6 +561,11 @@ public class TARenderHelperClient implements ITARenderHelper {
         FXDispatcher.INSTANCE.drawVentParticles(x, y, z, vx, vy, vz, color, scale);
     }
     
+    @Override
+    public void renderWispParticles(double x, double y, double z, double vx, double vy, double vz, int color, int delay) {
+        FXDispatcher.INSTANCE.drawWispParticles(x, y, z, vx, vy, vz, color, delay);
+    }
+    
     @Nullable
     private static EnumHand findImpulseCannon(EntityLivingBase entity) {
         ItemStack stack = entity.getHeldItemMainhand();

@@ -23,7 +23,9 @@ package thecodex6824.thaumicaugmentation.common.event;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -38,6 +40,7 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.event.RiftJarVoidItemEvent;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
+import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class WorldEventHandler {
@@ -81,11 +84,28 @@ public class WorldEventHandler {
     
     @SubscribeEvent
     public static void onItemVoid(RiftJarVoidItemEvent event) {
-        if (event.getItemStack().getItem() == TAItems.ELDRITCH_LOCK_KEY) {
-            BlockPos pos = event.getPosition();
-            event.getWorld().destroyBlock(pos, false);
-            event.getWorld().createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
-            event.setCanceled(true);
+        if (!event.isSimulated()) {
+            if (event.getItemStack().getItem() == TAItems.ELDRITCH_LOCK_KEY) {
+                BlockPos pos = event.getPosition();
+                event.getWorld().destroyBlock(pos, false);
+                event.getWorld().createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
+                event.setCanceled(true);
+            }
+            else if (event.getItemStack().getItem() == TAItems.RIFT_JAR) {
+                NBTTagCompound tag = event.getItemStack().getTagCompound();
+                if (tag != null && tag.hasKey("seed", NBT.TAG_INT) && tag.getInteger("size") > 0) {
+                    BlockPos pos = event.getPosition();
+                    event.getWorld().destroyBlock(pos, false);
+                    event.getWorld().createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
+                    EntityPrimalWisp wisp = new EntityPrimalWisp(event.getWorld());
+                    wisp.setPositionAndRotation(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
+                            event.getWorld().rand.nextInt(360) - 180, 0.0F);
+                    wisp.rotationYawHead = wisp.rotationYaw;
+                    wisp.renderYawOffset = wisp.rotationYaw;
+                    wisp.onInitialSpawn(event.getWorld().getDifficultyForLocation(pos), null);
+                    event.getWorld().spawnEntity(wisp);
+                }
+            }
         }
     }
     

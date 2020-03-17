@@ -34,12 +34,16 @@ public class RiftJarVoidItemEvent extends Event {
     protected final IRiftJar jar;
     protected final World world;
     protected final BlockPos pos;
+    protected final boolean simulate;
     
-    public RiftJarVoidItemEvent(ItemStack toVoid, IRiftJar jarCap, World jarWorld, BlockPos jarPos) {
+    public RiftJarVoidItemEvent(ItemStack toVoid, IRiftJar jarCap, World jarWorld, BlockPos jarPos,
+            boolean simulated) {
+        
         stack = toVoid;
         jar = jarCap;
         world = jarWorld;
         pos = jarPos;
+        simulate = simulated;
     }
     
     public ItemStack getItemStack() {
@@ -56,6 +60,10 @@ public class RiftJarVoidItemEvent extends Event {
     
     public BlockPos getPosition() {
         return pos;
+    }
+    
+    public boolean isSimulated() {
+        return simulate;
     }
     
 }

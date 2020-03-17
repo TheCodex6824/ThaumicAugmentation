@@ -57,6 +57,10 @@ public final class TANetwork {
         INSTANCE.registerMessage(PacketFXFocusPartImpact.class, PacketFXFocusPartImpact.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketLivingEquipmentChange.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketBaubleChange.class, id++, Side.CLIENT);
+        // not to be confused with TC's PacketFXWispZap that does more rendering on the network thread
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketWispZap.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFollowingOrb.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFlightState.class, id++, Side.CLIENT);
         
         INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketInteractGUI.class, id++, Side.SERVER);
         INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketElytraBoost.class, id++, Side.SERVER);

@@ -79,7 +79,7 @@ public class ItemBlockImpetusMirror extends ItemBlock implements IModelProvider<
         
         if (world.isRemote) {
             player.swingArm(hand);
-            return EnumActionResult.PASS;
+            return EnumActionResult.SUCCESS;
         }
         else if (world.isBlockModifiable(player, pos)){
             TileEntity target = world.getTileEntity(pos);

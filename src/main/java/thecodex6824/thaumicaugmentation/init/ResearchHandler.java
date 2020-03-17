@@ -40,6 +40,7 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
+import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.research.ScanEntityWithPeacefulFallback;
 import thecodex6824.thaumicaugmentation.common.research.ScanTool;
@@ -62,6 +63,9 @@ public final class ResearchHandler {
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/gauntlets.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/warded.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/void.json"));
+        ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/construct.json"));
+        ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/baubles.json"));
+        ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/impetus.json"));
         if (!TAConfig.disableWardFocus.getValue()) {
             if (ThaumicAugmentationAPI.isCoremodAvailable())
                 ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/ward_foci_coremod.json"));
@@ -87,6 +91,9 @@ public final class ResearchHandler {
         ScanningManager.addScannableThing(new ScanItem("f_FLINTANDSTEEL", new ItemStack(Items.FLINT_AND_STEEL)));
         ScanningManager.addScannableThing(new ScanEntityWithPeacefulFallback("m_CREEPER", new ScanEntity("m_CREEPER", EntityCreeper.class, true),
                 new ScanItem("m_CREEPER", new ItemStack(Items.GUNPOWDER))));
+        
+        ScanningManager.addScannableThing(new ScanItem("!ELYTRA", new ItemStack(Items.ELYTRA)));
+        ScanningManager.addScannableThing(new ScanEntity("!AUTOCASTER", EntityAutocasterEldritch.class, true));
         
         TheorycraftManager.registerCard(ResearchCardRiftJar.class);
         TheorycraftManager.registerCard(ResearchCardRiftMonitor.class);

@@ -71,7 +71,7 @@ public class RenderImpetusMirror extends TileEntitySpecialRenderer<TileImpetusMi
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         }
         else if (index == 1) {
-            Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.PARTICLES);
+            Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.MIRROR_PARTICLES);
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(SourceFactor.ONE, DestFactor.ONE);
             scaleFactor = 0.5F;

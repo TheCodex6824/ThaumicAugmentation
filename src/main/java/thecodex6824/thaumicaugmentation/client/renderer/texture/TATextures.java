@@ -33,7 +33,7 @@ public class TATextures {
     public static final ResourceLocation MONITOR_GLASS_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/blocks/rift_monitor_glass.png");
     
     public static final ResourceLocation TUNNEL = new ResourceLocation("thaumcraft", "textures/misc/tunnel.png");
-    public static final ResourceLocation PARTICLES = new ResourceLocation("thaumcraft", "textures/misc/particlefield.png");
+    public static final ResourceLocation MIRROR_PARTICLES = new ResourceLocation("thaumcraft", "textures/misc/particlefield.png");
     
     public static final ResourceLocation HARNESS_BASE_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/harness/harness_base.png");
     public static final ResourceLocation THAUMOSTATIC_TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/harness/thaumostatic_module.png"); 
@@ -73,6 +73,8 @@ public class TATextures {
     public static final ResourceLocation ELDRITCH_PORTAL = new ResourceLocation("thaumcraft", "textures/misc/eldritch_portal.png");
     
     public static final ResourceLocation TC_HUD = new ResourceLocation("thaumcraft", "textures/gui/hud.png");
+    public static final ResourceLocation TC_PARTICLES = new ResourceLocation("thaumcraft", "textures/misc/particles.png");
+    public static final ResourceLocation NODE = new ResourceLocation("thaumcraft", "textures/misc/auranodes.png");
     
     public static void setupTextures() {
         SimpleTexture tex = new SimpleTexture(MIRROR);

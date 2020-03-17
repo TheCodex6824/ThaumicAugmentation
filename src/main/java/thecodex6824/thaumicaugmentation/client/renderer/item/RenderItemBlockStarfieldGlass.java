@@ -58,7 +58,8 @@ public class RenderItemBlockStarfieldGlass extends TileEntityItemStackRenderer {
         switch (stack.getMetadata()) {
             case 0: {
                 if (TAShaderManager.shouldUseShaders())
-                    TAShaderManager.enableShader(TAShaders.FLUX_RIFT, TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE);
+                    TAShaderManager.enableShader(TAShaders.FLUX_RIFT, glassItem.getLastTransformType() == TransformType.GUI ? 
+                            TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED_5 : TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE);
                 else
                     GlStateManager.color(0.1F, 0.4F, 0.5F, 1.0F);
                 
@@ -67,15 +68,16 @@ public class RenderItemBlockStarfieldGlass extends TileEntityItemStackRenderer {
             }
             case 1: {
                 if (TAShaderManager.shouldUseShaders())
-                    TAShaderManager.enableShader(TAShaders.FRACTURE, TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE);
+                    TAShaderManager.enableShader(TAShaders.FRACTURE, glassItem.getLastTransformType() == TransformType.GUI ? 
+                            TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED_5 : TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE);
                 
                 Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.EMPTINESS_SKY);
                 break;
             }
             case 2: {
                 if (TAShaderManager.shouldUseShaders())
-                    TAShaderManager.enableShader(TAShaders.MIRROR, TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE);
-                
+                    TAShaderManager.enableShader(TAShaders.MIRROR, glassItem.getLastTransformType() == TransformType.GUI ? 
+                            TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED_5 : TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE);
                 
                 Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.MIRROR);
                 break;

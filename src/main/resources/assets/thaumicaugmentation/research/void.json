@@ -166,7 +166,7 @@
                     "text": "thaumicaugmentation.research.rift_power.2",
                     "recipes": [
                         "thaumicaugmentation:rift_energy_cell",
-                        "thaumicaugmentation:augment_gauntlet_rift_energy_storage"
+                        "thaumicaugmentation:impetus_conductor"
                     ]
                 }
             ]
@@ -182,7 +182,7 @@
                 "RIFT_POWER"
             ],
             "location": [
-                7.5,
+                6.5,
                 -3
             ],
             "meta": [
@@ -215,7 +215,7 @@
                 "FRACTURE_THEORY"
             ],
             "location": [
-                9,
+                8.5,
                 -3
             ],
             "meta": [
@@ -247,6 +247,224 @@
                     "text": "thaumicaugmentation.research.entering_fracture.3",
                     "required_research": [
                         "!EldritchGuardian"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ELDRITCH_BOSS",
+            "name": "thaumicaugmentation.research.eldritch_boss.title",
+            "icons": [
+                "thaumicaugmentation:textures/blocks/eldritch_eye.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "ENTERING_FRACTURE"
+            ],
+            "location": [
+                10.5,
+                0
+            ],
+            "meta": [
+                "SPIKY"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.eldritch_boss.0",
+                    "required_research": [
+                        "m_ENTERSPIRE"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.eldritch_boss.1",
+                    "required_research": [
+                        "m_ELDRITCHBOSS"
+                    ],
+                    "warp": 3
+                },
+                {
+                    "text": "thaumicaugmentation.research.eldritch_boss.2"
+                }
+            ]
+        },
+        {
+            "key": "RIFT_MANAGEMENT",
+            "name": "thaumicaugmentation.research.rift_management.title",
+            "icons": [
+                "thaumcraft:textures/research/r_fluxrift.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "RIFT_STUDIES",
+                "IMPETUS"
+            ],
+            "location": [
+                12,
+                0
+            ],
+            "meta": [
+                "ROUND"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.rift_management.0"
+                }
+            ]
+        },
+        {
+            "key": "RIFT_FEEDER",
+            "name": "thaumicaugmentation.research.rift_feeder.title",
+            "icons": [
+                "thaumicaugmentation:rift_feeder"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "RIFT_MANAGEMENT",
+                "~FLUXCLEANUP"
+            ],
+            "location": [
+                14,
+                -2
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.rift_feeder.0",
+                    "required_item": [
+                        "thaumcraft:flux_condenser"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;AUROMANCY;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.rift_feeder.1",
+                    "recipes": [
+                        "thaumicaugmentation:rift_feeder"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "RIFT_MOVING",
+            "name": "thaumicaugmentation.research.rift_feeder.title",
+            "icons": [
+                "thaumicaugmentation:rift_jar;1;0;{size:100,seed:666}"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "RIFT_MANAGEMENT"
+            ],
+            "location": [
+                16,
+                -2
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.rift_moving.0",
+                    "required_item": [
+                        "thaumcraft:jar_normal"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;AUROMANCY;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.rift_moving.1",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1"
+                    ],
+                    "recipes": [
+                        "thaumicaugmentation:rift_jar"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.rift_moving.2",
+                    "recipes": [
+                        "thaumicaugmentation:rift_jar",
+                        "thaumicaugmentation:rift_mover_input",
+                        "thaumicaugmentation:rift_mover_output"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "STABILITY_FIELD_GENERATOR",
+            "name": "thaumicaugmentation.research.stability_field_generator.title",
+            "icons": [
+                "thaumicaugmentation:stability_field_generator"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "RIFT_MANAGEMENT",
+                "~STABILIZER",
+                "~VISGENERATOR"
+            ],
+            "location": [
+                14,
+                2
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.stability_field_generator.0",
+                    "required_item": [
+                        "thaumcraft:stabilizer"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;INFUSION;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;INFUSION;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.stability_field_generator.1",
+                    "recipes": [
+                        "thaumicaugmentation:stability_field_generator"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "RIFT_MONITOR",
+            "name": "thaumicaugmentation.research.rift_monitor.title",
+            "icons": [
+                "thaumicaugmentation:rift_monitor"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "RIFT_MANAGEMENT",
+                "~DIOPTRA"
+            ],
+            "location": [
+                16,
+                2
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.rift_monitor.0",
+                    "required_item": [
+                        "thaumcraft:goggles",
+                        "thaumcraft:thaumometer"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;FUNDAMENTALS;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.rift_monitor.1",
+                    "recipes": [
+                        "thaumicaugmentation:rift_monitor"
                     ]
                 }
             ]

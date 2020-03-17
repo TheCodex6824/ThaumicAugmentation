@@ -24,12 +24,18 @@ import java.util.WeakHashMap;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
+import net.minecraft.stats.StatisticsManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -37,6 +43,8 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import thaumcraft.api.capabilities.IPlayerKnowledge.EnumResearchFlag;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
@@ -45,11 +53,14 @@ import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.item.IArmorReduceFallDamage;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class PlayerEventHandler {
 
     private static final WeakHashMap<Entity, Float> FALL_DAMAGE = new WeakHashMap<>();
+    private static final WeakHashMap<EntityPlayer, Boolean> CREATIVE_FLIGHT = new WeakHashMap<>();
     
     private PlayerEventHandler() {}
     
@@ -72,20 +83,74 @@ public final class PlayerEventHandler {
             PlayerMovementAbilityManager.onJump((EntityPlayer) event.getEntity());
     }
 
+    protected static void checkResearch(EntityPlayer player) {
+        if (!TAConfig.disableEmptiness.getValue() && player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && 
+                        !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
+                    
+            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERVOID");
+            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void").setStyle(
+                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+        }
+        
+        Biome biome = player.getEntityWorld().getBiome(player.getPosition());
+        if (BiomeDictionary.hasType(biome, Type.OCEAN) && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_OCEAN")) {
+            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_OCEAN");
+            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.ocean").setStyle(
+                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+        }
+        
+        if (BiomeDictionary.hasType(biome, Type.MOUNTAIN) && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_MOUNTAIN")) {
+            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_MOUNTAIN");
+            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.mountain").setStyle(
+                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+        }
+        
+        if (BiomeDictionary.hasType(biome, Type.SANDY) && BiomeDictionary.hasType(biome, Type.HOT) && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_DESERT")) {
+            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_DESERT");
+            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.desert").setStyle(
+                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+        }
+        
+        if (BiomeDictionary.hasType(biome, Type.FOREST) && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_FOREST")) {
+            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_FOREST");
+            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.forest").setStyle(
+                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+        }
+        
+        StatisticsManager stats = player.getServer().getPlayerList().getPlayerStatsFile(player);
+        if (stats.readStat(StatList.FLY_ONE_CM) > 199999 && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ELYTRAFLY")) {
+            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ELYTRAFLY");
+            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.elytra_fly").setStyle(
+                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+        }
+        
+        if (stats.readStat(StatList.DIVE_ONE_CM) > 7999 && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_LONGTIMEINWATER")) {
+            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_LONGTIMEINWATER");
+            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.long_time_in_water").setStyle(
+                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+        }
+    }
+    
     @SubscribeEvent
-    public static void onTick(LivingEvent.LivingUpdateEvent event) {
-        if (event.getEntity() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) event.getEntity();
+    public static void onTick(PlayerTickEvent event) {
+        if (event.phase == Phase.END) {
+            EntityPlayer player = event.player;
             if (PlayerMovementAbilityManager.isValidSideForMovement(player))
                 PlayerMovementAbilityManager.tick(player);
             
-            if (!player.getEntityWorld().isRemote && player.getEntityWorld().getTotalWorldTime() % 40 == 0 &&
-                    !TAConfig.disableEmptiness.getValue() && player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && 
-                    !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
+            if (!player.getEntityWorld().isRemote) {
+                if (player.getEntityWorld().getTotalWorldTime() % 40 == 0)
+                    checkResearch(player);
                 
-                ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERVOID");
-                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void").setStyle(
-                        new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+                Boolean fly = Boolean.valueOf(player.capabilities.isFlying);
+                if (!fly.equals(CREATIVE_FLIGHT.get(player))) {
+                    PacketFlightState packet = new PacketFlightState(player.getEntityId(), fly);
+                    if (player instanceof EntityPlayerMP)
+                        TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
+                    
+                    TANetwork.INSTANCE.sendToAllTracking(packet, player);
+                    CREATIVE_FLIGHT.put(player, fly);
+                }
             }
         }
     }

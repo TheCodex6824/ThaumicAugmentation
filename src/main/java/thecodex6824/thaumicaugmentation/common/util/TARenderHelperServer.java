@@ -106,6 +106,10 @@ public class TARenderHelperServer implements ITARenderHelper {
     public void renderVent(double x, double y, double z, double vx, double vy, double vz, int color, float scale) {}
     
     @Override
+    public void renderWispParticles(double x, double y, double z, double vx, double vy, double vz, int color,
+            int delay) {}
+    
+    @Override
     public void drawCube() {}
     
     @Override

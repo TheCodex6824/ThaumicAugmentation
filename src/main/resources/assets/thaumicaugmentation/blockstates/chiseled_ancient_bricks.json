@@ -1,48 +1,48 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "cube",
+        "model": "minecraft:cube",
         "transform": "forge:default-block",
         "textures": {
-			"west": "thaumicaugmentation:blocks/eb_1",
-			"east": "thaumicaugmentation:blocks/eb_2",
-			"north": "thaumicaugmentation:blocks/ebi_1",
-			"south": "thaumicaugmentation:blocks/ebi_2",
-            "down": "thaumcraft:blocks/ancient_tile",
-            "up": "thaumcraft:blocks/ancient_tile",
-            "particle": "thaumcraft:blocks/ancient_tile"
+            "up": "thaumicaugmentation:blocks/ancient_bricks_smooth_1",
+            "west": "thaumicaugmentation:blocks/ancient_bricks_smooth_1",
+            "east": "thaumicaugmentation:blocks/ancient_bricks_smooth_2",
+            "north": "thaumicaugmentation:blocks/ancient_bricks_smooth_inverted_1",
+            "south": "thaumicaugmentation:blocks/ancient_bricks_smooth_inverted_2",
+            "down": "thaumicaugmentation:blocks/ancient_bricks_smooth_2",
+            "particle": "thaumicaugmentation:blocks/ancient_bricks_smooth_1"
         }
     },
     "variants": {
         "normal": [
             {
 				"textures": {
-					"up": "thaumcraft:blocks/ancient_tile",
-					"west": "thaumicaugmentation:blocks/eb_1",
-					"east": "thaumicaugmentation:blocks/eb_2",
-					"north": "thaumicaugmentation:blocks/ebi_1",
-					"south": "thaumicaugmentation:blocks/ebi_2",
-					"down": "thaumicaugmentation:blocks/es_p"
+					"up": "thaumicaugmentation:blocks/ancient_bricks_smooth_1",
+					"west": "thaumicaugmentation:blocks/ancient_bricks_smooth_1",
+					"east": "thaumicaugmentation:blocks/ancient_bricks_smooth_2",
+					"north": "thaumicaugmentation:blocks/ancient_bricks_smooth_inverted_1",
+					"south": "thaumicaugmentation:blocks/ancient_bricks_smooth_inverted_2",
+					"down": "thaumicaugmentation:blocks/ancient_bricks_smooth_2"
 				}
 			},
             {
 				"textures": {
-					"up": "thaumcraft:blocks/ancient_tile",
-					"west": "thaumicaugmentation:blocks/eb_2",
-					"east": "thaumicaugmentation:blocks/eb_3",
-					"north": "thaumicaugmentation:blocks/ebi_2",
-					"south": "thaumicaugmentation:blocks/ebi_3",
-					"down": "thaumicaugmentation:blocks/es_p"
+					"up": "thaumicaugmentation:blocks/ancient_bricks_smooth_2",
+					"west": "thaumicaugmentation:blocks/ancient_bricks_smooth_2",
+					"east": "thaumicaugmentation:blocks/ancient_bricks_smooth_3",
+					"north": "thaumicaugmentation:blocks/ancient_bricks_smooth_inverted_2",
+					"south": "thaumicaugmentation:blocks/ancient_bricks_smooth_inverted_3",
+					"down": "thaumicaugmentation:blocks/ancient_bricks_smooth_3"
 				}
 			},
             {
 				"textures": {
-					"up": "thaumcraft:blocks/ancient_tile",
-					"west": "thaumicaugmentation:blocks/eb_1",
-					"east": "thaumicaugmentation:blocks/eb_3",
-					"north": "thaumicaugmentation:blocks/ebi_1",
-					"south": "thaumicaugmentation:blocks/ebi_3",
-					"down": "thaumicaugmentation:blocks/es_p"
+					"up": "thaumicaugmentation:blocks/ancient_bricks_smooth_1",
+					"west": "thaumicaugmentation:blocks/ancient_bricks_smooth_1",
+					"east": "thaumicaugmentation:blocks/ancient_bricks_smooth_3",
+					"north": "thaumicaugmentation:blocks/ancient_bricks_smooth_inverted_1",
+					"south": "thaumicaugmentation:blocks/ancient_bricks_smooth_inverted_3",
+					"down": "thaumicaugmentation:blocks/ancient_bricks_smooth_3"
 				}
 			}
         ],

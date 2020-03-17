@@ -75,6 +75,8 @@ public interface ITARenderHelper {
     
     public void renderVent(double x, double y, double z, double vx, double vy, double vz, int color, float scale);
     
+    public void renderWispParticles(double x, double y, double z, double vx, double vy, double vz, int color, int delay);
+    
     public void drawCube();
     
     public void drawCube(double min, double max);

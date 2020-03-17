@@ -20,7 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
+import java.util.IdentityHashMap;
 import java.util.Random;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -112,6 +114,7 @@ import thecodex6824.thaumicaugmentation.client.event.ClientEventHandler;
 import thecodex6824.thaumicaugmentation.client.event.ClientLivingEquipmentChangeEvent;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
+import thecodex6824.thaumicaugmentation.client.fx.FXGenericP2ECustomSpeed;
 import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
@@ -126,6 +129,7 @@ import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderAutocaster;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderPrimalWisp;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
@@ -152,6 +156,7 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
+import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
@@ -163,6 +168,8 @@ import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.PacketBiomeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketConfigSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
+import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
+import thecodex6824.thaumicaugmentation.common.network.PacketFollowingOrb;
 import thecodex6824.thaumicaugmentation.common.network.PacketFractureLocatorUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketFullImpetusNodeSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
@@ -175,6 +182,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChan
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
+import thecodex6824.thaumicaugmentation.common.network.PacketWispZap;
 import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
@@ -200,6 +208,33 @@ import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 
 public class ClientProxy extends ServerProxy {
 
+    private IdentityHashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
+    
+    public ClientProxy() {
+        handlers = new IdentityHashMap<>();
+        handlers.put(PacketParticleEffect.class, (message, ctx) -> handleParticlePacket((PacketParticleEffect) message, ctx));
+        handlers.put(PacketConfigSync.class, (message, ctx) -> handleConfigSyncPacket((PacketConfigSync) message, ctx));
+        handlers.put(PacketAugmentableItemSync.class, (message, ctx) -> handleAugmentableItemSyncPacket((PacketAugmentableItemSync) message, ctx));
+        handlers.put(PacketFullWardSync.class, (message, ctx) -> handleFullWardSyncPacket((PacketFullWardSync) message, ctx));
+        handlers.put(PacketWardUpdate.class, (message, ctx) -> handleWardUpdatePacket((PacketWardUpdate) message, ctx));
+        handlers.put(PacketFractureLocatorUpdate.class, (message, ctx) -> handleFractureLocatorUpdatePacket((PacketFractureLocatorUpdate) message, ctx));
+        handlers.put(PacketEntityCast.class, (message, ctx) -> handleEntityCastPacket((PacketEntityCast) message, ctx));
+        handlers.put(PacketFullImpetusNodeSync.class, (message, ctx) -> handleFullImpetusNodeSyncPacket((PacketFullImpetusNodeSync) message, ctx));
+        handlers.put(PacketImpetusNodeUpdate.class, (message, ctx) -> handleImpetusNodeUpdatePacket((PacketImpetusNodeUpdate) message, ctx));
+        handlers.put(PacketImpetusTransaction.class, (message, ctx) -> handleImpetusTransationPacket((PacketImpetusTransaction) message, ctx));
+        handlers.put(PacketRiftJarInstability.class, (message, ctx) -> handleRiftJarInstabilityPacket((PacketRiftJarInstability) message, ctx));
+        handlers.put(PacketBiomeUpdate.class, (message, ctx) -> handleBiomeUpdatePacket((PacketBiomeUpdate) message, ctx));
+        handlers.put(PacketFXShield.class, (message, ctx) -> handleFXShieldPacket((PacketFXShield) message, ctx));
+        handlers.put(PacketImpulseBeam.class, (message, ctx) -> handleImpulseBeamPacket((PacketImpulseBeam) message, ctx));
+        handlers.put(PacketImpulseBurst.class, (message, ctx) -> handleImpulseBurstPacket((PacketImpulseBurst) message, ctx));
+        handlers.put(PacketImpulseRailgunProjectile.class, (message, ctx) -> handleImpulseRailgunPacket((PacketImpulseRailgunProjectile) message, ctx));
+        handlers.put(PacketLivingEquipmentChange.class, (message, ctx) -> handleLivingEquipmentChangePacket((PacketLivingEquipmentChange) message, ctx));
+        handlers.put(PacketBaubleChange.class, (message, ctx) -> handleBaubleChangePacket((PacketBaubleChange) message, ctx));
+        handlers.put(PacketWispZap.class, (message, ctx) -> handleWispZapPacket((PacketWispZap) message, ctx));
+        handlers.put(PacketFollowingOrb.class, (message, ctx) -> handleFollowingOrbPacket((PacketFollowingOrb) message, ctx));
+        handlers.put(PacketFlightState.class, (message, ctx) -> handleFlightStatePacket((PacketFlightState) message, ctx));
+    }
+    
     @Override
     public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params) {
         return ModelLoaderRegistry.loadASM(loc, params);
@@ -297,42 +332,9 @@ public class ClientProxy extends ServerProxy {
     
     @Override
     public void handlePacketClient(IMessage message, MessageContext context) {
-        if (message instanceof PacketParticleEffect)
-            handleParticlePacket((PacketParticleEffect) message, context);
-        else if (message instanceof PacketConfigSync)
-            handleConfigSyncPacket((PacketConfigSync) message, context);
-        else if (message instanceof PacketAugmentableItemSync)
-            handleAugmentableItemSyncPacket((PacketAugmentableItemSync) message, context);
-        else if (message instanceof PacketFullWardSync)
-            handleFullWardSyncPacket((PacketFullWardSync) message, context);
-        else if (message instanceof PacketWardUpdate)
-            handleWardUpdatePacket((PacketWardUpdate) message, context);
-        else if (message instanceof PacketFractureLocatorUpdate)
-            handleFractureLocatorUpdatePacket((PacketFractureLocatorUpdate) message, context);
-        else if (message instanceof PacketEntityCast)
-            handleEntityCastPacket((PacketEntityCast) message, context);
-        else if (message instanceof PacketFullImpetusNodeSync)
-            handleFullImpetusNodeSyncPacket((PacketFullImpetusNodeSync) message, context);
-        else if (message instanceof PacketImpetusNodeUpdate)
-            handleImpetusNodeUpdatePacket((PacketImpetusNodeUpdate) message, context);
-        else if (message instanceof PacketImpetusTransaction)
-            handleImpetusTransationPacket((PacketImpetusTransaction) message, context);
-        else if (message instanceof PacketRiftJarInstability)
-            handleRiftJarInstabilityPacket((PacketRiftJarInstability) message, context);
-        else if (message instanceof PacketBiomeUpdate)
-            handleBiomeUpdatePacket((PacketBiomeUpdate) message, context);
-        else if (message instanceof PacketFXShield)
-            handleFXShieldPacket((PacketFXShield) message, context);
-        else if (message instanceof PacketImpulseBeam)
-            handleImpulseBeamPacket((PacketImpulseBeam) message, context);
-        else if (message instanceof PacketImpulseBurst)
-            handleImpulseBurstPacket((PacketImpulseBurst) message, context);
-        else if (message instanceof PacketImpulseRailgunProjectile)
-            handleImpulseRailgunPacket((PacketImpulseRailgunProjectile) message, context);
-        else if (message instanceof PacketLivingEquipmentChange)
-            handleLivingEquipmentChangePacket((PacketLivingEquipmentChange) message, context);
-        else if (message instanceof PacketBaubleChange)
-            handleBaubleChangePacket((PacketBaubleChange) message, context);
+        BiConsumer<IMessage, MessageContext> handler = handlers.get(message.getClass());
+        if (handler != null)
+            handler.accept(message, context);
         else
             ThaumicAugmentation.getLogger().warn("An unknown packet was received and will be dropped: " + message.getClass().toString());
     }
@@ -779,6 +781,47 @@ public class ClientProxy extends ServerProxy {
                     EntityEquipmentSlot.HEAD, ItemStack.EMPTY));
         }
     }
+    
+    protected void handleWispZapPacket(PacketWispZap message, MessageContext context) {
+        World world = Minecraft.getMinecraft().world;
+        Entity source = world.getEntityByID(message.getSourceID());
+        Entity target = world.getEntityByID(message.getTargetID());
+        if (source != null && target != null) {
+            int packed = message.getZapColor();
+            float r = ((packed >> 16) & 0xFF) / 255.0F;
+            float g = ((packed >> 8) & 0xFF) / 255.0F;
+            float b = (packed & 0xFF) / 255.0F;
+            FXDispatcher.INSTANCE.arcBolt(source.posX, source.posY, source.posZ, target.posX, target.posY, target.posZ, r, g, b, 0.6F);
+        }
+    }
+    
+    protected void handleFollowingOrbPacket(PacketFollowingOrb message, MessageContext context) {
+        int entityID = message.getEntityID();
+        World world = Minecraft.getMinecraft().world;
+        Entity e = world.getEntityByID(entityID);
+        if (e != null) {
+            int color = message.getColor();
+            FXGenericP2ECustomSpeed orb = new FXGenericP2ECustomSpeed(world, message.getX(), message.getY(), message.getZ(), e, -0.2, 0.2);
+            orb.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F,
+                    (color & 0xFF) / 255.0F);
+            orb.setMaxAge(200);
+            orb.setAlphaF(0.75F, 1.0F, 0.0F);
+            orb.setGridSize(64);
+            orb.setParticles(264, 8, 1);
+            orb.setScale(2.0F);
+            orb.setLayer(1);
+            orb.setLoop(true);
+            orb.setNoClip(false);
+            orb.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
+            ParticleEngine.addEffect(world, orb);
+        }
+    }
+    
+    protected void handleFlightStatePacket(PacketFlightState message, MessageContext context) {
+        Entity e = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
+        if (e instanceof EntityPlayer)
+            ClientEventHandler.onFlightChange((EntityPlayer) e, message.isFlying());
+    }
 
     @Override
     public void preInit() {
@@ -817,6 +860,12 @@ public class ClientProxy extends ServerProxy {
             @Override
             public Render<? super EntityTAEldritchWarden> createRenderFor(RenderManager manager) {
                 return new RenderTAEldritchGuardian(manager, new ModelEldritchGuardianFixed(), 0.6F);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityPrimalWisp.class, new IRenderFactory<EntityPrimalWisp>() {
+            @Override
+            public Render<? super EntityPrimalWisp> createRenderFor(RenderManager manager) {
+                return new RenderPrimalWisp(manager);
             }
         });
         
@@ -1074,8 +1123,7 @@ public class ClientProxy extends ServerProxy {
                         IImpetusStorage s = tile.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                         if (s != null) {
                             int base = ImpetusAPI.getSuggestedColorForDescriptor(s);
-                            double brightness = (double) s.getEnergyStored() / s.getMaxEnergyStored();
-                            brightness *= (Math.sin(Minecraft.getSystemTime() / 1000.0 + pos.hashCode()) + 1.0) / 2.0;
+                            double brightness = (Math.sin(Minecraft.getSystemTime() / 1000.0 + pos.hashCode()) + 1.0) / 2.0;
                             int r = (int) (((base >> 16) & 0xFF) * brightness) << 16;
                             int g = (int) (((base >> 8) & 0xFF) * brightness) << 8;
                             int b = (int) ((base & 0xFF) * brightness);

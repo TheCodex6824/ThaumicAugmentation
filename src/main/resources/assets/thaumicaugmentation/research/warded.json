@@ -68,8 +68,8 @@
                 "WARDED_ARCANA"
             ],
             "location": [
-                -3,
-                3
+                -1,
+                2
             ],
             "stages": [
                 {
@@ -109,8 +109,8 @@
                 "WARDED_ARCANA"
             ],
             "location": [
-                -1.5,
-                4.5
+                -1,
+                4
             ],
             "stages": [
                 {
@@ -126,6 +126,129 @@
                         "thaumicaugmentation:key_iron",
                         "thaumicaugmentation:key_brass",
                         "thaumicaugmentation:key_thaumium"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FORTIFIED_GLASS",
+            "name": "thaumicaugmentation.research.fortified_glass.title",
+            "icons": [
+                "thaumicaugmentation:fortified_glass"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "WARDED_ARCANA"
+            ],
+            "location": [
+                1,
+                5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.fortified_glass.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.fortified_glass.1",
+                    "recipes": [
+                        "thaumicaugmentation:fortified_glass"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "STARFIELD_GLASS_RIFT",
+            "name": "thaumicaugmentation.research.starfield_glass_rift.title",
+            "icons": [
+                "thaumicaugmentation:starfield_glass;1;0"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "FORTIFIED_GLASS",
+                "!FluxRift"
+            ],
+            "location": [
+                2,
+                4
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.starfield_glass_rift.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.starfield_glass_rift.1",
+                    "recipes": [
+                        "thaumicaugmentation:starfield_glass_rift"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "STARFIELD_GLASS_FRACTURE",
+            "name": "thaumicaugmentation.research.starfield_glass_fracture.title",
+            "icons": [
+                "thaumicaugmentation:starfield_glass;1;1"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "FORTIFIED_GLASS",
+                "m_DIMENSIONALFRACTURE"
+            ],
+            "location": [
+                3,
+                4
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.starfield_glass_fracture.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.starfield_glass_fracture.1",
+                    "recipes": [
+                        "thaumicaugmentation:starfield_glass_fracture"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "STARFIELD_GLASS_MIRROR",
+            "name": "thaumicaugmentation.research.starfield_glass_mirror.title",
+            "icons": [
+                "thaumicaugmentation:starfield_glass;1;2"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "FORTIFIED_GLASS",
+                "~MIRROR"
+            ],
+            "location": [
+                4,
+                4
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.starfield_glass_mirror.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.starfield_glass_mirror.1",
+                    "recipes": [
+                        "thaumicaugmentation:starfield_glass_mirror"
                     ]
                 }
             ]

@@ -1,0 +1,268 @@
+{
+    "entries": [
+        {
+            "key": "IMPETUS",
+            "name": "thaumicaugmentation.research.impetus.title",
+            "icons": [
+                "thaumicaugmentation:material;1;5"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "ELDRITCH_BOSS"
+            ],
+            "location": [
+                10,
+                4
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impetus.0",
+                    "required_craft": [
+                        "thaumicaugmentation:impetus_jewel"
+                    ],
+                    "required_item": [
+                        "oredict:netherStar"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ALCHEMY;1",
+                        "THEORY;ALCHEMY;2",
+                        "THEORY;ELDRITCH;1"
+                    ],
+                    "recipes": [
+                        "thaumicaugmentation:impetus_jewel"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impetus.1",
+                    "recipes": [
+                        "thaumicaugmentation:impetus_jewel",
+                        "thaumicaugmentation:impetus_drainer",
+                        "thaumicaugmentation:impetus_relay",
+                        "thaumicaugmentation:impetus_diffuser",
+                        "thaumicaugmentation:impetus_resonator"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPETUS_MATRIX",
+            "name": "thaumicaugmentation.research.impetus_matrix.title",
+            "icons": [
+                "thaumicaugmentation:impetus_matrix"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPETUS",
+                "~INFUSION"
+            ],
+            "location": [
+                12,
+                6
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impetus_matrix.0",
+                    "required_item": [
+                        "thaumcraft:infusion_matrix"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impetus_matrix.1",
+                    "recipes": [
+                        "thaumicaugmentation:impetus_matrix"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPETUS_MIRROR",
+            "name": "thaumicaugmentation.research.impetus_mirror.title",
+            "icons": [
+                "thaumicaugmentation:impetus_mirror"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPETUS",
+                "~MIRRORESSENTIA"
+            ],
+            "location": [
+                14,
+                6
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impetus_mirror.0",
+                    "required_item": [
+                        "thaumcraft:mirrored_glass"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impetus_mirror.1",
+                    "recipes": [
+                        "thaumicaugmentation:impetus_mirror"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPETUS_GATE",
+            "name": "thaumicaugmentation.research.impetus_gate.title",
+            "icons": [
+                "thaumicaugmentation:impetus_gate"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPETUS",
+                "~WARDED_ARCANA"
+            ],
+            "location": [
+                10,
+                6
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impetus_gate.0",
+                    "required_item": [
+                        "thaumicaugmentation:material;1;1"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impetus_gate.1",
+                    "recipes": [
+                        "thaumicaugmentation:impetus_gate"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "VOID_RECHARGE_PEDESTAL",
+            "name": "thaumicaugmentation.research.void_recharge_pedestal.title",
+            "icons": [
+                "thaumicaugmentation:void_recharge_pedestal"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPETUS",
+                "~RECHARGEPEDESTAL"
+            ],
+            "location": [
+                8,
+                5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.void_recharge_pedestal.0",
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.void_recharge_pedestal.1",
+                    "recipes": [
+                        "thaumicaugmentation:void_recharge_pedestal"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPETUS_GENERATOR",
+            "name": "thaumicaugmentation.research.impetus_generator.title",
+            "icons": [
+                "thaumicaugmentation:impetus_generator"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPETUS",
+                "~VISGENERATOR"
+            ],
+            "location": [
+                6,
+                5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impetus_generator.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impetus_generator.1",
+                    "recipes": [
+                        "thaumicaugmentation:impetus_generator"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ARCANE_TERRAFORMER",
+            "name": "thaumicaugmentation.research.arcane_terraformer.title",
+            "icons": [
+                "thaumicaugmentation:arcane_terraformer"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPETUS"
+            ],
+            "location": [
+                8,
+                3
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.arcane_terraformer.0",
+                    "required_research": [
+                        "m_OCEAN",
+                        "m_MOUNTAINS",
+                        "m_DESERT",
+                        "m_FOREST",
+                        "m_hellandback",
+                        "m_endoftheworld"
+                    ],
+                    "required_knowledge": [
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.arcane_terraformer.1",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;AUROMANCY;1",
+                        "THEORY;ELDRITCH;1"
+                    ],
+                    "recipes": [
+                        "thaumicaugmentation:biome_focus"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.arcane_terraformer.2",
+                    "recipes": [
+                        "thaumicaugmentation:biome_focus",
+                        "thaumicaugmentation:biome_focus_special_reset",
+                        "thaumicaugmentation:arcane_terraformer"
+                    ]
+                }
+            ]
+        }
+    ]
+}

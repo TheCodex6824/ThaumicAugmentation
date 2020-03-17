@@ -52,6 +52,10 @@ public interface ISidedProxy {
     
     public IWardStorage createWardStorageInstance(World world);
     
+    public void handlePacketClient(IMessage message, MessageContext context);
+    
+    public void handlePacketServer(IMessage message, MessageContext context);
+    
     public Container getServerGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z);
     
     public Object getClientGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z);
@@ -80,10 +84,6 @@ public interface ISidedProxy {
     
     public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Supplier<Vec3d> tick,
             float x, float y, float z, float vol, float pitch);
-    
-    public void handlePacketClient(IMessage message, MessageContext context);
-
-    public void handlePacketServer(IMessage message, MessageContext context);
     
     public void preInit();
 

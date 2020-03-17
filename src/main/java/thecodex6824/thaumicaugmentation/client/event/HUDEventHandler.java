@@ -62,7 +62,7 @@ public class HUDEventHandler {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             GlStateManager.disableBlend();
             Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.RIFT);
-            TAShaderManager.enableShader(TAShaders.FLUX_RIFT_HUD, TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED);
+            TAShaderManager.enableShader(TAShaders.FLUX_RIFT_HUD, TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED_20);
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
             buffer.pos(-43.0, 59.5, 0.0).tex(1.0, 0.0).endVertex();
             buffer.pos(-56.0 + height, 59.5, 0.0).tex(0.0, 0.0).endVertex();

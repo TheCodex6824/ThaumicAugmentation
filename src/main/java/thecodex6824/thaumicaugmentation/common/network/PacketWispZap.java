@@ -20,20 +20,47 @@
 
 package thecodex6824.thaumicaugmentation.common.network;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
-public class GenericServerMessageHandler <T extends IMessage> implements IMessageHandler<T, IMessage> {
+public class PacketWispZap implements IMessage {
+
+    protected int source;
+    protected int target;
+    protected int color;
+    
+    public PacketWispZap() {}
+    
+    public PacketWispZap(int sourceID, int targetID, int zapColor) {
+        source = sourceID;
+        target = targetID;
+        color = zapColor;
+    }
+    
+    public int getSourceID() {
+        return source;
+    }
+    
+    public int getTargetID() {
+        return target;
+    }
+    
+    public int getZapColor() {
+        return color;
+    }
 
     @Override
-    public IMessage onMessage(T message, MessageContext ctx) {
-        ctx.getServerHandler().player.server.addScheduledTask(() -> {
-            ThaumicAugmentation.proxy.handlePacketServer(message, ctx);
-        });
-        
-        return null;
+    public void toBytes(ByteBuf buf) {
+        buf.writeInt(source);
+        buf.writeInt(target);
+        buf.writeInt(color);
+    }
+
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        source = buf.readInt();
+        target = buf.readInt();
+        color = buf.readInt();
     }
     
 }

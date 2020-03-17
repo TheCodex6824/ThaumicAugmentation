@@ -48,6 +48,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoS
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoVillagerFarming;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockRandomTick;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockResistance;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockTaintImmunity;
 
 public class TATransformer implements IClassTransformer {
 
@@ -75,6 +76,8 @@ public class TATransformer implements IClassTransformer {
         TRANSFORMERS.add(new TransformerWardBlockNoSheepGrazing());
         // same
         TRANSFORMERS.add(new TransformerWardBlockNoVillagerFarming());
+        // required because TC calls Block#getBlockHardness instead of the blockstate method
+        TRANSFORMERS.add(new TransformerWardBlockTaintImmunity());
         
         // required to cancel sprinting client side immediately
         // using events allows 1-tick sprints, and holding down sprint will allow constant sprinting

@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.api.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
@@ -107,6 +108,11 @@ public class RaytraceHelper {
     
     @Nullable
     public static Entity raytraceEntity(EntityLivingBase user, double maxDistance) {
+        return raytraceEntity(user, maxDistance, e -> true);
+    }
+    
+    @Nullable
+    public static Entity raytraceEntity(EntityLivingBase user, double maxDistance, Predicate<Entity> acceptor) {
         Vec3d eyes = user.getPositionEyes(1.0F);
         Vec3d look = user.getLook(1.0F);
         Vec3d extended = eyes.add(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance);
@@ -114,7 +120,7 @@ public class RaytraceHelper {
         maxDistance = blockCheck != null ? blockCheck.hitVec.distanceTo(eyes) : maxDistance;
         List<Entity> list = user.getEntityWorld().getEntitiesInAABBexcluding(user,
                 user.getEntityBoundingBox().expand(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance).grow(1.0, 1.0, 1.0),
-                Predicates.and(EntitySelectors.NOT_SPECTATING, entity -> entity != null && entity.canBeCollidedWith()
+                Predicates.and(entity -> entity != null && entity.canBeCollidedWith(), Predicates.and(EntitySelectors.NOT_SPECTATING, entity -> acceptor.test(entity))
         ));
         
         double dist = maxDistance;

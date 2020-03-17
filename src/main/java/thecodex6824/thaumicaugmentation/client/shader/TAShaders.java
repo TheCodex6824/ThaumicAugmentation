@@ -65,7 +65,18 @@ public class TAShaders {
         ARBShaderObjects.glUniform1fARB(zoom, 1.0F);
     };
     
-    public static final Consumer<Shader> SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED = shader -> {
+    public static final Consumer<Shader> SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED_5 = shader -> {
+        int x = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "yaw");
+        ARBShaderObjects.glUniform1fARB(x, 0.0F);
+        
+        int z = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "pitch");
+        ARBShaderObjects.glUniform1fARB(z, 0.0F);
+        
+        int zoom = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "zoom");
+        ARBShaderObjects.glUniform1fARB(zoom, 5.0F);
+    };
+    
+    public static final Consumer<Shader> SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED_20 = shader -> {
         int x = ARBShaderObjects.glGetUniformLocationARB(shader.getID(), "yaw");
         ARBShaderObjects.glUniform1fARB(x, 0.0F);
         

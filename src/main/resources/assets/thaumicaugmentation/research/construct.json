@@ -1,0 +1,142 @@
+{
+    "entries": [
+        {
+            "key": "MORE_GOLEMANCY",
+            "name": "thaumicaugmentation.research.more_golemancy.title",
+            "icons": [
+                "thaumicaugmentation:textures/research/further_golemancy.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "~BASEGOLEMANCY",
+                "THAUMIC_AUGMENTATION_BASE"
+            ],
+            "location": [
+                -3,
+                3
+            ],
+            "meta": [
+                "ROUND"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.more_golemancy.0"
+                }
+            ]
+        },
+        {
+            "key": "SEAL_COPIER",
+            "name": "thaumicaugmentation.research.seal_copier.title",
+            "icons": [
+                "thaumicaugmentation:seal_copier;1;0;{seal:{}}"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "MORE_GOLEMANCY",
+                "~BASEINFUSION"
+            ],
+            "location": [
+                -5,
+                3
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.seal_copier.0",
+                    "required_item": [
+                        "thaumcraft:seals;1;0",
+                        "thaumcraft:brain"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;GOLEMANCY;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.seal_copier.1",
+                    "recipes": [
+                        "thaumicaugmentation:seal_copier"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "SEAL_SECURE",
+            "name": "thaumicaugmentation.research.seal_secure.title",
+            "icons": [
+                "thaumicaugmentation:textures/items/seal/seal_attack.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "MORE_GOLEMANCY",
+                "~SEALGUARD"
+            ],
+            "location": [
+                -4,
+                2
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.seal_secure.0",
+                    "required_knowledge": [
+                        "OBSERVATION;GOLEMANCY;1",
+                        "THEORY;GOLEMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.seal_secure.1",
+                    "recipes": [
+                        "thaumicaugmentation:seal_secure"
+                    ]
+                }
+            ],
+            "addenda": [
+                { 
+                    "text": "thaumicaugmentation.research.seal_secure.2",  
+                    "recipes": [
+                        "thaumicaugmentation:seal_secure_advanced"
+                    ],  
+                    "required_research":[
+                        "MINDBIOTHAUMIC"
+                    ] 
+                }
+            ]
+        },
+        {
+            "key": "AUTOCASTER",
+            "name": "thaumicaugmentation.research.autocaster.title",
+            "icons": [
+                "thaumicaugmentation:textures/items/autocaster.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "ELDRITCH_BOSS",
+                "!AUTOCASTER",
+                "~MINDBIOTHAUMIC",
+                "~BASEAUROMANCY"
+            ],
+            "location": [
+                7,
+                1
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.autocaster.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;GOLEMANCY;2",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;GOLEMANCY;1",
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.autocaster.1",
+                    "recipes": [
+                        "thaumicaugmentation:autocaster"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -34,9 +34,12 @@ public final class TALootTables {
             ThaumicAugmentationAPI.MODID, "entity/autocaster");
     public static final ResourceLocation AUTOCASTER_ELDRITCH = new ResourceLocation(
             ThaumicAugmentationAPI.MODID, "entity/autocaster_eldritch");
+    public static final ResourceLocation PRIMAL_WISP = new ResourceLocation(
+            ThaumicAugmentationAPI.MODID, "entity/primal_wisp");
     
     public static ResourceLocation[] getAllLootTables() {
-        return new ResourceLocation[] {ELDRITCH_GUARDIAN, TAINT_MOB, AUTOCASTER, AUTOCASTER_ELDRITCH};
+        return new ResourceLocation[] {ELDRITCH_GUARDIAN, TAINT_MOB, AUTOCASTER, AUTOCASTER_ELDRITCH,
+                PRIMAL_WISP};
     }
     
 }

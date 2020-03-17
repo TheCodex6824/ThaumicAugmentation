@@ -41,7 +41,6 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -198,42 +197,35 @@ public final class ClientEventHandler {
         }
     }
     
-    protected static void onFlightChange(EntityPlayer player) {
-        IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
-        if (baubles != null) {
-            for (int slot : BaubleType.BODY.getValidSlots()) {
-                ItemStack body = baubles.getStackInSlot(slot);
-                if (body.getItem() == TAItems.THAUMOSTATIC_HARNESS && RechargeHelper.getCharge(body) > 0) {
-                    if (player.capabilities.isFlying) {
-                        player.getEntityWorld().playSound(null, player.getPosition(), SoundsTC.hhon, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                        final int id = player.getEntityId();
-                        ThaumicAugmentation.proxy.playSpecialSound(SoundsTC.jacobs, SoundCategory.PLAYERS,
-                                () -> {
-                                    Entity entity = Minecraft.getMinecraft().world.getEntityByID(id);
-                                    if (entity instanceof EntityPlayer && !entity.isDead && ((EntityPlayer) entity).capabilities.isFlying)
-                                        return entity.getPositionVector();
-                                    else
-                                        return null;
-                                }, (float) player.posX, (float) player.posY, (float) player.posZ, 1.0F, 1.0F);
+    public static void onFlightChange(EntityPlayer player, boolean flying) {
+        Boolean fly = Boolean.valueOf(flying);
+        if (!fly.equals(CREATIVE_FLIGHT.get(player))) {
+            IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+            if (baubles != null) {
+                for (int slot : BaubleType.BODY.getValidSlots()) {
+                    ItemStack body = baubles.getStackInSlot(slot);
+                    if (body.getItem() == TAItems.THAUMOSTATIC_HARNESS && RechargeHelper.getCharge(body) > 0) {
+                        if (flying) {
+                            player.getEntityWorld().playSound(player.posX, player.posY, player.posZ, SoundsTC.hhon, SoundCategory.PLAYERS, 1.0F, 1.0F, false);
+                            final int id = player.getEntityId();
+                            ThaumicAugmentation.proxy.playSpecialSound(SoundsTC.jacobs, SoundCategory.PLAYERS,
+                                    () -> {
+                                        Entity entity = Minecraft.getMinecraft().world.getEntityByID(id);
+                                        if (entity instanceof EntityPlayer && !entity.isDead && Boolean.TRUE.equals(CREATIVE_FLIGHT.get((EntityPlayer) entity)))
+                                            return entity.getPositionVector();
+                                        else
+                                            return null;
+                                    }, (float) player.posX, (float) player.posY, (float) player.posZ, 0.1F, 1.0F);
+                        }
+                        else
+                            player.getEntityWorld().playSound(player.posX, player.posY, player.posZ, SoundsTC.hhoff, SoundCategory.PLAYERS, 1.0F, 1.0F, false);
+                            
+                        break;
                     }
-                    else
-                        player.getEntityWorld().playSound(null, player.getPosition(), SoundsTC.hhoff, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                        
-                    break;
                 }
             }
-        }
-    }
-    
-    @SubscribeEvent
-    public static void onTick(LivingEvent.LivingUpdateEvent event) {
-        if (event.getEntity() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) event.getEntity();
-            Boolean fly = Boolean.valueOf(player.capabilities.isFlying);
-            if (!fly.equals(CREATIVE_FLIGHT.get(player))) {
-                onFlightChange(player);
-                CREATIVE_FLIGHT.put(player, fly);
-            }
+            
+            CREATIVE_FLIGHT.put(player, fly);
         }
     }
     

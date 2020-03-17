@@ -35,7 +35,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import thaumcraft.api.ThaumcraftMaterials;
 import thaumcraft.common.lib.SoundsTC;
-import thecodex6824.thaumicaugmentation.common.util.QuadConsumer;
+import thecodex6824.thaumicaugmentation.api.util.QuadConsumer;
 
 /**
  * Property interface for the type of stone in Thaumic Augmentation's stone.

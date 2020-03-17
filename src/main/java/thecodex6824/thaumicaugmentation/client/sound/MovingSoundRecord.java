@@ -68,7 +68,6 @@ public class MovingSoundRecord extends MovingSound {
     @Override
     public void update() {
         Vec3d pos = tickFunc.get();
-        System.out.println(pos);
         if (pos == null)
             donePlaying = true;
         else

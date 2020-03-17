@@ -56,10 +56,12 @@ public class TileRiftJar extends TileEntity implements ITickable {
         @Nonnull
         @SuppressWarnings("null")
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            RiftJarVoidItemEvent event = new RiftJarVoidItemEvent(stack, rift, world, pos);
+            RiftJarVoidItemEvent event = new RiftJarVoidItemEvent(stack, rift, world, pos, simulate);
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled()) {
-                setRiftStability(Math.max(stability - stack.getCount() * 3, -200));
+                if (!simulate)
+                    setRiftStability(Math.max(stability - stack.getCount() * 3, -200));
+                
                 return ItemStack.EMPTY;
             }
             else

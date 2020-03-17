@@ -125,6 +125,7 @@ entity.thaumicaugmentation.autocaster.name=Autocaster
 entity.thaumicaugmentation.autocaster_eldritch.name=Eldritch Autocaster
 entity.thaumicaugmentation.eldritch_guardian.name=Eldritch Guardian
 entity.thaumicaugmentation.eldritch_warden.name=Eldritch Warden
+entity.thaumicaugmentation.primal_wisp.name=Primordial Wisp
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
 itemGroup.thaumicaugmentation.biome_selector=TA: Biome Foci

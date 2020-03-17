@@ -48,6 +48,7 @@ import thaumcraft.api.aspects.AspectEventProxy;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.AspectRegistryEvent;
 import thaumcraft.api.blocks.BlocksTC;
+import thaumcraft.common.golems.seals.SealHandler;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
@@ -95,8 +96,11 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
+import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
+import thecodex6824.thaumicaugmentation.common.golem.SealAttack;
+import thecodex6824.thaumicaugmentation.common.golem.SealAttackAdvanced;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemAutocasterPlacer;
 import thecodex6824.thaumicaugmentation.common.item.ItemBiomeSelector;
@@ -310,6 +314,12 @@ public final class RegistryHandler {
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)
+    public static void registerItemsLater(RegistryEvent.Register<Item> event) {
+        SealHandler.registerSeal(new SealAttack());
+        SealHandler.registerSeal(new SealAttackAdvanced());
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void registerOreDict(RegistryEvent.Register<Item> event) {
         OreDictionary.registerOre("blockAmber", BlocksTC.amberBlock);
         OreDictionary.registerOre("blockAmber", BlocksTC.amberBrick);
@@ -333,7 +343,7 @@ public final class RegistryHandler {
         event.getRegistry().register(new CustomAugmentCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "custom_augment")));
         event.getRegistry().register(new MorphicToolUnbindingRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_tool_unbinding")));
         event.getRegistry().register(new PrimalCutterAbilityRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "primal_cutter_ability")));
-        event.getRegistry().register(new BiomeSelectorSpecialResetRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "biome_selector_special_reset")));
+        event.getRegistry().register(new BiomeSelectorSpecialResetRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "biome_focus_special_reset")));
     }
 
     @SubscribeEvent
@@ -377,6 +387,10 @@ public final class RegistryHandler {
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "eldritch_warden"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".eldritch_warden").tracker(64, 3, true).egg(
                         0x383882, 0x880000).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityPrimalWisp.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "primal_wisp"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".primal_wisp").tracker(64, 1, true).egg(
+                        0xC71585, 0xFF1493).build());
     }
     
     @SubscribeEvent

@@ -35,8 +35,8 @@
                 "MORE_AUROMANCY"
             ],
             "location": [
-                3,
-                3
+                2,
+                2
             ],
             "stages": [
                 {
@@ -55,6 +55,66 @@
                 },
                 {
                     "text": "thaumicaugmentation.research.focus_light.1"
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_SHIELD",
+            "name": "thaumicaugmentation.research.focus_shield.title",
+            "icons": [
+                "focus:focus.thaumicaugmentation.shield"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "FOCUS_WARD",
+                "IMPETUS"
+            ],
+            "location": [
+                6,
+                3
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.focus_shield.0",
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_shield.1"
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_WATER",
+            "name": "thaumicaugmentation.research.focus_water.title",
+            "icons": [
+                "focus:focus.thaumicaugmentation.water"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "MORE_AUROMANCY"
+            ],
+            "location": [
+                4,
+                2
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.focus_water.0",
+                    "required_research": [
+                        "!aqua",
+                        "m_LONGTIMEINWATER"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.focus_water.1"
                 }
             ]
         }
