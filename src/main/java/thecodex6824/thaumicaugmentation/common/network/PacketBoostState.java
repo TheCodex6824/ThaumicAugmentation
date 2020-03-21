@@ -18,18 +18,41 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.tile;
+package thecodex6824.thaumicaugmentation.common.network;
 
-public interface IImpetusGate {
+import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-    public void cycleLimit();
+public class PacketBoostState implements IMessage {
+
+    protected int id;
+    protected boolean boost;
     
-    public void cycleMode();
+    public PacketBoostState() {}
     
-    public boolean isInRedstoneMode();
+    public PacketBoostState(int entityID, boolean boosting) {
+        id = entityID;
+        boost = boosting;
+    }
     
-    public long getLimit();
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        id = buf.readInt();
+        boost = buf.readBoolean();
+    }
     
-    public int getManualLimitLevel();
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeInt(id);
+        buf.writeBoolean(boost);
+    }
+    
+    public int getEntityID() {
+        return id;
+    }
+    
+    public boolean isBoosting() {
+        return boost;
+    }
     
 }

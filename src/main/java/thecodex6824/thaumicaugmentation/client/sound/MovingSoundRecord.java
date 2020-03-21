@@ -20,7 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.client.sound;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.util.SoundCategory;
@@ -29,27 +29,34 @@ import net.minecraft.util.math.Vec3d;
 
 public class MovingSoundRecord extends MovingSound {
 
-    protected Supplier<Vec3d> tickFunc;
+    protected Function<Vec3d, Vec3d> tickFunc;
     
-    public MovingSoundRecord(SoundEvent sound, SoundCategory category, Supplier<Vec3d> tick) {
+    public MovingSoundRecord(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick) {
         
         this(sound, category, tick, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F);
     }
     
-    public MovingSoundRecord(SoundEvent sound, SoundCategory category, Supplier<Vec3d> tick,
+    public MovingSoundRecord(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick,
             float x, float y, float z) {
         
         this(sound, category, tick, x, y, z, 1.0F, 1.0F);
     }
     
-    public MovingSoundRecord(SoundEvent sound, SoundCategory category, Supplier<Vec3d> tick,
+    public MovingSoundRecord(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick,
             float x, float y, float z, float soundVolume, float soundPitch) {
+        
+        this(sound, category, tick, x, y, z, soundVolume, soundPitch, false, 0);
+    }
+    
+    public MovingSoundRecord(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick,
+            float x, float y, float z, float soundVolume, float soundPitch, boolean repeatSound,
+            int repeatDelayTicks) {
         
         super(sound, category);
         tickFunc = tick;
         attenuationType = AttenuationType.LINEAR;
-        repeat = true;
-        repeatDelay = 0;
+        repeat = repeatSound;
+        repeatDelay = repeatDelayTicks;
         volume = soundVolume;
         pitch = soundPitch;
         setPos(x, y, z);
@@ -61,13 +68,17 @@ public class MovingSoundRecord extends MovingSound {
         zPosF = z;
     }
     
+    public void setAttenuationType(AttenuationType newType) {
+        attenuationType = newType;
+    }
+    
     public void stop() {
         donePlaying = true;
     }
     
     @Override
     public void update() {
-        Vec3d pos = tickFunc.get();
+        Vec3d pos = tickFunc.apply(new Vec3d(xPosF, yPosF, zPosF));
         if (pos == null)
             donePlaying = true;
         else

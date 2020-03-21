@@ -37,14 +37,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
-import thecodex6824.thaumicaugmentation.api.tile.IImpetusGate;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGate;
@@ -106,32 +103,6 @@ public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, 
         if (!world.getBlockState(pos.offset(dir)).isSideSolid(world, pos.offset(dir), dir)) {
             dropBlockAsItem(world, pos, state, 0);
             world.setBlockToAir(pos);
-        }
-    }
-    
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-            EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        
-        if (world.isRemote)
-            return true;
-        else {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof IImpetusGate) {
-                IImpetusGate gate = (IImpetusGate) tile;
-                if (player.isSneaking()) {
-                    gate.cycleMode();
-                    world.playSound(null, pos, SoundsTC.tool, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                }
-                else if (!gate.isInRedstoneMode()) {
-                    gate.cycleLimit();
-                    world.playSound(null, pos, SoundsTC.ticks, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                }
-                
-                return true;
-            }
-            else
-                return false;
         }
     }
     

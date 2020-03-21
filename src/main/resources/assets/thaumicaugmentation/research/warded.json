@@ -171,6 +171,9 @@
                 "FORTIFIED_GLASS",
                 "!FluxRift"
             ],
+            "meta": [
+                "HIDDEN"  
+            ],
             "location": [
                 2,
                 4
@@ -202,6 +205,9 @@
                 "FORTIFIED_GLASS",
                 "m_DIMENSIONALFRACTURE"
             ],
+            "meta": [
+                "HIDDEN"  
+            ],
             "location": [
                 3,
                 4
@@ -232,6 +238,9 @@
             "parents": [
                 "FORTIFIED_GLASS",
                 "~MIRROR"
+            ],
+            "meta": [
+                "HIDDEN"  
             ],
             "location": [
                 4,

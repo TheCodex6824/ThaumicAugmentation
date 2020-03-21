@@ -123,5 +123,45 @@
                 "stream": false
             }
         ]
+    },
+    "booster_start": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:item/booster_start1",
+                "subtitle": "thaumicaugmentation.subtitle.booster_start",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:item/booster_start2",
+                "subtitle": "thaumicaugmentation.subtitle.booster_start",
+                "stream": false
+            }
+        ]
+    },
+    "booster_end": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:item/booster_end1",
+                "subtitle": "thaumicaugmentation.subtitle.booster_end",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:item/booster_end2",
+                "subtitle": "thaumicaugmentation.subtitle.booster_start",
+                "stream": false
+            }
+        ]
+    },
+    "booster_loop": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:item/booster_loop",
+                "subtitle": "thaumicaugmentation.subtitle.booster_loop",
+                "stream": false
+            }
+        ]
     }
 }

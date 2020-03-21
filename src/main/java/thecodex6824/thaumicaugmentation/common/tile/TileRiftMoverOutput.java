@@ -181,8 +181,8 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                     loop.stop();
                 
                 loop = ThaumicAugmentation.proxy.playSpecialSound(TASounds.RIFT_MOVER_OUTPUT_LOOP, SoundCategory.BLOCKS,
-                        () -> operating && rift != null ? new Vec3d(pos).add(0.5, 0.5, 0.5) : null, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
-                        4.0F, 1.0F);
+                        old -> operating && rift != null ? old : null, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
+                        4.0F, 1.0F, true, 0);
             }
             
             loadedRiftUUID = null;
@@ -300,8 +300,8 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                     loop.stop();
                 
                 loop = ThaumicAugmentation.proxy.playSpecialSound(TASounds.RIFT_MOVER_OUTPUT_LOOP, SoundCategory.BLOCKS,
-                        () -> operating && rift != null ? new Vec3d(pos).add(0.5, 0.5, 0.5) : null, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
-                        4.0F, 1.0F);
+                        old -> operating && rift != null ? old : null, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
+                        4.0F, 1.0F, true, 0);
             }
         }
     }

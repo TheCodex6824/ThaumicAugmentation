@@ -24,7 +24,6 @@ import java.util.IdentityHashMap;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -102,7 +101,6 @@ import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
-import thecodex6824.thaumicaugmentation.api.tile.IImpetusGate;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.storage.ClientWardStorageValue;
@@ -136,6 +134,7 @@ import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderAltar;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderEldritchLock;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusGate;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObelisk;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObeliskVisual;
@@ -166,6 +165,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.PacketBiomeUpdate;
+import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
 import thecodex6824.thaumicaugmentation.common.network.PacketConfigSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
 import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
@@ -188,6 +188,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGate;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
@@ -233,6 +234,7 @@ public class ClientProxy extends ServerProxy {
         handlers.put(PacketWispZap.class, (message, ctx) -> handleWispZapPacket((PacketWispZap) message, ctx));
         handlers.put(PacketFollowingOrb.class, (message, ctx) -> handleFollowingOrbPacket((PacketFollowingOrb) message, ctx));
         handlers.put(PacketFlightState.class, (message, ctx) -> handleFlightStatePacket((PacketFlightState) message, ctx));
+        handlers.put(PacketBoostState.class, (message, ctx) -> handleBoostStatePacket((PacketBoostState) message, ctx));
     }
     
     @Override
@@ -314,10 +316,10 @@ public class ClientProxy extends ServerProxy {
     }
     
     @Override
-    public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Supplier<Vec3d> tick, float x, float y,
-            float z, float vol, float pitch) {
+    public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick, float x, float y,
+            float z, float vol, float pitch, boolean repeat, int repeatDelay) {
         
-        MovingSoundRecord audio = new MovingSoundRecord(sound, category, tick, x, y, z, vol, pitch);
+        MovingSoundRecord audio = new MovingSoundRecord(sound, category, tick, x, y, z, vol, pitch, repeat, repeatDelay);
         Minecraft.getMinecraft().getSoundHandler().playSound(audio);
         return new SoundHandleSpecialSound(audio);
     }
@@ -822,6 +824,12 @@ public class ClientProxy extends ServerProxy {
         if (e instanceof EntityPlayer)
             ClientEventHandler.onFlightChange((EntityPlayer) e, message.isFlying());
     }
+    
+    protected void handleBoostStatePacket(PacketBoostState message, MessageContext context) {
+        Entity e = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
+        if (e instanceof EntityPlayer)
+            ClientEventHandler.onBoostChange((EntityPlayer) e, message.isBoosting());
+    }
 
     @Override
     public void preInit() {
@@ -895,6 +903,7 @@ public class ClientProxy extends ServerProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftMoverOutput.class, new RenderRiftMoverOutput());
         ClientRegistry.bindTileEntitySpecialRenderer(TileVoidRechargePedestal.class, new RenderVoidRechargePedestal());
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusMirror.class, new RenderImpetusMirror());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusGate.class, new RenderImpetusGate());
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftMonitor.class, new RenderRiftMonitor());
         ClientRegistry.bindTileEntitySpecialRenderer(TileStabilityFieldGenerator.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileStarfieldGlass.class, new RenderStarfieldGlass());
@@ -1091,20 +1100,11 @@ public class ClientProxy extends ServerProxy {
                 
                 if (tintIndex == 1 && world != null && pos != null) {
                     TileEntity tile = world.getTileEntity(pos);
-                    if (tile instanceof IImpetusGate) {
-                        if (((IImpetusGate) tile).isInRedstoneMode()) {
-                            if (world instanceof World && ((World) world).isBlockPowered(pos))
-                                return 0xCC0000;
-                            else
-                                return 0x550000;
-                        }
-                        else {
-                            int level = ((IImpetusGate) tile).getManualLimitLevel();
-                            if (level > -1 && level < 16) {
-                                int component = (int) (level / 15.0 * 153.0) & 0xFF;
-                                return (component << 16) | component;
-                            }
-                        }
+                    if (tile instanceof TileImpetusGate) {
+                        if (tile.getWorld().getRedstonePowerFromNeighbors(pos) > 0)
+                            return 0;
+                        else
+                            return 0x990099;
                     }
                 }
                 

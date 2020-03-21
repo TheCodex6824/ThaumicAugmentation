@@ -139,6 +139,9 @@
                 "HARNESS_BASE",
                 "!ELYTRA"
             ],
+            "meta": [
+                "HIDDEN"  
+            ],
             "location": [
                 0,
                 6

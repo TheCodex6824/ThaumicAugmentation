@@ -20,7 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -82,8 +82,8 @@ public interface ISidedProxy {
     
     public float getPartialTicks();
     
-    public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Supplier<Vec3d> tick,
-            float x, float y, float z, float vol, float pitch);
+    public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick,
+            float x, float y, float z, float vol, float pitch, boolean repeat, int repeatDelay);
     
     public void preInit();
 

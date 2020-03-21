@@ -25,12 +25,26 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class PacketElytraBoost implements IMessage {
 
+    protected boolean start;
+    
     public PacketElytraBoost() {}
     
-    @Override
-    public void fromBytes(ByteBuf buf) {}
+    public PacketElytraBoost(boolean starting) {
+        start = starting;
+    }
     
     @Override
-    public void toBytes(ByteBuf buf) {}
+    public void fromBytes(ByteBuf buf) {
+        start = buf.readBoolean();
+    }
+    
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeBoolean(start);
+    }
+    
+    public boolean isStarting() {
+        return start;
+    }
     
 }

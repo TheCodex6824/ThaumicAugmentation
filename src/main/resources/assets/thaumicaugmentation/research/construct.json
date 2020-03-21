@@ -114,6 +114,9 @@
                 "~MINDBIOTHAUMIC",
                 "~BASEAUROMANCY"
             ],
+            "meta": [
+                "HIDDEN"  
+            ],
             "location": [
                 7,
                 1

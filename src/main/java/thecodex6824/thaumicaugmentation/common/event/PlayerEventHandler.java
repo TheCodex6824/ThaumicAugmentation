@@ -20,8 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.common.event;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.WeakHashMap;
 
+import baubles.api.BaubleType;
+import baubles.api.cap.BaublesCapabilities;
+import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,6 +35,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.stats.StatisticsManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -48,11 +54,18 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import thaumcraft.api.capabilities.IPlayerKnowledge.EnumResearchFlag;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
+import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.item.IArmorReduceFallDamage;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
+import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
 import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
@@ -60,7 +73,8 @@ import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 public final class PlayerEventHandler {
 
     private static final WeakHashMap<Entity, Float> FALL_DAMAGE = new WeakHashMap<>();
-    private static final WeakHashMap<EntityPlayer, Boolean> CREATIVE_FLIGHT = new WeakHashMap<>();
+    private static final Set<EntityPlayer> CREATIVE_FLIGHT = Collections.newSetFromMap(new WeakHashMap<>());
+    private static final Set<EntityPlayer> ELYTRA_BOOSTS = Collections.newSetFromMap(new WeakHashMap<>());
     
     private PlayerEventHandler() {}
     
@@ -131,6 +145,46 @@ public final class PlayerEventHandler {
         }
     }
     
+    public static boolean getBoostState(EntityPlayer player) {
+        return ELYTRA_BOOSTS.contains(player);
+    }
+    
+    public static void updateBoostState(EntityPlayer player, boolean boost) {
+        if (boost)
+            ELYTRA_BOOSTS.add(player);
+        else
+            ELYTRA_BOOSTS.remove(player);
+    }
+    
+    public static boolean playerCanBoost(EntityPlayer player) {
+        boolean canKeepFlying = false;
+        IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+        if (baubles != null) {
+            for (int slot : BaubleType.BODY.getValidSlots()) {
+                ItemStack body = baubles.getStackInSlot(slot);
+                if (body.getItem() == TAItems.ELYTRA_HARNESS) {
+                    IAugmentableItem augmentable = body.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                    if (augmentable != null) {
+                        for (ItemStack aug : augmentable.getAllAugments()) {
+                            if (aug.getItem() == TAItems.ELYTRA_HARNESS_AUGMENT && aug.getMetadata() == 0) {
+                                IImpetusStorage impetus = aug.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                                if (impetus != null && ImpetusAPI.tryExtractFully(impetus, 1, player)) {
+                                    canKeepFlying = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                if (canKeepFlying)
+                    break;
+            }
+        }
+        
+        return canKeepFlying;
+    }
+    
     @SubscribeEvent
     public static void onTick(PlayerTickEvent event) {
         if (event.phase == Phase.END) {
@@ -143,13 +197,33 @@ public final class PlayerEventHandler {
                     checkResearch(player);
                 
                 Boolean fly = Boolean.valueOf(player.capabilities.isFlying);
-                if (!fly.equals(CREATIVE_FLIGHT.get(player))) {
+                if (CREATIVE_FLIGHT.contains(player) != fly) {
                     PacketFlightState packet = new PacketFlightState(player.getEntityId(), fly);
                     if (player instanceof EntityPlayerMP)
                         TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
                     
                     TANetwork.INSTANCE.sendToAllTracking(packet, player);
-                    CREATIVE_FLIGHT.put(player, fly);
+                    if (fly)
+                        CREATIVE_FLIGHT.add(player);
+                    else
+                        CREATIVE_FLIGHT.remove(player);
+                }
+                
+                if (ELYTRA_BOOSTS.contains(player)) {
+                    if (!playerCanBoost(player)) {
+                        ELYTRA_BOOSTS.remove(player);
+                        PacketBoostState packet = new PacketBoostState(player.getEntityId(), false);
+                        if (player instanceof EntityPlayerMP)
+                            TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
+                        
+                        TANetwork.INSTANCE.sendToAllTracking(packet, player);
+                    }
+                    else {
+                        Vec3d vec3d = player.getLookVec();
+                        player.motionX += vec3d.x * 0.1 + (vec3d.x * 1.5 - player.motionX) * 0.5;
+                        player.motionY += vec3d.y * 0.1 + (vec3d.y * 1.5 - player.motionY) * 0.5;
+                        player.motionZ += vec3d.z * 0.1 + (vec3d.z * 1.5 - player.motionZ) * 0.5;
+                    }
                 }
             }
         }

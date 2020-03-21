@@ -161,6 +161,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         @Override
         public void onEnergyChanged() {
             markDirty();
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
         }
         
         public void validateEnergy() {

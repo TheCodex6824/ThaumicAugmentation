@@ -28,7 +28,6 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -49,12 +48,11 @@ import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
+import thecodex6824.thaumicaugmentation.client.event.ClientEventHandler;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
 import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
-import thecodex6824.thaumicaugmentation.common.network.PacketElytraBoost;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public class ItemElytraHarnessAugment extends ItemTABase {
 
@@ -97,18 +95,11 @@ public class ItemElytraHarnessAugment extends ItemTABase {
                 @Override
                 public boolean onTick(Entity user) {
                     if (user.world.isRemote && ThaumicAugmentation.proxy.isEntityClientPlayer(user)) {
-                        EntityLivingBase entity = (EntityLivingBase) user;
-                        IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                        if (energy != null && entity.isElytraFlying() && entity.getTicksElytraFlying() >= 2 && ThaumicAugmentation.proxy.isJumpDown()) {
-                            // let the server send the updated energy value
-                            if ((entity instanceof EntityPlayer && ((EntityPlayer) entity).isCreative()) ||
-                                    energy.extractEnergy(1, true) == 1) {
-                                TANetwork.INSTANCE.sendToServer(new PacketElytraBoost());
-                                Vec3d vec3d = entity.getLookVec();
-                                entity.motionX += vec3d.x * 0.1 + (vec3d.x * 1.5 - entity.motionX) * 0.5;
-                                entity.motionY += vec3d.y * 0.1 + (vec3d.y * 1.5 - entity.motionY) * 0.5;
-                                entity.motionZ += vec3d.z * 0.1 + (vec3d.z * 1.5 - entity.motionZ) * 0.5;
-                            }
+                        if (ClientEventHandler.isBoosting((EntityPlayer) user)) {
+                            Vec3d vec3d = user.getLookVec();
+                            user.motionX += vec3d.x * 0.1 + (vec3d.x * 1.5 - user.motionX) * 0.5;
+                            user.motionY += vec3d.y * 0.1 + (vec3d.y * 1.5 - user.motionY) * 0.5;
+                            user.motionZ += vec3d.z * 0.1 + (vec3d.z * 1.5 - user.motionZ) * 0.5;
                         }
                     }
                     

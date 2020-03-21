@@ -44,6 +44,9 @@ public final class TASounds {
     public static final SoundEvent RIFT_MOVER_OUTPUT_LOOP = create("rift_mover_output_loop");
     public static final SoundEvent ALTAR_SUMMON_START = create("altar_summon_start");
     public static final SoundEvent ALTAR_SUMMON = create("altar_summon");
+    public static final SoundEvent ELYTRA_BOOST_START = create("booster_start");
+    public static final SoundEvent ELYTRA_BOOST_END = create("booster_end");
+    public static final SoundEvent ELYTRA_BOOST_LOOP = create("booster_loop");
     
     /**
      * Returns all of the sounds in the mod.
@@ -51,7 +54,8 @@ public final class TASounds {
      */
     public static SoundEvent[] getAllSounds() {
         return new SoundEvent[] {EMPTINESS_AMBIENCE, EMPTINESS_MUSIC, RIFT_ENERGY_ZAP, FOCUS_WATER_IMPACT,
-                RIFT_MOVER_INPUT_LOOP, RIFT_MOVER_OUTPUT_LOOP, ALTAR_SUMMON_START, ALTAR_SUMMON};
+                RIFT_MOVER_INPUT_LOOP, RIFT_MOVER_OUTPUT_LOOP, ALTAR_SUMMON_START, ALTAR_SUMMON,
+                ELYTRA_BOOST_START, ELYTRA_BOOST_END, ELYTRA_BOOST_LOOP};
     }
     
 }

@@ -34,11 +34,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import thaumcraft.api.items.IGogglesDisplayExtended;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
@@ -46,17 +43,14 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
-import thecodex6824.thaumicaugmentation.api.tile.IImpetusGate;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusGate extends TileEntity implements ITickable, IBreakCallback, IImpetusGate, IGogglesDisplayExtended {
+public class TileImpetusGate extends TileEntity implements ITickable, IBreakCallback {
     
     protected static final Vec3d OFFSET = new Vec3d(0.0, 0.2, 0.0);
     
     protected ImpetusNode node;
-    protected byte limit;
-    protected boolean mode;
     protected int ticks;
     
     public TileImpetusGate() {
@@ -65,7 +59,7 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
             public long onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy,
                     boolean simulate) {
                 
-                return energy >= getLimit() ? energy : 0;
+                return world.getRedstonePowerFromNeighbors(pos) > 0 ? 0 : energy;
             }
             
             @Override
@@ -95,53 +89,6 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     public void update() {
         if (!world.isRemote && ticks++ % 20 == 0)
             NodeHelper.validateOutputs(world, node);
-    }
-    
-    @Override
-    public void cycleLimit() {
-        if (limit == 15)
-            limit = 0;
-        else
-            ++limit;
-        
-        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-    }
-    
-    @Override
-    public void cycleMode() {
-        mode = !mode;
-        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-    }
-    
-    @Override
-    public boolean isInRedstoneMode() {
-        return mode;
-    }
-    
-    @Override
-    public long getLimit() {
-        if (!mode) {
-            if (limit == 0)
-                return 0;
-            else if (limit == 15)
-                return Long.MAX_VALUE;
-            else
-                return (long) Math.pow(2, limit);
-        }
-        else {
-            int level = Math.min(world.getRedstonePowerFromNeighbors(pos), 15);
-            if (level == 0)
-                return 0;
-            else if (level == 15)
-                return Long.MAX_VALUE;
-            else
-                return (long) Math.pow(2, level);
-        }
-    }
-    
-    @Override
-    public int getManualLimitLevel() {
-        return mode ? -1 : limit;
     }
     
     @Override
@@ -181,29 +128,6 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     }
     
     @Override
-    public String[] getIGogglesText() {
-        if (mode) {
-            return new String[] {
-                    TextFormatting.GOLD + "" + TextFormatting.ITALIC + new TextComponentTranslation("thaumicaugmentation.text.gate_mode").getFormattedText() +
-                    TextFormatting.RED + new TextComponentTranslation("thaumicaugmentation.text.gate_mode_redstone").getFormattedText()
-            };
-        }
-        else {
-            return new String[] {
-                    TextFormatting.GOLD + "" + TextFormatting.ITALIC + new TextComponentTranslation("thaumicaugmentation.text.gate_mode").getFormattedText() +
-                    TextFormatting.WHITE + new TextComponentTranslation("thaumicaugmentation.text.gate_mode_manual").getFormattedText(),
-                    TextFormatting.GOLD + "" + TextFormatting.ITALIC + new TextComponentTranslation("thaumicaugmentation.text.gate_level").getFormattedText() +
-                    TextFormatting.WHITE + new TextComponentTranslation("thaumicaugmentation.text.gate_level_limit", limit).getFormattedText()
-            };
-        }
-    }
-    
-    @Override
-    public Vec3d getIGogglesTextOffset() {
-        return OFFSET;
-    }
-    
-    @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return oldState.getBlock() != newState.getBlock();
     }
@@ -212,8 +136,6 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound tag = super.getUpdateTag();
         tag.setTag("node", node.serializeNBT());
-        tag.setBoolean("mode", mode);
-        tag.setByte("limit", limit);
         return tag;
     }
     
@@ -221,8 +143,6 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
         node.init(world);
-        mode = tag.getBoolean("mode");
-        limit = tag.getByte("limit");
         world.markBlockRangeForRenderUpdate(pos, pos);
     }
     
@@ -230,23 +150,17 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     @Nullable
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setBoolean("mode", mode);
-        tag.setByte("limit", limit);
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
     
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        mode = pkt.getNbtCompound().getBoolean("mode");
-        limit = pkt.getNbtCompound().getByte("limit");
         world.markBlockRangeForRenderUpdate(pos, pos);
     }
     
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         tag.setTag("node", node.serializeNBT());
-        tag.setByte("limit", limit);
-        tag.setBoolean("mode", mode);
         return super.writeToNBT(tag);
     }
     
@@ -254,8 +168,6 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         node.deserializeNBT(nbt.getCompoundTag("node"));
-        limit = nbt.getByte("limit");
-        mode = nbt.getBoolean("mode");
     }
     
     @Override
@@ -272,6 +184,16 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
             return CapabilityImpetusNode.IMPETUS_NODE.cast(node);
         else
             return super.getCapability(capability, facing);
+    }
+    
+    @Override
+    public boolean hasFastRenderer() {
+        return true;
+    }
+    
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 1;
     }
     
 }

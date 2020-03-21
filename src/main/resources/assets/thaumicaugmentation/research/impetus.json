@@ -10,6 +10,9 @@
             "parents": [
                 "ELDRITCH_BOSS"
             ],
+            "meta": [
+                "HIDDEN"
+            ],
             "location": [
                 10,
                 4
@@ -125,7 +128,7 @@
                 "~WARDED_ARCANA"
             ],
             "location": [
-                10,
+                16,
                 6
             ],
             "stages": [
@@ -260,6 +263,107 @@
                         "thaumicaugmentation:biome_focus",
                         "thaumicaugmentation:biome_focus_special_reset",
                         "thaumicaugmentation:arcane_terraformer"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON",
+            "name": "thaumicaugmentation.research.impetus_cannon.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPETUS",
+                "~INFUSIONSTABLE"
+            ],
+            "location": [
+                10,
+                6
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon.0",
+                    "required_craft": [
+                        "thaumcraft:stabilizer"
+                    ],
+                    "required_research": [
+                        "f_IMPETUSDAMAGE"  
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT_RAILGUN",
+            "name": "thaumicaugmentation.research.impetus_cannon_augment_railgun.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment;1;0"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON"
+            ],
+            "location": [
+                8,
+                8
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_railgun.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_railgun.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment_railgun"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT_BURST",
+            "name": "thaumicaugmentation.research.impetus_cannon_augment_burst.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment;1;1"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON"
+            ],
+            "location": [
+                6,
+                8
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_burst.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_burst.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment_burst"
                     ]
                 }
             ]

@@ -61,6 +61,7 @@ public final class TANetwork {
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketWispZap.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFollowingOrb.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFlightState.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketBoostState.class, id++, Side.CLIENT);
         
         INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketInteractGUI.class, id++, Side.SERVER);
         INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketElytraBoost.class, id++, Side.SERVER);

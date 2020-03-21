@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.client.sound;
 
 import java.lang.ref.WeakReference;
 
+import net.minecraft.client.audio.ISound.AttenuationType;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 
 public class SoundHandleSpecialSound implements ISoundHandle {
@@ -30,6 +31,12 @@ public class SoundHandleSpecialSound implements ISoundHandle {
     
     public SoundHandleSpecialSound(MovingSoundRecord audio) {
         sound = new WeakReference<>(audio);
+    }
+    
+    public void setAttenuationType(AttenuationType newType) {
+        MovingSoundRecord s = sound.get();
+        if (s != null)
+            s.setAttenuationType(newType);
     }
     
     @Override

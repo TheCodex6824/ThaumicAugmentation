@@ -266,7 +266,8 @@
                 0
             ],
             "meta": [
-                "SPIKY"
+                "SPIKY",
+                "HIDDEN"
             ],
             "stages": [
                 {
@@ -303,7 +304,8 @@
                 0
             ],
             "meta": [
-                "ROUND"
+                "ROUND",
+                "HIDDEN"
             ],
             "stages": [
                 {
@@ -402,7 +404,7 @@
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
                 "RIFT_MANAGEMENT",
-                "~STABILIZER",
+                "~INFUSIONSTABLE",
                 "~VISGENERATOR"
             ],
             "location": [

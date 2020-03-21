@@ -20,13 +20,16 @@
 
 package thecodex6824.thaumicaugmentation.client.event;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound.AttenuationType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -59,21 +62,29 @@ import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.storage.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageClient;
+import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
+import thecodex6824.thaumicaugmentation.common.network.PacketElytraBoost;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public final class ClientEventHandler {
 
-    private static final WeakHashMap<EntityPlayer, Boolean> CREATIVE_FLIGHT = new WeakHashMap<>();
+    private static final Set<EntityPlayer> CREATIVE_FLIGHT = Collections.newSetFromMap(new WeakHashMap<>());
+    private static final Set<EntityPlayer> ELYTRA_BOOSTS = Collections.newSetFromMap(new WeakHashMap<>());
     
     private ClientEventHandler() {}
     
@@ -170,28 +181,99 @@ public final class ClientEventHandler {
     
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (!TAConfig.disableWardFocus.getValue() && event.phase == Phase.END) {
-            Minecraft mc = FMLClientHandler.instance().getClient();
-            if (mc.player != null && mc.world != null && mc.world.getTotalWorldTime() % 2 == 0 && mc.getRenderViewEntity() == mc.player) {
-                if (mc.player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ICaster) {
-                    ItemStack stack = mc.player.getHeldItem(EnumHand.MAIN_HAND);
-                    if (((ICaster) stack.getItem()).getFocus(stack) instanceof ItemFocus && 
-                            focusContainsWardFocus(((ICaster) stack.getItem()).getFocusStack(stack))) {
-                        
-                        handleWardOverlay(mc.player.rayTrace(Math.min(mc.player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() * 2, 32),
-                                mc.getRenderPartialTicks()));
-                        return;
+        if (event.phase == Phase.END) {
+            EntityPlayer player = Minecraft.getMinecraft().player;
+            if (!TAConfig.disableWardFocus.getValue()) {
+                Minecraft mc = Minecraft.getMinecraft();
+                if (player != null && mc.world != null && mc.world.getTotalWorldTime() % 2 == 0 && mc.getRenderViewEntity() == player) {
+                    if (player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ICaster) {
+                        ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+                        if (((ICaster) stack.getItem()).getFocus(stack) instanceof ItemFocus && 
+                                focusContainsWardFocus(((ICaster) stack.getItem()).getFocusStack(stack))) {
+                            
+                            handleWardOverlay(player.rayTrace(Math.min(player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() * 2, 32),
+                                    mc.getRenderPartialTicks()));
+                            return;
+                        }
+                    }   
+                    
+                    if (player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ICaster) {
+                        ItemStack stack = player.getHeldItem(EnumHand.OFF_HAND);
+                        if (((ICaster) stack.getItem()).getFocus(stack) instanceof ItemFocus && 
+                                focusContainsWardFocus(((ICaster) stack.getItem()).getFocusStack(stack))) {
+                            
+                            handleWardOverlay(player.rayTrace(Math.min(player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() * 2, 32),
+                                    mc.getRenderPartialTicks()));
+                        }
                     }
-                }   
+                }
+            }
+            
+            Boolean boost = ELYTRA_BOOSTS.contains(player);
+            if (!boost && ThaumicAugmentation.proxy.isEntityRenderView(player) && ThaumicAugmentation.proxy.isJumpDown() &&
+                    player.isElytraFlying() && player.getTicksElytraFlying() >= 2) {
                 
-                if (mc.player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ICaster) {
-                    ItemStack stack = mc.player.getHeldItem(EnumHand.OFF_HAND);
-                    if (((ICaster) stack.getItem()).getFocus(stack) instanceof ItemFocus && 
-                            focusContainsWardFocus(((ICaster) stack.getItem()).getFocusStack(stack))) {
+                IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+                boolean done = false;
+                if (baubles != null) {
+                    for (int slot : BaubleType.BODY.getValidSlots()) {
+                        ItemStack body = baubles.getStackInSlot(slot);
+                        if (body.getItem() == TAItems.ELYTRA_HARNESS) {
+                            IAugmentableItem augmentable = body.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                            if (augmentable != null) {
+                                for (ItemStack aug : augmentable.getAllAugments()) {
+                                    if (aug.getItem() == TAItems.ELYTRA_HARNESS_AUGMENT && aug.getMetadata() == 0) {
+                                        IImpetusStorage impetus = aug.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                                        if (impetus != null && (player.isCreative() || impetus.extractEnergy(1, true) == 1)) {
+                                            onBoostChange(player, true);
+                                            PacketElytraBoost boostPacket = new PacketElytraBoost(true);
+                                            TANetwork.INSTANCE.sendToServer(boostPacket);
+                                            done = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         
-                        handleWardOverlay(mc.player.rayTrace(Math.min(mc.player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() * 2, 32),
-                                mc.getRenderPartialTicks()));
+                        if (done)
+                            break;
                     }
+                }
+            }
+            else if (boost && ThaumicAugmentation.proxy.isEntityRenderView(player)) {
+                boolean stopping = !ThaumicAugmentation.proxy.isJumpDown() || !player.isElytraFlying() || player.getTicksElytraFlying() < 2;
+                if (!stopping) {
+                    IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+                    stopping = true;
+                    if (baubles != null) {
+                        for (int slot : BaubleType.BODY.getValidSlots()) {
+                            ItemStack body = baubles.getStackInSlot(slot);
+                            if (body.getItem() == TAItems.ELYTRA_HARNESS) {
+                                IAugmentableItem augmentable = body.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                                if (augmentable != null) {
+                                    for (ItemStack aug : augmentable.getAllAugments()) {
+                                        if (aug.getItem() == TAItems.ELYTRA_HARNESS_AUGMENT && aug.getMetadata() == 0) {
+                                            IImpetusStorage impetus = aug.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                                            if (impetus != null && (player.isCreative() || impetus.extractEnergy(1, true) == 1)) {
+                                                stopping = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if (!stopping)
+                                break;
+                        }
+                    }
+                }
+                
+                if (stopping) {
+                    onBoostChange(player, false);
+                    PacketElytraBoost boostPacket = new PacketElytraBoost(false);
+                    TANetwork.INSTANCE.sendToServer(boostPacket);
                 }
             }
         }
@@ -199,33 +281,99 @@ public final class ClientEventHandler {
     
     public static void onFlightChange(EntityPlayer player, boolean flying) {
         Boolean fly = Boolean.valueOf(flying);
-        if (!fly.equals(CREATIVE_FLIGHT.get(player))) {
+        if (!fly.equals(CREATIVE_FLIGHT.contains(player))) {
             IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
             if (baubles != null) {
                 for (int slot : BaubleType.BODY.getValidSlots()) {
                     ItemStack body = baubles.getStackInSlot(slot);
                     if (body.getItem() == TAItems.THAUMOSTATIC_HARNESS && RechargeHelper.getCharge(body) > 0) {
+                        final int id = player.getEntityId();
                         if (flying) {
-                            player.getEntityWorld().playSound(player.posX, player.posY, player.posZ, SoundsTC.hhon, SoundCategory.PLAYERS, 1.0F, 1.0F, false);
-                            final int id = player.getEntityId();
-                            ThaumicAugmentation.proxy.playSpecialSound(SoundsTC.jacobs, SoundCategory.PLAYERS,
-                                    () -> {
+                            ISoundHandle handle = ThaumicAugmentation.proxy.playSpecialSound(SoundsTC.hhon, SoundCategory.PLAYERS,
+                                    old -> {
                                         Entity entity = Minecraft.getMinecraft().world.getEntityByID(id);
-                                        if (entity instanceof EntityPlayer && !entity.isDead && Boolean.TRUE.equals(CREATIVE_FLIGHT.get((EntityPlayer) entity)))
+                                        if (entity instanceof EntityPlayer && !entity.isDead)
                                             return entity.getPositionVector();
                                         else
                                             return null;
-                                    }, (float) player.posX, (float) player.posY, (float) player.posZ, 0.1F, 1.0F);
+                                    }, (float) player.posX, (float) player.posY, (float) player.posZ, 1.0F, 1.0F, false, 0);
+                            if (ThaumicAugmentation.proxy.isEntityRenderView(player) && handle instanceof SoundHandleSpecialSound)
+                                ((SoundHandleSpecialSound) handle).setAttenuationType(AttenuationType.NONE);
+                            
+                            handle = ThaumicAugmentation.proxy.playSpecialSound(SoundsTC.jacobs, SoundCategory.PLAYERS,
+                                    old -> {
+                                        Entity entity = Minecraft.getMinecraft().world.getEntityByID(id);
+                                        if (entity instanceof EntityPlayer && !entity.isDead && CREATIVE_FLIGHT.contains((EntityPlayer) entity))
+                                            return entity.getPositionVector();
+                                        else
+                                            return null;
+                                    }, (float) player.posX, (float) player.posY, (float) player.posZ, 0.1F, 1.0F, true, 0);
+                            if (ThaumicAugmentation.proxy.isEntityRenderView(player) && handle instanceof SoundHandleSpecialSound)
+                                ((SoundHandleSpecialSound) handle).setAttenuationType(AttenuationType.NONE);
                         }
-                        else
-                            player.getEntityWorld().playSound(player.posX, player.posY, player.posZ, SoundsTC.hhoff, SoundCategory.PLAYERS, 1.0F, 1.0F, false);
+                        else {
+                            ISoundHandle handle = ThaumicAugmentation.proxy.playSpecialSound(SoundsTC.hhoff, SoundCategory.PLAYERS,
+                                    old -> {
+                                        Entity entity = Minecraft.getMinecraft().world.getEntityByID(id);
+                                        if (entity instanceof EntityPlayer && !entity.isDead)
+                                            return entity.getPositionVector();
+                                        else
+                                            return null;
+                                    }, (float) player.posX, (float) player.posY, (float) player.posZ, 1.0F, 1.0F, false, 0);
+                            if (ThaumicAugmentation.proxy.isEntityRenderView(player) && handle instanceof SoundHandleSpecialSound)
+                                ((SoundHandleSpecialSound) handle).setAttenuationType(AttenuationType.NONE);
+                        }
                             
                         break;
                     }
                 }
             }
             
-            CREATIVE_FLIGHT.put(player, fly);
+            if (fly)
+                CREATIVE_FLIGHT.add(player);
+            else
+                CREATIVE_FLIGHT.remove(player);
+        }
+    }
+    
+    public static void onBoostChange(EntityPlayer player, boolean boost) {
+        final int id = player.getEntityId();
+        if (boost && !ELYTRA_BOOSTS.contains(player)) {
+            ELYTRA_BOOSTS.add(player);
+            ISoundHandle handle = ThaumicAugmentation.proxy.playSpecialSound(TASounds.ELYTRA_BOOST_START, SoundCategory.PLAYERS,
+                    old -> {
+                        Entity entity = Minecraft.getMinecraft().world.getEntityByID(id);
+                        if (entity instanceof EntityPlayer && !entity.isDead)
+                            return entity.getPositionVector();
+                        else
+                            return null;
+                    }, (float) player.posX, (float) player.posY, (float) player.posZ, 1.0F, 1.0F, false, 0);
+            if (ThaumicAugmentation.proxy.isEntityRenderView(player) && handle instanceof SoundHandleSpecialSound)
+                ((SoundHandleSpecialSound) handle).setAttenuationType(AttenuationType.NONE);
+            
+            handle = ThaumicAugmentation.proxy.playSpecialSound(TASounds.ELYTRA_BOOST_LOOP, SoundCategory.PLAYERS,
+                    old -> {
+                        Entity entity = Minecraft.getMinecraft().world.getEntityByID(id);
+                        if (entity instanceof EntityPlayer && !entity.isDead && ELYTRA_BOOSTS.contains((EntityPlayer) entity))
+                            return entity.getPositionVector();
+                        else
+                            return null;
+                    }, (float) player.posX, (float) player.posY, (float) player.posZ, 0.6F, 1.0F, true, 0);
+            if (ThaumicAugmentation.proxy.isEntityRenderView(player) && handle instanceof SoundHandleSpecialSound)
+                ((SoundHandleSpecialSound) handle).setAttenuationType(AttenuationType.NONE);
+        }
+        else if (!boost && ELYTRA_BOOSTS.contains(player)) {
+            ELYTRA_BOOSTS.remove(player);
+            ISoundHandle handle = ThaumicAugmentation.proxy.playSpecialSound(TASounds.ELYTRA_BOOST_END, SoundCategory.PLAYERS,
+                    old -> {
+                        Entity entity = Minecraft.getMinecraft().world.getEntityByID(id);
+                        if (entity instanceof EntityPlayer && !entity.isDead)
+                            return entity.getPositionVector();
+                        else
+                            return null;
+                    }, (float) player.posX, (float) player.posY, (float) player.posZ, 1.0F, 1.0F, false, 0);
+            if (ThaumicAugmentation.proxy.isEntityRenderView(player) && handle instanceof SoundHandleSpecialSound)
+                ((SoundHandleSpecialSound) handle).setAttenuationType(AttenuationType.NONE);
         }
     }
     
@@ -247,6 +395,10 @@ public final class ClientEventHandler {
         // will have already updated augment state in SP due to server check
         if (!ThaumicAugmentation.proxy.isSingleplayer())
             AugmentEventHandler.onEquipmentChange(event.getEntityLiving());
+    }
+    
+    public static boolean isBoosting(EntityPlayer player) {
+        return ELYTRA_BOOSTS.contains(player);
     }
     
 }

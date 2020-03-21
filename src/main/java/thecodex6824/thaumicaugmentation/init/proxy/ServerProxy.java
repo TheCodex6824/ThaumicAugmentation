@@ -23,19 +23,16 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 
-import baubles.api.BaubleType;
-import baubles.api.BaublesApi;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -53,14 +50,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.common.golems.client.gui.SealBaseContainer;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
-import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
-import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer;
@@ -68,10 +57,10 @@ import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerrafor
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
 import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
+import thecodex6824.thaumicaugmentation.common.event.PlayerEventHandler;
+import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
 import thecodex6824.thaumicaugmentation.common.network.PacketElytraBoost;
 import thecodex6824.thaumicaugmentation.common.network.PacketInteractGUI;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
@@ -175,8 +164,8 @@ public class ServerProxy implements ISidedProxy {
     }
     
     @Override
-    public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Supplier<Vec3d> tick, float x,
-            float y, float z, float vol, float pitch) {
+    public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick, float x,
+            float y, float z, float vol, float pitch, boolean repeat, int repeatDelay) {
         
         return new ISoundHandle.Noop();
     }
@@ -209,75 +198,45 @@ public class ServerProxy implements ISidedProxy {
     
     protected void handleElytraBoostPacket(PacketElytraBoost message, MessageContext context) {
         EntityPlayerMP entity = context.getServerHandler().player;
-        ItemStack body = BaublesApi.getBaublesHandler(entity).getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
-        if (!body.isEmpty() && body.getItem() == TAItems.ELYTRA_HARNESS && body.getItemDamage() < body.getMaxDamage()) {
-            IAugmentableItem i = body.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-            if (i != null) {
-                ItemStack augment = ItemStack.EMPTY;
-                for (ItemStack stack : i.getAllAugments()) {
-                    IAugment aug = stack.getCapability(CapabilityAugment.AUGMENT, null);
-                    if (stack.getItem() == TAItems.ELYTRA_HARNESS_AUGMENT &&
-                            aug instanceof IElytraHarnessAugment && !((IElytraHarnessAugment) aug).isCosmetic()) {
-                        augment = stack;
-                        break;
-                    }
-                }
+        if (!message.isStarting()) {
+            if (PlayerEventHandler.getBoostState(entity)) {
+                PlayerEventHandler.updateBoostState(entity, false);
+                PacketBoostState packet = new PacketBoostState(entity.getEntityId(), false);
+                if (entity instanceof EntityPlayerMP)
+                    TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);
                 
-                IImpetusStorage energy = augment.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                if (!augment.isEmpty() && energy != null && (entity.isCreative() || energy.extractEnergy(1, false) == 1)) {
-                    // don't kick players that are otherwise legit for bad latency
-                    if (entity.isElytraFlying()) {
-                        Vec3d vec3d = entity.getLookVec();
-                        entity.motionX += vec3d.x * 0.1 + (vec3d.x * 1.5 - entity.motionX) * 0.5;
-                        entity.motionY += vec3d.y * 0.1 + (vec3d.y * 1.5 - entity.motionY) * 0.5;
-                        entity.motionZ += vec3d.z * 0.1 + (vec3d.z * 1.5 - entity.motionZ) * 0.5;
-                        Vec3d dir = entity.getLookVec();
-                        PacketParticleEffect packet = new PacketParticleEffect(ParticleEffect.FIRE_MULTIPLE_RAND,
-                                entity.posX - dir.x, entity.posY + entity.height / 2.0 - dir.y, entity.posZ - dir.z,
-                                5.0, 0x101030);
-                        TANetwork.INSTANCE.sendTo(packet, entity);
-                        TANetwork.INSTANCE.sendToAllTracking(packet, entity);
-                        // we don't send a velocity update packet here as it makes the client's view of the player glitch out
-                        // at this point the client is correct anyway, we only need to send one if they are wrong
-                    }
-                }
-                else {
-                    if (!isSingleplayer()) {
-                        int fails = 5;
-                        try {
-                            fails = invalidBoosts.get(entity.getGameProfile().getId(), () -> 0);
-                        }
-                        catch (ExecutionException ex) {}
-                        
-                        if (fails >= 5) {
-                            ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: exceeded maximum acceptable incorrect elytra boost requests", entity.getName(), entity.getGameProfile().getId());
-                            context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
-                        }
-                        else {
-                            invalidBoosts.put(entity.getGameProfile().getId(), fails + 1);
-                            entity.connection.sendPacket(new SPacketEntityVelocity(entity));
-                        }
-                    }
-                    else
-                        entity.connection.sendPacket(new SPacketEntityVelocity(entity));
-                }
+                TANetwork.INSTANCE.sendToAllTracking(packet, entity);
+            }
+        }
+        else {
+            if (PlayerEventHandler.playerCanBoost(entity)) {
+                PlayerEventHandler.updateBoostState(entity, true);
+                PacketBoostState packet = new PacketBoostState(entity.getEntityId(), true);
+                if (entity instanceof EntityPlayerMP)
+                    TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);
+                
+                TANetwork.INSTANCE.sendToAllTracking(packet, entity);
             }
             else {
                 if (!isSingleplayer()) {
-                    ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: attempted elytra boost without augment", entity.getName(), entity.getGameProfile().getId());
-                    context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+                    int fails = 5;
+                    try {
+                        fails = invalidBoosts.get(entity.getGameProfile().getId(), () -> 0);
+                    }
+                    catch (ExecutionException ex) {}
+                    
+                    if (fails >= 5) {
+                        ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: exceeded maximum acceptable incorrect elytra boost requests", entity.getName(), entity.getGameProfile().getId());
+                        context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+                    }
+                    else {
+                        invalidBoosts.put(entity.getGameProfile().getId(), fails + 1);
+                        entity.connection.sendPacket(new SPacketEntityVelocity(entity));
+                    }
                 }
                 else
                     entity.connection.sendPacket(new SPacketEntityVelocity(entity));
             }
-        }
-        else {
-            if (!isSingleplayer()) {
-                ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: attempted elytra boost without item", entity.getName(), entity.getGameProfile().getId());
-                context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
-            }
-            else
-                entity.connection.sendPacket(new SPacketEntityVelocity(entity));
         }
     }
     
