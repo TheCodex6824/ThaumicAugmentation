@@ -65,13 +65,14 @@ public class RenderAltar extends TileEntitySpecialRenderer<TileAltar> {
             int open = !te.isOpen() ? 0 : Math.min(280 - te.getOpenTicks(), 100);
             double jitter = !te.isOpen() || te.getOpenTicks() > 180 ? 0.0 :
                 (Math.sin(rv.ticksExisted + partialTicks) / 4.0) * Math.min(180 - te.getOpenTicks(), 100) / 100.0;
-            double scaleX = (int) Math.min(5.0, open + partialTicks) / 5.0 + 0.1 + jitter;
-            double scaleY = (int) Math.min(30.0, open + partialTicks) / 65.0 + 0.075 + jitter;
+            double scaleX = (int) Math.min(30.0, open + partialTicks) / 30.0 + 0.1 + jitter;
+            double scaleY = (int) Math.min(5.0, open + partialTicks) / 5.0 + 0.075 + jitter;
             bindTexture(TATextures.ELDRITCH_PORTAL);
             GlStateManager.pushMatrix();
             GlStateManager.disableLighting();
-            GlStateManager.translate(x + 0.5, y + 1.35, z + 0.5);
+            GlStateManager.translate(x + 0.5, y + 1.5, z + 0.5);
             GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             GlStateManager.depthMask(false);
             GlStateManager.enableBlend();
@@ -80,10 +81,10 @@ public class RenderAltar extends TileEntitySpecialRenderer<TileAltar> {
             BufferBuilder buffer = t.getBuffer();
             float ticks = rv.ticksExisted % 16 / 16.0F;
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            buffer.pos(scaleX, -scaleY, 0.0).tex(ticks + 0.0625, 1.0).endVertex();
-            buffer.pos(-scaleX, -scaleY, 0.0).tex(ticks, 1.0).endVertex();
-            buffer.pos(-scaleX, scaleY, 0.0).tex(ticks, 0.0).endVertex();
-            buffer.pos(scaleX, scaleY, 0.0).tex(ticks + 0.0625, 0.0).endVertex();
+            buffer.pos(scaleX, -scaleY, 0.0).tex(ticks, 1.0).endVertex();
+            buffer.pos(-scaleX, -scaleY, 0.0).tex(ticks + 0.0625, 1.0).endVertex();
+            buffer.pos(-scaleX, scaleY, 0.0).tex(ticks + 0.0625, 0.0).endVertex();
+            buffer.pos(scaleX, scaleY, 0.0).tex(ticks, 0.0).endVertex();
             t.draw();
             GlStateManager.disableBlend();
             GlStateManager.depthMask(true);
