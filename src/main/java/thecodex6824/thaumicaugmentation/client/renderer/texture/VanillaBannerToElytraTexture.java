@@ -49,6 +49,7 @@ public class VanillaBannerToElytraTexture extends AbstractTexture {
     }
     
     @Override
+    @SuppressWarnings("resource") // TextureUtil#readBufferedImage closes resource
     public void loadTexture(IResourceManager resourceManager) throws IOException {
         deleteGlTexture();
         try (IResource resource = resourceManager.getResource(texture)){

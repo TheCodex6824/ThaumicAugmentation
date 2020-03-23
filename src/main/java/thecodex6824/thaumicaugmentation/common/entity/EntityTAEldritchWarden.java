@@ -70,11 +70,14 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
             DataSerializers.BOOLEAN);
     
     protected static final Field LAST_BLAST;
+    protected static final Field FRENZY_COUNTER;
     
     static {
         try {
             LAST_BLAST = EntityEldritchWarden.class.getDeclaredField("lastBlast");
             LAST_BLAST.setAccessible(true);
+            FRENZY_COUNTER = EntityEldritchWarden.class.getDeclaredField("fieldFrenzyCounter");
+            FRENZY_COUNTER.setAccessible(true);
         }
         catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -208,9 +211,18 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
         }
     }
     
+    protected int getFieldFrenzyCounter() {
+        try {
+            return FRENZY_COUNTER.getInt(this);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
     @Override
     protected void updateEntityActionState() {
-        if (getSpawnTimer() == 0)
+        if (getSpawnTimer() == 0 && getFieldFrenzyCounter() == 0)
             super.updateEntityActionState();
     }
     

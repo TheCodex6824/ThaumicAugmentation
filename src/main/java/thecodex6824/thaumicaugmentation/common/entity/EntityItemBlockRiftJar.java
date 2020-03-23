@@ -35,6 +35,8 @@ import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public class EntityItemBlockRiftJar extends EntityItem {
 
+    protected boolean ignoreDamage;
+    
     public EntityItemBlockRiftJar(World world) {
         super(world);
     }
@@ -47,37 +49,40 @@ public class EntityItemBlockRiftJar extends EntityItem {
         super(world, x, y, z, stack);
     }
     
+    protected void breakAndDoBadThings(int size, int seed) {
+        if (!ModConfig.CONFIG_MISC.wussMode) {
+            EntityFluxRift rift = new EntityFluxRift(world);
+            rift.setPositionAndRotation(posX, posY, posZ, rotationYaw, rotationPitch);
+            rift.setRiftSeed(seed);
+            rift.setRiftSize(size);
+            rift.setRiftStability(-50.0F);
+            if (world.spawnEntity(rift)) {
+                AuraHelper.polluteAura(world, rift.getPosition(), (float) Math.sqrt(size), true);
+                rift.playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.75F, 1.0F);
+                rift.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
+                TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
+                        rift.posX, rift.posY, rift.posZ), rift);
+            }
+        }
+        else {
+            playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.75F, 1.0F);
+            playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
+            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
+                    posX, posY, posZ), this);
+        }
+    }
+    
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
         super.attackEntityFrom(source, amount);
-        if (isDead) {
+        if (isDead && !ignoreDamage) {
             ItemStack stack = getItem();
+            int size = stack.getTagCompound().getInteger("size");
             if (stack.hasTagCompound() && stack.getTagCompound().hasKey("seed", NBT.TAG_INT) && 
-                    stack.getTagCompound().hasKey("size", NBT.TAG_INT)) {
+                    size > 0) {
                 
-                int size = stack.getTagCompound().getInteger("size");
-                if (size > 0) {
-                    if (!ModConfig.CONFIG_MISC.wussMode) {
-                        EntityFluxRift rift = new EntityFluxRift(world);
-                        rift.setPositionAndRotation(posX, posY, posZ, rotationYaw, rotationPitch);
-                        rift.setRiftSeed(stack.getTagCompound().getInteger("seed"));
-                        rift.setRiftSize(size);
-                        rift.setRiftStability(-50.0F);
-                        if (world.spawnEntity(rift)) {
-                            AuraHelper.polluteAura(world, rift.getPosition(), (float) Math.sqrt(size), true);
-                            rift.playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.75F, 1.0F);
-                            rift.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
-                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
-                                    rift.posX, rift.posY, rift.posZ), rift);
-                        }
-                    }
-                    else {
-                        playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.75F, 1.0F);
-                        playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
-                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
-                                posX, posY, posZ), this);
-                    }
-                }
+                ignoreDamage = true;
+                breakAndDoBadThings(size, stack.getTagCompound().getInteger("seed"));
             }
         }
         
@@ -87,15 +92,42 @@ public class EntityItemBlockRiftJar extends EntityItem {
     @Override
     protected void outOfWorld() {
         ItemStack stack = getItem();
+        int size = stack.getTagCompound().getInteger("size");
         if (!ModConfig.CONFIG_MISC.wussMode && stack.hasTagCompound() && stack.getTagCompound().hasKey("seed", NBT.TAG_INT) && 
-                stack.getTagCompound().hasKey("size", NBT.TAG_INT)) {
+                size > 0) {
             
-            int size = stack.getTagCompound().getInteger("size");
-            if (size > 0)
-                AuraHelper.polluteAura(world, getPosition(), size, true);
+            AuraHelper.polluteAura(world, getPosition(), size, true);
         }
         
         super.outOfWorld();
+    }
+    
+    @Override
+    public void setDead() {
+        if (!isDead) {
+            StackTraceElement[] trace = new Throwable().getStackTrace();
+            if (trace.length >= 2 && trace[1].getClassName().equals("thaumcraft.common.entities.EntityFluxRift")) {
+                ItemStack stack = getItem();
+                if (stack.hasTagCompound() && stack.getTagCompound().hasKey("seed", NBT.TAG_INT) && 
+                        stack.getTagCompound().getInteger("size") > 0) {
+                    
+                    for (EntityFluxRift rift : world.getEntitiesWithinAABB(EntityFluxRift.class, getEntityBoundingBox().grow(1.0)))
+                        rift.setDead();
+                    
+                    ignoreDamage = true;
+                    world.createExplosion(null, posX, posY, posZ, 3.0F, false);
+                    EntityPrimalWisp wisp = new EntityPrimalWisp(world);
+                    wisp.setPositionAndRotation(posX, posY + height / 2.0F, posZ,
+                            world.rand.nextInt(360) - 180, 0.0F);
+                    wisp.rotationYawHead = wisp.rotationYaw;
+                    wisp.renderYawOffset = wisp.rotationYaw;
+                    wisp.onInitialSpawn(world.getDifficultyForLocation(getPosition()), null);
+                    world.spawnEntity(wisp);
+                }
+            }
+        }
+        
+        super.setDead();
     }
     
 }

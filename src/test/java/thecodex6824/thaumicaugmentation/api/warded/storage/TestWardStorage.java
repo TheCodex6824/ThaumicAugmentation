@@ -35,8 +35,6 @@ import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
-import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageServer;
-import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer;
 import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer.StorageManagersServer.IWardStorageManagerServer;
 import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer.StorageManagersServer.StorageManager1Bit;
 import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer.StorageManagersServer.StorageManager2Bits;
