@@ -73,6 +73,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.beams.FXBeamBore;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -381,7 +382,8 @@ public class RenderEventHandler {
     
     public static void onRenderEntities(int pass) {
         if (pass == 0) {
-            float pt = Minecraft.getMinecraft().getRenderPartialTicks();
+            float pt = ThaumicAugmentation.proxy.isSingleplayer() && Minecraft.getMinecraft().isGamePaused() ?
+                    0.0F : Minecraft.getMinecraft().getRenderPartialTicks();
             Entity rv = Minecraft.getMinecraft().getRenderViewEntity() != null ? Minecraft.getMinecraft().getRenderViewEntity() :
                 Minecraft.getMinecraft().player;
             

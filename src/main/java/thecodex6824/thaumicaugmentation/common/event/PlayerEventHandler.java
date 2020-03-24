@@ -30,6 +30,7 @@ import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
@@ -141,6 +142,12 @@ public final class PlayerEventHandler {
         if (stats.readStat(StatList.DIVE_ONE_CM) > 7999 && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_LONGTIMEINWATER")) {
             ThaumcraftCapabilities.getKnowledge(player).addResearch("m_LONGTIMEINWATER");
             player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.long_time_in_water").setStyle(
+                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+        }
+        
+        if (player.getActivePotionEffect(MobEffects.LEVITATION) != null && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_LEVITATE")) {
+            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_LEVITATE");
+            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.levitate").setStyle(
                     new Style().setColor(TextFormatting.DARK_PURPLE)), true);
         }
     }

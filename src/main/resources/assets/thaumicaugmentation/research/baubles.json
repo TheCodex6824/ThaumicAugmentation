@@ -50,7 +50,7 @@
                 {
                     "text": "thaumicaugmentation.research.thaumostatic_harness.0",
                     "required_research": [
-                        "!LEVITATE"
+                        "m_LEVITATE"
                     ],
                     "required_knowledge": [
                         "OBSERVATION;ARTIFICE;1",
@@ -150,11 +150,12 @@
                 {
                     "text": "thaumicaugmentation.research.elytra_harness.0",
                     "required_research": [
-                        "!ELYTRAFLY"
+                        "m_ELYTRAFLY"
                     ],
                     "required_knowledge": [
                         "OBSERVATION;ARTIFICE;1",
-                        "THEORY;ARTIFICE;1"
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;ELDRITCH;1"
                     ]
                 },
                 {
