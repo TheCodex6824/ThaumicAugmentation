@@ -112,7 +112,8 @@
                 "ELDRITCH_BOSS",
                 "!AUTOCASTER",
                 "~MINDBIOTHAUMIC",
-                "~BASEAUROMANCY"
+                "~BASEAUROMANCY",
+                "~CROSSBOW"
             ],
             "meta": [
                 "HIDDEN"  
@@ -138,6 +139,14 @@
                     "recipes": [
                         "thaumicaugmentation:autocaster"
                     ]
+                }
+            ],
+            "addenda": [
+                { 
+                    "text": "thaumicaugmentation.research.autocaster.2",  
+                    "required_research":[
+                        "FOCUS_SHIELD"
+                    ] 
                 }
             ]
         }

@@ -161,6 +161,18 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                         }
                     }
                 }
+                
+                IImpetusStorage entityStorage = entity.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                if (entityStorage != null && entityStorage.canReceive()) {
+                    long canReceive = Math.min(entityStorage.receiveEnergy(Long.MAX_VALUE, true), 25);
+                    ConsumeResult result = consumer.consume(canReceive, false);
+                    if (entityStorage.receiveEnergy(result.energyConsumed, false) > 0) {
+                        ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.5, 0.5), entity.getPositionVector());
+                        NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+                        for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+                            NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+                    }
+                }
             }
         }
         else if (world.isRemote && ticks++ % 5 == 0) {

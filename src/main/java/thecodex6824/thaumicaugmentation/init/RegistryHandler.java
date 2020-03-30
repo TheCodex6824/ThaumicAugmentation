@@ -64,6 +64,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockCrabVent;
 import thecodex6824.thaumicaugmentation.common.block.BlockEldritchLock;
 import thecodex6824.thaumicaugmentation.common.block.BlockEldritchLockImpetus;
 import thecodex6824.thaumicaugmentation.common.block.BlockFortifiedGlass;
+import thecodex6824.thaumicaugmentation.common.block.BlockFortifiedGlassPane;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusGate;
@@ -228,6 +229,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockTASlab.Double(), "slab_double"));
         registry.register(setupBlock(new BlockTABars(), "bars"));
         registry.register(setupBlock(new BlockFortifiedGlass(), "fortified_glass"));
+        registry.register(setupBlock(new BlockFortifiedGlassPane(), "fortified_glass_pane"));
         registry.register(setupBlock(new BlockStarfieldGlass(), "starfield_glass"));
         registry.register(setupBlock(new BlockObelisk(), "obelisk"));
         registry.register(setupBlock(new BlockCapstone(), "capstone"));

@@ -95,7 +95,9 @@
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-                "MORE_AUROMANCY"
+                "MORE_AUROMANCY",
+                "~FOCUSELEMENTAL",
+                "~EVERFULLURN"
             ],
             "location": [
                 4,

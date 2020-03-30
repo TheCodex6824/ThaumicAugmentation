@@ -156,6 +156,12 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
     }
     
     @Override
+    public void setCustomNameTag(String name) {
+        super.setCustomNameTag(name);
+        bossInfo.setName(getDisplayName());
+    }
+    
+    @Override
     public void generateName() {
         int cIndex = (int) getEntityAttribute(ThaumcraftApiHelper.CHAMPION_MOD).getAttributeValue();
         setCustomNameTag(new TextComponentTranslation("thaumicaugmentation.text.entity.eldritch_warden", generateName(rand),

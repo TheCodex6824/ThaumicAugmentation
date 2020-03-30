@@ -59,6 +59,8 @@ import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
+import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.warded.entity.CapabilityWardOwnerProvider;
 import thecodex6824.thaumicaugmentation.api.warded.entity.WardOwnerProviderOwnable;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
@@ -72,6 +74,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     protected WeakReference<Entity> ownerRef;
     protected EntityAINearestValidTarget targeting;
     protected WardOwnerProviderOwnable<EntityAutocaster> wardOwner;
+    protected ImpetusStorage impetus;
     
     protected boolean teamCheck(EntityLivingBase target) {
         Team myTeam = getTeam();
@@ -119,6 +122,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
         super(world);
         ownerRef = new WeakReference<>(null);
         setDropChance(EntityEquipmentSlot.MAINHAND, 0.0F);
+        impetus = new ImpetusStorage(50, 25);
     }
     
     @Override
@@ -330,6 +334,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     @Override
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
+        compound.setTag("energy", impetus.serializeNBT());
         if (dataManager.get(OWNER_ID).isPresent())
             compound.setUniqueId("owner", dataManager.get(OWNER_ID).get());
         
@@ -341,6 +346,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     @Override
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
+        impetus.deserializeNBT(compound.getCompoundTag("energy"));
         if (compound.hasUniqueId("owner"))
             dataManager.set(OWNER_ID, Optional.of(compound.getUniqueId("owner")));
         
@@ -370,7 +376,9 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        return capability == CapabilityWardOwnerProvider.WARD_OWNER ? true : super.hasCapability(capability, facing);
+        return capability == CapabilityWardOwnerProvider.WARD_OWNER ||
+                capability == CapabilityImpetusStorage.IMPETUS_STORAGE ? true :
+                super.hasCapability(capability, facing);
     }
     
     @Override
@@ -382,6 +390,8 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
             
             return CapabilityWardOwnerProvider.WARD_OWNER.cast(wardOwner);
         }
+        else if (capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
+            return CapabilityImpetusStorage.IMPETUS_STORAGE.cast(impetus);
         else
             return super.getCapability(capability, facing);
     }

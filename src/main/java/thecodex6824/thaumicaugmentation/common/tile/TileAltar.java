@@ -38,6 +38,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thaumcraft.common.lib.SoundsTC;
@@ -131,7 +132,7 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
     public boolean onCasterRightClick(World world, ItemStack stack, EntityPlayer player,
             BlockPos pos, EnumFacing facing, EnumHand hand) {
         
-        if (!world.isRemote) {
+        if (!world.isRemote && world.getDifficulty() != EnumDifficulty.PEACEFUL) {
             open();
             world.playSound(null, pos, SoundsTC.wand, SoundCategory.BLOCKS, 1.0F, 1.0F);
             world.playSound(null, pos, TASounds.ALTAR_SUMMON_START, SoundCategory.BLOCKS, 1.5F, 1.0F);

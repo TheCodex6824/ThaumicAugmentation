@@ -160,6 +160,12 @@ public class EntityPrimalWisp extends EntityFlying implements IMob, IRangedAttac
     }
     
     @Override
+    public void setCustomNameTag(String name) {
+        super.setCustomNameTag(name);
+        boss.setName(getDisplayName());
+    }
+    
+    @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
         if (!world.isRemote) {

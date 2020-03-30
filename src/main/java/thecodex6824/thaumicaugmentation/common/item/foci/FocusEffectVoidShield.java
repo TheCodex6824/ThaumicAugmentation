@@ -100,7 +100,7 @@ public class FocusEffectVoidShield extends FocusEffect {
     
     @Override
     public String getResearch() {
-        return "FIRSTSTEPS";//return "FOCUS_SHIELD";
+        return "FOCUS_SHIELD";
     }
     
     @Override
@@ -129,6 +129,9 @@ public class FocusEffectVoidShield extends FocusEffect {
                 break;
             }
         }
+        
+        if (storage == null)
+            storage = caster.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
         
         if (storage != null) {
             if (!world.isRemote && result.typeOfHit == Type.ENTITY) {

@@ -1,7 +1,7 @@
 {
     "ctm":{
         "ctm_version": 1,
-        "type":"CTM",
+        "type":"ctm",
         "textures":[
             "thaumicaugmentation:blocks/fortified_glass_ctm"
         ],

@@ -1,0 +1,88 @@
+{
+    "multipart": [
+        {   
+            "apply": { 
+                "model": "thaumicaugmentation:fortified_glass_pane_post",
+                "uvlock": true 
+            }
+        },
+        {   
+            "when": { 
+                "north": true 
+            },
+            "apply": { 
+                "model": "thaumicaugmentation:fortified_glass_pane_side",
+                "uvlock": true 
+            }
+        },
+        {   
+            "when": { 
+                "east": true 
+            },
+            "apply": {
+                "model": "thaumicaugmentation:fortified_glass_pane_side",
+                "uvlock": true,
+                "y": 90
+            }
+        },
+        {   
+            "when": {
+                "south": true
+            },
+            "apply": {
+                "model": "thaumicaugmentation:fortified_glass_pane_side",
+                "uvlock": true,
+                "y": 180
+            }
+        },
+        {   
+            "when": {
+                "west": true
+            },
+            "apply": {
+                "model": "thaumicaugmentation:fortified_glass_pane_side",
+                "uvlock": true,
+                "y": 270
+            }
+        },
+        {   
+            "when": {
+                "north": false
+            },
+            "apply": {
+                "model": "thaumicaugmentation:fortified_glass_pane_noside",
+                "uvlock": true 
+            }
+        },
+        {   
+            "when": {
+                "east": false 
+            },
+            "apply": {
+                "model": "thaumicaugmentation:fortified_glass_pane_noside",
+                "uvlock": true,
+                "y": 90
+            }
+        },
+        {   
+            "when": {
+                "south": false
+            },
+            "apply": {
+                "model": "thaumicaugmentation:fortified_glass_pane_noside",
+                "uvlock": true,
+                "y": 180
+            }
+        },
+        {   
+            "when": {
+                "west": false
+            },
+            "apply": {
+                "model": "thaumicaugmentation:fortified_glass_pane_noside",
+                "uvlock": true,
+                "y": 270
+            }
+        }
+    ]
+}

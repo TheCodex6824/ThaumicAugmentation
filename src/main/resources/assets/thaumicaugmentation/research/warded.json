@@ -141,7 +141,7 @@
                 "WARDED_ARCANA"
             ],
             "location": [
-                1,
+                0,
                 5
             ],
             "stages": [
@@ -175,14 +175,15 @@
                 "HIDDEN"  
             ],
             "location": [
-                2,
+                1,
                 4
             ],
             "stages": [
                 {
                     "text": "thaumicaugmentation.research.starfield_glass_rift.0",
                     "required_knowledge": [
-                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "OBSERVATION;AUROMANCY;1",
                         "THEORY;ARTIFICE;1"
                     ]
                 },
@@ -195,15 +196,15 @@
             ]
         },
         {
-            "key": "STARFIELD_GLASS_FRACTURE",
-            "name": "thaumicaugmentation.research.starfield_glass_fracture.title",
+            "key": "STARFIELD_GLASS_MIRROR",
+            "name": "thaumicaugmentation.research.starfield_glass_mirror.title",
             "icons": [
-                "thaumicaugmentation:starfield_glass;1;1"
+                "thaumicaugmentation:starfield_glass;1;2"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-                "FORTIFIED_GLASS",
-                "m_DIMENSIONALFRACTURE"
+                "STARFIELD_GLASS_RIFT",
+                "~MIRROR"
             ],
             "meta": [
                 "HIDDEN"  
@@ -214,50 +215,48 @@
             ],
             "stages": [
                 {
-                    "text": "thaumicaugmentation.research.starfield_glass_fracture.0",
-                    "required_knowledge": [
-                        "OBSERVATION;ARTIFICE;1",
-                        "THEORY;ARTIFICE;1"
-                    ]
-                },
-                {
-                    "text": "thaumicaugmentation.research.starfield_glass_fracture.1",
-                    "recipes": [
-                        "thaumicaugmentation:starfield_glass_fracture"
-                    ]
-                }
-            ]
-        },
-        {
-            "key": "STARFIELD_GLASS_MIRROR",
-            "name": "thaumicaugmentation.research.starfield_glass_mirror.title",
-            "icons": [
-                "thaumicaugmentation:starfield_glass;1;2"
-            ],
-            "category": "THAUMIC_AUGMENTATION",
-            "parents": [
-                "FORTIFIED_GLASS",
-                "~MIRROR"
-            ],
-            "meta": [
-                "HIDDEN"  
-            ],
-            "location": [
-                4,
-                4
-            ],
-            "stages": [
-                {
                     "text": "thaumicaugmentation.research.starfield_glass_mirror.0",
                     "required_knowledge": [
-                        "OBSERVATION;ARTIFICE;1",
-                        "THEORY;ARTIFICE;1"
+                        "OBSERVATION;ELDRITCH;1"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.starfield_glass_mirror.1",
                     "recipes": [
                         "thaumicaugmentation:starfield_glass_mirror"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "STARFIELD_GLASS_FRACTURE",
+            "name": "thaumicaugmentation.research.starfield_glass_fracture.title",
+            "icons": [
+                "thaumicaugmentation:starfield_glass;1;1"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "STARFIELD_GLASS_RIFT",
+                "~ENTERING_FRACTURE"
+            ],
+            "meta": [
+                "HIDDEN"  
+            ],
+            "location": [
+                2,
+                5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.starfield_glass_fracture.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.starfield_glass_fracture.1",
+                    "recipes": [
+                        "thaumicaugmentation:starfield_glass_fracture"
                     ]
                 }
             ]
