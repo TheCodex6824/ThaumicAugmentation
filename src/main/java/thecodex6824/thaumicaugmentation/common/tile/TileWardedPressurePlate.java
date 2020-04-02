@@ -21,41 +21,18 @@
 package thecodex6824.thaumicaugmentation.common.tile;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TileArcaneTrapdoor extends TileWarded {
+public class TileWardedPressurePlate extends TileWarded {
 
-    protected boolean powered;
-    
-    public TileArcaneTrapdoor() {
+    public TileWardedPressurePlate() {
         super();
-    }
-    
-    public boolean isPowered() {
-        return powered;
-    }
-    
-    public void setPowered(boolean powered) {
-        this.powered = powered;
     }
 
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return oldState.getBlock() != newState.getBlock();
     }
-    
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        powered = compound.getBoolean("powered");
-    }
-    
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setBoolean("powered", powered);
-        return super.writeToNBT(compound);
-    }
-    
+
 }

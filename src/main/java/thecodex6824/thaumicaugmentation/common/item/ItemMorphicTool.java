@@ -69,7 +69,7 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
 
-    private static final IMorphicTool NULL_TOOL = new IMorphicTool() {
+    private static final IMorphicTool NULL_TOOL = new MorphicTool() {
         
         @Override
         public NBTTagCompound serializeNBT() {
@@ -121,7 +121,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
         if (stack.hasTagCompound())
             tag.setTag("item", stack.getTagCompound().copy());
         
-        tag.setTag("cap", stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).serializeNBT());
+        tag.setTag("cap", ((MorphicTool) stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)).serializeNBT());
         return tag;
     }
     
@@ -129,7 +129,7 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         if (nbt != null) {
             if (nbt.hasKey("cap", NBT.TAG_COMPOUND))
-                stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).deserializeNBT(nbt.getCompoundTag("cap"));
+                ((MorphicTool) stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)).deserializeNBT(nbt.getCompoundTag("cap"));
             if (nbt.hasKey("item", NBT.TAG_COMPOUND))
                 stack.setTagCompound(nbt.getCompoundTag("item"));
             else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {

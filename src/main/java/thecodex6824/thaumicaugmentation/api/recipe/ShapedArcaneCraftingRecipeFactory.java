@@ -55,7 +55,7 @@ public class ShapedArcaneCraftingRecipeFactory implements IRecipeFactory {
         int vis = JsonUtils.getInt(json, "vis");
         
         AspectList aspects = new AspectList();
-        JsonObject aspectJson = JsonUtils.getJsonObject(json, "aspects");
+        JsonObject aspectJson = JsonUtils.getJsonObject(json, "aspects", new JsonObject());
         for (Map.Entry<String, JsonElement> entry : aspectJson.entrySet()) {
             Aspect aspect = Aspect.getAspect(entry.getKey());
             if (aspect == null)

@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,15 +33,15 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants.NBT;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedTile;
-import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.tile.WardedTile;
 
 public abstract class TileWarded extends TileEntity implements IInteractWithCaster {
 
-    protected IWardedTile ward;
+    protected WardedTile ward;
 
     public TileWarded() {
         super();
@@ -78,13 +80,17 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setString("owner", ward.getOwner());
+        compound.setUniqueId("owner", ward.getOwner());
         return super.writeToNBT(compound);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
-        ward.setOwner(compound.getString("owner"));
+        if (compound.hasKey("owner", NBT.TAG_STRING))
+            ward.setOwner(UUID.fromString(compound.getString("owner")));
+        else
+            ward.setOwner(compound.getUniqueId("owner"));
+        
         super.readFromNBT(compound);
     }
 

@@ -20,16 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.api.item;
 
-import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
-public interface IMorphicTool {
+public final class CapabilityWardAuthenticator {
 
-    public void setFunctionalStack(ItemStack stack);
+    private CapabilityWardAuthenticator() {}
     
-    public ItemStack getFunctionalStack();
-    
-    public void setDisplayStack(ItemStack stack);
-    
-    public ItemStack getDisplayStack();
+    @CapabilityInject(IWardAuthenticator.class)
+    public static final Capability<IWardAuthenticator> WARD_AUTHENTICATOR = null;
     
 }

@@ -51,6 +51,7 @@ import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
 import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedInventory;
+import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
@@ -154,9 +155,13 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
             ItemStack stack) {
 
-        if (!world.isRemote && world.getTileEntity(pos).hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
-            world.getTileEntity(pos).getCapability(CapabilityWardedTile.WARDED_TILE, null).setOwner(placer instanceof EntityPlayer ? 
-                    ((EntityPlayer) placer).getUniqueID().toString() : placer.getName());
+        if (!world.isRemote) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile != null) {
+                IWardedTile warded = tile.getCapability(CapabilityWardedTile.WARDED_TILE, null);
+                if (warded != null)
+                    warded.setOwner(placer.getUniqueID());
+            }
         }
 
         super.onBlockPlacedBy(world, pos, state, placer, stack);
@@ -232,7 +237,7 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
             boolean willHarvest) {
         
-        if (WardHelper.doesPlayerHaveSpecialPermission(player))
+        if (WardHelper.doesEntityHaveSpecialPermission(player))
             return super.removedByPlayer(state, world, pos, player, willHarvest);
         else
             return false;

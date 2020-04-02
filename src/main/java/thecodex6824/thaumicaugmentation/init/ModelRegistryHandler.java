@@ -38,6 +38,8 @@ import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITABarsType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITASlabType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
+import thecodex6824.thaumicaugmentation.api.block.property.IWardOpenedBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningWeakPower;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
@@ -52,11 +54,17 @@ public final class ModelRegistryHandler {
         OBJLoader.INSTANCE.addDomain(ThaumicAugmentationAPI.MODID);
         
         ModelLoader.setCustomStateMapper(TABlocks.TEMPORARY_LIGHT, new StateMap.Builder().ignore(ILightSourceBlock.LIGHT_LEVEL).build());
+        ModelLoader.setCustomStateMapper(TABlocks.ARCANE_DOOR_GREATWOOD, new StateMap.Builder().ignore(IWardOpenedBlock.WARD_OPENED).build());
+        ModelLoader.setCustomStateMapper(TABlocks.ARCANE_DOOR_SILVERWOOD, new StateMap.Builder().ignore(IWardOpenedBlock.WARD_OPENED).build());
+        ModelLoader.setCustomStateMapper(TABlocks.ARCANE_DOOR_THAUMIUM, new StateMap.Builder().ignore(IWardOpenedBlock.WARD_OPENED).build());
         ModelLoader.setCustomStateMapper(TABlocks.STONE, new StateMap.Builder().withName(ITAStoneType.STONE_TYPE).build());
         ModelLoader.setCustomStateMapper(TABlocks.SLAB, new StateMap.Builder().withName(ITASlabType.SLAB_TYPE).ignore(ITASlabType.DOUBLE).withSuffix("_slab").build());
         ModelLoader.setCustomStateMapper(TABlocks.SLAB_DOUBLE, new StateMap.Builder().withName(ITASlabType.SLAB_TYPE).ignore(ITASlabType.DOUBLE).ignore(BlockSlab.HALF).withSuffix("_slab_double").build());
         ModelLoader.setCustomStateMapper(TABlocks.BARS, new StateMap.Builder().withName(ITABarsType.BARS_TYPE).build());
         ModelLoader.setCustomStateMapper(TABlocks.STARFIELD_GLASS, new StateMap.Builder().withName(IStarfieldGlassType.GLASS_TYPE).build());
+        ModelLoader.setCustomStateMapper(TABlocks.WARDED_BUTTON_GREATWOOD, new StateMap.Builder().ignore(IWardOpeningWeakPower.WEAK_POWER).build());
+        ModelLoader.setCustomStateMapper(TABlocks.WARDED_BUTTON_SILVERWOOD, new StateMap.Builder().ignore(IWardOpeningWeakPower.WEAK_POWER).build());
+        ModelLoader.setCustomStateMapper(TABlocks.WARDED_BUTTON_ARCANE_STONE, new StateMap.Builder().ignore(IWardOpeningWeakPower.WEAK_POWER).build());
         
         for (Block b : TABlocks.getAllBlocks()) {
             if (b instanceof IModelProvider<?>)

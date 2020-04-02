@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.function.Supplier;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockPressurePlate.Sensitivity;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -84,13 +87,17 @@ import thecodex6824.thaumicaugmentation.common.block.BlockStabilityFieldGenerato
 import thecodex6824.thaumicaugmentation.common.block.BlockStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.block.BlockStrangeCrystal;
 import thecodex6824.thaumicaugmentation.common.block.BlockTABars;
+import thecodex6824.thaumicaugmentation.common.block.BlockTAButton;
+import thecodex6824.thaumicaugmentation.common.block.BlockTAPressurePlate;
 import thecodex6824.thaumicaugmentation.common.block.BlockTASlab;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStairs;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
 import thecodex6824.thaumicaugmentation.common.block.BlockTaintFlower;
 import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockVoidRechargePedestal;
+import thecodex6824.thaumicaugmentation.common.block.BlockWardedButton;
 import thecodex6824.thaumicaugmentation.common.block.BlockWardedChest;
+import thecodex6824.thaumicaugmentation.common.block.BlockWardedPressurePlate;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
@@ -166,7 +173,9 @@ import thecodex6824.thaumicaugmentation.common.tile.TileStabilityFieldGenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
+import thecodex6824.thaumicaugmentation.common.tile.TileWardedButton;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
+import thecodex6824.thaumicaugmentation.common.tile.TileWardedPressurePlate;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessHighlands;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeTaintedLands;
@@ -238,7 +247,19 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockEldritchLock(), "eldritch_lock"));
         registry.register(setupBlock(new BlockRiftBarrier(), "rift_barrier"));
         registry.register(setupBlock(new BlockEldritchLockImpetus(), "eldritch_lock_impetus"));
-
+        registry.register(setupBlock(new BlockTAButton(SoundType.WOOD, 30, true), "button_greatwood"));
+        registry.register(setupBlock(new BlockTAButton(SoundType.WOOD, 30, true), "button_silverwood"));
+        registry.register(setupBlock(new BlockTAButton(SoundType.STONE, 20, false), "button_arcane_stone"));
+        registry.register(setupBlock(new BlockWardedButton(SoundType.WOOD, MapColor.BROWN, 30, true), "warded_button_greatwood"));
+        registry.register(setupBlock(new BlockWardedButton(SoundType.WOOD, MapColor.SILVER, 30, true), "warded_button_silverwood"));
+        registry.register(setupBlock(new BlockWardedButton(SoundType.STONE, MapColor.GRAY, 20, false), "warded_button_arcane_stone"));
+        registry.register(setupBlock(new BlockTAPressurePlate(Material.WOOD, Sensitivity.EVERYTHING, SoundType.WOOD), "pressure_plate_greatwood"));
+        registry.register(setupBlock(new BlockTAPressurePlate(Material.WOOD, Sensitivity.EVERYTHING, SoundType.WOOD), "pressure_plate_silverwood"));
+        registry.register(setupBlock(new BlockTAPressurePlate(Material.ROCK, Sensitivity.MOBS, SoundType.STONE), "pressure_plate_arcane_stone"));
+        registry.register(setupBlock(new BlockWardedPressurePlate(Material.WOOD, Sensitivity.EVERYTHING, SoundType.WOOD), "warded_pressure_plate_greatwood"));
+        registry.register(setupBlock(new BlockWardedPressurePlate(Material.WOOD, Sensitivity.EVERYTHING, SoundType.WOOD), "warded_pressure_plate_silverwood"));
+        registry.register(setupBlock(new BlockWardedPressurePlate(Material.ROCK, Sensitivity.MOBS, SoundType.STONE), "warded_pressure_plate_arcane_stone"));
+        
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
         GameRegistry.registerTileEntity(TileArcaneDoor.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "arcane_door"));
@@ -266,6 +287,8 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileCrabVent.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "crab_vent"));
         GameRegistry.registerTileEntity(TileEldritchLock.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "eldritch_lock"));
         GameRegistry.registerTileEntity(TileRiftBarrier.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_barrier"));
+        GameRegistry.registerTileEntity(TileWardedButton.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_button"));
+        GameRegistry.registerTileEntity(TileWardedPressurePlate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_pressure_plate"));
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)

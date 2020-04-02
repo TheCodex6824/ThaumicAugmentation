@@ -1,0 +1,13 @@
+{
+  "type": "thaumicaugmentation:arcane_shapeless",
+  "research": "WARD_OPENERS",
+  "vis": 5,
+  "ingredients": [
+    {
+      "item": "thaumcraft:plank_greatwood"
+    }
+  ],
+  "result": {
+    "item": "thaumicaugmentation:button_greatwood"
+  }
+}

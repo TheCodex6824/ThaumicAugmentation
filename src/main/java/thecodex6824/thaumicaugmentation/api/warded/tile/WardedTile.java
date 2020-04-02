@@ -21,7 +21,9 @@
 package thecodex6824.thaumicaugmentation.api.warded.tile;
 
 import java.lang.ref.WeakReference;
+import java.util.UUID;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,6 +31,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.Constants.NBT;
 import thecodex6824.thaumicaugmentation.api.event.WardedTilePermissionEvent;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
@@ -39,20 +42,23 @@ import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
  */
 public class WardedTile implements IWardedTile, INBTSerializable<NBTTagCompound> {
 
-    protected String owner = "";
+    protected static final UUID DEFAULT_UUID = new UUID(0, 0);
+    
+    protected UUID owner;
     protected WeakReference<TileEntity> tile;
     
     public WardedTile(TileEntity t) {
+        owner = DEFAULT_UUID;
         tile = new WeakReference<>(t);
     }
     
     @Override
-    public String getOwner() {
+    public UUID getOwner() {
         return owner;
     }
     
     @Override
-    public void setOwner(String uuid) {
+    public void setOwner(UUID uuid) {
         owner = uuid;
     }
     
@@ -66,14 +72,15 @@ public class WardedTile implements IWardedTile, INBTSerializable<NBTTagCompound>
         return tile.get() != null ? tile.get().getPos() : BlockPos.ORIGIN;
     }
     
-    protected boolean checkPermission(EntityPlayer player) {
-        if (player == null)
+    protected boolean checkPermission(EntityLivingBase entity) {
+        if (entity == null)
             return false;
-        else if (owner.equals(player.getUniqueID().toString()))
+        else if (owner.equals(entity.getUniqueID()))
             return true;
-        else if (WardHelper.doesPlayerHaveSpecialPermission(player))
+        else if (WardHelper.doesEntityHaveSpecialPermission(entity))
             return true;
-        else {
+        else if (entity instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) entity;
             ItemStack stack = null;
             for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
                 stack = player.inventory.getStackInSlot(i);
@@ -89,7 +96,7 @@ public class WardedTile implements IWardedTile, INBTSerializable<NBTTagCompound>
     }
 
     @Override
-    public boolean hasPermission(EntityPlayer player) {
+    public boolean hasPermission(EntityLivingBase player) {
         if (tile.get() != null) {
             TileEntity t = tile.get();
             WardedTilePermissionEvent event = new WardedTilePermissionEvent(t.getWorld(), t.getPos(), t.getWorld().getBlockState(t.getPos()), player, checkPermission(player));
@@ -109,13 +116,16 @@ public class WardedTile implements IWardedTile, INBTSerializable<NBTTagCompound>
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("owner", owner);
+        tag.setUniqueId("owner", owner);
         return tag;
     }
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        owner = nbt.getString("owner");
+        if (nbt.hasKey("owner", NBT.TAG_STRING))
+            owner = UUID.fromString(nbt.getString("owner"));
+        else
+            owner = nbt.getUniqueId("owner");
     }
     
 }

@@ -1,0 +1,16 @@
+{
+  "type": "thaumicaugmentation:arcane_shapeless",
+  "research": "WARD_OPENERS",
+  "vis": 5,
+  "ingredients": [
+    {
+      "item": "thaumicaugmentation:pressure_plate_greatwood"
+    },
+    {
+      "item": "#SIGIL"
+    }
+  ],
+  "result": {
+    "item": "thaumicaugmentation:warded_pressure_plate_greatwood"
+  }
+}

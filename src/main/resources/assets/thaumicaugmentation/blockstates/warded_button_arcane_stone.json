@@ -1,0 +1,50 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "transform": "forge:default-block",
+        "textures": {
+            "texture": "thaumcraft:blocks/arcane_stone_1"
+        }
+    },
+    "variants": {
+        "ta_ward_opening": {
+            "true": {
+                "model": "minecraft:button_pressed"
+            },
+            "false": {
+                "model": "minecraft:button"
+            }
+        },
+        "ta_direction": {
+            "up": {
+                "uvlock": true
+            },
+            "down": {
+                "uvlock": true,
+                "x": 180
+            },
+            "east": {
+                "uvlock": true,
+                "x": 90,
+                "y": 90
+            },
+            "west": {
+                "uvlock": true,
+                "x": 90,
+                "y": 270
+            },
+            "south": {
+                "uvlock": true,
+                "x": 90,
+                "y": 180
+            },
+            "north": {
+                "uvlock": true,
+                "x": 90
+            }
+        },
+        "inventory": {
+            "model": "minecraft:button_inventory"   
+        }
+    }
+}

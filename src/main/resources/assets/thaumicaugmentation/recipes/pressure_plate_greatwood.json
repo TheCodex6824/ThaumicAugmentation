@@ -1,0 +1,16 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "WARD_OPENERS",
+  "vis": 5,
+  "pattern": [
+    "PP"
+  ],
+  "key": {
+    "P": {
+      "item": "thaumcraft:plank_greatwood"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:pressure_plate_greatwood"
+  }
+}

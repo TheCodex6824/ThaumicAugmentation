@@ -118,7 +118,7 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
         if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
             if (storage.hasWard(pos)) {
-                if (!WardHelper.doesPlayerHaveSpecialPermission(event.getPlayer())) {
+                if (!WardHelper.doesEntityHaveSpecialPermission(event.getPlayer())) {
                     event.setCanceled(true);
                     if (event.getPlayer() instanceof FakePlayer) {
                         if (event.getPlayer().getName().equals("FakeThaumcraftBore"))
@@ -138,7 +138,7 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
         Chunk chunk = player.getEntityWorld().getChunk(pos);
         if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
             IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && !WardHelper.doesPlayerHaveSpecialPermission(player)) {
+            if (storage.hasWard(pos) && !WardHelper.doesEntityHaveSpecialPermission(player)) {
                 RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
                         player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()).add(new Vec3d(pos)), false, false, true);
                 sendWardParticles(event.getEntityPlayer().getEntityWorld(), pos, ray.sideHit);

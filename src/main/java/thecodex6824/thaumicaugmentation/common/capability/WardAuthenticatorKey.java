@@ -20,58 +20,64 @@
 
 package thecodex6824.thaumicaugmentation.common.capability;
 
+import java.util.UUID;
+
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
+import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
+import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
 
-public class MorphicTool implements IMorphicTool, INBTSerializable<NBTTagCompound>{
+public class WardAuthenticatorKey implements IWardAuthenticator, INBTSerializable<NBTTagCompound> {
 
-    protected ItemStack functional;
-    protected ItemStack display;
+    protected static final UUID DEFAULT_UUID = new UUID(0, 0);
     
-    public MorphicTool() {
-        functional = ItemStack.EMPTY;
-        display = ItemStack.EMPTY;
+    protected UUID owner;
+    protected String name;
+    
+    public WardAuthenticatorKey() {
+        owner = DEFAULT_UUID;
+        name = "";
+    }
+    
+    public void setOwner(UUID newOwner) {
+        owner = newOwner;
+    }
+    
+    public UUID getOwner() {
+        return owner;
+    }
+    
+    public void setOwnerName(String newName) {
+        name = newName;
+    }
+    
+    public String getOwnerName() {
+        return name;
+    }
+    
+    public void reset() {
+        owner = DEFAULT_UUID;
+        name = "";
     }
     
     @Override
-    public void setFunctionalStack(ItemStack stack) {
-        functional = stack.copy();
-    }
-    
-    @Override
-    public ItemStack getFunctionalStack() {
-        return functional;
-    }
-    
-    @Override
-    public void setDisplayStack(ItemStack stack) {
-        display = stack.copy();
-    }
-    
-    @Override
-    public ItemStack getDisplayStack() {
-        return display;
+    public boolean permitsUsage(IWardedTile tile, ItemStack stack, EntityLivingBase user) {
+        return user.getUniqueID().equals(owner);
     }
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        if (nbt.hasKey("functional", NBT.TAG_COMPOUND))
-            functional = new ItemStack(nbt.getCompoundTag("functional"));
-        if (nbt.hasKey("display", NBT.TAG_COMPOUND))
-            display = new ItemStack(nbt.getCompoundTag("display"));
+        owner = nbt.getUniqueId("owner");
+        name = nbt.getString("name");
     }
     
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        if (!functional.isEmpty())
-            tag.setTag("functional", functional.serializeNBT());
-        if (!display.isEmpty())
-            tag.setTag("display", display.serializeNBT());
-        
+        tag.setUniqueId("owner", owner);
+        tag.setString("name", name);
         return tag;
     }
     

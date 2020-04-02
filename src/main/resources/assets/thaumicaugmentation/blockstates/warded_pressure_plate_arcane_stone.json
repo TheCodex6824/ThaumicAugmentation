@@ -1,0 +1,21 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "texture": "thaumcraft:blocks/arcane_stone_1"
+        }
+    },
+    "variants": {
+        "ta_ward_opening": {
+            "true": {
+                "model": "minecraft:pressure_plate_down"
+            },
+            "false": {
+                "model": "minecraft:pressure_plate_up"
+            }
+        },
+        "inventory": {
+            "model": "minecraft:pressure_plate_up"
+        }
+    }
+}

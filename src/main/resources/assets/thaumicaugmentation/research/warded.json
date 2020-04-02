@@ -131,6 +131,46 @@
             ]
         },
         {
+            "key": "WARD_OPENERS",
+            "name": "thaumicaugmentation.research.ward_openers.title",
+            "icons": [
+                "thaumicaugmentation:warded_button_greatwood",
+                "thaumicaugmentation:warded_button_silverwood",
+                "thaumicaugmentation:warded_button_arcane_stone",
+                "thaumicaugmentation:warded_pressure_plate_greatwood",
+                "thaumicaugmentation:warded_pressure_plate_silverwood",
+                "thaumicaugmentation:warded_pressure_plate_arcane_stone"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "WARDED_ARCANA"
+            ],
+            "location": [
+                1,
+                1
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.ward_openers.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.ward_openers.1",
+                    "recipes": [
+                        "thaumicaugmentation:warded_button_greatwood",
+                        "thaumicaugmentation:warded_button_silverwood",
+                        "thaumicaugmentation:warded_button_arcane_stone",
+                        "thaumicaugmentation:warded_pressure_plate_greatwood",
+                        "thaumicaugmentation:warded_pressure_plate_silverwood",
+                        "thaumicaugmentation:warded_pressure_plate_arcane_stone"
+                    ]
+                }
+            ]
+        },
+        {
             "key": "FORTIFIED_GLASS",
             "name": "thaumicaugmentation.research.fortified_glass.title",
             "icons": [

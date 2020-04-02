@@ -18,36 +18,29 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.block.prefab;
+package thecodex6824.thaumicaugmentation.common.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
+import net.minecraft.block.BlockPressurePlate;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
-public class BlockTABase extends Block implements IModelProvider<Block> {
+public class BlockTAPressurePlate extends BlockPressurePlate implements IModelProvider<Block>, IItemBlockProvider {
 
-    public BlockTABase(Material material) {
-        super(material);
+    public BlockTAPressurePlate(Material material, Sensitivity sensitivity, SoundType sound) {
+        super(material, sensitivity);
+        setSoundType(sound);
     }
     
-    public BlockTABase(Material material, MapColor color) {
-        super(material, color);
-    }
-
     @Override
-    @SideOnly(Side.CLIENT)
     public void registerModels() {
-        if (this instanceof IItemBlockProvider) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
-                    getRegistryName().toString(), "inventory"));
-        }
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
+                getRegistryName().toString(), "inventory"));
     }
-
+    
 }

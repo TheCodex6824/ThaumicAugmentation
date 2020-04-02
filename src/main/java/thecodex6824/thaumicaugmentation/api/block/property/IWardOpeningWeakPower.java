@@ -18,18 +18,12 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.item;
+package thecodex6824.thaumicaugmentation.api.block.property;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.block.properties.PropertyBool;
 
-public interface IMorphicTool {
+public interface IWardOpeningWeakPower {
 
-    public void setFunctionalStack(ItemStack stack);
-    
-    public ItemStack getFunctionalStack();
-    
-    public void setDisplayStack(ItemStack stack);
-    
-    public ItemStack getDisplayStack();
+    public static final PropertyBool WEAK_POWER = PropertyBool.create("ta_ward_opening_weak_power");
     
 }

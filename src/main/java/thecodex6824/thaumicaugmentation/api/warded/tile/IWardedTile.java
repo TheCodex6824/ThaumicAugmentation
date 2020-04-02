@@ -20,7 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.api.warded.tile;
 
-import net.minecraft.entity.player.EntityPlayer;
+import java.util.UUID;
+
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -46,27 +48,26 @@ public interface IWardedTile {
     public String getUniqueTypeID();
 
     /**
-     * Sets the owner of this warded tile. For players, this should be their UUID, as
-     * usernames can change.
-     * @param uuid The UUID (or just string for NPCs) of the owner
+     * Sets the owner of this warded tile.
+     * @param uuid The UUID of the owner
      */
-    public void setOwner(String uuid);
+    public void setOwner(UUID uuid);
 
     /**
      * Returns the owner of this warded tile.
      * @return The owner
      */
-    public String getOwner();
+    public UUID getOwner();
 
     /**
-     * Method called when a player tries to interact with a warded tile. This should fire
+     * Method called when an entity tries to interact with a warded tile. This should fire
      * a {@link thecodex6824.thaumicaugmentation.api.event.WardedTilePermissionEvent WardedBlockPermissionEvent}, 
      * and should react to its result and/or cancellation. The default check can be defined by 
      * the implementation, but should generally check if the player is the owner and/or the player has an 
      * {@link thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator IWardAuthenticator} that allows access.
-     * @param player The player trying to access this warded tile.
-     * @return If the player has permission, and the interaction should continue
+     * @param living The entity trying to access this warded tile.
+     * @return If the entity has permission, and the interaction should continue
      */
-    public boolean hasPermission(EntityPlayer player);
+    public boolean hasPermission(EntityLivingBase living);
 
 }

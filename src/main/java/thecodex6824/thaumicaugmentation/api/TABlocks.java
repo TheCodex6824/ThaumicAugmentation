@@ -75,6 +75,18 @@ public final class TABlocks {
     public static final Block ELDRITCH_LOCK = null;
     public static final Block RIFT_BARRIER = null;
     public static final Block ELDRITCH_LOCK_IMPETUS = null;
+    public static final Block BUTTON_GREATWOOD = null;
+    public static final Block BUTTON_SILVERWOOD = null;
+    public static final Block BUTTON_ARCANE_STONE = null;
+    public static final Block WARDED_BUTTON_GREATWOOD = null;
+    public static final Block WARDED_BUTTON_SILVERWOOD = null;
+    public static final Block WARDED_BUTTON_ARCANE_STONE = null;
+    public static final Block PRESSURE_PLATE_GREATWOOD = null;
+    public static final Block PRESSURE_PLATE_SILVERWOOD = null;
+    public static final Block PRESSURE_PLATE_ARCANE_STONE = null;
+    public static final Block WARDED_PRESSURE_PLATE_GREATWOOD = null;
+    public static final Block WARDED_PRESSURE_PLATE_SILVERWOOD = null;
+    public static final Block WARDED_PRESSURE_PLATE_ARCANE_STONE = null;
 
     /**
      * Returns all blocks in the mod.
@@ -88,7 +100,10 @@ public final class TABlocks {
                RIFT_JAR, VOID_RECHARGE_PEDESTAL, IMPETUS_MIRROR, ARCANE_TERRAFORMER, RIFT_MONITOR,
                IMPETUS_GENERATOR, STABILITY_FIELD_GENERATOR, IMPETUS_GATE, STAIRS_ANCIENT, SLAB, SLAB_DOUBLE,
                STAIRS_ELDRITCH_TILE, BARS, FORTIFIED_GLASS, FORTIFIED_GLASS_PANE, STARFIELD_GLASS, OBELISK,
-               CAPSTONE, STRANGE_CRYSTAL, CRAB_VENT, ELDRITCH_LOCK, RIFT_BARRIER, ELDRITCH_LOCK_IMPETUS};
+               CAPSTONE, STRANGE_CRYSTAL, CRAB_VENT, ELDRITCH_LOCK, RIFT_BARRIER, ELDRITCH_LOCK_IMPETUS,
+               BUTTON_GREATWOOD, BUTTON_SILVERWOOD, BUTTON_ARCANE_STONE, WARDED_BUTTON_GREATWOOD, WARDED_BUTTON_SILVERWOOD,
+               WARDED_BUTTON_ARCANE_STONE, PRESSURE_PLATE_GREATWOOD, PRESSURE_PLATE_SILVERWOOD, PRESSURE_PLATE_ARCANE_STONE,
+               WARDED_PRESSURE_PLATE_GREATWOOD, WARDED_PRESSURE_PLATE_SILVERWOOD, WARDED_PRESSURE_PLATE_ARCANE_STONE};
     }
 
 }

@@ -58,6 +58,7 @@ public interface IAugment {
      * @param caster The stack of the casting item
      * @param focus The FocusWrapper that is being used by the caster
      * @param user The entity that has this augment and is casting
+     * @return If this action should be cancelled
      */
     public default boolean onCastPre(ItemStack caster, FocusWrapper focus, Entity user) {
         return false;
@@ -77,6 +78,7 @@ public interface IAugment {
     /**
      * Called when the owning entity is ticked. This is called on both the client and server sides.
      * @param user The entity that has this augment
+     * @return If this action should be cancelled
      */
     public default boolean onTick(Entity user) {
         return false;
@@ -86,6 +88,7 @@ public interface IAugment {
      * Called when the user hurts another entity.
      * @param user The entity that has this augment
      * @param attacked The entity that was attacked
+     * @return If this action should be cancelled
      */
     public default boolean onHurtEntity(Entity user, Entity attacked) {
         return false;
@@ -95,6 +98,7 @@ public interface IAugment {
      * Called when the user damages another entity.
      * @param user The entity that has this augment
      * @param attacked The entity that was damages
+     * @return If this action should be cancelled
      */
     public default boolean onDamagedEntity(Entity user, Entity attacked) {
         return false;
@@ -104,6 +108,7 @@ public interface IAugment {
      * Called when the user is hurt by another entity.
      * @param user The entity that has this augment
      * @param attacker The entity that attacked the user
+     * @return If this action should be cancelled
      */
     public default boolean onHurt(Entity user, @Nullable Entity attacker) {
         return false;
@@ -113,6 +118,7 @@ public interface IAugment {
      * Called when the user is damaged by another entity.
      * @param user The entity that has this augment
      * @param attacker The entity that damaged the user
+     * @return If this action should be cancelled
      */
     public default boolean onDamaged(Entity user, @Nullable Entity attacker) {
         return false;
@@ -124,6 +130,7 @@ public interface IAugment {
      * @param used The stack of the augmentable item used with the interaction
      * @param target The entity that was interacted with
      * @param hand The hand that the user used for the interaction
+     * @return If this action should be cancelled
      */
     public default boolean onInteractEntity(Entity user, ItemStack used, Entity target, EnumHand hand) {
         return false;
@@ -136,6 +143,7 @@ public interface IAugment {
      * @param target The position of the block interacted with
      * @param face The face of the block that was interacted with
      * @param hand The hand that the user used for the interaction
+     * @return If this action should be cancelled
      */
     public default boolean onInteractBlock(Entity user, ItemStack used, BlockPos target, EnumFacing face, EnumHand hand) {
         return false;
@@ -146,6 +154,7 @@ public interface IAugment {
      * @param user The entity that has this augment
      * @param used The stack of the augmentable item used with the interaction
      * @param hand The hand that the user used for the interaction
+     * @return If this action should be cancelled
      */
     public default boolean onInteractAir(Entity user, ItemStack used, EnumHand hand) {
         return false;
@@ -155,6 +164,7 @@ public interface IAugment {
      * Called when the augmentable item is used, regardless of the type of usage.
      * @param user The entity that has this augment
      * @param used The stack of the augmentable item used
+     * @return If this action should be cancelled
      */
     public default boolean onUseItem(Entity user, ItemStack used) {
         return false;

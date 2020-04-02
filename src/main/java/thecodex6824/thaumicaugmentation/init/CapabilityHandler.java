@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBanner;
@@ -69,6 +70,7 @@ import thecodex6824.thaumicaugmentation.api.item.BiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
+import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.item.ImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.api.tile.RiftJar;
@@ -101,7 +103,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IAugment> capability, IAugment instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof Augment) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((Augment) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -110,7 +112,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IAugment> capability, IAugment instance, EnumFacing side) {
                 if (!(instance instanceof Augment))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((Augment) instance).serializeNBT();
             }
@@ -122,7 +124,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IAugmentableItem> capability, IAugmentableItem instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof AugmentableItem) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((AugmentableItem) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -131,7 +133,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IAugmentableItem> capability, IAugmentableItem instance, EnumFacing side) {
                 if (!(instance instanceof AugmentableItem))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((AugmentableItem) instance).serializeNBT();
             }
@@ -143,7 +145,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IImpetusStorage> capability, IImpetusStorage instance, EnumFacing side, NBTBase nbt) {
                 if ((!(instance instanceof ImpetusStorage) && !(instance instanceof FluxRiftImpetusStorage)) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 if (instance instanceof ImpetusStorage)
                     ((ImpetusStorage) instance).deserializeNBT((NBTTagCompound) nbt);
@@ -153,7 +155,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IImpetusStorage> capability, IImpetusStorage instance, EnumFacing side) {
                 if (!(instance instanceof ImpetusStorage) && !(instance instanceof FluxRiftImpetusStorage))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return instance instanceof ImpetusStorage ? ((ImpetusStorage) instance).serializeNBT() :
                     new NBTTagCompound();
@@ -166,7 +168,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IWardedInventory> capability, IWardedInventory instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof WardedInventory) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((WardedInventory) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -175,7 +177,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IWardedInventory> capability, IWardedInventory instance, EnumFacing side) {
                 if (!(instance instanceof WardedInventory))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((WardedInventory) instance).serializeNBT();
             }
@@ -187,7 +189,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IFractureLocations> capability, IFractureLocations instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof FractureLocations) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((FractureLocations) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -196,7 +198,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IFractureLocations> capability, IFractureLocations instance, EnumFacing side) {
                 if (!(instance instanceof FractureLocations))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((FractureLocations) instance).serializeNBT();
             }
@@ -208,7 +210,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IWardStorage> capability, IWardStorage instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof WardStorageServer) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation (or non-server implementations)");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation (or non-server implementations)");
                 
                 ((WardStorageServer) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -217,19 +219,19 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IWardStorage> capability, IWardStorage instance, EnumFacing side) {
                 if (!(instance instanceof WardStorageServer))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation (or non-server implementations)");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation (or non-server implementations)");
                 
                 return ((WardStorageServer) instance).serializeNBT();
             }
             
-        }, () -> { throw new UnsupportedOperationException("Cannot create a default ward storage impl (create one for client or server side instead)"); });
+        }, WardStorageServer::new);
         
         CapabilityManager.INSTANCE.register(IWardedTile.class, new IStorage<IWardedTile>() {
             
             @Override
             public void readNBT(Capability<IWardedTile> capability, IWardedTile instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof WardedTile) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((WardedTile) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -238,7 +240,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IWardedTile> capability, IWardedTile instance, EnumFacing side) {
                 if (!(instance instanceof WardedTile))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((WardedTile) instance).serializeNBT();
             }
@@ -250,7 +252,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IPortalState> capability, IPortalState instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof PortalState) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((PortalState) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -259,7 +261,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IPortalState> capability, IPortalState instance, EnumFacing side) {
                 if (!(instance instanceof PortalState))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((PortalState) instance).serializeNBT();
             }
@@ -271,7 +273,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IMorphicTool> capability, IMorphicTool instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof MorphicTool) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((MorphicTool) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -280,7 +282,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IMorphicTool> capability, IMorphicTool instance, EnumFacing side) {
                 if (!(instance instanceof MorphicTool))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((MorphicTool) instance).serializeNBT();
             }
@@ -292,7 +294,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IImpetusNode> capability, IImpetusNode instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof ImpetusNode) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((WardedTile) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -301,7 +303,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IImpetusNode> capability, IImpetusNode instance, EnumFacing side) {
                 if (!(instance instanceof ImpetusNode))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((ImpetusNode) instance).serializeNBT();
             }
@@ -313,7 +315,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IRiftJar> capability, IRiftJar instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof RiftJar) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((RiftJar) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -322,7 +324,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IRiftJar> capability, IRiftJar instance, EnumFacing side) {
                 if (!(instance instanceof RiftJar))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((RiftJar) instance).serializeNBT();
             }
@@ -334,7 +336,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IBiomeSelector> capability, IBiomeSelector instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof BiomeSelector) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((BiomeSelector) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -343,7 +345,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IBiomeSelector> capability, IBiomeSelector instance, EnumFacing side) {
                 if (!(instance instanceof BiomeSelector))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((BiomeSelector) instance).serializeNBT();
             }
@@ -355,7 +357,7 @@ public final class CapabilityHandler {
             @Override
             public void readNBT(Capability<IImpetusLinker> capability, IImpetusLinker instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof ImpetusLinker) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
                 
                 ((ImpetusLinker) instance).deserializeNBT((NBTTagCompound) nbt);
             }
@@ -364,7 +366,7 @@ public final class CapabilityHandler {
             @Nullable
             public NBTBase writeNBT(Capability<IImpetusLinker> capability, IImpetusLinker instance, EnumFacing side) {
                 if (!(instance instanceof ImpetusLinker))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
                 
                 return ((ImpetusLinker) instance).serializeNBT();
             }
@@ -389,6 +391,24 @@ public final class CapabilityHandler {
             @Nullable
             public UUID getWardOwnerUUID() {
                 return null;
+            }
+        });
+        
+        CapabilityManager.INSTANCE.register(IWardAuthenticator.class, new IStorage<IWardAuthenticator>() {
+            
+            @Override
+            public void readNBT(Capability<IWardAuthenticator> capability, IWardAuthenticator instance, EnumFacing side, NBTBase nbt) {}
+            
+            @Override
+            @Nullable
+            public NBTBase writeNBT(Capability<IWardAuthenticator> capability, IWardAuthenticator instance, EnumFacing side) {
+                return null;
+            }
+            
+        }, () -> new IWardAuthenticator() {
+            @Override
+            public boolean permitsUsage(IWardedTile tile, ItemStack stack, EntityLivingBase user) {
+                return false;
             }
         });
     }

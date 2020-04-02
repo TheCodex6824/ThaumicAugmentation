@@ -21,7 +21,7 @@
 package thecodex6824.thaumicaugmentation.api.event;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -40,15 +40,15 @@ public class WardedTilePermissionEvent extends Event {
 
     protected Result result;
     protected World world;
-    protected EntityPlayer player;
+    protected EntityLivingBase entity;
     protected BlockPos position;
     protected IBlockState state;
     protected boolean allowed;
 
-    public WardedTilePermissionEvent(World w, BlockPos pos, IBlockState s, EntityPlayer p, boolean info) {
+    public WardedTilePermissionEvent(World w, BlockPos pos, IBlockState s, EntityLivingBase e, boolean info) {
         result = Result.DEFAULT;
         world = w;
-        player = p;
+        entity = e;
         position = pos;
         state = s;
         allowed = info;
@@ -63,11 +63,19 @@ public class WardedTilePermissionEvent extends Event {
     }
 
     /**
-     * Returns the player interacting with the warded block.
-     * @return The player interacting with the warded block
+     * Returns the entity interacting with the warded block.
+     * @return The entity interacting with the warded block
      */
-    public EntityPlayer getPlayer() {
-        return player;
+    public EntityLivingBase getEntity() {
+        return entity;
+    }
+    
+    /**
+     * Returns the entity interacting with the warded block.
+     * @return The entity interacting with the warded block
+     */
+    public EntityLivingBase getEntityLiving() {
+        return entity;
     }
 
     /**
