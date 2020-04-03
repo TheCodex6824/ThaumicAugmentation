@@ -22,7 +22,6 @@ package thecodex6824.thaumicaugmentation.common.block;
 
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -53,6 +52,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningWeakPower;
+import thecodex6824.thaumicaugmentation.api.block.property.IWardParticles;
 import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
 import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
@@ -62,7 +62,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileWardedButton;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockWardedButton extends BlockTABase implements IItemBlockProvider, IDirectionalBlock, IWardOpeningBlock,
-    IUnwardableBlock {
+    IUnwardableBlock, IWardParticles {
 
     protected static final AxisAlignedBB AABB_DOWN_OFF = new AxisAlignedBB(0.3125, 0.875, 0.375, 0.6875, 1.0, 0.625);
     protected static final AxisAlignedBB AABB_UP_OFF = new AxisAlignedBB(0.3125, 0.0, 0.375, 0.6875, 0.125, 0.625);
@@ -260,10 +260,10 @@ public class BlockWardedButton extends BlockTABase implements IItemBlockProvider
         }
     }
 
-    protected boolean isEntityValidForWood(EntityArrow e, UUID owner) {
+    protected boolean isEntityValidForWood(EntityArrow e, IWardedTile owner) {
         Entity shooter = e.shootingEntity;
-        if (shooter != null)
-            return shooter.getUniqueID().equals(owner);
+        if (shooter instanceof EntityLivingBase)
+            return owner.hasPermission((EntityLivingBase) shooter);
         else
             return false;
     }
@@ -274,7 +274,7 @@ public class BlockWardedButton extends BlockTABase implements IItemBlockProvider
             IWardedTile warded = tile.getCapability(CapabilityWardedTile.WARDED_TILE, null);
             if (warded != null) {
                 List<? extends Entity> list = world.getEntitiesWithinAABB(EntityArrow.class, state.getBoundingBox(world, pos).offset(pos),
-                        e -> isEntityValidForWood(e, warded.getOwner()));
+                        e -> isEntityValidForWood(e, warded));
                 boolean powered = state.getValue(IWardOpeningBlock.WARD_OPENING);
                 if (!list.isEmpty() && !powered) {
                     world.setBlockState(pos, state.withProperty(IWardOpeningBlock.WARD_OPENING, true));

@@ -26,17 +26,25 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class FXBlockWardFixed extends Particle {
     
-    protected ResourceLocation[] textures = new ResourceLocation[15];
+    protected static final ResourceLocation[] TEXTURES = new ResourceLocation[15];
+    
+    static {
+        for (int i = 0; i < TEXTURES.length; ++i)
+            TEXTURES[i] = new ResourceLocation("thaumcraft", "textures/models/hemis" + (i + 1) + ".png");
+    }
+    
     protected EnumFacing side;
     protected int rotation = 0;
     protected float sx = 0.0F;
@@ -46,6 +54,9 @@ public class FXBlockWardFixed extends Particle {
     public FXBlockWardFixed(World world, double x, double y, double z, EnumFacing side, float hX, float hY, float hZ) {
         super(world, x, y, z, 0.0, 0.0, 0.0);
         this.side = side;
+        sx = hX;
+        sy = hY;
+        sz = hZ;
         
         motionX = 0.0;
         motionY = 0.0;
@@ -58,51 +69,38 @@ public class FXBlockWardFixed extends Particle {
         prevPosY = posY;
         prevPosZ = posZ;
       
-        particleScale = ((float)(1.4D + rand.nextGaussian() * 0.3));
+        particleScale = (float) (1.4 + rand.nextGaussian() * 0.3);
         rotation = rand.nextInt(360);
-        sx = (float) MathHelper.clamp(hX - 0.6F + rand.nextFloat() * 0.2F, -0.4F, 0.4F);
-        sy = (float) MathHelper.clamp(hY - 0.6F + rand.nextFloat() * 0.2F, -0.4F, 0.4F);
-        sz = (float) MathHelper.clamp(hZ - 0.6F + rand.nextFloat() * 0.2F, -0.4F, 0.4F);
-        if (side.getXOffset() != 0)
-            sx = 0.0F;
-        if (side.getYOffset() != 0)
-            sy = 0.0F;
-        if (side.getZOffset() != 0)
-            sz = 0.0F;
-     
-        for (int i = 0; i < 15; ++i)
-            textures[i] = new ResourceLocation("thaumcraft", "textures/models/hemis" + (i + 1) + ".png");
-     
     }
     
     @Override
     public void renderParticle(BufferBuilder buffer, Entity entity, float partialTicks, float rotX, float rotZ, float rotYZ, float rotXY, float rotXZ) {
         Tessellator.getInstance().draw();
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         float fade = (particleAge + partialTicks) / particleMaxAge;
-        int frame = (int) Math.min(textures.length - 1, Math.max(0, (textures.length - 1) * fade));
-        Minecraft.getMinecraft().renderEngine.bindTexture(textures[frame]);
+        int frame = (int) Math.min(TEXTURES.length - 1, Math.max(0, (TEXTURES.length - 1) * fade));
+        Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURES[frame]);
       
-        GL11.glDepthMask(false);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        GlStateManager.depthMask(false);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
       
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, particleAlpha / 2.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, particleAlpha / 2.0F);
       
         float drawX = (float) (prevPosX + (posX - prevPosX) * partialTicks - interpPosX);
         float drawY = (float) (prevPosY + (posY - prevPosY) * partialTicks - interpPosY);
         float drawZ = (float) (prevPosZ + (posZ - prevPosZ) * partialTicks - interpPosZ);
       
-        GL11.glTranslated(drawX + sx, drawY + sy, drawZ + sz);
+        GlStateManager.translate(drawX + sx, drawY + sy, drawZ + sz);
       
-        GL11.glRotatef(90.0F, side.getYOffset(), -side.getXOffset(), side.getZOffset());
-        GL11.glRotatef(rotation, 0.0F, 0.0F, 1.0F);
+        GlStateManager.rotate(90.0F, side.getYOffset(), -side.getXOffset(), side.getZOffset());
+        GlStateManager.rotate(rotation, 0.0F, 0.0F, 1.0F);
         if (side.getZOffset() > 0) {
-            GL11.glTranslated(0.0D, 0.0D, 0.501);
-            GL11.glRotatef(180.0F, 0.0F, -1.0F, 0.0F);
+            GlStateManager.translate(0.0, 0.0, 0.501);
+            GlStateManager.rotate(180.0F, 0.0F, -1.0F, 0.0F);
         }
         else
-            GL11.glTranslated(0.0D, 0.0D, -0.501);
+            GlStateManager.translate(0.0, 0.0, -0.501);
       
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
         int s = 240 >> 16 & 0xFFFF;
@@ -113,11 +111,11 @@ public class FXBlockWardFixed extends Particle {
         buffer.pos(-0.5 * particleScale, -0.5 * particleScale, 0.0).tex(0.0, 0.0).color(particleRed, particleGreen, particleBlue, particleAlpha / 2.0F).lightmap(s, b).endVertex();
         Tessellator.getInstance().draw();
       
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDepthMask(true);
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableBlend();
+        GlStateManager.depthMask(true);
       
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
         Minecraft.getMinecraft().renderEngine.bindTexture(ParticleManager.PARTICLE_TEXTURES);
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
     }

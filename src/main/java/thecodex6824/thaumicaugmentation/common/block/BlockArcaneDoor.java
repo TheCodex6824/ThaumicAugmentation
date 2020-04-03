@@ -281,10 +281,33 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
                     if (!shouldOpen)
                         shouldOpen = WardHelper.isOpenedByWardOpeningBlock(world, openPos.equals(pos) ? powerPos : openPos, warded.getOwner());
                     
+                    if (!shouldOpen) {
+                        EnumFacing doorFacing = world.getBlockState(powerPos).getValue(IHorizontallyDirectionalBlock.DIRECTION);
+                        IBlockState lower =  world.getBlockState(openPos);
+                        EnumFacing offset = lower.getValue(IArcaneDoorHinge.HINGE_SIDE) == EnumHingePosition.LEFT ? 
+                                doorFacing.rotateY() : doorFacing.rotateYCCW();
+                        BlockPos otherDoor = openPos.offset(offset);
+                        IBlockState otherDoorLower = world.getBlockState(otherDoor);
+                        if (otherDoorLower.getBlock() == this && otherDoorLower.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.LOWER && 
+                                world.getBlockState(otherDoor.up()).getValue(IWardOpenedBlock.WARD_OPENED) && 
+                                otherDoorLower.getValue(IArcaneDoorHinge.HINGE_SIDE) != lower.getValue(IArcaneDoorHinge.HINGE_SIDE)) {
+                            
+                            TileEntity otherDoorTile = world.getTileEntity(otherDoor);
+                            if (otherDoorTile != null) {
+                                IWardedTile wardedOther = otherDoorTile.getCapability(CapabilityWardedTile.WARDED_TILE, null);
+                                if (wardedOther != null && wardedOther.getOwner().equals(warded.getOwner())) {
+                                    shouldOpen = WardHelper.isOpenedByWardOpeningBlock(world, otherDoor, wardedOther.getOwner());
+                                    if (!shouldOpen)
+                                        shouldOpen = WardHelper.isOpenedByWardOpeningBlock(world, otherDoor.up(), wardedOther.getOwner());
+                                }
+                            }
+                        }
+                    }
+                    
                     if (shouldOpen != setPoweredOn.getValue(IWardOpenedBlock.WARD_OPENED)) {
-                        world.setBlockState(powerPos, setPoweredOn.withProperty(IWardOpenedBlock.WARD_OPENED, shouldOpen), 2);
+                        world.setBlockState(powerPos, setPoweredOn.withProperty(IWardOpenedBlock.WARD_OPENED, shouldOpen), 3);
                         if (shouldOpen != setOpenOn.getValue(IArcaneDoorOpen.DOOR_OPEN)) {
-                            world.setBlockState(openPos, setOpenOn.withProperty(IArcaneDoorOpen.DOOR_OPEN, shouldOpen), 2);
+                            world.setBlockState(openPos, setOpenOn.withProperty(IArcaneDoorOpen.DOOR_OPEN, shouldOpen), 3);
                             world.playSound(null, openPos, shouldOpen ? getOpenSound(state) : getCloseSound(state),
                                     SoundCategory.BLOCKS, 1.0F, 1.0F);
                         }

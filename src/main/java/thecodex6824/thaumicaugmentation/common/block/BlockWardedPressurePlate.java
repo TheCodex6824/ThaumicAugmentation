@@ -24,7 +24,6 @@ import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -52,6 +51,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IWardParticles;
 import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
 import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
@@ -61,7 +61,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileWardedPressurePlate;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockWardedPressurePlate extends BlockTABase implements IWardOpeningBlock,
-    IItemBlockProvider, IUnwardableBlock {
+    IItemBlockProvider, IUnwardableBlock, IWardParticles {
 
     protected static final AxisAlignedBB PRESSED_AABB = new AxisAlignedBB(0.0625, 0.0, 0.0625, 0.9375, 0.03125, 0.9375);
     protected static final AxisAlignedBB UNPRESSED_AABB = new AxisAlignedBB(0.0625, 0.0, 0.0625, 0.9375, 0.0625, 0.9375);
@@ -147,7 +147,7 @@ public class BlockWardedPressurePlate extends BlockTABase implements IWardOpenin
     @Override
     public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {}
 
-    protected boolean isEntityValid(Entity firstEntity, UUID owner) {
+    protected boolean isEntityValid(Entity firstEntity, IWardedTile owner) {
         HashSet<Entity> visited = new HashSet<>();
         ArrayDeque<Entity> toCheck = new ArrayDeque<>();
         toCheck.add(firstEntity);
@@ -155,7 +155,7 @@ public class BlockWardedPressurePlate extends BlockTABase implements IWardOpenin
             Entity e = toCheck.pop();
             if (!visited.contains(e)) {
                 visited.add(e);
-                if (e.getUniqueID().equals(owner))
+                if (e instanceof EntityLivingBase && owner.hasPermission((EntityLivingBase) e))
                     return true;
                 else if (e instanceof EntityArrow && ((EntityArrow) e).shootingEntity != null)
                     toCheck.add(((EntityArrow) e).shootingEntity);
@@ -177,11 +177,11 @@ public class BlockWardedPressurePlate extends BlockTABase implements IWardOpenin
                 List<Entity> list = null;
                 if (sens == Sensitivity.EVERYTHING) {
                     list = world.getEntitiesWithinAABB(Entity.class, PRESSURE_AABB.offset(pos),
-                            e -> isEntityValid(e, warded.getOwner()));
+                            e -> isEntityValid(e, warded));
                 }
                 else {
                     list = world.getEntitiesWithinAABB(EntityLivingBase.class, PRESSURE_AABB.offset(pos),
-                            e -> isEntityValid(e, warded.getOwner()));
+                            e -> isEntityValid(e, warded));
                 }
 
                 for (Entity e : list) {

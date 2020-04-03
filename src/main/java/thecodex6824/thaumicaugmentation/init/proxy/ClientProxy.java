@@ -51,6 +51,8 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
@@ -342,7 +344,7 @@ public class ClientProxy extends ServerProxy {
     }
     
     protected void handleParticlePacket(PacketParticleEffect message, MessageContext context) {
-        if (FMLClientHandler.instance().getClient().world != null) {
+        if (Minecraft.getMinecraft().world != null) {
             Random rand = FMLClientHandler.instance().getClient().world.rand;
             double d[] = message.getData();
             switch (message.getEffect()) {
@@ -368,12 +370,22 @@ public class ClientProxy extends ServerProxy {
                     break;
                 }
                 case WARD: {
-                    if (d.length == 7) {
+                    if (d.length == 4) {
                         double x = d[0], y = d[1], z = d[2];
-                        int index = (int) d[3];
-                        double hitX = d[4], hitY = d[5], hitZ = d[6];
-                        FXBlockWardFixed ward = new FXBlockWardFixed(FXDispatcher.INSTANCE.getWorld(), x + 0.5, y + 0.5, z + 0.5, 
-                                EnumFacing.byIndex(index), (float) hitX, (float) hitY, (float) hitZ);
+                        EnumFacing dir = EnumFacing.byIndex((int) d[3]);
+                        BlockPos pos = new BlockPos(x, y, z);
+                        IBlockState state = Minecraft.getMinecraft().world.getBlockState(pos);
+                        AxisAlignedBB box = state.getBoundingBox(Minecraft.getMinecraft().world, pos);
+                        float hitX = (float) (box.maxX + box.minX) / 2.0F, hitY = (float) (box.maxY + box.minY) / 2.0F, hitZ = (float) (box.maxZ + box.minZ) / 2.0F;
+                        if (dir.getXOffset() != 0)
+                            hitX = 0.5F * -dir.getXOffset() + (float) (dir.getAxisDirection() == AxisDirection.NEGATIVE ? box.minX : box.maxX);
+                        if (dir.getYOffset() != 0)
+                            hitY = 0.5F * -dir.getYOffset() + (float) (dir.getAxisDirection() == AxisDirection.NEGATIVE ? box.minY : box.maxY);
+                        if (dir.getZOffset() != 0)
+                            hitZ = 0.5F * -dir.getZOffset() + (float) (dir.getAxisDirection() == AxisDirection.NEGATIVE ? box.minZ : box.maxZ);
+                        
+                        FXBlockWardFixed ward = new FXBlockWardFixed(FXDispatcher.INSTANCE.getWorld(), x, y, z, 
+                                dir, hitX, hitY, hitZ);
                         FMLClientHandler.instance().getClient().effectRenderer.addEffect(ward);
                     }
                     

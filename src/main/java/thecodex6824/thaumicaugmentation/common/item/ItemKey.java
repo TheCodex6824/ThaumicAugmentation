@@ -39,8 +39,10 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedTile;
@@ -134,10 +136,6 @@ public class ItemKey extends ItemTABase {
         return "(" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")";
     }
 
-    protected String formatBlockPos(int[] pos) {
-        return "(" + pos[0] + ", " + pos[1] + ", " + pos[2] + ")";
-    }
-
     @Override
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
             float hitY, float hitZ, EnumHand hand) {
@@ -194,6 +192,38 @@ public class ItemKey extends ItemTABase {
         }
 
         return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
+    }
+    
+    @Override
+    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (stack.hasTagCompound())
+            tag.setTag("item", stack.getTagCompound().copy());
+        
+        tag.setTag("cap", ((WardAuthenticatorKey) stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null)).serializeNBT());
+        return tag;
+    }
+    
+    @Override
+    public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
+        if (nbt != null) {
+            if (nbt.hasKey("cap", NBT.TAG_COMPOUND))
+                ((WardAuthenticatorKey) stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null)).deserializeNBT(nbt.getCompoundTag("cap"));
+            if (nbt.hasKey("item", NBT.TAG_COMPOUND))
+                stack.setTagCompound(nbt.getCompoundTag("item"));
+            else if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                nbt.removeTag("cap");
+                if (!nbt.isEmpty())
+                    stack.setTagCompound(nbt);
+            }
+            
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer()) {
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
+                
+                stack.getTagCompound().setTag("cap", nbt.getCompoundTag("cap"));
+            }
+        }
     }
 
     @Override

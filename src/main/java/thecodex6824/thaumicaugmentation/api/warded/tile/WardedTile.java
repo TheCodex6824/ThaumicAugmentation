@@ -33,6 +33,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.Constants.NBT;
 import thecodex6824.thaumicaugmentation.api.event.WardedTilePermissionEvent;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
 
@@ -84,11 +85,9 @@ public class WardedTile implements IWardedTile, INBTSerializable<NBTTagCompound>
             ItemStack stack = null;
             for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
                 stack = player.inventory.getStackInSlot(i);
-                if (stack.getItem() instanceof IWardAuthenticator && 
-                        ((IWardAuthenticator) stack.getItem()).permitsUsage(this, stack, player)) {
-
+                IWardAuthenticator auth = stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
+                if (auth != null && auth.permitsUsage(this, stack, entity))
                     return true;
-                }
             }
         }
 
@@ -99,7 +98,8 @@ public class WardedTile implements IWardedTile, INBTSerializable<NBTTagCompound>
     public boolean hasPermission(EntityLivingBase player) {
         if (tile.get() != null) {
             TileEntity t = tile.get();
-            WardedTilePermissionEvent event = new WardedTilePermissionEvent(t.getWorld(), t.getPos(), t.getWorld().getBlockState(t.getPos()), player, checkPermission(player));
+            WardedTilePermissionEvent event = new WardedTilePermissionEvent(t.getWorld(), t.getPos(),
+                    t.getWorld().getBlockState(t.getPos()), player, checkPermission(player));
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled()) {
                 switch (event.getResult()) {

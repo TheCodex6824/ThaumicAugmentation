@@ -1,0 +1,12 @@
+{
+    "ctm":{
+        "ctm_version": 1,
+        "type":"ctm",
+        "textures":[
+            "thaumcraft:blocks/plank_silverwood_ctm"
+        ],
+        "extra": {
+        	"ignore_states": "true"
+        }
+    }
+}
