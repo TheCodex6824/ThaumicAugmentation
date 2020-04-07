@@ -246,7 +246,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
             return false;
         else if (reflect && !world.isRemote) {
             Entity entity = source.getImmediateSource();
-            if (entity instanceof IProjectile || entity instanceof EntityFireball) {
+            if ((entity instanceof IProjectile || entity instanceof EntityFireball) && entity.isEntityAlive()) {
                 Entity newEntity = EntityList.newEntity(entity.getClass(), entity.world);
                 if (newEntity != null) {
                     NBTTagCompound toCopy = entity.serializeNBT();
@@ -256,6 +256,9 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                     newEntity.motionX = -entity.motionX;
                     newEntity.motionY = -entity.motionY;
                     newEntity.motionZ = -entity.motionZ;
+                    while (newEntity.getEntityBoundingBox().intersects(getEntityBoundingBox()))
+                        newEntity.setPosition(newEntity.posX + newEntity.motionX, newEntity.posY + newEntity.motionY, newEntity.posZ + newEntity.motionZ);
+                    
                     if (entity instanceof EntityFireball && newEntity instanceof EntityFireball) {
                         EntityFireball original = (EntityFireball) entity;
                         EntityFireball fireball = (EntityFireball) newEntity;

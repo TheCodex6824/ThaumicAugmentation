@@ -47,11 +47,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -75,6 +75,7 @@ import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
+import thaumcraft.client.renderers.models.entity.ModelEldritchGolem;
 import thaumcraft.common.golems.client.gui.SealBaseGUI;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.lib.events.EssentiaHandler;
@@ -130,7 +131,9 @@ import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderAutocaster;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderPrimalWisp;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGolem;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGuardian;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAGolemOrb;
 import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
@@ -158,8 +161,10 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
+import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGolem;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
+import thecodex6824.thaumicaugmentation.common.entity.EntityTAGolemOrb;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
@@ -886,6 +891,18 @@ public class ClientProxy extends ServerProxy {
             @Override
             public Render<? super EntityPrimalWisp> createRenderFor(RenderManager manager) {
                 return new RenderPrimalWisp(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityTAEldritchGolem.class, new IRenderFactory<EntityTAEldritchGolem>() {
+            @Override
+            public Render<? super EntityTAEldritchGolem> createRenderFor(RenderManager manager) {
+                return new RenderTAEldritchGolem(manager, new ModelEldritchGolem(), 0.5F);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityTAGolemOrb.class, new IRenderFactory<EntityTAGolemOrb>() {
+            @Override
+            public Render<? super EntityTAGolemOrb> createRenderFor(RenderManager manager) {
+                return new RenderTAGolemOrb(manager);
             }
         });
         

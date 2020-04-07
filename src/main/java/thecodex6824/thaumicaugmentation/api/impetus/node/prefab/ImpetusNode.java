@@ -124,6 +124,7 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     @Override
     public boolean removeInput(IImpetusNode input) {
         onDisconnected(input);
+        input.onDisconnected(this);
         input.removeOutputLocation(loc);
         return inputs.remove(input.getLocation());
     }
@@ -131,6 +132,7 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     @Override
     public boolean removeOutput(IImpetusNode output) {
         onDisconnected(output);
+        output.onDisconnected(this);
         output.removeInputLocation(loc);
         return outputs.remove(output.getLocation());
     }

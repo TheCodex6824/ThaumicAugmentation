@@ -139,6 +139,8 @@ entity.thaumicaugmentation.autocaster_eldritch.name=Eldritch Autocaster
 entity.thaumicaugmentation.eldritch_guardian.name=Eldritch Guardian
 entity.thaumicaugmentation.eldritch_warden.name=Eldritch Warden
 entity.thaumicaugmentation.primal_wisp.name=Primordial Wisp
+entity.thaumicaugmentation.eldritch_golem.name=Eldritch Construct
+entity.thaumicaugmentation.golem_orb.name=Energy Orb
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
 itemGroup.thaumicaugmentation.biome_selector=TA: Biome Foci
@@ -190,6 +192,7 @@ thaumicaugmentation.text.eldritch_lock_key_lore=It seems to be a part of somethi
 thaumicaugmentation.text.eldritch_lock_type=Key: %s
 thaumicaugmentation.text.impetus=Impetus
 thaumicaugmentation.text.levitate=Your understanding of levitation has been lifted to new heights.
+thaumicaugmentation.text.entity.eldritch_golem=%s %s
 
 thaumicaugmentation.text.damage.impetus=%s was annihilated
 thaumicaugmentation.text.damage.impetus_attack=%s was annihilated by %s

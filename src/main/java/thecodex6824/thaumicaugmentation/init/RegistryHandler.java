@@ -105,8 +105,10 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
 import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
+import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGolem;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
+import thecodex6824.thaumicaugmentation.common.entity.EntityTAGolemOrb;
 import thecodex6824.thaumicaugmentation.common.golem.SealAttack;
 import thecodex6824.thaumicaugmentation.common.golem.SealAttackAdvanced;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
@@ -397,7 +399,7 @@ public final class RegistryHandler {
                         ThaumicAugmentationAPI.MODID + ".item_rift_jar").tracker(64, 20, true).build());
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityFocusShield.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "shield_focus"), id++).name(
-                        ThaumicAugmentationAPI.MODID + ".shield_focus").tracker(512, 1, false).build());
+                        ThaumicAugmentationAPI.MODID + ".shield_focus").tracker(256, 1, false).build());
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityAutocaster.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "autocaster"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".autocaster").tracker(64, 3, false).build());
@@ -416,6 +418,13 @@ public final class RegistryHandler {
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "primal_wisp"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".primal_wisp").tracker(64, 1, true).egg(
                         0xC71585, 0xFF1493).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityTAEldritchGolem.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "eldritch_golem"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".eldritch_golem").tracker(64, 3, true).egg(
+                        0x383882, 0x888888).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityTAGolemOrb.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "golem_orb"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".golem_orb").tracker(64, 1, true).build());
     }
     
     @SubscribeEvent

@@ -45,6 +45,7 @@ import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.block.property.IAltarBlock;
+import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGolem;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
@@ -85,7 +86,10 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
     }
     
     protected EntityLiving createBoss() {
-        return new EntityTAEldritchWarden(world);
+        if (world.rand.nextBoolean())
+            return new EntityTAEldritchGolem(world);
+        else
+            return new EntityTAEldritchWarden(world);
     }
     
     @Override

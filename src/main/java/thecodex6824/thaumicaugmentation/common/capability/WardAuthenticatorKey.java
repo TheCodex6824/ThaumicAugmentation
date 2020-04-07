@@ -64,7 +64,7 @@ public class WardAuthenticatorKey implements IWardAuthenticator, INBTSerializabl
     
     @Override
     public boolean permitsUsage(IWardedTile tile, ItemStack stack, EntityLivingBase user) {
-        return user.getUniqueID().equals(owner);
+        return tile.getOwner().equals(owner);
     }
     
     @Override

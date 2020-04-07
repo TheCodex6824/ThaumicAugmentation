@@ -52,6 +52,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
     protected DimensionalBlockPos linked;
     protected int ticks;
     protected boolean needsSync;
+    protected boolean open;
     
     public TileImpetusMirror() {
         node = new ImpetusNode(2, 2) {
@@ -89,6 +90,22 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
             }
             
             @Override
+            public void onConnected(IImpetusNode other) {
+                if (!world.isRemote && !linked.isInvalid() && other.getLocation().equals(linked)) {
+                    open = true;
+                    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+                }
+            }
+            
+            @Override
+            public void onDisconnected(IImpetusNode other) {
+                if (!world.isRemote && !linked.isInvalid() && other.getLocation().equals(linked)) {
+                    open = false;
+                    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+                }
+            }
+            
+            @Override
             public Vec3d getBeamEndpoint() {
                 Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
                 IBlockState state = world.getBlockState(pos);
@@ -116,15 +133,9 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
     @Override
     public void update() {
         if (!world.isRemote) {
-            if (needsSync) {
-                NodeHelper.syncAddedImpetusNodeInput(node, linked);
-                NodeHelper.syncAddedImpetusNodeOutput(node, linked);
-                needsSync = false;
-            }
-            
-            if (ticks++ % 100 == 0 && !linked.isInvalid() &&
+            if (ticks++ % 20 == 0 && !linked.isInvalid() &&
                     !node.getLocation().isInvalid() && node.getGraph().findNodeByPosition(linked) == null) {
-                    
+                
                 World targetWorld = DimensionManager.getWorld(linked.getDimension());
                 if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
                     TileEntity tile = world.getTileEntity(linked.getPos());
@@ -132,18 +143,25 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
                         IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                         if (otherNode != null) {
                             if (tile instanceof TileImpetusMirror) {
-                                ((TileImpetusMirror) tile).setLink(node.getLocation());
-                                node.addInput(otherNode);
-                                node.addOutput(otherNode);
-                                markDirty();
-                                NodeHelper.syncAddedImpetusNodeInput(node, otherNode.getLocation());
-                                NodeHelper.syncAddedImpetusNodeInput(otherNode, node.getLocation());
-                                NodeHelper.syncAddedImpetusNodeOutput(node, otherNode.getLocation());
-                                NodeHelper.syncAddedImpetusNodeOutput(otherNode, node.getLocation());
+                                TileImpetusMirror otherMirror = (TileImpetusMirror) tile;
+                                if (otherMirror.getLink().isInvalid() || otherMirror.getLink().equals(node.getLocation())) {
+                                    otherMirror.setLink(node.getLocation());
+                                    node.addInput(otherNode);
+                                    node.addOutput(otherNode);
+                                    markDirty();
+                                    needsSync = true;
+                                }
                             }
                         }
                     }
                 }
+            }
+            
+            if (needsSync) {
+                NodeHelper.syncAddedImpetusNodeInput(node, linked);
+                NodeHelper.syncAddedImpetusNodeOutput(node, linked);
+                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+                needsSync = false;
             }
             
             if (ticks % 20 == 0)
@@ -154,17 +172,6 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
     
     @Override
     public void onBlockBroken() {
-        if (!world.isRemote && !linked.isInvalid() && node.getLocation() != DimensionalBlockPos.INVALID &&
-                node.getGraph().findNodeByPosition(linked) != null) {
-                    
-            World targetWorld = DimensionManager.getWorld(linked.getDimension());
-            if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
-                TileEntity tile = world.getTileEntity(linked.getPos());
-                if (tile instanceof TileImpetusMirror)
-                    ((TileImpetusMirror) tile).setLink(DimensionalBlockPos.INVALID);
-            }
-        }
-        
         for (IImpetusNode input : node.getInputs())
             NodeHelper.syncRemovedImpetusNodeOutput(input, node.getLocation());
         
@@ -178,7 +185,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
     public void setLink(DimensionalBlockPos linkTo) {
         if (!linkTo.equals(linked)) {
             boolean removed = false;
-            IImpetusNode link = node.getGraph().findNodeByPosition(linked);
+            IImpetusNode link = node.getGraph().findNodeByPosition(linkTo);
             if (link != null) {
                 removed = node.removeInput(link);
                 removed |= node.removeOutput(link);
@@ -210,6 +217,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
                                 node.addInput(otherNode);
                                 node.addOutput(otherNode);
                                 markDirty();
+                                open = true;
                                 // client may not have the TE data yet
                                 needsSync = true;
                             }
@@ -218,10 +226,29 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
                 }
             }
         }
+        else if (!world.isRemote && !open && node.getGraph().findNodeByPosition(linked) == null) {
+            World targetWorld = DimensionManager.getWorld(linked.getDimension());
+            if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
+                TileEntity tile = world.getTileEntity(linked.getPos());
+                if (tile instanceof TileImpetusMirror) {
+                    IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                    if (otherNode != null) {
+                        node.addInput(otherNode);
+                        node.addOutput(otherNode);
+                        open = true;
+                        needsSync = true;
+                    }
+                }
+            }
+        }
     }
     
     public DimensionalBlockPos getLink() {
         return linked;
+    }
+    
+    public boolean shouldShowOpenMirror() {
+        return open;
     }
     
     @Override
@@ -242,6 +269,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
             node.addInputLocation(linked);
             node.addOutputLocation(linked);
         }
+        
         node.init(world);
         ThaumicAugmentation.proxy.registerRenderableImpetusNode(node);
     }
@@ -277,18 +305,20 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound tag = super.getUpdateTag();
-        tag.setTag("node", node.serializeNBT());
         if (!linked.isInvalid())
             tag.setIntArray("link", linked.toArray());
+        
+        tag.setBoolean("open", open);
         return tag;
     }
     
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
-        node.init(world);
         if (tag.hasKey("link", NBT.TAG_INT_ARRAY))
             linked = new DimensionalBlockPos(tag.getIntArray("link"));
+        
+        open = tag.getBoolean("open");
     }
     
     @Override
@@ -296,14 +326,20 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
         NBTTagCompound tag = new NBTTagCompound();
         if (!linked.isInvalid())
             tag.setIntArray("link", linked.toArray());
+        
+        tag.setBoolean("open", open);
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
     
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        if (world.isRemote && packet.getNbtCompound().hasKey("link", NBT.TAG_INT_ARRAY)) {
-            linked = new DimensionalBlockPos(packet.getNbtCompound().getIntArray("link"));
-            world.markBlockRangeForRenderUpdate(pos, pos);
+        if (world.isRemote) {
+            if (packet.getNbtCompound().hasKey("link", NBT.TAG_INT_ARRAY)) {
+                linked = new DimensionalBlockPos(packet.getNbtCompound().getIntArray("link"));
+                world.markBlockRangeForRenderUpdate(pos, pos);
+            }
+            
+            open = packet.getNbtCompound().getBoolean("open");
         }
     }
     

@@ -108,7 +108,7 @@ public class BlockImpetusMirror extends BlockTABase implements IDirectionalBlock
         boolean value = false;
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileImpetusMirror)
-            value = !((TileImpetusMirror) tile).getLink().isInvalid();
+            value = ((TileImpetusMirror) tile).shouldShowOpenMirror();
         
         return state.withProperty(IConnected.CONNECTED, value);
     }

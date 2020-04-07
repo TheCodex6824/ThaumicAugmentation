@@ -54,9 +54,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.capabilities.IPlayerWarp.EnumWarpType;
+import thaumcraft.api.entities.IEldritchMob;
 import thaumcraft.common.entities.ai.combat.AILongRangeAttack;
 import thaumcraft.common.entities.monster.EntityEldritchGuardian;
+import thaumcraft.common.entities.monster.boss.EntityCultistLeader;
+import thaumcraft.common.entities.monster.boss.EntityCultistPortalGreater;
 import thaumcraft.common.entities.monster.cult.EntityCultist;
+import thaumcraft.common.entities.monster.cult.EntityCultistPortalLesser;
 import thaumcraft.common.entities.projectile.EntityEldritchOrb;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.network.PacketHandler;
@@ -97,7 +101,10 @@ public class EntityTAEldritchGuardian extends EntityEldritchGuardian {
         tasks.addTask(8, new EntityAILookIdle(this));
         targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
         targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+        targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityCultistLeader.class, true));
         targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityCultist.class, true));
+        targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityCultistPortalGreater.class, true));
+        targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityCultistPortalLesser.class, true));
     }
     
     @Override
@@ -196,7 +203,10 @@ public class EntityTAEldritchGuardian extends EntityEldritchGuardian {
     
     @Override
     public boolean isOnSameTeam(Entity entity) {
-        return super.isOnSameTeam(entity) || isOnScoreboardTeam(entity.getTeam());
+        if (getTeam() != null)
+            return isOnScoreboardTeam(entity.getTeam());
+        else
+            return entity instanceof IEldritchMob;
     }
     
     @Override

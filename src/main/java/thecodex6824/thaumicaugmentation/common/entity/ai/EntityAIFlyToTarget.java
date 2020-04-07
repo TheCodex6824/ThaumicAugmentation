@@ -57,6 +57,7 @@ public class EntityAIFlyToTarget extends EntityAIBase {
         entity.motionX += (Math.signum(x) * 0.5 - entity.motionX) * speed;
         entity.motionY += (Math.signum(y) * 0.7 - entity.motionY) * speed;
         entity.motionZ += (Math.signum(z) * 0.5 - entity.motionZ) * speed;
+        entity.velocityChanged = true;
         entity.moveForward = 0.15F;
         if (rotate) {
             float yaw = (float) (Math.toDegrees(Math.atan2(entity.motionZ, entity.motionX))) - 90.0F;

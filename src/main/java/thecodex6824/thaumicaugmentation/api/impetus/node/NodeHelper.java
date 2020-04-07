@@ -202,16 +202,16 @@ public final class NodeHelper {
             RayTraceResult r = sharedWorld.rayTraceBlocks(start, target, false, true, false);
             if (r == null || node2.getLocation().getPos().equals(r.getBlockPos()))
                 break;
-            else if (r.getBlockPos() != null) {
+            else if (r.getBlockPos() != null && r.hitVec != null) {
                 IBlockState state = sharedWorld.getBlockState(r.getBlockPos());
                 if (state.isOpaqueCube() || state.getLightOpacity(sharedWorld, r.getBlockPos()) > 0) {
                     clear = false;
                     break;
                 }
                 else {
-                    double dX = Math.max(-1, Math.min(1, target.x - r.getBlockPos().getX()));
-                    double dY = Math.max(-1, Math.min(1, target.y - r.getBlockPos().getY()));
-                    double dZ = Math.max(-1, Math.min(1, target.z - r.getBlockPos().getZ()));
+                    double dX = Math.max(-1, Math.min(1, target.x - r.hitVec.x));
+                    double dY = Math.max(-1, Math.min(1, target.y - r.hitVec.y));
+                    double dZ = Math.max(-1, Math.min(1, target.z - r.hitVec.z));
                     start = start.add(dX, dY, dZ);
                 }
             }

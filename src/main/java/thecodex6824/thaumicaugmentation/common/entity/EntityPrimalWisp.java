@@ -66,7 +66,7 @@ import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.entity.PrimalWispAttackRegistry;
 import thecodex6824.thaumicaugmentation.api.util.QuadConsumer;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
-import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAIAttackRangedNoMovement;
+import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAIAttackRangedCustomMutex;
 import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAIFlyToTarget;
 import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAIFlyWander;
 import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAIHurtByTargetAnyLiving;
@@ -102,7 +102,7 @@ public class EntityPrimalWisp extends EntityFlying implements IMob, IRangedAttac
     @Override
     protected void initEntityAI() {
         super.initEntityAI();
-        tasks.addTask(2, new EntityAIAttackRangedNoMovement<>(this, 20, 40, 16.0F));
+        tasks.addTask(2, new EntityAIAttackRangedCustomMutex<>(this, 20, 40, 16.0F, 2));
         tasks.addTask(4, new EntityAIFlyToTarget(this, 0.1F, false));
         tasks.addTask(7, new EntityAIFlyWander(this, 0.1F));
         targetTasks.addTask(1, new EntityAIHurtByTargetAnyLiving(this, true));

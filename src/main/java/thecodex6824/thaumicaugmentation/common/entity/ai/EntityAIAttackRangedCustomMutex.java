@@ -26,7 +26,7 @@ import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.math.MathHelper;
 
-public class EntityAIAttackRangedNoMovement<T extends EntityLiving & IRangedAttackMob> extends EntityAIBase {
+public class EntityAIAttackRangedCustomMutex<T extends EntityLiving & IRangedAttackMob> extends EntityAIBase {
 
     protected T entity;
     protected EntityLivingBase target;
@@ -37,18 +37,18 @@ public class EntityAIAttackRangedNoMovement<T extends EntityLiving & IRangedAtta
     protected float attackRadius;
     protected float maxAttackDistance;
 
-    public EntityAIAttackRangedNoMovement(T attacker, int maxAttackTime, float maxAttackDistanceIn) {
-        this(attacker, maxAttackTime, maxAttackTime, maxAttackDistanceIn);
+    public EntityAIAttackRangedCustomMutex(T attacker, int maxAttackTime, float maxAttackDistanceIn, int mutex) {
+        this(attacker, maxAttackTime, maxAttackTime, maxAttackDistanceIn, mutex);
     }
 
-    public EntityAIAttackRangedNoMovement(T attacker, int intervalMin, int maxAttackTime, float maxAttackDistanceIn) {
+    public EntityAIAttackRangedCustomMutex(T attacker, int intervalMin, int maxAttackTime, float maxAttackDistanceIn, int mutex) {
         entity = attacker;
         rangedAttackTime = -1;
         attackIntervalMin = intervalMin;
         maxRangedAttackTime = maxAttackTime;
         attackRadius = maxAttackDistanceIn;
         maxAttackDistance = maxAttackDistanceIn * maxAttackDistanceIn;
-        setMutexBits(2);
+        setMutexBits(mutex);
     }
 
     @Override

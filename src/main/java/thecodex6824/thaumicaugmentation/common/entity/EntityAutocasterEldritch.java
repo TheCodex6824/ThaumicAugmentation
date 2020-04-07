@@ -34,6 +34,7 @@ import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,9 +49,12 @@ import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.IFocusElement;
 import thaumcraft.api.entities.IEldritchMob;
 import thaumcraft.common.entities.monster.EntityEldritchGuardian;
+import thaumcraft.common.entities.monster.boss.EntityCultistLeader;
+import thaumcraft.common.entities.monster.boss.EntityCultistPortalGreater;
 import thaumcraft.common.entities.monster.boss.EntityEldritchGolem;
 import thaumcraft.common.entities.monster.boss.EntityEldritchWarden;
 import thaumcraft.common.entities.monster.cult.EntityCultist;
+import thaumcraft.common.entities.monster.cult.EntityCultistPortalLesser;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.items.casters.foci.FocusEffectAir;
 import thaumcraft.common.items.casters.foci.FocusEffectCurse;
@@ -175,10 +179,12 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
         tasks.addTask(2, new EntityAIWatchClosest(this, EntityEldritchGuardian.class, 12.0F));
         tasks.addTask(2, new EntityAIWatchClosest(this, EntityPlayer.class, 12.0F));
         tasks.addTask(3, new EntityAILookIdle(this));
-        targetTasks.addTask(1, new EntityAIHurtByTarget(this, false, new Class[0]));
-        EntityAINearestValidTarget targeting = new EntityAINearestValidTarget(true, 5);
-        targeting.addTargetSelector(entity -> entity instanceof EntityPlayer || entity instanceof EntityCultist);
-        targetTasks.addTask(2, targeting);
+        targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+        targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+        targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityCultistLeader.class, true));
+        targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityCultist.class, true));
+        targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityCultistPortalGreater.class, true));
+        targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityCultistPortalLesser.class, true));
     }
     
     protected void addWord(Random rand, StringBuilder builder) {
@@ -344,7 +350,10 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
     
     @Override
     public boolean isOnSameTeam(Entity entity) {
-        return entity instanceof IEldritchMob;
+        if (getTeam() != null)
+            return super.isOnSameTeam(entity);
+        else
+            return entity instanceof IEldritchMob;
     }
     
     @Override
