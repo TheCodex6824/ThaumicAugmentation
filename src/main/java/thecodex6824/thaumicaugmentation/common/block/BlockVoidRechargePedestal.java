@@ -42,7 +42,6 @@ import net.minecraftforge.items.IItemHandler;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 public class BlockVoidRechargePedestal extends BlockTABase implements IItemBlockProvider {
 
@@ -117,16 +116,13 @@ public class BlockVoidRechargePedestal extends BlockTABase implements IItemBlock
             if (inv != null) {
                 for (int i = 0; i < inv.getSlots(); ++i) {
                     ItemStack stack = inv.getStackInSlot(i);
-                    if (stack != null && !stack.isEmpty()) {
+                    if (!stack.isEmpty()) {
                         world.spawnEntity(new EntityItem(world, pos.getX() + 0.5 + world.rand.nextGaussian() / 2, 
                                 pos.getY() + 0.5 + Math.abs(world.rand.nextGaussian() / 2), pos.getZ() + 0.5 + world.rand.nextGaussian() / 2, stack));
                     }
                 }
             }
         }
-        
-        if (tile instanceof IBreakCallback)
-            ((IBreakCallback) tile).onBlockBroken();
         
         super.breakBlock(world, pos, state);
     }

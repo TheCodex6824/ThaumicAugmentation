@@ -59,9 +59,9 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
     
     public double getMaxConnectDistance(IImpetusNode toConnect);
     
-    public void addInputLocation(DimensionalBlockPos toConnect);
+    public boolean addInputLocation(DimensionalBlockPos toConnect);
     
-    public void addOutputLocation(DimensionalBlockPos toConnect);
+    public boolean addOutputLocation(DimensionalBlockPos toConnect);
     
     public boolean removeInputLocation(DimensionalBlockPos toRemove);
     

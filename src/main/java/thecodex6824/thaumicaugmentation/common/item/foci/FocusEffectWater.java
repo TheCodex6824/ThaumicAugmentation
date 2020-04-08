@@ -130,7 +130,7 @@ public class FocusEffectWater extends FocusEffect {
     
     @Override
     public String getResearch() {
-        return "FIRSTSTEPS"; //"FOCUS_WATER";
+        return "FOCUS_WATER";
     }
     
     @Override

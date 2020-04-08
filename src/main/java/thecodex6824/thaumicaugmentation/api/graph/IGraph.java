@@ -27,9 +27,9 @@ import javax.annotation.Nullable;
 
 public interface IGraph<Node, Self> {
 
-    public void addNode(Node node);
+    public boolean addNode(Node node);
     
-    public void removeNode(Node node);
+    public boolean removeNode(Node node);
     
     public int size();
     
@@ -43,9 +43,9 @@ public interface IGraph<Node, Self> {
     
     public Set<Node> getOutputs(Node node);
     
-    public void addInput(Node node, Node newInput);
+    public boolean addInput(Node node, Node newInput);
     
-    public void addOutput(Node node, Node newOutput);
+    public boolean addOutput(Node node, Node newOutput);
     
     public boolean removeInput(Node node, Node input);
     

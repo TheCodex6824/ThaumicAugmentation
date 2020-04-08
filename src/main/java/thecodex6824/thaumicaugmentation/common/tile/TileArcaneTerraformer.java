@@ -79,10 +79,9 @@ import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
-public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable, IEssentiaTransport, IBreakCallback {
+public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable, IEssentiaTransport {
 
     protected static final int MAX_ESSENTIA = 20; // per aspect
     protected static final Cache<Biome, Object2IntOpenHashMap<Aspect>> BIOME_COSTS =
@@ -494,19 +493,13 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     
     @Override
     public void invalidate() {
-        consumer.unload();
+        consumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
     }
     
     @Override
-    public void onBlockBroken() {
-        for (IImpetusNode input : consumer.getInputs())
-            NodeHelper.syncRemovedImpetusNodeOutput(input, consumer.getLocation());
-        
-        for (IImpetusNode output : consumer.getOutputs())
-            NodeHelper.syncRemovedImpetusNodeInput(output, consumer.getLocation());
-        
-        consumer.destroy();
+    public void onChunkUnload() {
+        consumer.unload();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
     }
     
@@ -598,11 +591,6 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
         consumer.init(world);
-        inventory.deserializeNBT(tag.getCompoundTag("inventory"));
-        radius = tag.getInteger("radius");
-        circle = tag.getBoolean("circle");
-        if (tag.hasKey("biome", NBT.TAG_STRING))
-            activeBiome = new ResourceLocation(tag.getString("biome"));
     }
     
     @Override

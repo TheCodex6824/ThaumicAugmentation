@@ -46,18 +46,24 @@ public class ImpetusGraph implements IImpetusGraph {
     }
     
     @Override
-    public void addNode(IImpetusNode node) {
+    public boolean addNode(IImpetusNode node) {
         IImpetusGraph graph = node.getGraph();
-        if (graph != null && graph != this)
+        if (graph != null && graph != this) {
             addAndMergeGraph(node);
+            return true;
+        }
         else
-            nodes.put(node.getLocation(), node);
+            return nodes.put(node.getLocation(), node) == null;
     }
     
     @Override
-    public void removeNode(IImpetusNode node) {
-        if (nodes.containsKey(node.getLocation()))
+    public boolean removeNode(IImpetusNode node) {
+        if (nodes.containsKey(node.getLocation())) {
             removeAndSplitGraph(node);
+            return true;
+        }
+        else
+            return false;
     }
     
     @Override
@@ -81,13 +87,13 @@ public class ImpetusGraph implements IImpetusGraph {
     }
     
     @Override
-    public void addInput(IImpetusNode node, IImpetusNode input) {
-        node.addInput(input);
+    public boolean addInput(IImpetusNode node, IImpetusNode input) {
+        return node.addInput(input);
     }
     
     @Override
-    public void addOutput(IImpetusNode node, IImpetusNode output) {
-        node.addOutput(output);
+    public boolean addOutput(IImpetusNode node, IImpetusNode output) {
+        return node.addOutput(output);
     }
     
     @Override

@@ -23,7 +23,6 @@ package thecodex6824.thaumicaugmentation.client.event;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +40,8 @@ import com.google.common.cache.CacheBuilder;
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
@@ -102,7 +103,8 @@ public class RenderEventHandler {
     private static final Cache<EntityLivingBase, FXBeamBore> IMPULSE_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterWrite(
             5000, TimeUnit.MILLISECONDS).weakKeys().maximumSize(25).build();
     
-    private static final HashMap<DimensionalBlockPos[], Long> TRANSACTIONS = new HashMap<>();
+    private static final Object2LongOpenHashMap<DimensionalBlockPos[]> TRANSACTIONS = new Object2LongOpenHashMap<>();
+    private static final Object2IntOpenHashMap<DimensionalBlockPos> FRAME_COLORS = new Object2IntOpenHashMap<>();
     
     private static boolean renderShaders = false;
     private static final ArrayList<ArrayList<IShaderRenderingCallback>> SHADER_RENDERS = new ArrayList<>(ShaderType.values().length);
@@ -345,6 +347,7 @@ public class RenderEventHandler {
     
     private static void renderCubeFrame(Entity rv, float partial, Vec3d eyePos, BlockPos blockPosition, AxisAlignedBB cube,
             float r, float g, float b, float a) {
+        
         GlStateManager.depthMask(false);
         GlStateManager.disableDepth();
         GlStateManager.enableBlend();
@@ -510,17 +513,35 @@ public class RenderEventHandler {
                                          pos, player.world.getBlockState(pos).getBoundingBox(player.world, pos), 0.8F, 0.8F, 1.0F, 1.0F);
                             }
                             
-                            for (DimensionalBlockPos p : cap.getInputLocations()) {
-                                if (p.getDimension() == player.dimension && p.getPos().distanceSq(eyes.x, eyes.y, eyes.z) < 64 * 64) {
-                                    renderCubeFrame(rv, event.getPartialTicks(), rv.getPositionEyes(event.getPartialTicks()),
-                                             p.getPos(), player.world.getBlockState(p.getPos()).getBoundingBox(player.world, p.getPos()), 1.0F, 0.8F, 0.8F, 1.0F);
-                                }
-                            }
+                            FRAME_COLORS.clear();
+                            for (DimensionalBlockPos p : cap.getInputLocations())
+                                FRAME_COLORS.addTo(p, 1);
                             
-                            for (DimensionalBlockPos p : cap.getOutputLocations()) {
+                            for (DimensionalBlockPos p : cap.getOutputLocations())
+                                FRAME_COLORS.addTo(p, 2);
+                            
+                            for (DimensionalBlockPos p : FRAME_COLORS.keySet()) {
                                 if (p.getDimension() == player.dimension && p.getPos().distanceSq(eyes.x, eyes.y, eyes.z) < 64 * 64) {
+                                    int color = FRAME_COLORS.getInt(p);
+                                    float r = 0.8F, g = 0.8F, b = 0.8F, a = 0.8F;
+                                    switch (color) {
+                                        case 1: {
+                                            r = 1.0F;
+                                            break;
+                                        }
+                                        case 2: {
+                                            g = 1.0F;
+                                            break;
+                                        }
+                                        default: {
+                                            r = 1.0F;
+                                            g = 1.0F;
+                                            break;
+                                        }
+                                    }
+                                    
                                     renderCubeFrame(rv, event.getPartialTicks(), rv.getPositionEyes(event.getPartialTicks()),
-                                             p.getPos(), player.world.getBlockState(p.getPos()).getBoundingBox(player.world, p.getPos()), 0.8F, 1.0F, 0.8F, 1.0F);
+                                             p.getPos(), player.world.getBlockState(p.getPos()).getBoundingBox(player.world, p.getPos()), r, g, b, a);
                                 }
                             }
                         }

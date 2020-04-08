@@ -202,12 +202,6 @@ public class TileEldritchLock extends TileEntity implements ITickable, IInteract
     }
     
     @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
-        super.handleUpdateTag(tag);
-        openTicks = tag.getInteger("openTicks");
-    }
-    
-    @Override
     @Nullable
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();

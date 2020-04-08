@@ -21,12 +21,10 @@
 package thecodex6824.thaumicaugmentation.api.impetus.node.prefab;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
@@ -34,6 +32,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusGraph;
@@ -48,7 +47,6 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     protected DimensionalBlockPos loc;
     protected Set<DimensionalBlockPos> inputs;
     protected Set<DimensionalBlockPos> outputs;
-    protected Object2BooleanOpenHashMap<DimensionalBlockPos> tempStorage;
     
     public ImpetusNode(int totalInputs, int totalOutputs) {
         this(totalInputs, totalOutputs, DimensionalBlockPos.INVALID);
@@ -106,35 +104,53 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     }
     
     @Override
-    public void addInput(IImpetusNode input) {
-        addInputLocation(input.getLocation());
-        input.addOutputLocation(loc);
-        graph.addNode(input);
-        onConnected(input);
+    public boolean addInput(IImpetusNode input) {
+        boolean newToUs = addInputLocation(input.getLocation());
+        boolean newToThem = input.addOutputLocation(loc);
+        boolean result = graph.addNode(input);
+        if (newToUs || result)
+            onConnected(input);
+        if (newToThem || result)
+            input.onConnected(this);
+        
+        return result;
     }
     
     @Override
-    public void addOutput(IImpetusNode output) {
-        addOutputLocation(output.getLocation());
-        output.addInputLocation(loc);
-        graph.addNode(output);
-        onConnected(output);
+    public boolean addOutput(IImpetusNode output) {
+        boolean newToUs = addOutputLocation(output.getLocation());
+        boolean newToThem = output.addInputLocation(loc);
+        boolean result = graph.addNode(output);
+        if (newToUs || result)
+            onConnected(output);
+        if (newToThem || result)
+            output.onConnected(this);
+        
+        return result;
     }
     
     @Override
     public boolean removeInput(IImpetusNode input) {
-        onDisconnected(input);
-        input.onDisconnected(this);
-        input.removeOutputLocation(loc);
-        return inputs.remove(input.getLocation());
+        boolean removedUs = input.removeOutputLocation(loc);
+        boolean removedThem = inputs.remove(input.getLocation());
+        if (removedUs)
+            onDisconnected(input);
+        if (removedThem)
+            input.onDisconnected(this);
+        
+        return removedThem;
     }
     
     @Override
     public boolean removeOutput(IImpetusNode output) {
-        onDisconnected(output);
-        output.onDisconnected(this);
-        output.removeInputLocation(loc);
-        return outputs.remove(output.getLocation());
+        boolean removedUs = output.removeInputLocation(loc);
+        boolean removedThem = outputs.remove(output.getLocation());
+        if (removedUs)
+            onDisconnected(output);
+        if (removedThem)
+            output.onDisconnected(this);
+        
+        return removedThem;
     }
     
     @Override
@@ -163,19 +179,19 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     }
     
     @Override
-    public void addInputLocation(DimensionalBlockPos toConnect) {
+    public boolean addInputLocation(DimensionalBlockPos toConnect) {
         if (inputs.size() == maxInputs && !inputs.contains(toConnect))
             throw new IndexOutOfBoundsException("Exceeded maximum amount of inputs for node (" + inputs.size() + ")");
         
-        inputs.add(toConnect);
+        return inputs.add(toConnect);
     }
     
     @Override
-    public void addOutputLocation(DimensionalBlockPos toConnect) {
+    public boolean addOutputLocation(DimensionalBlockPos toConnect) {
         if (outputs.size() == maxOutputs && !outputs.contains(toConnect))
             throw new IndexOutOfBoundsException("Exceeded maximum amount of outputs for node (" + outputs.size() + ")");
         
-        outputs.add(toConnect);
+        return outputs.add(toConnect);
     }
     
     @Override
@@ -253,31 +269,62 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
         unload();
     }
     
+    protected void initServer() {
+        for (DimensionalBlockPos pos : inputs) {
+            World world = DimensionManager.getWorld(pos.getDimension());
+            if (world != null && world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
+                TileEntity te = world.getTileEntity(pos.getPos());
+                if (te != null) {
+                    IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                    if (possible != null)
+                        addInput(possible);
+                }
+            }
+        }
+        
+        for (DimensionalBlockPos pos : outputs) {
+            World world = DimensionManager.getWorld(pos.getDimension());
+            if (world != null && world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
+                TileEntity te = world.getTileEntity(pos.getPos());
+                if (te != null) {
+                    IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                    if (possible != null)
+                        addOutput(possible);
+                }
+            }
+        }
+    }
+    
+    protected void initClient(World world) {
+        for (DimensionalBlockPos pos : inputs) {
+            if (world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
+                TileEntity te = world.getTileEntity(pos.getPos());
+                if (te != null) {
+                    IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                    if (possible != null)
+                        addInput(possible);
+                }
+            }
+        }
+        
+        for (DimensionalBlockPos pos : outputs) {
+            if (world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
+                TileEntity te = world.getTileEntity(pos.getPos());
+                if (te != null) {
+                    IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                    if (possible != null)
+                        addOutput(possible);
+                }
+            }
+        }
+    }
+    
     @Override
     public void init(World world) {
-        if (tempStorage != null) {
-            for (Map.Entry<DimensionalBlockPos, Boolean> entry : tempStorage.entrySet()) {
-                DimensionalBlockPos pos = entry.getKey();
-                if (world.isBlockLoaded(pos.getPos())) {
-                    TileEntity te = world.getTileEntity(pos.getPos());
-                    if (te != null && te.hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null)) {
-                        if (entry.getValue())
-                            addOutput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
-                        else
-                            addInput(te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null));
-                    }
-                    
-                    continue;
-                }
-                
-                if (entry.getValue())
-                    addOutputLocation(pos);
-                else
-                    addInputLocation(pos);
-            }
-            
-            tempStorage = null;
-        }
+        if (!world.isRemote)
+            initServer();
+        else
+            initClient(world);
     }
     
     @Override
@@ -292,14 +339,13 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        tempStorage = new Object2BooleanOpenHashMap<>();
         NBTTagList list = nbt.getTagList("inputs", NBT.TAG_INT_ARRAY);
         for (int i = 0; i < list.tagCount(); ++i)
-            tempStorage.put(new DimensionalBlockPos(list.getIntArrayAt(i)), false);
+            inputs.add(new DimensionalBlockPos(list.getIntArrayAt(i)));
         
         list = nbt.getTagList("outputs", NBT.TAG_INT_ARRAY);
         for (int i = 0; i < list.tagCount(); ++i)
-            tempStorage.put(new DimensionalBlockPos(list.getIntArrayAt(i)), true);
+            outputs.add(new DimensionalBlockPos(list.getIntArrayAt(i)));
     }
     
     @Override

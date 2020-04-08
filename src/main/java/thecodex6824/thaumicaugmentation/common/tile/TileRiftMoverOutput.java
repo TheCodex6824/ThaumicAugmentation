@@ -317,14 +317,6 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
     }
     
     @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
-        super.handleUpdateTag(tag);
-        operating = tag.getBoolean("operating");
-        if (operating)
-            loadedRiftUUID = tag.getUniqueId("rift");
-    }
-    
-    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setBoolean("operating", operating);
         if (operating) {

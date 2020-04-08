@@ -220,12 +220,19 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (!world.isRemote && isDisabled()) {
+        
+    }
+    
+    @Override
+    protected void updateEntityActionState() {
+        if (isDisabled()) {
             targeting.resetTask();
             BlockPos base = getPosition().down();
             lookHelper.setLookPosition(base.getX() + 0.5, base.getY() + 0.5, base.getZ() + 0.5, getHorizontalFaceSpeed(), getVerticalFaceSpeed());
             lookHelper.onUpdateLook();
         }
+        else
+            super.updateEntityActionState();
     }
     
     @Override
@@ -298,8 +305,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     
     @Override
     protected boolean isDisabled() {
-        return BitUtil.isBitSet(dataManager.get(TARGETS), 4) &&
-                world.getStrongPower(getPosition().offset(dataManager.get(FACING).getOpposite())) > 0;
+        return BitUtil.isBitSet(dataManager.get(TARGETS), 4) && world.isBlockPowered(getPosition());
     }
     
     @Override

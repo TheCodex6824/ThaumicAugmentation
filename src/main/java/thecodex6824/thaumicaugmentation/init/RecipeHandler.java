@@ -290,7 +290,7 @@ public final class RecipeHandler {
             }
         };
         
-        IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("FIRSTSTEPS", blueprint));
+        IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("IMPETUS_MATRIX", blueprint));
         ThaumcraftApi.addMultiblockRecipeToCatalog(new ResourceLocation("thaumicaugmentation", "impetus_matrix"), new BluePrint("IMPETUS_MATRIX", blueprint, new ItemStack[] {
                 new ItemStack(BlocksTC.infusionMatrix),
                 new ItemStack(BlocksTC.pedestalEldritch, 2)

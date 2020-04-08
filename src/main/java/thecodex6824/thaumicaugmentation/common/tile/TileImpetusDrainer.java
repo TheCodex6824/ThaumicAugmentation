@@ -59,9 +59,8 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile, IBreakCallback {
+public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile {
 
     protected BufferedImpetusProvider provider;
     protected Vec3d lastRiftPos;
@@ -164,19 +163,13 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     
     @Override
     public void invalidate() {
-        provider.unload();
+        provider.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
     }
     
     @Override
-    public void onBlockBroken() {
-        for (IImpetusNode input : provider.getInputs())
-            NodeHelper.syncRemovedImpetusNodeOutput(input, provider.getLocation());
-        
-        for (IImpetusNode output : provider.getOutputs())
-            NodeHelper.syncRemovedImpetusNodeInput(output, provider.getLocation());
-        
-        provider.destroy();
+    public void onChunkUnload() {
+        provider.unload();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
     }
     

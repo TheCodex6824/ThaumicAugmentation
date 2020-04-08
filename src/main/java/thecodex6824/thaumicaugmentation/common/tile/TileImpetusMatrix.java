@@ -58,7 +58,6 @@ import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.crafting.IInfusionStabiliser;
@@ -82,17 +81,16 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 @SuppressWarnings("deprecation")
-public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimatedTile, IBreakCallback, IGogglesDisplayExtended {
+public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimatedTile, IGogglesDisplayExtended {
 
     protected static final long CELL_CAPACITY = 500;
     protected static final float MIN_STABILITY = -100.0F;
     protected static final float MAX_STABILITY = 25.0F;
     protected static final DecimalFormat STAB_FORMATTER = new DecimalFormat("#######.##");
     
-    protected class MatrixImpetusStorage implements IImpetusStorage, INBTSerializable<NBTTagCompound> {
+    protected class MatrixImpetusStorage implements IImpetusStorage {
         
         protected long energy;
         
@@ -144,18 +142,6 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
             }
             
             return 0;
-        }
-        
-        @Override
-        public NBTTagCompound serializeNBT() {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setLong("energy", energy);
-            return tag;
-        }
-        
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            energy = nbt.getLong("energy");
         }
         
         @Override
@@ -423,19 +409,13 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     
     @Override
     public void invalidate() {
-        prosumer.unload();
+        prosumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
     }
     
     @Override
-    public void onBlockBroken() {
-        for (IImpetusNode input : prosumer.getInputs())
-            NodeHelper.syncRemovedImpetusNodeOutput(input, prosumer.getLocation());
-        
-        for (IImpetusNode output : prosumer.getOutputs())
-            NodeHelper.syncRemovedImpetusNodeInput(output, prosumer.getLocation());
-        
-        prosumer.destroy();
+    public void onChunkUnload() {
+        prosumer.unload();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
     }
     
@@ -481,17 +461,15 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         tag.setTag("node", prosumer.serializeNBT());
         tag.setFloat("gain", gain);
         tag.setFloat("stab", stability);
-        tag.setLong("energy", buffer.getEnergyStored());
+        tag.setLong("energy", buffer.energy);
         return tag;
     }
     
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
-        prosumer.init(world);
         gain = tag.getFloat("gain");
-        stability = tag.getFloat("stab");
-        buffer.energy = tag.getLong("energy");
+        prosumer.init(world);
     }
     
     @Override
@@ -514,7 +492,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         tag.setTag("node", prosumer.serializeNBT());
-        tag.setTag("energy", buffer.serializeNBT());
+        tag.setLong("energy", buffer.energy);
         tag.setFloat("stab", stability);
         return super.writeToNBT(tag);
     }
@@ -522,7 +500,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        buffer.deserializeNBT(nbt.getCompoundTag("energy"));
+        buffer.energy = nbt.getLong("energy");
         prosumer.deserializeNBT(nbt.getCompoundTag("node"));
         stability = nbt.getFloat("stab");
     }

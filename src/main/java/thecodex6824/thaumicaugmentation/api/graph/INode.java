@@ -48,9 +48,9 @@ public interface INode<Graph extends IGraph<Self, ?>, Self> {
     
     public boolean hasOutput(Self out);
     
-    public void addInput(Self input);
+    public boolean addInput(Self input);
     
-    public void addOutput(Self output);
+    public boolean addOutput(Self output);
     
     public boolean removeInput(Self input);
     

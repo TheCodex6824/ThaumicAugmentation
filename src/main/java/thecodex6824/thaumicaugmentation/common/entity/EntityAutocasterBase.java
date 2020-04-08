@@ -124,12 +124,6 @@ public abstract class EntityAutocasterBase extends EntityCreature {
     protected abstract boolean isDisabled();
     
     @Override
-    protected void updateEntityActionState() {
-        if (!isDisabled())
-            super.updateEntityActionState();
-    }
-    
-    @Override
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {

@@ -36,13 +36,11 @@ import net.minecraftforge.common.capabilities.Capability;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusRelay extends TileEntity implements ITickable, IBreakCallback {
+public class TileImpetusRelay extends TileEntity implements ITickable {
 
     protected ImpetusNode node;
     protected int ticks;
@@ -98,19 +96,13 @@ public class TileImpetusRelay extends TileEntity implements ITickable, IBreakCal
     
     @Override
     public void invalidate() {
-        node.unload();
+        node.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }
     
     @Override
-    public void onBlockBroken() {
-        for (IImpetusNode input : node.getInputs())
-            NodeHelper.syncRemovedImpetusNodeOutput(input, node.getLocation());
-        
-        for (IImpetusNode output : node.getOutputs())
-            NodeHelper.syncRemovedImpetusNodeInput(output, node.getLocation());
-        
-        node.destroy();
+    public void onChunkUnload() {
+        node.unload();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }
     

@@ -50,9 +50,8 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusGenerator extends TileEntity implements IBreakCallback, ITickable {
+public class TileImpetusGenerator extends TileEntity implements ITickable {
 
     protected static class CustomEnergyStorage extends EnergyStorage {
         
@@ -155,19 +154,13 @@ public class TileImpetusGenerator extends TileEntity implements IBreakCallback, 
     
     @Override
     public void invalidate() {
-        node.unload();
+        node.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }
     
     @Override
-    public void onBlockBroken() {
-        for (IImpetusNode input : node.getInputs())
-            NodeHelper.syncRemovedImpetusNodeOutput(input, node.getLocation());
-        
-        for (IImpetusNode output : node.getOutputs())
-            NodeHelper.syncRemovedImpetusNodeInput(output, node.getLocation());
-        
-        node.destroy();
+    public void onChunkUnload() {
+        node.unload();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }
     
@@ -210,7 +203,6 @@ public class TileImpetusGenerator extends TileEntity implements IBreakCallback, 
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
         node.init(world);
-        forgeEnergy.setEnergy(tag.getInteger("energy"));
     }
     
     @Override

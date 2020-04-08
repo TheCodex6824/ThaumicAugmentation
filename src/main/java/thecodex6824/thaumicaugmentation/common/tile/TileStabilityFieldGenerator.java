@@ -353,7 +353,6 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
-        maxStabilityPerOperation = tag.getFloat("stabRegen");
         clientLoadedID = tag.getInteger("riftID");
         if (clientLoadedID != -1)
             loadTargetFromID();
@@ -361,8 +360,6 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
             targetedRift.clear();
             updateBeam();
         }
-        
-        energy.setEnergy(tag.getInteger("energy"));
     }
     
     @Override

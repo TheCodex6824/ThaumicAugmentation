@@ -246,7 +246,9 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
             return false;
         else if (reflect && !world.isRemote) {
             Entity entity = source.getImmediateSource();
-            if ((entity instanceof IProjectile || entity instanceof EntityFireball) && entity.isEntityAlive()) {
+            if ((entity instanceof IProjectile || entity instanceof EntityFireball) && entity.isEntityAlive() &&
+                    getEntityBoundingBox().intersects(entity.getEntityBoundingBox())) {
+                
                 Entity newEntity = EntityList.newEntity(entity.getClass(), entity.world);
                 if (newEntity != null) {
                     NBTTagCompound toCopy = entity.serializeNBT();
@@ -279,15 +281,18 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         }
         
         if (super.attackEntityFrom(source, amount)) {
-            int targetID = -1;
-            if (source.getTrueSource() != null)
-                targetID = source.getTrueSource().getEntityId();
-            else if (source == DamageSource.FALLING_BLOCK)
-                targetID = -3;
-            else if (source.getImmediateSource() != null)
-                targetID = source.getImmediateSource().getEntityId();
+            if (!world.isRemote) {
+                int targetID = -1;
+                if (source.getTrueSource() != null)
+                    targetID = source.getTrueSource().getEntityId();
+                else if (source == DamageSource.FALLING_BLOCK)
+                    targetID = -3;
+                else if (source.getImmediateSource() != null)
+                    targetID = source.getImmediateSource().getEntityId();
+                
+                TANetwork.INSTANCE.sendToAllTracking(new PacketFXShield(getEntityId(), targetID), this);
+            }
             
-            TANetwork.INSTANCE.sendToAllTracking(new PacketFXShield(getEntityId(), targetID), this);
             return true;
         }
         else

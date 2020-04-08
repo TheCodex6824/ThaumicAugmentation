@@ -219,7 +219,6 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
-        mode = tag.getBoolean("mode");
         clientTargetID = tag.getInteger("targetID");
         if (clientTargetID != -1)
             loadTargetFromID();
