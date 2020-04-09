@@ -33,12 +33,16 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
@@ -49,6 +53,16 @@ public class BlockFortifiedGlassPane extends BlockPane implements IModelProvider
         setHardness(15.0F);
         setResistance(2000.0F);
         setHarvestLevel("pickaxe", 2);
+    }
+    
+    @Override
+    public ItemBlock createItemBlock() {
+        return new ItemBlock(this) {
+            @Override
+            public IRarity getForgeRarity(ItemStack stack) {
+                return TAMaterials.RARITY_MAGICAL;
+            }
+        };
     }
     
     @Override

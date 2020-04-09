@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.api;
 
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.util.EnumHelper;
 
 /**
@@ -33,6 +35,42 @@ public final class TAMaterials {
     private TAMaterials() {}
     
     public static final ArmorMaterial VOID_BOOTS = EnumHelper.addArmorMaterial(ThaumicAugmentationAPI.MODID + ":VOID_BOOTS", 
-            ThaumicAugmentationAPI.MODID + ":void_boots", 18, new int[] {4, 7, 9, 4}, 10, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 2.0F);
+            ThaumicAugmentationAPI.MODID + ":void_boots", 18, new int[] {4, 7, 9, 3}, 10, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 2.0F);
 
+    public static final IRarity RARITY_MAGICAL = new IRarity() {
+        @Override
+        public String getName() {
+            return "Magical";
+        }
+        
+        @Override
+        public TextFormatting getColor() {
+            return TextFormatting.YELLOW;
+        }
+    };
+    
+    public static final IRarity RARITY_ARCANE = new IRarity() {
+        @Override
+        public String getName() {
+            return "Arcane";
+        }
+        
+        @Override
+        public TextFormatting getColor() {
+            return TextFormatting.AQUA;
+        }
+    };
+    
+    public static final IRarity RARITY_ELDRITCH = new IRarity() {
+        @Override
+        public String getName() {
+            return "Eldritch";
+        }
+        
+        @Override
+        public TextFormatting getColor() {
+            return TextFormatting.LIGHT_PURPLE;
+        }
+    };
+    
 }

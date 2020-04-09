@@ -35,6 +35,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
@@ -54,6 +55,7 @@ import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.common.golems.seals.SealHandler;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
@@ -309,7 +311,21 @@ public final class RegistryHandler {
         }
 
         registry.register(setupItem(new ItemTieredCasterGauntlet(), "gauntlet"));
-        registry.register(setupItem(new ItemTABase("lattice", "warding_sigil", "amalgamated_gear", "rift_energy_cell", "harness_base", "impetus_resonator"), "material"));
+        registry.register(setupItem(new ItemTABase("lattice", "warding_sigil", "amalgamated_gear", "rift_energy_cell", "harness_base", "impetus_resonator") {
+            @Override
+            public IRarity getForgeRarity(ItemStack stack) {
+                switch (stack.getMetadata()) {
+                    case 0:
+                    case 1:
+                    case 2: return TAMaterials.RARITY_MAGICAL;
+                    
+                    case 3: 
+                    case 5: return TAMaterials.RARITY_ELDRITCH;
+                    
+                    default: return super.getForgeRarity(stack);
+                }
+            }
+        }, "material"));
         registry.register(setupItem(new ItemSealCopier(), "seal_copier"));
         registry.register(setupItem(new ItemArcaneDoor(), "arcane_door"));
         registry.register(setupItem(new ItemKey(), "key"));

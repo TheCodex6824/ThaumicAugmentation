@@ -25,10 +25,13 @@ import java.util.stream.Collectors;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemMultiTexture;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
 import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType.GlassType;
@@ -41,6 +44,11 @@ public class ItemBlockStarfieldGlass extends ItemMultiTexture implements IModelP
     public ItemBlockStarfieldGlass() {
         super(TABlocks.STARFIELD_GLASS, null, IStarfieldGlassType.GLASS_TYPE.getAllowedValues().stream().map(
                 IStarfieldGlassType.GLASS_TYPE::getName).collect(Collectors.toList()).toArray(new String[IStarfieldGlassType.GLASS_TYPE.getAllowedValues().size()]));
+    }
+    
+    @Override
+    public IRarity getForgeRarity(ItemStack stack) {
+        return TAMaterials.RARITY_ARCANE;
     }
     
     @Override

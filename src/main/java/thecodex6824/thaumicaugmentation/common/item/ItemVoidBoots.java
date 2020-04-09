@@ -39,7 +39,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
@@ -56,6 +55,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
@@ -139,10 +139,10 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
             int slot) {
 
         int priority = 0;
-        double ratio = 0.08; // 2 / 25.0
+        double ratio = 0.04; // 1 / 25.0
         if (source.isMagicDamage()) {
             priority = 1;
-            ratio = 0.057142857142857; // 2 / 35.0
+            ratio = 0.028571428571429; // 1 / 35.0
         }
         else if (source.isUnblockable()) {
             priority = 0;
@@ -256,8 +256,8 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
     }
 
     @Override
-    public EnumRarity getRarity(ItemStack stack) {
-        return EnumRarity.EPIC;
+    public IRarity getForgeRarity(ItemStack stack) {
+        return TAMaterials.RARITY_ELDRITCH;
     }
 
     @Override

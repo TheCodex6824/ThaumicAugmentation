@@ -30,6 +30,8 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -41,6 +43,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IRarity;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
@@ -62,6 +66,16 @@ public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, 
         setResistance(35.0F);
         setSoundType(SoundType.METAL);
         setDefaultState(getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.UP));
+    }
+    
+    @Override
+    public ItemBlock createItemBlock() {
+        return new ItemBlock(this) {
+            @Override
+            public IRarity getForgeRarity(ItemStack stack) {
+                return TAMaterials.RARITY_ELDRITCH;
+            }
+        };
     }
     
     @Override

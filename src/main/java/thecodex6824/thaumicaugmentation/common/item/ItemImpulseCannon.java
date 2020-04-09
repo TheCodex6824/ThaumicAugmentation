@@ -41,6 +41,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -48,6 +49,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
@@ -258,6 +260,11 @@ public class ItemImpulseCannon extends ItemTABase {
     @Override
     public boolean isFull3D() {
         return true;
+    }
+    
+    @Override
+    public IRarity getForgeRarity(ItemStack stack) {
+        return TAMaterials.RARITY_ELDRITCH;
     }
     
     @Override

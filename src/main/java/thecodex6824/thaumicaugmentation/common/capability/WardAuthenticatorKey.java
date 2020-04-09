@@ -49,6 +49,10 @@ public class WardAuthenticatorKey implements IWardAuthenticator, INBTSerializabl
         return owner;
     }
     
+    public boolean hasOwner() {
+        return !owner.equals(DEFAULT_UUID);
+    }
+    
     public void setOwnerName(String newName) {
         name = newName;
     }

@@ -32,8 +32,10 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemEldritchLockKey extends ItemTABase {
@@ -54,11 +56,16 @@ public class ItemEldritchLockKey extends ItemTABase {
     }
     
     @Override
+    public IRarity getForgeRarity(ItemStack stack) {
+        return TAMaterials.RARITY_ELDRITCH;
+    }
+    
+    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.eldritch_lock_key_lore").setStyle(new Style()
                 .setItalic(true)
-                .setColor(TextFormatting.LIGHT_PURPLE))
+                .setColor(TextFormatting.DARK_PURPLE))
             .getFormattedText());
     }
     

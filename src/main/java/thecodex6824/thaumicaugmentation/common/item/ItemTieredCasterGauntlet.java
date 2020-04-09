@@ -41,7 +41,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.EnumRarity;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -59,6 +58,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -85,6 +85,7 @@ import thaumcraft.common.world.aura.AuraHandler;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
@@ -384,11 +385,11 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     }
 
     @Override
-    public EnumRarity getRarity(ItemStack stack) {
+    public IRarity getForgeRarity(ItemStack stack) {
         switch (stack.getMetadata()) {
-        case 0: return EnumRarity.RARE;
-        case 1: return EnumRarity.EPIC;
-        default: return EnumRarity.UNCOMMON;
+            case 0: return TAMaterials.RARITY_ARCANE;
+            case 1: return TAMaterials.RARITY_ELDRITCH;
+            default: return TAMaterials.RARITY_ARCANE;
         }
     }
 

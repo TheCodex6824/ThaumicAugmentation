@@ -28,6 +28,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -40,9 +41,11 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IRarity;
 import thaumcraft.api.blocks.BlocksTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.block.property.IImpetusCellInfo;
 import thecodex6824.thaumicaugmentation.api.block.property.IVerticallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
@@ -57,6 +60,16 @@ public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellI
         setResistance(500.0F);
         setDefaultState(getDefaultState().withProperty(IImpetusCellInfo.CELL_INFO, 0));
         setSoundType(SoundType.STONE);
+    }
+    
+    @Override
+    public ItemBlock createItemBlock() {
+        return new ItemBlock(this) {
+            @Override
+            public IRarity getForgeRarity(ItemStack stack) {
+                return TAMaterials.RARITY_ELDRITCH;
+            }
+        };
     }
     
     @Override

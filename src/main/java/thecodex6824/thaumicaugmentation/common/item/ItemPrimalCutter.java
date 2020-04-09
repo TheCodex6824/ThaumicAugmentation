@@ -48,7 +48,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
@@ -65,6 +64,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -78,6 +78,7 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -269,8 +270,8 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     }
     
     @Override
-    public EnumRarity getRarity(ItemStack stack) {
-        return EnumRarity.EPIC;
+    public IRarity getForgeRarity(ItemStack stack) {
+        return TAMaterials.RARITY_ELDRITCH;
     }
     
     @Override

@@ -28,6 +28,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -38,6 +39,7 @@ import thaumcraft.api.items.IRechargable;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.api.items.RechargeHelper;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
@@ -167,6 +169,11 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
         return toRepair.getItemDamage() > 0 && !repair.isEmpty() && 
                 OreDictionary.itemMatches(new ItemStack(ItemsTC.ingots, 1, 1), repair, false);
+    }
+    
+    @Override
+    public IRarity getForgeRarity(ItemStack stack) {
+        return TAMaterials.RARITY_ARCANE;
     }
     
     @Override

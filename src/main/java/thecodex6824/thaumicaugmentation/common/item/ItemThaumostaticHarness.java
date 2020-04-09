@@ -28,6 +28,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -36,6 +37,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.items.IRechargable;
 import thaumcraft.api.items.RechargeHelper;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
@@ -255,6 +257,11 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
     @Override
     public EnumChargeDisplay showInHud(ItemStack arg0, EntityLivingBase arg1) {
         return EnumChargeDisplay.PERIODIC;
+    }
+    
+    @Override
+    public IRarity getForgeRarity(ItemStack stack) {
+        return TAMaterials.RARITY_ARCANE;
     }
     
     @Override

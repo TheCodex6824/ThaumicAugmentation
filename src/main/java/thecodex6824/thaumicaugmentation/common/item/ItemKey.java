@@ -37,12 +37,14 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedTile;
@@ -240,6 +242,11 @@ public class ItemKey extends ItemTABase {
         else
             return ItemStack.EMPTY;
     }
+    
+    @Override
+    public IRarity getForgeRarity(ItemStack stack) {
+        return TAMaterials.RARITY_MAGICAL;
+    }
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -247,14 +254,16 @@ public class ItemKey extends ItemTABase {
         IWardAuthenticator auth = stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
         if (auth instanceof WardAuthenticatorKey) {
             WardAuthenticatorKey key = (WardAuthenticatorKey) auth;
-            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.bound_to", 
-                    key.getOwnerName()).getFormattedText());
-            if (stack.getMetadata() == 2 && key instanceof WardAuthenticatorThaumiumKey) {
-                WardAuthenticatorThaumiumKey thaum = (WardAuthenticatorThaumiumKey) key;
-                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.bound_to_type", 
-                        new TextComponentTranslation(thaum.getBoundTypeName())).getFormattedText());
-                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.bound_to_pos", 
-                        formatBlockPos(thaum.getBoundPosition())).getFormattedText());
+            if (key.hasOwner()) {
+                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.bound_to", 
+                        key.getOwnerName()).getFormattedText());
+                if (stack.getMetadata() == 2 && key instanceof WardAuthenticatorThaumiumKey) {
+                    WardAuthenticatorThaumiumKey thaum = (WardAuthenticatorThaumiumKey) key;
+                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.bound_to_type", 
+                            new TextComponentTranslation(thaum.getBoundTypeName())).getFormattedText());
+                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.bound_to_pos", 
+                            formatBlockPos(thaum.getBoundPosition())).getFormattedText());
+                }
             }
         }
     }

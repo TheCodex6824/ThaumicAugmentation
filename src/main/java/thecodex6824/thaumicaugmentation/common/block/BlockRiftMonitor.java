@@ -24,6 +24,8 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -32,6 +34,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IRarity;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
@@ -41,6 +45,16 @@ public class BlockRiftMonitor extends BlockTABase implements IItemBlockProvider 
     public BlockRiftMonitor() {
         super(Material.ROCK);
         setSoundType(SoundType.STONE);
+    }
+    
+    @Override
+    public ItemBlock createItemBlock() {
+        return new ItemBlock(this) {
+            @Override
+            public IRarity getForgeRarity(ItemStack stack) {
+                return TAMaterials.RARITY_ELDRITCH;
+            }
+        };
     }
     
     @Override
