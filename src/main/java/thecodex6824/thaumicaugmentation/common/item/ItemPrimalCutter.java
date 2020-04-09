@@ -44,6 +44,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumAction;
@@ -65,7 +66,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.util.EnumHelper;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -141,7 +141,7 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
         if (!target.getEntityWorld().isRemote && (!(target instanceof EntityPlayer) ||
-                FMLCommonHandler.instance().getMinecraftServerInstance().isPVPEnabled())) {
+                ThaumicAugmentation.proxy.isPvPEnabled())) {
             target.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 60));
             target.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 120));
         }
@@ -153,8 +153,10 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     @Override
     public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
         super.onUpdate(stack, world, entity, itemSlot, isSelected);
-        if (stack.isItemDamaged() && entity != null && entity.ticksExisted % 20 == 0 && entity instanceof EntityLivingBase)
-            stack.damageItem(-1, (EntityLivingBase) entity);
+        if (stack.isItemDamaged() && entity != null && entity.ticksExisted % 20 == 0) {
+            stack.attemptDamageItem(-1, world.rand,
+                    entity instanceof EntityPlayerMP ? (EntityPlayerMP) entity : null);
+        }
     }
     
     @Override

@@ -31,7 +31,6 @@ import javax.annotation.Nullable;
 import com.google.common.base.Optional;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -302,7 +301,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     @Override
     public boolean canBeCollidedWith() {
         // I hate this
-        if (world.isRemote && Minecraft.getMinecraft().player.equals(ownerRef.get())) {
+        if (world.isRemote && ThaumicAugmentation.proxy.isEntityClientPlayer(ownerRef.get())) {
             StackTraceElement[] trace = Thread.currentThread().getStackTrace();
             if (trace.length >= 3 && trace[2].getClassName().equals("net.minecraft.client.renderer.EntityRenderer$1"))
                 return false;
@@ -471,11 +470,14 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                     motionZ = owner.motionZ;
                     resetBoundingBoxes();
                     collideWithNearbyEntities();
-                    
                     if (canReflect()) {
                         for (EntityFocusCloud e : world.getEntitiesWithinAABB(EntityFocusCloud.class, owner.getEntityBoundingBox().grow(1.0))) {
-                            damageEntity(DamageSource.causeIndirectDamage(e, e.getOwner()), getCloudPower(e) / 2.0F);
-                            e.setDead();
+                            damageEntity(DamageSource.causeIndirectDamage(e, e.getOwner()), getCloudPower(e) / 4.0F);
+                            float radius = e.getRadius();
+                            if (radius > 1.0F)
+                                e.setRadius(radius - 1);
+                            else
+                                e.setDead();
                         }
                     }
                 }

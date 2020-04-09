@@ -1106,8 +1106,10 @@ public class ClientProxy extends ServerProxy {
                             ItemStack stack = inv.getStackInSlot(0);
                             IBiomeSelector item = stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null);
                             if (item != null) {
-                                if (item.getBiomeID().equals(IBiomeSelector.EMPTY) || item.getBiomeID().equals(IBiomeSelector.RESET))
+                                if (item.getBiomeID().equals(IBiomeSelector.EMPTY))
                                     return -1;
+                                else if (item.getBiomeID().equals(IBiomeSelector.RESET))
+                                    return 0xFF1493;
                                 else {
                                     Biome biome = Biome.REGISTRY.getObject(item.getBiomeID());
                                     if (biome != null)

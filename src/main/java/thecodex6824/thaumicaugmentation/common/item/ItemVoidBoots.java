@@ -35,6 +35,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -138,10 +139,10 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
             int slot) {
 
         int priority = 0;
-        double ratio = damageReduceAmount / 25.0;
+        double ratio = 0.08; // 2 / 25.0
         if (source.isMagicDamage()) {
             priority = 1;
-            ratio = damageReduceAmount / 35.0;
+            ratio = 0.057142857142857; // 2 / 35.0
         }
         else if (source.isUnblockable()) {
             priority = 0;
@@ -271,12 +272,14 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
 
         return origDamage;
     }
-
+    
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack stack) {
         if (!world.isRemote && player.ticksExisted % 20 == 0) {
-            if (stack.getItemDamage() > 0)
-                stack.damageItem(-1, player);
+            if (stack.getItemDamage() > 0) {
+                stack.attemptDamageItem(-1, player.getRNG(),
+                        player instanceof EntityPlayerMP ? (EntityPlayerMP) player : null);
+            }
 
             int current = 0;
             if (stack.hasTagCompound() && stack.getTagCompound().hasKey("energyRemaining", NBT.TAG_INT))

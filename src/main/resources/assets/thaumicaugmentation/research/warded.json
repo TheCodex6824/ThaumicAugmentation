@@ -143,11 +143,12 @@
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
+                "MORE_MECHANISMS",
                 "WARDED_ARCANA"
             ],
             "location": [
-                1,
-                1
+                2,
+                2
             ],
             "stages": [
                 {
@@ -166,6 +167,14 @@
                         "thaumicaugmentation:warded_pressure_plate_greatwood",
                         "thaumicaugmentation:warded_pressure_plate_silverwood",
                         "thaumicaugmentation:warded_pressure_plate_arcane_stone"
+                    ]
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.ward_openers.2",
+                    "required_research": [
+                        "ARCANE_DOOR"
                     ]
                 }
             ]
