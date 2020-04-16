@@ -3,7 +3,7 @@
     "defaults": {
         "transform": "forge:default-block",
         "textures": {
-            "texture": "thaumcraft:blocks/arcane_stone_1"
+            "texture": "thaumicaugmentation:blocks/warded_button_arcane_stone"
         }
     },
     "variants": {

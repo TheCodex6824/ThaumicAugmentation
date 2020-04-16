@@ -2,7 +2,7 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {
-            "texture": "thaumicaugmentation:blocks/plank_silverwood_pressure_plate"
+            "texture": "thaumicaugmentation:blocks/warded_pressure_plate_silverwood"
         }
     },
     "variants": {

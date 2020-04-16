@@ -25,6 +25,8 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.MapColor;
@@ -341,6 +343,18 @@ public class BlockWardedButton extends BlockTABase implements IItemBlockProvider
         super.onBlockPlacedBy(world, pos, state, placer, stack);
     }
 
+    @Override
+    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos) {
+        return false;
+    }
+    
+    @Override
+    public boolean isReplaceableOreGen(IBlockState state, IBlockAccess world, BlockPos pos,
+            Predicate<IBlockState> target) {
+
+        return false;
+    }
+    
     @Override
     public boolean canBeReplacedByLeaves(IBlockState state, IBlockAccess world, BlockPos pos) {
         return false;

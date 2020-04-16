@@ -2,7 +2,7 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {
-            "texture": "thaumcraft:blocks/plank_greatwood"
+            "texture": "thaumicaugmentation:blocks/warded_pressure_plate_greatwood"
         }
     },
     "variants": {

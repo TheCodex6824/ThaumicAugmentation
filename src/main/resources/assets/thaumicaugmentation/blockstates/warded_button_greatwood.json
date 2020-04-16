@@ -3,7 +3,7 @@
     "defaults": {
         "transform": "forge:default-block",
         "textures": {
-            "texture": "thaumcraft:blocks/plank_greatwood"
+            "texture": "thaumicaugmentation:blocks/warded_button_greatwood"
         }
     },
     "variants": {

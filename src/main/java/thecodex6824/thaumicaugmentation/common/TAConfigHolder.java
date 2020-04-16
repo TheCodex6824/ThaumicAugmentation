@@ -466,6 +466,26 @@ public final class TAConfigHolder {
         @RequiresMcRestart
         public boolean disableEmptiness = false;
         
+        @Name("generateEldritchSpires")
+        @Comment({
+            "Allows the Eldritch Spire structure to generate in the Emptiness.",
+            "The spire is intended to be a part of the research progression, so removing it is not reccomended.",
+            "The structure will never generate if the Emptiness itself is disabled, or if the structure generation world option is disabled."
+        })
+        public boolean generateSpires = true;
+        
+        @Name("spireMinDist")
+        @Comment({
+            "The absolute minimum distance, in chunks, between generated Eldritch Spires."
+        })
+        public int spireMinDist = 20;
+        
+        @Name("spireSpacing")
+        @Comment({
+            "The approximate distance, in chunks, between generated Eldritch Spires."
+        })
+        public int spireSpacing = 80;
+        
     }
     
     public static class ClientOptions {
@@ -476,6 +496,14 @@ public final class TAConfigHolder {
             "This includes the special effect of the casted light, as well as most of the particles on the Metaspatial Accumulator/Extruder"
         })
         public boolean reducedEffects = false;
+        
+        @Name("optimizedFluxRiftRenderer")
+        @Comment({
+            "Overrides Thaumcraft's Flux Rift renderer to use one that is slightly better for performance.",
+            "It probably won't make a major difference as of now, but can help."
+        })
+        @RequiresMcRestart
+        public boolean optimizedFluxRiftRenderer = false;
         
         @Name("gauntletCastAnimation")
         @Comment({
@@ -519,6 +547,7 @@ public final class TAConfigHolder {
         TAConfig.tileWardMode.setValue(gameplay.ward.tileWardMode, side);
 
         TAConfig.reducedEffects.setValue(client.reducedEffects, side);
+        TAConfig.optimizedFluxRiftRenderer.setValue(client.optimizedFluxRiftRenderer, side);
 
         TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
         TAConfig.defaultVoidBootsColor.setValue(gameplay.defaultVoidBootsColor, side);
@@ -550,6 +579,10 @@ public final class TAConfigHolder {
         TAConfig.primalCutterDamage.setValue(gameplay.primalCutterDamage);
         
         TAConfig.blacklistedCategories.setValue(gameplay.blacklistedCategories);
+        
+        TAConfig.generateSpires.setValue(world.generateSpires);
+        TAConfig.spireMinDist.setValue(world.spireMinDist);
+        TAConfig.spireSpacing.setValue(world.spireSpacing);
     }
 
     public static void syncLocally() {
@@ -608,7 +641,8 @@ public final class TAConfigHolder {
         }));
         
         TAConfig.reducedEffects = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.reducedEffects));
-
+        TAConfig.optimizedFluxRiftRenderer = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.optimizedFluxRiftRenderer));
+        
         TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
         TAConfig.defaultVoidBootsColor = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));
 
@@ -645,6 +679,10 @@ public final class TAConfigHolder {
         TAConfig.primalCutterDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.primalCutterDamage));
     
         TAConfig.blacklistedCategories = TAConfigManager.addOption(new ConfigOptionStringArray(true, gameplay.blacklistedCategories));
+    
+        TAConfig.generateSpires = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.generateSpires));
+        TAConfig.spireMinDist = TAConfigManager.addOption(new ConfigOptionInt(false, world.spireMinDist));
+        TAConfig.spireSpacing = TAConfigManager.addOption(new ConfigOptionInt(false, world.spireSpacing));
     }
 
 }

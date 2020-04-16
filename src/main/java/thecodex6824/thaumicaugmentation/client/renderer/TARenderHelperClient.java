@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.client.renderer;
 
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -83,6 +84,10 @@ public class TARenderHelperClient implements ITARenderHelper {
     protected static final ResourceLocation RIFT_TEXTURE = new ResourceLocation("minecraft", "textures/entity/end_portal.png");
     protected static final ResourceLocation BLANK = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/misc/white.png");
     protected static final CoreGLE GLE = new CoreGLE();
+    
+    protected static double[][] POINT_BUFFER = new double[0][0];
+    protected static float[][] COLOR_BUFFER = new float[0][0];
+    protected static double[] RADIUS_BUFFER = new double[0];
     
     protected static final FloatBuffer BUFFER_X = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(1.0F).put(0.0F).put(0.0F).put(0.0F).flip();
     protected static final FloatBuffer BUFFER_Y = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(0.0F).put(1.0F).put(0.0F).put(0.0F).flip();
@@ -152,6 +157,10 @@ public class TARenderHelperClient implements ITARenderHelper {
             0
     };
     
+    protected static final double[][] FRACTURE_POINT_BUFFER = new double[FRACTURE_POINTS_CLOSED.length][3];
+    protected static final float[][] FRACTURE_COLOR_BUFFER = new float[FRACTURE_POINTS_CLOSED.length][4];
+    protected static final double[] FRACTURE_RADIUS_BUFFER = new double[FRACTURE_POINTS_CLOSED.length];
+    
     @Override
     public void renderGlowingSphere(World world, double x, double y, double z, int color) {
         FXFireMote sphere = new FXFireMote(world, x, y, z, 0, 0, 0,
@@ -198,9 +207,15 @@ public class TARenderHelperClient implements ITARenderHelper {
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, layer != 3 ? DestFactor.ONE : DestFactor.ONE_MINUS_SRC_ALPHA);
             if (rift.getPoints().length > 2) {
                 GlStateManager.pushMatrix();
-                double[][] points = new double[rift.getPoints().length][3];
-                float[][] colors = new float[rift.getPoints().length][4];
-                double[] widths = new double[rift.getPoints().length];
+                if (rift.getPoints().length > POINT_BUFFER.length) {
+                    POINT_BUFFER = new double[rift.getPoints().length][3];
+                    COLOR_BUFFER = new float[rift.getPoints().length][4];
+                    for (float[] arr : COLOR_BUFFER)
+                        Arrays.fill(arr, 1.0F);
+                    
+                    RADIUS_BUFFER = new double[rift.getPoints().length];
+                }
+                
                 for (int i = 0; i < rift.getPoints().length; ++i) {
                     float time = Minecraft.getMinecraft().player.ticksExisted + partialTicks;
                     if (i > rift.getPoints().length / 2)
@@ -208,22 +223,16 @@ public class TARenderHelperClient implements ITARenderHelper {
                     else if (i < rift.getPoints().length / 2)
                         time += i * 10;
                     
-                    points[i][0] = rift.getPoints()[i].x + Math.sin(time / 50.0) * 0.10000000149011612 * stab;
-                    points[i][1] = rift.getPoints()[i].y + Math.sin(time / 60.0) * 0.10000000149011612 * stab;
-                    points[i][2] = rift.getPoints()[i].z + Math.sin(time / 70.0) * 0.10000000149011612 * stab;
-                    
-                    colors[i][0] = 1.0F;
-                    colors[i][1] = 1.0F;
-                    colors[i][2] = 1.0F;
-                    colors[i][3] = 1.0F;
-                    
-                    widths[i] = rift.getWidths()[i] * (1.0 - Math.sin(time / 8.0) * 0.10000000149011612 * stab) *
+                    POINT_BUFFER[i][0] = rift.getPoints()[i].x + Math.sin(time / 50.0) * 0.10000000149011612 * stab;
+                    POINT_BUFFER[i][1] = rift.getPoints()[i].y + Math.sin(time / 60.0) * 0.10000000149011612 * stab;
+                    POINT_BUFFER[i][2] = rift.getPoints()[i].z + Math.sin(time / 70.0) * 0.10000000149011612 * stab;
+                    RADIUS_BUFFER[i] = rift.getWidths()[i] * (1.0 - Math.sin(time / 8.0) * 0.10000000149011612 * stab) *
                             (layer < 3 ? 1.25 + 0.5 * layer : 1.0);
                 }
                 
                 GLE.set_POLYCYL_TESS(tessLevel);
                 GLE.gleSetJoinStyle(CoreGLE.TUBE_JN_ANGLE);
-                GLE.glePolyCone(points.length, points, colors, widths, 1.0F, 0.0F);
+                GLE.glePolyCone(rift.getPoints().length, POINT_BUFFER, COLOR_BUFFER, RADIUS_BUFFER, 1.0F, 0.0F);
                 GlStateManager.popMatrix();
             }
             
@@ -252,6 +261,7 @@ public class TARenderHelperClient implements ITARenderHelper {
     }
     
     protected void renderFluxRiftSingleLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean disableDepth, float r, float g, float b, float a, int joinType) {
+        boolean colorMod = r < 1.0F || g < 1.0F || b < 1.0F || a < 1.0F;
         float stab = Math.max(Math.min(1.0F - stability / 50.0F, 1.5F), 0.0F);
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         if (disableDepth) {
@@ -260,9 +270,14 @@ public class TARenderHelperClient implements ITARenderHelper {
         }
         if (rift.getPoints().length > 2) {
             GlStateManager.pushMatrix();
-            double[][] points = new double[rift.getPoints().length][3];
-            float[][] colors = new float[rift.getPoints().length][4];
-            double[] widths = new double[rift.getPoints().length];
+            if (rift.getPoints().length > POINT_BUFFER.length) {
+                POINT_BUFFER = new double[rift.getPoints().length][3];
+                COLOR_BUFFER = new float[rift.getPoints().length][4];
+                for (float[] arr : COLOR_BUFFER)
+                    Arrays.fill(arr, 1.0F);
+                
+                RADIUS_BUFFER = new double[rift.getPoints().length];
+            }
             for (int i = 0; i < rift.getPoints().length; ++i) {
                 float time = Minecraft.getMinecraft().player.ticksExisted + partialTicks;
                 if (i > rift.getPoints().length / 2)
@@ -270,21 +285,21 @@ public class TARenderHelperClient implements ITARenderHelper {
                 else if (i < rift.getPoints().length / 2)
                     time += i * 10;
                 
-                points[i][0] = rift.getPoints()[i].x + Math.sin(time / 50.0) * 0.10000000149011612 * stab;
-                points[i][1] = rift.getPoints()[i].y + Math.sin(time / 60.0) * 0.10000000149011612 * stab;
-                points[i][2] = rift.getPoints()[i].z + Math.sin(time / 70.0) * 0.10000000149011612 * stab;
-                
-                colors[i][0] = r;
-                colors[i][1] = g;
-                colors[i][2] = b;
-                colors[i][3] = a;
-                
-                widths[i] = rift.getWidths()[i] * (1.0 - Math.sin(time / 8.0) * 0.10000000149011612 * stab);
+                POINT_BUFFER[i][0] = rift.getPoints()[i].x + Math.sin(time / 50.0) * 0.10000000149011612 * stab;
+                POINT_BUFFER[i][1] = rift.getPoints()[i].y + Math.sin(time / 60.0) * 0.10000000149011612 * stab;
+                POINT_BUFFER[i][2] = rift.getPoints()[i].z + Math.sin(time / 70.0) * 0.10000000149011612 * stab;
+                if (colorMod) {
+                    COLOR_BUFFER[i][0] = r;
+                    COLOR_BUFFER[i][1] = g;
+                    COLOR_BUFFER[i][2] = b;
+                    COLOR_BUFFER[i][3] = a;
+                }
+                RADIUS_BUFFER[i] = rift.getWidths()[i] * (1.0 - Math.sin(time / 8.0) * 0.10000000149011612 * stab);
             }
             
             GLE.set_POLYCYL_TESS(tessLevel);
             GLE.gleSetJoinStyle(joinType);
-            GLE.glePolyCone(points.length, points, colors, widths, 1.0F, 0.0F);
+            GLE.glePolyCone(rift.getPoints().length, POINT_BUFFER, COLOR_BUFFER, RADIUS_BUFFER, 1.0F, 0.0F);
             GlStateManager.popMatrix();
         }
         
@@ -295,6 +310,10 @@ public class TARenderHelperClient implements ITARenderHelper {
         
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        if (colorMod) {
+            for (float[] arr : COLOR_BUFFER)
+                Arrays.fill(arr, 1.0F);
+        }
     }
     
     @Override
@@ -385,9 +404,7 @@ public class TARenderHelperClient implements ITARenderHelper {
 
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, layer != 3 ? DestFactor.ONE : DestFactor.ONE_MINUS_SRC_ALPHA);
             GlStateManager.pushMatrix();
-            double[][] pointBuffer = new double[FRACTURE_POINTS_CLOSED.length][3];
-            float[][] colorBuffer = new float[FRACTURE_POINTS_CLOSED.length][4];
-            double[] radiusBuffer = new double[FRACTURE_POINTS_CLOSED.length];
+            
             for (int i = 0; i < FRACTURE_POINTS_CLOSED.length; ++i) {
                 double time = worldTime + partialTicks;
                 if (i > FRACTURE_POINTS_CLOSED.length / 2)
@@ -397,22 +414,23 @@ public class TARenderHelperClient implements ITARenderHelper {
 
                 Vec3d rotatedClosed = FRACTURE_POINTS_CLOSED[i].add(-0.5, 1.0, -0.5);
                 Vec3d rotatedOpen = FRACTURE_POINTS_OPEN[i].add(-0.5, 1.0, -0.5);
-                pointBuffer[i][0] = lerp(rotatedClosed.x, rotatedOpen.x, worldTime, timeOpened, openingDuration) + Math.sin(time / 50) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
-                pointBuffer[i][1] = lerp(rotatedClosed.y, rotatedOpen.y, worldTime, timeOpened, openingDuration) + Math.sin(time / 60) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
-                pointBuffer[i][2] = lerp(rotatedClosed.z, rotatedOpen.z, worldTime, timeOpened, openingDuration) + Math.sin(time / 70) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
+                FRACTURE_POINT_BUFFER[i][0] = lerp(rotatedClosed.x, rotatedOpen.x, worldTime, timeOpened, openingDuration) + Math.sin(time / 50) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
+                FRACTURE_POINT_BUFFER[i][1] = lerp(rotatedClosed.y, rotatedOpen.y, worldTime, timeOpened, openingDuration) + Math.sin(time / 60) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
+                FRACTURE_POINT_BUFFER[i][2] = lerp(rotatedClosed.z, rotatedOpen.z, worldTime, timeOpened, openingDuration) + Math.sin(time / 70) * lerp(0.1, 0.01, worldTime, timeOpened, openingDuration);
                 
-                colorBuffer[i][0] = r;
-                colorBuffer[i][1] = g;
-                colorBuffer[i][2] = b;
-                colorBuffer[i][3] = (float) lerp(a / 4.0, a, worldTime, timeOpened, openingDuration);
+                FRACTURE_COLOR_BUFFER[i][0] = r;
+                FRACTURE_COLOR_BUFFER[i][1] = g;
+                FRACTURE_COLOR_BUFFER[i][2] = b;
+                FRACTURE_COLOR_BUFFER[i][3] = (float) lerp(a / 4.0, a, worldTime, timeOpened, openingDuration);
 
                 double widthMultiplier = 1.0 - Math.sin(time / 8) * 0.1;
-                radiusBuffer[i] = lerp(FRACTURE_WIDTHS_CLOSED[i], FRACTURE_WIDTHS_OPEN[i], worldTime, timeOpened, openingDuration) * widthMultiplier * (layer != 3 ? 1.25 + 0.5 * layer : 1.0);
+                FRACTURE_RADIUS_BUFFER[i] = lerp(FRACTURE_WIDTHS_CLOSED[i], FRACTURE_WIDTHS_OPEN[i], worldTime, timeOpened, openingDuration) * widthMultiplier * (layer != 3 ? 1.25 + 0.5 * layer : 1.0);
             }
 
             GLE.set_POLYCYL_TESS(tessLevel);
             GLE.gleSetJoinStyle(CoreGLE.TUBE_JN_ANGLE);
-            GLE.glePolyCone(pointBuffer.length, pointBuffer, colorBuffer, radiusBuffer, 1.0F, 0.0F);
+            GLE.glePolyCone(FRACTURE_POINT_BUFFER.length, FRACTURE_POINT_BUFFER, FRACTURE_COLOR_BUFFER,
+                    FRACTURE_RADIUS_BUFFER,1.0F, 0.0F);
 
             GlStateManager.popMatrix();
             if (layer != 3) {

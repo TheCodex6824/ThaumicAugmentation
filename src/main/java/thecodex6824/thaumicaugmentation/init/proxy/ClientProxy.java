@@ -76,6 +76,7 @@ import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.client.renderers.models.entity.ModelEldritchGolem;
+import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.golems.client.gui.SealBaseGUI;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.lib.events.EssentiaHandler;
@@ -83,6 +84,7 @@ import thaumcraft.common.lib.events.EssentiaHandler.EssentiaSourceFX;
 import thaumcraft.common.lib.network.fx.PacketFXShield;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
@@ -129,6 +131,7 @@ import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderAutocaster;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFluxRiftOptimized;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderPrimalWisp;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGolem;
@@ -920,6 +923,7 @@ public class ClientProxy extends ServerProxy {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void init() {
         super.init();
         ClientSoundHandler.init();
@@ -945,6 +949,12 @@ public class ClientProxy extends ServerProxy {
         registerBlockColorHandlers();
         for (RenderPlayer render : Minecraft.getMinecraft().getRenderManager().getSkinMap().values())
             render.addLayer(new RenderLayerHarness(render));
+        
+        if (TAConfig.optimizedFluxRiftRenderer.getValue()) {
+            // need to use this version to overwrite TC's entry
+            RenderingRegistry.registerEntityRenderingHandler(EntityFluxRift.class,
+                    new RenderFluxRiftOptimized(Minecraft.getMinecraft().getRenderManager()));
+        }
     }
 
     @Override

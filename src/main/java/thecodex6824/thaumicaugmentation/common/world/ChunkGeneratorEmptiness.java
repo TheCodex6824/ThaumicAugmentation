@@ -27,26 +27,29 @@ import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent.InitNoiseField;
+import net.minecraftforge.event.terraingen.InitMapGenEvent.EventType;
 import net.minecraftforge.event.terraingen.InitNoiseGensEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
+import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
-public class ChunkGeneratorEmptiness implements IChunkGenerator {
+public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 
     protected World world;
     protected Random rand;
@@ -59,6 +62,8 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
     protected NoiseGeneratorPerlin gen4;
     
     protected double[] biomeWeights;
+    
+    protected MapGenEldritchSpire spireGenerator;
 
     public ChunkGeneratorEmptiness(World w) {
         world = w;
@@ -83,6 +88,8 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         main = ctx.getPerlin();
         scale = ctx.getScale();
         depth = ctx.getDepth();
+        
+        spireGenerator = (MapGenEldritchSpire) TerrainGen.getModdedMapGen(new MapGenEldritchSpire(this), EventType.CUSTOM);
     }
 
     protected double[] generateHeights(int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ, Biome[] biomes) {
@@ -180,6 +187,12 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         return output;
     }
 
+    @Override
+    public void populatePrimerWithHeightmap(int xPos, int zPos, ChunkPrimer primer) {
+        Biome[] biomes = world.getBiomeProvider().getBiomesForGeneration(null, xPos * 4 - 2, zPos * 4 - 2, 10, 10);
+        setBlocksInChunk(xPos, zPos, primer, biomes);
+    }
+    
     protected void setBlocksInChunk(int xPos, int zPos, ChunkPrimer primer, Biome[] biomes) {
         IBlockState filler = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
         int scaleX = 5, scaleY = 33, scaleZ = 5;
@@ -254,6 +267,10 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         setBlocksInChunk(x, z, primer, biomes);
         biomes = world.getBiomeProvider().getBiomes(biomes, x * 16, z * 16, 16, 16);
         replaceBlocksForBiome(x, z, primer, biomes);
+        
+        if (world.getWorldInfo().isMapFeaturesEnabled() && TAConfig.generateSpires.getValue())
+            spireGenerator.generate(world, x, z, primer);
+        
         Chunk chunk = new Chunk(world, primer, x, z);
         for (int i = 0; i < chunk.getBiomeArray().length; ++i)
             chunk.getBiomeArray()[i] = (byte) Biome.getIdForBiome(biomes[i]);
@@ -274,6 +291,9 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
         rand.setSeed(x * xSeed + z * zSeed ^ world.getSeed());
         
         ForgeEventFactory.onChunkPopulate(true, this, world, rand, x, z, false);
+        if (world.getWorldInfo().isMapFeaturesEnabled() && TAConfig.generateSpires.getValue())
+            spireGenerator.generateStructure(world, rand, new ChunkPos(x, z));
+        
         biome.decorate(world, rand, pos);
 
         ForgeEventFactory.onChunkPopulate(false, this, world, rand, x, z, false);
@@ -294,15 +314,28 @@ public class ChunkGeneratorEmptiness implements IChunkGenerator {
 
     @Override
     public List<SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
+        if (world.getWorldInfo().isMapFeaturesEnabled() && TAConfig.generateSpires.getValue()) {
+            if (spireGenerator.isInsideStructure(pos))
+                return spireGenerator.getSpawnableCreatures(creatureType, pos);
+        }
+        
         return world.getBiome(pos).getSpawnableList(creatureType);
     }
 
     @Override
     public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos) {
+        if (world.getWorldInfo().isMapFeaturesEnabled() && TAConfig.generateSpires.getValue()) {
+            if (spireGenerator != null && spireGenerator.getStructureName().equals(structureName))
+                return spireGenerator.isInsideStructure(pos);
+        }
+        
         return false;
     }
 
     @Override
-    public void recreateStructures(Chunk chunkIn, int x, int z) {}
+    public void recreateStructures(Chunk chunkIn, int x, int z) {
+        if (world.getWorldInfo().isMapFeaturesEnabled() && TAConfig.generateSpires.getValue())
+            spireGenerator.generate(world, x, z, null);
+    }
 
 }

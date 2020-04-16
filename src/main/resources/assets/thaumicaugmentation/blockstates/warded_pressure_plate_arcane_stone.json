@@ -2,7 +2,7 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {
-            "texture": "thaumcraft:blocks/arcane_stone_1"
+            "texture": "thaumicaugmentation:blocks/warded_pressure_plate_arcane_stone"
         }
     },
     "variants": {

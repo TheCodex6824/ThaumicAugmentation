@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import com.google.common.base.Predicate;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.SoundType;
@@ -255,6 +257,18 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
             if (down.getBlock().isLadder(down, world, pos.down(), entity) && down.getPropertyKeys().contains(BlockLadder.FACING))
                 return down.getValue(BlockLadder.FACING) == state.getValue(IHorizontallyDirectionalBlock.DIRECTION);
         }
+        return false;
+    }
+    
+    @Override
+    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos) {
+        return false;
+    }
+    
+    @Override
+    public boolean isReplaceableOreGen(IBlockState state, IBlockAccess world, BlockPos pos,
+            Predicate<IBlockState> target) {
+
         return false;
     }
 

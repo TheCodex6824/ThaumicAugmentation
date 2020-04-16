@@ -3,7 +3,7 @@
     "defaults": {
         "transform": "forge:default-block",
         "textures": {
-            "texture": "thaumicaugmentation:blocks/plank_silverwood_noctm"
+            "texture": "thaumicaugmentation:blocks/warded_button_silverwood"
         }
     },
     "variants": {

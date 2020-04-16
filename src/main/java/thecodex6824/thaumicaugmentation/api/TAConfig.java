@@ -68,6 +68,7 @@ public final class TAConfig {
     public static ConfigOptionEnum<TileWardMode> tileWardMode;
 
     public static ConfigOptionBoolean reducedEffects;
+    public static ConfigOptionBoolean optimizedFluxRiftRenderer;
 
     public static ConfigOptionIntList defaultGauntletColors;
     public static ConfigOptionInt defaultVoidBootsColor;
@@ -105,6 +106,10 @@ public final class TAConfig {
     public static ConfigOptionFloat primalCutterDamage;
     
     public static ConfigOptionStringArray blacklistedCategories;
+    
+    public static ConfigOptionBoolean generateSpires;
+    public static ConfigOptionInt spireMinDist;
+    public static ConfigOptionInt spireSpacing;
     
     /**
      * Registers a callback to be notified when the config is synced or updated.

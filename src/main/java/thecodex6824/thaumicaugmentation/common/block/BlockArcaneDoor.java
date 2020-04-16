@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import com.google.common.base.Predicate;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockDoor.EnumHingePosition;
@@ -142,6 +144,12 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
     @Override
     public SoundType getSoundType() {
         return material == Material.IRON ? SoundType.METAL : SoundType.WOOD;
+    }
+    
+    @Override
+    public boolean canPlaceBlockAt(World world, BlockPos pos) {
+        return world.getBlockState(pos).getBlock().isReplaceable(world, pos) &&
+                world.getBlockState(pos.up()).getBlock().isReplaceable(world, pos);
     }
 
     @Override
@@ -385,6 +393,18 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
         }
 
         super.onBlockPlacedBy(world, pos, state, placer, stack);
+    }
+    
+    @Override
+    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos) {
+        return false;
+    }
+    
+    @Override
+    public boolean isReplaceableOreGen(IBlockState state, IBlockAccess world, BlockPos pos,
+            Predicate<IBlockState> target) {
+
+        return false;
     }
 
     @Override

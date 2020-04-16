@@ -24,6 +24,9 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
+
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -127,7 +130,44 @@ public class BlockEldritchLockImpetus extends BlockTABase implements IHorizontal
     }
     
     @Override
+    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos) {
+        return false;
+    }
+    
+    @Override
+    public boolean isReplaceableOreGen(IBlockState state, IBlockAccess world, BlockPos pos,
+            Predicate<IBlockState> target) {
+
+        return false;
+    }
+
+    @Override
+    public boolean canBeReplacedByLeaves(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return false;
+    }
+    
+    @Override
     public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
+        return false;
+    }
+    
+    @Override
+    public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
+        return 0;
+    }
+
+    @Override
+    public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
+        return 0;
+    }
+
+    @Override
+    public EnumPushReaction getPushReaction(IBlockState state) {
+        return EnumPushReaction.IGNORE;
+    }
+
+    @Override
+    public boolean isFlammable(IBlockAccess world, BlockPos pos, EnumFacing face) {
         return false;
     }
     
