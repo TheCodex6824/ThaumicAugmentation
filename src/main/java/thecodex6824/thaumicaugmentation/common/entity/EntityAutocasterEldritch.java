@@ -41,6 +41,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import thaumcraft.api.casters.FocusMediumRoot;
@@ -367,6 +368,11 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
     @Override
     protected boolean isDisabled() {
         return false;
+    }
+    
+    @Override
+    public ItemStack getPickedResult(RayTraceResult target) {
+        return new ItemStack(TAItems.AUTOCASTER_PLACER, 1, 1);
     }
     
     @Override

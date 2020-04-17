@@ -130,11 +130,11 @@ public abstract class EntityAutocasterBase extends EntityCreature {
             rotationYaw = rotationYawHead;
             EnumFacing facing = dataManager.get(FACING);
             BlockPos checkPos = getPosition().offset(facing.getOpposite());
-            if (!world.getBlockState(checkPos).isSideSolid(world, checkPos, facing.getOpposite())) {
+            if (!world.getBlockState(checkPos).isSideSolid(world, checkPos, facing)) {
                 boolean ok = false;
                 for (EnumFacing face : EnumFacing.VALUES) {
                     checkPos = getPosition().offset(face.getOpposite());
-                    if (face != facing && world.getBlockState(checkPos).isSideSolid(world, checkPos, face.getOpposite())) {
+                    if (face != facing && world.getBlockState(checkPos).isSideSolid(world, checkPos, face)) {
                         setFacing(face);
                         setPosition(Math.floor(posX) + 0.5, Math.floor(posY), Math.floor(posZ) + 0.5);
                         ok = true;

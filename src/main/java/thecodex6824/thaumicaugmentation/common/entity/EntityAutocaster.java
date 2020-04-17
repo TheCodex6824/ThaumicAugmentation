@@ -50,6 +50,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -335,6 +336,11 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
         super.onDeath(cause);
         if (!world.isRemote)
             dropFocus();
+    }
+    
+    @Override
+    public ItemStack getPickedResult(RayTraceResult target) {
+        return new ItemStack(TAItems.AUTOCASTER_PLACER);
     }
     
     @Override

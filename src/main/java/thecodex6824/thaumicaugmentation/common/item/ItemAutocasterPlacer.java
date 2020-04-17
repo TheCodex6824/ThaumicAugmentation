@@ -82,8 +82,9 @@ public class ItemAutocasterPlacer extends ItemTABase {
             
             entity.setPosition(Math.floor(x) + 0.5, Math.floor(y), Math.floor(z) + 0.5);
             entity.setFacing(side);
-            boolean cancel = MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, (float) entity.posX, (float) entity.posY, (float) entity.posZ, null));
-            if (!cancel) {
+            if (!MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world,
+                    (float) entity.posX, (float) entity.posY, (float) entity.posZ, null))) {
+                
                 if (entity instanceof EntityAutocasterEldritch)
                     ((EntityAutocasterEldritch) entity).onInitialSpawn(world.getDifficultyForLocation(entity.getPosition()), null, true);
                 else

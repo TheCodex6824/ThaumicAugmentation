@@ -55,6 +55,15 @@ public class WorldProviderEmptiness extends WorldProvider {
     }
     
     @Override
+    protected void generateLightBrightnessTable() {
+        // slightly boost ambient lighting
+        for (int i = 0; i < 16; ++i) {
+            float b = 1.0F - i / 15.0F;
+            lightBrightnessTable[i] = (1.0F - b) / (b * 3.0F + 1.0F) * 0.95F + 0.05F;
+        }
+    }
+    
+    @Override
     public int getAverageGroundLevel() {
         return 16;
     }

@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.world.structure;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -27,6 +28,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -37,10 +39,12 @@ import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.structure.MapGenStructure;
+import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureStart;
 import thaumcraft.api.blocks.BlocksTC;
+import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
@@ -53,6 +57,11 @@ public class MapGenEldritchSpire extends MapGenStructure {
     
     protected static final ImmutableList<Biome> BIOMES = ImmutableList.of(
             TABiomes.EMPTINESS, TABiomes.EMPTINESS_HIGHLANDS);
+    
+    static {
+        MapGenStructureIO.registerStructure(Start.class, "EldritchSpire");
+        EldritchSpireComponents.register();
+    }
     
     protected ITAChunkGenerator generator;
     
@@ -100,7 +109,7 @@ public class MapGenEldritchSpire extends MapGenStructure {
     
     @Override
     public String getStructureName() {
-        return "Eldritch Spire";
+        return "EldritchSpire";
     }
     
     @Override
@@ -141,12 +150,20 @@ public class MapGenEldritchSpire extends MapGenStructure {
             int height3 = primer.findGroundBlockIdx(7 + x, 7);
             int height4 = primer.findGroundBlockIdx(7 + x, 7 + z);
             int minHeight = Math.min(Math.min(height1, height2), Math.min(height3, height4));
-            if (minHeight >= world.provider.getAverageGroundLevel() / 2) {
+            if (minHeight >= 2) {
                 BlockPos pos = new BlockPos(chunkX * 16 + 8, minHeight + 1, chunkZ * 16 + 8);
-                // TODO set up bounding boxes and pieces for real
+                List<EldritchSpireComponents.EldritchSpireTemplate> pieces = new ArrayList<>();
+                EldritchSpireComponents.generate(world.getSaveHandler().getStructureTemplateManager(),
+                        pos, rot, random, pieces);
+                components.addAll(pieces);
                 updateBoundingBox();
                 valid = true;
             }
+        }
+        
+        protected boolean isEldritchBlock(IBlockState state) {
+            return state.getBlock() == BlocksTC.stoneEldritchTile || state.getBlock() == BlocksTC.slabEldritch ||
+                    state.getBlock() == BlocksTC.doubleSlabEldritch || state.getBlock() == TABlocks.STAIRS_ELDRITCH_TILE;
         }
         
         @Override
@@ -163,19 +180,27 @@ public class MapGenEldritchSpire extends MapGenStructure {
                     if (!world.isAirBlock(mutable) && boundingBox.isVecInside(mutable)) {
                         boolean hasSomething = false;
                         for (StructureComponent component : components) {
-                            if (component.getBoundingBox().isVecInside(mutable)) {
+                            if ((!(component instanceof EldritchSpireComponents.EldritchSpireTemplate) ||
+                                    ((EldritchSpireComponents.EldritchSpireTemplate) component).shouldFillBlocksBelow()) &&
+                                    getBoundingBox().isVecInside(mutable)) {
+                                
                                 hasSomething = true;
                                 break;
                             }
                         }
 
                         if (hasSomething) {
+                            IBlockState place = BlocksTC.stoneAncient.getDefaultState();
+                            IBlockState above = world.getBlockState(mutable);
+                            if (isEldritchBlock(above))
+                                place = BlocksTC.stoneEldritchTile.getDefaultState();
+                            
                             for (int y = minY - 1; y > 1; --y) {
                                 mutable.setPos(x, y, z);
                                 if (!world.isAirBlock(mutable) && !world.getBlockState(mutable).getMaterial().isLiquid())
                                     break;
 
-                                world.setBlockState(mutable, BlocksTC.stoneEldritchTile.getDefaultState(), 2);
+                                world.setBlockState(mutable, place, 2);
                             }
                         }
                     }
