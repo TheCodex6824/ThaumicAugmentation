@@ -37,9 +37,16 @@ public final class TALootTables {
     public static final ResourceLocation PRIMAL_WISP = new ResourceLocation(
             ThaumicAugmentationAPI.MODID, "entity/primal_wisp");
     
+    public static final ResourceLocation LOOT_COMMON = new ResourceLocation(
+            ThaumicAugmentationAPI.MODID, "block/loot_common");
+    public static final ResourceLocation LOOT_UNCOMMON = new ResourceLocation(
+            ThaumicAugmentationAPI.MODID, "block/loot_uncommon");
+    public static final ResourceLocation LOOT_RARE = new ResourceLocation(
+            ThaumicAugmentationAPI.MODID, "block/loot_rare");
+    
     public static ResourceLocation[] getAllLootTables() {
         return new ResourceLocation[] {ELDRITCH_GUARDIAN, TAINT_MOB, AUTOCASTER, AUTOCASTER_ELDRITCH,
-                PRIMAL_WISP};
+                PRIMAL_WISP, LOOT_COMMON, LOOT_UNCOMMON, LOOT_RARE};
     }
     
 }

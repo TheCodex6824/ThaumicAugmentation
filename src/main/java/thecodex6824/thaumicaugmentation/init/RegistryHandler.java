@@ -94,6 +94,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockTAPressurePlate;
 import thecodex6824.thaumicaugmentation.common.block.BlockTASlab;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStairs;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
+import thecodex6824.thaumicaugmentation.common.block.BlockTAUrn;
 import thecodex6824.thaumicaugmentation.common.block.BlockTaintFlower;
 import thecodex6824.thaumicaugmentation.common.block.BlockVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.block.BlockVoidRechargePedestal;
@@ -263,6 +264,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockWardedPressurePlate(Material.WOOD, Sensitivity.EVERYTHING, SoundType.WOOD), "warded_pressure_plate_greatwood"));
         registry.register(setupBlock(new BlockWardedPressurePlate(Material.WOOD, Sensitivity.EVERYTHING, SoundType.WOOD), "warded_pressure_plate_silverwood"));
         registry.register(setupBlock(new BlockWardedPressurePlate(Material.ROCK, Sensitivity.MOBS, SoundType.STONE), "warded_pressure_plate_arcane_stone"));
+        registry.register(setupBlock(new BlockTAUrn(), "urn"));
         
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));

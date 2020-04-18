@@ -291,8 +291,10 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         rand.setSeed(x * xSeed + z * zSeed ^ world.getSeed());
         
         ForgeEventFactory.onChunkPopulate(true, this, world, rand, x, z, false);
-        if (world.getWorldInfo().isMapFeaturesEnabled() && TAConfig.generateSpires.getValue())
+        if (world.getWorldInfo().isMapFeaturesEnabled() && TAConfig.generateSpires.getValue()) {
             spireGenerator.generateStructure(world, rand, new ChunkPos(x, z));
+            world.getChunk(x, z).resetRelightChecks();
+        }
         
         biome.decorate(world, rand, pos);
 

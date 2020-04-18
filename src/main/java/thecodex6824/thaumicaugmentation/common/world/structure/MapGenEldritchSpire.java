@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
@@ -118,7 +119,10 @@ public class MapGenEldritchSpire extends MapGenStructure {
     }
     
     public List<SpawnListEntry> getSpawnableCreatures(EnumCreatureType type, BlockPos pos) {
-        return MONSTER_SPAWNS;
+        if (type == EnumCreatureType.MONSTER)
+            return MONSTER_SPAWNS;
+        else
+            return ImmutableList.of();
     }
     
     public static class Start extends StructureStart {
@@ -211,6 +215,18 @@ public class MapGenEldritchSpire extends MapGenStructure {
         @Override
         public boolean isSizeableStructure() {
             return valid;
+        }
+        
+        @Override
+        public void writeToNBT(NBTTagCompound tagCompound) {
+            super.writeToNBT(tagCompound);
+            tagCompound.setBoolean("valid", valid);
+        }
+        
+        @Override
+        public void readFromNBT(NBTTagCompound tagCompound) {
+            super.readFromNBT(tagCompound);
+            valid = tagCompound.getBoolean("valid");
         }
         
     }

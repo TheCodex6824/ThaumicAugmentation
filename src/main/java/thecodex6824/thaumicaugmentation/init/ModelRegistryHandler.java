@@ -38,6 +38,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITABarsType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITASlabType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
+import thecodex6824.thaumicaugmentation.api.block.property.IUrnType;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardOpenedBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningWeakPower;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
@@ -65,6 +66,7 @@ public final class ModelRegistryHandler {
         ModelLoader.setCustomStateMapper(TABlocks.WARDED_BUTTON_GREATWOOD, new StateMap.Builder().ignore(IWardOpeningWeakPower.WEAK_POWER).build());
         ModelLoader.setCustomStateMapper(TABlocks.WARDED_BUTTON_SILVERWOOD, new StateMap.Builder().ignore(IWardOpeningWeakPower.WEAK_POWER).build());
         ModelLoader.setCustomStateMapper(TABlocks.WARDED_BUTTON_ARCANE_STONE, new StateMap.Builder().ignore(IWardOpeningWeakPower.WEAK_POWER).build());
+        ModelLoader.setCustomStateMapper(TABlocks.URN, new StateMap.Builder().withName(IUrnType.URN_TYPE).build());
         
         for (Block b : TABlocks.getAllBlocks()) {
             if (b instanceof IModelProvider<?>)

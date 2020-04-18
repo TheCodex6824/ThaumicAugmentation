@@ -70,6 +70,9 @@ tile.thaumicaugmentation.pressure_plate_arcane_stone.name=Arcane Stone Pressure 
 tile.thaumicaugmentation.warded_pressure_plate_greatwood.name=Greatwood Arcane Pressure Plate
 tile.thaumicaugmentation.warded_pressure_plate_silverwood.name=Silverwood Arcane Pressure Plate
 tile.thaumicaugmentation.warded_pressure_plate_arcane_stone.name=Arcane Stone Arcane Pressure Plate
+tile.thaumicaugmentation.urn.urn_common.name=Common Urn
+tile.thaumicaugmentation.urn.urn_uncommon.name=Uncommon Urn
+tile.thaumicaugmentation.urn.urn_rare.name=Rare Urn
 
 tile.thaumcraft.stairs_ancient_tile.name=Ancient Stone Tile Stairs
 
