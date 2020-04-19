@@ -2,7 +2,7 @@
 	"type": "block",
 	"pools": [
 		{
-			"name": "loot_uncommon",
+			"name": "loot_rare",
             "rolls": {
                 "min": 2,
                 "max": 5

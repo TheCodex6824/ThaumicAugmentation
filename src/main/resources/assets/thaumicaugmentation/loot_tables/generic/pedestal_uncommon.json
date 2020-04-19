@@ -1,0 +1,124 @@
+{
+	"type": "block",
+	"pools": [
+		{
+			"name": "pedestal_uncommon",
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "thaumcraft:nugget",
+                    "entryName": "rare_earths",
+                    "weight": 5,
+                    "functions": [
+                        {
+                            "function": "minecraft:set_data",
+                            "data": 10
+                        }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "thaumcraft:salis_mundus",
+                    "weight": 3
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:ender_pearl",
+                    "weight": 10
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:name_tag",
+                    "weight": 2
+                },
+                {
+                    "type": "item",
+                    "name": "thaumcraft:primordial_pearl",
+                    "weight": 1,
+                    "functions": [
+                        {
+                            "function": "minecraft:set_damage",
+                            "damage": {
+                                "min": 0.5,
+                                "max": 0.875
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:nether_star",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "thaumcraft:amulet_vis",
+                    "weight": 3,
+                    "functions": [
+                        {
+                            "function": "minecraft:set_data",
+                            "data": 0
+                        }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:golden_apple",
+                    "weight": 5,
+                    "functions": [
+                        {
+                            "function": "minecraft:set_data",
+                            "data": 0
+                        }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:gold_ingot",
+                    "weight": 10
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:diamond",
+                    "weight": 10
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:emerald",
+                    "weight": 10
+                },
+                {
+                    "type": "item",
+                    "name": "thaumcraft:quicksilver",
+                    "weight": 15
+                },
+                {
+                    "type": "item",
+                    "name": "thaumcraft:amber",
+                    "weight": 15
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:experience_bottle",
+                    "weight": 7
+                },
+                {
+                    "type": "item",
+                    "name": "thaumcraft:alumentum",
+                    "weight": 3
+                },
+                {
+                    "type": "item",
+                    "name": "thaumcraft:nitor_yellow",
+                    "weight": 3
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:glowstone_dust",
+                    "weight": 5
+                }
+            ]
+		}
+	]
+}

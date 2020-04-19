@@ -25,6 +25,7 @@ import java.util.Random;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
@@ -32,19 +33,24 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponentTemplate;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.gen.structure.template.TemplateManager;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.common.entities.monster.EntityEldritchCrab;
 import thaumcraft.common.entities.monster.EntityInhabitedZombie;
+import thaumcraft.common.tiles.crafting.TilePedestal;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType;
@@ -289,14 +295,60 @@ public class EldritchSpireComponents {
                 StructureBoundingBox sbb) {
             
             if (function.startsWith("loot_")) {
-                IBlockState toPlace = BlocksTC.lootUrnCommon.getDefaultState();
+                IBlockState toPlace = null;
                 String id = function.substring(5);
                 if (id.equals("2"))
                     toPlace = BlocksTC.lootUrnRare.getDefaultState();
                 else if (id.equals("1"))
                     toPlace = BlocksTC.lootUrnUncommon.getDefaultState();
+                else
+                    toPlace = BlocksTC.lootUrnCommon.getDefaultState();
                 
                 world.setBlockState(pos, toPlace, 2);
+            }
+            else if (function.startsWith("pedestal_")) {
+                IBlockState toPlace = null;
+                String type = function.substring(9, 1);
+                if (type.equals("e"))
+                    toPlace = BlocksTC.pedestalEldritch.getDefaultState();
+                else if (type.equals("a"))
+                    toPlace = BlocksTC.pedestalAncient.getDefaultState();
+                else
+                    toPlace = BlocksTC.pedestalArcane.getDefaultState();
+                
+                int tableNum = 0;
+                type = function.substring(11);
+                if (type.equals("2"))
+                    tableNum = 2;
+                else if (type.equals("1"))
+                    tableNum = 1;
+                
+                world.setBlockState(pos, toPlace, 2);
+                TileEntity tile = world.getTileEntity(pos);
+                if (tile instanceof TilePedestal) {
+                    LootTable table = null;
+                    switch (tableNum) {
+                        case 1: {
+                            table = world.getLootTableManager().getLootTableFromLocation(
+                                TALootTables.PEDESTAL_UNCOMMON);
+                            break;
+                        }
+                        case 2: {
+                            table = world.getLootTableManager().getLootTableFromLocation(
+                                    TALootTables.PEDESTAL_RARE);
+                            break;
+                        }
+                        default: {
+                            table = world.getLootTableManager().getLootTableFromLocation(
+                                    TALootTables.PEDESTAL_COMMON);
+                            break;
+                        }
+                    }
+                    
+                    LootContext context = new LootContext.Builder((WorldServer) world).build();
+                    // imagine using IInventory in 2020
+                    ((TilePedestal) tile).setInventorySlotContents(0, table.generateLootForPools(rand, context).get(0));
+                }
             }
             else if (function.startsWith("autocaster")) {
                 if (!function.equals("autocaster_random") || rand.nextBoolean()) {
@@ -330,7 +382,7 @@ public class EldritchSpireComponents {
                     world.spawnEntity(entity);
                 }
             }
-            else if (function.equals("husk")) {
+            else if (function.equals("inz")) {
                 EntityInhabitedZombie entity = new EntityInhabitedZombie(world);
                 entity.setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, rand.nextInt(360), 0);
                 entity.enablePersistence();
@@ -382,29 +434,57 @@ public class EldritchSpireComponents {
             }
             else if (function.startsWith("lock_")) {
                 EnumFacing face = null;
-                String dir = function.substring(5, 6);
-                if (dir.equals("e"))
+                String type = function.substring(5, 6);
+                if (type.equals("e"))
                     face = placeSettings.getRotation().rotate(EnumFacing.EAST);
-                else if (dir.equals("s"))
+                else if (type.equals("s"))
                     face = placeSettings.getRotation().rotate(EnumFacing.SOUTH);
-                else if (dir.equals("w"))
+                else if (type.equals("w"))
                     face = placeSettings.getRotation().rotate(EnumFacing.WEST);
                 else
                     face = placeSettings.getRotation().rotate(EnumFacing.NORTH);
                 
-                LockType lock = LockType.BOSS;
-                String type = function.substring(7);
+                LockType lock = null;
+                type = function.substring(7);
                 if (type.equals("maze"))
                     lock = LockType.LABYRINTH;
                 else if (type.equals("prison"))
                     lock = LockType.PRISON;
                 else if (type.equals("library"))
                     lock = LockType.LIBRARY;
+                else
+                    lock = LockType.BOSS;
                 
                 IBlockState state = TABlocks.ELDRITCH_LOCK.getDefaultState();
                 state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, face);
                 state = state.withProperty(IEldritchLockType.LOCK_TYPE, lock);
                 world.setBlockState(pos, state, 2);
+            }
+            else if (function.startsWith("key_")) {
+                IBlockState toPlace = null;
+                String type = function.substring(4, 1);
+                if (type.equals("e"))
+                    toPlace = BlocksTC.pedestalEldritch.getDefaultState();
+                else if (type.equals("a"))
+                    toPlace = BlocksTC.pedestalAncient.getDefaultState();
+                else
+                    toPlace = BlocksTC.pedestalArcane.getDefaultState();
+                
+                LockType lock = null;
+                type = function.substring(6);
+                if (type.equals("maze"))
+                    lock = LockType.LABYRINTH;
+                else if (type.equals("prison"))
+                    lock = LockType.PRISON;
+                else if (type.equals("library"))
+                    lock = LockType.LIBRARY;
+                else
+                    lock = LockType.BOSS;
+                
+                world.setBlockState(pos, toPlace, 2);
+                TileEntity tile = world.getTileEntity(pos);
+                if (tile instanceof TilePedestal)
+                    ((TilePedestal) tile).setInventorySlotContents(0, lock.getKey());
             }
         }
         

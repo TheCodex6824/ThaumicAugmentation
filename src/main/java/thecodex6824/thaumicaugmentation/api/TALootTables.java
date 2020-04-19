@@ -44,6 +44,13 @@ public final class TALootTables {
     public static final ResourceLocation LOOT_RARE = new ResourceLocation(
             ThaumicAugmentationAPI.MODID, "block/loot_rare");
     
+    public static final ResourceLocation PEDESTAL_COMMON = new ResourceLocation(
+            ThaumicAugmentationAPI.MODID, "generic/pedestal_common");
+    public static final ResourceLocation PEDESTAL_UNCOMMON = new ResourceLocation(
+            ThaumicAugmentationAPI.MODID, "generic/pedestal_uncommon");
+    public static final ResourceLocation PEDESTAL_RARE = new ResourceLocation(
+            ThaumicAugmentationAPI.MODID, "generic/pedestal_rare");
+    
     public static ResourceLocation[] getAllLootTables() {
         return new ResourceLocation[] {ELDRITCH_GUARDIAN, TAINT_MOB, AUTOCASTER, AUTOCASTER_ELDRITCH,
                 PRIMAL_WISP, LOOT_COMMON, LOOT_UNCOMMON, LOOT_RARE};
