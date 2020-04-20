@@ -478,13 +478,13 @@ public final class TAConfigHolder {
         @Comment({
             "The absolute minimum distance, in chunks, between generated Eldritch Spires."
         })
-        public int spireMinDist = 20;
+        public int spireMinDist = 10;
         
         @Name("spireSpacing")
         @Comment({
             "The approximate distance, in chunks, between generated Eldritch Spires."
         })
-        public int spireSpacing = 80;
+        public int spireSpacing = 60;
         
     }
     

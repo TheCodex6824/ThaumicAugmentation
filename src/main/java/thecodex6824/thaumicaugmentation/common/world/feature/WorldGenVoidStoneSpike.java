@@ -25,6 +25,7 @@ import java.util.Random;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -49,7 +50,8 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
     @Override
     public boolean generate(World world, Random rand, BlockPos position) {
         position = position.down();
-        if (!world.isAirBlock(position)) {
+        if (world.getBlockState(position).getBlock() == TABlocks.STONE) {
+            BlockPos ground = position;
             position = position.up(rand.nextInt(4));
             int height = rand.nextInt(4) + 7;
             int width = height / 4 + rand.nextInt(2);
@@ -58,6 +60,17 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
             if (width > 1 && rand.nextInt(5) == 0) {
                 position = position.up(10 + rand.nextInt(30));
                 tall = true;
+            }
+            
+            MutableBlockPos pos = new MutableBlockPos(position);
+            for (int y = position.getY(); y > ground.getY(); --y) {
+                for (int x = -1; x < 2; ++x) {
+                    for (int z = -1; z < 2; ++z) {
+                        pos.setPos(x + ground.getX(), y, z + ground.getZ());
+                        if (!world.isAirBlock(pos) && world.getBlockState(pos) != getBlockStateToPlace(world, pos))
+                            return false;
+                    }
+                }
             }
 
             if (!tall || rand.nextBoolean()) {
@@ -70,12 +83,12 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                             float f2 = MathHelper.abs(z) - 0.25F;
     
                             if ((x == 0 && z == 0 || f1 * f1 + f2 * f2 <= f * f) && ((x != -l && x != l && z != -l && z != l) || rand.nextFloat() <= 0.75F)) {
-                                BlockPos pos = position.add(x, y, z);
+                                pos.setPos(x + position.getX(), y + position.getY(), z + position.getZ());
                                 if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
                                     setBlockAndNotifyAdequately(world, pos, getBlockStateToPlace(world, pos));
-    
+                                
                                 if (y != 0 && l > 1) {
-                                    pos = position.add(x, -y, z);
+                                    pos.setY(position.getY() - y);
                                     if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
                                         setBlockAndNotifyAdequately(world, pos, getBlockStateToPlace(world, pos));
                                 }
@@ -88,7 +101,7 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
             int length = MathHelper.clamp(width - 1, 0, 1);
             for (int x = -length; x <= length; ++x) {
                 for (int z = -length; z <= length; ++z) {
-                    BlockPos pos = position.add(x, -1, z);
+                    pos.setPos(position.getX() + x, position.getY() - 1, position.getZ());
                     int heightLeft = 50;
 
                     if (Math.abs(x) == 1 && Math.abs(z) == 1)
@@ -127,11 +140,11 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                                 }
                             }
                         }
-                        pos = pos.down();
+                        pos.setY(pos.getY() - 1);
                         --heightLeft;
                         
                         if (heightLeft <= 0) {
-                            pos = pos.down(rand.nextInt(5) + 1);
+                            pos.setY(pos.getY() - (rand.nextInt(5) + 1));
                             heightLeft = rand.nextInt(5);
                         }
                     }

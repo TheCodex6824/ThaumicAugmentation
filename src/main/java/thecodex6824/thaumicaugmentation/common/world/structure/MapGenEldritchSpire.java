@@ -199,7 +199,7 @@ public class MapGenEldritchSpire extends MapGenStructure {
                             if (isEldritchBlock(above))
                                 place = BlocksTC.stoneEldritchTile.getDefaultState();
                             
-                            for (int y = minY - 1; y > 1; --y) {
+                            for (int y = minY - 1; y >= 0; --y) {
                                 mutable.setPos(x, y, z);
                                 if (!world.isAirBlock(mutable) && !world.getBlockState(mutable).getMaterial().isLiquid())
                                     break;

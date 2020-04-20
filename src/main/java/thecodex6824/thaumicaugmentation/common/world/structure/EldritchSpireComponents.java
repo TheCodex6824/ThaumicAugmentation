@@ -68,26 +68,30 @@ public class EldritchSpireComponents {
     public static void generate(TemplateManager templateManager, BlockPos position,
             Rotation rot, Random random, List<EldritchSpireTemplate> pieces) {
         
+        Mirror mirror = Mirror.values()[random.nextInt(Mirror.values().length)];
         MutableBlockPos current = new MutableBlockPos(position);
-        BlockPos baseSize = generateBase(templateManager, current, rot, random, pieces);
-        generateGroundFloor(templateManager, current, baseSize, rot, random, pieces);
-        generateFirstFloor(templateManager, current, baseSize, rot, random, pieces);
-        generateSecondFloor(templateManager, current, baseSize, rot, random, pieces);
-        generateThirdFloor(templateManager, current, baseSize, rot, random, pieces);
-        generateFourthFloor(templateManager, current, baseSize, rot, random, pieces);
+        BlockPos baseSize = generateBase(templateManager, current, rot, mirror, random, pieces);
+        generateGroundFloor(templateManager, current, baseSize, rot, mirror, random, pieces);
+        generateFirstFloor(templateManager, current, baseSize, rot, mirror, random, pieces);
+        generateSecondFloor(templateManager, current, baseSize, rot, mirror, random, pieces);
+        generateThirdFloor(templateManager, current, baseSize, rot, mirror, random, pieces);
+        generateFourthFloor(templateManager, current, baseSize, rot, mirror, random, pieces);
     }
     
-    protected static Rotation fromFacing(Rotation base, EnumFacing face) {
+    protected static BlockPos transformOffset(int x, int z, Rotation rot, Mirror mi) {
+        return new BlockPos(mi == Mirror.FRONT_BACK ? -x : x, 0,
+                mi == Mirror.LEFT_RIGHT ? -z : z).rotate(rot);
+    }
+    
+    protected static Rotation fromFacing(EnumFacing face, Mirror mi) {
         switch (face) {
-            case WEST: return base.add(Rotation.COUNTERCLOCKWISE_90);
-            case SOUTH: return base.add(Rotation.CLOCKWISE_180);
-            case EAST: return base.add(Rotation.CLOCKWISE_90);
-            default: return base;
+            case WEST: return mi != Mirror.NONE ? Rotation.COUNTERCLOCKWISE_90 :
+                Rotation.CLOCKWISE_90;
+            case NORTH: return Rotation.CLOCKWISE_180;
+            case EAST: return mi != Mirror.NONE ? Rotation.CLOCKWISE_90 :
+                Rotation.COUNTERCLOCKWISE_90;
+            default: return Rotation.NONE;
         }
-    }
-    
-    protected static Mirror pickMirror(Random rand) {
-        return Mirror.values()[rand.nextInt(Mirror.values().length)];
     }
     
     protected static String pickBase(Random rand) {
@@ -119,30 +123,29 @@ public class EldritchSpireComponents {
     }
     
     public static BlockPos generateBase(TemplateManager templateManager, MutableBlockPos current,
-            Rotation rot, Random random, List<EldritchSpireTemplate> pieces) {
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
         
         BlockPos original = current.toImmutable();
         EldritchSpireTemplate base = new EldritchSpireTemplate(templateManager, pickBase(random),
-                true, original, rot, pickMirror(random));
+                true, original, rot, mirror);
         pieces.add(base);
-        BlockPos offset = current.add(base.getTemplate().getSize().getX() / 2, 0, -base.getTemplate().getSize().getZ() / 2);
+        BlockPos offset = current.add(transformOffset(base.getTemplate().getSize().getX() / 2,
+                base.getTemplate().getSize().getZ() / 2, rot, mirror));
         current.setPos(offset);
         for (EnumFacing face : EnumFacing.HORIZONTALS) {
             String tName = pickStairs(random);
             Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
                     new ResourceLocation(ThaumicAugmentationAPI.MODID, "spire/" + tName));
-            current.move(face, face.getXOffset() != 0 ? base.getTemplate().getSize().getX() / 2 + 1 :
-                base.getTemplate().getSize().getZ() / 2 + 1);
+            BlockPos add = new BlockPos(transformOffset((base.getTemplate().getSize().getX() / 2 + 1) * face.getXOffset(),
+                    (base.getTemplate().getSize().getZ() / 2 + 1) * face.getZOffset(), rot, mirror));
+            current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
             
             // always use the x size because that's what matters when rotated
             int sizeX = template.getSize().getX();
-            if (face.getXOffset() != 0)
-                current.setPos(current.getX(), current.getY(), current.getZ() + sizeX / 2 * face.getXOffset());
-            else
-                current.setPos(current.getX() - sizeX / 2 * face.getZOffset(), current.getY(), current.getZ());
-                
+            add = transformOffset(-sizeX / 2 * face.getZOffset(), sizeX / 2 * face.getXOffset(), rot, mirror);
+            current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
             pieces.add(new EldritchSpireTemplate(templateManager, template, tName, true,
-                    current.toImmutable(), fromFacing(rot, face), random.nextBoolean() ? Mirror.LEFT_RIGHT : Mirror.NONE));
+                    current.toImmutable(), rot.add(fromFacing(face, mirror)), mirror));
             current.setPos(offset);
         }
         
@@ -151,80 +154,85 @@ public class EldritchSpireComponents {
     }
     
     public static void generateGroundFloor(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Random random, List<EldritchSpireTemplate> pieces) {
+            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
         
         String tName = pickGroundFloor(random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
                     new ResourceLocation(ThaumicAugmentationAPI.MODID, "spire/" + tName));
         BlockPos original = current.toImmutable();
-        current.setPos(current.getX() + (baseSize.getX() - (baseSize.getX() - template.getSize().getX())) + 1,
-                current.getY(), current.getZ() - (baseSize.getZ() - template.getSize().getZ()) / 2);
+        BlockPos add = transformOffset((baseSize.getX() - template.getSize().getX()) / 2,
+                (baseSize.getZ() - template.getSize().getZ()) / 2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         EldritchSpireTemplate floor = new EldritchSpireTemplate(templateManager, template, tName,
-                true, current.toImmutable(), rot, Mirror.NONE);
+                true, current.toImmutable(), rot, mirror);
         pieces.add(floor);
         
         current.setPos(original.up(floor.getTemplate().getSize().getY()));
     }
     
     public static void generateFirstFloor(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Random random, List<EldritchSpireTemplate> pieces) {
+            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
         
         String tName = pickFirstFloor(random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
                     new ResourceLocation(ThaumicAugmentationAPI.MODID, "spire/" + tName));
         BlockPos original = current.toImmutable();
-        current.setPos(current.getX() + (baseSize.getX() - (baseSize.getX() - template.getSize().getX())) + 1,
-                current.getY(), current.getZ() - (baseSize.getZ() - template.getSize().getZ()) / 2);
+        BlockPos add = transformOffset((baseSize.getX() - template.getSize().getX()) / 2,
+                (baseSize.getZ() - template.getSize().getZ()) / 2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         EldritchSpireTemplate floor = new EldritchSpireTemplate(templateManager, template, tName,
-                true, current.toImmutable(), rot, Mirror.NONE);
+                true, current.toImmutable(), rot, mirror);
         pieces.add(floor);
         
         current.setPos(original.up(floor.getTemplate().getSize().getY()));
     }
     
     public static void generateSecondFloor(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Random random, List<EldritchSpireTemplate> pieces) {
+            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
         
         String tName = pickSecondFloor(random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
                     new ResourceLocation(ThaumicAugmentationAPI.MODID, "spire/" + tName));
         BlockPos original = current.toImmutable();
-        current.setPos(current.getX() + (baseSize.getX() - (baseSize.getX() - template.getSize().getX())) + 1,
-                current.getY(), current.getZ() - (baseSize.getZ() - template.getSize().getZ()) / 2);
+        BlockPos add = transformOffset((baseSize.getX() - template.getSize().getX()) / 2,
+                (baseSize.getZ() - template.getSize().getZ()) / 2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         EldritchSpireTemplate floor = new EldritchSpireTemplate(templateManager, template, tName,
-                true, current.toImmutable(), rot, Mirror.NONE);
+                true, current.toImmutable(), rot, mirror);
         pieces.add(floor);
         
         current.setPos(original.up(floor.getTemplate().getSize().getY()));
     }
     
     public static void generateThirdFloor(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Random random, List<EldritchSpireTemplate> pieces) {
+            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
         
         String tName = pickThirdFloor(random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
                     new ResourceLocation(ThaumicAugmentationAPI.MODID, "spire/" + tName));
         BlockPos original = current.toImmutable();
-        current.setPos(current.getX() + (baseSize.getX() - (baseSize.getX() - template.getSize().getX())) + 1,
-                current.getY(), current.getZ() - (baseSize.getZ() - template.getSize().getZ()) / 2);
+        BlockPos add = transformOffset((baseSize.getX() - template.getSize().getX()) / 2,
+                (baseSize.getZ() - template.getSize().getZ()) / 2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         EldritchSpireTemplate floor = new EldritchSpireTemplate(templateManager, template, tName,
-                true, current.toImmutable(), rot, Mirror.NONE);
+                true, current.toImmutable(), rot, mirror);
         pieces.add(floor);
         
         current.setPos(original.up(floor.getTemplate().getSize().getY()));
     }
     
     public static void generateFourthFloor(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Random random, List<EldritchSpireTemplate> pieces) {
+            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
         
         String tName = pickFourthFloor(random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
                     new ResourceLocation(ThaumicAugmentationAPI.MODID, "spire/" + tName));
         BlockPos original = current.toImmutable();
-        current.setPos(current.getX() + (baseSize.getX() - (baseSize.getX() - template.getSize().getX())) + 1,
-                current.getY(), current.getZ() - (baseSize.getZ() - template.getSize().getZ()) / 2);
+        BlockPos add = transformOffset((baseSize.getX() - template.getSize().getX()) / 2,
+                (baseSize.getZ() - template.getSize().getZ()) / 2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         EldritchSpireTemplate floor = new EldritchSpireTemplate(templateManager, template, tName,
-                true, current.toImmutable(), rot, Mirror.NONE);
+                true, current.toImmutable(), rot, mirror);
         pieces.add(floor);
         
         current.setPos(original.up(floor.getTemplate().getSize().getY()));
@@ -330,7 +338,7 @@ public class EldritchSpireComponents {
                     switch (tableNum) {
                         case 1: {
                             table = world.getLootTableManager().getLootTableFromLocation(
-                                TALootTables.PEDESTAL_UNCOMMON);
+                                    TALootTables.PEDESTAL_UNCOMMON);
                             break;
                         }
                         case 2: {
