@@ -156,7 +156,7 @@ public class MapGenEldritchSpire extends MapGenStructure {
             int minHeight = Math.min(Math.min(height1, height2), Math.min(height3, height4));
             if (minHeight >= 2) {
                 BlockPos pos = new BlockPos(chunkX * 16 + 8, minHeight + 1, chunkZ * 16 + 8);
-                List<EldritchSpireComponents.EldritchSpireTemplate> pieces = new ArrayList<>();
+                List<EldritchSpireTemplate> pieces = new ArrayList<>();
                 EldritchSpireComponents.generate(world.getSaveHandler().getStructureTemplateManager(),
                         pos, rot, random, pieces);
                 components.addAll(pieces);
@@ -184,8 +184,8 @@ public class MapGenEldritchSpire extends MapGenStructure {
                     if (!world.isAirBlock(mutable) && boundingBox.isVecInside(mutable)) {
                         boolean hasSomething = false;
                         for (StructureComponent component : components) {
-                            if ((!(component instanceof EldritchSpireComponents.EldritchSpireTemplate) ||
-                                    ((EldritchSpireComponents.EldritchSpireTemplate) component).shouldFillBlocksBelow()) &&
+                            if ((!(component instanceof EldritchSpireTemplate) ||
+                                    ((EldritchSpireTemplate) component).shouldFillBlocksBelow()) &&
                                     getBoundingBox().isVecInside(mutable)) {
                                 
                                 hasSomething = true;
