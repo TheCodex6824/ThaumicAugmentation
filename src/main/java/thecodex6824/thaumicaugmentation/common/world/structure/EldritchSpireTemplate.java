@@ -58,8 +58,12 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType.LockType;
+import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart.ObeliskPart;
+import thecodex6824.thaumicaugmentation.api.block.property.IObeliskType.ObeliskType;
 import thecodex6824.thaumicaugmentation.api.block.property.IUrnType.UrnType;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart;
+import thecodex6824.thaumicaugmentation.api.block.property.IObeliskType;
 import thecodex6824.thaumicaugmentation.api.block.property.IUrnType;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
@@ -79,7 +83,7 @@ public class EldritchSpireTemplate extends StructureComponentTemplate {
         
         super(0);
         if (template == null)
-            throw new NullPointerException("Structure template is null (should be impossible)");
+            throw new NullPointerException("Structure template is null (removed template?)");
         
         name = templateName;
         fillBlocks = fillBelow;
@@ -250,6 +254,25 @@ public class EldritchSpireTemplate extends StructureComponentTemplate {
             
             world.setBlockState(pos, vent, 2);
         }
+        else if (function.startsWith("obelisk_")) {
+            String type = function.substring(8);
+            ObeliskType oType = null;
+            if (type.equals("e"))
+                oType = ObeliskType.ELDRITCH;
+            else
+                oType = ObeliskType.ANCIENT;
+        
+            world.setBlockState(pos, TABlocks.OBELISK.getDefaultState().withProperty(
+                    IObeliskPart.OBELISK_PART, ObeliskPart.CAP).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
+            world.setBlockState(pos.up(), TABlocks.OBELISK.getDefaultState().withProperty(
+                    IObeliskPart.OBELISK_PART, ObeliskPart.INNER).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
+            world.setBlockState(pos.up(2), TABlocks.OBELISK.getDefaultState().withProperty(
+                    IObeliskPart.OBELISK_PART, ObeliskPart.MIDDLE).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
+            world.setBlockState(pos.up(3), TABlocks.OBELISK.getDefaultState().withProperty(
+                    IObeliskPart.OBELISK_PART, ObeliskPart.INNER).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
+            world.setBlockState(pos.up(4), TABlocks.OBELISK.getDefaultState().withProperty(
+                    IObeliskPart.OBELISK_PART, ObeliskPart.CAP).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
+        }
         else if (function.startsWith("lock_front_")) {
             EnumFacing face = null;
             String dir = function.substring(11, 12);
@@ -296,7 +319,7 @@ public class EldritchSpireTemplate extends StructureComponentTemplate {
         }
         else if (function.startsWith("key_")) {
             IBlockState toPlace = null;
-            String type = function.substring(4, 1);
+            String type = function.substring(4, 5);
             if (type.equals("e"))
                 toPlace = BlocksTC.pedestalEldritch.getDefaultState();
             else if (type.equals("a"))

@@ -30,6 +30,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
+import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.world.biome.IBiomeSpecificSpikeBlockProvider;
 
 public class WorldGenVoidStoneSpike extends WorldGenerator {
@@ -47,10 +49,16 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
             return biome.fillerBlock;
     }
     
+    protected boolean isValidGroundBlock(IBlockState state) {
+        return state.getBlock() == TABlocks.STONE && (state.getValue(ITAStoneType.STONE_TYPE) == StoneType.STONE_VOID
+                || state.getValue(ITAStoneType.STONE_TYPE) == StoneType.STONE_TAINT_NODECAY
+                || state.getValue(ITAStoneType.STONE_TYPE) == StoneType.SOIL_STONE_TAINT_NODECAY);
+    }
+    
     @Override
     public boolean generate(World world, Random rand, BlockPos position) {
         position = position.down();
-        if (world.getBlockState(position).getBlock() == TABlocks.STONE) {
+        if (isValidGroundBlock(world.getBlockState(position))) {
             BlockPos ground = position;
             position = position.up(rand.nextInt(4));
             int height = rand.nextInt(4) + 7;
@@ -67,7 +75,7 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                 for (int x = -1; x < 2; ++x) {
                     for (int z = -1; z < 2; ++z) {
                         pos.setPos(x + ground.getX(), y, z + ground.getZ());
-                        if (!world.isAirBlock(pos) && world.getBlockState(pos) != getBlockStateToPlace(world, pos))
+                        if (!world.isAirBlock(pos) && !isValidGroundBlock(world.getBlockState(pos)))
                             return false;
                     }
                 }
@@ -84,12 +92,12 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
     
                             if ((x == 0 && z == 0 || f1 * f1 + f2 * f2 <= f * f) && ((x != -l && x != l && z != -l && z != l) || rand.nextFloat() <= 0.75F)) {
                                 pos.setPos(x + position.getX(), y + position.getY(), z + position.getZ());
-                                if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
+                                if (world.isAirBlock(pos))
                                     setBlockAndNotifyAdequately(world, pos, getBlockStateToPlace(world, pos));
                                 
                                 if (y != 0 && l > 1) {
                                     pos.setY(position.getY() - y);
-                                    if (world.isAirBlock(pos) || world.getBlockState(pos).getBlock() == TABlocks.STONE)
+                                    if (world.isAirBlock(pos))
                                         setBlockAndNotifyAdequately(world, pos, getBlockStateToPlace(world, pos));
                                 }
                             }
@@ -108,7 +116,7 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
                         heightLeft = rand.nextInt(5);
 
                     while (pos.getY() > 0) {
-                        if (!world.isAirBlock(pos) && world.getBlockState(pos).getBlock() != getBlockStateToPlace(world, pos).getBlock())
+                        if (!world.isAirBlock(pos) && !isValidGroundBlock(world.getBlockState(pos)))
                             break;
 
                         setBlockAndNotifyAdequately(world, pos, getBlockStateToPlace(world, pos));

@@ -50,4 +50,15 @@ public class MazeCell {
         return wallCount;
     }
     
+    public boolean isCorner() {
+        if (getNumWalls() == 2) {
+            for (EnumFacing dir : EnumFacing.HORIZONTALS) {
+                if (hasWall(dir))
+                    return !hasWall(dir.getOpposite());
+            }
+        }
+        
+        return false;
+    }
+    
 }

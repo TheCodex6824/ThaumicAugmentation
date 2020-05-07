@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.warded;
 
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -139,8 +140,12 @@ public final class WardHelper {
     }
     
     public static UUID generateSafeUUID() {
-        long most = ThreadLocalRandom.current().nextLong();
-        long least = ThreadLocalRandom.current().nextLong();
+        return generateSafeUUID(ThreadLocalRandom.current());
+    }
+    
+    public static UUID generateSafeUUID(Random rand) {
+        long most = rand.nextLong();
+        long least = rand.nextLong();
         return new UUID(most & ~VERSION_MASK, least);
     }
     

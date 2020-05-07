@@ -38,9 +38,8 @@ public class TestMazeGenerator {
 
     @Test
     public void testMazeGeneration() {
-        for (int i = 0; i < 100; ++i) {
-            long seed = System.nanoTime();
-            Random rand = new Random(seed);
+        for (int i = 0; i < 10000; ++i) {
+            Random rand = new Random(i);
             Maze maze = new MazeGenerator().withSize(5, 5).generate(rand);
             
             // maze must have all areas accessible and filled, no openings to OoB
@@ -80,7 +79,7 @@ public class TestMazeGenerator {
                 }
             }
             
-            assertEquals("Inaccessible maze cell(s), seed: " + seed,
+            assertEquals("Inaccessible maze cell(s), seed: " + i,
                     maze.getWidth() * maze.getLength(), visited.size());
         }
     }

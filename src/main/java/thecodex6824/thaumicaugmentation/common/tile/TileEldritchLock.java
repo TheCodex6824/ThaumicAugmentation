@@ -43,6 +43,7 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
@@ -99,14 +100,18 @@ public class TileEldritchLock extends TileEntity implements ITickable, IInteract
         boolean xAxis = face.getAxis() == Axis.X;
         MutableBlockPos check = new MutableBlockPos();
         ArrayList<Vec3d> particles = new ArrayList<>();
-        for (int c = -2; c < 3; ++c) {
+        for (int c = -3; c < 4; ++c) {
             check.setPos(pos.getX() + (xAxis ? 0 : c), 0, pos.getZ() + (xAxis ? c : 0));
-            for (int y = -2; y < 3; ++y) {
+            for (int y = -3; y < 4; ++y) {
                 check.setY(pos.getY() + y);
-                IBlockState state = world.getBlockState(check);
-                if (state.getBlock() == TABlocks.RIFT_BARRIER && world.isBlockLoaded(check)) {
-                    world.setBlockToAir(check);
-                    particles.add(new Vec3d(check.getX(), check.getY(), check.getZ()));
+                if (world.isBlockLoaded(check)) {
+                    IBlockState state = world.getBlockState(check);
+                    if (Math.abs(c) <= 2 && Math.abs(y) <= 2 && state.getBlock() == TABlocks.RIFT_BARRIER) {
+                        world.setBlockToAir(check);
+                        particles.add(new Vec3d(check.getX(), check.getY(), check.getZ()));
+                    }
+                    else if (state.getBlock() == BlocksTC.stoneAncientDoorway)
+                        world.setBlockState(check, BlocksTC.stoneEldritchTile.getDefaultState(), 2);
                 }
             }
         }

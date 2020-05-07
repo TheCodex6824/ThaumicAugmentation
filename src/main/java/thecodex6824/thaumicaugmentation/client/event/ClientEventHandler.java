@@ -280,8 +280,7 @@ public final class ClientEventHandler {
     }
     
     public static void onFlightChange(EntityPlayer player, boolean flying) {
-        Boolean fly = Boolean.valueOf(flying);
-        if (!fly.equals(CREATIVE_FLIGHT.contains(player))) {
+        if (flying != CREATIVE_FLIGHT.contains(player)) {
             IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
             if (baubles != null) {
                 for (int slot : BaubleType.BODY.getValidSlots()) {
@@ -307,7 +306,7 @@ public final class ClientEventHandler {
                                             return entity.getPositionVector();
                                         else
                                             return null;
-                                    }, (float) player.posX, (float) player.posY, (float) player.posZ, 0.1F, 1.0F, true, 0);
+                                    }, (float) player.posX, (float) player.posY, (float) player.posZ, 0.05F, 1.0F, true, 0);
                             if (ThaumicAugmentation.proxy.isEntityRenderView(player) && handle instanceof SoundHandleSpecialSound)
                                 ((SoundHandleSpecialSound) handle).setAttenuationType(AttenuationType.NONE);
                         }
@@ -329,7 +328,7 @@ public final class ClientEventHandler {
                 }
             }
             
-            if (fly)
+            if (flying)
                 CREATIVE_FLIGHT.add(player);
             else
                 CREATIVE_FLIGHT.remove(player);
