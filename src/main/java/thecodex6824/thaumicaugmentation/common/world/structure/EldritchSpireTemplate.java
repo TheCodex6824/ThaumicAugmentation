@@ -82,8 +82,8 @@ public class EldritchSpireTemplate extends StructureComponentTemplate {
             boolean fillBelow, BlockPos position, Rotation rot, Mirror mi) {
         
         super(0);
-        if (template == null)
-            throw new NullPointerException("Structure template is null (removed template?)");
+        if (template == null) // TODO add fallback in case user template is removed
+            throw new NullPointerException("Structure template is null (removed template?): " + templateName);
         
         name = templateName;
         fillBlocks = fillBelow;
@@ -96,7 +96,7 @@ public class EldritchSpireTemplate extends StructureComponentTemplate {
             BlockPos position, Rotation rot, Mirror mi) {
         
         this(templateManager, templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "spire/" + templateName)), templateName,
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, templateName)), templateName,
                 fillBelow, position, rot, mi);
     }
     

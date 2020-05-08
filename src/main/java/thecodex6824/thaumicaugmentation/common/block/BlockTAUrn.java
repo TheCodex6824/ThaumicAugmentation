@@ -89,6 +89,11 @@ public class BlockTAUrn extends BlockTABase implements IUrnType, IItemBlockProvi
     }
     
     @Override
+    public int damageDropped(IBlockState state) {
+        return state.getValue(IUrnType.URN_TYPE).getMeta();
+    }
+    
+    @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
     }

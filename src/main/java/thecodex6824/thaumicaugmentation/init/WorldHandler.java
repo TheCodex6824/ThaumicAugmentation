@@ -3,6 +3,7 @@ package thecodex6824.thaumicaugmentation.init;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -27,6 +28,7 @@ import thecodex6824.thaumicaugmentation.common.world.TAWorldGenerator;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.WorldProviderEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
+import thecodex6824.thaumicaugmentation.common.world.structure.EldritchSpireComponents;
 
 /**
  *  Thaumic Augmentation
@@ -120,8 +122,11 @@ public final class WorldHandler {
     
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
-        if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue())
+        if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue()) {
             WorldDataCache.addOrUpdateData(event.getWorld());
+            if (event.getWorld().provider.getDimension() == TADimensions.EMPTINESS.getId())
+                EldritchSpireComponents.findTemplateVariants(((WorldServer) event.getWorld()).getStructureTemplateManager());
+        }
     }
     
     @SubscribeEvent
