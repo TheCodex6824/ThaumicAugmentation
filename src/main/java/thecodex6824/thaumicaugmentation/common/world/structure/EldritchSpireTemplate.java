@@ -33,6 +33,7 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
@@ -55,17 +56,19 @@ import thaumcraft.common.tiles.crafting.TilePedestal;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.block.property.IAltarBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType.LockType;
-import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart.ObeliskPart;
-import thecodex6824.thaumicaugmentation.api.block.property.IObeliskType.ObeliskType;
-import thecodex6824.thaumicaugmentation.api.block.property.IUrnType.UrnType;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart;
+import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart.ObeliskPart;
 import thecodex6824.thaumicaugmentation.api.block.property.IObeliskType;
+import thecodex6824.thaumicaugmentation.api.block.property.IObeliskType.ObeliskType;
 import thecodex6824.thaumicaugmentation.api.block.property.IUrnType;
+import thecodex6824.thaumicaugmentation.api.block.property.IUrnType.UrnType;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
+import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
 
 public class EldritchSpireTemplate extends StructureComponentTemplate {
@@ -146,7 +149,7 @@ public class EldritchSpireTemplate extends StructureComponentTemplate {
         }
         else if (function.startsWith("pedestal_")) {
             IBlockState toPlace = null;
-            String type = function.substring(9, 1);
+            String type = function.substring(9, 10);
             if (type.equals("e"))
                 toPlace = BlocksTC.pedestalEldritch.getDefaultState();
             else if (type.equals("a"))
@@ -228,6 +231,7 @@ public class EldritchSpireTemplate extends StructureComponentTemplate {
                     (float) entity.posY, (float) entity.posZ))) {
                 
                 entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+                entity.setChild(false);
                 world.spawnEntity(entity);
             }
         }
@@ -359,6 +363,55 @@ public class EldritchSpireTemplate extends StructureComponentTemplate {
                 MobSpawnerBaseLogic logic = ((TileEntityMobSpawner) tile).getSpawnerBaseLogic();
                 logic.potentialSpawns.clear();
                 logic.setEntityId(spawn);
+            }
+        }
+        else if (function.startsWith("altar_")) {
+            String type = function.substring(6);
+            IBlockState toPlace = TABlocks.CAPSTONE.getDefaultState().withProperty(IAltarBlock.ALTAR, true);
+            ObeliskType obeliskType = null;
+            if (type.equals("e"))
+                obeliskType = ObeliskType.ELDRITCH;
+            else
+                obeliskType = ObeliskType.ANCIENT;
+            
+            world.setBlockState(pos, toPlace.withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
+            world.setBlockState(pos.up(2), TABlocks.OBELISK.getDefaultState().withProperty(
+                    IObeliskPart.OBELISK_PART, ObeliskPart.CAP).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
+            world.setBlockState(pos.up(3), TABlocks.OBELISK.getDefaultState().withProperty(
+                    IObeliskPart.OBELISK_PART, ObeliskPart.INNER).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
+            world.setBlockState(pos.up(4), TABlocks.OBELISK.getDefaultState().withProperty(
+                    IObeliskPart.OBELISK_PART, ObeliskPart.MIDDLE).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
+            world.setBlockState(pos.up(5), TABlocks.OBELISK.getDefaultState().withProperty(
+                    IObeliskPart.OBELISK_PART, ObeliskPart.INNER).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
+            world.setBlockState(pos.up(6), TABlocks.OBELISK.getDefaultState().withProperty(
+                    IObeliskPart.OBELISK_PART, ObeliskPart.CAP).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
+        }
+        else if (function.equals("eg_mb")) {
+            EntityTAEldritchGuardian entity = new EntityTAEldritchGuardian(world);
+            entity.setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, rand.nextInt(360), 0);
+            entity.enablePersistence();
+            if (!MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent(entity, world, (float) entity.posX,
+                    (float) entity.posY, (float) entity.posZ))) {
+                
+                entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+                if (world.spawnEntity(entity)) {
+                    EntityFocusShield shield = new EntityFocusShield(world);
+                    shield.setOwner(entity);
+                    shield.setCasterID(entity.getPersistentID());
+                    shield.setColor(0x606060);
+                    shield.setInfiniteLifespan();
+                    if (world.getDifficulty() == EnumDifficulty.HARD) {
+                        shield.setMaxHealth(100.0F, false);
+                        shield.setReflect(true);
+                    }
+                    else if (world.getDifficulty() == EnumDifficulty.NORMAL)
+                        shield.setMaxHealth(50.0F, false);
+                    else
+                        shield.setMaxHealth(20.0F, false);
+                    
+                    shield.setHealth(shield.getMaxHealth());
+                    world.spawnEntity(shield);
+                }
             }
         }
     }
