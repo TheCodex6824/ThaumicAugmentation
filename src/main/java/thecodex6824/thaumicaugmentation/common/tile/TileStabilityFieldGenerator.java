@@ -235,7 +235,9 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
             }
         }
         else if (world.isRemote && ticks++ % 5 == 0) {
-            boolean on = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
+            IBlockState state = world.getBlockState(pos);
+            boolean on = state.getPropertyKeys().contains(IEnabledBlock.ENABLED) &&
+                    state.getValue(IEnabledBlock.ENABLED);
             if (!on)
                 targetedRift.clear();
             

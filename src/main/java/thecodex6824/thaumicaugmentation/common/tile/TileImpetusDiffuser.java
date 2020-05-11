@@ -175,7 +175,9 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
             }
         }
         else if (world.isRemote && ticks++ % 5 == 0) {
-            boolean enabled = world.getBlockState(pos).getValue(IEnabledBlock.ENABLED);
+            IBlockState state = world.getBlockState(pos);
+            boolean enabled = state.getPropertyKeys().contains(IEnabledBlock.ENABLED) && 
+                    state.getValue(IEnabledBlock.ENABLED);
             if (enabled != lastState) {
                 lastState = enabled;
                 actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));

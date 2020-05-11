@@ -57,17 +57,19 @@ public class TileCrabVent extends TileEntity implements ITickable {
     
     protected void makeVentParticles() {
         IBlockState state = world.getBlockState(pos);
-        EnumFacing face = state.getValue(IDirectionalBlock.DIRECTION);
-        AxisAlignedBB box = state.getBoundingBox(world, pos);
-        Random rand = world.rand;
-        double x = face.getAxis() == Axis.X ? (face.getAxisDirection() == AxisDirection.POSITIVE ? box.maxX : box.minX) + 
-                (rand.nextFloat() - rand.nextFloat()) / 4.0 : rand.nextFloat() / 2.0 + 0.25;
-        double y = face.getAxis() == Axis.Y ? (face.getAxisDirection() == AxisDirection.POSITIVE ? box.maxY : box.minY) + 
-                (rand.nextFloat() - rand.nextFloat()) / 4.0 : rand.nextFloat() / 2.0 + 0.25;
-        double z = face.getAxis() == Axis.Z ? (face.getAxisDirection() == AxisDirection.POSITIVE ? box.maxZ : box.minZ) + 
-                (rand.nextFloat() - rand.nextFloat()) / 4.0 : rand.nextFloat() / 2.0 + 0.25;
-        ThaumicAugmentation.proxy.getRenderHelper().renderVent(pos.getX() + x, pos.getY() + y, pos.getZ() + z, face.getXOffset() * 0.25, face.getYOffset() * 0.25,
-                face.getZOffset() * 0.25, 0x9988AA, 2.0F);
+        if (state.getPropertyKeys().contains(IDirectionalBlock.DIRECTION)) {
+            EnumFacing face = state.getValue(IDirectionalBlock.DIRECTION);
+            AxisAlignedBB box = state.getBoundingBox(world, pos);
+            Random rand = world.rand;
+            double x = face.getAxis() == Axis.X ? (face.getAxisDirection() == AxisDirection.POSITIVE ? box.maxX : box.minX) + 
+                    (rand.nextFloat() - rand.nextFloat()) / 4.0 : rand.nextFloat() / 2.0 + 0.25;
+            double y = face.getAxis() == Axis.Y ? (face.getAxisDirection() == AxisDirection.POSITIVE ? box.maxY : box.minY) + 
+                    (rand.nextFloat() - rand.nextFloat()) / 4.0 : rand.nextFloat() / 2.0 + 0.25;
+            double z = face.getAxis() == Axis.Z ? (face.getAxisDirection() == AxisDirection.POSITIVE ? box.maxZ : box.minZ) + 
+                    (rand.nextFloat() - rand.nextFloat()) / 4.0 : rand.nextFloat() / 2.0 + 0.25;
+            ThaumicAugmentation.proxy.getRenderHelper().renderVent(pos.getX() + x, pos.getY() + y, pos.getZ() + z, face.getXOffset() * 0.25, face.getYOffset() * 0.25,
+                    face.getZOffset() * 0.25, 0x9988AA, 2.0F);
+        }
     }
     
     protected int getBaseSpawnDelay() {

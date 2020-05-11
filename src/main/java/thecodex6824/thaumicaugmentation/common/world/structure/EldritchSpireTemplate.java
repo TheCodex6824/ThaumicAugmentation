@@ -126,7 +126,7 @@ public class EldritchSpireTemplate extends StructureComponentTemplate {
         Rotation rot = Rotation.valueOf(tag.getString("rot"));
         Mirror mi = Mirror.valueOf(tag.getString("mi"));
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
-                new ResourceLocation(ThaumicAugmentationAPI.MODID, "spire/" + name));
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, name));
         PlacementSettings settings = new PlacementSettings().setIgnoreEntities(true).setRotation(rot).setMirror(mi);
         setup(template, templatePosition, settings);
     }
