@@ -20,7 +20,7 @@ item.thaumicaugmentation.material.warding_sigil.name=守护印记
 item.thaumicaugmentation.material.amalgamated_gear.name=齿轮组
 item.thaumicaugmentation.material.rift_energy_cell.name=元动能量单元
 item.thaumicaugmentation.material.harness_base.name=缰绳底座
-item.thaumicaugmentation.seal_copier.name=印记仿置器
+item.thaumicaugmentation.seal_copier.name=印记拓印器
 item.thaumicaugmentation.arcane_door.greatwood.name=宏伟之木奥能之扉
 item.thaumicaugmentation.arcane_door.thaumium.name=神秘奥能之扉
 item.thaumicaugmentation.arcane_door.silverwood.name=银树奥能之扉
@@ -113,9 +113,9 @@ thaumicaugmentation.research.vis_regenerator.0=根据我过去的经验，一次
 thaumicaugmentation.research.vis_regenerator.1=我计划制造一种装置，我将其称为灵气再生器。它包含一个由银树树叶和源质滤管制成的栅格，以及一个试图通过栅格“再循环”灵气的外壳。<BR>这个设备有一个有趣的特点，其效能似乎与区域内灵气的总容量有关。换句话说，自然生成的Vis总含量低的区域会有更高的再生速度。<BR>如果我出于某种原因需要关闭灵气再生器的话，为它提供红石信号应该就能达到效果。
 thaumicaugmentation.research.vis_regenerator.2=鉴于灵气再生器和区域内灵气场间微妙的关系，我应该避免在充满咒波的区域使用它。我有种预感，它会让灵气场的污染更加严重......
 
-thaumicaugmentation.research.seal_copier.title=印记仿置器
+thaumicaugmentation.research.seal_copier.title=印记拓印器
 thaumicaugmentation.research.seal_copier.0=对于小型的工程来说，手动配置操控印记是个不错的选择，但是一旦涉及到成堆的印记，这种方法就会变得乏味且容易出错。我应该研究一种用于快速配置大量的印记的方法。
-thaumicaugmentation.research.seal_copier.1=我计划制造一种基础的印记仿置装置。我只需要按我所需配置好一个印记，然后用印记仿置器右键单击它，即可复制该印记的设置。接下来我只需要右击其它要应用该设置的印记，便可以快速完成配置。如果我想清除仿置器所记忆的印记设置，我只需在潜行时右键单击，然后我便可以继续复制新的设置。<BR>看起来我的印记仿置器无法与其他人的印记进行交互。如果我要与其他神秘使合作，我应该牢记这一点。
+thaumicaugmentation.research.seal_copier.1=我计划制造一种基础的印记拓印装置。我只需要按我所需配置好一个印记，然后用印记拓印器右键单击它，即可复制该印记的设置。接下来我只需要右击其它要应用该设置的印记，便可以快速完成配置。如果我想清除拓印器所记忆的印记设置，我只需在潜行时右键单击，然后我便可以继续复制新的设置。<BR>看起来我的印记拓印器无法与其他人的印记进行交互。如果我要与其他神秘使合作，我应该牢记这一点。
 
 thaumicaugmentation.research.seal_secure.title=操控印记：治安
 thaumicaugmentation.research.seal_secure.0=虽然我已经创造了能使傀儡保护特定区域的操控印记，但我感觉这不足以完整地发挥战斗傀儡的能力。事实上，使用守卫印记来让傀儡保护小范围区域是件微不足道的事情，真正具有挑战性的任务是驱使傀儡攻击它们所看见的任何怪物。
