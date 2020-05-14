@@ -32,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -40,6 +41,7 @@ import net.minecraftforge.common.IRarity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.items.IWarpingGear;
+import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemIndestructible;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
@@ -61,6 +63,7 @@ public class ItemResearchNotes extends ItemTABase implements IWarpingGear {
         if (!world.isRemote) {
             player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.research_notes_use").setStyle(new Style()
                 .setColor(TextFormatting.DARK_PURPLE)), true);
+            world.playSound(null, player.getPosition().up(), SoundsTC.learn, SoundCategory.PLAYERS, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
             return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
         }
         

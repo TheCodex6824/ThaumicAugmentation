@@ -825,7 +825,7 @@ public class EldritchSpireComponents {
         Rotation reflectedRot = rot;
         switch (mirror) {
             case NONE: {
-                reflection = Mirror.FRONT_BACK;
+                reflection = Mirror.LEFT_RIGHT;
                 break;
             }
             case LEFT_RIGHT: {
