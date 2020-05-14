@@ -28,6 +28,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import thaumcraft.api.ThaumcraftMaterials;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
@@ -56,6 +57,9 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
     }
     
     protected void generateBiomeTerrain(World world, Random rand, BlockPos fracture, TerrainBlocks blocks) {
+        if (((ChunkProviderServer) world.getChunkProvider()).isInsideStructure(world, "EldritchSpire", fracture.down(2)))
+            return;
+        
         int depth = rand.nextInt(2) + 1;
         for (int x = -5; x < 6; ++x) {
             for (int y = 5; y > -6 - depth; --y) {

@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.world.structure;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -46,20 +47,21 @@ import thecodex6824.thaumicaugmentation.common.util.maze.MazeGenerator;
 public class EldritchSpireComponents {
 
     public static void register() {
-        MapGenStructureIO.registerStructureComponent(EldritchSpireTemplate.class, "est");
+        MapGenStructureIO.registerStructureComponent(EldritchSpireComponent.class, "est");
+        MapGenStructureIO.registerStructureComponent(EldritchSpireMazeComponent.class, "estm");
     }
     
     public static void generate(TemplateManager templateManager, BlockPos position,
-            Rotation rot, Random random, List<EldritchSpireTemplate> pieces) {
+            Rotation rot, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
         Mirror mirror = Mirror.values()[random.nextInt(Mirror.values().length)];
         MutableBlockPos current = new MutableBlockPos(position);
-        BlockPos baseSize = generateBase(templateManager, current, rot, mirror, random, pieces);
-        generateGroundFloor(templateManager, current, baseSize, rot, mirror, random, pieces);
-        generateFirstFloor(templateManager, current, baseSize, rot, mirror, random, pieces);
-        generateSecondFloor(templateManager, current, baseSize, rot, mirror, random, pieces);
-        generateThirdFloor(templateManager, current, baseSize, rot, mirror, random, pieces);
-        generateFourthFloor(templateManager, current, baseSize, rot, mirror, random, pieces);
+        BlockPos baseSize = generateBase(templateManager, current, rot, mirror, random, pieces, ward);
+        generateGroundFloor(templateManager, current, baseSize, rot, mirror, random, pieces, ward);
+        generateFirstFloor(templateManager, current, baseSize, rot, mirror, random, pieces, ward);
+        generateSecondFloor(templateManager, current, baseSize, rot, mirror, random, pieces, ward);
+        generateThirdFloor(templateManager, current, baseSize, rot, mirror, random, pieces, ward);
+        generateFourthFloor(templateManager, current, baseSize, rot, mirror, random, pieces, ward);
     }
     
     protected static BlockPos transformOffset(int x, int z, Rotation rot, Mirror mi) {
@@ -137,11 +139,11 @@ public class EldritchSpireComponents {
     }
     
     public static BlockPos generateBase(TemplateManager templateManager, MutableBlockPos current,
-            Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
         BlockPos original = current.toImmutable();
-        EldritchSpireTemplate base = new EldritchSpireTemplate(templateManager, pickTemplate(BASE, random),
-                true, original, rot, mirror);
+        EldritchSpireComponent base = new EldritchSpireComponent(templateManager, pickTemplate(BASE, random),
+                true, original, rot, mirror, ward);
         pieces.add(base);
         BlockPos offset = current.add(transformOffset(base.getTemplate().getSize().getX() / 2,
                 base.getTemplate().getSize().getZ() / 2, rot, mirror));
@@ -157,8 +159,8 @@ public class EldritchSpireComponents {
             
             add = transformOffset((-template.getSize().getX() - base.getTemplate().getSize().getX()) / 2, 0, rot.add(fromFacing(face)), mirror);
             current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-            pieces.add(new EldritchSpireTemplate(templateManager, template, tName, true,
-                    current.toImmutable(), rot.add(fromFacing(face)), mirror));
+            pieces.add(new EldritchSpireComponent(templateManager, template, tName, true,
+                    current.toImmutable(), rot.add(fromFacing(face)), mirror, ward));
             current.setPos(offset);
         }
         
@@ -166,8 +168,8 @@ public class EldritchSpireComponents {
         return base.getTemplate().getSize();
     }
     
-    public static void generateGroundFloor(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+    public static void generateGroundFloor(TemplateManager templateManager, MutableBlockPos current, BlockPos baseSize,
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
         String tName = pickTemplate(GROUND_FLOOR, random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
@@ -176,15 +178,15 @@ public class EldritchSpireComponents {
         BlockPos add = transformOffset((baseSize.getX() - template.getSize().getX()) / 2,
                 (baseSize.getZ() - template.getSize().getZ()) / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        EldritchSpireTemplate floor = new EldritchSpireTemplate(templateManager, template, tName,
-                true, current.toImmutable(), rot, mirror);
+        EldritchSpireComponent floor = new EldritchSpireComponent(templateManager, template, tName,
+                true, current.toImmutable(), rot, mirror, ward);
         pieces.add(floor);
         
         current.setPos(original.up(floor.getTemplate().getSize().getY()));
     }
     
-    public static void generateFirstFloor(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+    public static void generateFirstFloor(TemplateManager templateManager, MutableBlockPos current, BlockPos baseSize,
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
         String tName = pickTemplate(FIRST_FLOOR, random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
@@ -193,8 +195,8 @@ public class EldritchSpireComponents {
         BlockPos add = transformOffset((baseSize.getX() - template.getSize().getX()) / 2,
                 (baseSize.getZ() - template.getSize().getZ()) / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        EldritchSpireTemplate floor = new EldritchSpireTemplate(templateManager, template, tName,
-                true, current.toImmutable(), rot, mirror);
+        EldritchSpireComponent floor = new EldritchSpireComponent(templateManager, template, tName,
+                true, current.toImmutable(), rot, mirror, ward);
         pieces.add(floor);
         
         String cName = pickTemplate(CONNECTOR_MAZE, random);
@@ -207,27 +209,27 @@ public class EldritchSpireComponents {
         add = transformOffset(cTemplate.getSize().getX() / 2, cTemplate.getSize().getZ() - 1, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         Rotation cRot = mirror == Mirror.LEFT_RIGHT ? rot.add(Rotation.CLOCKWISE_180) : rot;
-        pieces.add(new EldritchSpireTemplate(templateManager, cTemplate, cName, false,
-                current.toImmutable(), cRot.add(fromFacing(mirror.mirror(EnumFacing.NORTH))), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, cTemplate, cName, false,
+                current.toImmutable(), cRot.add(fromFacing(mirror.mirror(EnumFacing.NORTH))), mirror, ward));
         
         current.setPos(backup);
-        generateMaze(templateManager, current, cTemplate.getSize(), rot, mirror, random, pieces);
+        generateMaze(templateManager, current, cTemplate.getSize(), rot, mirror, random, pieces, ward);
         
         current.setPos(original.up(floor.getTemplate().getSize().getY()));
     }
     
-    public static void generateMaze(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+    public static void generateMaze(TemplateManager templateManager, MutableBlockPos current, BlockPos baseSize,
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
-        BlockPos origin = current.toImmutable().down(3);
+        BlockPos origin = current.toImmutable().down(4);
         String shellName = pickTemplate(MAZE_SHELL_BL, random);
         Template sTemplate = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, shellName));
         BlockPos add = transformOffset(MathHelper.ceil((sTemplate.getSize().getX() - baseSize.getX()) / 2.0F) + 1,
                 sTemplate.getSize().getZ(), rot, mirror);
         current.setPos(origin.getX() + add.getX(), origin.getY(), origin.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, sTemplate, shellName, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, sTemplate, shellName, false,
+                current.toImmutable(), rot, mirror, ward));
         
         shellName = pickTemplate(MAZE_SHELL_FL, random);
         sTemplate = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
@@ -235,8 +237,8 @@ public class EldritchSpireComponents {
         add = transformOffset(MathHelper.ceil((sTemplate.getSize().getX() - baseSize.getX()) / 2.0F) + 1,
                 -1, rot, mirror);
         current.setPos(origin.getX() + add.getX(), origin.getY(), origin.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, sTemplate, shellName, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, sTemplate, shellName, false,
+                current.toImmutable(), rot, mirror, ward));
         
         shellName = pickTemplate(MAZE_SHELL_BR, random);
         sTemplate = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
@@ -244,8 +246,8 @@ public class EldritchSpireComponents {
         add = transformOffset((-sTemplate.getSize().getX() - baseSize.getX()) / 2 + 2,
                 sTemplate.getSize().getZ(), rot, mirror);
         current.setPos(origin.getX() + add.getX(), origin.getY(), origin.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, sTemplate, shellName, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, sTemplate, shellName, false,
+                current.toImmutable(), rot, mirror, ward));
         
         shellName = pickTemplate(MAZE_SHELL_FR, random);
         sTemplate = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
@@ -253,10 +255,10 @@ public class EldritchSpireComponents {
         add = transformOffset((-sTemplate.getSize().getX() - baseSize.getX()) / 2 + 2,
                 -1, rot, mirror);
         current.setPos(origin.getX() + add.getX(), origin.getY(), origin.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, sTemplate, shellName, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, sTemplate, shellName, false,
+                current.toImmutable(), rot, mirror, ward));
         
-        origin = origin.add(transformOffset(sTemplate.getSize().getX() + 1, sTemplate.getSize().getZ() + baseSize.getZ() + 6, rot, mirror).up(1));
+        origin = origin.add(transformOffset(sTemplate.getSize().getX() + 1, sTemplate.getSize().getZ() + baseSize.getZ() + 6, rot, mirror).up(2));
         Maze maze = new MazeGenerator().withSize(5, 5).generate(random);
         int keyX = random.nextInt(maze.getWidth());
         for (int z = 0; z < maze.getLength(); ++z) {
@@ -456,18 +458,18 @@ public class EldritchSpireComponents {
                 BlockPos xz = transformOffset(x, z, transformRot, Mirror.NONE);
                 add = new BlockPos(xz.getX() * move.getX() + offsets.getX(), 0, xz.getZ() * move.getZ() + offsets.getZ());
                 BlockPos cellLoc = origin.add(add);
-                pieces.add(new EldritchSpireTemplate(templateManager, templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
-                        new ResourceLocation(ThaumicAugmentationAPI.MODID, cellName)), cellName, false, cellLoc, rot.add(adjust), mirror));
+                pieces.add(new EldritchSpireMazeComponent(templateManager, templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                        new ResourceLocation(ThaumicAugmentationAPI.MODID, cellName)), cellName, false, cellLoc, rot.add(adjust), mirror, ward));
                 if (overlayName != null) {
-                    pieces.add(new EldritchSpireTemplate(templateManager, templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
-                            new ResourceLocation(ThaumicAugmentationAPI.MODID, overlayName)), overlayName, false, cellLoc, rot.add(adjust), mirror));
+                    pieces.add(new EldritchSpireMazeComponent(templateManager, templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                            new ResourceLocation(ThaumicAugmentationAPI.MODID, overlayName)), overlayName, false, cellLoc, rot.add(adjust), mirror, ward));
                 }
             }
         }
     }
     
-    public static void generateSecondFloor(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+    public static void generateSecondFloor(TemplateManager templateManager, MutableBlockPos current, BlockPos baseSize,
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
         String tName = pickTemplate(SECOND_FLOOR, random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
@@ -476,8 +478,8 @@ public class EldritchSpireComponents {
         BlockPos add = transformOffset((baseSize.getX() - template.getSize().getX()) / 2,
                 (baseSize.getZ() - template.getSize().getZ()) / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        EldritchSpireTemplate floor = new EldritchSpireTemplate(templateManager, template, tName,
-                true, current.toImmutable(), rot, mirror);
+        EldritchSpireComponent floor = new EldritchSpireComponent(templateManager, template, tName,
+                true, current.toImmutable(), rot, mirror, ward);
         pieces.add(floor);
         
         String cName = pickTemplate(CONNECTOR_PRISON, random);
@@ -490,16 +492,16 @@ public class EldritchSpireComponents {
         add = transformOffset(cTemplate.getSize().getX() / 2, -1, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         Rotation cRot = mirror == Mirror.LEFT_RIGHT ? rot.add(Rotation.CLOCKWISE_180) : rot;
-        pieces.add(new EldritchSpireTemplate(templateManager, cTemplate, cName, false,
-                current.toImmutable(), cRot.add(fromFacing(mirror.mirror(EnumFacing.NORTH))), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, cTemplate, cName, false,
+                current.toImmutable(), cRot.add(fromFacing(mirror.mirror(EnumFacing.NORTH))), mirror, ward));
         
         current.setPos(backup);
-        generatePrison(templateManager, current, cTemplate.getSize(), rot, mirror, random, pieces);
+        generatePrison(templateManager, current, cTemplate.getSize(), rot, mirror, random, pieces, ward);
         current.setPos(original.up(floor.getTemplate().getSize().getY()));
     }
     
-    public static void generatePrison(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+    public static void generatePrison(TemplateManager templateManager, MutableBlockPos current, BlockPos baseSize,
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
         String piece = pickTemplate(PRISON_ENTRANCE, random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
@@ -507,8 +509,8 @@ public class EldritchSpireComponents {
         BlockPos add = transformOffset(template.getSize().getX(),
                 -template.getSize().getZ() - baseSize.getZ(), rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 3, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, template, piece, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, template, piece, false,
+                current.toImmutable(), rot, mirror, ward));
         int entranceSizeX = template.getSize().getX();
         
         add = transformOffset(template.getSize().getX() / 2, 0, rot, mirror);
@@ -543,8 +545,8 @@ public class EldritchSpireComponents {
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, piece));
         add = transformOffset(edge1.getSize().getX() + entranceSizeX / 2, 0, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, edge1, piece, false,
-                current.toImmutable(), reflectedRot, reflection));
+        pieces.add(new EldritchSpireComponent(templateManager, edge1, piece, false,
+                current.toImmutable(), reflectedRot, reflection, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_EDGE, random);
@@ -552,12 +554,12 @@ public class EldritchSpireComponents {
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, piece));
         add = transformOffset(-edge2.getSize().getX() - entranceSizeX / 2, 0, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, edge2, piece, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, edge2, piece, false,
+                current.toImmutable(), rot, mirror, ward));
         
         current.setPos(backup);
         generatePrisonBlock0(templateManager, current, edge1.getSize(), edge2.getSize(), template.getSize(),
-                rot, mirror, random, pieces);
+                rot, mirror, random, pieces, ward);
         
         add = transformOffset(template.getSize().getX() / 2, 0, rot, mirror);
         piece = pickTemplate(PRISON_BLOCK_CONNECTOR, random);
@@ -566,16 +568,17 @@ public class EldritchSpireComponents {
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         add = transformOffset(-template.getSize().getX() / 2, -template.getSize().getZ(), rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 5, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, template, piece, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, template, piece, false,
+                current.toImmutable(), rot, mirror, ward));
         
         add = transformOffset(template.getSize().getX() / 2, 0, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() + 5, current.getZ() + add.getZ());
-        generatePrisonBlock1(templateManager, current, template.getSize(), rot, mirror, random, pieces);
+        generatePrisonBlock1(templateManager, current, template.getSize(), rot, mirror, random, pieces, ward);
     }
     
-    public static void generatePrisonBlock0(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos edgeSize1, BlockPos edgeSize2, BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+    public static void generatePrisonBlock0(TemplateManager templateManager, MutableBlockPos current, BlockPos edgeSize1,
+            BlockPos edgeSize2, BlockPos baseSize, Rotation rot, Mirror mirror, Random random,
+            List<EldritchSpireComponent> pieces, UUID ward) {
         
         BlockPos backup = current.toImmutable();
         String piece = pickTemplate(PRISON_0_CORNER, random);
@@ -583,8 +586,8 @@ public class EldritchSpireComponents {
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, piece));
         BlockPos add = transformOffset(corner1.getSize().getX() + edgeSize1.getX() + baseSize.getX() / 2, 5, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 1, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, corner1, piece, false,
-                current.toImmutable(), rot.add(Rotation.CLOCKWISE_180), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, corner1, piece, false,
+                current.toImmutable(), rot.add(Rotation.CLOCKWISE_180), mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_0_CORNER, random);
@@ -592,8 +595,8 @@ public class EldritchSpireComponents {
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, piece));
         add = transformOffset(-corner2.getSize().getX() - edgeSize2.getX() - baseSize.getX() / 2, 5, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 1, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, corner2, piece, false, current.toImmutable(),
-                mirror == Mirror.NONE ? rot.add(Rotation.COUNTERCLOCKWISE_90) : rot.add(Rotation.CLOCKWISE_90), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, corner2, piece, false, current.toImmutable(),
+                mirror == Mirror.NONE ? rot.add(Rotation.COUNTERCLOCKWISE_90) : rot.add(Rotation.CLOCKWISE_90), mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_0_SIDE, random);
@@ -602,8 +605,8 @@ public class EldritchSpireComponents {
         add = transformOffset(corner1.getSize().getX() + edgeSize1.getX() + baseSize.getX() / 2,
                 -side1.getSize().getX() - corner1.getSize().getZ() / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, side1, piece, false, current.toImmutable(),
-                mirror == Mirror.NONE ? rot.add(Rotation.CLOCKWISE_90) : rot.add(Rotation.COUNTERCLOCKWISE_90), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, side1, piece, false, current.toImmutable(),
+                mirror == Mirror.NONE ? rot.add(Rotation.CLOCKWISE_90) : rot.add(Rotation.COUNTERCLOCKWISE_90), mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_0_SIDE, random);
@@ -612,8 +615,8 @@ public class EldritchSpireComponents {
         add = transformOffset(-corner2.getSize().getX() - edgeSize2.getX() - baseSize.getX() / 2,
                 -corner1.getSize().getZ() / 2 - 1, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, side2, piece, false, current.toImmutable(),
-                mirror == Mirror.NONE ? rot.add(Rotation.COUNTERCLOCKWISE_90) : rot.add(Rotation.CLOCKWISE_90), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, side2, piece, false, current.toImmutable(),
+                mirror == Mirror.NONE ? rot.add(Rotation.COUNTERCLOCKWISE_90) : rot.add(Rotation.CLOCKWISE_90), mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_0_CORNER, random);
@@ -622,8 +625,8 @@ public class EldritchSpireComponents {
         add = transformOffset(corner3.getSize().getX() + edgeSize1.getX() + baseSize.getX() / 2,
                 -corner3.getSize().getZ() - side1.getSize().getX() - corner1.getSize().getZ() / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 1, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, corner3, piece, false, current.toImmutable(),
-                mirror == Mirror.NONE ? rot.add(Rotation.CLOCKWISE_90) : rot.add(Rotation.COUNTERCLOCKWISE_90), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, corner3, piece, false, current.toImmutable(),
+                mirror == Mirror.NONE ? rot.add(Rotation.CLOCKWISE_90) : rot.add(Rotation.COUNTERCLOCKWISE_90), mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_0_CORNER, random);
@@ -632,8 +635,8 @@ public class EldritchSpireComponents {
         add = transformOffset(-corner4.getSize().getX() - edgeSize2.getX() - baseSize.getX() / 2,
                 -corner4.getSize().getZ() - side2.getSize().getX() - corner2.getSize().getZ() / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 1, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, corner4, piece, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, corner4, piece, false,
+                current.toImmutable(), rot, mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_0, random);
@@ -641,15 +644,15 @@ public class EldritchSpireComponents {
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, piece));
         add = transformOffset(-template.getSize().getX() / 2, -template.getSize().getZ(), rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 5, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, template, piece, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, template, piece, false,
+                current.toImmutable(), rot, mirror, ward));
         
         add = transformOffset(template.getSize().getX() / 2 - baseSize.getX() / 2, 0, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() + 5, current.getZ() + add.getZ());
     }
     
-    public static void generatePrisonBlock1(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+    public static void generatePrisonBlock1(TemplateManager templateManager, MutableBlockPos current, BlockPos baseSize,
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
         BlockPos backup = current.toImmutable();
         String piece = pickTemplate(PRISON_1_CORNER, random);
@@ -657,8 +660,8 @@ public class EldritchSpireComponents {
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, piece));
         BlockPos add = transformOffset(corner1.getSize().getX() + baseSize.getX() / 2, 5, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 1, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, corner1, piece, false,
-                current.toImmutable(), rot.add(Rotation.CLOCKWISE_180), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, corner1, piece, false,
+                current.toImmutable(), rot.add(Rotation.CLOCKWISE_180), mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_1_CORNER, random);
@@ -666,8 +669,8 @@ public class EldritchSpireComponents {
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, piece));
         add = transformOffset(-corner2.getSize().getX() - baseSize.getX() / 2, 5, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 1, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, corner2, piece, false, current.toImmutable(),
-                mirror == Mirror.NONE ? rot.add(Rotation.COUNTERCLOCKWISE_90) : rot.add(Rotation.CLOCKWISE_90), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, corner2, piece, false, current.toImmutable(),
+                mirror == Mirror.NONE ? rot.add(Rotation.COUNTERCLOCKWISE_90) : rot.add(Rotation.CLOCKWISE_90), mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_1_SIDE, random);
@@ -676,8 +679,8 @@ public class EldritchSpireComponents {
         add = transformOffset(corner1.getSize().getX() + baseSize.getX() / 2,
                 -side1.getSize().getX() - corner1.getSize().getZ() / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, side1, piece, false, current.toImmutable(),
-                mirror == Mirror.NONE ? rot.add(Rotation.CLOCKWISE_90) : rot.add(Rotation.COUNTERCLOCKWISE_90), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, side1, piece, false, current.toImmutable(),
+                mirror == Mirror.NONE ? rot.add(Rotation.CLOCKWISE_90) : rot.add(Rotation.COUNTERCLOCKWISE_90), mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_1_SIDE, random);
@@ -686,8 +689,8 @@ public class EldritchSpireComponents {
         add = transformOffset(-corner2.getSize().getX() - baseSize.getX() / 2,
                 -corner1.getSize().getZ() / 2 - 1, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, side2, piece, false, current.toImmutable(),
-                mirror == Mirror.NONE ? rot.add(Rotation.COUNTERCLOCKWISE_90) : rot.add(Rotation.CLOCKWISE_90), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, side2, piece, false, current.toImmutable(),
+                mirror == Mirror.NONE ? rot.add(Rotation.COUNTERCLOCKWISE_90) : rot.add(Rotation.CLOCKWISE_90), mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_1_CORNER, random);
@@ -696,8 +699,8 @@ public class EldritchSpireComponents {
         add = transformOffset(corner3.getSize().getX() + baseSize.getX() / 2,
                 -corner3.getSize().getZ() - side1.getSize().getX() - corner1.getSize().getZ() / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 1, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, corner3, piece, false, current.toImmutable(),
-                mirror == Mirror.NONE ? rot.add(Rotation.CLOCKWISE_90) : rot.add(Rotation.COUNTERCLOCKWISE_90), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, corner3, piece, false, current.toImmutable(),
+                mirror == Mirror.NONE ? rot.add(Rotation.CLOCKWISE_90) : rot.add(Rotation.COUNTERCLOCKWISE_90), mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_1_CORNER, random);
@@ -706,8 +709,8 @@ public class EldritchSpireComponents {
         add = transformOffset(-corner4.getSize().getX() - baseSize.getX() / 2,
                 -corner4.getSize().getZ() - side2.getSize().getX() - corner2.getSize().getZ() / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 1, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, corner4, piece, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, corner4, piece, false,
+                current.toImmutable(), rot, mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_1_SIDE, random);
@@ -716,8 +719,8 @@ public class EldritchSpireComponents {
         add = transformOffset(-side3.getSize().getX() / 2,
                 -corner4.getSize().getZ() - side2.getSize().getX() - corner2.getSize().getZ() / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, side3, piece, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, side3, piece, false,
+                current.toImmutable(), rot, mirror, ward));
         
         current.setPos(backup);
         piece = pickTemplate(PRISON_1, random);
@@ -725,12 +728,12 @@ public class EldritchSpireComponents {
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, piece));
         add = transformOffset(-template.getSize().getX() / 2, -template.getSize().getZ(), rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 5, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, template, piece, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, template, piece, false,
+                current.toImmutable(), rot, mirror, ward));
     }
     
-    public static void generateThirdFloor(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+    public static void generateThirdFloor(TemplateManager templateManager, MutableBlockPos current, BlockPos baseSize,
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
         String tName = pickTemplate(THIRD_FLOOR, random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
@@ -739,27 +742,316 @@ public class EldritchSpireComponents {
         BlockPos add = transformOffset((baseSize.getX() - template.getSize().getX()) / 2,
                 (baseSize.getZ() - template.getSize().getZ()) / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        EldritchSpireTemplate floor = new EldritchSpireTemplate(templateManager, template, tName,
-                true, current.toImmutable(), rot, mirror);
+        EldritchSpireComponent floor = new EldritchSpireComponent(templateManager, template, tName,
+                true, current.toImmutable(), rot, mirror, ward);
         pieces.add(floor);
         
         String cName = pickTemplate(CONNECTOR_LIBRARY, random);
         Template cTemplate = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, cName));
+        BlockPos backup = current.add(transformOffset(-template.getSize().getZ() - cTemplate.getSize().getZ(), 0, rot, mirror));
         add = transformOffset(0,
                 template.getSize().getZ() / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         add = transformOffset(-cTemplate.getSize().getZ(), cTemplate.getSize().getX() / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         Rotation cRot = mirror == Mirror.LEFT_RIGHT ? rot.add(Rotation.CLOCKWISE_180) : rot;
-        pieces.add(new EldritchSpireTemplate(templateManager, cTemplate, cName, false,
-                current.toImmutable(), cRot.add(fromFacing(mirror.mirror(EnumFacing.EAST))), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, cTemplate, cName, false,
+                current.toImmutable(), cRot.add(fromFacing(mirror.mirror(EnumFacing.EAST))), mirror, ward));
         
+        current.setPos(backup);
+        generateLibrary(templateManager, current, cTemplate.getSize(), rot, mirror, random, pieces, ward);
         current.setPos(original.up(floor.getTemplate().getSize().getY()));
     }
     
-    public static void generateFourthFloor(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+    public static void generateLibrary(TemplateManager templateManager, MutableBlockPos current, BlockPos connectorSize,
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
+        
+        BlockPos backup = current.toImmutable();
+        String tName = pickTemplate(LIBRARY_GROUND_FLOOR_FRONT, random);
+        Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        BlockPos add = transformOffset(-connectorSize.getZ() / 2 - 1, -2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() - 3, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        MutableBlockPos mainSize = new MutableBlockPos(template.getSize());
+        
+        tName = pickTemplate(LIBRARY_GROUND_FLOOR_BACK, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-template.getSize().getZ() - 1, 0, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        
+        tName = pickTemplate(LIBRARY_BACK, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-template.getSize().getX(), template.getSize().getZ() / 2 - 1, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() + 13, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        int backSizeZ = template.getSize().getZ();
+        BlockPos cornerSideBackup = current.toImmutable();
+        
+        tName = pickTemplate(LIBRARY_CORNER, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(0, template.getSize().getZ() - (template.getSize().getZ() - backSizeZ), rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() - 11, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        
+        current.setPos(backup);
+        tName = pickTemplate(LIBRARY_SIDE_FRONT, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-connectorSize.getZ() / 2 - 1, backSizeZ + template.getSize().getZ() + 1, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() + 13, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        BlockPos sideSize = template.getSize();
+        
+        tName = pickTemplate(LIBRARY_SIDE_BACK, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-template.getSize().getX(), 0, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        
+        Mirror reflection = null;
+        Rotation reflectedRot = rot;
+        switch (mirror) {
+            case NONE: {
+                reflection = Mirror.FRONT_BACK;
+                break;
+            }
+            case LEFT_RIGHT: {
+                reflection = Mirror.NONE;
+                break;
+            }
+            case FRONT_BACK: {
+                reflection = Mirror.NONE;
+                reflectedRot = reflectedRot.add(Rotation.CLOCKWISE_180);
+                break;
+            }
+            default: {
+                reflection = mirror;
+                break;
+            }
+        }
+        
+        current.setPos(cornerSideBackup);
+        tName = pickTemplate(LIBRARY_CORNER, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(0, -1, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() - 11, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), reflectedRot, reflection, ward));
+        
+        current.setPos(backup);
+        tName = pickTemplate(LIBRARY_SIDE_FRONT, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-connectorSize.getZ() / 2 - 1, -3, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() + 13, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), reflectedRot, reflection, ward));
+        
+        tName = pickTemplate(LIBRARY_SIDE_BACK, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-template.getSize().getX(), 0, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), reflectedRot, reflection, ward));
+        
+        current.setPos(backup);
+        tName = pickTemplate(LIBRARY_HALL_LOWER, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(connectorSize.getZ() / 2, -template.getSize().getZ() - 2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() - 2, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        
+        tName = pickTemplate(LIBRARY_HALL_LOWER, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-template.getSize().getX(), 0, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        
+        tName = pickTemplate(LIBRARY_HALL_LOWER_BACK, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-template.getSize().getX(), 0, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        
+        current.setPos(backup);
+        tName = pickTemplate(LIBRARY_HALL_LOWER, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(connectorSize.getZ() / 2, mainSize.getZ() + template.getSize().getZ() - 3, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() - 2, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), reflectedRot, reflection, ward));
+        
+        tName = pickTemplate(LIBRARY_HALL_LOWER, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-template.getSize().getX(), 0, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), reflectedRot, reflection, ward));
+        
+        tName = pickTemplate(LIBRARY_HALL_LOWER_BACK, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-template.getSize().getX(), 0, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), reflectedRot, reflection, ward));
+        
+        current.setPos(backup);
+        tName = pickTemplate(LIBRARY_HALL_UPPER, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(template.getSize().getX() - 2, -template.getSize().getZ() - sideSize.getZ() - 2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() + 14, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        
+        for (int i = 0; i < 2; ++i) {
+            tName = pickTemplate(LIBRARY_HALL_UPPER, random);
+            template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                        new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+            add = transformOffset(-template.getSize().getX() - 8, 0, rot, mirror);
+            current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+            pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                    current.toImmutable(), rot, mirror, ward));
+        }
+        
+        current.setPos(backup);
+        tName = pickTemplate(LIBRARY_HALL_UPPER, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(template.getSize().getX() - 2, mainSize.getZ() + template.getSize().getZ() + sideSize.getZ() - 3, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() + 14, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), reflectedRot, reflection, ward));
+        
+        for (int i = 0; i < 2; ++i) {
+            tName = pickTemplate(LIBRARY_HALL_UPPER, random);
+            template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                        new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+            add = transformOffset(-template.getSize().getX() - 8, 0, rot, mirror);
+            current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+            pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                    current.toImmutable(), reflectedRot, reflection, ward));
+        }
+        
+        current.setPos(backup);
+        tName = pickTemplate(LIBRARY_FIRST_FLOOR_FRONT, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-connectorSize.getZ() / 2 - 1, -2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() + mainSize.getY() - 3, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        
+        tName = pickTemplate(LIBRARY_FIRST_FLOOR_BACK, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-template.getSize().getZ() - 1, 0, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        int heightAdd = template.getSize().getY();
+        
+        int keyAlcove = random.nextInt(14);
+        current.setPos(backup);
+        tName = pickTemplate(keyAlcove == 0 ? LIBRARY_ALCOVE_KEY : LIBRARY_ALCOVE, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(connectorSize.getZ() / 2 + template.getSize().getX() + 1, -template.getSize().getZ() - 2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() + mainSize.getY() + template.getSize().getY() - 2, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        
+        for (int i = 1; i < 6; ++i) {
+            tName = pickTemplate(keyAlcove == i ? LIBRARY_ALCOVE_KEY : LIBRARY_ALCOVE, random);
+            template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                        new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+            add = transformOffset(-template.getSize().getX() - (i == 3 ? 2 : 1), 0, rot, mirror);
+            current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+            pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                    current.toImmutable(), rot, mirror, ward));
+        }
+        
+        current.setPos(backup);
+        tName = pickTemplate(keyAlcove == 6 ? LIBRARY_ALCOVE_KEY : LIBRARY_ALCOVE, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(connectorSize.getZ() / 2 + template.getSize().getX() + 1, mainSize.getZ() + template.getSize().getZ() / 2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() + mainSize.getY() + template.getSize().getY() - 2, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), reflectedRot, reflection, ward));
+        
+        for (int i = 7; i < 12; ++i) {
+            tName = pickTemplate(keyAlcove == i ? LIBRARY_ALCOVE_KEY : LIBRARY_ALCOVE, random);
+            template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                        new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+            add = transformOffset(-template.getSize().getX() - (i == 9 ? 2 : 1), 0, rot, mirror);
+            current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+            pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                    current.toImmutable(), reflectedRot, reflection, ward));
+        }
+        
+        current.setPos(backup);
+        tName = pickTemplate(keyAlcove == 12 ? LIBRARY_ALCOVE_KEY : LIBRARY_ALCOVE, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-connectorSize.getZ() / 2 - mainSize.getX() - template.getSize().getZ() - 1, template.getSize().getX() + 5, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() + mainSize.getY() + template.getSize().getY() - 2, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false, current.toImmutable(),
+                mirror == Mirror.NONE ? rot.add(Rotation.COUNTERCLOCKWISE_90) : rot.add(Rotation.CLOCKWISE_90), mirror, ward));
+        
+        tName = pickTemplate(keyAlcove == 13 ? LIBRARY_ALCOVE_KEY : LIBRARY_ALCOVE, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(0, template.getSize().getX() + 1, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false, current.toImmutable(),
+                mirror == Mirror.NONE ? rot.add(Rotation.COUNTERCLOCKWISE_90) : rot.add(Rotation.CLOCKWISE_90), mirror, ward));
+        
+        mainSize.setY(mainSize.getY() + heightAdd);
+        current.setPos(backup);
+        tName = pickTemplate(LIBRARY_SECOND_FLOOR_FRONT, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-connectorSize.getZ() / 2 - 1, -2, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY() + mainSize.getY() - 3, current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+        
+        tName = pickTemplate(LIBRARY_SECOND_FLOOR_BACK, random);
+        template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
+                    new ResourceLocation(ThaumicAugmentationAPI.MODID, tName));
+        add = transformOffset(-template.getSize().getZ() - 1, 0, rot, mirror);
+        current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
+        pieces.add(new EldritchSpireComponent(templateManager, template, tName, false,
+                current.toImmutable(), rot, mirror, ward));
+    }
+    
+    public static void generateFourthFloor(TemplateManager templateManager, MutableBlockPos current, BlockPos baseSize,
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
         String tName = pickTemplate(FOURTH_FLOOR, random);
         Template template = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
@@ -768,8 +1060,8 @@ public class EldritchSpireComponents {
         BlockPos add = transformOffset((baseSize.getX() - template.getSize().getX()) / 2,
                 (baseSize.getZ() - template.getSize().getZ()) / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
-        EldritchSpireTemplate floor = new EldritchSpireTemplate(templateManager, template, tName,
-                true, current.toImmutable(), rot, mirror);
+        EldritchSpireComponent floor = new EldritchSpireComponent(templateManager, template, tName,
+                true, current.toImmutable(), rot, mirror, ward);
         pieces.add(floor);
         
         String cName = pickTemplate(CONNECTOR_BOSS, random);
@@ -782,24 +1074,24 @@ public class EldritchSpireComponents {
         add = transformOffset(cTemplate.getSize().getZ() - 1, -cTemplate.getSize().getX() / 2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY(), current.getZ() + add.getZ());
         Rotation cRot = mirror == Mirror.LEFT_RIGHT ? rot.add(Rotation.CLOCKWISE_180) : rot;
-        pieces.add(new EldritchSpireTemplate(templateManager, cTemplate, cName, false,
-                current.toImmutable(), cRot.add(fromFacing(mirror.mirror(EnumFacing.WEST))), mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, cTemplate, cName, false,
+                current.toImmutable(), cRot.add(fromFacing(mirror.mirror(EnumFacing.WEST))), mirror, ward));
         
         current.setPos(backup);
-        generateBossRoom(templateManager, current, cTemplate.getSize(), rot, mirror, random, pieces);
+        generateBossRoom(templateManager, current, cTemplate.getSize(), rot, mirror, random, pieces, ward);
         current.setPos(original.up(floor.getTemplate().getSize().getY()));
     }
     
-    public static void generateBossRoom(TemplateManager templateManager, MutableBlockPos current,
-            BlockPos baseSize, Rotation rot, Mirror mirror, Random random, List<EldritchSpireTemplate> pieces) {
+    public static void generateBossRoom(TemplateManager templateManager, MutableBlockPos current, BlockPos baseSize,
+            Rotation rot, Mirror mirror, Random random, List<EldritchSpireComponent> pieces, UUID ward) {
         
         String bossName = pickTemplate(BOSS, random);
         Template bTemplate = templateManager.get(FMLCommonHandler.instance().getMinecraftServerInstance(),
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, bossName));
         BlockPos add = transformOffset(-1, -2, rot, mirror);
         current.setPos(current.getX() + add.getX(), current.getY() - 2, current.getZ() + add.getZ());
-        pieces.add(new EldritchSpireTemplate(templateManager, bTemplate, bossName, false,
-                current.toImmutable(), rot, mirror));
+        pieces.add(new EldritchSpireComponent(templateManager, bTemplate, bossName, false,
+                current.toImmutable(), rot, mirror, ward));
     }
     
     protected static final String BASE = "spire/base_";
@@ -849,6 +1141,22 @@ public class EldritchSpireComponents {
     protected static final String PRISON_1_SIDE = "spire/prison/1_cell_side_";
     protected static final String PRISON_EDGE = "spire/prison/cell_edge_";
     
+    protected static final String LIBRARY_GROUND_FLOOR_FRONT = "spire/library/ground0_";
+    protected static final String LIBRARY_GROUND_FLOOR_BACK = "spire/library/ground1_";
+    protected static final String LIBRARY_FIRST_FLOOR_FRONT = "spire/library/first0_";
+    protected static final String LIBRARY_FIRST_FLOOR_BACK = "spire/library/first1_";
+    protected static final String LIBRARY_SECOND_FLOOR_FRONT = "spire/library/second0_";
+    protected static final String LIBRARY_SECOND_FLOOR_BACK = "spire/library/second1_";
+    protected static final String LIBRARY_BACK = "spire/library/back_";
+    protected static final String LIBRARY_CORNER = "spire/library/corner_";
+    protected static final String LIBRARY_SIDE_FRONT = "spire/library/side0_";
+    protected static final String LIBRARY_SIDE_BACK = "spire/library/side1_";
+    protected static final String LIBRARY_HALL_LOWER = "spire/library/lower_hall_";
+    protected static final String LIBRARY_HALL_LOWER_BACK = "spire/library/lower_hall_back_";
+    protected static final String LIBRARY_HALL_UPPER = "spire/library/upper_hall_";
+    protected static final String LIBRARY_ALCOVE = "spire/library/alcove_";
+    protected static final String LIBRARY_ALCOVE_KEY = "spire/library/alcove_key_";
+    
     protected static final String BOSS = "spire/boss/boss_";
     
     // so we don't need to have an individual loop for every single path
@@ -860,7 +1168,10 @@ public class EldritchSpireComponents {
             MAZE_CELL_ENTRANCE_CROSS, MAZE_CELL_ENTRANCE_T, MAZE_CELL_ENTRANCE_CORNER, MAZE_CELL_ENTRANCE_STRAIGHT, MAZE_CELL_ENTRANCE_END,
             MAZE_CELL_ROOM_END_CRAB, MAZE_OVERLAY_ROOM, MAZE_OVERLAY_HALL, MAZE_OVERLAY_WEB, MAZE_OVERLAY_KEY,
             PRISON_ENTRANCE, PRISON_0, PRISON_0_CORNER, PRISON_0_SIDE, PRISON_BLOCK_CONNECTOR, PRISON_1, PRISON_1_CORNER,
-            PRISON_1_SIDE, PRISON_EDGE, BOSS
+            PRISON_1_SIDE, PRISON_EDGE, LIBRARY_GROUND_FLOOR_FRONT, LIBRARY_GROUND_FLOOR_BACK, LIBRARY_FIRST_FLOOR_FRONT,
+            LIBRARY_FIRST_FLOOR_BACK, LIBRARY_SECOND_FLOOR_FRONT, LIBRARY_SECOND_FLOOR_BACK, LIBRARY_BACK,
+            LIBRARY_CORNER, LIBRARY_SIDE_FRONT, LIBRARY_SIDE_BACK, LIBRARY_HALL_LOWER, LIBRARY_HALL_LOWER_BACK,
+            LIBRARY_HALL_UPPER, LIBRARY_ALCOVE, LIBRARY_ALCOVE_KEY, BOSS
     ).build();
     
     protected static ImmutableMap<String, Integer> templateCounts = ImmutableMap.of();

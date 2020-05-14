@@ -118,6 +118,7 @@ item.thaumicaugmentation.eldritch_lock_key.library.name=Tome of Forbidden Knowle
 item.thaumicaugmentation.eldritch_lock_key.boss.name=Sinister Blade
 item.thaumicaugmentation.obelisk_placer.eldritch.name=Eldritch Obelisk
 item.thaumicaugmentation.obelisk_placer.ancient.name=Ancient Obelisk
+item.thaumicaugmentation.research_notes.eldritch.name=Tattered Scrolls
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld
@@ -197,6 +198,8 @@ thaumicaugmentation.text.eldritch_lock_type=Key: %s
 thaumicaugmentation.text.impetus=Impetus
 thaumicaugmentation.text.levitate=Your understanding of levitation has been lifted to new heights.
 thaumicaugmentation.text.entity.eldritch_golem=%s %s
+thaumicaugmentation.text.research_notes_use=You cannot seem to decipher the text. Perhaps a thaumometer would help?
+thaumicaugmentation.text.research_notes_eldritch=The writing is difficult to read, but powerful knowledge lurks within these pages...
 
 thaumicaugmentation.text.damage.impetus=%s was annihilated
 thaumicaugmentation.text.damage.impetus_attack=%s was annihilated by %s

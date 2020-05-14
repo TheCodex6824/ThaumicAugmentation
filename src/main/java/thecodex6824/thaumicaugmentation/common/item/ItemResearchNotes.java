@@ -27,7 +27,11 @@ import javax.annotation.Nullable;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -35,16 +39,40 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IRarity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thaumcraft.api.items.IWarpingGear;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemIndestructible;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
-public class ItemEldritchLockKey extends ItemTABase {
+public class ItemResearchNotes extends ItemTABase implements IWarpingGear {
 
-    public ItemEldritchLockKey() {
-        super("labyrinth", "prison", "library", "boss");
+    public ItemResearchNotes() {
+        super("eldritch");
         setMaxStackSize(1);
-        setHasSubtypes(true);
+    }
+    
+    @Override
+    public IRarity getForgeRarity(ItemStack stack) {
+        return TAMaterials.RARITY_ELDRITCH;
+    }
+    
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        if (!world.isRemote) {
+            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.research_notes_use").setStyle(new Style()
+                .setColor(TextFormatting.DARK_PURPLE)), true);
+            return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        }
+        
+        return super.onItemRightClick(world, player, hand);
+    }
+    
+    @Override
+    public int getWarp(ItemStack stack, EntityPlayer player) {
+        if (stack.getMetadata() == 0)
+            return 5;
+        else
+            return 0;
     }
     
     @Override
@@ -70,14 +98,10 @@ public class ItemEldritchLockKey extends ItemTABase {
     }
     
     @Override
-    public IRarity getForgeRarity(ItemStack stack) {
-        return TAMaterials.RARITY_ELDRITCH;
-    }
-    
-    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.eldritch_lock_key_lore").setStyle(new Style()
+        int meta = Math.min(subItemNames.length, stack.getMetadata());
+        tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.research_notes_" + subItemNames[meta]).setStyle(new Style()
                 .setItalic(true)
                 .setColor(TextFormatting.DARK_PURPLE))
             .getFormattedText());

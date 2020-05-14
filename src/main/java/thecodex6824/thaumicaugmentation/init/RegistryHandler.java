@@ -35,8 +35,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.common.IRarity;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -107,6 +107,7 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
+import thecodex6824.thaumicaugmentation.common.entity.EntityItemIndestructible;
 import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGolem;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
@@ -132,6 +133,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemMorphicTool;
 import thecodex6824.thaumicaugmentation.common.item.ItemObeliskPlacer;
 import thecodex6824.thaumicaugmentation.common.item.ItemPrimalCutter;
+import thecodex6824.thaumicaugmentation.common.item.ItemResearchNotes;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
@@ -354,6 +356,7 @@ public final class RegistryHandler {
         registry.register(new ItemFocusAncient()); // had to setup in constructor due to TC doing things to the item
         registry.register(setupItem(new ItemEldritchLockKey(), "eldritch_lock_key"));
         registry.register(setupItem(new ItemObeliskPlacer(), "obelisk_placer"));
+        registry.register(setupItem(new ItemResearchNotes(), "research_notes"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }
@@ -414,6 +417,9 @@ public final class RegistryHandler {
                         ThaumicAugmentationAPI.MODID + ".dimensional_fracture").tracker(128, 4, false).build());
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityItemBlockRiftJar.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_rift_jar"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".item_rift_jar").tracker(64, 20, true).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityItemIndestructible.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_indestructible"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".item_rift_jar").tracker(64, 20, true).build());
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityFocusShield.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "shield_focus"), id++).name(

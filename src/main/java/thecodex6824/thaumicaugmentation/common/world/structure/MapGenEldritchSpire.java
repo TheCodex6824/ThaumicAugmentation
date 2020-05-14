@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.common.world.structure;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -47,6 +48,7 @@ import net.minecraft.world.gen.structure.StructureStart;
 import thaumcraft.api.blocks.BlocksTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
 import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.common.world.ITAChunkGenerator;
@@ -156,9 +158,10 @@ public class MapGenEldritchSpire extends MapGenStructure {
             int minHeight = Math.min(Math.min(height1, height2), Math.min(height3, height4));
             if (minHeight >= 2) {
                 BlockPos pos = new BlockPos(chunkX * 16 + 8, minHeight + 1, chunkZ * 16 + 8);
-                List<EldritchSpireTemplate> pieces = new ArrayList<>();
+                List<EldritchSpireComponent> pieces = new ArrayList<>();
+                UUID ward = WardHelper.generateSafeUUID(random);
                 EldritchSpireComponents.generate(world.getSaveHandler().getStructureTemplateManager(),
-                        pos, rot, random, pieces);
+                        pos, rot, random, pieces, ward);
                 components.addAll(pieces);
                 updateBoundingBox();
                 valid = true;
@@ -184,8 +187,8 @@ public class MapGenEldritchSpire extends MapGenStructure {
                     if (!world.isAirBlock(mutable) && boundingBox.isVecInside(mutable)) {
                         boolean hasSomething = false;
                         for (StructureComponent component : components) {
-                            if ((!(component instanceof EldritchSpireTemplate) ||
-                                    ((EldritchSpireTemplate) component).shouldFillBlocksBelow()) &&
+                            if ((!(component instanceof EldritchSpireComponent) ||
+                                    ((EldritchSpireComponent) component).shouldFillBlocksBelow()) &&
                                     getBoundingBox().isVecInside(mutable)) {
                                 
                                 hasSomething = true;

@@ -34,7 +34,7 @@ import thaumcraft.common.lib.utils.EntityUtils;
 public class BiomeDecoratorTaintedLands extends BiomeDecoratorEmptinessBase {
     
     private void generateEntities(World world, Random rand, Biome biome, BlockPos pos) {
-        BlockPos p = world.getTopSolidOrLiquidBlock(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16)));
+        BlockPos p = world.getHeight(pos.add(8 + rand.nextInt(16), 0, 8 + rand.nextInt(16)));
         if (!world.isAirBlock(p.down()) && world.getBlockState(p.down()).isNormalCube()) {
             EntityLiving thingToSpawn = null;
             int result = rand.nextInt(500);

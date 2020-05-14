@@ -84,27 +84,25 @@ public class WorldEventHandler {
     
     @SubscribeEvent
     public static void onItemVoid(RiftJarVoidItemEvent event) {
-        if (!event.isSimulated()) {
-            if (event.getItemStack().getItem() == TAItems.ELDRITCH_LOCK_KEY) {
+        if (event.getItemStack().getItem() == TAItems.ELDRITCH_LOCK_KEY || event.getItemStack().getItem() == TAItems.RESEARCH_NOTES) {
+            BlockPos pos = event.getPosition();
+            event.getWorld().destroyBlock(pos, false);
+            event.getWorld().createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
+            event.setCanceled(true);
+        }
+        else if (event.getItemStack().getItem() == TAItems.RIFT_JAR) {
+            NBTTagCompound tag = event.getItemStack().getTagCompound();
+            if (tag != null && tag.hasKey("seed", NBT.TAG_INT) && tag.getInteger("size") > 0) {
                 BlockPos pos = event.getPosition();
                 event.getWorld().destroyBlock(pos, false);
                 event.getWorld().createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
-                event.setCanceled(true);
-            }
-            else if (event.getItemStack().getItem() == TAItems.RIFT_JAR) {
-                NBTTagCompound tag = event.getItemStack().getTagCompound();
-                if (tag != null && tag.hasKey("seed", NBT.TAG_INT) && tag.getInteger("size") > 0) {
-                    BlockPos pos = event.getPosition();
-                    event.getWorld().destroyBlock(pos, false);
-                    event.getWorld().createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
-                    EntityPrimalWisp wisp = new EntityPrimalWisp(event.getWorld());
-                    wisp.setPositionAndRotation(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
-                            event.getWorld().rand.nextInt(360) - 180, 0.0F);
-                    wisp.rotationYawHead = wisp.rotationYaw;
-                    wisp.renderYawOffset = wisp.rotationYaw;
-                    wisp.onInitialSpawn(event.getWorld().getDifficultyForLocation(pos), null);
-                    event.getWorld().spawnEntity(wisp);
-                }
+                EntityPrimalWisp wisp = new EntityPrimalWisp(event.getWorld());
+                wisp.setPositionAndRotation(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
+                        event.getWorld().rand.nextInt(360) - 180, 0.0F);
+                wisp.rotationYawHead = wisp.rotationYaw;
+                wisp.renderYawOffset = wisp.rotationYaw;
+                wisp.onInitialSpawn(event.getWorld().getDifficultyForLocation(pos), null);
+                event.getWorld().spawnEntity(wisp);
             }
         }
     }
