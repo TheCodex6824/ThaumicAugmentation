@@ -464,6 +464,10 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
                 if (stone == StoneType.STONE_CRUSTED || stone == StoneType.STONE_CRUSTED_GLOWING)
                     return false;
             }
+            else if (state.getBlock() == Blocks.WEB)
+                return false;
+            else if (state.getMaterial().isLiquid())
+                return false;
             
             return true;
         }
