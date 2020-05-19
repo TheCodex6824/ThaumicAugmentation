@@ -284,7 +284,17 @@
                     "warp": 3
                 },
                 {
-                    "text": "thaumicaugmentation.research.eldritch_boss.2"
+                    "text": "thaumicaugmentation.research.eldritch_boss.2",
+                    "recipes": [
+                        "thaumicaugmentation:ancient_bricks",
+                        "thaumicaugmentation:ancient_pillar",
+                        "thaumicaugmentation:ancient_stairs",
+                        "thaumcraft:StairsAncient",
+                        "thaumicaugmentation:ancient_tile",
+                        "thaumicaugmentation:ancient_tile_slab",
+                        "thaumicaugmentation:chiseled_ancient_bricks",
+                        "thaumicaugmentation:ancient_lantern"
+                    ]
                 }
             ]
         },

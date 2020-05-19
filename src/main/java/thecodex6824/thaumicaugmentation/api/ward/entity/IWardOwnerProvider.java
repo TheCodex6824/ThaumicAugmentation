@@ -18,27 +18,15 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded.entity;
+package thecodex6824.thaumicaugmentation.api.ward.entity;
 
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.IEntityOwnable;
+public interface IWardOwnerProvider {
 
-public class WardOwnerProviderOwnable<T extends Entity & IEntityOwnable> implements IWardOwnerProvider {
-
-    protected T entity;
-    
-    public WardOwnerProviderOwnable(T ownable) {
-        entity = ownable;
-    }
-    
-    @Override
     @Nullable
-    public UUID getWardOwnerUUID() {
-        return entity.getOwnerId();
-    }
+    public UUID getWardOwnerUUID();
     
 }

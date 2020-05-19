@@ -62,8 +62,8 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
-import thecodex6824.thaumicaugmentation.api.warded.entity.CapabilityWardOwnerProvider;
-import thecodex6824.thaumicaugmentation.api.warded.entity.WardOwnerProviderOwnable;
+import thecodex6824.thaumicaugmentation.api.ward.entity.CapabilityWardOwnerProvider;
+import thecodex6824.thaumicaugmentation.api.ward.entity.WardOwnerProviderOwnable;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 

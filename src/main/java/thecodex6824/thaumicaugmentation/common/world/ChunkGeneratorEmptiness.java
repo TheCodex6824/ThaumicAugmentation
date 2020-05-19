@@ -311,6 +311,12 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
     public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position,
             boolean findUnexplored) {
 
+        if (world.getWorldInfo().isMapFeaturesEnabled() && TAConfig.generateSpires.getValue() &&
+                spireGenerator.getStructureName().equals(structureName)) {
+            
+            return spireGenerator.getNearestStructurePos(worldIn, position, findUnexplored);
+        }
+        
         return null;
     }
 

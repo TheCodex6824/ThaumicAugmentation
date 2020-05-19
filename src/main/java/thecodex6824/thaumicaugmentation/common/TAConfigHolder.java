@@ -469,7 +469,7 @@ public final class TAConfigHolder {
         @Name("generateEldritchSpires")
         @Comment({
             "Allows the Eldritch Spire structure to generate in the Emptiness.",
-            "The spire is intended to be a part of the research progression, so removing it is not reccomended.",
+            "The spire is intended to be a part of the research progression, so removing it is not recommended.",
             "The structure will never generate if the Emptiness itself is disabled, or if the structure generation world option is disabled."
         })
         public boolean generateSpires = true;
@@ -490,7 +490,7 @@ public final class TAConfigHolder {
     
     public static class ClientOptions {
         
-        @Name("simpleCastedLightRendering")
+        @Name("reducedEffects")
         @Comment({
             "Disables some unneccessary particle effects.",
             "This includes the special effect of the casted light, as well as most of the particles on the Metaspatial Accumulator/Extruder"
@@ -500,7 +500,8 @@ public final class TAConfigHolder {
         @Name("optimizedFluxRiftRenderer")
         @Comment({
             "Overrides Thaumcraft's Flux Rift renderer to use one that is slightly better for performance.",
-            "It probably won't make a major difference as of now, but can help."
+            "It probably won't make a major difference as of now, but can help.",
+            "Further work may make this option more useful."
         })
         @RequiresMcRestart
         public boolean optimizedFluxRiftRenderer = false;

@@ -36,6 +36,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClient
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderEntities;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCBlueprintCrashFix;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCRobesElytraFlapping;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerUpdateElytra;
@@ -112,6 +113,10 @@ public class TATransformer implements IClassTransformer {
         // but since the outer lands don't exist they always do it
         // even if it did exist its hardcodedness is problematic
         TRANSFORMERS.add(new TransformerEldritchGuardianFog());
+        
+        // required because any attempt by TC to render a tile entity in a blueprint that is
+        // an AnimationTESR will crash the game
+        TRANSFORMERS.add(new TransformerTCBlueprintCrashFix());
     }
     
     public TATransformer() {}

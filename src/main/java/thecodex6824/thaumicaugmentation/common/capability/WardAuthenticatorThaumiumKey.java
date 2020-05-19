@@ -26,7 +26,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.ward.tile.IWardedTile;
 
 public class WardAuthenticatorThaumiumKey extends WardAuthenticatorKey {
 

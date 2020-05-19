@@ -36,8 +36,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IInteractWithCaster;
-import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedTile;
-import thecodex6824.thaumicaugmentation.api.warded.tile.WardedTile;
+import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedTile;
+import thecodex6824.thaumicaugmentation.api.ward.tile.WardedTile;
 
 public abstract class TileWarded extends TileEntity implements IInteractWithCaster {
 

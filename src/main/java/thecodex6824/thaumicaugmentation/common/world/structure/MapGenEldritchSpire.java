@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
 
@@ -48,7 +49,8 @@ import net.minecraft.world.gen.structure.StructureStart;
 import thaumcraft.api.blocks.BlocksTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
-import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
+import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.common.world.ITAChunkGenerator;
@@ -56,7 +58,7 @@ import thecodex6824.thaumicaugmentation.common.world.ITAChunkGenerator;
 public class MapGenEldritchSpire extends MapGenStructure {
 
     protected static final ImmutableList<SpawnListEntry> MONSTER_SPAWNS = ImmutableList.of(
-            new SpawnListEntry(EntityTAEldritchGuardian.class, 1, 1, 3));
+            new SpawnListEntry(EntityTAEldritchGuardian.class, 1, 1, 2));
     
     protected static final ImmutableList<Biome> BIOMES = ImmutableList.of(
             TABiomes.EMPTINESS, TABiomes.EMPTINESS_HIGHLANDS);
@@ -121,7 +123,8 @@ public class MapGenEldritchSpire extends MapGenStructure {
     }
     
     public List<SpawnListEntry> getSpawnableCreatures(EnumCreatureType type, BlockPos pos) {
-        if (type == EnumCreatureType.MONSTER)
+        // random chance to lessen mob spawn spam
+        if (type == EnumCreatureType.MONSTER && ThreadLocalRandom.current().nextBoolean())
             return MONSTER_SPAWNS;
         else
             return ImmutableList.of();
@@ -130,13 +133,16 @@ public class MapGenEldritchSpire extends MapGenStructure {
     public static class Start extends StructureStart {
         
         protected boolean valid;
+        protected UUID ward;
         
         public Start() {
             super();
+            ward = IWardStorageServer.NIL_UUID;
         }
         
         public Start(World world, ITAChunkGenerator generator, Random random, int chunkX, int chunkZ) {
             super(chunkX, chunkZ);
+            ward = WardHelper.generateSafeUUID(random);
             Rotation rot = Rotation.values()[random.nextInt(Rotation.values().length)];
             ChunkPrimer primer = new ChunkPrimer();
             generator.populatePrimerWithHeightmap(chunkX, chunkZ, primer);
@@ -159,7 +165,6 @@ public class MapGenEldritchSpire extends MapGenStructure {
             if (minHeight >= 2) {
                 BlockPos pos = new BlockPos(chunkX * 16 + 8, minHeight + 1, chunkZ * 16 + 8);
                 List<EldritchSpireComponent> pieces = new ArrayList<>();
-                UUID ward = WardHelper.generateSafeUUID(random);
                 EldritchSpireComponents.generate(world.getSaveHandler().getStructureTemplateManager(),
                         pos, rot, random, pieces, ward);
                 components.addAll(pieces);
@@ -220,16 +225,24 @@ public class MapGenEldritchSpire extends MapGenStructure {
             return valid;
         }
         
+        public UUID getWard() {
+            return ward;
+        }
+        
         @Override
         public void writeToNBT(NBTTagCompound tagCompound) {
             super.writeToNBT(tagCompound);
             tagCompound.setBoolean("valid", valid);
+            tagCompound.setUniqueId("ward", ward);
         }
         
         @Override
         public void readFromNBT(NBTTagCompound tagCompound) {
             super.readFromNBT(tagCompound);
             valid = tagCompound.getBoolean("valid");
+            ward = tagCompound.getUniqueId("ward");
+            if (ward == null)
+                ward = IWardStorageServer.NIL_UUID;
         }
         
     }

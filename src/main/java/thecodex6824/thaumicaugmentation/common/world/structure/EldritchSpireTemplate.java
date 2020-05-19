@@ -39,9 +39,9 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
-import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageServer;
+import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 
 /**
  * It's time for another Thaumic Augmentation wrapper class, yay!
@@ -108,6 +108,10 @@ public class EldritchSpireTemplate extends Template {
                                     tile.readFromNBT(info.tileentityData);
                                     tile.mirror(placement.getMirror());
                                     tile.rotate(placement.getRotation());
+                                    
+                                    IWardStorage storage = world.getChunk(blockpos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                                    if (storage instanceof IWardStorageServer)
+                                        ((IWardStorageServer) storage).clearWard(world, blockpos);
                                 }
                             }
                             
@@ -120,6 +124,11 @@ public class EldritchSpireTemplate extends Template {
                                 IWardStorage storage = world.getChunk(blockpos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                                 if (storage instanceof IWardStorageServer)
                                     ((IWardStorageServer) storage).setWard(world, blockpos, ward);
+                            }
+                            else if (!templateProcessor.shouldBlockBeWarded(world, pos, info)) {
+                                IWardStorage storage = world.getChunk(blockpos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                                if (storage instanceof IWardStorageServer)
+                                    ((IWardStorageServer) storage).clearWard(world, blockpos);
                             }
                         }
                     }

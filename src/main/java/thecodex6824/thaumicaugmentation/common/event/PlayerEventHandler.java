@@ -40,6 +40,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -99,12 +100,21 @@ public final class PlayerEventHandler {
     }
 
     protected static void checkResearch(EntityPlayer player) {
-        if (!TAConfig.disableEmptiness.getValue() && player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && 
-                        !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
-                    
-            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERVOID");
-            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void").setStyle(
-                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+        if (!TAConfig.disableEmptiness.getValue() && player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId()) {
+            if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
+                ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERVOID");
+                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void").setStyle(
+                        new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+            }
+            
+            if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERSPIRE")) {
+                WorldServer w = (WorldServer) player.getEntityWorld();
+                if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", player.getPosition())) {
+                    ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERSPIRE");
+                    player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_spire").setStyle(
+                            new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+                }
+            }
         }
         
         Biome biome = player.getEntityWorld().getBiome(player.getPosition());

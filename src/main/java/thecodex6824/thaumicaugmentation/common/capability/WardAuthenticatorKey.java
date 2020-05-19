@@ -27,7 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
-import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.ward.tile.IWardedTile;
 
 public class WardAuthenticatorKey implements IWardAuthenticator, INBTSerializable<NBTTagCompound> {
 

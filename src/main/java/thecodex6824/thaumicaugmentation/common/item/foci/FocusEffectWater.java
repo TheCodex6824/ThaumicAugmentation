@@ -46,7 +46,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -67,6 +66,8 @@ import thaumcraft.api.casters.FocusEffect;
 import thaumcraft.api.casters.NodeSetting;
 import thaumcraft.api.casters.NodeSetting.NodeSettingIntRange;
 import thaumcraft.api.casters.Trajectory;
+import thaumcraft.client.fx.ParticleEngine;
+import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.lib.network.fx.PacketFXFocusPartImpact;
 import thaumcraft.common.tiles.TileThaumcraft;
 import thecodex6824.thaumicaugmentation.api.TASounds;
@@ -295,7 +296,17 @@ public class FocusEffectWater extends FocusEffect {
     public void renderParticleFX(World world, double posX, double posY, double posZ, double velX, double velY,
             double velZ) {
 
-        world.spawnParticle(EnumParticleTypes.WATER_SPLASH, posX, posY, posZ, velX, velY, velZ, 0);
+        FXGeneric bubble = new FXGeneric(world, posX, posY, posZ, velX, velY, velZ);
+        bubble.setMaxAge(25 + world.rand.nextInt(30));
+        bubble.setScale(world.rand.nextFloat() * 0.3F + 0.3F);
+        bubble.setAlphaF(1.0F, 0.0F);
+        bubble.setParticle(64);
+        bubble.setGravity(-0.001F);
+        int color = getAspect().getColor();
+        bubble.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
+        bubble.setRotationSpeed(world.rand.nextFloat(), 0.0F);
+        bubble.setFinalFrames(65, 66, 66);
+        ParticleEngine.addEffect(world, bubble);
     }
     
 }

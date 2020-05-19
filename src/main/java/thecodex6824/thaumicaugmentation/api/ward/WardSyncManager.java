@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded;
+package thecodex6824.thaumicaugmentation.api.ward;
 
 import java.util.Collection;
 import java.util.Map.Entry;
@@ -31,7 +31,7 @@ import com.google.common.collect.MultimapBuilder;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageServer;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 
 /**
  * Handles syncing ward changes to clients.
@@ -71,7 +71,7 @@ public final class WardSyncManager {
     
     private static Multimap<DimensionalChunkPos, WardUpdateEntry> entries = MultimapBuilder.hashKeys().arrayListValues(16).build();
     
-    public static void markChunkForClear(World world, BlockPos pos) {
+    public static void markChunkForFullSync(World world, BlockPos pos) {
         markPosForNewOwner(world, pos, null);
     }
     

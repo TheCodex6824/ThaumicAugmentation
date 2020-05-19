@@ -6,12 +6,13 @@
   ],
   "key": {
     "#": {
-      "item": "thaumicaugmentation:stone",
-      "data": 9
+      "item": "thaumcraft:stone_ancient_tile",
+      "data": 0
     }
   },
   "result": {
-    "item": "thaumcraft:stone_ancient",
+    "item": "thaumicaugmentation:stone",
+    "data": 9,
     "count": 4
   }
 }

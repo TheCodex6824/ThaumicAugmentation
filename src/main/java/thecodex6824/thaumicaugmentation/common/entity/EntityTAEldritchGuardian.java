@@ -124,7 +124,7 @@ public class EntityTAEldritchGuardian extends EntityEldritchGuardian {
         MinecraftForge.EVENT_BUS.post(event);
         if (event.getResult() == Result.ALLOW || (event.getResult() == Result.DEFAULT && world.provider.getDimension() == TADimensions.EMPTINESS.getId())) {
             dataManager.set(TRANSPARENT, false);
-            float difficultyMod = Math.max(0, world.getDifficulty().getId() - 1);
+            float difficultyMod = world.getDifficulty().getId() / 3.0F;
             if (difficultyMod > 0) {
                 float absorbAmount = (float) getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue() / 2.0F * difficultyMod;
                 setAbsorptionAmount(getAbsorptionAmount() + absorbAmount);

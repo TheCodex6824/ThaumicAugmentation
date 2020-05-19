@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded;
+package thecodex6824.thaumicaugmentation.api.ward;
 
 import java.util.Random;
 import java.util.UUID;
@@ -41,8 +41,8 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAConfig.TileWardMode;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningWeakPower;
-import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedTile;
-import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedTile;
+import thecodex6824.thaumicaugmentation.api.ward.tile.IWardedTile;
 
 public final class WardHelper {
 

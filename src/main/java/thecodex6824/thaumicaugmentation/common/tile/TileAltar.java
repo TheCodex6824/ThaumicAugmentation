@@ -40,16 +40,23 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.MapGenStructureData;
+import net.minecraft.world.gen.structure.MapGenStructureIO;
+import net.minecraft.world.gen.structure.StructureStart;
+import net.minecraftforge.common.util.Constants.NBT;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.block.property.IAltarBlock;
+import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGolem;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
+import thecodex6824.thaumicaugmentation.common.entity.IEldritchSpireWardHolder;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
 public class TileAltar extends TileEntity implements ITickable, IInteractWithCaster {
 
@@ -109,6 +116,23 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
                         MathHelper.wrapDegrees(world.rand.nextFloat() * 360.0F), 0.0F);
                 boss.rotationYawHead = boss.rotationYaw;
                 boss.renderYawOffset = boss.rotationYaw;
+                if (boss instanceof IEldritchSpireWardHolder) {
+                    MapGenStructureData data = (MapGenStructureData) world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "EldritchSpire");
+                    if (data != null) {
+                        NBTTagCompound nbt = data.getTagCompound();
+                        for (String s : nbt.getKeySet()) {
+                            NBTTagCompound tag = nbt.getCompoundTag(s);
+                            if (tag.hasKey("ChunkX", NBT.TAG_INT) && tag.hasKey("ChunkZ", NBT.TAG_INT)) {
+                                StructureStart start = MapGenStructureIO.getStructureStart(tag, world);
+                                if (start instanceof MapGenEldritchSpire.Start && start.getBoundingBox().isVecInside(pos)) {
+                                    ((IEldritchSpireWardHolder) boss).setStructurePos(new DimensionalBlockPos(
+                                            new BlockPos(start.getChunkPosX() << 4, 0, start.getChunkPosZ() << 4), world.provider.getDimension()));
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 boss.onInitialSpawn(world.getDifficultyForLocation(pos), null);
                 if (world.spawnEntity(boss)) {
                     world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0F, 1.0F);

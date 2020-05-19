@@ -35,9 +35,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageServer;
+import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 
 public class SubCommandWard implements ISubCommand {
 

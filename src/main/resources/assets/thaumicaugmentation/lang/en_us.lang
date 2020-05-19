@@ -200,6 +200,7 @@ thaumicaugmentation.text.levitate=Your understanding of levitation has been lift
 thaumicaugmentation.text.entity.eldritch_golem=%s %s
 thaumicaugmentation.text.research_notes_use=You cannot seem to decipher the text. Perhaps a thaumometer would help?
 thaumicaugmentation.text.research_notes_eldritch=The writing is difficult to read, but powerful knowledge lurks within these pages...
+thaumicaugmentation.text.entity.eldritch_guardian_mb=Eldritch Gaoler
 
 thaumicaugmentation.text.damage.impetus=%s was annihilated
 thaumicaugmentation.text.damage.impetus_attack=%s was annihilated by %s

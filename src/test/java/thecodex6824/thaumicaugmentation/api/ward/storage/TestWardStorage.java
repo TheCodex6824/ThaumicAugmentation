@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded.storage;
+package thecodex6824.thaumicaugmentation.api.ward.storage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -35,13 +35,13 @@ import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
-import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer.StorageManagersServer.IWardStorageManagerServer;
-import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer.StorageManagersServer.StorageManager1Bit;
-import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer.StorageManagersServer.StorageManager2Bits;
-import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer.StorageManagersServer.StorageManager4Bits;
-import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer.StorageManagersServer.StorageManagerByte;
-import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer.StorageManagersServer.StorageManagerNull;
-import thecodex6824.thaumicaugmentation.api.warded.storage.WardStorageServer.StorageManagersServer.StorageManagerShort;
+import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.IWardStorageManagerServer;
+import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManager1Bit;
+import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManager2Bits;
+import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManager4Bits;
+import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManagerByte;
+import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManagerNull;
+import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManagerShort;
 
 public class TestWardStorage {
     

@@ -37,6 +37,7 @@ import thaumcraft.api.research.ScanningManager;
 import thaumcraft.api.research.theorycraft.TheorycraftManager;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
@@ -94,6 +95,8 @@ public final class ResearchHandler {
         
         ScanningManager.addScannableThing(new ScanItem("!ELYTRA", new ItemStack(Items.ELYTRA)));
         ScanningManager.addScannableThing(new ScanEntity("!AUTOCASTER", EntityAutocasterEldritch.class, true));
+        
+        ScanningManager.addScannableThing(new ScanItem("m_ELDRITCHBOSS", new ItemStack(TAItems.RESEARCH_NOTES, 1, 0)));
         
         TheorycraftManager.registerCard(ResearchCardRiftJar.class);
         TheorycraftManager.registerCard(ResearchCardRiftMonitor.class);

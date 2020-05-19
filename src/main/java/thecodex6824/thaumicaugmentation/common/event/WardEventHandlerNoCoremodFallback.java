@@ -39,22 +39,22 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.BlockEvent.CropGrowEvent;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import thaumcraft.api.golems.tasks.Task;
 import thaumcraft.common.entities.construct.EntityArcaneBore;
 import thaumcraft.common.golems.tasks.TaskHandler;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
-import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
-import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageServer;
+import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
+import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 
 public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
 

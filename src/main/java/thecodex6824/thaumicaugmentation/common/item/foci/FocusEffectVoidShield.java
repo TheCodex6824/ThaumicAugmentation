@@ -198,9 +198,9 @@ public class FocusEffectVoidShield extends FocusEffect {
         FXGeneric fb = new FXGeneric(world, posX, posY, posZ, velX, velY, velZ);
         fb.setMaxAge(40 + world.rand.nextInt(40));
         fb.setParticles(16, 1, 1);
-        fb.setSlowDown(0.5D);
-        fb.setAlphaF(new float[] { 1.0F, 0.0F });
-        fb.setScale(new float[] { (float)(0.699999988079071D + world.rand.nextGaussian() * 0.30000001192092896D) });
+        fb.setSlowDown(0.5);
+        fb.setAlphaF(1.0F, 0.0F);
+        fb.setScale((float) (0.699999988079071 + world.rand.nextGaussian() * 0.30000001192092896));
         int color = 0x5000C8;
         fb.setRBGColorF(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
         fb.setRotationSpeed(world.rand.nextFloat(), 0.0F);

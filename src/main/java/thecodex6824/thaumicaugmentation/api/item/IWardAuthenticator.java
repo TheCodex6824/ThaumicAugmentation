@@ -22,7 +22,7 @@ package thecodex6824.thaumicaugmentation.api.item;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import thecodex6824.thaumicaugmentation.api.warded.tile.IWardedTile;
+import thecodex6824.thaumicaugmentation.api.ward.tile.IWardedTile;
 
 /**
  * Interface for items that can allow players to access warded blocks

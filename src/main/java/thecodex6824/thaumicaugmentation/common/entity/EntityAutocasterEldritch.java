@@ -38,6 +38,7 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -170,6 +171,7 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
     public EntityAutocasterEldritch(World world) {
         super(world);
         experienceValue = 15;
+        setDropChance(EntityEquipmentSlot.MAINHAND, 0.01F);
     }
     
     @Override

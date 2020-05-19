@@ -20,17 +20,32 @@
 
 package thecodex6824.thaumicaugmentation.client.internal;
 
+import org.lwjgl.opengl.GL11;
+
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketEntityAction;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.model.animation.AnimationTESR;
+import thaumcraft.client.gui.GuiResearchPage.BlueprintBlockAccess;
 import thaumcraft.client.renderers.models.gear.ModelCustomArmor;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
@@ -123,6 +138,37 @@ public final class TAHooksClient {
     
     public static void onRenderEntities(int pass) {
         RenderEventHandler.onRenderEntities(pass);
+    }
+    
+    public static void renderFastTESRBlueprint(TileEntity tile, BlockPos pos, BlueprintBlockAccess world) {
+        TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer(tile);
+        if (tesr != null) {
+            BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            // properly do the thing TC tried to do but failed
+            try {
+                if (tesr instanceof AnimationTESR) {
+                    // Animation TESRs do special things that won't work without actually being in the world
+                    // Luckilly, they still have models we can fall back to
+                    tile.setWorld(Minecraft.getMinecraft().world);
+                    BlockRendererDispatcher render = Minecraft.getMinecraft().getBlockRendererDispatcher();
+                    IBlockState fake = world.getBlockState(pos);
+                    IBakedModel model = render.getBlockModelShapes().getModelForState(fake);
+                    render.getBlockModelRenderer().renderModel(tile.getWorld(), model, fake, pos, buffer, false);
+                }
+                else {
+                    // No idea what it can do, so just hope for the best
+                    tesr.renderTileEntityFast(tile, pos.getX(), pos.getY(), pos.getZ(), Minecraft.getMinecraft().getRenderPartialTicks(),
+                            0, 1.0F, buffer);
+                }
+            }
+            catch (Exception ex) {
+                // something doesn't like the fake world, not much we can do
+            }
+            finally {
+                Tessellator.getInstance().draw();
+            }
+        }
     }
     
 }

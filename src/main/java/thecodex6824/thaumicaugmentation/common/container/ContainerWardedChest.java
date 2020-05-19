@@ -27,8 +27,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedInventory;
-import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedTile;
+import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedInventory;
+import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 
 public class ContainerWardedChest extends Container {

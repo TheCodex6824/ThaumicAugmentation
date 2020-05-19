@@ -1,0 +1,28 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPULSE_CANNON_AUGMENT_BURST",
+  "vis": 150,
+  "aspects": {
+    "ordo": 1,
+    "aer": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "PPP",
+    "JJJ",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "J": {
+      "item": "#IMPETUS_RESONATOR"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impulse_cannon_augment",
+    "data": 1
+  }
+}

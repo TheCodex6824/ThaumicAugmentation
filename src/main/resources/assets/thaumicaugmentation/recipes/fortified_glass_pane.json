@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "thaumicaugmentation:fortified_glass"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:fortified_glass_pane",
+    "amount": 16
+  }
+}

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
@@ -130,7 +131,7 @@ public class AugmentRenderer {
                         }
                     }
                     
-                    ResourceLocation textureID = new ResourceLocation(ThaumicAugmentationAPI.MODID, "banner_cache" + ref.hashCode());
+                    ResourceLocation textureID = new ResourceLocation(ThaumicAugmentationAPI.MODID, "banner_cache" + ref.hashCode() + ThreadLocalRandom.current().nextInt());
                     Minecraft.getMinecraft().getTextureManager().loadTexture(textureID, new VanillaBannerToElytraTexture(TATextures.VANILLA_BANNER_BASE, patterns, colors));
                     return textureID;
                 }));
@@ -144,7 +145,7 @@ public class AugmentRenderer {
             try {
                 final ItemStack ref = cosmetic;
                 renderer.bindTexture(BANNER_CACHE.get(cosmetic, () -> {
-                    ResourceLocation textureID = new ResourceLocation(ThaumicAugmentationAPI.MODID, "banner_cache" + ref.hashCode());
+                    ResourceLocation textureID = new ResourceLocation(ThaumicAugmentationAPI.MODID, "banner_cache" + ref.hashCode() + ThreadLocalRandom.current().nextInt());
                     Minecraft.getMinecraft().getTextureManager().loadTexture(textureID, new TCBannerToElytraTexture(TATextures.CRIMSON_BANNER));
                     return textureID;
                 }));
@@ -161,7 +162,7 @@ public class AugmentRenderer {
                     Aspect aspect = null;
                     if (ref.hasTagCompound())
                        aspect = Aspect.getAspect(ref.getTagCompound().getString("aspect"));
-                    ResourceLocation textureID = new ResourceLocation(ThaumicAugmentationAPI.MODID, "banner_cache" + ref.hashCode());
+                    ResourceLocation textureID = new ResourceLocation(ThaumicAugmentationAPI.MODID, "banner_cache" + ref.hashCode() + ThreadLocalRandom.current().nextInt());
                     Minecraft.getMinecraft().getTextureManager().loadTexture(textureID, new TCBannerToElytraTexture(TATextures.TC_BANNER,
                             aspect, bannerReverseMap.get(((ItemBlock) ref.getItem()).getBlock()).getColorValue()));
                     return textureID;

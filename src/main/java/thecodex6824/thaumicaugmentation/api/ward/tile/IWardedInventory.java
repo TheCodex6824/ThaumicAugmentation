@@ -18,20 +18,29 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded.storage;
+package thecodex6824.thaumicaugmentation.api.ward.tile;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 
 /**
- * Holds an instance of the capability for {@link IWardStorage}.
+ * Inventory manager for warded inventories. The API is very similar to IItemHandler,
+ * but it's a separate interface so that other things that are accessing IItemHandler capabilities
+ * don't access warded inventories.
  * @author TheCodex6824
  */
-public final class CapabilityWardStorage {
-
-    private CapabilityWardStorage() {}
+public interface IWardedInventory {
     
-    @CapabilityInject(IWardStorage.class)
-    public static final Capability<IWardStorage> WARD_STORAGE = null;
+    public ItemStack extractItem(int slot, int amount, boolean simulate);
+    
+    public int getSlotLimit(int slot);
+    
+    public int getSlots();
+    
+    public ItemStack getStackInSlot(int slot);
+    
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate);
+    
+    public IItemHandler getItemHandler();
     
 }

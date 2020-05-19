@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "SJS",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "thaumcraft:stone_ancient",
+      "data": 0
+    },
+    "J": {
+      "item": "#IMPETUS_RESONATOR"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:stone",
+    "data": 11,
+    "amount": 4
+  }
+}

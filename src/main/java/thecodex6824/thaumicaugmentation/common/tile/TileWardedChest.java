@@ -41,8 +41,8 @@ import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.warded.tile.CapabilityWardedInventory;
-import thecodex6824.thaumicaugmentation.api.warded.tile.WardedInventory;
+import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedInventory;
+import thecodex6824.thaumicaugmentation.api.ward.tile.WardedInventory;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 
 public class TileWardedChest extends TileWarded implements IAnimatedTile {

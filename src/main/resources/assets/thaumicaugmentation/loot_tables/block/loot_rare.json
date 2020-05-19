@@ -19,7 +19,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 2,
-                                "max": 6 
+                                "max": 4 
                             }
                         }
                     ]
@@ -39,7 +39,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 2,
-                                "max": 6 
+                                "max": 4 
                             }
                         }
                     ]
@@ -59,7 +59,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 2,
-                                "max": 6 
+                                "max": 4 
                             }
                         }
                     ]
@@ -79,7 +79,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 2,
-                                "max": 6 
+                                "max": 4 
                             }
                         }
                     ]
@@ -99,7 +99,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 2,
-                                "max": 6 
+                                "max": 4 
                             }
                         }
                     ]
@@ -141,7 +141,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 2,
-                                "max": 5 
+                                "max": 4 
                             }
                         }
                     ]
@@ -312,7 +312,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 2,
-                                "max": 6 
+                                "max": 4 
                             }
                         }
                     ]

@@ -18,29 +18,27 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded.tile;
+package thecodex6824.thaumicaugmentation.api.ward.entity;
 
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import java.util.UUID;
 
-/**
- * Inventory manager for warded inventories. The API is very similar to IItemHandler,
- * but it's a separate interface so that other things that are accessing IItemHandler capabilities
- * don't access warded inventories.
- * @author TheCodex6824
- */
-public interface IWardedInventory {
+import javax.annotation.Nullable;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.IEntityOwnable;
+
+public class WardOwnerProviderOwnable<T extends Entity & IEntityOwnable> implements IWardOwnerProvider {
+
+    protected T entity;
     
-    public ItemStack extractItem(int slot, int amount, boolean simulate);
+    public WardOwnerProviderOwnable(T ownable) {
+        entity = ownable;
+    }
     
-    public int getSlotLimit(int slot);
-    
-    public int getSlots();
-    
-    public ItemStack getStackInSlot(int slot);
-    
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate);
-    
-    public IItemHandler getItemHandler();
+    @Override
+    @Nullable
+    public UUID getWardOwnerUUID() {
+        return entity.getOwnerId();
+    }
     
 }

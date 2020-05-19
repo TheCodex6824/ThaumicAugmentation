@@ -1,0 +1,28 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "STARFIELD_GLASS_RIFT",
+  "vis": 30,
+  "aspects": {
+    "aer": 1,
+    "aqua": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "GGG",
+    "GEG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "thaumicaugmentation:fortified_glass"
+    },
+    "E": {
+      "item": "thaumcraft:mirrored_glass"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:starfield_glass",
+    "amount": 8,
+    "data": 2
+  }
+}

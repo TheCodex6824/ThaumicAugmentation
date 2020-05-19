@@ -57,13 +57,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardParticles;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
-import thecodex6824.thaumicaugmentation.api.warded.WardHelper;
-import thecodex6824.thaumicaugmentation.api.warded.WardSyncManager;
-import thecodex6824.thaumicaugmentation.api.warded.WardSyncManager.DimensionalChunkPos;
-import thecodex6824.thaumicaugmentation.api.warded.WardSyncManager.WardUpdateEntry;
-import thecodex6824.thaumicaugmentation.api.warded.storage.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.warded.storage.IWardStorageServer;
+import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
+import thecodex6824.thaumicaugmentation.api.ward.WardSyncManager;
+import thecodex6824.thaumicaugmentation.api.ward.WardSyncManager.DimensionalChunkPos;
+import thecodex6824.thaumicaugmentation.api.ward.WardSyncManager.WardUpdateEntry;
+import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
@@ -107,10 +107,10 @@ public class WardEventHandler {
                         Chunk chunk = world.getChunk(pos.x, pos.z);
                         IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                         if (storage instanceof IWardStorageServer) {
-                            NBTTagCompound sync = ((IWardStorageServer) storage).fullSyncToClient(chunk, WardHelper.generateSafeUUID(), true);
-                            if (sync != null) {
-                                for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) {
-                                    if (player.dimension == pos.dim && isPlayerInChunkRange(pos, player))
+                            for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) {
+                                if (player.dimension == pos.dim && isPlayerInChunkRange(pos, player)) {
+                                    NBTTagCompound sync = ((IWardStorageServer) storage).fullSyncToClient(chunk, player.getUniqueID(), true);
+                                    if (sync != null)
                                         TANetwork.INSTANCE.sendTo(new PacketFullWardSync(sync), player);
                                 }
                             }

@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded.storage;
+package thecodex6824.thaumicaugmentation.api.ward.storage;
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 

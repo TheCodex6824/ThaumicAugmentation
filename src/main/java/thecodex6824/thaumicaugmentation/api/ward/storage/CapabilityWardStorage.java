@@ -18,15 +18,20 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded.entity;
+package thecodex6824.thaumicaugmentation.api.ward.storage;
 
-import java.util.UUID;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
-import javax.annotation.Nullable;
+/**
+ * Holds an instance of the capability for {@link IWardStorage}.
+ * @author TheCodex6824
+ */
+public final class CapabilityWardStorage {
 
-public interface IWardOwnerProvider {
-
-    @Nullable
-    public UUID getWardOwnerUUID();
+    private CapabilityWardStorage() {}
+    
+    @CapabilityInject(IWardStorage.class)
+    public static final Capability<IWardStorage> WARD_STORAGE = null;
     
 }

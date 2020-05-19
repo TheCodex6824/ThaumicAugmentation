@@ -38,6 +38,7 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -416,10 +417,12 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
             EntityTAEldritchGuardian entity = new EntityTAEldritchGuardian(world);
             entity.setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, rand.nextInt(360), 0);
             entity.enablePersistence();
+            entity.setCustomNameTag(new TextComponentTranslation("thaumicaugmentation.text.entity.eldritch_guardian_mb").getFormattedText());
             if (!MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent(entity, world, (float) entity.posX,
                     (float) entity.posY, (float) entity.posZ))) {
                 
                 entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+                entity.setAbsorptionAmount(entity.getAbsorptionAmount() * 2);
                 if (world.spawnEntity(entity)) {
                     EntityFocusShield shield = new EntityFocusShield(world);
                     shield.setOwner(entity);
@@ -464,6 +467,10 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
                 if (stone == StoneType.STONE_CRUSTED || stone == StoneType.STONE_CRUSTED_GLOWING)
                     return false;
             }
+            else if (state.getBlock() == BlocksTC.stonePorous)
+                return false;
+            else if (state.getBlock() == TABlocks.STRANGE_CRYSTAL)
+                return false;
             else if (state.getBlock() == Blocks.WEB)
                 return false;
             else if (state.getMaterial().isLiquid())

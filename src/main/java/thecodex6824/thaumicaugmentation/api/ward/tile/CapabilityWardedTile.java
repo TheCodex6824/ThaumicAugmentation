@@ -18,16 +18,20 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded.entity;
+package thecodex6824.thaumicaugmentation.api.ward.tile;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
-public class CapabilityWardOwnerProvider {
+/**
+ * Holds an instance of the capability for {@link IWardedTile}.
+ * @author TheCodex6824
+ */
+public final class CapabilityWardedTile {
 
-    private CapabilityWardOwnerProvider() {}
+    private CapabilityWardedTile() {}
     
-    @CapabilityInject(IWardOwnerProvider.class)
-    public static final Capability<IWardOwnerProvider> WARD_OWNER = null;
+    @CapabilityInject(IWardedTile.class)
+    public static final Capability<IWardedTile> WARDED_TILE = null;
     
 }

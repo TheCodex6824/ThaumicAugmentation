@@ -204,7 +204,8 @@
                 {
                     "text": "thaumicaugmentation.research.fortified_glass.1",
                     "recipes": [
-                        "thaumicaugmentation:fortified_glass"
+                        "thaumicaugmentation:fortified_glass",
+                        "thaumicaugmentation:fortified_glass_pane"
                     ]
                 }
             ]

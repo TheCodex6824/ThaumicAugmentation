@@ -18,20 +18,12 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded.tile;
+package thecodex6824.thaumicaugmentation.common.entity;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
-/**
- * Holds an instance of the capability for {@link IWardedInventory}.
- * @author TheCodex6824
- */
-public final class CapabilityWardedInventory {
+public interface IEldritchSpireWardHolder {
 
-    private CapabilityWardedInventory() {}
-    
-    @CapabilityInject(IWardedInventory.class)
-    public static Capability<IWardedInventory> WARDED_INVENTORY = null;
+    public void setStructurePos(DimensionalBlockPos pos);
     
 }

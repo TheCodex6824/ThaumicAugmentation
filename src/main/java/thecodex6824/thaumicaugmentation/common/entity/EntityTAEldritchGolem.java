@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.common.entity;
 
 import java.lang.reflect.Field;
+import java.util.UUID;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -39,10 +40,18 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.structure.MapGenStructureData;
+import net.minecraft.world.gen.structure.MapGenStructureIO;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraft.world.gen.structure.StructureStart;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.Constants.NBT;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.entities.IEldritchMob;
 import thaumcraft.common.entities.ai.combat.AILongRangeAttack;
@@ -54,9 +63,15 @@ import thaumcraft.common.entities.monster.cult.EntityCultistPortalLesser;
 import thaumcraft.common.entities.monster.mods.ChampionModifier;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.utils.EntityUtils;
+import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+import thecodex6824.thaumicaugmentation.api.ward.WardSyncManager;
+import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAIAttackRangedCustomMutex;
+import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
-public class EntityTAEldritchGolem extends EntityEldritchGolem {
+public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldritchSpireWardHolder {
 
     protected static final Field CHARGING_BEAM;
     protected static final Field BEAM_CHARGE;
@@ -73,9 +88,17 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem {
         }
     }
     
+    protected DimensionalBlockPos structurePos;
+    
     public EntityTAEldritchGolem(World world) {
         super(world);
         setSize(1.75F, 2.95F);
+        structurePos = DimensionalBlockPos.INVALID;
+    }
+    
+    @Override
+    public void setStructurePos(DimensionalBlockPos pos) {
+        structurePos = pos;
     }
     
     @Override
@@ -175,12 +198,6 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem {
     }
     
     @Override
-    protected void updateEntityActionState() {
-        // TODO Auto-generated method stub
-        super.updateEntityActionState();
-    }
-    
-    @Override
     protected void updateAITasks() {
         super.updateAITasks();
         if (getAttackTarget() != null && (!getAttackTarget().isEntityAlive() || getAttackTarget() == this))
@@ -234,10 +251,60 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem {
     }
     
     @Override
+    public void onDeath(DamageSource cause) {
+        super.onDeath(cause);
+        if (!world.isRemote && !structurePos.isInvalid()) {
+            WorldServer structureDim = DimensionManager.getWorld(structurePos.getDimension());
+            if (structureDim != null) {
+                MapGenStructureData data = (MapGenStructureData) structureDim.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "EldritchSpire");
+                if (data != null) {
+                    NBTTagCompound nbt = data.getTagCompound();
+                    for (String s : nbt.getKeySet()) {
+                        NBTTagCompound tag = nbt.getCompoundTag(s);
+                        if (tag.hasKey("ChunkX", NBT.TAG_INT) && tag.hasKey("ChunkZ", NBT.TAG_INT)) {
+                            int testX = tag.getInteger("ChunkX");
+                            int testZ = tag.getInteger("ChunkZ");
+                            if (testX == structurePos.getPos().getX() >> 4 && testZ == structurePos.getPos().getZ() >> 4) {
+                                StructureStart start = MapGenStructureIO.getStructureStart(tag, structureDim);
+                                if (start instanceof MapGenEldritchSpire.Start) {
+                                    UUID ward = ((MapGenEldritchSpire.Start) start).getWard();
+                                    StructureBoundingBox bb = start.getBoundingBox();     
+                                    for (int z = bb.minZ >> 4; z < bb.maxZ >> 4; z += 16) {
+                                        for (int x = bb.minX >> 4; x < bb.minX >> 4; x += 16) {
+                                            IWardStorage storage = world.getChunk(x, z).getCapability(
+                                                    CapabilityWardStorage.WARD_STORAGE, null);
+                                            if (storage instanceof IWardStorageServer) {
+                                                ((IWardStorageServer) storage).removeOwner(ward);
+                                                WardSyncManager.markChunkForFullSync(world, new BlockPos(x << 4, 0, z << 4));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void writeEntityToNBT(NBTTagCompound nbt) {
+        super.writeEntityToNBT(nbt);
+        if (!structurePos.isInvalid())
+            nbt.setIntArray("structure", structurePos.toArray());
+    }
+    
+    @Override
     public void readEntityFromNBT(NBTTagCompound nbt) {
         super.readEntityFromNBT(nbt);
+        if (nbt.hasKey("structure", NBT.TAG_INT_ARRAY))
+            structurePos = new DimensionalBlockPos(nbt.getIntArray("structure"));
+        
         if (isHeadless())
             fixHeadlessAI();
+        
+        bossInfo.setName(getDisplayName());
     }
     
 }

@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.entity;
 
 import java.lang.reflect.Field;
 import java.util.Random;
+import java.util.UUID;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -42,12 +43,21 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.structure.MapGenStructureData;
+import net.minecraft.world.gen.structure.MapGenStructureIO;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraft.world.gen.structure.StructureStart;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
@@ -66,9 +76,15 @@ import thaumcraft.common.lib.network.PacketHandler;
 import thaumcraft.common.lib.network.fx.PacketFXSonic;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
+import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+import thecodex6824.thaumicaugmentation.api.ward.WardSyncManager;
+import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
+import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
-public class EntityTAEldritchWarden extends EntityEldritchWarden {
+public class EntityTAEldritchWarden extends EntityEldritchWarden implements IEldritchSpireWardHolder {
 
     protected static final DataParameter<Boolean> TRANSPARENT = EntityDataManager.createKey(EntityTAEldritchWarden.class,
             DataSerializers.BOOLEAN);
@@ -110,9 +126,17 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
         return NAMES[rng.nextInt(NAMES.length)];
     }
     
+    protected DimensionalBlockPos structurePos;
+    
     public EntityTAEldritchWarden(World world) {
         super(world);
         setSize(0.8F, 2.25F);
+        structurePos = DimensionalBlockPos.INVALID;
+    }
+    
+    @Override
+    public void setStructurePos(DimensionalBlockPos pos) {
+        structurePos = pos;
     }
     
     @Override
@@ -303,15 +327,58 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden {
     }
     
     @Override
+    public void onDeath(DamageSource cause) {
+        super.onDeath(cause);
+        if (!world.isRemote && !structurePos.isInvalid()) {
+            WorldServer structureDim = DimensionManager.getWorld(structurePos.getDimension());
+            if (structureDim != null) {
+                MapGenStructureData data = (MapGenStructureData) structureDim.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "EldritchSpire");
+                if (data != null) {
+                    NBTTagCompound nbt = data.getTagCompound();
+                    for (String s : nbt.getKeySet()) {
+                        NBTTagCompound tag = nbt.getCompoundTag(s);
+                        if (tag.hasKey("ChunkX", NBT.TAG_INT) && tag.hasKey("ChunkZ", NBT.TAG_INT)) {
+                            int testX = tag.getInteger("ChunkX");
+                            int testZ = tag.getInteger("ChunkZ");
+                            if (testX == structurePos.getPos().getX() >> 4 && testZ == structurePos.getPos().getZ() >> 4) {
+                                StructureStart start = MapGenStructureIO.getStructureStart(tag, structureDim);
+                                if (start instanceof MapGenEldritchSpire.Start) {
+                                    UUID ward = ((MapGenEldritchSpire.Start) start).getWard();
+                                    StructureBoundingBox bb = start.getBoundingBox();     
+                                    for (int z = bb.minZ >> 4; z <= bb.maxZ >> 4; ++z) {
+                                        for (int x = bb.minX >> 4; x <= bb.maxX >> 4; ++x) {
+                                            IWardStorage storage = world.getChunk(x, z).getCapability(
+                                                    CapabilityWardStorage.WARD_STORAGE, null);
+                                            if (storage instanceof IWardStorageServer) {
+                                                ((IWardStorageServer) storage).removeOwner(ward);
+                                                WardSyncManager.markChunkForFullSync(world, new BlockPos(x << 4, 0, z << 4));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @Override
     public void writeEntityToNBT(NBTTagCompound nbt) {
         super.writeEntityToNBT(nbt);
         nbt.setBoolean("transparent", dataManager.get(TRANSPARENT));
+        if (!structurePos.isInvalid())
+            nbt.setIntArray("structure", structurePos.toArray());
     }
     
     @Override
     public void readEntityFromNBT(NBTTagCompound nbt) {
         super.readEntityFromNBT(nbt);
         dataManager.set(TRANSPARENT, nbt.getBoolean("transparent"));
+        if (nbt.hasKey("structure", NBT.TAG_INT_ARRAY))
+            structurePos = new DimensionalBlockPos(nbt.getIntArray("structure"));
+        
         bossInfo.setName(getDisplayName());
     }
     

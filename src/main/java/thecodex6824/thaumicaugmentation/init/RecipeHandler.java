@@ -145,7 +145,7 @@ public final class RecipeHandler {
             EnumInfusionEnchantment.addInfusionEnchantment(cutter, EnumInfusionEnchantment.ARCING, 2);
             EnumInfusionEnchantment.addInfusionEnchantment(cutter, EnumInfusionEnchantment.BURROWING, 1);
             ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "primal_cutter"),
-                    new InfusionRecipe("PRIMAL_CUTTER", cutter, 7, new AspectList().add(Aspect.PLANT, 75).add(
+                    new InfusionRecipe("PRIMAL_CUTTER", cutter, 7, new AspectList().add(Aspect.EARTH, 75).add(
                     Aspect.TOOL, 50).add(Aspect.MAGIC, 50).add(Aspect.VOID, 50).add(Aspect.AVERSION, 75).add(
                     Aspect.ELDRITCH, 50).add(Aspect.DESIRE, 50), ItemsTC.primordialPearl, new Object[] {
                             ItemsTC.voidAxe, ItemsTC.voidSword, ItemsTC.elementalAxe, ItemsTC.elementalSword
@@ -223,6 +223,15 @@ public final class RecipeHandler {
                             ThaumcraftApiHelper.makeCrystal(Aspect.VOID), "plateVoid"
                     }
             ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impulse_cannon"), new InfusionRecipe(
+                    "IMPULSE_CANNON", new ItemStack(TAItems.IMPULSE_CANNON, 1, 0), 12, new AspectList().add(Aspect.ELDRITCH, 75).add(Aspect.AVERSION, 75).add(Aspect.ENERGY, 75).add(Aspect.MECHANISM, 50).add(
+                            Aspect.DEATH, 50).add(Aspect.VOID, 30).add(Aspect.DARKNESS, 25),
+                    new ItemStack(TAItems.MATERIAL, 1, 3), new Object[] {
+                            BlocksTC.stabilizer, ItemsTC.focus3, "plateBrass", ItemsTC.morphicResonator, BlocksTC.inlay, "plateVoid", new ItemStack(TAItems.MATERIAL, 1, 5), ItemsTC.mechanismComplex,
+                            "plateThaumium", "plateVoid"
+                    }
+            ));
     }
     
     public static void initCrucibleRecipes() {
@@ -259,6 +268,9 @@ public final class RecipeHandler {
     
         ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_jewel"), new CrucibleRecipe(
                 "IMPETUS", new ItemStack(TAItems.MATERIAL, 2, 5), ItemsTC.voidSeed, new AspectList().add(Aspect.ORDER, 25).add(Aspect.ENERGY, 10)));
+    
+        ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ancient_cobblestone"), new CrucibleRecipe(
+                "ELDRITCH_BOSS", new ItemStack(TABlocks.STONE, 1, 10), BlocksTC.stoneAncient, new AspectList().add(Aspect.ENTROPY, 2)));
     }
     
     public static void initFakeArcaneCraftingRecipes() {
@@ -291,7 +303,7 @@ public final class RecipeHandler {
         };
         
         IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("IMPETUS_MATRIX", blueprint));
-        ThaumcraftApi.addMultiblockRecipeToCatalog(new ResourceLocation("thaumicaugmentation", "impetus_matrix"), new BluePrint("IMPETUS_MATRIX", blueprint, new ItemStack[] {
+        ThaumcraftApi.addMultiblockRecipeToCatalog(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_matrix"), new BluePrint("IMPETUS_MATRIX", blueprint, new ItemStack[] {
                 new ItemStack(BlocksTC.infusionMatrix),
                 new ItemStack(BlocksTC.pedestalEldritch, 2)
         }));

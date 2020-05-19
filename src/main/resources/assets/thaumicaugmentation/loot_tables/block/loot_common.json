@@ -19,7 +19,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 1,
-                                "max": 3 
+                                "max": 2 
                             }
                         }
                     ]
@@ -39,7 +39,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 1,
-                                "max": 3 
+                                "max": 2 
                             }
                         }
                     ]
@@ -59,7 +59,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 1,
-                                "max": 3 
+                                "max": 2
                             }
                         }
                     ]
@@ -79,7 +79,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 1,
-                                "max": 3 
+                                "max": 2 
                             }
                         }
                     ]
@@ -99,7 +99,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 1,
-                                "max": 3 
+                                "max": 2 
                             }
                         }
                     ]
@@ -132,17 +132,7 @@
                 {
                     "type": "item",
                     "name": "minecraft:gold_ingot",
-                    "weight": 15,
-                    "functions": [
-                        {
-                            "function": "minecraft:set_count",
-                            "count": {
-                                "type": "uniform",
-                                "min": 1,
-                                "max": 2 
-                            }
-                        }
-                    ]
+                    "weight": 15
                 },
                 {
                     "type": "item",
@@ -189,7 +179,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 1,
-                                "max": 3 
+                                "max": 2 
                             }
                         }
                     ]
@@ -204,7 +194,7 @@
                             "count": {
                                 "type": "uniform",
                                 "min": 1,
-                                "max": 3 
+                                "max": 2 
                             }
                         }
                     ]

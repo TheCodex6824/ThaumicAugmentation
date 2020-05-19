@@ -18,24 +18,16 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.test;
+package thecodex6824.thaumicaugmentation.api.ward.entity;
 
-import static org.junit.Assert.assertEquals;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
-import java.util.UUID;
+public class CapabilityWardOwnerProvider {
 
-import org.junit.Test;
-
-import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
-
-public class TestWardAPI {
-
-    @Test
-    public void testSafeUUIDGeneration() {
-        for (int i = 0; i < 100; ++i) {
-            UUID uuid = WardHelper.generateSafeUUID();
-            assertEquals(0, uuid.version());
-        }
-    }
+    private CapabilityWardOwnerProvider() {}
+    
+    @CapabilityInject(IWardOwnerProvider.class)
+    public static final Capability<IWardOwnerProvider> WARD_OWNER = null;
     
 }

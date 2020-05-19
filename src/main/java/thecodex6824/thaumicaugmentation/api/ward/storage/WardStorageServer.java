@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.warded.storage;
+package thecodex6824.thaumicaugmentation.api.ward.storage;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -37,7 +37,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
-import thecodex6824.thaumicaugmentation.api.warded.WardSyncManager;
+import thecodex6824.thaumicaugmentation.api.ward.WardSyncManager;
 
 /**
  * Default implementation of {@link IWardStorage} for servers.
@@ -1041,7 +1041,7 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
     @Override
     public void clearAllWards(World syncTo, BlockPos inside) {
         manager.clearAllOwnersAndWards();
-        WardSyncManager.markChunkForClear(syncTo, inside);
+        WardSyncManager.markChunkForFullSync(syncTo, inside);
     }
     
     protected StorageManagersServer.IWardStorageManagerServer createIncreasedSizeManager() {

@@ -1,0 +1,29 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "FORTIFIED_GLASS",
+  "vis": 20,
+  "aspects": {
+    "ordo": 1,
+    "ignis": 1,
+    "aqua": 1,
+    "terra": 1
+  },
+  "pattern": [
+    "GGG",
+    "GSG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "blockGlass"
+    },
+    "S": {
+      "item": "#SIGIL"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:fortified_glass",
+    "amount": 8
+  }
+}
