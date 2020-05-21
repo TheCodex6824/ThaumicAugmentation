@@ -31,6 +31,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.NextTickListEntry;
@@ -123,10 +124,11 @@ public class WardEventHandler {
                 Iterator<NextTickListEntry> iterator = world.pendingTickListEntriesHashSet.iterator();
                 while (iterator.hasNext()) {
                     NextTickListEntry entry = iterator.next();
-                    Chunk chunk = world.getChunk(entry.position);
-                    if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
+                    // need to get chunk without resetting unload flag
+                    Chunk chunk = world.getChunkProvider().loadedChunks.get(ChunkPos.asLong(entry.position.getX() >> 4, entry.position.getZ() >> 4));
+                    if (chunk != null) {
                         IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                        if (storage.hasWard(entry.position)) {
+                        if (storage != null && storage.hasWard(entry.position)) {
                             iterator.remove();
                             world.pendingTickListEntriesTreeSet.remove(entry);
                         }
