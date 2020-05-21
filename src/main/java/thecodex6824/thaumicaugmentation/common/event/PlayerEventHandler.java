@@ -143,7 +143,7 @@ public final class PlayerEventHandler {
         }
         
         StatisticsManager stats = player.getServer().getPlayerList().getPlayerStatsFile(player);
-        if (stats.readStat(StatList.FLY_ONE_CM) > 199999 && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ELYTRAFLY")) {
+        if (stats.readStat(StatList.AVIATE_ONE_CM) > 199999 && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ELYTRAFLY")) {
             ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ELYTRAFLY");
             player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.elytra_fly").setStyle(
                     new Style().setColor(TextFormatting.DARK_PURPLE)), true);
@@ -210,7 +210,7 @@ public final class PlayerEventHandler {
                 PlayerMovementAbilityManager.tick(player);
             
             if (!player.getEntityWorld().isRemote) {
-                if (player.getEntityWorld().getTotalWorldTime() % 40 == 0)
+                if (player.ticksExisted % 40 == 0)
                     checkResearch(player);
                 
                 Boolean fly = Boolean.valueOf(player.capabilities.isFlying);

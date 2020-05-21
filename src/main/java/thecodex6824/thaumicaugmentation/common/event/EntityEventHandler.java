@@ -40,12 +40,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import thaumcraft.common.entities.EntityFluxRift;
-import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
-import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -55,9 +52,7 @@ public class EntityEventHandler {
 
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
-        if (!TAConfig.disableEmptiness.getValue() && event.getWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() && event.getEntity().getClass() == EntityFluxRift.class)
-            event.setCanceled(true);
-        else if (event.getEntity().hasCapability(CapabilityPortalState.PORTAL_STATE, null) && 
+        if (event.getEntity().hasCapability(CapabilityPortalState.PORTAL_STATE, null) && 
                 event.getEntity().getCapability(CapabilityPortalState.PORTAL_STATE, null).isInPortal()) {
             
             PortalStateManager.markEntityInPortal(event.getEntity());

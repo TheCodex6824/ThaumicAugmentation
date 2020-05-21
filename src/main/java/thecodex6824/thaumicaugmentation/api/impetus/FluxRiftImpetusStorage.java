@@ -89,13 +89,23 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
     public long extractEnergy(long maxToExtract, boolean simulate) {
         EntityFluxRift r = rift.get();
         if (r != null && r.getRiftSize() > 0) {
-            long toExtract = Math.min(calcEnergyThisSize(Math.min(r.getRiftSize(), MAX_SIZE)), maxToExtract);
-            if (!simulate) {
-                r.setRiftSize(r.getRiftSize() - 1);
-                r.setRiftStability(r.getRiftStability() - 1.0F);
+            long total = 0;
+            if (simulate) {
+                int currentSize = r.getRiftSize();
+                do {
+                    total += Math.min(calcEnergyThisSize(Math.min(currentSize, MAX_SIZE)), maxToExtract - total);
+                    --currentSize;
+                } while (total < maxToExtract && r.getRiftSize() > 0);
+            }
+            else {
+                do {
+                    total += Math.min(calcEnergyThisSize(Math.min(r.getRiftSize(), MAX_SIZE)), maxToExtract - total);
+                    r.setRiftSize(r.getRiftSize() - 1);
+                    r.setRiftStability(r.getRiftStability() - 1.0F);
+                } while (total < maxToExtract && r.getRiftSize() > 0);
             }
             
-            return toExtract;
+            return total;
         }
         
         return 0;

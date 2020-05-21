@@ -51,7 +51,9 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
+import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.common.recipe.FluxSeedGrowthRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicToolBindingRecipe;
@@ -285,6 +287,13 @@ public final class RecipeHandler {
             ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "custom_augment_example"), new ShapelessOreRecipe(
                     defaultGroup, customAugment, custom.getStrengthProvider(), custom.getEffectProvider()));
         }
+        
+        ItemStack biomeResult = new ItemStack(TAItems.BIOME_SELECTOR, 1);
+        IBiomeSelector selector = biomeResult.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null);
+        if (selector != null)
+            selector.setBiomeID(IBiomeSelector.RESET);
+        ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "biome_focus_special_reset"), new ShapelessOreRecipe(
+                defaultGroup, biomeResult, TAItems.BIOME_SELECTOR, ItemsTC.primordialPearl));
     }
     
     public static void initMultiblocks() {
