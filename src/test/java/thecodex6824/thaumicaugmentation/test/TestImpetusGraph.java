@@ -50,15 +50,18 @@ public class TestImpetusGraph {
         DimensionalBlockPos first = new DimensionalBlockPos(0, 0, 0, 0);
         DimensionalBlockPos second = new DimensionalBlockPos(0, 0, 0, 0);
         assertEquals(first, second);
-        assertTrue(first.hashCode() == second.hashCode());
         
         first = new DimensionalBlockPos(0, 0, 0, 1);
         assertNotEquals(first, second);
-        assertTrue(first.hashCode() != second.hashCode());
         
         first = new DimensionalBlockPos(0, 1, 0, 0);
         assertNotEquals(first, second);
-        assertTrue(first.hashCode() != second.hashCode());
+        
+        first = DimensionalBlockPos.INVALID;
+        assertNotEquals(first, second);
+        
+        second = DimensionalBlockPos.INVALID;
+        assertEquals(first, second);
     }
     
     @Test
@@ -170,10 +173,6 @@ public class TestImpetusGraph {
     
     @Test
     public void testSaving() {
-        
-        // TODO deserializing in testing is currently problematic because of the coupling with World
-        // there's probably a better way to handle deserializing
-        
         ImpetusNode node1 = new ImpetusNode(2, 2, new DimensionalBlockPos(0, 0, 0, 0));
         ImpetusNode node2 = new ImpetusNode(2, 2, new DimensionalBlockPos(0, 0, 3, 0));
         node2.addInput(node1);
@@ -189,6 +188,12 @@ public class TestImpetusGraph {
         
         assertEquals(tag1.getTagList("outputs", NBT.TAG_INT_ARRAY), correct1);
         assertEquals(tag2.getTagList("inputs", NBT.TAG_INT_ARRAY), correct2);
+        
+        // deserializing in testing is currently problematic because of the coupling with World
+        // the most we can do is just make sure that the saved connections made it into the connection sets
+        node2 = new ImpetusNode(2, 2, new DimensionalBlockPos(0, 0, 3, 0));
+        node2.deserializeNBT(tag2);
+        assertTrue(node2.getInputLocations().contains(node1.getLocation()));
     }
     
 }
