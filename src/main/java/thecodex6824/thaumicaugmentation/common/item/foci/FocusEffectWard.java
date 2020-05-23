@@ -96,36 +96,34 @@ public class FocusEffectWard extends FocusEffect {
                 }
                 
                 Chunk chunk = getPackage().getCaster().getEntityWorld().getChunk(pos);
-                if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                    if (TAConfig.tileWardMode.getValue() != TileWardMode.ALL) {
-                        TileEntity tile = chunk.getTileEntity(pos, EnumCreateEntityType.CHECK);
-                        if (TAConfig.tileWardMode.getValue() == TileWardMode.NOTICK && tile instanceof ITickable)
-                            return false;
-                        else if (TAConfig.tileWardMode.getValue() == TileWardMode.NONE && tile != null)
-                            return false;
+                if (TAConfig.tileWardMode.getValue() != TileWardMode.ALL) {
+                    TileEntity tile = chunk.getTileEntity(pos, EnumCreateEntityType.CHECK);
+                    if (TAConfig.tileWardMode.getValue() == TileWardMode.NOTICK && tile instanceof ITickable)
+                        return false;
+                    else if (TAConfig.tileWardMode.getValue() == TileWardMode.NONE && tile != null)
+                        return false;
+                }
+                
+                IWardStorage wardStorage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                if (wardStorage instanceof IWardStorageServer) {
+                    IWardStorageServer storage = (IWardStorageServer) wardStorage;
+                    UUID owner = getPackage().getCasterUUID();
+                    IWardOwnerProvider provider = getPackage().getCaster().getCapability(CapabilityWardOwnerProvider.WARD_OWNER, null);
+                    if (provider != null) {
+                        UUID maybe = provider.getWardOwnerUUID();
+                        if (maybe != null)
+                            owner = maybe;
                     }
                     
-                    IWardStorage wardStorage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                    if (wardStorage instanceof IWardStorageServer) {
-                        IWardStorageServer storage = (IWardStorageServer) wardStorage;
-                        UUID owner = getPackage().getCasterUUID();
-                        IWardOwnerProvider provider = getPackage().getCaster().getCapability(CapabilityWardOwnerProvider.WARD_OWNER, null);
-                        if (provider != null) {
-                            UUID maybe = provider.getWardOwnerUUID();
-                            if (maybe != null)
-                                owner = maybe;
-                        }
-                        
-                        if (!storage.hasWard(pos)) {
-                            storage.setWard(world, pos, owner);
-                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.POOF, pos.getX(), pos.getY(), pos.getZ(), Aspect.PROTECT.getColor(), result.sideHit.getIndex()),
-                                    new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
-                        }
-                        else if (storage.getWard(pos).equals(owner)) {
-                            storage.clearWard(world, pos);
-                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.POOF, pos.getX(), pos.getY(), pos.getZ(), Aspect.PROTECT.getColor(), result.sideHit.getIndex()),
-                                    new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
-                        }
+                    if (!storage.hasWard(pos)) {
+                        storage.setWard(pos, owner, world);
+                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.POOF, pos.getX(), pos.getY(), pos.getZ(), Aspect.PROTECT.getColor(), result.sideHit.getIndex()),
+                                new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
+                    }
+                    else if (storage.getWard(pos).equals(owner)) {
+                        storage.clearWard(pos, world);
+                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.POOF, pos.getX(), pos.getY(), pos.getZ(), Aspect.PROTECT.getColor(), result.sideHit.getIndex()),
+                                new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
                     }
                 }
             }

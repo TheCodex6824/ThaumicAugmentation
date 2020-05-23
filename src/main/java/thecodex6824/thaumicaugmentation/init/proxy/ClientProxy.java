@@ -597,8 +597,9 @@ public class ClientProxy extends ServerProxy {
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
                 for (ItemStack stack : func.apply(entity)) {
                     if (i == message.getItemIndex()) {
-                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                            stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).readSyncNBT(message.getTagCompound());
+                        IAugmentableItem augmentable = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                        if (augmentable != null) {
+                            augmentable.readSyncNBT(message.getTagCompound());
                             return;
                         }
                     }
@@ -613,22 +614,20 @@ public class ClientProxy extends ServerProxy {
         NBTTagCompound tag = message.getTag();
         World world = Minecraft.getMinecraft().world;
         int chunkX = tag.getInteger("x"), chunkZ = tag.getInteger("z");
-        if (world.isBlockLoaded(new BlockPos(chunkX << 4, 0, chunkZ << 4)) && world.getChunk(chunkX, chunkZ).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            if (world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageClient) {
-                IWardStorageClient storage = (IWardStorageClient) world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                storage.deserializeNBT(tag);
-            }
+        if (world.isBlockLoaded(new BlockPos(chunkX << 4, 0, chunkZ << 4))) {
+            IWardStorage s = world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (s instanceof IWardStorageClient)
+                ((IWardStorageClient) s).deserializeNBT(tag);
         }
     }
     
     protected void handleWardUpdatePacket(PacketWardUpdate message, MessageContext context) {
         BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
         World world = Minecraft.getMinecraft().world;
-        if (world.isBlockLoaded(pos) && world.getChunk(pos).hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            if (world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageClient) {
-                IWardStorageClient storage = (IWardStorageClient) world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                storage.setWard(pos, ClientWardStorageValue.fromID(message.getStatus()));
-            }
+        if (world.isBlockLoaded(pos)) {
+            IWardStorage s = world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (s instanceof IWardStorageClient)
+                ((IWardStorageClient) s).setWard(pos, ClientWardStorageValue.fromID(message.getStatus()));
         }
     }
     

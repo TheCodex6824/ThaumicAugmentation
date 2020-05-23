@@ -130,13 +130,10 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
     
     @Override
     public boolean isCompatible(ItemStack otherAugment) {
-        if (otherAugment.hasCapability(CapabilityAugment.AUGMENT, null) && otherAugment.getCapability(
-                CapabilityAugment.AUGMENT, null).getClass() == getClass()) {
-            IAugment a = otherAugment.getCapability(CapabilityAugment.AUGMENT, null);
-            if (a instanceof ICustomCasterAugment) {
-                ICustomCasterAugment aug = (ICustomCasterAugment) a;
-                return !aug.getStrengthProvider().getTranslationKey().equals(strength.getTranslationKey());
-            }
+        IAugment a = otherAugment.getCapability(CapabilityAugment.AUGMENT, null);
+        if (a != null && a instanceof ICustomCasterAugment) {
+            ICustomCasterAugment aug = (ICustomCasterAugment) a;
+            return !aug.getStrengthProvider().getTranslationKey().equals(strength.getTranslationKey());
         }
         
         return true;

@@ -162,17 +162,20 @@ public final class ImpetusAPI {
                 for (int y = (int) Math.floor(range.minY); y < Math.ceil(range.maxY); ++y) {  
                     if (world.isBlockLoaded(pos) && world.getChunk(pos).getTileEntity(pos, EnumCreateEntityType.CHECK) != null) {
                         TileEntity tile = world.getTileEntity(pos);
-                        if (tile.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
-                            long maxToExtract = dest.getMaxEnergyStored() - dest.getEnergyStored();
-                            long extracted = tile.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null).extractEnergy(maxToExtract, false);
-                            if (extracted > 0) {
-                                dest.receiveEnergy(extracted, false);
-                                if (effectDest != null) {
-                                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                                            x + 0.5, y + 0.5, z + 0.5, effectDest.x, effectDest.y, effectDest.z, 0.04F), 
-                                            new TargetPoint(world.provider.getDimension(), effectDest.x, effectDest.y, effectDest.z, 64.0F));
+                        if (tile != null) {
+                            IImpetusStorage storage = tile.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                            if (storage != null) {
+                                long maxToExtract = dest.getMaxEnergyStored() - dest.getEnergyStored();
+                                long extracted = storage.extractEnergy(maxToExtract, false);
+                                if (extracted > 0) {
+                                    dest.receiveEnergy(extracted, false);
+                                    if (effectDest != null) {
+                                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
+                                                x + 0.5, y + 0.5, z + 0.5, effectDest.x, effectDest.y, effectDest.z, 0.04F), 
+                                                new TargetPoint(world.provider.getDimension(), effectDest.x, effectDest.y, effectDest.z, 64.0F));
+                                    }
+                                    receivedEnergy = true;
                                 }
-                                receivedEnergy = true;
                             }
                         }
                     }
@@ -184,9 +187,10 @@ public final class ImpetusAPI {
         }
         
         for (Entity entity : world.getEntitiesWithinAABB(Entity.class, range)) {
-            if (entity.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
+            IImpetusStorage storage = entity.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+            if (storage != null) {
                 long maxToExtract = dest.getMaxEnergyStored() - dest.getEnergyStored();
-                long extracted = entity.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null).extractEnergy(maxToExtract, false);
+                long extracted = storage.extractEnergy(maxToExtract, false);
                 if (extracted > 0) {
                     dest.receiveEnergy(extracted, false);
                     if (effectDest != null) {

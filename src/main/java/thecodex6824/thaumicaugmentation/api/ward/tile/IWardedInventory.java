@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.api.ward.tile;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
@@ -31,14 +33,17 @@ import net.minecraftforge.items.IItemHandler;
  */
 public interface IWardedInventory {
     
+    @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate);
     
     public int getSlotLimit(int slot);
     
     public int getSlots();
     
+    @Nonnull
     public ItemStack getStackInSlot(int slot);
     
+    @Nonnull
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate);
     
     public IItemHandler getItemHandler();

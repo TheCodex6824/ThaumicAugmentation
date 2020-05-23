@@ -36,6 +36,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
@@ -50,6 +51,7 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.WeakImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
@@ -112,14 +114,19 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
         List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class, new AxisAlignedBB(pos).grow(8.0));
         rifts.sort((rift1, rift2) -> Double.compare(rift1.getPosition().distanceSq(pos), rift2.getPosition().distanceSq(pos)));
         for (EntityFluxRift rift : rifts) {
-            if (!rift.isDead && rift.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
-                //RayTraceResult result = world.rayTraceBlocks(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
-                //        rift.getPositionVector().add(0.0, rift.height / 2.0, 0.0));
-                //if (result == null || result.getBlockPos() == null) {
-                    storage.bind(rift.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null));
-                    lastRiftPos = rift.getPositionVector();
-                    break;
-                //}
+            if (!rift.isDead) {
+                IImpetusStorage riftStorage = rift.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                if (riftStorage != null) {
+                    for (Vec3d point : rift.points) {
+                        RayTraceResult result = world.rayTraceBlocks(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
+                                rift.getPositionVector().add(point));
+                        if (result == null || result.getBlockPos() == null) {
+                            storage.bind(riftStorage);
+                            lastRiftPos = rift.getPositionVector();
+                            return;
+                        }
+                    }
+                }
             }
         }
     }

@@ -147,14 +147,18 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
             EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-        if (!world.isRemote && world.getTileEntity(pos).hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
-            if (world.getTileEntity(pos).getCapability(CapabilityWardedTile.WARDED_TILE, null).hasPermission(player)) {
-                state = state.cycleProperty(IArcaneDoorOpen.DOOR_OPEN);
-                world.setBlockState(pos, state, 10);
-                world.markBlockRangeForRenderUpdate(pos, pos);
-                world.playSound(null, pos, state.getValue(IArcaneDoorOpen.DOOR_OPEN) ? 
-                        getOpenSound(state) : getCloseSound(state), SoundCategory.BLOCKS, 1.0F, 1.0F);
-                return true;
+        if (!world.isRemote) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile != null) {
+                IWardedTile warded = tile.getCapability(CapabilityWardedTile.WARDED_TILE, null);
+                if (warded != null && warded.hasPermission(player)) {
+                    state = state.cycleProperty(IArcaneDoorOpen.DOOR_OPEN);
+                    world.setBlockState(pos, state, 10);
+                    world.markBlockRangeForRenderUpdate(pos, pos);
+                    world.playSound(null, pos, state.getValue(IArcaneDoorOpen.DOOR_OPEN) ? 
+                            getOpenSound(state) : getCloseSound(state), SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    return true;
+                }
             }
         }
 

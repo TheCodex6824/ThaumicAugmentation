@@ -42,6 +42,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
+import thecodex6824.thaumicaugmentation.api.entity.IPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
@@ -52,11 +53,9 @@ public class EntityEventHandler {
 
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
-        if (event.getEntity().hasCapability(CapabilityPortalState.PORTAL_STATE, null) && 
-                event.getEntity().getCapability(CapabilityPortalState.PORTAL_STATE, null).isInPortal()) {
-            
+        IPortalState state = event.getEntity().getCapability(CapabilityPortalState.PORTAL_STATE, null);
+        if (state != null && state.isInPortal())
             PortalStateManager.markEntityInPortal(event.getEntity());
-        }
     }
     
     @SubscribeEvent

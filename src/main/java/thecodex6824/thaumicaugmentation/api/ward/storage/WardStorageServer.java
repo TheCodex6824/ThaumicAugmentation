@@ -1022,13 +1022,13 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
         return !getWard(pos).equals(NIL_UUID);
     }
     
-    @VisibleForTesting
-    void clearWard(BlockPos pos) {
+    @Override
+    public void clearWard(BlockPos pos) {
         manager.setOwner(pos, NIL_UUID);
     }
     
     @Override
-    public void clearWard(World syncTo, BlockPos pos) {
+    public void clearWard(BlockPos pos, World syncTo) {
         BlockWardEvent.DewardedServer event = new BlockWardEvent.DewardedServer.Pre(syncTo, pos);
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.isCanceled()) {
@@ -1036,6 +1036,11 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
             WardSyncManager.markPosForClear(syncTo, pos);
             MinecraftForge.EVENT_BUS.post(new BlockWardEvent.DewardedServer.Post(syncTo, pos));
         }
+    }
+    
+    @Override
+    public void clearAllWards() {
+        manager.clearAllOwnersAndWards();
     }
     
     @Override
@@ -1068,8 +1073,8 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
             manager = new StorageManagersServer.StorageManagerByte(manager);
     }
     
-    @VisibleForTesting
-    void setWard(BlockPos pos, UUID owner) {
+    @Override
+    public void setWard(BlockPos pos, UUID owner) {
         if (!manager.isOwner(owner)) {
             if (manager.getNumCurrentOwners() == manager.getMaxAllowedOwners())
                 manager = createIncreasedSizeManager();
@@ -1081,7 +1086,7 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
     }
     
     @Override
-    public void setWard(World syncTo, BlockPos pos, UUID owner) {
+    public void setWard(BlockPos pos, UUID owner, World syncTo) {
         BlockWardEvent.WardedServer event = new BlockWardEvent.WardedServer.Pre(syncTo, pos, owner);
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.isCanceled()) {

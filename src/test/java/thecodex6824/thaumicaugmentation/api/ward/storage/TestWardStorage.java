@@ -45,9 +45,6 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.Stora
 
 public class TestWardStorage {
     
-    private HashMap<BlockPos, UUID> data;
-    private IWardStorageManagerServer manager;
-    
     /**
      * The default Java UUID factory uses SecureRandom,
      * which is nice and all but we aren't using these
@@ -64,15 +61,15 @@ public class TestWardStorage {
         return new UUID(most, least);
     }
     
-    private void sharedTest(int numPlayers) {
+    private void sharedTest(IWardStorageManagerServer manager) {
         WardStorageServer storage = new WardStorageServer(manager);
         
-        UUID[] players = new UUID[numPlayers + 1];
+        UUID[] players = new UUID[manager.getMaxAllowedOwners() + 1];
         players[0] = IWardStorageServer.NIL_UUID;
         for (int i = 1; i < players.length; ++i)
             players[i] = fastGenerateUUID();
         
-        data = new HashMap<>(16 * 16 * 256);
+        HashMap<BlockPos, UUID> data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -100,38 +97,32 @@ public class TestWardStorage {
     
     @Test
     public void testNull() {
-        manager = new StorageManagerNull();
-        sharedTest(manager.getMaxAllowedOwners());
+        sharedTest(new StorageManagerNull());
     }
     
     @Test
     public void test1Bit() {
-        manager = new StorageManager1Bit();
-        sharedTest(manager.getMaxAllowedOwners());
+        sharedTest(new StorageManager1Bit());
     }
     
     @Test
     public void test2Bits() {
-        manager = new StorageManager2Bits();
-        sharedTest(manager.getMaxAllowedOwners());
+        sharedTest(new StorageManager2Bits());
     }
     
     @Test
     public void test4Bits() {
-        manager = new StorageManager4Bits();
-        sharedTest(manager.getMaxAllowedOwners());
+        sharedTest(new StorageManager4Bits());
     }
     
     @Test
     public void testByte() {
-        manager = new StorageManagerByte();
-        sharedTest(manager.getMaxAllowedOwners());
+        sharedTest(new StorageManagerByte());
     }
     
     @Test
     public void testShort() {
-        manager = new StorageManagerShort();
-        sharedTest(manager.getMaxAllowedOwners());
+        sharedTest(new StorageManagerShort());
     }
     
     @Test
@@ -143,7 +134,7 @@ public class TestWardStorage {
         for (int i = 1; i < players.length; ++i)
             players[i] = fastGenerateUUID();
         
-        data = new HashMap<>(16 * 16 * 256);
+        HashMap<BlockPos, UUID> data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -180,7 +171,7 @@ public class TestWardStorage {
         for (int i = 1; i < players.length; ++i)
             players[i] = fastGenerateUUID();
         
-        data = new HashMap<>(16 * 16 * 256);
+        HashMap<BlockPos, UUID> data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -217,7 +208,7 @@ public class TestWardStorage {
         for (int i = 1; i < players.length; ++i)
             players[i] = fastGenerateUUID();
         
-        data = new HashMap<>(16 * 16 * 256);
+        HashMap<BlockPos, UUID> data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -294,7 +285,7 @@ public class TestWardStorage {
         for (int i = 1; i < players.length; ++i)
             players[i] = fastGenerateUUID();
         
-        data = new HashMap<>(16 * 16 * 256);
+        HashMap<BlockPos, UUID> data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -395,7 +386,7 @@ public class TestWardStorage {
         for (int i = 1; i < players.length; ++i)
             players[i] = fastGenerateUUID();
         
-        data = new HashMap<>(16 * 16 * 256);
+        HashMap<BlockPos, UUID> data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -496,7 +487,7 @@ public class TestWardStorage {
         for (int i = 1; i < players.length; ++i)
             players[i] = fastGenerateUUID();
         
-        data = new HashMap<>(16 * 16 * 256);
+        HashMap<BlockPos, UUID> data = new HashMap<>(16 * 16 * 256);
         int forcedIndex = 1;
         Random rand = new Random();
         for (int x = 0; x < 16; ++x) {
@@ -600,7 +591,7 @@ public class TestWardStorage {
         for (int i = 1; i < players.length; ++i)
             players[i] = fastGenerateUUID();
         
-        data = new HashMap<>(16 * 16 * 256);
+        HashMap<BlockPos, UUID> data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -701,7 +692,7 @@ public class TestWardStorage {
         for (int i = 1; i < players.length; ++i)
             players[i] = fastGenerateUUID();
         
-        data = new HashMap<>(16 * 16 * 256);
+        HashMap<BlockPos, UUID> data = new HashMap<>(16 * 16 * 256);
         Random rand = new Random();
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {

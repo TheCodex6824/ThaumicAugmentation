@@ -111,7 +111,7 @@ public class EldritchSpireTemplate extends Template {
                                     
                                     IWardStorage storage = world.getChunk(blockpos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                                     if (storage instanceof IWardStorageServer)
-                                        ((IWardStorageServer) storage).clearWard(world, blockpos);
+                                        ((IWardStorageServer) storage).clearWard(blockpos, world);
                                 }
                             }
                             
@@ -123,12 +123,12 @@ public class EldritchSpireTemplate extends Template {
                                 // so we assume the strictest setting of no wards on tiles
                                 IWardStorage storage = world.getChunk(blockpos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                                 if (storage instanceof IWardStorageServer)
-                                    ((IWardStorageServer) storage).setWard(world, blockpos, ward);
+                                    ((IWardStorageServer) storage).setWard(blockpos, ward, world);
                             }
                             else if (!templateProcessor.shouldBlockBeWarded(world, pos, info)) {
                                 IWardStorage storage = world.getChunk(blockpos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                                 if (storage instanceof IWardStorageServer)
-                                    ((IWardStorageServer) storage).clearWard(world, blockpos);
+                                    ((IWardStorageServer) storage).clearWard(blockpos, world);
                             }
                         }
                     }

@@ -163,27 +163,32 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
 
             if (lower.getBlock() != this)
                 return false;
-            else if (world.getTileEntity(blockpos).hasCapability(CapabilityWardedTile.WARDED_TILE, null) && 
-                    world.getTileEntity(blockpos).getCapability(CapabilityWardedTile.WARDED_TILE, null).hasPermission(player)) {
-                state = lower.cycleProperty(IArcaneDoorOpen.DOOR_OPEN);
-                world.setBlockState(blockpos, state, 10);
-                world.markBlockRangeForRenderUpdate(blockpos, pos);
-                world.playSound(null, blockpos, state.getValue(IArcaneDoorOpen.DOOR_OPEN) ? getOpenSound(state) : getCloseSound(state),
-                        SoundCategory.BLOCKS, 1.0F, 1.0F);
-                
-                EnumFacing doorFacing = upper.getValue(IHorizontallyDirectionalBlock.DIRECTION);
-                EnumFacing offset = state.getValue(IArcaneDoorHinge.HINGE_SIDE) == EnumHingePosition.LEFT ? 
-                        doorFacing.rotateY() : doorFacing.rotateYCCW();
-                IBlockState otherDoorLower = world.getBlockState(blockpos.offset(offset));
-                if (otherDoorLower.getBlock() == this && otherDoorLower.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.LOWER && 
-                        otherDoorLower.getValue(IArcaneDoorOpen.DOOR_OPEN) == lower.getValue(IArcaneDoorOpen.DOOR_OPEN) && 
-                        otherDoorLower.getValue(IArcaneDoorHinge.HINGE_SIDE) != lower.getValue(IArcaneDoorHinge.HINGE_SIDE)) {
-                    
-                    otherDoorLower.getBlock().onBlockActivated(world, blockpos.offset(offset), otherDoorLower, player, 
-                            hand, facing, hitX, hitY, hitZ);
+            else {
+                TileEntity tile = world.getTileEntity(blockpos);
+                if (tile != null) {
+                    IWardedTile warded = tile.getCapability(CapabilityWardedTile.WARDED_TILE, null);
+                    if (warded != null && warded.hasPermission(player)) {
+                        state = lower.cycleProperty(IArcaneDoorOpen.DOOR_OPEN);
+                        world.setBlockState(blockpos, state, 10);
+                        world.markBlockRangeForRenderUpdate(blockpos, pos);
+                        world.playSound(null, blockpos, state.getValue(IArcaneDoorOpen.DOOR_OPEN) ? getOpenSound(state) : getCloseSound(state),
+                                SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        
+                        EnumFacing doorFacing = upper.getValue(IHorizontallyDirectionalBlock.DIRECTION);
+                        EnumFacing offset = state.getValue(IArcaneDoorHinge.HINGE_SIDE) == EnumHingePosition.LEFT ? 
+                                doorFacing.rotateY() : doorFacing.rotateYCCW();
+                        IBlockState otherDoorLower = world.getBlockState(blockpos.offset(offset));
+                        if (otherDoorLower.getBlock() == this && otherDoorLower.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.LOWER && 
+                                otherDoorLower.getValue(IArcaneDoorOpen.DOOR_OPEN) == lower.getValue(IArcaneDoorOpen.DOOR_OPEN) && 
+                                otherDoorLower.getValue(IArcaneDoorHinge.HINGE_SIDE) != lower.getValue(IArcaneDoorHinge.HINGE_SIDE)) {
+                            
+                            otherDoorLower.getBlock().onBlockActivated(world, blockpos.offset(offset), otherDoorLower, player, 
+                                    hand, facing, hitX, hitY, hitZ);
+                        }
+                        
+                        return true;
+                    }
                 }
-                
-                return true;
             }
         }
 

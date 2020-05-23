@@ -111,8 +111,8 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     }
     
     private IMorphicTool getTool(ItemStack stack) {
-        return stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null) ?
-                stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null) : NULL_TOOL;
+        IMorphicTool tool = stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        return tool != null ? tool : NULL_TOOL;
     }
     
     @Override

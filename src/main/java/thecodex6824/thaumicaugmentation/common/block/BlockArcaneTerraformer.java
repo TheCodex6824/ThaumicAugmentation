@@ -142,13 +142,15 @@ public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraf
     protected void dropContents(World world, BlockPos pos) {
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
-            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+            if (te != null) {
                 IItemHandler items = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                for (int i = 0; i < items.getSlots(); ++i) {
-                    ItemStack stack = items.getStackInSlot(i);
-                    if (stack != null && !stack.isEmpty())
-                        world.spawnEntity(new EntityItem(world, pos.getX() + 0.5 + world.rand.nextGaussian() / 2, 
-                                pos.getY() + 0.5 + Math.abs(world.rand.nextGaussian() / 2), pos.getZ() + 0.5 + world.rand.nextGaussian() / 2, stack));
+                if (items != null) {
+                    for (int i = 0; i < items.getSlots(); ++i) {
+                        ItemStack stack = items.getStackInSlot(i);
+                        if (!stack.isEmpty())
+                            world.spawnEntity(new EntityItem(world, pos.getX() + 0.5 + world.rand.nextGaussian() / 2, 
+                                    pos.getY() + 0.5 + Math.abs(world.rand.nextGaussian() / 2), pos.getZ() + 0.5 + world.rand.nextGaussian() / 2, stack));
+                    }
                 }
             }
         }

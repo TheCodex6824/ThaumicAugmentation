@@ -44,8 +44,8 @@ public class Augment implements IAugment, INBTSerializable<NBTTagCompound> {
     
     @Override
     public boolean isCompatible(ItemStack otherAugment) {
-        return !otherAugment.hasCapability(CapabilityAugment.AUGMENT, null) || 
-                otherAugment.getCapability(CapabilityAugment.AUGMENT, null).getClass() != getClass();
+        IAugment other = otherAugment.getCapability(CapabilityAugment.AUGMENT, null);
+        return other == null || other.getClass() != getClass();
     }
     
 }

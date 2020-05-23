@@ -60,24 +60,46 @@ public interface IWardStorageServer extends IWardStorage {
     public boolean isWardOwner(UUID id);
     
     /**
+     * Sets the owner of a ward of a block to the passed new owner. The caller is
+     * responsible for syncing or firing events as needed.
+     * @param pos The position of the block to change the owner of
+     * @param owner The UUID of the new owner
+     */
+    public void setWard(BlockPos pos, UUID owner);
+    
+    /**
      * Sets the owner of a ward of a block to the passed new owner, and handles
-     * syncing the change to clients.
+     * syncing the change to clients and firing the appropiate events.
      * @param syncTo The world this storage exists in
      * @param pos The position of the block to change the owner of
      * @param owner The UUID of the new owner
      */
-    public void setWard(World syncTo, BlockPos pos, UUID owner);
+    public void setWard(BlockPos pos, UUID owner, World syncTo);
+    
+    /**
+     * Removes the owner of the ward of a block. The caller is
+     * responsible for syncing or firing events as needed.
+     * @param pos The position of the block to clear
+     */
+    public void clearWard(BlockPos pos);
     
     /**
      * Removes the owner of the ward of a block, and handles
-     * syncing the change to clients.
+     * syncing the change to clients and firing the appropiate events.
      * @param syncTo The world this storage exists in
      * @param pos The position of the block to clear
      */
-    public void clearWard(World syncTo, BlockPos pos);
+    public void clearWard(BlockPos pos, World syncTo);
     
     /**
-     * Unconditionally clears <strong>all</strong> of the wards in this chunk.
+     * Unconditionally clears <strong>all</strong> of the wards in this chunk. The caller is
+     * responsible for syncing or firing events as needed.
+     */
+    public void clearAllWards();
+    
+    /**
+     * Unconditionally clears <strong>all</strong> of the wards in this chunk, and handles
+     * syncing the change to clients and firing the appropiate events.
      * @param syncTo The world this storage exists in
      * @param inside A BlockPos that exists inside this chunk
      */
@@ -108,7 +130,7 @@ public interface IWardStorageServer extends IWardStorage {
      * the client will have an up-to-date view of the wards in this area, no matter
      * what data they already have. If this storage has no meaningful data,
      * null can be returned to not do a sync.
-     * @param chunk The chunk the player is located in
+     * @param chunk The chunk that is to be synced
      * @param player The player that needs to be synced to
      * @return An NBTTagCompound to send to the client for sync purposes, or null if no sync is needed
      */
@@ -120,7 +142,7 @@ public interface IWardStorageServer extends IWardStorage {
      * the client will have an up-to-date view of the wards in this area, no matter
      * what data they already have. If this storage has no meaningful data,
      * null can be returned to not do a sync unless force is true, in which case it will still return data.
-     * @param chunk The chunk the player is located in
+     * @param chunk The chunk that is to be synced
      * @param player The player that needs to be synced to
      * @param force To force the storage to return a tag compound, even if it has no meaningful data
      * @return An NBTTagCompound to send to the client for sync purposes, or null if no sync is needed

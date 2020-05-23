@@ -132,22 +132,18 @@ public final class WorldHandler {
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
         if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue() && FractureUtils.isDimAllowedForLinking(event.getWorld().provider.getDimension())) {
-            if (event.getChunk().hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
-                IFractureLocations loc = event.getChunk().getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
-                if (loc.hasFracture())
-                    FractureLocatorSearchManager.addFractureLocations(event.getWorld(), loc.getFractureLocations());
-            }
+            IFractureLocations loc = event.getChunk().getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
+            if (loc != null && loc.hasFracture())
+                FractureLocatorSearchManager.addFractureLocations(event.getWorld(), loc.getFractureLocations());
         }
     }
     
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event) {
         if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue() && FractureUtils.isDimAllowedForLinking(event.getWorld().provider.getDimension())) {
-            if (event.getChunk().hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
-                IFractureLocations loc = event.getChunk().getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
-                if (loc.hasFracture())
-                    FractureLocatorSearchManager.removeFractureLocations(event.getWorld(), loc.getFractureLocations());
-            }
+            IFractureLocations loc = event.getChunk().getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
+            if (loc != null && loc.hasFracture())
+                FractureLocatorSearchManager.removeFractureLocations(event.getWorld(), loc.getFractureLocations());
         }
     }
 

@@ -38,8 +38,9 @@ public final class PortalStateManager {
     private static final Set<Entity> TRACKED = Collections.newSetFromMap(new WeakHashMap<>());
     
     public static void markEntityInPortal(Entity entity) {
-        if (entity.hasCapability(CapabilityPortalState.PORTAL_STATE, null) && !TRACKED.contains(entity)) {
-            entity.getCapability(CapabilityPortalState.PORTAL_STATE, null).setInPortal(true);
+        IPortalState state = entity.getCapability(CapabilityPortalState.PORTAL_STATE, null);
+        if (state != null && !TRACKED.contains(entity)) {
+            state.setInPortal(true);
             TRACKED.add(entity);
         }
     }
@@ -84,8 +85,9 @@ public final class PortalStateManager {
         for (Entity entity : TRACKED) {
             if (!findPortalBlock(entity)) {
                 if (!findPortalEntity(entity)) {
-                    if (entity.hasCapability(CapabilityPortalState.PORTAL_STATE, null))
-                        entity.getCapability(CapabilityPortalState.PORTAL_STATE, null).setInPortal(false);
+                    IPortalState state = entity.getCapability(CapabilityPortalState.PORTAL_STATE, null);
+                    if (state != null)
+                        state.setInPortal(false);
                     
                     toGetRidOf.add(entity);
                 }

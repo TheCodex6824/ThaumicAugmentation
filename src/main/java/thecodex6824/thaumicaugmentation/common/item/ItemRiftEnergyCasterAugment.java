@@ -97,12 +97,10 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             
             @Override
             public boolean onCastPre(ItemStack caster, FocusWrapper focusPackage, Entity user) {
-                if (stack.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)) {
-                    IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                    // not actually removing energy is intentional
-                    if (energy.extractEnergy(10, true) == 10)
-                        focusPackage.setFocusPower(focusPackage.getFocusPower() * 1.1F);
-                }
+                IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                // not actually removing energy is intentional
+                if (energy != null && energy.extractEnergy(10, true) == 10)
+                    focusPackage.setFocusPower(focusPackage.getFocusPower() * 1.1F);
                 
                 return super.onCastPre(caster, focusPackage, user);
             }
@@ -111,7 +109,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             public boolean onTick(Entity user) {
                 if (!user.getEntityWorld().isRemote && user.getEntityWorld().getTotalWorldTime() % 20 == 0) {
                     IImpetusStorage stackStorage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                    if (stackStorage.canReceive() && stackStorage.getEnergyStored() < stackStorage.getMaxEnergyStored()) {
+                    if (stackStorage != null && stackStorage.canReceive() && stackStorage.getEnergyStored() < stackStorage.getMaxEnergyStored()) {
                         syncNeeded = ImpetusAPI.drainNearbyEnergyIntoStorage(user.getEntityWorld(), stackStorage, 
                                 user.getEntityBoundingBox().grow(user.width * 2, user.height, user.width * 2), 
                                 user.getPositionVector().add(0, user.height / 2, 0));

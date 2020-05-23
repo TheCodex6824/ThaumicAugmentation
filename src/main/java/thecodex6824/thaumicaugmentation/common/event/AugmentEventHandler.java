@@ -80,15 +80,17 @@ public final class AugmentEventHandler {
                 ArrayList<ItemStack> oldList = oldItems.get(entity);
                 ItemStack old = oldList != null && oldList.size() > i ? oldList.get(i) : ItemStack.EMPTY;
                 if (!ItemStack.areItemStacksEqual(current, old)) {
-                    if (old.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
-                        AugmentEventHelper.fireUnequipEvent(old.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), entity);
+                    IAugmentableItem oldCap = old.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                    if (oldCap != null)
+                        AugmentEventHelper.fireUnequipEvent(oldCap, entity);
                 
-                    if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                        AugmentEventHelper.fireEquipEvent(current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), entity);
+                    IAugmentableItem currentCap = current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                    if (currentCap != null) {
+                        AugmentEventHelper.fireEquipEvent(currentCap, entity);
                         hasAugments.add(entity);
                         if (!entity.getEntityWorld().isRemote) {
-                            TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(entity.getEntityId(), totalIndex, current.getCapability(
-                                    CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getSyncNBT()), entity);
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketAugmentableItemSync(entity.getEntityId(), totalIndex,
+                                    currentCap.getSyncNBT()), entity);
                         }
                     }
                 
@@ -131,8 +133,8 @@ public final class AugmentEventHandler {
                 Iterator<ItemStack> iterator = func.apply(event.getEntity()).iterator();
                 while (iterator.hasNext()) {
                     ItemStack current = iterator.next();
-                    if (current.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                        IAugmentableItem cap = current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                    IAugmentableItem cap = current.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                    if (cap != null) {
                         cancel |= AugmentEventHelper.fireTickEvent(cap, event.getEntity());
                         AugmentEventHelper.handleSync(cap, event.getEntity(), totalIndex);
                     }
@@ -154,8 +156,9 @@ public final class AugmentEventHandler {
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
                 if (hasAugments.contains(event.getSource().getTrueSource())) {
                     for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
-                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                            cancel |= AugmentEventHelper.fireHurtEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                        IAugmentableItem cap = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                        if (cap != null) {
+                            cancel |= AugmentEventHelper.fireHurtEntityEvent(cap,
                                     event.getSource().getTrueSource(), event.getEntity());
                         }
                     }
@@ -163,8 +166,9 @@ public final class AugmentEventHandler {
                 
                 if (hasAugments.contains(event.getEntity())) {
                     for (ItemStack stack : func.apply(event.getEntity())) {
-                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                            cancel |= AugmentEventHelper.fireHurtByEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                        IAugmentableItem cap = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                        if (cap != null) {
+                            cancel |= AugmentEventHelper.fireHurtByEntityEvent(cap, 
                                     event.getEntity(), event.getSource().getTrueSource());
                         }
                     }
@@ -183,8 +187,9 @@ public final class AugmentEventHandler {
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
                 if (hasAugments.contains(event.getSource().getTrueSource())) {
                     for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
-                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                            cancel |= AugmentEventHelper.fireDamageEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                        IAugmentableItem cap = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                        if (cap != null) {
+                            cancel |= AugmentEventHelper.fireDamageEntityEvent(cap, 
                                     event.getSource().getTrueSource(), event.getEntity());
                         }
                     }
@@ -192,8 +197,9 @@ public final class AugmentEventHandler {
                 
                 if (hasAugments.contains(event.getEntity())) {
                     for (ItemStack stack : func.apply(event.getEntity())) {
-                        if (stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-                            cancel |= AugmentEventHelper.fireDamagedByEntityEvent(stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
+                        IAugmentableItem cap = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                        if (cap != null) {
+                            cancel |= AugmentEventHelper.fireDamagedByEntityEvent(cap, 
                                     event.getEntity(), event.getSource().getTrueSource());
                         }
                     }
@@ -207,62 +213,69 @@ public final class AugmentEventHandler {
     
     @SubscribeEvent
     public static void onCastPre(CastEvent.Pre event) {
-        if (!event.getEntity().getEntityWorld().isRemote && event.getCasterStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-            if (AugmentEventHelper.fireCastPreEvent(event.getCasterStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                    event.getCasterStack(), event.getFocus(), event.getEntityLiving()))
+        if (!event.getEntity().getEntityWorld().isRemote) {
+            IAugmentableItem cap = event.getCasterStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+            if (cap != null && AugmentEventHelper.fireCastPreEvent(cap, event.getCasterStack(), event.getFocus(),
+                    event.getEntityLiving())) {
+                    
                 event.setCanceled(true);
+            }
         }
     }
     
     @SubscribeEvent
     public static void onCastPost(CastEvent.Post event) {
-        if (!event.getEntity().getEntityWorld().isRemote && event.getCasterStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-            AugmentEventHelper.fireCastPostEvent(event.getCasterStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                    event.getCasterStack(), event.getFocus(), event.getEntityLiving());
-            
-            if (event.getCasterStack().getItem() == TAItems.GAUNTLET) {
-                if (event.getEntity() instanceof EntityPlayerMP)
-                    TANetwork.INSTANCE.sendTo(new PacketEntityCast(event.getEntity().getEntityId()), (EntityPlayerMP) event.getEntity());
+        if (!event.getEntity().getEntityWorld().isRemote) {
+            IAugmentableItem cap = event.getCasterStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+            if (cap != null) {
+                AugmentEventHelper.fireCastPostEvent(cap, event.getCasterStack(), event.getFocus(),
+                        event.getEntityLiving());
                 
-                TANetwork.INSTANCE.sendToAllTracking(new PacketEntityCast(event.getEntity().getEntityId()), event.getEntity());
+                if (event.getCasterStack().getItem() == TAItems.GAUNTLET) {
+                    if (event.getEntity() instanceof EntityPlayerMP)
+                        TANetwork.INSTANCE.sendTo(new PacketEntityCast(event.getEntity().getEntityId()), (EntityPlayerMP) event.getEntity());
+                    
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketEntityCast(event.getEntity().getEntityId()), event.getEntity());
+                }
             }
         }
     }
     
     @SubscribeEvent
     public static void onInteractEntity(PlayerInteractEvent.EntityInteract event) {
-        if (event.getItemStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-            if (AugmentEventHelper.fireInteractEntityEvent(event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                    event.getEntityPlayer(), event.getItemStack(), event.getTarget(), event.getHand()))
-                event.setCanceled(true);
+        IAugmentableItem cap = event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+        if (cap != null && AugmentEventHelper.fireInteractEntityEvent(cap, event.getEntityPlayer(), event.getItemStack(),
+                event.getTarget(), event.getHand())) {
+            
+            event.setCanceled(true);
         }
     }
     
     @SubscribeEvent
     public static void onInteractBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getItemStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-            if (AugmentEventHelper.fireInteractBlockEvent(event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                    event.getEntityPlayer(), event.getItemStack(), event.getPos(), event.getFace(), event.getHand()))
-                event.setCanceled(true);
+        IAugmentableItem cap = event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+        if (cap != null && AugmentEventHelper.fireInteractBlockEvent(cap, event.getEntityPlayer(), event.getItemStack(),
+                event.getPos(), event.getFace(), event.getHand())) {
+                
+            event.setCanceled(true);
         }
     }
     
     @SubscribeEvent
     public static void onInteractAir(PlayerInteractEvent.RightClickItem event) {
-        if (event.getItemStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-            if (AugmentEventHelper.fireInteractAirEvent(event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                    event.getEntityPlayer(), event.getItemStack(), event.getHand()))
-                event.setCanceled(true);
+        IAugmentableItem cap = event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+        if (cap != null && AugmentEventHelper.fireInteractAirEvent(cap, event.getEntityPlayer(), event.getItemStack(),
+                event.getHand())) {
+                
+            event.setCanceled(true);
         }
     }
     
     @SubscribeEvent
     public static void onUseItem(LivingEntityUseItemEvent.Tick event) {
-        if (event.getItem().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-            if (AugmentEventHelper.fireUseItemEvent(event.getItem().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), 
-                    event.getEntity(), event.getItem()))
-                event.setCanceled(true);
-        }
+        IAugmentableItem cap = event.getItem().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+        if (cap != null && AugmentEventHelper.fireUseItemEvent(cap, event.getEntity(), event.getItem()))
+            event.setCanceled(true);
     }
     
 }

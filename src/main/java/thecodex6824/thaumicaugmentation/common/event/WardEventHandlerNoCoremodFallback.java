@@ -95,14 +95,12 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
                     Task task = entry.getValue();
                     if (task.getType() == 0 && event.world.isBlockLoaded(task.getPos())) {
                         Chunk chunk = event.world.getChunk(task.getPos());
-                        if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                            if (storage.hasWard(task.getPos())) {
-                                task.setPriority(Byte.MIN_VALUE);
-                                task.setReserved(true);
-                                task.setCompletion(true);
-                                tasks.remove(entry.getKey());
-                            }
+                        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                        if (storage != null && storage.hasWard(task.getPos())) {
+                            task.setPriority(Byte.MIN_VALUE);
+                            task.setReserved(true);
+                            task.setCompletion(true);
+                            tasks.remove(entry.getKey());
                         }
                     }
                 }
@@ -115,19 +113,17 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
     public void onBlockBreak(BlockEvent.BreakEvent event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos)) {
-                if (!WardHelper.doesEntityHaveSpecialPermission(event.getPlayer())) {
-                    event.setCanceled(true);
-                    if (event.getPlayer() instanceof FakePlayer) {
-                        if (event.getPlayer().getName().equals("FakeThaumcraftBore"))
-                            handleBoreNotCaringAboutCanceledEvents((FakePlayer) event.getPlayer());
-                    }
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null && storage.hasWard(pos)) {
+            if (!WardHelper.doesEntityHaveSpecialPermission(event.getPlayer())) {
+                event.setCanceled(true);
+                if (event.getPlayer() instanceof FakePlayer) {
+                    if (event.getPlayer().getName().equals("FakeThaumcraftBore"))
+                        handleBoreNotCaringAboutCanceledEvents((FakePlayer) event.getPlayer());
                 }
-                else if (storage instanceof IWardStorageServer)
-                    ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
             }
+            else if (storage instanceof IWardStorageServer)
+                ((IWardStorageServer) storage).clearWard(pos, event.getWorld());
         }
     }
     
@@ -136,15 +132,15 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
         BlockPos pos = event.getPos();
         EntityPlayer player = event.getEntityPlayer();
         Chunk chunk = player.getEntityWorld().getChunk(pos);
-        if (chunk != null && chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && !WardHelper.doesEntityHaveSpecialPermission(player)) {
-                RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
-                        player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()).add(new Vec3d(pos)), false, false, true);
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null && storage.hasWard(pos) && !WardHelper.doesEntityHaveSpecialPermission(player)) {
+            RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
+                    player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()).add(new Vec3d(pos)), false, false, true);
+            if (ray != null)
                 sendWardParticles(event.getEntityPlayer().getEntityWorld(), pos, ray.sideHit);
-                event.setCanceled(true);
-                event.setNewSpeed(0.0F);
-            }
+            
+            event.setCanceled(true);
+            event.setNewSpeed(0.0F);
         }
     }
     
@@ -159,15 +155,13 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
                 BlockPos pos = notifier.offset(facing);
                 if (event.getWorld().isChunkGeneratedAt(pos.getX() >> 4, pos.getZ() >> 4) && !event.getWorld().isAirBlock(pos)) {
                     Chunk chunk = event.getWorld().getChunk(pos);
-                    if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                        if (storage.hasWard(pos)) {
+                    IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                    if (storage != null && storage.hasWard(pos)) {
+                        event.setCanceled(true);
+                        if (event.getState().getMaterial() == Material.FIRE) {
+                            event.getWorld().setBlockState(notifier, Blocks.AIR.getDefaultState(), 2);
                             event.setCanceled(true);
-                            if (event.getState().getMaterial() == Material.FIRE) {
-                                event.getWorld().setBlockState(notifier, Blocks.AIR.getDefaultState(), 2);
-                                event.setCanceled(true);
-                                return;
-                            }
+                            return;
                         }
                     }
                 }
@@ -182,8 +176,8 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
         while (iterator.hasNext()) {
             BlockPos pos = iterator.next();
             Chunk chunk = event.getWorld().getChunk(pos);
-            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && 
-                    chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null).hasWard(pos)) {
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage != null && storage.hasWard(pos)) {
                 blockers.add(pos);
                 iterator.remove();
             }
@@ -215,11 +209,9 @@ public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
     public void onGrow(CropGrowEvent.Pre event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos))
-                event.setResult(Result.DENY);
-        }
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null && storage.hasWard(pos))
+            event.setResult(Result.DENY);
     }
     
     @Override

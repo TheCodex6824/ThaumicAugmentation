@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class MorphicEventHandler {
@@ -50,8 +51,9 @@ public class MorphicEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onUseStart(LivingEntityUseItemEvent.Start event) {
-        if (event.getItem().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
-            ItemStack func = event.getItem().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack();
+        IMorphicTool tool = event.getItem().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        if (tool != null) {
+            ItemStack func = tool.getFunctionalStack();
             if (!func.isEmpty()) {
                 LivingEntityUseItemEvent.Start newEvent = new LivingEntityUseItemEvent.Start(event.getEntityLiving(),
                         func, event.getDuration());
@@ -64,8 +66,9 @@ public class MorphicEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onUseTick(LivingEntityUseItemEvent.Tick event) {
-        if (event.getItem().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
-            ItemStack func = event.getItem().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack();
+        IMorphicTool tool = event.getItem().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        if (tool != null) {
+            ItemStack func = tool.getFunctionalStack();
             if (!func.isEmpty()) {
                 LivingEntityUseItemEvent.Tick newEvent = new LivingEntityUseItemEvent.Tick(event.getEntityLiving(),
                         func, event.getDuration());
@@ -78,8 +81,9 @@ public class MorphicEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onUseStop(LivingEntityUseItemEvent.Stop event) {
-        if (event.getItem().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
-            ItemStack func = event.getItem().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack();
+        IMorphicTool tool = event.getItem().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        if (tool != null) {
+            ItemStack func = tool.getFunctionalStack();
             if (!func.isEmpty()) {
                 LivingEntityUseItemEvent.Stop newEvent = new LivingEntityUseItemEvent.Stop(event.getEntityLiving(),
                         func, event.getDuration());
@@ -93,8 +97,9 @@ public class MorphicEventHandler {
     @SuppressWarnings("null")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onUseFinish(LivingEntityUseItemEvent.Finish event) {
-        if (event.getItem().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
-            ItemStack func = event.getItem().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack();
+        IMorphicTool tool = event.getItem().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        if (tool != null) {
+            ItemStack func = tool.getFunctionalStack();
             if (!func.isEmpty()) {
                 LivingEntityUseItemEvent.Finish newEvent = new LivingEntityUseItemEvent.Finish(event.getEntityLiving(),
                         func, event.getDuration(),
@@ -109,14 +114,14 @@ public class MorphicEventHandler {
     @SuppressWarnings("null")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
-        boolean fromMorphic = event.getFrom().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null) &&
-                !event.getFrom().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty();
-        boolean toMorphic = event.getTo().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null) &&
-                !event.getTo().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty();
+        IMorphicTool from = event.getFrom().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        IMorphicTool to = event.getTo().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        boolean fromMorphic = from != null && !from.getFunctionalStack().isEmpty();
+        boolean toMorphic = to != null && !to.getFunctionalStack().isEmpty();
         if (fromMorphic || toMorphic) {
             LivingEquipmentChangeEvent newEvent = new LivingEquipmentChangeEvent(event.getEntityLiving(), event.getSlot(),
-                    fromMorphic ? event.getFrom().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack() : event.getFrom(),
-                    toMorphic ? event.getTo().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack() : event.getFrom());
+                    fromMorphic ? from.getFunctionalStack() : event.getFrom(),
+                    toMorphic ? to.getFunctionalStack() : event.getFrom());
             MinecraftForge.EVENT_BUS.post(newEvent);
         }
     }
@@ -135,10 +140,11 @@ public class MorphicEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onPlayerInteractEntity(PlayerInteractEvent.EntityInteract event) {
-        if (event.getItemStack().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
+        IMorphicTool tool = event.getItemStack().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        if (tool != null) {
             ItemStack old = event.getItemStack();
-            if (!old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
-                setStackSilently(event.getEntityPlayer(), event.getHand(), old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
+            if (!tool.getFunctionalStack().isEmpty()) {
+                setStackSilently(event.getEntityPlayer(), event.getHand(), tool.getFunctionalStack());
                 PlayerInteractEvent.EntityInteract newEvent = new PlayerInteractEvent.EntityInteract(
                         event.getEntityPlayer(), event.getHand(), event.getTarget());
                 MinecraftForge.EVENT_BUS.post(newEvent);
@@ -150,10 +156,11 @@ public class MorphicEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onPlayerInteractEntitySpecific(PlayerInteractEvent.EntityInteractSpecific event) {
-        if (event.getItemStack().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
+        IMorphicTool tool = event.getItemStack().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        if (tool != null) {
             ItemStack old = event.getItemStack();
-            if (!old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
-                setStackSilently(event.getEntityPlayer(), event.getHand(), old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
+            if (!tool.getFunctionalStack().isEmpty()) {
+                setStackSilently(event.getEntityPlayer(), event.getHand(), tool.getFunctionalStack());
                 PlayerInteractEvent.EntityInteractSpecific newEvent = new PlayerInteractEvent.EntityInteractSpecific(
                         event.getEntityPlayer(), event.getHand(), event.getTarget(), event.getLocalPos());
                 MinecraftForge.EVENT_BUS.post(newEvent);
@@ -165,10 +172,11 @@ public class MorphicEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onPlayerInteractLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        if (event.getItemStack().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
+        IMorphicTool tool = event.getItemStack().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        if (tool != null) {
             ItemStack old = event.getItemStack();
-            if (!old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
-                setStackSilently(event.getEntityPlayer(), event.getHand(), old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
+            if (!tool.getFunctionalStack().isEmpty()) {
+                setStackSilently(event.getEntityPlayer(), event.getHand(), tool.getFunctionalStack());
                 PlayerInteractEvent.LeftClickBlock newEvent = new PlayerInteractEvent.LeftClickBlock(
                         event.getEntityPlayer(), event.getPos(), event.getFace(), event.getHitVec());
                 MinecraftForge.EVENT_BUS.post(newEvent);
@@ -182,10 +190,11 @@ public class MorphicEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onPlayerInteractRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getItemStack().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
+        IMorphicTool tool = event.getItemStack().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        if (tool != null) {
             ItemStack old = event.getItemStack();
-            if (!old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
-                setStackSilently(event.getEntityPlayer(), event.getHand(), old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
+            if (!tool.getFunctionalStack().isEmpty()) {
+                setStackSilently(event.getEntityPlayer(), event.getHand(), tool.getFunctionalStack());
                 PlayerInteractEvent.RightClickBlock newEvent = new PlayerInteractEvent.RightClickBlock(
                         event.getEntityPlayer(), event.getHand(), event.getPos(), event.getFace(), event.getHitVec());
                 MinecraftForge.EVENT_BUS.post(newEvent);
@@ -199,10 +208,11 @@ public class MorphicEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onPlayerInteractRightClickItem(PlayerInteractEvent.RightClickItem event) {
-        if (event.getItemStack().hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
+        IMorphicTool tool = event.getItemStack().getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        if (tool != null) {
             ItemStack old = event.getItemStack();
-            if (!old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
-                setStackSilently(event.getEntityPlayer(), event.getHand(), old.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
+            if (!tool.getFunctionalStack().isEmpty()) {
+                setStackSilently(event.getEntityPlayer(), event.getHand(), tool.getFunctionalStack());
                 PlayerInteractEvent.RightClickItem newEvent = new PlayerInteractEvent.RightClickItem(
                         event.getEntityPlayer(), event.getHand());
                 MinecraftForge.EVENT_BUS.post(newEvent);
@@ -217,15 +227,14 @@ public class MorphicEventHandler {
         if (event.getPlayer() != null && event.getPlayer().getActiveHand() != null) {
             EnumHand hand = event.getPlayer().getActiveHand();
             ItemStack stack = event.getPlayer().getHeldItem(hand);
-            if (stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
-                if (!stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
-                    setStackSilently(event.getPlayer(), hand, stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
-                    BlockEvent.BreakEvent newEvent = new BlockEvent.BreakEvent(event.getWorld(), event.getPos(),
-                            event.getState(), event.getPlayer());
-                    MinecraftForge.EVENT_BUS.post(newEvent);
-                    setStackSilently(event.getPlayer(), hand, stack);
-                    event.setCanceled(newEvent.isCanceled());
-                }
+            IMorphicTool tool = stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+            if (tool != null && !tool.getFunctionalStack().isEmpty()) {
+                setStackSilently(event.getPlayer(), hand, tool.getFunctionalStack());
+                BlockEvent.BreakEvent newEvent = new BlockEvent.BreakEvent(event.getWorld(), event.getPos(),
+                        event.getState(), event.getPlayer());
+                MinecraftForge.EVENT_BUS.post(newEvent);
+                setStackSilently(event.getPlayer(), hand, stack);
+                event.setCanceled(newEvent.isCanceled());
             }
         }
     }
@@ -235,17 +244,16 @@ public class MorphicEventHandler {
         if (event.getHarvester() != null && event.getHarvester().getActiveHand() != null) {
             EnumHand hand = event.getHarvester().getActiveHand();
             ItemStack stack = event.getHarvester().getHeldItem(hand);
-            if (stack.hasCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)) {
-                if (!stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack().isEmpty()) {
-                    setStackSilently(event.getHarvester(), hand, stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null).getFunctionalStack());
-                    BlockEvent.HarvestDropsEvent newEvent = new BlockEvent.HarvestDropsEvent(event.getWorld(), event.getPos(),
-                            event.getState(), event.getFortuneLevel(), event.getDropChance(), event.getDrops(),
-                            event.getHarvester(), event.isSilkTouching());
-                    MinecraftForge.EVENT_BUS.post(newEvent);
-                    setStackSilently(event.getHarvester(), hand, stack);
-                    event.setDropChance(newEvent.getDropChance());
-                    // can't cancel
-                }
+            IMorphicTool tool = stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+            if (tool != null && !tool.getFunctionalStack().isEmpty()) {
+                setStackSilently(event.getHarvester(), hand, tool.getFunctionalStack());
+                BlockEvent.HarvestDropsEvent newEvent = new BlockEvent.HarvestDropsEvent(event.getWorld(), event.getPos(),
+                        event.getState(), event.getFortuneLevel(), event.getDropChance(), event.getDrops(),
+                        event.getHarvester(), event.isSilkTouching());
+                MinecraftForge.EVENT_BUS.post(newEvent);
+                setStackSilently(event.getHarvester(), hand, stack);
+                event.setDropChance(newEvent.getDropChance());
+                // can't cancel
             }
         }
     }

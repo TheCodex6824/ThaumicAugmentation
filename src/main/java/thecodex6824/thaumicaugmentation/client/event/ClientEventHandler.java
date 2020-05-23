@@ -91,10 +91,10 @@ public final class ClientEventHandler {
     private static void handleAugmentTooltips(ItemTooltipEvent event, IAugmentableItem cap) {
         LinkedList<LinkedList<String>> tooltip = new LinkedList<>();
         for (ItemStack augment : cap.getAllAugments()) {
-            if (augment.hasCapability(CapabilityAugment.AUGMENT, null)) {
+            IAugment aug = augment.getCapability(CapabilityAugment.AUGMENT, null);
+            if (aug != null) {
                 LinkedList<String> thisTooltip = new LinkedList<>();
                 thisTooltip.add(augment.getDisplayName());
-                IAugment aug = augment.getCapability(CapabilityAugment.AUGMENT, null);
                 if (aug.hasAdditionalAugmentTooltip())
                     aug.appendAdditionalAugmentTooltip(thisTooltip);
                 
@@ -114,13 +114,11 @@ public final class ClientEventHandler {
     
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event) {
-        if (event.getItemStack().hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
-            IAugmentableItem cap = event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-            if (cap.isAugmented()) {
-                event.getToolTip().add(TextFormatting.RED + new TextComponentTranslation("thaumicaugmentation.text.augmented", 
-                        TextFormatting.RESET, cap.getUsedAugmentSlots(), cap.getTotalAugmentSlots()).getFormattedText());
-                handleAugmentTooltips(event, cap);
-            }
+        IAugmentableItem cap = event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+        if (cap != null && cap.isAugmented()) {
+            event.getToolTip().add(TextFormatting.RED + new TextComponentTranslation("thaumicaugmentation.text.augmented", 
+                    TextFormatting.RESET, cap.getUsedAugmentSlots(), cap.getTotalAugmentSlots()).getFormattedText());
+            handleAugmentTooltips(event, cap);
         }
     }
     

@@ -126,12 +126,13 @@ public class WardEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onTrackChunk(ChunkWatchEvent.Watch event) {
-        if (event.getChunkInstance() != null && event.getPlayer() != null && event.getChunkInstance().hasCapability(CapabilityWardStorage.WARD_STORAGE, null) && 
-                event.getChunkInstance().getCapability(CapabilityWardStorage.WARD_STORAGE, null) instanceof IWardStorageServer) {
-            IWardStorageServer storage = (IWardStorageServer) event.getChunkInstance().getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            NBTTagCompound sync = storage.fullSyncToClient(event.getChunkInstance(), event.getPlayer().getUniqueID());
-            if (sync != null)
-                TANetwork.INSTANCE.sendTo(new PacketFullWardSync(sync), event.getPlayer());
+        if (event.getChunkInstance() != null && event.getPlayer() != null) {
+            IWardStorage storage = event.getChunkInstance().getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage instanceof IWardStorageServer) {
+                NBTTagCompound sync = ((IWardStorageServer) storage).fullSyncToClient(event.getChunkInstance(), event.getPlayer().getUniqueID());
+                if (sync != null)
+                    TANetwork.INSTANCE.sendTo(new PacketFullWardSync(sync), event.getPlayer());
+            }
         }
     }
     
@@ -162,14 +163,12 @@ public class WardEventHandler {
     public void onBlockBreak(BlockEvent.BreakEvent event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos)) { 
-                if (!WardHelper.doesEntityHaveSpecialPermission(event.getPlayer()))
-                    event.setCanceled(true);
-                else if (storage instanceof IWardStorageServer)
-                    ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
-            }
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null && storage.hasWard(pos)) { 
+            if (!WardHelper.doesEntityHaveSpecialPermission(event.getPlayer()))
+                event.setCanceled(true);
+            else if (storage instanceof IWardStorageServer)
+                ((IWardStorageServer) storage).clearWard(pos, event.getWorld());
         }
     }
     
@@ -177,8 +176,8 @@ public class WardEventHandler {
     public void onBlockPunch(PlayerInteractEvent.LeftClickBlock event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null) {
             if (storage.hasWard(pos) && !WardHelper.doesEntityHaveSpecialPermission(event.getEntityPlayer())) {
                 EntityPlayer player = event.getEntityPlayer();
                 RayTraceResult ray = player.getEntityWorld().rayTraceBlocks(player.getPositionEyes(1.0F), player.getLookVec().scale(
@@ -204,11 +203,9 @@ public class WardEventHandler {
     public void onBlockInteract(PlayerInteractEvent.RightClickBlock event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && !WardHelper.doesEntityHaveSpecialPermission(event.getEntityPlayer()))
-                event.setUseBlock(Result.DENY);
-        }
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null && storage.hasWard(pos) && !WardHelper.doesEntityHaveSpecialPermission(event.getEntityPlayer()))
+            event.setUseBlock(Result.DENY);
     }
     
     protected static void doAllTheNotifications(World world, BlockPos pos, EnumSet<EnumFacing> notify) {
@@ -226,14 +223,10 @@ public class WardEventHandler {
                 BlockPos pos = notifier.offset(facing);
                 if (event.getWorld().isChunkGeneratedAt(pos.getX() >> 4, pos.getZ() >> 4) && !event.getWorld().isAirBlock(pos)) {
                     Chunk chunk = event.getWorld().getChunk(pos);
-                    if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                        // sticky pistons are broken while warded and don't set the piston head to air, relying on the head to do it instead
-                        // then again one can say this entire function is broken, so...
-                        if (storage.hasWard(pos)) {// && event.getWorld().getBlockState(pos).getBlock() != Blocks.PISTON_HEAD) {
-                            event.setCanceled(true);
-                            sidesToRemove.add(facing);
-                        }
+                    IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                    if (storage != null && storage.hasWard(pos)) {
+                        event.setCanceled(true);
+                        sidesToRemove.add(facing);
                     }
                 }
             }
@@ -243,11 +236,9 @@ public class WardEventHandler {
             TileEntity check = event.getWorld().getTileEntity(event.getPos());
             if (event.getWorld().isAirBlock(event.getPos()) || !WardHelper.isTileWardAllowed(check)) {
                 Chunk chunk = event.getWorld().getChunk(event.getPos());
-                if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                    IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                    if (storage instanceof IWardStorageServer && storage.hasWard(event.getPos()))
-                        ((IWardStorageServer) storage).clearWard(event.getWorld(), event.getPos());
-                }
+                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                if (storage instanceof IWardStorageServer && storage.hasWard(event.getPos()))
+                    ((IWardStorageServer) storage).clearWard(event.getPos(), event.getWorld());
             }
         }
     }
@@ -258,11 +249,9 @@ public class WardEventHandler {
         if (!(event instanceof BlockEvent.MultiPlaceEvent)) {
             BlockPos pos = event.getPos();
             Chunk chunk = event.getWorld().getChunk(pos);
-            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage instanceof IWardStorageServer && storage.hasWard(event.getPos()))
-                    ((IWardStorageServer) storage).clearWard(event.getWorld(), event.getPos());
-            }
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage != null && storage instanceof IWardStorageServer && storage.hasWard(event.getPos()))
+                ((IWardStorageServer) storage).clearWard(event.getPos(), event.getWorld());
         }
     }
     
@@ -271,16 +260,14 @@ public class WardEventHandler {
         for (BlockSnapshot b : event.getReplacedBlockSnapshots()) {
             BlockPos pos = b.getPos();
             Chunk chunk = event.getWorld().getChunk(pos);
-            if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-                IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage.hasWard(pos)) {
-                    if (!(event.getEntity() instanceof EntityPlayer) || !WardHelper.doesEntityHaveSpecialPermission((EntityPlayer) event.getEntity())) {
-                        event.setCanceled(true);
-                        return;
-                    }
-                    else if (storage instanceof IWardStorageServer)
-                        ((IWardStorageServer) storage).clearWard(event.getWorld(), pos);
+            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+            if (storage != null && storage.hasWard(pos)) {
+                if (!(event.getEntity() instanceof EntityPlayer) || !WardHelper.doesEntityHaveSpecialPermission((EntityPlayer) event.getEntity())) {
+                    event.setCanceled(true);
+                    return;
                 }
+                else if (storage instanceof IWardStorageServer)
+                    ((IWardStorageServer) storage).clearWard(pos, event.getWorld());
             }
         }
     }
@@ -289,14 +276,12 @@ public class WardEventHandler {
     public void onDestruction(LivingDestroyBlockEvent event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getEntity().getEntityWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos)) {
-                if (!(event.getEntity() instanceof EntityPlayer) || !WardHelper.doesEntityHaveSpecialPermission((EntityPlayer) event.getEntity()))
-                    event.setCanceled(true);
-                else if (storage instanceof IWardStorageServer)
-                    ((IWardStorageServer) storage).clearWard(event.getEntity().getEntityWorld(), pos);
-            }
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null && storage.hasWard(pos)) {
+            if (!(event.getEntity() instanceof EntityPlayer) || !WardHelper.doesEntityHaveSpecialPermission((EntityPlayer) event.getEntity()))
+                event.setCanceled(true);
+            else if (storage instanceof IWardStorageServer)
+                ((IWardStorageServer) storage).clearWard(pos, event.getEntity().getEntityWorld());
         }
     }
     
@@ -304,44 +289,36 @@ public class WardEventHandler {
     public void onBonemeal(BonemealEvent event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && !WardHelper.doesEntityHaveSpecialPermission(event.getEntityPlayer()))
-                event.setCanceled(true);
-        }
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null && storage.hasWard(pos) && !WardHelper.doesEntityHaveSpecialPermission(event.getEntityPlayer()))
+            event.setCanceled(true);
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onHoe(UseHoeEvent event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && !WardHelper.doesEntityHaveSpecialPermission(event.getEntityPlayer()))
-                event.setCanceled(true);
-        }
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null && storage.hasWard(pos) && !WardHelper.doesEntityHaveSpecialPermission(event.getEntityPlayer()))
+            event.setCanceled(true);
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onTrample(FarmlandTrampleEvent event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !WardHelper.doesEntityHaveSpecialPermission((EntityPlayer) event.getEntity())))
-                event.setCanceled(true);
-        }
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null && storage.hasWard(pos) && (!(event.getEntity() instanceof EntityPlayer) || !WardHelper.doesEntityHaveSpecialPermission((EntityPlayer) event.getEntity())))
+            event.setCanceled(true);
     }
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onFluidPlaceBlock(FluidPlaceBlockEvent event) {
         BlockPos pos = event.getPos();
         Chunk chunk = event.getWorld().getChunk(pos);
-        if (chunk.hasCapability(CapabilityWardStorage.WARD_STORAGE, null)) {
-            IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-            if (storage.hasWard(pos))
-                event.setCanceled(true);
-        }
+        IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage != null && storage.hasWard(pos))
+            event.setCanceled(true);
     }
     
     @SubscribeEvent(priority = EventPriority.LOWEST)

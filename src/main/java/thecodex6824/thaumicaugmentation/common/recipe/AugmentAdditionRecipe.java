@@ -27,6 +27,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 
 public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
@@ -60,10 +61,13 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
             }
         }
         
-        return !augmentable.isEmpty() && !augment.isEmpty() && augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getNextAvailableSlot() != -1 &&
-                augment.getCapability(CapabilityAugment.AUGMENT, null).canBeAppliedToItem(augmentable) &&
-                augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).isAugmentAcceptable(
-                augment, augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getNextAvailableSlot());
+        IAugmentableItem augmentableCap = augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+        IAugment augmentCap = augment.getCapability(CapabilityAugment.AUGMENT, null);
+        int nextSlot = augmentableCap.getNextAvailableSlot();
+        return !augmentable.isEmpty() && !augment.isEmpty() && nextSlot != -1 &&
+                augmentCap.canBeAppliedToItem(augmentable) &&
+                augmentableCap.isAugmentAcceptable(
+                augment, nextSlot);
     }
 
     @Override

@@ -100,10 +100,9 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                     fracture.setLinkedPosition(scaled);
                     fracture.setDestinationBiome(linkedBiome);
                     world.spawnEntity(fracture);
-                    if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
-                        IFractureLocations loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
+                    IFractureLocations loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
+                    if (loc != null) {
                         loc.addFractureLocation(placeAt);
-                        
                         // onLoad in Chunk is called before populate, so this catches new fractures
                         FractureLocatorSearchManager.addFractureLocation(world, placeAt);
                     }
@@ -126,8 +125,8 @@ public class WorldGenDimensionalFracture extends WorldGenerator {
                     fracture.setLinkedPosition(scaled);
                     fracture.setDestinationBiome(linkedBiome);
                     world.spawnEntity(fracture);
-                    if (world.getChunk(placeAt).hasCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null)) {
-                        IFractureLocations loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
+                    IFractureLocations loc = world.getChunk(placeAt).getCapability(CapabilityFractureLocations.FRACTURE_LOCATIONS, null);
+                    if (loc != null) {
                         loc.addFractureLocation(placeAt);
                         FractureLocatorSearchManager.addFractureLocation(world, placeAt);
                     }

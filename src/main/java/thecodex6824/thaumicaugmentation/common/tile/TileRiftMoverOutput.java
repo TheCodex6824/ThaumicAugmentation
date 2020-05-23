@@ -204,24 +204,26 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
             if (!world.isRemote && ticks++ % 10 == 0) {
                 TileEntity below = world.getTileEntity(pos.down());
                 if (rift == null || rift.isDead || rift.getRiftSize() < 1 || rift.getCollapse() ||
-                        below == null || !below.hasCapability(CapabilityRiftJar.RIFT_JAR, null) || 
-                        !below.getCapability(CapabilityRiftJar.RIFT_JAR, null).hasRift()) {
+                        below == null) {
                     
-                    if (rift != null) {
-                        if (rift.getCollapse())
-                            rift.setCollapse(false);
+                    IRiftJar jar = below != null ? below.getCapability(CapabilityRiftJar.RIFT_JAR, null) : null;
+                    if (jar == null || !jar.hasRift()) {
+                        if (rift != null) {
+                            if (rift.getCollapse())
+                                rift.setCollapse(false);
+                            
+                            rift.setRiftSize(0);
+                        }
                         
-                        rift.setRiftSize(0);
+                        if (jar != null)
+                            jar.setRift(new FluxRiftReconstructor(0, 0));
+                        
+                        AuraHelper.polluteAura(world, pos, targetSize, true);
+                        operating = false;
+                        markDirty();
+                        world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
+                        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                     }
-                    
-                    if (below != null && below.hasCapability(CapabilityRiftJar.RIFT_JAR, null))
-                        below.getCapability(CapabilityRiftJar.RIFT_JAR, null).setRift(new FluxRiftReconstructor(0, 0));
-                    
-                    AuraHelper.polluteAura(world, pos, targetSize, true);
-                    operating = false;
-                    markDirty();
-                    world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
-                    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                 }
                 else if (AuraHelper.drainVis(world, pos, 0.25F, false) >= 0.25F - 0.0001) {
                     rift.setRiftSize(rift.getRiftSize() + 1);

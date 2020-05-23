@@ -129,13 +129,16 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     protected void dropContents(World world, BlockPos pos) {
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
-            if (te.hasCapability(CapabilityWardedInventory.WARDED_INVENTORY, null)) {
+            if (te != null) {
                 IWardedInventory items = te.getCapability(CapabilityWardedInventory.WARDED_INVENTORY, null);
-                for (int i = 0; i < items.getSlots(); ++i) {
-                    ItemStack stack = items.getStackInSlot(i);
-                    if (stack != null && !stack.isEmpty())
-                        world.spawnEntity(new EntityItem(world, pos.getX() + 0.5 + world.rand.nextGaussian() / 2, 
-                                pos.getY() + 0.5 + Math.abs(world.rand.nextGaussian() / 2), pos.getZ() + 0.5 + world.rand.nextGaussian() / 2, stack));
+                if (items != null) {
+                    for (int i = 0; i < items.getSlots(); ++i) {
+                        ItemStack stack = items.getStackInSlot(i);
+                        if (!stack.isEmpty()) {
+                            world.spawnEntity(new EntityItem(world, pos.getX() + 0.5 + world.rand.nextGaussian() / 2, 
+                                    pos.getY() + 0.5 + Math.abs(world.rand.nextGaussian() / 2), pos.getZ() + 0.5 + world.rand.nextGaussian() / 2, stack));
+                        }
+                    }
                 }
             }
         }
@@ -151,16 +154,20 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
             EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-        if (!world.isRemote && world.getTileEntity(pos).hasCapability(CapabilityWardedTile.WARDED_TILE, null)) {
-            if (world.getTileEntity(pos).getCapability(CapabilityWardedTile.WARDED_TILE, null).hasPermission(player)) {
-                if (!(player.getHeldItem(hand).getItem() instanceof ICaster) || !player.isSneaking())
-                    player.openGui(ThaumicAugmentation.instance, GUIHandler.TAInventory.WARDED_CHEST.getID(), world, 
-                            pos.getX(), pos.getY(), pos.getZ());
-
-                return true;
+        if (!world.isRemote) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile != null) {
+                IWardedTile warded = tile.getCapability(CapabilityWardedTile.WARDED_TILE, null);
+                if (warded != null && warded.hasPermission(player)) {
+                    if (!(player.getHeldItem(hand).getItem() instanceof ICaster) || !player.isSneaking())
+                        player.openGui(ThaumicAugmentation.instance, GUIHandler.TAInventory.WARDED_CHEST.getID(), world, 
+                                pos.getX(), pos.getY(), pos.getZ());
+    
+                    return true;
+                }
+                else
+                    return false;
             }
-            else
-                return false;
         }
 
         return true;

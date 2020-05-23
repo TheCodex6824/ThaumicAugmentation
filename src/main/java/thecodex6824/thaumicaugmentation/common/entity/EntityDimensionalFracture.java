@@ -57,6 +57,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.api.entity.IPortalEntity;
+import thecodex6824.thaumicaugmentation.api.entity.IPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
@@ -103,7 +104,8 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     
     protected void onCollide(Entity entity) {
         if (!world.isRemote && entity.timeUntilPortal == 0 && !entity.isRiding() && !entity.isBeingRidden() && entity.isNonBoss()) {
-            if (!entity.hasCapability(CapabilityPortalState.PORTAL_STATE, null) || !entity.getCapability(CapabilityPortalState.PORTAL_STATE, null).isInPortal()) {
+            IPortalState state = entity.getCapability(CapabilityPortalState.PORTAL_STATE, null);
+            if (state == null || !state.isInPortal()) {
                 if (isOpen()) {
                     if (linkInvalid) {
                         if (world.getTotalWorldTime() % 20 == 0 && entity instanceof EntityPlayer)
@@ -207,8 +209,9 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                 guardian.setAbsorptionAmount(guardian.getAbsorptionAmount() + 
                         (float) guardian.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue() / 2);
                 guardian.timeUntilPortal = guardian.getPortalCooldown();
-                if (guardian.hasCapability(CapabilityPortalState.PORTAL_STATE, null))
-                    guardian.getCapability(CapabilityPortalState.PORTAL_STATE, null).setInPortal(true);
+                IPortalState state = guardian.getCapability(CapabilityPortalState.PORTAL_STATE, null);
+                if (state != null)
+                    state.setInPortal(true);
                 
                 world.spawnEntity(guardian);
             }

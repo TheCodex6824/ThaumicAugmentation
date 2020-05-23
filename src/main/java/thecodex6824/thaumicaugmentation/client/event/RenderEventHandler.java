@@ -60,6 +60,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -464,10 +465,12 @@ public class RenderEventHandler {
         if (!nodes.isEmpty()) {
             List<IImpetusNode> renderNodes = nodes.stream()
                     .filter(node -> {
-                        return eyePos.squareDistanceTo(new Vec3d(node.getLocation().getPos())) < 128 * 128 &&
-                        world.isBlockLoaded(node.getLocation().getPos()) &&
-                        world.getTileEntity(node.getLocation().getPos()) != null &&
-                        world.getTileEntity(node.getLocation().getPos()).hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                        if (world.isBlockLoaded(node.getLocation().getPos())) {
+                            TileEntity tile = world.getTileEntity(node.getLocation().getPos());
+                            return tile != null && tile.hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null) && eyePos.squareDistanceTo(new Vec3d(node.getLocation().getPos())) < 128 * 128;   
+                        }
+                        
+                        return false;
                     })
                     .sorted(Comparator.<IImpetusNode>comparingDouble(node -> eyePos.squareDistanceTo(new Vec3d(node.getLocation().getPos()))).reversed())
                     .collect(Collectors.toList());
