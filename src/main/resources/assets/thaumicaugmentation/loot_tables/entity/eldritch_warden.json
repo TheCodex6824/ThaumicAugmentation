@@ -1,0 +1,44 @@
+{
+	"type": "entity",
+	"pools": [
+		{
+			"name": "pearl",
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "thaumcraft:primordial_pearl",
+                    "weight": 1
+                }
+            ]
+		},
+        {
+            "name": "loot_bag",
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "thaumcraft:loot_bag",
+                    "weight": 1,
+                    "functions": [
+                        {
+                            "function": "minecraft:set_data",
+                            "data": 2
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "research_notes",
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "thaumicaugmentation:research_notes",
+                    "weight": 1
+                }
+            ]
+        }
+	]
+}

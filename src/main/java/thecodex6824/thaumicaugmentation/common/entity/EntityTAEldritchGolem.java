@@ -23,6 +23,8 @@ package thecodex6824.thaumicaugmentation.common.entity;
 import java.lang.reflect.Field;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -35,11 +37,14 @@ import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -54,6 +59,8 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.entities.IEldritchMob;
+import thaumcraft.api.items.ItemsTC;
+import thaumcraft.common.entities.EntitySpecialItem;
 import thaumcraft.common.entities.ai.combat.AILongRangeAttack;
 import thaumcraft.common.entities.monster.boss.EntityCultistLeader;
 import thaumcraft.common.entities.monster.boss.EntityCultistPortalGreater;
@@ -63,6 +70,7 @@ import thaumcraft.common.entities.monster.cult.EntityCultistPortalLesser;
 import thaumcraft.common.entities.monster.mods.ChampionModifier;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.utils.EntityUtils;
+import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.ward.WardSyncManager;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
@@ -305,6 +313,38 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldri
             fixHeadlessAI();
         
         bossInfo.setName(getDisplayName());
+    }
+    
+    @Override
+    @Nullable
+    protected ResourceLocation getLootTable() {
+        return TALootTables.ELDRITCH_GOLEM;
+    }
+    
+    @Override
+    @Nullable
+    public EntityItem entityDropItem(ItemStack stack, float offsetY) {
+        if (stack.isEmpty())
+            return null;
+        else {
+            EntityItem entity = null;
+            if (stack.getItem() == ItemsTC.primordialPearl) {
+                entity = new EntitySpecialItem(world, posX, posY + offsetY, posZ, stack);
+                entity.motionX = 0.0;
+                entity.motionY = 0.1;
+                entity.motionZ = 0.0;
+            }
+            else
+                entity = new EntityItem(world, posX, posY + offsetY, posZ, stack);
+            
+            entity.setDefaultPickupDelay();
+            if (captureDrops)
+                capturedDrops.add(entity);
+            else
+                world.spawnEntity(entity);
+            
+            return entity;
+        }
     }
     
 }

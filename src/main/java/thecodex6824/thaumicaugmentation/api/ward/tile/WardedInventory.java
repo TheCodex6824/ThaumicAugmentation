@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.api.ward.tile;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -39,6 +41,7 @@ public class WardedInventory implements IWardedInventory, INBTSerializable<NBTTa
     }
     
     @Override
+    @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return wrapped.extractItem(slot, amount, simulate);
     }
@@ -54,6 +57,7 @@ public class WardedInventory implements IWardedInventory, INBTSerializable<NBTTa
     }
     
     @Override
+    @Nonnull
     public ItemStack getStackInSlot(int slot) {
         return wrapped.getStackInSlot(slot);
     }

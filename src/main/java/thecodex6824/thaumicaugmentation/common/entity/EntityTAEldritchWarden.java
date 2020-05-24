@@ -24,6 +24,8 @@ import java.lang.reflect.Field;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
@@ -35,15 +37,18 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -63,6 +68,8 @@ import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.capabilities.IPlayerWarp.EnumWarpType;
 import thaumcraft.api.entities.IEldritchMob;
+import thaumcraft.api.items.ItemsTC;
+import thaumcraft.common.entities.EntitySpecialItem;
 import thaumcraft.common.entities.ai.combat.AILongRangeAttack;
 import thaumcraft.common.entities.monster.boss.EntityCultistLeader;
 import thaumcraft.common.entities.monster.boss.EntityCultistPortalGreater;
@@ -75,6 +82,7 @@ import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.network.PacketHandler;
 import thaumcraft.common.lib.network.fx.PacketFXSonic;
 import thaumcraft.common.lib.utils.EntityUtils;
+import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.ward.WardSyncManager;
@@ -380,6 +388,38 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden implements IEld
             structurePos = new DimensionalBlockPos(nbt.getIntArray("structure"));
         
         bossInfo.setName(getDisplayName());
+    }
+    
+    @Override
+    @Nullable
+    protected ResourceLocation getLootTable() {
+        return TALootTables.ELDRITCH_WARDEN;
+    }
+    
+    @Override
+    @Nullable
+    public EntityItem entityDropItem(ItemStack stack, float offsetY) {
+        if (stack.isEmpty())
+            return null;
+        else {
+            EntityItem entity = null;
+            if (stack.getItem() == ItemsTC.primordialPearl) {
+                entity = new EntitySpecialItem(world, posX, posY + offsetY, posZ, stack);
+                entity.motionX = 0.0;
+                entity.motionY = 0.1;
+                entity.motionZ = 0.0;
+            }
+            else
+                entity = new EntityItem(world, posX, posY + offsetY, posZ, stack);
+            
+            entity.setDefaultPickupDelay();
+            if (captureDrops)
+                capturedDrops.add(entity);
+            else
+                world.spawnEntity(entity);
+            
+            return entity;
+        }
     }
     
 }
