@@ -126,7 +126,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
                                 rift.getPositionVector().add(point), false, true, false);
                         if (result == null || result.getBlockPos() == null) {
                             storage.bind(riftStorage);
-                            lastRiftPos = rift.getPositionVector();
+                            lastRiftPos = translated;
                             return;
                         }
                     }
