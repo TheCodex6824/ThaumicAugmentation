@@ -118,8 +118,12 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
                 IImpetusStorage riftStorage = rift.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                 if (riftStorage != null) {
                     for (Vec3d point : rift.points) {
-                        RayTraceResult result = world.rayTraceBlocks(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
-                                rift.getPositionVector().add(point));
+                        Vec3d translated = rift.getPositionVector().add(point);
+                        double dX = Math.max(-1.0, Math.min(1.0, translated.x - pos.getX()));
+                        double dY = Math.max(-1.0, Math.min(1.0, translated.y - pos.getY()));
+                        double dZ = Math.max(-1.0, Math.min(1.0, translated.z - pos.getZ()));
+                        RayTraceResult result = world.rayTraceBlocks(new Vec3d(pos.getX() + dX, pos.getY() + dY, pos.getZ() + dZ),
+                                rift.getPositionVector().add(point), false, true, false);
                         if (result == null || result.getBlockPos() == null) {
                             storage.bind(riftStorage);
                             lastRiftPos = rift.getPositionVector();
