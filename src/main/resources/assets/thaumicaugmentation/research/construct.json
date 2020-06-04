@@ -109,7 +109,7 @@
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-                "ELDRITCH_BOSS",
+                "ELDRITCH_SPIRE",
                 "!AUTOCASTER",
                 "~MINDBIOTHAUMIC",
                 "~BASEAUROMANCY",

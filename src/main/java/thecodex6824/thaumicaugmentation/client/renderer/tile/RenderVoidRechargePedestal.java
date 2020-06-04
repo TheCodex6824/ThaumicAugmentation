@@ -51,7 +51,7 @@ public class RenderVoidRechargePedestal extends TileEntitySpecialRenderer<TileVo
                 GlStateManager.enableLighting();
                 GlStateManager.translate(x + 0.5, y + 0.95, z + 0.5);
                 GlStateManager.scale(1.25F, 1.25F, 1.25F);
-                GlStateManager.rotate(rv.ticksExisted + partialTicks % 360, 0.0F, 1.0F, 0.0F);
+                GlStateManager.rotate((rv.ticksExisted + partialTicks) % 360, 0.0F, 1.0F, 0.0F);
                 Minecraft.getMinecraft().getRenderItem().renderItem(stack, TransformType.GROUND);
                 GlStateManager.popMatrix();
             }

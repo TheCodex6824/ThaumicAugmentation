@@ -8,7 +8,7 @@
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-                "ELDRITCH_BOSS"
+                "ELDRITCH_SPIRE"
             ],
             "meta": [
                 "HIDDEN"
@@ -22,9 +22,6 @@
                     "text": "thaumicaugmentation.research.impetus.0",
                     "required_craft": [
                         "thaumicaugmentation:impetus_jewel"
-                    ],
-                    "required_item": [
-                        "oredict:netherStar"
                     ],
                     "required_knowledge": [
                         "OBSERVATION;ALCHEMY;1",
@@ -42,7 +39,7 @@
                         "thaumicaugmentation:impetus_drainer",
                         "thaumicaugmentation:impetus_relay",
                         "thaumicaugmentation:impetus_diffuser",
-                        "thaumicaugmentation:impetus_resonator"
+                        "thaumicaugmentation:impetus_linker"
                     ]
                 }
             ]

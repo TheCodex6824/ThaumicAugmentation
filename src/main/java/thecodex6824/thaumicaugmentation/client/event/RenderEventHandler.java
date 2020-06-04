@@ -538,7 +538,7 @@ public class RenderEventHandler {
                                         }
                                         default: {
                                             r = 1.0F;
-                                            g = 1.0F;
+                                            b = 1.0F;
                                             break;
                                         }
                                     }
