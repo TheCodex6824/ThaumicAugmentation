@@ -24,8 +24,11 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityWardAuthenticator;
+import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
+import thecodex6824.thaumicaugmentation.common.capability.WardAuthenticatorKey;
+import thecodex6824.thaumicaugmentation.common.capability.WardAuthenticatorThaumiumKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 
 public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
@@ -36,10 +39,7 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
     }
 
     protected boolean isThaumiumKeyValid(ItemStack key) {
-        return key.hasTagCompound() && key.getTagCompound().hasKey("boundTo", NBT.TAG_STRING) && 
-                key.getTagCompound().hasKey("boundType", NBT.TAG_STRING) &&
-                key.getTagCompound().hasKey("boundBlockPos", NBT.TAG_INT_ARRAY) &&
-                key.getTagCompound().getIntArray("boundBlockPos").length == 3;
+        return key.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null) instanceof WardAuthenticatorThaumiumKey;
     }
 
     @Override
@@ -59,9 +59,11 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
                         else
                             return false;
                     }
-                    else if (stack.getMetadata() == 1 && brassKey.isEmpty() && stack.hasTagCompound() && 
-                            stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
-                        brassKey = stack;
+                    else if (stack.getMetadata() == 1 && brassKey.isEmpty()) {
+                        IWardAuthenticator key = stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
+                        if (key instanceof WardAuthenticatorKey && ((WardAuthenticatorKey) key).hasOwner())
+                            brassKey = stack;
+                    }
                     else
                         return false;
                 }
@@ -70,8 +72,13 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
             }
         }
 
-        return hasEmptyThaumiumKey && !thaumiumKey.isEmpty() && !brassKey.isEmpty() && 
-                thaumiumKey.getTagCompound().getString("boundTo").equals(brassKey.getTagCompound().getString("boundTo"));
+        if (hasEmptyThaumiumKey && !thaumiumKey.isEmpty() && !brassKey.isEmpty()) {
+            WardAuthenticatorKey brass = (WardAuthenticatorKey) brassKey.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
+            WardAuthenticatorKey thaum = (WardAuthenticatorKey) thaumiumKey.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
+            return brass.getOwner().equals(thaum.getOwner());
+        }
+        else
+            return false;
     }
 
     @Override
@@ -91,9 +98,11 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
                         else
                             return ItemStack.EMPTY;
                     }
-                    else if (stack.getMetadata() == 1 && brassKey.isEmpty() && stack.hasTagCompound() && 
-                            stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
-                        brassKey = stack;
+                    else if (stack.getMetadata() == 1 && brassKey.isEmpty()) {
+                        IWardAuthenticator key = stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
+                        if (key instanceof WardAuthenticatorKey && ((WardAuthenticatorKey) key).hasOwner())
+                            brassKey = stack;
+                    }
                     else
                         return ItemStack.EMPTY;
                 }
@@ -102,8 +111,7 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
             }
         }
 
-        if (!emptyThaumiumKey.isEmpty() && !thaumiumKey.isEmpty() && !brassKey.isEmpty() && 
-                thaumiumKey.getTagCompound().getString("boundTo").equals(brassKey.getTagCompound().getString("boundTo")))
+        if (!emptyThaumiumKey.isEmpty() && !thaumiumKey.isEmpty() && !brassKey.isEmpty())
             return thaumiumKey.copy();
         else
             return ItemStack.EMPTY;

@@ -24,8 +24,10 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityWardAuthenticator;
+import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
+import thecodex6824.thaumicaugmentation.common.capability.WardAuthenticatorKey;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
 
 public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
@@ -43,11 +45,16 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof ItemKey) {
-                    if (stack.getMetadata() == 0 && !hasIronKey && !stack.hasTagCompound())
-                        hasIronKey = true;
-                    else if (stack.getMetadata() == 1 && !hasBrassKey && stack.hasTagCompound() && 
-                            stack.getTagCompound().hasKey("boundTo", NBT.TAG_STRING))
-                        hasBrassKey = true;
+                    if (stack.getMetadata() == 0 && !hasIronKey) {
+                        IWardAuthenticator key = stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
+                        if (key instanceof WardAuthenticatorKey && !((WardAuthenticatorKey) key).hasOwner())
+                            hasIronKey = true;
+                    }
+                    else if (stack.getMetadata() == 1 && !hasBrassKey) {
+                        IWardAuthenticator key = stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
+                        if (key instanceof WardAuthenticatorKey && ((WardAuthenticatorKey) key).hasOwner())
+                            hasBrassKey = true;
+                    }
                     else
                         return false;
                 }
@@ -67,10 +74,16 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
                 if (stack.getItem() instanceof ItemKey) {
-                    if (stack.getMetadata() == 0 && ironKey.isEmpty())
-                        ironKey = stack;
-                    else if (stack.getMetadata() == 1 && brassKey.isEmpty())
-                        brassKey = stack;
+                    if (stack.getMetadata() == 0 && ironKey.isEmpty()) {
+                        IWardAuthenticator key = stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
+                        if (key instanceof WardAuthenticatorKey && !((WardAuthenticatorKey) key).hasOwner())
+                            ironKey = stack;
+                    }
+                    else if (stack.getMetadata() == 1 && brassKey.isEmpty()) {
+                        IWardAuthenticator key = stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
+                        if (key instanceof WardAuthenticatorKey && ((WardAuthenticatorKey) key).hasOwner())
+                            brassKey = stack;
+                    }
                     else
                         return ItemStack.EMPTY;
                 }
