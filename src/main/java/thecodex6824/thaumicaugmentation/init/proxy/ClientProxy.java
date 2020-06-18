@@ -20,7 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -219,10 +219,10 @@ import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 
 public class ClientProxy extends ServerProxy {
 
-    private IdentityHashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
+    private HashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
     
     public ClientProxy() {
-        handlers = new IdentityHashMap<>();
+        handlers = new HashMap<>();
         handlers.put(PacketParticleEffect.class, (message, ctx) -> handleParticlePacket((PacketParticleEffect) message, ctx));
         handlers.put(PacketConfigSync.class, (message, ctx) -> handleConfigSyncPacket((PacketConfigSync) message, ctx));
         handlers.put(PacketAugmentableItemSync.class, (message, ctx) -> handleAugmentableItemSyncPacket((PacketAugmentableItemSync) message, ctx));
@@ -576,6 +576,17 @@ public class ClientProxy extends ServerProxy {
                             int x = (int) d[i], y = (int) d[i + 1], z = (int) d[i + 2];
                             FXDispatcher.INSTANCE.drawPollutionParticles(new BlockPos(x, y, z));
                         }
+                    }
+                    
+                    break;
+                }
+                case ARC: {
+                    if (d.length == 8) {
+                        double sx = d[0], sy = d[1], sz = d[2];
+                        double dx = d[3], dy = d[4], dz = d[5];
+                        int color = (int) d[6];
+                        double height = d[7];
+                        getRenderHelper().renderArc(Minecraft.getMinecraft().world, sx, sy, sz, dx, dy, dz, color, height);
                     }
                     
                     break;

@@ -47,8 +47,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -70,6 +72,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IImpetusCellInfo;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
@@ -344,15 +347,20 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
                             new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
                 }
                 else {
-                    int discharge = (int) (getTotalCells() * world.rand.nextFloat() * 50.0F);
-                    buffer.extractEnergy(discharge, false);
+                    long discharge = (long) (getTotalCells() * world.rand.nextFloat() * 50.0F);
+                    discharge = buffer.extractEnergy(discharge, false);
+                    for (Entity e : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).grow(2.5))) {
+                        ImpetusAPI.causeImpetusDamage(new Vec3d(pos), e, Math.max(discharge / 10.0F, 1.0F));
+                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.ARC, pos.getX() + 0.5,
+                                pos.getY() + 0.5, pos.getZ() + 0.5, e.posX, e.posY + e.getEyeHeight(), e.posZ, Aspect.ELDRITCH.getColor(), e.height),
+                                new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
+                    }
+                    
                     world.playSound(null, pos, SoundsTC.shock, SoundCategory.BLOCKS, 0.6F, 1.0F);
                     TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, pos.getX() + 0.5,
                             pos.getY() + 0.5, pos.getZ() + 0.5, 15.0F, Aspect.ELDRITCH.getColor()),
                             new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
                 }
-                
-                stability += 5.0F + world.rand.nextFloat() * 5.0F;
             }
             
             int level = getComparatorOutput();
@@ -386,7 +394,11 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     }
     
     protected float getStabilityLossPerSecond() {
-        return getTotalCells() / 16.0F;
+        long max = buffer.getMaxEnergyStored();
+        if (max <= 0)
+            return -0.05F;
+        else
+            return (float) (((double) buffer.getEnergyStored() / max) * 0.5);
     }
     
     @Override
