@@ -39,7 +39,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
@@ -55,7 +54,7 @@ public class TileImpetusGate extends TileEntity implements ITickable {
     public TileImpetusGate() {
         node = new ImpetusNode(1, 1) {
             @Override
-            public long onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy,
+            public long onTransaction(Deque<IImpetusNode> path, long energy,
                     boolean simulate) {
                 
                 return world.getRedstonePowerFromNeighbors(pos) > 0 ? 0 : energy;

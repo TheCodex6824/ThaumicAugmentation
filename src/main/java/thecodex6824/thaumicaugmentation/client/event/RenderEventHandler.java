@@ -488,16 +488,17 @@ public class RenderEventHandler {
         while (iterator.hasNext()) {
             Map.Entry<DimensionalBlockPos[], Long> entry = iterator.next();
             DimensionalBlockPos[] array = entry.getKey();
-            double factor = 1.0 - (time - entry.getValue()) / TRANSACTION_DURATION;
-            for (int i = 0; i < array.length - 1; ++i) {
-                IImpetusNode start = ImpetusRenderingManager.findNodeByPosition(array[i]);
-                IImpetusNode end = ImpetusRenderingManager.findNodeByPosition(array[i + 1]);
-                if (start != null && end != null && start.shouldPhysicalBeamLinkTo(end) && end.shouldPhysicalBeamLinkTo(start))
-                    renderStrongLaser(rv, event.getPartialTicks(), eyePos, start.getBeamEndpoint(), end.getBeamEndpoint(), factor);
-            }
-            
-            if (factor < 0.0)
+            double factor = (entry.getValue() - time) / TRANSACTION_DURATION;
+            if (factor > 0.99999)
                 iterator.remove();
+            else {
+                for (int i = 0; i < array.length - 1; ++i) {
+                    IImpetusNode start = ImpetusRenderingManager.findNodeByPosition(array[i]);
+                    IImpetusNode end = ImpetusRenderingManager.findNodeByPosition(array[i + 1]);
+                    if (start != null && end != null && start.shouldPhysicalBeamLinkTo(end) && end.shouldPhysicalBeamLinkTo(start))
+                        renderStrongLaser(rv, event.getPartialTicks(), eyePos, start.getBeamEndpoint(), end.getBeamEndpoint(), 1.0 - factor);
+                }
+            }
         }
         
         EntityPlayer player = Minecraft.getMinecraft().player;

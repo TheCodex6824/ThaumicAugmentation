@@ -290,8 +290,10 @@
                     ],
                     "required_knowledge": [
                         "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;AUROMANCY;1",
                         "OBSERVATION;ELDRITCH;1",
                         "THEORY;ARTIFICE;1",
+                        "THEORY;AUROMANCY;1",
                         "THEORY;ELDRITCH;1"
                     ]
                 },

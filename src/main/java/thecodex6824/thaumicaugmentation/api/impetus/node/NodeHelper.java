@@ -160,7 +160,7 @@ public final class NodeHelper {
                     if (actuallyDrawn > 0) {
                         Deque<IImpetusNode> nodes = paths.get(i);
                         for (IImpetusNode n : nodes) {
-                            actuallyDrawn = n.onTransaction(dest, nodes, actuallyDrawn, simulate);
+                            actuallyDrawn = n.onTransaction(nodes, actuallyDrawn, simulate);
                             if (actuallyDrawn <= 0)
                                 break;
                         }

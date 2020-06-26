@@ -35,7 +35,7 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
     
     public Set<DimensionalBlockPos> getOutputLocations();
     
-    public default long onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {
+    public default long onTransaction(Deque<IImpetusNode> path, long energy, boolean simulate) {
         return energy;
     }
     

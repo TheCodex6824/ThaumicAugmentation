@@ -46,6 +46,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -60,6 +61,7 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.entity.DamageSourceImpetus;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
@@ -266,7 +268,7 @@ public final class PlayerEventHandler {
     }
 
     @SubscribeEvent
-    public static void onFallDamage(LivingHurtEvent event) {
+    public static void onFallHurt(LivingHurtEvent event) {
         // this is needed to actually reduce damage if it's not 0
         if (event.getSource() == DamageSource.FALL && FALL_DAMAGE.containsKey(event.getEntity())) {
             float damage = FALL_DAMAGE.remove(event.getEntity());
@@ -276,6 +278,19 @@ public final class PlayerEventHandler {
             }
             else
                 event.setAmount(damage);
+        }
+    }
+    
+    @SubscribeEvent
+    @SuppressWarnings("null")
+    public static void onDamage(LivingDamageEvent event) {
+        if (event.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getEntity();
+            if (event.getSource() instanceof DamageSourceImpetus && !ThaumcraftCapabilities.knowsResearchStrict(player, "f_IMPETUSDAMAGE")) {
+                ThaumcraftCapabilities.getKnowledge(player).addResearch("f_IMPETUSDAMAGE");
+                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.impetus_damage").setStyle(
+                        new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+            }
         }
     }
 

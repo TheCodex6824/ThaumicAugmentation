@@ -75,7 +75,6 @@ import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProsumer;
@@ -171,7 +170,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         buffer = new MatrixImpetusStorage();
         prosumer = new BufferedImpetusProsumer(1, 1, buffer) {
             @Override
-            public long onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {
+            public long onTransaction(Deque<IImpetusNode> path, long energy, boolean simulate) {
                 if (!simulate)
                     markDirty();
                 

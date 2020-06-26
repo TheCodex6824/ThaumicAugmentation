@@ -317,7 +317,8 @@
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
                 "RIFT_STUDIES",
-                "IMPETUS"
+                "IMPETUS",
+                "~INFUSIONSTABLE"
             ],
             "location": [
                 12,
@@ -424,7 +425,6 @@
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
                 "RIFT_MANAGEMENT",
-                "~INFUSIONSTABLE",
                 "~VISGENERATOR"
             ],
             "location": [

@@ -55,7 +55,6 @@ import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.WeakImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProvider;
@@ -96,7 +95,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
             }
             
             @Override
-            public long onTransaction(IImpetusConsumer originator, Deque<IImpetusNode> path, long energy, boolean simulate) {
+            public long onTransaction(Deque<IImpetusNode> path, long energy, boolean simulate) {
                 if (!simulate)
                     markDirty();
                 

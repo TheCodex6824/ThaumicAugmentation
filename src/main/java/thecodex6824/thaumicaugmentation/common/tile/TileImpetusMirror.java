@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.Deque;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
@@ -37,6 +38,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
+import thaumcraft.api.aura.AuraHelper;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
@@ -52,6 +54,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
     protected int ticks;
     protected boolean needsSync;
     protected boolean open;
+    protected long fluxProgress;
     
     public TileImpetusMirror() {
         node = new ImpetusNode(2, 2) {
@@ -123,6 +126,16 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
                 return position.add(0.5, 0.01875, 0.5);
             }
             
+            @Override
+            public long onTransaction(Deque<IImpetusNode> path, long energy,
+                    boolean simulate) {
+                
+                energy = Math.min(energy, 45);
+                fluxProgress += energy;
+                markDirty();
+                return energy;
+            }
+            
         };
         
         linked = DimensionalBlockPos.INVALID;
@@ -153,6 +166,12 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
                             }
                         }
                     }
+                }
+                
+                while (fluxProgress >= 1000) {
+                    AuraHelper.polluteAura(world, pos, world.rand.nextInt(4) + 1, true);
+                    fluxProgress -= 1000;
+                    markDirty();
                 }
             }
             
@@ -277,6 +296,8 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
         if (!linked.isInvalid())
             tag.setIntArray("link", linked.toArray());
         
+        tag.setLong("flux", fluxProgress);
+        
         return super.writeToNBT(tag);
     }
     
@@ -286,6 +307,8 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
         node.deserializeNBT(nbt.getCompoundTag("node"));
         if (nbt.hasKey("link", NBT.TAG_INT_ARRAY))
             linked = new DimensionalBlockPos(nbt.getIntArray("link"));
+        
+        fluxProgress = nbt.getLong("flux");
     }
     
     @Override
