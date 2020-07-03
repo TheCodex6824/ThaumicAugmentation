@@ -168,9 +168,18 @@ public class RaytraceHelper {
     }
     
     public static List<Entity> raytraceEntities(World world, Vec3d start, Vec3d end) {
-        return world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(start.x, start.y, start.z, end.x, end.y, end.z),
+        List<Entity> list = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(start.x, start.y, start.z, end.x, end.y, end.z),
                 Predicates.and(EntitySelectors.NOT_SPECTATING, entity -> entity != null && entity.canBeCollidedWith()
         ));
+      
+        ArrayList<Entity> ret = new ArrayList<>();
+        for (Entity entity : list) {
+            AxisAlignedBB aabb = entity.getEntityBoundingBox().grow(entity.getCollisionBorderSize());
+            if (aabb.contains(start) || aabb.calculateIntercept(start, end) != null)
+                ret.add(entity);
+        }
+
+        return ret;
     }
     
 }

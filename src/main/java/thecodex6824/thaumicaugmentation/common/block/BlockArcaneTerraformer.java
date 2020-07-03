@@ -139,10 +139,11 @@ public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraf
         return new TileArcaneTerraformer();
     }
     
-    protected void dropContents(World world, BlockPos pos) {
+    protected void dropContentsAndCleanup(World world, BlockPos pos) {
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
-            if (te != null) {
+            if (te instanceof TileArcaneTerraformer) {
+                ((TileArcaneTerraformer) te).endTerraforming(true);
                 IItemHandler items = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
                 if (items != null) {
                     for (int i = 0; i < items.getSlots(); ++i) {
@@ -159,7 +160,7 @@ public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraf
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         if (state.getValue(IArcaneTerraformerHalf.TERRAFORMER_HALF) == ArcaneTerraformerHalf.LOWER) {
-            dropContents(world, pos);
+            dropContentsAndCleanup(world, pos);
             IBlockState up = world.getBlockState(pos.up());
             if (up.getBlock() != this || up.getValue(IArcaneTerraformerHalf.TERRAFORMER_HALF) == ArcaneTerraformerHalf.UPPER)
                 world.setBlockToAir(pos.up());

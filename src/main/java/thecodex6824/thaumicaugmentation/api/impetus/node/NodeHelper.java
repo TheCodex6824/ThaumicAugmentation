@@ -166,9 +166,7 @@ public final class NodeHelper {
                         }
                         
                         if (actuallyDrawn > 0) {
-                            if (!simulate)
-                                actuallyDrawn = p.provide(actuallyDrawn, false);
-                            
+                            actuallyDrawn = p.provide(actuallyDrawn, simulate);
                             usedPaths.put(nodes, actuallyDrawn);
                             drawn += actuallyDrawn;
                             if (actuallyDrawn < step && i < providers.size() - 1) {

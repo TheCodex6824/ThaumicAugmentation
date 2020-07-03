@@ -209,18 +209,33 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                     }
                 }
             }
-            else {
-                activeBiome = null;
-                currentPos.setPos(0, 0, 0);
-                blocksChecked = 0;
-                chunks.clear();
-                markDirty();
-                world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
-                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
-            }
+            else
+                endTerraforming(true);
         }
         
         return true;
+    }
+    
+    public void endTerraforming(boolean fail) {
+        if (activeBiome != null) {
+            activeBiome = null;
+            currentPos.setPos(0, 0, 0);
+            blocksChecked = 0;
+            for (ChunkPos c : chunks) {
+                BlockPos base = new BlockPos(c.getXStart(), pos.getY(), c.getZStart());
+                BiomeUtil.generateNewAura(world, base, true);
+                for (EnumFacing f : EnumFacing.HORIZONTALS)
+                    BiomeUtil.generateNewAura(world, base.offset(f, 16), true);
+            }
+            chunks.clear();
+            markDirty();
+            if (fail)
+                world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
+            else    
+                world.playSound(null, pos, SoundsTC.wand, SoundCategory.BLOCKS, 0.5F, 1.0F);
+            
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+        }
     }
     
     @Override
@@ -369,22 +384,8 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                             currentPos.setPos(currentPos.getX(), currentPos.getY(), currentPos.getZ() + ((currentPos.getX() - pos.getX()) >= 0 ? -1 : 1));
                             
                         ++blocksChecked;
-                        if (blocksChecked >= (radius * 2 - 1) * (radius * 2 - 1) + 1) {
-                            for (ChunkPos c : chunks) {
-                                BlockPos base = new BlockPos(c.getXStart(), pos.getY(), c.getZStart());
-                                BiomeUtil.generateNewAura(world, base, true);
-                                for (EnumFacing facing : EnumFacing.HORIZONTALS)
-                                    BiomeUtil.generateNewAura(world, base.offset(facing, 16), true);
-                            }
-                            
-                            activeBiome = null;
-                            currentPos.setPos(0, 0, 0);
-                            blocksChecked = 0;
-                            chunks.clear();
-                            world.playSound(null, pos, SoundsTC.wand, SoundCategory.BLOCKS, 0.5F, 1.0F);
-                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
-                            break;
-                        }
+                        if (blocksChecked >= (radius * 2 - 1) * (radius * 2 - 1) + 1)
+                            endTerraforming(false);
                         
                         markDirty();
                     }

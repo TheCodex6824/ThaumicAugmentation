@@ -42,7 +42,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
@@ -53,6 +52,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import thaumcraft.api.blocks.BlocksTC;
+import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.lib.utils.BlockStateUtils;
 import thaumcraft.common.tiles.crafting.TileVoidSiphon;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
@@ -189,17 +189,37 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                             TileEntity tile = world.getTileEntity(check);
                             if (tile instanceof TileVoidSiphon) {
                                 TileVoidSiphon siphon = (TileVoidSiphon) tile;
-                                if (BlockStateUtils.isEnabled(state) && siphon.progress < siphon.PROGREQ - 1) {
-                                    int maxProgress = Math.min(20, siphon.PROGREQ - siphon.progress - 1);
-                                    if (maxProgress > 0) {
-                                        ConsumeResult result = consumer.consume(MathHelper.ceil(maxProgress * 1.5F), false);
-                                        if (result.energyConsumed > 0) {
-                                            siphon.progress += (int) (result.energyConsumed / 1.5F);
-                                            if ((ticks - 1) % 40 == 0) {
-                                                ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.65, 0.5),
-                                                        new Vec3d(check).add(0.5, 0.85, 0.5));
+                                if (BlockStateUtils.isEnabled(state)) {
+                                    ConsumeResult result = consumer.consume(75, false);
+                                    if (result.energyConsumed > 0) {
+                                        NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+                                        for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+                                            NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+                                        
+                                        siphon.progress += (int) (result.energyConsumed / 1.5F);
+                                        if ((ticks - 1) % 40 == 0) {
+                                            ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.65, 0.5),
+                                                    new Vec3d(check).add(0.5, 0.85, 0.5));
+                                        }
+                                        
+                                        boolean sync = false;
+                                        while (siphon.progress >= 2000) {
+                                            ItemStack contained = siphon.getStackInSlot(0);
+                                            if (contained.isEmpty() ||
+                                                    (contained.getItem() == ItemsTC.voidSeed && contained.getCount() < contained.getMaxStackSize())) {
+                                                
+                                                siphon.progress -= 2000;
+                                                if (contained.isEmpty())
+                                                  siphon.setInventorySlotContents(0, new ItemStack(ItemsTC.voidSeed));
+                                                else
+                                                  siphon.setInventorySlotContents(0, new ItemStack(contained.getItem(), contained.getCount() + 1));
+                                                
+                                                sync = true;
                                             }
                                         }
+                                        
+                                        if (sync)
+                                            siphon.syncTile(false);
                                     }
                                 }
                             }

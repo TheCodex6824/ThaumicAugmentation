@@ -371,7 +371,7 @@
         },
         {
             "key": "RIFT_MOVING",
-            "name": "thaumicaugmentation.research.rift_feeder.title",
+            "name": "thaumicaugmentation.research.rift_moving.title",
             "icons": [
                 "thaumicaugmentation:rift_jar;1;0;{size:100,seed:666}"
             ],

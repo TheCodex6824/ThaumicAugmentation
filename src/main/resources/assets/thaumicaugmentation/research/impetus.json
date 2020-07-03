@@ -238,24 +238,15 @@
                         "m_endoftheworld"
                     ],
                     "required_knowledge": [
-                        "THEORY;AUROMANCY;1"
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;AUROMANCY;2",
+                        "THEORY;ELDRITCH;1"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.arcane_terraformer.1",
-                    "required_knowledge": [
-                        "OBSERVATION;ARTIFICE;1",
-                        "OBSERVATION;ELDRITCH;1",
-                        "THEORY;ARTIFICE;1",
-                        "THEORY;AUROMANCY;1",
-                        "THEORY;ELDRITCH;1"
-                    ],
-                    "recipes": [
-                        "thaumicaugmentation:biome_focus"
-                    ]
-                },
-                {
-                    "text": "thaumicaugmentation.research.arcane_terraformer.2",
                     "recipes": [
                         "thaumicaugmentation:biome_focus",
                         "thaumicaugmentation:biome_focus_special_reset",

@@ -72,7 +72,7 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
     @Nullable
     protected EntityFluxRift findClosestRift(EnumFacing face) {
         BlockPos pos1 = pos.offset(face).add(1.0 - face.getXOffset(), 1.0 - face.getYOffset(), 1.0 - face.getZOffset());
-        BlockPos pos2 = pos.offset(face, 10).add(1.0 + face.getXOffset(), 1.0 + face.getYOffset(), 1.0 + face.getZOffset());
+        BlockPos pos2 = pos.offset(face, 12).add(1.0 + face.getXOffset(), 1.0 + face.getYOffset(), 1.0 + face.getZOffset());
         List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class, 
                 new AxisAlignedBB(pos1.getX() - 1, pos1.getY() - 1, pos1.getZ() - 1, pos2.getX() + 2, pos2.getY() + 2, pos2.getZ() + 2));
         if (!rifts.isEmpty()) {
