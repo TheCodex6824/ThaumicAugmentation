@@ -54,7 +54,7 @@ public class ResearchCardRiftJar extends TheorycraftCard {
     @Override
     public boolean activate(EntityPlayer player, ResearchTableData data) {
         ArrayList<String> choices = data.getAvailableCategories(player);
-        CardHelper.removeBlacklistedCategories(choices);
+        CardHelper.removeBlockedCategories(choices);
         choices.removeAll(data.categoriesBlocked);
         WeightedRandom<String> picker = new WeightedRandom<>(choices, Collections.nCopies(choices.size(), 1));
         for (int i = 0; i < Math.min(choices.size(), 3); ++i) {

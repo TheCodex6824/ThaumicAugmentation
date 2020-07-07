@@ -29,25 +29,25 @@ import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 
 public final class CardHelper {
 
-    private static ImmutableSet<String> BLACKLISTED = ImmutableSet.of();
+    private static ImmutableSet<String> BLOCKED = ImmutableSet.of();
     
     private CardHelper() {}
     
-    private static void updateBlacklist() {
-        BLACKLISTED = ImmutableSet.copyOf(TAConfig.blacklistedCategories.getValue());
+    private static void updateBlockList() {
+        BLOCKED = ImmutableSet.copyOf(TAConfig.deniedCategories.getValue());
     }
     
     static {
-        TAConfigHolder.addListener(CardHelper::updateBlacklist);
-        updateBlacklist();
+        TAConfigHolder.addListener(CardHelper::updateBlockList);
+        updateBlockList();
     }
     
-    public static boolean isCategoryBlacklisted(String category) {
-        return BLACKLISTED.contains(category);
+    public static boolean isCategoryBlocked(String category) {
+        return BLOCKED.contains(category);
     }
     
-    public static boolean removeBlacklistedCategories(Collection<String> removeFrom) {
-        return removeFrom.removeAll(BLACKLISTED);
+    public static boolean removeBlockedCategories(Collection<String> removeFrom) {
+        return removeFrom.removeAll(BLOCKED);
     }
     
 }

@@ -179,7 +179,7 @@ public final class TAConfigHolder {
                     "so while this damage can theoretically be seen per tick, in practice this is",
                     "extremely unlikely and would take a large crowd and good aim to achieve."
                 })
-                public float beamDamage = 6.0F;
+                public float beamDamage = 8.0F;
                 
                 @Name("beamCost")
                 @Comment({
@@ -199,7 +199,7 @@ public final class TAConfigHolder {
                     "The amount of damage that the Impulse Cannon's railgun attack does.",
                     "Note that the beam can pierce through multiple entities, but not blocks."
                 })
-                public float railgunDamage = 24.0F;
+                public float railgunDamage = 28.0F;
                 
                 @Name("railgunCost")
                 @Comment({
@@ -229,7 +229,7 @@ public final class TAConfigHolder {
                     "to allow the other rounds to do damage.",
                     "Since there are three shots fired by the burst, the effective damage is three times this value."
                 })
-                public float burstDamage = 4.0F;
+                public float burstDamage = 5.0F;
                 
                 @Name("burstCost")
                 @Comment({
@@ -330,7 +330,7 @@ public final class TAConfigHolder {
         @Comment({
             "Makes the server calculate positions and velocities from the Boots of the Riftstrider in addition to the client.",
             "Normally the client is left to update their position, and the server just takes it from the client.",
-            "If you don't know what this does, you probably don't need to and shouldn't enable this."
+            "Unless your server needs accurate position/velocity info for some reason, don't enable this."
         })
         public boolean serverMovementCalculation = false;
         
@@ -358,13 +358,13 @@ public final class TAConfigHolder {
         @RequiresMcRestart
         public float primalCutterDamage = 6.0F;
         
-        @Name("blacklistedResearchCategories")
+        @Name("deniedResearchCategories")
         @Comment({
             "The list of research categories that Thaumic Augmentation will never willingly give research in.",
             "Sadly Thaumcraft makes all addons have a research category, even if they don't intend on using it.",
             "This is why cards like \"experiment\" can give categories that never appear otherwise."
         })
-        public String[] blacklistedCategories = new String[] {
+        public String[] deniedCategories = new String[] {
                 "THAUMIC_AUGMENTATION",
                 "THAUMIC_TINKERER",
                 "THAUMIC_WONDERS",
@@ -579,7 +579,7 @@ public final class TAConfigHolder {
         
         TAConfig.primalCutterDamage.setValue(gameplay.primalCutterDamage);
         
-        TAConfig.blacklistedCategories.setValue(gameplay.blacklistedCategories);
+        TAConfig.deniedCategories.setValue(gameplay.deniedCategories);
         
         TAConfig.generateSpires.setValue(world.generateSpires);
         TAConfig.spireMinDist.setValue(world.spireMinDist);
@@ -679,7 +679,7 @@ public final class TAConfigHolder {
     
         TAConfig.primalCutterDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.primalCutterDamage));
     
-        TAConfig.blacklistedCategories = TAConfigManager.addOption(new ConfigOptionStringArray(true, gameplay.blacklistedCategories));
+        TAConfig.deniedCategories = TAConfigManager.addOption(new ConfigOptionStringArray(true, gameplay.deniedCategories));
     
         TAConfig.generateSpires = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.generateSpires));
         TAConfig.spireMinDist = TAConfigManager.addOption(new ConfigOptionInt(false, world.spireMinDist));

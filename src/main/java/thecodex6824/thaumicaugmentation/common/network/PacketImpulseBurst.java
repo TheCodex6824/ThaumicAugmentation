@@ -27,35 +27,35 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 public class PacketImpulseBurst implements IMessage {
 
     protected int id;
-    protected Vec3d vel;
+    protected Vec3d t;
     
     public PacketImpulseBurst() {}
     
-    public PacketImpulseBurst(int entityID, Vec3d velocity) {
+    public PacketImpulseBurst(int entityID, Vec3d target) {
         id = entityID;
-        vel = velocity;
+        t = target;
     }
     
     @Override
     public void fromBytes(ByteBuf buf) {
         id = buf.readInt();
-        vel = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        t = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
     }
     
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(id);
-        buf.writeDouble(vel.x);
-        buf.writeDouble(vel.y);
-        buf.writeDouble(vel.z);
+        buf.writeDouble(t.x);
+        buf.writeDouble(t.y);
+        buf.writeDouble(t.z);
     }
     
     public int getEntityID() {
         return id;
     }
     
-    public Vec3d getVelocity() {
-        return vel;
+    public Vec3d getTarget() {
+        return t;
     }
     
 }

@@ -43,16 +43,11 @@ import baubles.api.cap.IBaublesItemHandler;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelBox;
-import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -73,8 +68,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.casters.ICaster;
-import thaumcraft.client.fx.FXDispatcher;
-import thaumcraft.client.fx.beams.FXBeamBore;
+import thaumcraft.client.fx.ParticleEngine;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
@@ -88,6 +82,7 @@ import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
+import thecodex6824.thaumicaugmentation.client.fx.FXImpulseBeam;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
@@ -101,8 +96,8 @@ public class RenderEventHandler {
 
     private static final Cache<Integer, Boolean> CAST_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterWrite(
             3000, TimeUnit.MILLISECONDS).maximumSize(250).build();
-    private static final Cache<EntityLivingBase, FXBeamBore> IMPULSE_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterWrite(
-            5000, TimeUnit.MILLISECONDS).weakKeys().maximumSize(25).build();
+    private static final Cache<EntityLivingBase, FXImpulseBeam> IMPULSE_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterAccess(
+            3000, TimeUnit.MILLISECONDS).weakKeys().maximumSize(50).build();
     
     private static final Object2LongOpenHashMap<DimensionalBlockPos[]> TRANSACTIONS = new Object2LongOpenHashMap<>();
     private static final Object2IntOpenHashMap<DimensionalBlockPos> FRAME_COLORS = new Object2IntOpenHashMap<>();
@@ -132,20 +127,25 @@ public class RenderEventHandler {
     }
     
     public static void onImpulseBeam(EntityLivingBase entity, boolean stop) {
-        if (stop)
+        if (stop) {
+            FXImpulseBeam beam = IMPULSE_CACHE.getIfPresent(entity);
+            if (beam != null)
+                beam.setExpired();
+            
             IMPULSE_CACHE.invalidate(entity);
+        }
         else {
-            FXBeamBore bore = IMPULSE_CACHE.getIfPresent(entity);
-            if (bore == null) {
-                Vec3d origin = entity.getPositionEyes(Minecraft.getMinecraft().getRenderPartialTicks());
+            FXImpulseBeam beam = IMPULSE_CACHE.getIfPresent(entity);
+            if (beam == null) {
+                System.out.println("beam null");
                 Vec3d dest = RaytraceHelper.raytracePosition(entity, TAConfig.cannonBeamRange.getValue());
-                bore = (FXBeamBore) FXDispatcher.INSTANCE.beamBore(origin.x, origin.y, origin.z,
-                        dest.x, dest.y, dest.z, 1, 0x6060B0, false, 0.01F, bore, Integer.MAX_VALUE);
-                bore.setPulse(true);
-                IMPULSE_CACHE.put(entity, bore);
+                beam = new FXImpulseBeam(entity.getEntityWorld(), entity, dest.x, dest.y, dest.z, 0.35F, 0.35F, 0.65F, Integer.MAX_VALUE);
+                beam.setPulse(true);
+                beam.setFollowOwner(true);
+                beam.setImpactTicks(Integer.MAX_VALUE);
+                IMPULSE_CACHE.put(entity, beam);
+                ParticleEngine.addEffect(entity.getEntityWorld(), beam);
             }
-            else
-                IMPULSE_CACHE.put(entity, bore);
         }
     }
     
@@ -554,54 +554,9 @@ public class RenderEventHandler {
             }
         }
         
-        for (Map.Entry<EntityLivingBase, FXBeamBore> entry : IMPULSE_CACHE.asMap().entrySet()) {
-            EntityLivingBase entity = entry.getKey();
-            Vec3d origin = null;
-            Render<? extends Entity> r = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entity);
-            if (r instanceof RenderLivingBase<?>) {
-                ModelBase model = ((RenderLivingBase<?>) r).getMainModel();
-                if (model instanceof ModelBiped) {
-                    ModelBiped biped = (ModelBiped) model;
-                    EnumHand hand = findImpulseCannon(entity);
-                    EnumHandSide side = hand == EnumHand.MAIN_HAND ? entity.getPrimaryHand() : entity.getPrimaryHand().opposite();
-                    ModelRenderer arm = side == EnumHandSide.RIGHT ? biped.bipedRightArm : biped.bipedLeftArm;
-                    boolean firstPerson = entity.equals(rv) && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0;
-                    float armLength = 0.0F;
-                    if (!arm.cubeList.isEmpty()) {
-                        ModelBox box = arm.cubeList.get(0);
-                        armLength = box.posY2 / 16.0F + (firstPerson ? -0.25F : 0.75F);
-                    }
-                    else
-                        armLength = 0.625F + (firstPerson ? -0.25F : 0.75F);
-                    
-                    double lerpX = entity.prevPosX + (entity.posX - entity.prevPosX) * event.getPartialTicks();
-                    double lerpY = entity.prevPosY + (entity.posY - entity.prevPosY) * event.getPartialTicks();
-                    double lerpZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * event.getPartialTicks();
-                    float lerpPitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * event.getPartialTicks();
-                    float lerpYaw = entity.prevRotationYawHead + (entity.rotationYawHead - entity.prevRotationYawHead) * event.getPartialTicks();
-                    origin = new Vec3d((firstPerson ? 0.125 : 0.325) * (side == EnumHandSide.RIGHT ? -1.0F : 1.0F), 0.0, armLength).rotatePitch(
-                            (float) -Math.toRadians(lerpPitch)).rotateYaw((float) -Math.toRadians(lerpYaw)).add(
-                                    lerpX, lerpY, lerpZ).add(0.0, firstPerson ? 1.525F : entity.getEyeHeight(), 0.0);
-                }
-            }
-            
-            if (origin == null) {
-                if (entity.equals(rv)) {
-                    double lerpX = entity.prevPosX + (entity.posX - entity.prevPosX) * event.getPartialTicks();
-                    double lerpY = entity.prevPosY + (entity.posY - entity.prevPosY) * event.getPartialTicks();
-                    double lerpZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * event.getPartialTicks();
-                    origin = new Vec3d(lerpX, lerpY, lerpZ).add(0.0, entity.height / 2.0F, 0.0);
-                }
-                else {
-                    double lerpX = rv.prevPosX + (rv.posX - rv.prevPosX) * event.getPartialTicks();
-                    double lerpY = rv.prevPosY + (rv.posY - rv.prevPosY) * event.getPartialTicks();
-                    double lerpZ = rv.prevPosZ + (rv.posZ - rv.prevPosZ) * event.getPartialTicks();
-                    origin = new Vec3d(lerpX, lerpY, lerpZ).add(0.0, rv.height / 2.0F, 0.0);
-                }
-            }
-            
-            Vec3d dest = RaytraceHelper.raytracePosition(entity, TAConfig.cannonBeamRange.getValue(), event.getPartialTicks());
-            entry.getValue().updateBeam(origin.x, origin.y, origin.z, dest.x, dest.y, dest.z);
+        for (Map.Entry<EntityLivingBase, FXImpulseBeam> entry : IMPULSE_CACHE.asMap().entrySet()) {
+            Vec3d dest = RaytraceHelper.raytracePosition(entry.getKey(), TAConfig.cannonBeamRange.getValue(), event.getPartialTicks());
+            entry.getValue().updateBeamTarget(dest.x, dest.y, dest.z);
         }
         
         GlStateManager.popMatrix();

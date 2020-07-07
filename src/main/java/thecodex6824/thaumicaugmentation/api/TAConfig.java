@@ -105,7 +105,7 @@ public final class TAConfig {
     
     public static ConfigOptionFloat primalCutterDamage;
     
-    public static ConfigOptionStringArray blacklistedCategories;
+    public static ConfigOptionStringArray deniedCategories;
     
     public static ConfigOptionBoolean generateSpires;
     public static ConfigOptionInt spireMinDist;

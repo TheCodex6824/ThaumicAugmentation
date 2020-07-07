@@ -54,6 +54,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -118,6 +119,7 @@ import thecodex6824.thaumicaugmentation.client.event.ClientLivingEquipmentChange
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.fx.FXGenericP2ECustomSpeed;
+import thecodex6824.thaumicaugmentation.client.fx.FXImpulseBeam;
 import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
@@ -754,24 +756,15 @@ public class ClientProxy extends ServerProxy {
         World world = Minecraft.getMinecraft().world;
         Entity entity = world.getEntityByID(message.getEntityID());
         if (entity instanceof EntityLivingBase) {
-            Vec3d p = getRenderHelper().estimateImpulseCannonFiringPoint((EntityLivingBase) entity,
-                    Minecraft.getMinecraft().getRenderPartialTicks());
-            Vec3d v = message.getVelocity();
-            for (int i = 0; i < 3; ++i) {
-                FXGeneric fx = new FXGeneric(world, p.x, p.y, p.z, v.x, v.y, v.z);
-                fx.setMaxAge(10);
-                fx.setRBGColorF(0.35F, 0.35F, 0.65F);
-                fx.setAlphaF(0.85F);
-                fx.setGridSize(64);
-                fx.setParticles(264, 8, 1);
-                fx.setScale(1.0F);
-                fx.setLayer(1);
-                fx.setLoop(true);
-                fx.setNoClip(false);
-                fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
-                ParticleEngine.addEffect(world, fx);
-                p = p.add(v);
-            }
+            Vec3d t = message.getTarget();
+            FXImpulseBeam beam = new FXImpulseBeam(world, (EntityLivingBase) entity, t.x, t.y, t.z, 0.35F, 0.35F, 0.65F, 9);
+            beam.setAlphaFunc(b -> {
+                int mod = b.getAge() % 3 + 1;
+                return MathHelper.sin((mod + getPartialTicks()) * ((float) Math.PI / 3.0F));
+            });
+            beam.setImpactTicks(9);
+            beam.setSize(0.8F);
+            ParticleEngine.addEffect(world, beam);
         }
     }
     
@@ -779,21 +772,12 @@ public class ClientProxy extends ServerProxy {
         World world = Minecraft.getMinecraft().world;
         Entity entity = world.getEntityByID(message.getEntityID());
         if (entity instanceof EntityLivingBase) {
-            Vec3d p = getRenderHelper().estimateImpulseCannonFiringPoint((EntityLivingBase) entity,
-                    Minecraft.getMinecraft().getRenderPartialTicks());
-            Vec3d v = message.getVelocity();
-            FXGeneric fx = new FXGeneric(world, p.x, p.y, p.z, v.x, v.y, v.z);
-            fx.setMaxAge(10);
-            fx.setRBGColorF(0.35F, 0.35F, 0.65F);
-            fx.setAlphaF(0.85F);
-            fx.setGridSize(64);
-            fx.setParticles(264, 8, 1);
-            fx.setScale(2.5F);
-            fx.setLayer(1);
-            fx.setLoop(true);
-            fx.setNoClip(false);
-            fx.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
-            ParticleEngine.addEffect(world, fx);
+            Vec3d t = message.getTarget();
+            FXImpulseBeam beam = new FXImpulseBeam(world, (EntityLivingBase) entity, t.x, t.y, t.z, 0.35F, 0.35F, 0.65F, 40);
+            beam.setAlphaFunc(b -> (Math.min((b.getMaxAge() - b.getAge()) / (float) b.getMaxAge(), 0.85F)));
+            beam.setImpactTicks(10);
+            beam.setSize(0.8F);
+            ParticleEngine.addEffect(world, beam);
         }
     }
     

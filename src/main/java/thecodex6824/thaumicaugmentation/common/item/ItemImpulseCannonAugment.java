@@ -95,12 +95,12 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                 
                 @Override
                 public void onCannonUsage(EntityLivingBase user) {
+                    Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonRailgunRange.getValue());
                     List<Entity> ents = RaytraceHelper.raytraceEntities(user, TAConfig.cannonRailgunRange.getValue());
                     for (Entity e : ents)
                         ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonRailgunDamage.getValue());
                     
-                    Vec3d v = user.getLookVec().scale(7.5);
-                    PacketImpulseRailgunProjectile packet = new PacketImpulseRailgunProjectile(user.getEntityId(), v);
+                    PacketImpulseRailgunProjectile packet = new PacketImpulseRailgunProjectile(user.getEntityId(), target);
                     TANetwork.INSTANCE.sendToAllTracking(packet, user);
                     if (user instanceof EntityPlayer) {
                         ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonRailgunCooldown.getValue());
@@ -153,8 +153,8 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                 @Override
                 public void onCannonUsage(EntityLivingBase user) {
                     ScheduledEventHandler.registerTask(() -> tick(user, 0));
-                    Vec3d v = user.getLookVec().scale(7.5);
-                    PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), v);
+                    Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonBurstRange.getValue());
+                    PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), target);
                     TANetwork.INSTANCE.sendToAllTracking(packet, user);
                     if (user instanceof EntityPlayer) {
                         ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonBurstCooldown.getValue());
