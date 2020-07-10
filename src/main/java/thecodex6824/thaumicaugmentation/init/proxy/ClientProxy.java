@@ -54,7 +54,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -757,11 +756,8 @@ public class ClientProxy extends ServerProxy {
         Entity entity = world.getEntityByID(message.getEntityID());
         if (entity instanceof EntityLivingBase) {
             Vec3d t = message.getTarget();
-            FXImpulseBeam beam = new FXImpulseBeam(world, (EntityLivingBase) entity, t.x, t.y, t.z, 0.35F, 0.35F, 0.65F, 9);
-            beam.setAlphaFunc(b -> {
-                int mod = b.getAge() % 3 + 1;
-                return MathHelper.sin((mod + getPartialTicks()) * ((float) Math.PI / 3.0F));
-            });
+            FXImpulseBeam beam = new FXImpulseBeam(world, (EntityLivingBase) entity, t.x, t.y, t.z, 0.35F, 0.35F, 0.65F, message.getBurstNum() == 2 ? 20 : 15);
+            beam.setAlphaFunc(b -> (Math.min((b.getMaxAge() - b.getAge()) / (float) b.getMaxAge(), 0.85F)));
             beam.setImpactTicks(9);
             beam.setSize(0.8F);
             ParticleEngine.addEffect(world, beam);

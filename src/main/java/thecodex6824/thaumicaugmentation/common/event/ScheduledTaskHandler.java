@@ -21,8 +21,9 @@
 package thecodex6824.thaumicaugmentation.common.event;
 
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Map.Entry;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -31,33 +32,37 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.util.ISchedulableTask;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
-public class ScheduledEventHandler {
+public class ScheduledTaskHandler {
     
-    private static final LinkedList<ISchedulableTask> TEMP = new LinkedList<>();
-    private static final LinkedList<ISchedulableTask> ENTRIES = new LinkedList<>();
+    private static final Object2IntOpenHashMap<ISchedulableTask> TEMP = new Object2IntOpenHashMap<>();
+    private static final Object2IntOpenHashMap<ISchedulableTask> ENTRIES = new Object2IntOpenHashMap<>();
     
     private static boolean iterating = false;
     
-    public static void registerTask(ISchedulableTask task) {
+    public static void registerTask(ISchedulableTask task, int delay) {
         if (!iterating)
-            ENTRIES.add(task);
+            ENTRIES.put(task, delay);
         else
-            TEMP.add(task);
+            TEMP.put(task, delay);
     }
     
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == Phase.END) {
             iterating = true;
-            Iterator<ISchedulableTask> iterator = ENTRIES.iterator();
+            Iterator<Entry<ISchedulableTask, Integer>> iterator = ENTRIES.entrySet().iterator();
             while (iterator.hasNext()) {
-                ISchedulableTask task = iterator.next();
-                if (!task.execute())
+                Entry<ISchedulableTask, Integer> task = iterator.next();
+                if (task.getValue() == 0) {
+                    task.getKey().execute();
                     iterator.remove();
+                }
+                else
+                    ENTRIES.addTo(task.getKey(), -1);
             }
             
             if (!TEMP.isEmpty()) {
-                ENTRIES.addAll(TEMP);
+                ENTRIES.putAll(TEMP);
                 TEMP.clear();
             }
             

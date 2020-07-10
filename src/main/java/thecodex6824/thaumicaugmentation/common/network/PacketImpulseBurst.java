@@ -28,18 +28,21 @@ public class PacketImpulseBurst implements IMessage {
 
     protected int id;
     protected Vec3d t;
+    protected int num;
     
     public PacketImpulseBurst() {}
     
-    public PacketImpulseBurst(int entityID, Vec3d target) {
+    public PacketImpulseBurst(int entityID, Vec3d target, int burstNum) {
         id = entityID;
         t = target;
+        num = burstNum;
     }
     
     @Override
     public void fromBytes(ByteBuf buf) {
         id = buf.readInt();
         t = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        num = buf.readInt();
     }
     
     @Override
@@ -48,6 +51,7 @@ public class PacketImpulseBurst implements IMessage {
         buf.writeDouble(t.x);
         buf.writeDouble(t.y);
         buf.writeDouble(t.z);
+        buf.writeInt(num);
     }
     
     public int getEntityID() {
@@ -56,6 +60,10 @@ public class PacketImpulseBurst implements IMessage {
     
     public Vec3d getTarget() {
         return t;
+    }
+    
+    public int getBurstNum() {
+        return num;
     }
     
 }

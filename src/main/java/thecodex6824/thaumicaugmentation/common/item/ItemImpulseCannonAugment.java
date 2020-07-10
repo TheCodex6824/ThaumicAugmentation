@@ -41,7 +41,7 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.IImpulseCannonAugmen
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
-import thecodex6824.thaumicaugmentation.common.event.ScheduledEventHandler;
+import thecodex6824.thaumicaugmentation.common.event.ScheduledTaskHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBurst;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpulseRailgunProjectile;
@@ -134,7 +134,7 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                     return TAConfig.cannonBurstCost.getValue();
                 }
                 
-                private boolean tick(EntityLivingBase user, int num) {
+                private void tick(EntityLivingBase user, int num) {
                     Entity e = RaytraceHelper.raytraceEntity(user, TAConfig.cannonBurstRange.getValue());
                     if (e != null && ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonBurstDamage.getValue()) && num < 2
                             && e instanceof EntityLivingBase) {
@@ -144,23 +144,21 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                         base.lastDamage = 0.0F;
                     }
                     
-                    if (num < 2)
-                        ScheduledEventHandler.registerTask(() -> tick(user, num + 1));
+                    Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonBurstRange.getValue());
+                    PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), target, num);
+                    TANetwork.INSTANCE.sendToAllTracking(packet, user);
+                    if (user instanceof EntityPlayerMP)
+                        TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);
                     
-                    return false;
+                    if (num < 2)
+                        ScheduledTaskHandler.registerTask(() -> tick(user, num + 1), 1);
                 }
                 
                 @Override
                 public void onCannonUsage(EntityLivingBase user) {
-                    ScheduledEventHandler.registerTask(() -> tick(user, 0));
-                    Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonBurstRange.getValue());
-                    PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), target);
-                    TANetwork.INSTANCE.sendToAllTracking(packet, user);
-                    if (user instanceof EntityPlayer) {
+                    ScheduledTaskHandler.registerTask(() -> tick(user, 0), 0);
+                    if (user instanceof EntityPlayer)
                         ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonBurstCooldown.getValue());
-                        if (user instanceof EntityPlayerMP)
-                            TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);
-                    }
                 }
                 
             };

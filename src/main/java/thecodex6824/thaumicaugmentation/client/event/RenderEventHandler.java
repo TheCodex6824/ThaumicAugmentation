@@ -143,6 +143,7 @@ public class RenderEventHandler {
                 beam.setPulse(true);
                 beam.setFollowOwner(true);
                 beam.setImpactTicks(Integer.MAX_VALUE);
+                beam.setEndsLoop(true);
                 IMPULSE_CACHE.put(entity, beam);
                 ParticleEngine.addEffect(entity.getEntityWorld(), beam);
             }

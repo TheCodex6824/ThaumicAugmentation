@@ -23,6 +23,6 @@ package thecodex6824.thaumicaugmentation.common.util;
 @FunctionalInterface
 public interface ISchedulableTask {
 
-    public boolean execute();
+    public void execute();
     
 }

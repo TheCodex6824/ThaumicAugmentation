@@ -70,6 +70,7 @@ public class FXImpulseBeam extends Particle {
     protected boolean follow;
     protected boolean posSet;
     protected Function<FXImpulseBeam, Float> alphaFunc;
+    protected boolean endsLoop;
     
     public FXImpulseBeam(World world, EntityLivingBase entity, double tx, double ty, double tz, float r, float g, float b, int maxAge) {
         super(world, entity.posX, entity.posY, entity.posZ, 0.0, 0.0, 0.0);
@@ -130,14 +131,6 @@ public class FXImpulseBeam extends Particle {
         prevYaw = rotYaw;
         prevPitch = rotPitch;
         
-        double dx = posX - tX;
-        double dy = posY - tY;
-        double dz = posZ - tZ;
-        length = MathHelper.sqrt(dx * dx + dy * dy + dz * dz);
-        double y = MathHelper.sqrt(dx * dx + dz * dz);
-        rotYaw = (float) (Math.toDegrees(Math.atan2(dx, dz)));
-        rotPitch = (float) MathHelper.wrapDegrees(Math.toDegrees(Math.atan2(dy, y)));
-        
         if (impact > 0)
             --impact;
         
@@ -181,6 +174,10 @@ public class FXImpulseBeam extends Particle {
         return particleMaxAge;
     }
     
+    public void setEndsLoop(boolean loop) {
+        endsLoop = loop;
+    }
+    
     public void renderStartAndEnd(BufferBuilder buffer, float partialTicks, float f1, float f2, float f3, float f4, float f5) {
         GlStateManager.pushMatrix();
         GlStateManager.depthMask(false);
@@ -191,7 +188,7 @@ public class FXImpulseBeam extends Particle {
         
         int maxParticles = TAConfig.reducedEffects.getValue() ? 2 : 3;
         for (int i = 0; i < maxParticles; ++i) {
-            int part = (particleAge + i * 2) % 16;
+            int part = endsLoop ? (particleAge + i * 2) % 16 : Math.min(particleAge + i * 2, 16);
             float var8 = part / 16.0F;
             float var9 = var8 + 0.0624375F;
             float var10 = 0.8126875F;
@@ -213,7 +210,7 @@ public class FXImpulseBeam extends Particle {
         
         if (impact > 0) {
             for (int i = 0; i < maxParticles; ++i) {
-                int part = (particleAge + i * 2 + 3) % 16;
+                int part = endsLoop ? (particleAge + i * 2) % 16 : Math.min(particleAge + i * 2, 16);
                 float var8 = part / 16.0F;
                 float var9 = var8 + 0.0624375F;
                 float var10 = 0.8126875F;
@@ -278,6 +275,14 @@ public class FXImpulseBeam extends Particle {
             posZ = pos.z;
             posSet = true;
         }
+        
+        double dx = posX - tX;
+        double dy = posY - tY;
+        double dz = posZ - tZ;
+        length = MathHelper.sqrt(dx * dx + dy * dy + dz * dz);
+        double y = MathHelper.sqrt(dx * dx + dz * dz);
+        rotYaw = (float) (Math.toDegrees(Math.atan2(dx, dz)));
+        rotPitch = (float) MathHelper.wrapDegrees(Math.toDegrees(Math.atan2(dy, y)));
         
         GlStateManager.translate(prevPosX + (posX - prevPosX) * partialTicks - interpPosX,
                 prevPosY + (posY - prevPosY) * partialTicks - interpPosY,
