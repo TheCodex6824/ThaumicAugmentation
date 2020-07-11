@@ -391,23 +391,15 @@
                     ],
                     "required_knowledge": [
                         "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
                         "THEORY;AUROMANCY;1",
-                        "THEORY;ELDRITCH;1"
+                        "THEORY;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1"
                     ]
                 },
                 {
                     "text": "thaumicaugmentation.research.rift_moving.1",
-                    "required_knowledge": [
-                        "OBSERVATION;ARTIFICE;1",
-                        "OBSERVATION;ELDRITCH;1",
-                        "THEORY;ARTIFICE;1"
-                    ],
-                    "recipes": [
-                        "thaumicaugmentation:rift_jar"
-                    ]
-                },
-                {
-                    "text": "thaumicaugmentation.research.rift_moving.2",
                     "recipes": [
                         "thaumicaugmentation:rift_jar",
                         "thaumicaugmentation:rift_mover_input",
@@ -488,6 +480,27 @@
                     "recipes": [
                         "thaumicaugmentation:rift_monitor"
                     ]
+                }
+            ]
+        },
+        {
+            "key": "PRIMORDIAL_WISP",
+            "name": "thaumicaugmentation.research.primordial_wisp.title",
+            "icons": [
+                "thaumcraft:textures/research/r_wisp.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "location": [
+                10,
+                8
+            ],
+            "meta": [
+                "ROUND",
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.primordial_wisp.0"
                 }
             ]
         }

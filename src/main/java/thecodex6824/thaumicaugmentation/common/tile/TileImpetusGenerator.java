@@ -121,7 +121,7 @@ public class TileImpetusGenerator extends TileEntity implements ITickable {
             if (neighbor != null) {
                 IEnergyStorage other = neighbor.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
                 if (other != null && other.canReceive()) {
-                    int extract = Math.min(forgeEnergy.getEnergyStored(), 30);
+                    int extract = Math.min(forgeEnergy.getEnergyStored(), 50);
                     extract = other.receiveEnergy(extract, false);
                     if (extract > 0) {
                         forgeEnergy.extractEnergy(extract, false);

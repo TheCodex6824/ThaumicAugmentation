@@ -257,7 +257,7 @@
         },
         {
             "key": "IMPULSE_CANNON",
-            "name": "thaumicaugmentation.research.impetus_cannon.title",
+            "name": "thaumicaugmentation.research.impulse_cannon.title",
             "icons": [
                 "thaumicaugmentation:impulse_cannon"
             ],
@@ -298,7 +298,7 @@
         },
         {
             "key": "IMPULSE_CANNON_AUGMENT_RAILGUN",
-            "name": "thaumicaugmentation.research.impetus_cannon_augment_railgun.title",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment_railgun.title",
             "icons": [
                 "thaumicaugmentation:impulse_cannon_augment;1;0"
             ],
@@ -329,7 +329,7 @@
         },
         {
             "key": "IMPULSE_CANNON_AUGMENT_BURST",
-            "name": "thaumicaugmentation.research.impetus_cannon_augment_burst.title",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment_burst.title",
             "icons": [
                 "thaumicaugmentation:impulse_cannon_augment;1;1"
             ],

@@ -84,17 +84,17 @@ public final class TAConfigHolder {
     
     public static class GeneralOptions {
         
-        @Name("disableCoremod")
+        @Name("DisableCoremod")
         @Comment({
             "Completely disables the Thaumic Augmentation coremod.",
             "It will still appear in the list of loaded coremods, but won't do anything.",
             "The coremod is a neccessary evil to get warded blocks to behave properly with other mods,",
-            "disabling it may make warded blocks less durable than intended."
+            "as well as work around other vanilla and Thaumcraft issues."
         })
         @RequiresMcRestart
         public boolean disableCoremod = false;
         
-        @Name("disabledTransformers")
+        @Name("DisabledTransformers")
         @Comment({
             "An optional list of coremod class transformers to disable.",
             "For advanced users / modpack makers that encounter issues with only a subset of the coremod.",
@@ -118,21 +118,21 @@ public final class TAConfigHolder {
         
         public static class WardOptions {
             
-            @Name("allowSingleplayerWardOverride")
+            @Name("AllowSingleplayerWardOverride")
             @Comment({
                 "Allows you to always be able to interact with or destroy any warded block/tile while in singleplayer.",
                 "For multiplayer see AllowOPWardOverride."
             })
             public boolean singlePlayerWardOverride = false;
             
-            @Name("allowOPWardOverride")
+            @Name("AllowOPWardOverride")
             @Comment({
                 "Allow server operators to always be able to interact with or destroy any warded block/tile.",
                 "For singleplayer see AllowSingleplayerWardOverride."
             })
             public boolean opWardOverride = false;
             
-            @Name("disableWardFocus")
+            @Name("DisableWardFocus")
             @Comment({
                 "Disables the ward focus. This will remove the research entry, disable existing wards, and make existing foci do nothing.",
                 "This is a server-side setting, although the ward research may not sync properly if the value is not the same on both sides."
@@ -140,7 +140,7 @@ public final class TAConfigHolder {
             @RequiresMcRestart
             public boolean disableWardFocus = false;
             
-            @Name("wardTileMode")
+            @Name("WardTileMode")
             @Comment({
                 "Optionally allows tile entities to be warded in addition to normal blocks.",
                 "While \"all\" and \"none\" should be self explanatory, \"notick\" will",
@@ -156,13 +156,13 @@ public final class TAConfigHolder {
             @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.impulse_cannon")
             public ImpulseCannon cannon = new ImpulseCannon();
             
-            @Name("terraformerCost")
+            @Name("TerraformerCost")
             @Comment({
                 "The amount of Impetus the Arcane Terraformer consumes per block terraformed."
             })
             public int terraformerCost = 5;
             
-            @Name("shieldFocusCost")
+            @Name("ShieldFocusCost")
             @Comment({
                 "The amount of Impetus the Void Shield focus effect consumes to create the shield.",
                 "Note that a proportion of this amount will be consumed to heal a damaged shield."
@@ -171,7 +171,7 @@ public final class TAConfigHolder {
             
             public static class ImpulseCannon {
                 
-                @Name("beamDamage")
+                @Name("BeamDamage")
                 @Comment({
                     "The amount of damage that the Impulse Cannon's beam attack does.",
                     "The beam attack is the default attack with no augments.",
@@ -179,36 +179,36 @@ public final class TAConfigHolder {
                     "so while this damage can theoretically be seen per tick, in practice this is",
                     "extremely unlikely and would take a large crowd and good aim to achieve."
                 })
-                public float beamDamage = 8.0F;
+                public float beamDamage = 7.0F;
                 
-                @Name("beamCost")
+                @Name("BeamCost")
                 @Comment({
                     "The amount of Impetus used by the Impulse Cannon's beam attack per tick.",
                     "This cost is paid even if nothing is being hit by the beam."
                 })
                 public int beamCost = 1;
                 
-                @Name("beamRange")
+                @Name("BeamRange")
                 @Comment({
                     "The range in meters of the Impulse Cannon's beam attack."
                 })
                 public double beamRange = 32.0;
                 
-                @Name("railgunDamage")
+                @Name("RailgunDamage")
                 @Comment({
                     "The amount of damage that the Impulse Cannon's railgun attack does.",
                     "Note that the beam can pierce through multiple entities, but not blocks."
                 })
-                public float railgunDamage = 28.0F;
+                public float railgunDamage = 25.0F;
                 
-                @Name("railgunCost")
+                @Name("RailgunCost")
                 @Comment({
                     "The amount of Impetus used by the Impulse Cannon's railgun attack per shot.",
                     "This cost is paid even if nothing is being hit by the shot."
                 })
                 public int railgunCost = 5;
                 
-                @Name("railgunCooldown")
+                @Name("RailgunCooldown")
                 @Comment({
                     "The cooldown in ticks between shots of the Impulse Cannon in railgun mode.",
                     "Note that this will lock the player out of all Impulse Cannons in their inventory for",
@@ -216,37 +216,37 @@ public final class TAConfigHolder {
                 })
                 public int railgunCooldown = 100;
                 
-                @Name("railgunRange")
+                @Name("RailgunRange")
                 @Comment({
                     "The range in meters of the Impulse Cannon's railgun attack."
                 })
                 public double railgunRange = 64.0;
                 
-                @Name("burstDamage")
+                @Name("BurstDamage")
                 @Comment({
                     "The amount of damage that the Impulse Cannon's burst attack does per shot.",
                     "Note that the damage cooldown of an entity hit by the first 2 rounds of the burst is reset",
                     "to allow the other rounds to do damage.",
                     "Since there are three shots fired by the burst, the effective damage is three times this value."
                 })
-                public float burstDamage = 5.0F;
+                public float burstDamage = 6.0F;
                 
-                @Name("burstCost")
+                @Name("BurstCost")
                 @Comment({
                     "The amount of Impetus used by the Impulse Cannon's burst attack per burst.",
                     "This cost is paid even if nothing is being hit by the shot."
                 })
                 public int burstCost = 6;
                 
-                @Name("burstCooldown")
+                @Name("BurstCooldown")
                 @Comment({
                     "The cooldown in ticks between shots of the Impulse Cannon in burst mode.",
                     "Note that this will lock the player out of all Impulse Cannons in their inventory for",
                     "this duration."
                 })
-                public int burstCooldown = 23;
+                public int burstCooldown = 26;
                 
-                @Name("burstRange")
+                @Name("BurstRange")
                 @Comment({
                     "The range in meters of the Impulse Cannon's burst attack."
                 })
@@ -255,21 +255,21 @@ public final class TAConfigHolder {
             }
         }
         
-        @Name("gauntletVisDiscounts")
+        @Name("GauntletVisDiscounts")
         @Comment({
             "The discounts that will be applied to the vis cost of foci used in the thaumium and void metal caster gauntlets."
         })
         @RangeDouble(min = 0.0F, max = 1.0F)
         public double[] gauntletVisDiscounts = {0.1, 0.3};
         
-        @Name("gauntletCooldownModifiers")
+        @Name("GauntletCooldownModifiers")
         @Comment({
             "The multipliers that will be applied to the use cooldowns of the Thaumium and Void Metal caster gauntlets."
         })
         @RangeDouble(min = 0.0F, max = 1.0F)
         public double[] gauntletCooldownModifiers = {0.80, 0.9};
 
-        @Name("voidseerExtraArea")
+        @Name("VoidseerExtraArea")
         @Comment({
             "The extra square area for the voidseer gauntlet, in chunks.",
             "An area of 3, for example, will mean vis will be taken in a 3x3 chunk area around the caster.",
@@ -279,7 +279,7 @@ public final class TAConfigHolder {
         @RangeInt(min = 1, max = 32)
         public int voidseerArea = 3;
 
-        @Name("voidBootsLandSpeedBoost")
+        @Name("VoidBootsLandSpeedBoost")
         @Comment({
             "The boost applied while the wearer is on the ground, and on dry land.",
             "This is added to the base movement of the player per tick."
@@ -287,7 +287,7 @@ public final class TAConfigHolder {
         @RangeDouble(min = 0.0F, max = 10.0F)
         public double voidBootsLandSpeedBoost = 0.09;
 
-        @Name("voidBootsWaterSpeedBoost")
+        @Name("VoidBootsWaterSpeedBoost")
         @Comment({
             "The boost applied while the wearer is in water.",
             "This is added to the base movement of the player per tick."
@@ -295,7 +295,7 @@ public final class TAConfigHolder {
         @RangeDouble(min = 0.0F, max = 10.0F)
         public double voidBootsWaterSpeedBoost = 0.045;
 
-        @Name("voidBootsJumpBoost")
+        @Name("VoidBootsJumpBoost")
         @Comment({
             "The boost applied when the wearer jumps.",
             "This is added to the base jump height of the player."
@@ -303,7 +303,7 @@ public final class TAConfigHolder {
         @RangeDouble(min = 0.0F, max = 10.0F)
         public double voidBootsJumpBoost = 0.4;
 
-        @Name("voidBootsJumpFactor")
+        @Name("VoidBootsJumpFactor")
         @Comment({
             "The boost applied to player movement while in the air.",
             "This itself is a speed, so it can make movement faster in the air than on the ground."
@@ -311,7 +311,7 @@ public final class TAConfigHolder {
         @RangeDouble(min = 0.0F, max = 10.0F)
         public double voidBootsJumpFactor = 0.04;
 
-        @Name("voidBootsStepHeight")
+        @Name("VoidBootsStepHeight")
         @Comment({
             "The boost applied to the player's step height (while not sneaking).",
             "This is added to the vanilla default value of 0.6."
@@ -319,14 +319,14 @@ public final class TAConfigHolder {
         @RangeDouble(min = 0.0F, max = 10.0F)
         public double voidBootsStepHeight = 0.47;
 
-        @Name("voidBootsSneakReduction")
+        @Name("VoidBootsSneakReduction")
         @Comment({
             "Any speed boosts (not jump) will be divided by this value while sneaking."
         })
         @RangeDouble(min = 1.0F, max = 10.0F)
         public double voidBootsSneakReduction = 4.0F;
         
-        @Name("serverSideMovementCalculation")
+        @Name("ServerSideMovementCalculation")
         @Comment({
             "Makes the server calculate positions and velocities from the Boots of the Riftstrider in addition to the client.",
             "Normally the client is left to update their position, and the server just takes it from the client.",
@@ -334,7 +334,7 @@ public final class TAConfigHolder {
         })
         public boolean serverMovementCalculation = false;
         
-        @Name("defaultCastingGauntletColors")
+        @Name("DefaultCastingGauntletColors")
         @Comment({
             "The default dye colors for the thaumium and void gauntlets when crafted, in that order.",
             "The dyed color is multiplied with the color of the texture.",
@@ -342,7 +342,7 @@ public final class TAConfigHolder {
         })
         public int[] defaultGauntletColors = new int[] {0x7A68C0, 0x262157};
 
-        @Name("defaultVoidBootsColor")
+        @Name("DefaultVoidBootsColor")
         @Comment({
             "The default dye color for the Boots of the Riftstrider when crafted.",
             "The dyed color is multiplied with the color of the texture.",
@@ -350,7 +350,7 @@ public final class TAConfigHolder {
         })
         public int defaultVoidBootsColor = 0x6A3880;
         
-        @Name("primalCutterDamage")
+        @Name("PrimalCutterDamage")
         @Comment({
             "The damage done by the Primal Cutter's material, NOT including the base damage.",
             "In other words, its total damage will be this number + 4 (3 for being a \"sword\", and 1 as the minimum)"
@@ -358,11 +358,12 @@ public final class TAConfigHolder {
         @RequiresMcRestart
         public float primalCutterDamage = 6.0F;
         
-        @Name("deniedResearchCategories")
+        @Name("DeniedResearchCategories")
         @Comment({
             "The list of research categories that Thaumic Augmentation will never willingly give research in.",
             "Sadly Thaumcraft makes all addons have a research category, even if they don't intend on using it.",
-            "This is why cards like \"experiment\" can give categories that never appear otherwise."
+            "This is why cards like \"experiment\" can give categories that never appear otherwise.",
+            "If you are a TC addon author and you want your mod included/removed from this list, message TheCodex6824 or open an issue/PR on Github."
         })
         public String[] deniedCategories = new String[] {
                 "THAUMIC_AUGMENTATION",
@@ -377,7 +378,7 @@ public final class TAConfigHolder {
     
     public static class WorldOptions {
         
-        @Name("emptinessDimID")
+        @Name("EmptinessDimID")
         @Comment({
             "The dimension ID to use for the Emptiness dimension.",
             "If this ID is already taken, a new one will automatically be assigned."
@@ -385,7 +386,7 @@ public final class TAConfigHolder {
         @RequiresMcRestart
         public int emptinessDimID = 14676;
 
-        @Name("emptinessMoveFactor")
+        @Name("EmptinessMoveFactor")
         @Comment({
             "The scaling factor applied to distances in the Emptiness dimension.",
             "For example, the nether has a value of 8 since it multiplies coords by 8.",
@@ -394,7 +395,7 @@ public final class TAConfigHolder {
         })
         public double emptinessMoveFactor = 16.0;
 
-        @Name("fractureGenChance")
+        @Name("FractureGenChance")
         @Comment({
             "The chance for a fracture to generate in a chunk in the Emptiness dimension.",
             "The approximate chance will be 1 / chance (assuming the chunk meets all other conditions).",
@@ -403,7 +404,7 @@ public final class TAConfigHolder {
         })
         public int fractureGenChance = 35;
         
-        @Name("fractureDimList")
+        @Name("FractureDimList")
         @Comment({
             "Lists the whitelisted dimensions for fractures (not including the Emptiness dim), and their associated weights.",
             "Higher weights (compared to lower weights) will be more likely to spawn.",
@@ -442,14 +443,14 @@ public final class TAConfigHolder {
             //fractureDimList.put("34", 4); dimension currently crashes due to unfinished biome
         }
         
-        @Name("fractureLocatorUpdateInterval")
+        @Name("FractureLocatorUpdateInterval")
         @Comment({
             "How often the location pointed to by the Fracture Locator should be updated, in milliseconds.",
             "This is a server-side setting."
         })
         public int fractureLocatorUpdateInterval = 2000;
         
-        @Name("validFracturesAlwaysTeleport")
+        @Name("ValidFracturesAlwaysTeleport")
         @Comment({
             "If this is set, fractures that previously found a valid location will always teleport the player, even if it is now invalid.",
             "Normally, fractures check if there is a fracture at the destination to make sure players can get back.",
@@ -457,7 +458,7 @@ public final class TAConfigHolder {
         })
         public boolean fracturesAlwaysTeleport = false;
         
-        @Name("disableEmptinessDimension")
+        @Name("DisableEmptinessDimension")
         @Comment({
             "Completely disables the Emptiness dimension, *including* all fracture generation.",
             "This is not the intended way to experience the mod but is included here for modpack authors.",
@@ -466,7 +467,7 @@ public final class TAConfigHolder {
         @RequiresMcRestart
         public boolean disableEmptiness = false;
         
-        @Name("generateEldritchSpires")
+        @Name("GenerateEldritchSpires")
         @Comment({
             "Allows the Eldritch Spire structure to generate in the Emptiness.",
             "The spire is intended to be a part of the research progression, so removing it is not recommended.",
@@ -474,13 +475,13 @@ public final class TAConfigHolder {
         })
         public boolean generateSpires = true;
         
-        @Name("spireMinDist")
+        @Name("SpireMinDist")
         @Comment({
             "The absolute minimum distance, in chunks, between generated Eldritch Spires."
         })
         public int spireMinDist = 10;
         
-        @Name("spireSpacing")
+        @Name("SpireSpacing")
         @Comment({
             "The approximate distance, in chunks, between generated Eldritch Spires."
         })
@@ -490,14 +491,14 @@ public final class TAConfigHolder {
     
     public static class ClientOptions {
         
-        @Name("reducedEffects")
+        @Name("ReducedEffects")
         @Comment({
             "Disables some unneccessary particle effects.",
             "This includes the special effect of the casted light, as well as most of the particles on the Metaspatial Accumulator/Extruder"
         })
         public boolean reducedEffects = false;
         
-        @Name("optimizedFluxRiftRenderer")
+        @Name("OptimizedFluxRiftRenderer")
         @Comment({
             "Overrides Thaumcraft's Flux Rift renderer to use one that is slightly better for performance.",
             "It probably won't make a major difference as of now, but can help.",
@@ -506,7 +507,7 @@ public final class TAConfigHolder {
         @RequiresMcRestart
         public boolean optimizedFluxRiftRenderer = false;
         
-        @Name("gauntletCastAnimation")
+        @Name("GauntletCastAnimation")
         @Comment({
             "Enables a simple animation where an entity holds their arm out after casting.",
             "This is a client-side setting."
