@@ -179,7 +179,7 @@ public final class TAConfigHolder {
                     "so while this damage can theoretically be seen per tick, in practice this is",
                     "extremely unlikely and would take a large crowd and good aim to achieve."
                 })
-                public float beamDamage = 7.0F;
+                public float beamDamage = 6.0F;
                 
                 @Name("BeamCost")
                 @Comment({
@@ -199,7 +199,7 @@ public final class TAConfigHolder {
                     "The amount of damage that the Impulse Cannon's railgun attack does.",
                     "Note that the beam can pierce through multiple entities, but not blocks."
                 })
-                public float railgunDamage = 25.0F;
+                public float railgunDamage = 30.0F;
                 
                 @Name("RailgunCost")
                 @Comment({
@@ -229,14 +229,14 @@ public final class TAConfigHolder {
                     "to allow the other rounds to do damage.",
                     "Since there are three shots fired by the burst, the effective damage is three times this value."
                 })
-                public float burstDamage = 6.0F;
+                public float burstDamage = 8.0F;
                 
                 @Name("BurstCost")
                 @Comment({
                     "The amount of Impetus used by the Impulse Cannon's burst attack per burst.",
                     "This cost is paid even if nothing is being hit by the shot."
                 })
-                public int burstCost = 6;
+                public int burstCost = 4;
                 
                 @Name("BurstCooldown")
                 @Comment({

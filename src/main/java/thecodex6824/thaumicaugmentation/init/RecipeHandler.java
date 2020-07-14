@@ -52,10 +52,13 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.common.recipe.FluxSeedGrowthRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.MorphicArmorBindingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicToolBindingRecipe;
 
 public final class RecipeHandler {
@@ -133,13 +136,26 @@ public final class RecipeHandler {
                     new MorphicToolBindingRecipe());
             
             ItemStack morphicSample = new ItemStack(TAItems.MORPHIC_TOOL);
-            IMorphicTool tool = morphicSample.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+            IMorphicItem tool = morphicSample.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
             tool.setDisplayStack(new ItemStack(Items.GOLDEN_HOE));
-            tool.setFunctionalStack(new ItemStack(Items.DIAMOND_SWORD));
+            ((IMorphicTool) tool).setFunctionalStack(new ItemStack(Items.DIAMOND_SWORD));
             ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_tool_binding_fake"),
                     new InfusionRecipe("MORPHIC_TOOL", morphicSample, 5, new AspectList().add(Aspect.VOID, 15),
                     Items.DIAMOND_SWORD, new Object[] {
                             ItemsTC.primordialPearl, Items.GOLDEN_HOE, ItemsTC.quicksilver
+                    }
+            ));
+            
+            ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_armor_binding"),
+                    new MorphicArmorBindingRecipe());
+            
+            morphicSample = new ItemStack(Items.DIAMOND_CHESTPLATE);
+            tool = morphicSample.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
+            tool.setDisplayStack(new ItemStack(Items.GOLDEN_CHESTPLATE));
+            ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_armor_binding_fake"),
+                    new InfusionRecipe("MORPHIC_ARMOR", morphicSample, 8, new AspectList().add(Aspect.VOID, 100),
+                    Items.DIAMOND_CHESTPLATE, new Object[] {
+                            ItemsTC.primordialPearl, Items.GOLDEN_CHESTPLATE, ItemsTC.quicksilver
                     }
             ));
             

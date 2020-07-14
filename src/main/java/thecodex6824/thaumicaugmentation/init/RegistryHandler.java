@@ -151,6 +151,7 @@ import thecodex6824.thaumicaugmentation.common.recipe.BiomeSelectorSpecialResetR
 import thecodex6824.thaumicaugmentation.common.recipe.CustomAugmentCreationRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.DyeableItemRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ElementChangeRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.MorphicArmorUnbindingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicToolUnbindingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.PrimalCutterAbilityRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumKeyCopyRecipe;
@@ -390,6 +391,7 @@ public final class RegistryHandler {
         event.getRegistry().register(new ElementChangeRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "element_swap")));
         event.getRegistry().register(new CustomAugmentCreationRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "custom_augment")));
         event.getRegistry().register(new MorphicToolUnbindingRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_tool_unbinding")));
+        event.getRegistry().register(new MorphicArmorUnbindingRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_armor_unbinding")));
         event.getRegistry().register(new PrimalCutterAbilityRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "primal_cutter_ability")));
         event.getRegistry().register(new BiomeSelectorSpecialResetRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "biome_focus_special_reset")));
     }

@@ -20,12 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.api.item;
 
-import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
-public interface IMorphicTool extends IMorphicItem {
+public final class CapabilityMorphicArmor {
 
-    public void setFunctionalStack(ItemStack stack);
+    private CapabilityMorphicArmor() {}
     
-    public ItemStack getFunctionalStack();
+    @CapabilityInject(IMorphicArmor.class)
+    public static final Capability<IMorphicArmor> MORPHIC_ARMOR = null;
     
 }

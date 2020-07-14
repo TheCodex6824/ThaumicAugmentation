@@ -96,7 +96,7 @@ public class ItemImpulseCannon extends ItemTABase {
             public boolean isAugmentAcceptable(ItemStack augment, int slot) {
                 return augment.getCapability(CapabilityAugment.AUGMENT, null) instanceof IImpulseCannonAugment;
             }
-        }, new ImpetusStorage(800, 50, 800));
+        }, new ImpetusStorage(1000, 100, 1000));
         
         if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
             provider.deserializeNBT(nbt.getCompoundTag("Parent"));

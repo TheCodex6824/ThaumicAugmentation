@@ -23,38 +23,37 @@ package thecodex6824.thaumicaugmentation.client.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ICustomModelLoader;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
+import thecodex6824.thaumicaugmentation.client.renderer.item.MorphicWrappingTEISR;
 
-public class BuiltInRendererModel implements IModel {
+public abstract class MorphicItemModel implements IModel {
 
-    protected IModel wrap;
-    
-    protected BuiltInRendererModel(@Nullable IModel wrapped) {
-        wrap = wrapped;
-    }
+    private static final ImmutableList<ResourceLocation> DEPS = ImmutableList.of(
+            new ResourceLocation("thaumcraft", "item/enchanted_placeholder"));
     
     @Override
     public IModelState getDefaultState() {
@@ -63,7 +62,7 @@ public class BuiltInRendererModel implements IModel {
     
     @Override
     public Collection<ResourceLocation> getDependencies() {
-        return Collections.emptyList();
+        return DEPS;
     }
     
     @Override
@@ -71,92 +70,80 @@ public class BuiltInRendererModel implements IModel {
         return Collections.emptyList();
     }
     
-    @Override
-    public IBakedModel bake(IModelState state, VertexFormat format,
-            Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+    public static abstract class BakedModel implements IBakedModel {
         
-        return new BakedModel(wrap != null ? wrap.bake(state, format, bakedTextureGetter) : null);
-    }
-    
-    public static class Loader implements ICustomModelLoader {
+        protected IBakedModel wrappedFallback;
         
-        public Loader() {}
+        protected ItemOverrideList handler;
         
-        @Override
-        public boolean accepts(ResourceLocation loc) {
-            return loc.getNamespace().equals("ta_special") && loc.getPath().startsWith("renderer_builtin:");
-        }
+        protected abstract IMorphicItem getMorphicItem(ItemStack stack);
         
-        @Override
-        public IModel loadModel(ResourceLocation modelLocation) throws Exception {
-            if (!(modelLocation instanceof ModelResourceLocation))
-                throw new Exception("Resource locations must be ModelResourceLocation instances, as a variant is needed");
+        protected BakedModel(IBakedModel wrappedModel) {
+            wrappedFallback = wrappedModel;
+            handler = new ItemOverrideList(ImmutableList.of()) {
                 
-            String component = modelLocation.getPath().split(":", 2)[1];
-            return new BuiltInRendererModel(ModelLoaderRegistry.getModel(new ModelResourceLocation(component, ((ModelResourceLocation) modelLocation).getVariant())));
-        }
-        
-        @Override
-        public void onResourceManagerReload(IResourceManager resourceManager) {}
-        
-    }
-    
-    public static class BakedModel implements IBakedModel {
-        
-        protected IBakedModel wrapped;
-        protected TransformType lastTransform;
-        
-        protected BakedModel(@Nullable IBakedModel toWrap) {
-            wrapped = toWrap;
+                @Override
+                public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world,
+                        @Nullable EntityLivingBase entity) {
+                    
+                    IMorphicItem tool = getMorphicItem(stack);
+                    if (tool == null || tool.getDisplayStack().isEmpty())
+                        return wrappedFallback;
+                    else {
+                        if (!(stack.getItem().getTileEntityItemStackRenderer() instanceof MorphicWrappingTEISR)) {
+                            stack.getItem().setTileEntityItemStackRenderer(new MorphicWrappingTEISR(stack.getItem().getTileEntityItemStackRenderer()) {
+                                @Override
+                                protected IMorphicItem getMorphicItem(ItemStack stack) {
+                                    return BakedModel.this.getMorphicItem(stack);
+                                }
+                            });
+                        }
+                        
+                        return Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(tool.getDisplayStack(), world, entity);
+                    }
+                }
+            };
         }
         
         @Override
         public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-            return wrapped != null ? wrapped.getQuads(state, side, rand) : Collections.emptyList();
+            return Collections.emptyList();
         }
         
         @Override
         public ItemOverrideList getOverrides() {
-            return wrapped.getOverrides();
+            return handler;
         }
         
         @Override
         public TextureAtlasSprite getParticleTexture() {
-            return wrapped != null ? wrapped.getParticleTexture() : null;
+            return wrappedFallback.getParticleTexture();
         }
         
         @Override
         public boolean isAmbientOcclusion() {
-            return wrapped != null ? wrapped.isAmbientOcclusion() : false;
+            return wrappedFallback.isAmbientOcclusion();
         }
         
         @Override
         public boolean isBuiltInRenderer() {
-            return true;
+            return wrappedFallback.isBuiltInRenderer();
         }
         
         @Override
         public boolean isGui3d() {
-            return wrapped != null ? wrapped.isGui3d() : false;
+            return wrappedFallback.isGui3d();
         }
         
         @Override
+        @SuppressWarnings("deprecation")
         public ItemCameraTransforms getItemCameraTransforms() {
-            return ItemCameraTransforms.DEFAULT;
+            return wrappedFallback.getItemCameraTransforms();
         }
         
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-            lastTransform = cameraTransformType;
-            return Pair.of(this, wrapped.handlePerspective(cameraTransformType).getValue());
-        }
-        
-        public IBakedModel getWrappedModel() {
-            return wrapped;
-        }
-        
-        public TransformType getLastTransformType() {
-            return lastTransform;
+            return Pair.of(this, wrappedFallback.handlePerspective(cameraTransformType).getValue());
         }
         
     }

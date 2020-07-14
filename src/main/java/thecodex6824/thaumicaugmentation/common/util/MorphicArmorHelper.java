@@ -18,14 +18,27 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.item;
+package thecodex6824.thaumicaugmentation.common.util;
 
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
-public interface IMorphicTool extends IMorphicItem {
+public final class MorphicArmorHelper {
 
-    public void setFunctionalStack(ItemStack stack);
+    private MorphicArmorHelper() {}
     
-    public ItemStack getFunctionalStack();
+    private static final NonNullList<ItemStack> EMPTY_ARMOR = NonNullList.withSize(4, ItemStack.EMPTY);
+    
+    public static NonNullList<ItemStack> getArmorInventory(EntityLivingBase entity) {
+        if (entity instanceof EntityPlayer)
+            return ((EntityPlayer) entity).inventory.armorInventory;
+        else if (entity instanceof EntityLiving)
+            return ((EntityLiving) entity).inventoryArmor;
+        else
+            return EMPTY_ARMOR;
+    }
     
 }

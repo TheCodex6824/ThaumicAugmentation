@@ -58,13 +58,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.casters.ICaster;
@@ -77,8 +80,10 @@ import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicArmor;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
@@ -89,6 +94,7 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.common.block.trait.INoBlockOutline;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
+import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
@@ -106,6 +112,8 @@ public class RenderEventHandler {
     private static final ArrayList<ArrayList<IShaderRenderingCallback>> SHADER_RENDERS = new ArrayList<>(ShaderType.values().length);
     
     private static final double TRANSACTION_DURATION = 60.0;
+    
+    private static NonNullList<ItemStack> tempArmor = NonNullList.withSize(4, ItemStack.EMPTY);
     
     static {
         for (int i = 0; i < ShaderType.values().length; ++i)
@@ -137,7 +145,6 @@ public class RenderEventHandler {
         else {
             FXImpulseBeam beam = IMPULSE_CACHE.getIfPresent(entity);
             if (beam == null) {
-                System.out.println("beam null");
                 Vec3d dest = RaytraceHelper.raytracePosition(entity, TAConfig.cannonBeamRange.getValue());
                 beam = new FXImpulseBeam(entity.getEntityWorld(), entity, dest.x, dest.y, dest.z, 0.35F, 0.35F, 0.65F, Integer.MAX_VALUE);
                 beam.setPulse(true);
@@ -250,6 +257,44 @@ public class RenderEventHandler {
             if (stack.getItem() instanceof IElytraCompat)
                 event.setRenderCape(false);
         }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onRenderLivingPre(RenderLivingEvent.Pre<EntityLivingBase> event) {
+        NonNullList<ItemStack> armor = MorphicArmorHelper.getArmorInventory(event.getEntity());
+        for (int i = 0; i < armor.size(); ++i) {
+            ItemStack s = armor.get(i);
+            IMorphicArmor morph = s.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
+            if (morph != null) {
+                ItemStack disp = morph.getDisplayStack();
+                if (!disp.isEmpty()) {
+                    tempArmor.set(i, s);
+                    armor.set(i, disp);
+                }
+            }
+        }
+    }
+    
+    private static void restoreArmor(EntityLivingBase entity) {
+        NonNullList<ItemStack> armor = MorphicArmorHelper.getArmorInventory(entity);
+        for (int i = 0; i < armor.size(); ++i) {
+            ItemStack s = tempArmor.get(i);
+            if (!s.isEmpty()) {
+                armor.set(i, s);
+                tempArmor.set(i, ItemStack.EMPTY);
+            }
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void onRenderLivingPreCheck(RenderLivingEvent.Pre<EntityLivingBase> event) {
+        if (event.isCanceled())
+            restoreArmor(event.getEntity());
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
+    public static void onRenderLivingPost(RenderLivingEvent.Post<EntityLivingBase> event) {
+        restoreArmor(event.getEntity());
     }
     
     @SubscribeEvent

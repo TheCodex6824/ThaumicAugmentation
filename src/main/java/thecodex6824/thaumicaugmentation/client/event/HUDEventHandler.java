@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
@@ -42,6 +43,8 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicArmor;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
@@ -114,13 +117,25 @@ public class HUDEventHandler {
     @SubscribeEvent
     public static void onRenderHUD(RenderGameOverlayEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (event.getType() == ElementType.TEXT && mc.inGameHasFocus && Minecraft.isGuiEnabled()) {
+        if (event.getType() == ElementType.POTION_ICONS && mc.inGameHasFocus && Minecraft.isGuiEnabled()) {
             IImpetusStorage storage = findStorage(mc.player.getHeldItemMainhand());
             if (storage == null)
                 storage = findStorage(mc.player.getHeldItemOffhand());
         
             if (storage != null)
                 renderHeldImpetusLevel(storage);
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onRenderHUDPre(RenderGameOverlayEvent.Pre event) {
+        Minecraft mc = Minecraft.getMinecraft();
+        GuiIngame ingame = mc.ingameGUI;
+        if (ingame.remainingHighlightTicks > 0) {
+            IMorphicArmor armor = mc.player.inventory.getCurrentItem().getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
+            // temp fix until I decide if I want to coremod this or not
+            if (armor != null && !armor.getDisplayStack().isEmpty())
+                ingame.remainingHighlightTicks = 0;
         }
     }
     

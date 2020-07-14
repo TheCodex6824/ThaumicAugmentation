@@ -18,14 +18,22 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.item;
+package thecodex6824.thaumicaugmentation.client.model;
 
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.item.ItemStack;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
 
-public interface IMorphicTool extends IMorphicItem {
-
-    public void setFunctionalStack(ItemStack stack);
+public class MorphicArmorBakedModel extends MorphicItemModel.BakedModel {
     
-    public ItemStack getFunctionalStack();
+    protected MorphicArmorBakedModel(IBakedModel wrappedModel) {
+        super(wrappedModel);
+    }
+    
+    @Override
+    protected IMorphicItem getMorphicItem(ItemStack stack) {
+        return stack.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
+    }
     
 }

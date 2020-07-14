@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.client.event;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -70,6 +71,8 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicArmor;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageClient;
@@ -114,6 +117,16 @@ public final class ClientEventHandler {
     
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event) {
+        IMorphicArmor armor = event.getItemStack().getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
+        if (armor != null && !armor.getDisplayStack().isEmpty()) {
+            ItemStack disp = armor.getDisplayStack();
+            List<String> newTooltip = disp.getTooltip(event.getEntityPlayer(), event.getFlags());
+            if (!newTooltip.isEmpty()) {
+                event.getToolTip().remove(0);
+                event.getToolTip().add(0, newTooltip.get(0));
+            }
+        }
+        
         IAugmentableItem cap = event.getItemStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
         if (cap != null && cap.isAugmented()) {
             event.getToolTip().add(TextFormatting.RED + new TextComponentTranslation("thaumicaugmentation.text.augmented", 

@@ -25,7 +25,10 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -51,9 +54,22 @@ public class MiscModels {
     
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
+        IRegistry<ModelResourceLocation, IBakedModel> registry = event.getModelRegistry();
         IModel shield = ModelLoaderRegistry.getModelOrMissing(SHIELD_MODEL);
         IBakedModel shieldModel = shield.bake(shield.getDefaultState(), DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
-        event.getModelRegistry().putObject(SHIELD_MODEL_LOC, shieldModel);
+        registry.putObject(SHIELD_MODEL_LOC, shieldModel);
+        
+        // prepare for suffering (aka looping over all items in the game)
+        ModelLoader loader = event.getModelLoader();
+        for (Item item : Item.REGISTRY) {
+            if (item instanceof ItemArmor) {
+                for (String s : loader.getVariantNames(item)) {
+                    ModelResourceLocation model = ModelLoader.getInventoryVariant(s);
+                    IBakedModel old = registry.getObject(model);
+                    registry.putObject(model, new MorphicArmorBakedModel(old));
+                }
+            }
+        }
     }
     
 }

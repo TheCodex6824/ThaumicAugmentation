@@ -34,9 +34,9 @@ public final class TAMaterials {
 
     private TAMaterials() {}
     
-    public static final ArmorMaterial VOID_BOOTS = EnumHelper.addArmorMaterial(ThaumicAugmentationAPI.MODID + ":VOID_BOOTS", 
+    public static final ArmorMaterial VOID_BOOTS = EnumHelper.addArmorMaterial(ThaumicAugmentationAPI.MODID + "_VOID_BOOTS", 
             ThaumicAugmentationAPI.MODID + ":void_boots", 18, new int[] {4, 7, 9, 3}, 10, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 2.0F);
-
+    
     public static final IRarity RARITY_MAGICAL = new IRarity() {
         @Override
         public String getName() {

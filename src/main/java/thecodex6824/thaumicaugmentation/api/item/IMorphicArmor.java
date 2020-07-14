@@ -20,12 +20,4 @@
 
 package thecodex6824.thaumicaugmentation.api.item;
 
-import net.minecraft.item.ItemStack;
-
-public interface IMorphicTool extends IMorphicItem {
-
-    public void setFunctionalStack(ItemStack stack);
-    
-    public ItemStack getFunctionalStack();
-    
-}
+public interface IMorphicArmor extends IMorphicItem {}

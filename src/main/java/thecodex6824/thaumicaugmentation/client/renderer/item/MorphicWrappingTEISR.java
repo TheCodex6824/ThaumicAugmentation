@@ -18,14 +18,29 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.item;
+package thecodex6824.thaumicaugmentation.client.renderer.item;
 
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.item.ItemStack;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
 
-public interface IMorphicTool extends IMorphicItem {
+public abstract class MorphicWrappingTEISR extends TileEntityItemStackRenderer {
 
-    public void setFunctionalStack(ItemStack stack);
+    protected TileEntityItemStackRenderer original;
     
-    public ItemStack getFunctionalStack();
+    protected abstract IMorphicItem getMorphicItem(ItemStack stack);
+    
+    public MorphicWrappingTEISR(TileEntityItemStackRenderer renderer) {
+        original = renderer;
+    }
+    
+    @Override
+    public void renderByItem(ItemStack stack) {
+        IMorphicItem item = getMorphicItem(stack);
+        if (item == null || item.getDisplayStack().isEmpty())
+            original.renderByItem(stack);
+        else
+            item.getDisplayStack().getItem().getTileEntityItemStackRenderer().renderByItem(item.getDisplayStack());
+    }
     
 }
