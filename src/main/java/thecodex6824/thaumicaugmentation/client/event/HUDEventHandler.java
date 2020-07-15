@@ -43,11 +43,10 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicArmor;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
+import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public class HUDEventHandler {
@@ -131,12 +130,8 @@ public class HUDEventHandler {
     public static void onRenderHUDPre(RenderGameOverlayEvent.Pre event) {
         Minecraft mc = Minecraft.getMinecraft();
         GuiIngame ingame = mc.ingameGUI;
-        if (ingame.remainingHighlightTicks > 0) {
-            IMorphicArmor armor = mc.player.inventory.getCurrentItem().getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
-            // temp fix until I decide if I want to coremod this or not
-            if (armor != null && !armor.getDisplayStack().isEmpty())
-                ingame.remainingHighlightTicks = 0;
-        }
+        if (ingame.remainingHighlightTicks > 0 && MorphicArmorHelper.hasMorphicArmor(mc.player.inventory.getCurrentItem()))
+            ingame.remainingHighlightTicks = 0;
     }
     
 }

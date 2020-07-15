@@ -22,8 +22,7 @@ package thecodex6824.thaumicaugmentation.client.model;
 
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.item.ItemStack;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
+import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
 public class MorphicArmorBakedModel extends MorphicItemModel.BakedModel {
     
@@ -32,8 +31,8 @@ public class MorphicArmorBakedModel extends MorphicItemModel.BakedModel {
     }
     
     @Override
-    protected IMorphicItem getMorphicItem(ItemStack stack) {
-        return stack.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
+    protected ItemStack getMorphicItem(ItemStack stack) {
+        return MorphicArmorHelper.getMorphicArmor(stack);
     }
     
 }

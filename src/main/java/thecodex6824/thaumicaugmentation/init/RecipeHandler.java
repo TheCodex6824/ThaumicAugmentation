@@ -52,7 +52,6 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
@@ -60,6 +59,7 @@ import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.common.recipe.FluxSeedGrowthRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicArmorBindingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicToolBindingRecipe;
+import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
 public final class RecipeHandler {
 
@@ -150,8 +150,7 @@ public final class RecipeHandler {
                     new MorphicArmorBindingRecipe());
             
             morphicSample = new ItemStack(Items.DIAMOND_CHESTPLATE);
-            tool = morphicSample.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
-            tool.setDisplayStack(new ItemStack(Items.GOLDEN_CHESTPLATE));
+            MorphicArmorHelper.setMorphicArmor(morphicSample, new ItemStack(Items.GOLDEN_CHESTPLATE));
             ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_armor_binding_fake"),
                     new InfusionRecipe("MORPHIC_ARMOR", morphicSample, 8, new AspectList().add(Aspect.VOID, 100),
                     Items.DIAMOND_CHESTPLATE, new Object[] {

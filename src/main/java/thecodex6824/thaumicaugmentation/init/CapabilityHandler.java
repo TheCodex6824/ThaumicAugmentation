@@ -30,7 +30,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -68,10 +67,8 @@ import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.BiomeSelector;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicArmor;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.item.ImpetusLinker;
@@ -90,7 +87,6 @@ import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureL
 import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
-import thecodex6824.thaumicaugmentation.common.capability.MorphicArmor;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
@@ -293,27 +289,6 @@ public final class CapabilityHandler {
             
         }, MorphicTool::new);
         
-        CapabilityManager.INSTANCE.register(IMorphicArmor.class, new IStorage<IMorphicArmor>() {
-            
-            @Override
-            public void readNBT(Capability<IMorphicArmor> capability, IMorphicArmor instance, EnumFacing side, NBTBase nbt) {
-                if (!(instance instanceof MorphicArmor) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
-                
-                ((MorphicArmor) instance).deserializeNBT((NBTTagCompound) nbt);
-            }
-            
-            @Override
-            @Nullable
-            public NBTBase writeNBT(Capability<IMorphicArmor> capability, IMorphicArmor instance, EnumFacing side) {
-                if (!(instance instanceof MorphicArmor))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
-                
-                return ((MorphicArmor) instance).serializeNBT();
-            }
-            
-        }, MorphicArmor::new);
-        
         CapabilityManager.INSTANCE.register(IImpetusNode.class, new IStorage<IImpetusNode>() {
             
             @Override
@@ -481,11 +456,6 @@ public final class CapabilityHandler {
                 }
                 
             }, CapabilityAugment.AUGMENT));
-        }
-        
-        if (event.getObject().getItem() instanceof ItemArmor) {
-            event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_armor"),
-                    new SimpleCapabilityProvider<>(new MorphicArmor(), CapabilityMorphicArmor.MORPHIC_ARMOR));
         }
     }
     

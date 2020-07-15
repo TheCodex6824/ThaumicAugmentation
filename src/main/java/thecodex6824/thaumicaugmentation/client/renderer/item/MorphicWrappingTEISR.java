@@ -22,13 +22,12 @@ package thecodex6824.thaumicaugmentation.client.renderer.item;
 
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.item.ItemStack;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
 
 public abstract class MorphicWrappingTEISR extends TileEntityItemStackRenderer {
 
     protected TileEntityItemStackRenderer original;
     
-    protected abstract IMorphicItem getMorphicItem(ItemStack stack);
+    protected abstract ItemStack getMorphicItem(ItemStack stack);
     
     public MorphicWrappingTEISR(TileEntityItemStackRenderer renderer) {
         original = renderer;
@@ -36,11 +35,11 @@ public abstract class MorphicWrappingTEISR extends TileEntityItemStackRenderer {
     
     @Override
     public void renderByItem(ItemStack stack) {
-        IMorphicItem item = getMorphicItem(stack);
-        if (item == null || item.getDisplayStack().isEmpty())
+        ItemStack item = getMorphicItem(stack);
+        if (item.isEmpty())
             original.renderByItem(stack);
         else
-            item.getDisplayStack().getItem().getTileEntityItemStackRenderer().renderByItem(item.getDisplayStack());
+            item.getItem().getTileEntityItemStackRenderer().renderByItem(item);
     }
     
 }

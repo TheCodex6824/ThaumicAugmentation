@@ -35,7 +35,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.model.IModelState;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 
 public class MorphicToolModel extends MorphicItemModel {
     
@@ -74,8 +74,9 @@ public class MorphicToolModel extends MorphicItemModel {
         }
         
         @Override
-        protected IMorphicItem getMorphicItem(ItemStack stack) {
-            return stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+        protected ItemStack getMorphicItem(ItemStack stack) {
+            IMorphicTool tool = stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+            return tool != null ? tool.getDisplayStack() : ItemStack.EMPTY;
         }
         
     }

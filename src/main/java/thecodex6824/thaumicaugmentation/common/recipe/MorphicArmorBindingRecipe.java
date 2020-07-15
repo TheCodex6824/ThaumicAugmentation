@@ -35,13 +35,12 @@ import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicArmor;
+import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
 public class MorphicArmorBindingRecipe extends InfusionRecipe {
 
     public MorphicArmorBindingRecipe() {
-        super("MORPHIC_ARMOR", ItemStack.EMPTY, 8, new AspectList().add(Aspect.VOID, 100),
+        super("MORPHIC_ARMOR", ItemStack.EMPTY, 8, new AspectList().add(Aspect.VOID, 1),
                 ItemStack.EMPTY, new Object[] {});
     }
     
@@ -49,9 +48,10 @@ public class MorphicArmorBindingRecipe extends InfusionRecipe {
     @SuppressWarnings("null")
     public boolean matches(List<ItemStack> input, ItemStack central, World world, EntityPlayer player) {
         if (input.size() != 3 || central.getItem() == TAItems.MORPHIC_TOOL || central.getItem() == ItemsTC.primordialPearl ||
-                !central.hasCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null) ||
-                !(central.getItem() instanceof ItemArmor) || !ThaumcraftCapabilities.knowsResearch(player, research))
+                !(central.getItem() instanceof ItemArmor) || !ThaumcraftCapabilities.knowsResearch(player, research)) {
+            
             return false;
+        }
 
         boolean morphicFound = false;
         boolean quicksilverFound = false;
@@ -77,10 +77,8 @@ public class MorphicArmorBindingRecipe extends InfusionRecipe {
                 // There is a coremod mitigation for this, but if it's disabled just stop it from being a problem
                 if (!ThaumicAugmentationAPI.isCoremodAvailable() && stack.getItem().hasContainerItem(stack))
                     return false;
-                else if (stack.hasCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null) &&
-                        !stack.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null).getDisplayStack().isEmpty()) {
+                else if (MorphicArmorHelper.hasMorphicArmor(stack))
                     return false;
-                }
                 else if (EntityLiving.getSlotForItemStack(central) != EntityLiving.getSlotForItemStack(stack))
                     return false;
                 else
@@ -99,13 +97,10 @@ public class MorphicArmorBindingRecipe extends InfusionRecipe {
     @Override
     public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
         ItemStack toReturn = input.copy();
-        IMorphicArmor armor = toReturn.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
-        if (armor != null) {
-            for (ItemStack stack : comps) {
-                if (stack.getItem() != ItemsTC.primordialPearl && stack.getItem() != ItemsTC.quicksilver) {
-                    armor.setDisplayStack(stack);
-                    return toReturn;
-                }
+        for (ItemStack stack : comps) {
+            if (stack.getItem() != ItemsTC.primordialPearl && stack.getItem() != ItemsTC.quicksilver) {
+                MorphicArmorHelper.setMorphicArmor(toReturn, stack);
+                return toReturn;
             }
         }
         

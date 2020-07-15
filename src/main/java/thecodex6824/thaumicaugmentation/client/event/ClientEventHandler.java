@@ -71,8 +71,6 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicArmor;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageClient;
@@ -82,6 +80,7 @@ import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 import thecodex6824.thaumicaugmentation.common.network.PacketElytraBoost;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
+import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public final class ClientEventHandler {
@@ -117,9 +116,8 @@ public final class ClientEventHandler {
     
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event) {
-        IMorphicArmor armor = event.getItemStack().getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
-        if (armor != null && !armor.getDisplayStack().isEmpty()) {
-            ItemStack disp = armor.getDisplayStack();
+        ItemStack disp = MorphicArmorHelper.getMorphicArmor(event.getItemStack());
+        if (!disp.isEmpty()) {
             List<String> newTooltip = disp.getTooltip(event.getEntityPlayer(), event.getFlags());
             if (!newTooltip.isEmpty()) {
                 event.getToolTip().remove(0);

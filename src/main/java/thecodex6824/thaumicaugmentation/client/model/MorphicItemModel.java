@@ -47,7 +47,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
 import thecodex6824.thaumicaugmentation.client.renderer.item.MorphicWrappingTEISR;
 
 public abstract class MorphicItemModel implements IModel {
@@ -76,7 +75,7 @@ public abstract class MorphicItemModel implements IModel {
         
         protected ItemOverrideList handler;
         
-        protected abstract IMorphicItem getMorphicItem(ItemStack stack);
+        protected abstract ItemStack getMorphicItem(ItemStack stack);
         
         protected BakedModel(IBakedModel wrappedModel) {
             wrappedFallback = wrappedModel;
@@ -86,20 +85,20 @@ public abstract class MorphicItemModel implements IModel {
                 public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world,
                         @Nullable EntityLivingBase entity) {
                     
-                    IMorphicItem tool = getMorphicItem(stack);
-                    if (tool == null || tool.getDisplayStack().isEmpty())
+                    ItemStack disp = getMorphicItem(stack);
+                    if (disp.isEmpty())
                         return wrappedFallback;
                     else {
                         if (!(stack.getItem().getTileEntityItemStackRenderer() instanceof MorphicWrappingTEISR)) {
                             stack.getItem().setTileEntityItemStackRenderer(new MorphicWrappingTEISR(stack.getItem().getTileEntityItemStackRenderer()) {
                                 @Override
-                                protected IMorphicItem getMorphicItem(ItemStack stack) {
+                                protected ItemStack getMorphicItem(ItemStack stack) {
                                     return BakedModel.this.getMorphicItem(stack);
                                 }
                             });
                         }
                         
-                        return Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(tool.getDisplayStack(), world, entity);
+                        return Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(disp, world, entity);
                     }
                 }
             };

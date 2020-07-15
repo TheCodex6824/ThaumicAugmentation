@@ -80,10 +80,8 @@ import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicArmor;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
@@ -261,22 +259,19 @@ public class RenderEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onRenderLivingPre(RenderLivingEvent.Pre<EntityLivingBase> event) {
-        NonNullList<ItemStack> armor = MorphicArmorHelper.getArmorInventory(event.getEntity());
+        List<ItemStack> armor = MorphicArmorHelper.getArmorInventory(event.getEntity());
         for (int i = 0; i < armor.size(); ++i) {
             ItemStack s = armor.get(i);
-            IMorphicArmor morph = s.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
-            if (morph != null) {
-                ItemStack disp = morph.getDisplayStack();
-                if (!disp.isEmpty()) {
-                    tempArmor.set(i, s);
-                    armor.set(i, disp);
-                }
+            ItemStack disp = MorphicArmorHelper.getMorphicArmor(s);
+            if (!disp.isEmpty()) {
+                tempArmor.set(i, s);
+                armor.set(i, disp);
             }
         }
     }
     
     private static void restoreArmor(EntityLivingBase entity) {
-        NonNullList<ItemStack> armor = MorphicArmorHelper.getArmorInventory(entity);
+        List<ItemStack> armor = MorphicArmorHelper.getArmorInventory(entity);
         for (int i = 0; i < armor.size(); ++i) {
             ItemStack s = tempArmor.get(i);
             if (!s.isEmpty()) {

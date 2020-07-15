@@ -26,8 +26,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicArmor;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicArmor;
+import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
 public class MorphicArmorUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
@@ -42,8 +41,8 @@ public class MorphicArmorUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecip
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                IMorphicArmor armor = stack.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null);
-                if (armor != null && !armor.getDisplayStack().isEmpty()) {
+                ItemStack disp = MorphicArmorHelper.getMorphicArmor(stack);
+                if (!disp.isEmpty()) {
                     if (!itemFound)
                         itemFound = true;
                     else
@@ -63,7 +62,7 @@ public class MorphicArmorUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecip
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.hasCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null)) {
+                if (MorphicArmorHelper.hasMorphicArmor(stack)) {
                     if (item.isEmpty())
                         item = stack;
                     else
@@ -75,7 +74,7 @@ public class MorphicArmorUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecip
         }
         
         ItemStack ret = item.copy();
-        ret.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null).setDisplayStack(ItemStack.EMPTY);
+        MorphicArmorHelper.setMorphicArmor(ret, ItemStack.EMPTY);
         return ret;
     }
     
@@ -87,7 +86,7 @@ public class MorphicArmorUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecip
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.hasCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null)) {
+                if (MorphicArmorHelper.hasMorphicArmor(stack)) {
                     if (item.isEmpty()) {
                         item = stack;
                         itemIndex = i;
@@ -100,7 +99,7 @@ public class MorphicArmorUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecip
             }
         }
         
-        result.set(itemIndex, item.getCapability(CapabilityMorphicArmor.MORPHIC_ARMOR, null).getDisplayStack().copy());
+        result.set(itemIndex, MorphicArmorHelper.getMorphicArmor(item));
         return result;
     }
     

@@ -20,7 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -43,6 +45,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -69,6 +73,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.IRegistryDelegate;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.golems.seals.ISealEntity;
@@ -215,6 +220,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
+import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 
@@ -958,6 +964,8 @@ public class ClientProxy extends ServerProxy {
             TAShaders.MIRROR = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "mirror"));
             TAShaders.FLUX_RIFT_HUD = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ender_hud"));
         }
+        
+        overrideArmorColorHandlers();
     }
 
     private static void registerItemColorHandlers() {
@@ -1166,6 +1174,41 @@ public class ClientProxy extends ServerProxy {
                 return -1;
             }
         }, TABlocks.IMPETUS_MATRIX);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static void overrideArmorColorHandlers() {
+        Map<IRegistryDelegate<Item>, IItemColor> registry = null;
+        try {
+            Field f = ItemColors.class.getDeclaredField("itemColorMap");
+            f.setAccessible(true);
+            registry = (Map<IRegistryDelegate<Item>, IItemColor>) f.get(Minecraft.getMinecraft().getItemColors());
+        }
+        catch (Exception ex) {
+            ThaumicAugmentation.getLogger().error("Could not access ItemColors#itemColorMap");
+            throw new RuntimeException(ex);
+        }
+        
+        HashMap<IRegistryDelegate<Item>, IItemColor> toReplace = new HashMap<>();
+        for (Map.Entry<IRegistryDelegate<Item>, IItemColor> entry : registry.entrySet()) {
+            Item item = entry.getKey().get();
+            if (item instanceof ItemArmor) {
+                final IItemColor original = entry.getValue();
+                toReplace.put(entry.getKey(), new IItemColor() {
+                    @Override
+                    public int colorMultiplier(ItemStack stack, int tintIndex) {
+                        if (MorphicArmorHelper.hasMorphicArmor(stack)) {
+                            ItemStack armor = MorphicArmorHelper.getMorphicArmor(stack);
+                            return Minecraft.getMinecraft().getItemColors().colorMultiplier(armor, tintIndex);
+                        }
+                        
+                        return original.colorMultiplier(stack, tintIndex);
+                    }
+                });
+            }
+        }
+        
+        registry.putAll(toReplace);
     }
 
 }
