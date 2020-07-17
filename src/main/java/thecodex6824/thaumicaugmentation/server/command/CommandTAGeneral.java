@@ -34,8 +34,11 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import thecodex6824.thaumicaugmentation.server.command.sub.ISubCommand;
 import thecodex6824.thaumicaugmentation.server.command.sub.SubCommandFixAura;
+import thecodex6824.thaumicaugmentation.server.command.sub.SubCommandMakeFracture;
 import thecodex6824.thaumicaugmentation.server.command.sub.SubCommandWard;
 
 public class CommandTAGeneral implements ICommand {
@@ -51,6 +54,7 @@ public class CommandTAGeneral implements ICommand {
         subCommands = new HashMap<>();
         putSubCommand(new SubCommandFixAura());
         putSubCommand(new SubCommandWard());
+        putSubCommand(new SubCommandMakeFracture());
     }
     
     @Override
@@ -66,6 +70,11 @@ public class CommandTAGeneral implements ICommand {
                 command.execute(server, sender, Arrays.copyOfRange(args, 1, args.length));
             else
                 throw new CommandException("thaumicaugmentation.command.invalid_command");
+        }
+        else {
+            sender.sendMessage(new TextComponentTranslation("thaumicaugmentation.command.subcommands"));
+            for (String s : subCommands.keySet())
+                sender.sendMessage(new TextComponentString(s));
         }
     }
     

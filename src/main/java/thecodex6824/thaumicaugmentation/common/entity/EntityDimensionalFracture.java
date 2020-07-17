@@ -32,11 +32,14 @@ import net.minecraft.entity.EntityAreaEffectCloud;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -48,7 +51,6 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
-import thaumcraft.common.entities.monster.EntityEldritchGuardian;
 import thaumcraft.common.entities.projectile.EntityFocusCloud;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
@@ -186,7 +188,21 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                                 linkInvalid = true;
                             }
                             else {
-                                entity = entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(linkedTo));
+                                if (targetWorld.provider.getDimension() != entity.dimension)
+                                    entity = entity.changeDimension(targetWorld.provider.getDimension(), new DimensionalFractureTeleporter(linkedTo));
+                                else {
+                                    if (entity instanceof EntityPlayerMP) {
+                                        ((EntityPlayerMP) entity).connection.setPlayerLocation(linkedTo.getX(), linkedTo.getY(),
+                                                linkedTo.getZ(), entity.rotationYaw, entity.rotationPitch);
+                                    }
+                                    else {
+                                        entity.setLocationAndAngles(linkedTo.getX(), linkedTo.getY(),
+                                                linkedTo.getZ(), entity.rotationYaw, entity.rotationPitch);
+                                    }
+                                }
+                                
+                                world.playSound(null, getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                                targetWorld.playSound(null, linkedTo, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
                                 if (entity != null) {
                                     entity.timeUntilPortal = entity.getPortalCooldown();
                                     PortalStateManager.markEntityInPortal(entity);
@@ -204,7 +220,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
         super.onUpdate();
         if (!world.isRemote && getDataManager().get(OPEN) && world.getTotalWorldTime() % 20 == 0 && world.getGameRules().getBoolean("doMobSpawning") && world.rand.nextInt(2000) < world.getDifficulty().getId()) {
             if (world.isBlockNormalCube(getPosition().down(), false) || world.isBlockNormalCube(getPosition().down(2), false)) {
-                EntityEldritchGuardian guardian = new EntityEldritchGuardian(world);
+                EntityTAEldritchGuardian guardian = new EntityTAEldritchGuardian(world);
                 guardian.setLocationAndAngles(posX, posY, posZ, world.rand.nextInt(360), 0);
                 guardian.setAbsorptionAmount(guardian.getAbsorptionAmount() + 
                         (float) guardian.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue() / 2);
