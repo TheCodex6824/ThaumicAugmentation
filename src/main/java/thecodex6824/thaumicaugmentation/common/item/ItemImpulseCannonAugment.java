@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.common.item;
 
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Nullable;
 
@@ -30,11 +31,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IImpulseCannonAugment;
@@ -45,6 +49,8 @@ import thecodex6824.thaumicaugmentation.common.event.ScheduledTaskHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBurst;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpulseRailgunProjectile;
+import thecodex6824.thaumicaugmentation.common.network.PacketRecoil;
+import thecodex6824.thaumicaugmentation.common.network.PacketRecoil.RecoilType;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public class ItemImpulseCannonAugment extends ItemTABase {
@@ -100,12 +106,19 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                     for (Entity e : ents)
                         ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonRailgunDamage.getValue());
                     
+                    Random rand = user.getRNG();
+                    user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_RAILGUN,
+                            SoundCategory.PLAYERS, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
                     PacketImpulseRailgunProjectile packet = new PacketImpulseRailgunProjectile(user.getEntityId(), target);
+                    PacketRecoil recoil = new PacketRecoil(user.getEntityId(), RecoilType.IMPULSE_RAILGUN);
                     TANetwork.INSTANCE.sendToAllTracking(packet, user);
+                    TANetwork.INSTANCE.sendToAllTracking(recoil, user);
                     if (user instanceof EntityPlayer) {
                         ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonRailgunCooldown.getValue());
-                        if (user instanceof EntityPlayerMP)
+                        if (user instanceof EntityPlayerMP) {
                             TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);
+                            TANetwork.INSTANCE.sendTo(recoil, (EntityPlayerMP) user);
+                        }
                     }
                 }
                 
@@ -144,6 +157,9 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                         base.lastDamage = 0.0F;
                     }
                     
+                    Random rand = user.getRNG();
+                    user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_BURST,
+                            SoundCategory.PLAYERS, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
                     Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonBurstRange.getValue());
                     PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), target, num);
                     TANetwork.INSTANCE.sendToAllTracking(packet, user);
@@ -157,8 +173,13 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                 @Override
                 public void onCannonUsage(EntityLivingBase user) {
                     ScheduledTaskHandler.registerTask(() -> tick(user, 0), 0);
-                    if (user instanceof EntityPlayer)
+                    PacketRecoil recoil = new PacketRecoil(user.getEntityId(), RecoilType.IMPULSE_BURST);
+                    TANetwork.INSTANCE.sendToAllTracking(recoil, user);
+                    if (user instanceof EntityPlayer) {
                         ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonBurstCooldown.getValue());
+                        if (user instanceof EntityPlayerMP)
+                            TANetwork.INSTANCE.sendTo(recoil, (EntityPlayerMP) user);
+                    }
                 }
                 
             };

@@ -61,6 +61,11 @@ public class TileRiftBarrier extends TileEntity implements IShaderRenderingCallb
     }
     
     @Override
+    public double getMaxRenderDistanceSquared() {
+        return 16384.0;
+    }
+    
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setIntArray("lockPos", new int[] {pos.getX(), pos.getY(), pos.getZ()});
         return super.writeToNBT(compound);

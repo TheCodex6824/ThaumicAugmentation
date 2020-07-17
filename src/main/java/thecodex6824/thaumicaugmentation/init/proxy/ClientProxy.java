@@ -52,12 +52,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -196,6 +198,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBurst;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpulseRailgunProjectile;
 import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.PacketRecoil;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketWispZap;
@@ -252,6 +255,7 @@ public class ClientProxy extends ServerProxy {
         handlers.put(PacketFollowingOrb.class, (message, ctx) -> handleFollowingOrbPacket((PacketFollowingOrb) message, ctx));
         handlers.put(PacketFlightState.class, (message, ctx) -> handleFlightStatePacket((PacketFlightState) message, ctx));
         handlers.put(PacketBoostState.class, (message, ctx) -> handleBoostStatePacket((PacketBoostState) message, ctx));
+        handlers.put(PacketRecoil.class, (message, ctx) -> handleRecoilPacket((PacketRecoil) message, ctx));
     }
     
     @Override
@@ -846,6 +850,38 @@ public class ClientProxy extends ServerProxy {
         if (e instanceof EntityPlayer)
             ClientEventHandler.onBoostChange((EntityPlayer) e, message.isBoosting());
     }
+    
+    protected boolean isImpulseCannonStable(EntityLivingBase entity) {
+        if (entity.getHeldItem(EnumHand.MAIN_HAND).getItem() == TAItems.IMPULSE_CANNON)
+            return entity.getHeldItem(EnumHand.OFF_HAND).isEmpty();
+        else if (entity.getHeldItem(EnumHand.OFF_HAND).getItem() == TAItems.IMPULSE_CANNON)
+            return entity.getHeldItem(EnumHand.MAIN_HAND).isEmpty();
+        else
+            return false;
+    }
+    
+    protected void handleRecoilPacket(PacketRecoil message, MessageContext context) {
+        Entity e = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
+        if (e instanceof EntityLivingBase) {
+            switch (message.getRecoilType()) {
+                case IMPULSE_BURST: {
+                    ClientEventHandler.onRecoil((EntityLivingBase) e, (entity, time) -> {
+                        float mult = isImpulseCannonStable(entity) ? 1.0F : 1.5F;
+                        return -MathHelper.cos(time * (float) Math.PI / 11.0F) * mult;
+                    }, 12);
+                    break;
+                }
+                case IMPULSE_RAILGUN: {
+                    ClientEventHandler.onRecoil((EntityLivingBase) e, (entity, time) -> {
+                        float mult = isImpulseCannonStable(entity) ? 1.0F : 1.5F;
+                        return -MathHelper.cos(time * (float) Math.PI / 14.0F) * 3.0F * mult;
+                    }, 15);
+                    break;
+                }
+                default: break;
+            }
+        }
+    }
 
     @Override
     public void preInit() {
@@ -1190,11 +1226,10 @@ public class ClientProxy extends ServerProxy {
         }
         
         HashMap<IRegistryDelegate<Item>, IItemColor> toReplace = new HashMap<>();
-        for (Map.Entry<IRegistryDelegate<Item>, IItemColor> entry : registry.entrySet()) {
-            Item item = entry.getKey().get();
+        for (Item item : Item.REGISTRY) {
             if (item instanceof ItemArmor) {
-                final IItemColor original = entry.getValue();
-                toReplace.put(entry.getKey(), new IItemColor() {
+                final IItemColor original = registry.get(item.delegate);
+                toReplace.put(item.delegate, new IItemColor() {
                     @Override
                     public int colorMultiplier(ItemStack stack, int tintIndex) {
                         if (MorphicArmorHelper.hasMorphicArmor(stack)) {
@@ -1202,7 +1237,7 @@ public class ClientProxy extends ServerProxy {
                             return Minecraft.getMinecraft().getItemColors().colorMultiplier(armor, tintIndex);
                         }
                         
-                        return original.colorMultiplier(stack, tintIndex);
+                        return original != null ? original.colorMultiplier(stack, tintIndex) : -1;
                     }
                 });
             }

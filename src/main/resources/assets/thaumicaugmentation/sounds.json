@@ -149,7 +149,7 @@
             },
             {
                 "name": "thaumicaugmentation:item/booster_end2",
-                "subtitle": "thaumicaugmentation.subtitle.booster_start",
+                "subtitle": "thaumicaugmentation.subtitle.booster_end",
                 "stream": false
             }
         ]
@@ -160,6 +160,86 @@
             {
                 "name": "thaumicaugmentation:item/booster_loop",
                 "subtitle": "thaumicaugmentation.subtitle.booster_loop",
+                "stream": false
+            }
+        ]
+    },
+    "impulse_cannon_beam_start": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_beam_start1",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_beam_start",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_beam_start2",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_beam_start",
+                "stream": false
+            }
+        ]
+    },
+    "impulse_cannon_beam_end": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_beam_end1",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_beam_end",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_beam_end2",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_beam_end",
+                "stream": false
+            }
+        ]
+    },
+    "impulse_cannon_beam_loop": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_beam_loop",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_beam_loop",
+                "stream": false
+            }
+        ]
+    },
+    "impulse_cannon_burst": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_burst1",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_burst",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_burst2",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_burst",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_burst3",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_burst",
+                "stream": false
+            }
+        ]
+    },
+    "impulse_cannon_railgun": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_railgun1",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_railgun",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_railgun2",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_railgun",
+                "stream": false
+            },
+            {
+                "name": "thaumicaugmentation:item/impulse_cannon_railgun3",
+                "subtitle": "thaumicaugmentation.subtitle.impulse_cannon_railgun",
                 "stream": false
             }
         ]

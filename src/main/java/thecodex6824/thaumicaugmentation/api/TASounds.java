@@ -47,6 +47,11 @@ public final class TASounds {
     public static final SoundEvent ELYTRA_BOOST_START = create("booster_start");
     public static final SoundEvent ELYTRA_BOOST_END = create("booster_end");
     public static final SoundEvent ELYTRA_BOOST_LOOP = create("booster_loop");
+    public static final SoundEvent IMPULSE_CANNON_BEAM_START = create("impulse_cannon_beam_start");
+    public static final SoundEvent IMPULSE_CANNON_BEAM_END = create("impulse_cannon_beam_end");
+    public static final SoundEvent IMPULSE_CANNON_BEAM_LOOP = create("impulse_cannon_beam_loop");
+    public static final SoundEvent IMPULSE_CANNON_BURST = create("impulse_cannon_burst");
+    public static final SoundEvent IMPULSE_CANNON_RAILGUN = create("impulse_cannon_railgun");
     
     /**
      * Returns all of the sounds in the mod.
@@ -55,7 +60,8 @@ public final class TASounds {
     public static SoundEvent[] getAllSounds() {
         return new SoundEvent[] {EMPTINESS_AMBIENCE, EMPTINESS_MUSIC, RIFT_ENERGY_ZAP, FOCUS_WATER_IMPACT,
                 RIFT_MOVER_INPUT_LOOP, RIFT_MOVER_OUTPUT_LOOP, ALTAR_SUMMON_START, ALTAR_SUMMON,
-                ELYTRA_BOOST_START, ELYTRA_BOOST_END, ELYTRA_BOOST_LOOP};
+                ELYTRA_BOOST_START, ELYTRA_BOOST_END, ELYTRA_BOOST_LOOP, IMPULSE_CANNON_BEAM_START,
+                IMPULSE_CANNON_BEAM_END, IMPULSE_CANNON_BEAM_LOOP, IMPULSE_CANNON_BURST, IMPULSE_CANNON_RAILGUN};
     }
     
 }

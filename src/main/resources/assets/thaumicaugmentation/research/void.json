@@ -487,12 +487,12 @@
             "key": "PRIMORDIAL_WISP",
             "name": "thaumicaugmentation.research.primordial_wisp.title",
             "icons": [
-                "thaumcraft:textures/research/r_wisp.png"
+                "thaumcraft:textures/research/r_nodes_2.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "location": [
-                10,
-                8
+                9,
+                2
             ],
             "meta": [
                 "ROUND",

@@ -20,10 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
+import java.util.List;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import thaumcraft.api.aura.AuraHelper;
@@ -51,17 +54,40 @@ public class EntityItemBlockRiftJar extends EntityItem {
     
     protected void breakAndDoBadThings(int size, int seed) {
         if (!ModConfig.CONFIG_MISC.wussMode) {
-            EntityFluxRift rift = new EntityFluxRift(world);
-            rift.setPositionAndRotation(posX, posY, posZ, rotationYaw, rotationPitch);
-            rift.setRiftSeed(seed);
-            rift.setRiftSize(size);
-            rift.setRiftStability(-50.0F);
-            if (world.spawnEntity(rift)) {
-                AuraHelper.polluteAura(world, rift.getPosition(), (float) Math.sqrt(size), true);
-                rift.playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.75F, 1.0F);
-                rift.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
-                TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
-                        rift.posX, rift.posY, rift.posZ), rift);
+            List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class, new AxisAlignedBB(posX, posY, posZ, 
+                    posX, posY, posZ).grow(32.0F));
+            if (!rifts.isEmpty()) {
+                for (EntityFluxRift rift : rifts) {
+                    AuraHelper.polluteAura(world, rift.getPosition(), (float) Math.sqrt(rift.getRiftSize()), true);
+                    rift.setDead();
+                }
+                
+                EntityPrimalWisp wisp = new EntityPrimalWisp(world);
+                wisp.setPositionAndRotation(posX + 0.5, posY + 0.5, posZ + 0.5,
+                        world.rand.nextInt(360) - 180, 0.0F);
+                wisp.rotationYawHead = wisp.rotationYaw;
+                wisp.renderYawOffset = wisp.rotationYaw;
+                wisp.onInitialSpawn(world.getDifficultyForLocation(wisp.getPosition()), null);
+                if (world.spawnEntity(wisp)) {
+                    wisp.playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.75F, 1.0F);
+                    wisp.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
+                            wisp.posX, wisp.posY, wisp.posZ), wisp);
+                }
+            }
+            else {
+                EntityFluxRift rift = new EntityFluxRift(world);
+                rift.setPositionAndRotation(posX, posY, posZ, rotationYaw, rotationPitch);
+                rift.setRiftSeed(seed);
+                rift.setRiftSize(size);
+                rift.setRiftStability(-50.0F);
+                if (world.spawnEntity(rift)) {
+                    AuraHelper.polluteAura(world, rift.getPosition(), (float) Math.sqrt(size), true);
+                    rift.playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.75F, 1.0F);
+                    rift.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.EXPLOSION,
+                            rift.posX, rift.posY, rift.posZ), rift);
+                }
             }
         }
         else {

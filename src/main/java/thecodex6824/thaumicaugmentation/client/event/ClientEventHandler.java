@@ -21,10 +21,13 @@
 package thecodex6824.thaumicaugmentation.client.event;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.function.BiFunction;
 
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
@@ -32,6 +35,7 @@ import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound.AttenuationType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -87,6 +91,22 @@ public final class ClientEventHandler {
 
     private static final Set<EntityPlayer> CREATIVE_FLIGHT = Collections.newSetFromMap(new WeakHashMap<>());
     private static final Set<EntityPlayer> ELYTRA_BOOSTS = Collections.newSetFromMap(new WeakHashMap<>());
+    
+    private static class RecoilEntry {
+        
+        public final long start;
+        public final long duration;
+        public final BiFunction<EntityLivingBase, Long, Float> recoilFunc;
+        
+        public RecoilEntry(long startTime, long totalTime, BiFunction<EntityLivingBase, Long, Float> recoilPattern) {
+            start = startTime;
+            duration = totalTime;
+            recoilFunc = recoilPattern;
+        }
+        
+    }
+    
+    private static final WeakHashMap<EntityLivingBase, RecoilEntry> RECOIL = new WeakHashMap<>();
     
     private ClientEventHandler() {}
     
@@ -190,10 +210,10 @@ public final class ClientEventHandler {
     
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == Phase.END) {
-            EntityPlayer player = Minecraft.getMinecraft().player;
+        Minecraft mc = Minecraft.getMinecraft();
+        if (event.phase == Phase.END && mc.world != null) {
+            EntityPlayer player = mc.player;
             if (!TAConfig.disableWardFocus.getValue()) {
-                Minecraft mc = Minecraft.getMinecraft();
                 if (player != null && mc.world != null && mc.world.getTotalWorldTime() % 2 == 0 && mc.getRenderViewEntity() == player) {
                     if (player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ICaster) {
                         ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
@@ -283,6 +303,22 @@ public final class ClientEventHandler {
                     onBoostChange(player, false);
                     PacketElytraBoost boostPacket = new PacketElytraBoost(false);
                     TANetwork.INSTANCE.sendToServer(boostPacket);
+                }
+            }
+            
+            if (!ThaumicAugmentation.proxy.isSingleplayer() || !mc.isGamePaused()) {
+                long now = mc.world.getTotalWorldTime();
+                Iterator<Entry<EntityLivingBase, RecoilEntry>> i = RECOIL.entrySet().iterator();
+                while (i.hasNext()) {
+                    Entry<EntityLivingBase, RecoilEntry> entry = i.next();
+                    RecoilEntry recoil = entry.getValue();
+                    if (now >= recoil.start + recoil.duration)
+                        i.remove();
+                    else {
+                        EntityLivingBase entity = entry.getKey();
+                        entity.prevRotationPitch = entity.rotationPitch;
+                        entity.rotationPitch += recoil.recoilFunc.apply(entity, now - recoil.start);
+                    }
                 }
             }
         }
@@ -406,7 +442,11 @@ public final class ClientEventHandler {
     }
     
     public static boolean isBoosting(EntityPlayer player) {
-        return ELYTRA_BOOSTS.contains(player);
+        return ELYTRA_BOOSTS.contains(player);  
+    }
+    
+    public static void onRecoil(EntityLivingBase living, BiFunction<EntityLivingBase, Long, Float> func, long duration) {
+        RECOIL.put(living, new RecoilEntry(Minecraft.getMinecraft().world.getTotalWorldTime() + 1, duration, func));
     }
     
 }

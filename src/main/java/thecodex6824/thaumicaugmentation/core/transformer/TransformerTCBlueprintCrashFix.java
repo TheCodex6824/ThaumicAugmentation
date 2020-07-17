@@ -83,7 +83,7 @@ public class TransformerTCBlueprintCrashFix extends Transformer {
                 ));
                 render.instructions.insert(afterRender, new FieldInsnNode(Opcodes.GETFIELD,
                         "thaumcraft/client/gui/GuiResearchPage",
-                        "mc",
+                        TransformUtil.remapFieldName("net/minecraft/client/gui/GuiScreen", "field_146297_k"),
                         "Lnet/minecraft/client/Minecraft;"
                 ));
                 render.instructions.insert(afterRender, new VarInsnNode(Opcodes.ALOAD, 0));

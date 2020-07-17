@@ -43,6 +43,7 @@ import baubles.api.cap.IBaublesItemHandler;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound.AttenuationType;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -59,6 +60,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -75,6 +77,7 @@ import thaumcraft.client.fx.ParticleEngine;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
@@ -89,9 +92,11 @@ import thecodex6824.thaumicaugmentation.client.fx.FXImpulseBeam;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
+import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.block.trait.INoBlockOutline;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
+import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
@@ -151,6 +156,17 @@ public class RenderEventHandler {
                 beam.setEndsLoop(true);
                 IMPULSE_CACHE.put(entity, beam);
                 ParticleEngine.addEffect(entity.getEntityWorld(), beam);
+                final int id = entity.getEntityId();
+                ISoundHandle handle = ThaumicAugmentation.proxy.playSpecialSound(TASounds.IMPULSE_CANNON_BEAM_LOOP, SoundCategory.PLAYERS,
+                        old -> {
+                            Entity e = Minecraft.getMinecraft().world.getEntityByID(id);
+                            if (e != null && !e.isDead && IMPULSE_CACHE.getIfPresent(e) != null)
+                                return e.getPositionVector();
+                            else
+                                return null;
+                        }, (float) entity.posX, (float) entity.posY, (float) entity.posZ, 1.0F, 1.0F, true, 0);
+                if (ThaumicAugmentation.proxy.isEntityRenderView(entity) && handle instanceof SoundHandleSpecialSound)
+                    ((SoundHandleSpecialSound) handle).setAttenuationType(AttenuationType.NONE);
             }
         }
     }

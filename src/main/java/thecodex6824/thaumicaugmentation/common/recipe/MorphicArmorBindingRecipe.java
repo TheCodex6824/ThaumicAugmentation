@@ -40,7 +40,7 @@ import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 public class MorphicArmorBindingRecipe extends InfusionRecipe {
 
     public MorphicArmorBindingRecipe() {
-        super("MORPHIC_ARMOR", ItemStack.EMPTY, 8, new AspectList().add(Aspect.VOID, 1),
+        super("MORPHIC_ARMOR", ItemStack.EMPTY, 8, new AspectList().add(Aspect.VOID, 100),
                 ItemStack.EMPTY, new Object[] {});
     }
     
