@@ -27,6 +27,8 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -40,6 +42,7 @@ import thaumcraft.api.aura.AuraHelper;
 import thaumcraft.common.world.aura.AuraHandler;
 import thaumcraft.common.world.biomes.BiomeHandler;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.common.integration.IntegrationAuraControl;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationJEID;
 import thecodex6824.thaumicaugmentation.common.network.PacketBiomeUpdate;
@@ -50,16 +53,24 @@ public final class BiomeUtil {
 
     private BiomeUtil() {}
     
-    private static void invoke(TriConsumer<World, BlockPos, Biome> c, World world, BlockPos pos, Biome biome) {
-        c.accept(world, pos, biome);
+    private static <A, B, C> void invoke(TriConsumer<A, B, C> consumer, A a, B b, C c) {
+        consumer.accept(a, b, c);
     }
     
     private static final TriConsumer<World, BlockPos, Biome> JEID_SET_BIOME = 
         (world, pos, biome) -> {
             invoke((w, p, b) -> {
-                ((IntegrationJEID) IntegrationHandler.getIntegration(IntegrationHandler.JEID_MOD_ID)).setBiomeJEID(w, pos, b);
+                ((IntegrationJEID) IntegrationHandler.getIntegration(IntegrationHandler.JEID_MOD_ID)).setBiomeJEID(w, p, b);
             }, 
             world, pos, biome);
+        };
+        
+    private static final TriConsumer<World, Integer, Integer> AURACONTROL_HANDLE_AURA = 
+        (world, chunkX, chunkZ) -> {
+            invoke((w, x, z) -> {
+                ((IntegrationAuraControl) IntegrationHandler.getIntegration(IntegrationHandler.AURACONTROL_MOD_ID)).handleAura(w, x, z);
+            }, 
+            world, chunkX, chunkZ);
         };
     
     public static void setBiome(World world, BlockPos pos, Biome newBiome) {
@@ -80,7 +91,7 @@ public final class BiomeUtil {
     }
     
     public static void resetBiome(World world, BlockPos pos) {
-        Biome[] biomeArray = world.getBiomeProvider().getBiomesForGeneration(null, pos.getX(), pos.getZ(), 1, 1);
+        Biome[] biomeArray = world.getBiomeProvider().getBiomesForGeneration(null, (pos.getX() >> 2) - 2, (pos.getZ() >> 2) - 2, 1, 1);
         if (biomeArray != null && biomeArray.length > 0) {
             Biome biome = biomeArray[0];
             if (biome != null)
@@ -88,8 +99,8 @@ public final class BiomeUtil {
         }
     }
     
-    public static Biome getNaturalBiome(World world, BlockPos pos, Biome fallback) {
-        Biome[] biomeArray = world.getBiomeProvider().getBiomesForGeneration(null, pos.getX(), pos.getZ(), 1, 1);
+    public static Biome getNaturalBiome(World world, BlockPos pos, @Nullable Biome fallback) {
+        Biome[] biomeArray = world.getBiomeProvider().getBiomesForGeneration(null, (pos.getX() >> 2) - 2, (pos.getZ() >> 2) - 2, 1, 1);
         if (biomeArray != null && biomeArray.length > 0) {
             Biome biome = biomeArray[0];
             if (biome != null)
@@ -104,11 +115,8 @@ public final class BiomeUtil {
     }
     
     public static boolean isNaturalBiomePresent(World world, BlockPos pos) {
-        Biome[] biomeArray = world.getBiomeProvider().getBiomesForGeneration(null, pos.getX(), pos.getZ(), 1, 1);
-        if (biomeArray != null && biomeArray.length > 0)
-            return biomeArray[0] == world.getBiome(pos);
-        else
-            return false;
+        Biome natural = getNaturalBiome(world, pos, null);
+        return natural != null && natural == world.getBiome(pos);
     }
     
     private static Random copyRand(Random rand) {
@@ -168,6 +176,11 @@ public final class BiomeUtil {
         Chunk chunk = world.getChunk(pos);
         AuraHandler.generateAura(chunk, copy);
         chunk.markDirty();
+        if (IntegrationHandler.isIntegrationPresent(IntegrationHandler.AURACONTROL_MOD_ID)) {
+            AURACONTROL_HANDLE_AURA.accept(world, pos.getX() >> 4, pos.getZ() >> 4);
+            solutionFound = true;
+        }
+        
         float applyVis = Math.min(Math.min(vis, AuraHelper.getVis(world, pos)), AuraHelper.getAuraBase(world, pos));
         AuraHelper.drainVis(world, pos, AuraHelper.getVis(world, pos) - applyVis, false);
         if (preserveFlux)

@@ -65,6 +65,7 @@ dependencies {
     deobfCompile "curse.maven:wizardry-mod:2726334"
     deobfCompile "curse.maven:jeid:2810213"
     deobfCompile "curse.maven:botania:2846950"
+    deobfCompile "curse.maven:auracontrol:3010775"
     
     testCompile "junit:junit:4.12"
     testCompile "org.hamcrest:hamcrest:2.1"

@@ -196,7 +196,7 @@ public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraf
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
             ItemStack stack) {
-        
+ 
         world.setBlockState(pos.up(), getDefaultState().withProperty(IArcaneTerraformerHalf.TERRAFORMER_HALF,
                 ArcaneTerraformerHalf.UPPER));
     }

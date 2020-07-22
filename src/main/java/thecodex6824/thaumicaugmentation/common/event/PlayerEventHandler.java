@@ -67,11 +67,16 @@ import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.item.IArmorReduceFallDamage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
 import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
+import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class PlayerEventHandler {
@@ -101,22 +106,35 @@ public final class PlayerEventHandler {
             PlayerMovementAbilityManager.onJump((EntityPlayer) event.getEntity());
     }
 
-    protected static void checkResearch(EntityPlayer player) {
-        if (!TAConfig.disableEmptiness.getValue() && player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId()) {
-            if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
-                ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERVOID");
-                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void").setStyle(
+    protected static void checkFrequent(EntityPlayer player) {
+        WorldServer w = (WorldServer) player.getEntityWorld();
+        if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", player.getPosition())) {
+            if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERSPIRE")) {
+                ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERSPIRE");
+                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_spire").setStyle(
                         new Style().setColor(TextFormatting.DARK_PURPLE)), true);
             }
             
-            if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERSPIRE")) {
-                WorldServer w = (WorldServer) player.getEntityWorld();
-                if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", player.getPosition())) {
-                    ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERSPIRE");
-                    player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_spire").setStyle(
+            if (player.capabilities.isFlying && !player.isCreative() && !player.isSpectator()) {
+                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(player.getPosition());
+                IWardStorage storage = w.getChunk(player.getPosition()).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                if (storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard())) {
+                    player.capabilities.isFlying = false;
+                    player.sendPlayerAbilities();
+                    player.sendStatusMessage(new TextComponentTranslation("tc.break.fly").setStyle(
                             new Style().setColor(TextFormatting.DARK_PURPLE)), true);
                 }
             }
+        }
+    }
+    
+    protected static void checkResearch(EntityPlayer player) {
+        if (!TAConfig.disableEmptiness.getValue() && player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() &&
+                !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
+            
+            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERVOID");
+            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_void").setStyle(
+                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
         }
         
         Biome biome = player.getEntityWorld().getBiome(player.getPosition());
@@ -212,8 +230,11 @@ public final class PlayerEventHandler {
                 PlayerMovementAbilityManager.tick(player);
             
             if (!player.getEntityWorld().isRemote) {
-                if (player.ticksExisted % 40 == 0)
-                    checkResearch(player);
+                if (player.ticksExisted % 2 == 0) {
+                    checkFrequent(player);
+                    if (player.ticksExisted % 40 == 0)
+                        checkResearch(player);
+                }
                 
                 Boolean fly = Boolean.valueOf(player.capabilities.isFlying);
                 if (CREATIVE_FLIGHT.contains(player) != fly) {

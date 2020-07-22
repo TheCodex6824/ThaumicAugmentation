@@ -28,7 +28,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import thaumcraft.api.entities.IEldritchMob;
@@ -42,9 +41,9 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
     
     protected int getHealCycleLength() {
         switch (world.getDifficulty()) {
-            case NORMAL: return 20;
-            case HARD: return 10;
-            default: return 30;
+            case NORMAL: return 30;
+            case HARD: return 20;
+            default: return 40;
         }
     }
     
@@ -54,8 +53,12 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
             boolean hard = world.getDifficulty() == EnumDifficulty.HARD;
             for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(6.0))) {
                 if (entity instanceof IEldritchMob) {
-                    entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, hard ? 1 : 0, true, true));
-                    entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, hard ? 1 : 0, true, true));
+                    if (entity.isPotionApplicable(new PotionEffect(MobEffects.REGENERATION, 1, 0))) {
+                        entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, hard ? 1 : 0, true, true));
+                        entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, hard ? 1 : 0, true, true));
+                    }
+                    else
+                        entity.setHealth(entity.getHealth() + 1);
                 }
             }
         }
@@ -63,11 +66,8 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
             boolean particles = false;
             for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(6.0))) {
                 if (entity instanceof IEldritchMob) {
-                    Vec3d sub = entity.getPositionVector().subtract(new Vec3d(pos));
-                    Vec3d dir = sub.normalize();
-                    double speed = sub.length() / 40.0;
-                    ThaumicAugmentation.proxy.getRenderHelper().renderObeliskConnection(world, pos.getX(), pos.getY(), pos.getZ(),
-                            dir.x * speed, dir.y * speed, dir.z * speed);
+                    ThaumicAugmentation.proxy.getRenderHelper().renderFollowingParticles(world, pos.getX(), pos.getY(), pos.getZ(),
+                            entity, 0.05F, 0.05F, 0.05F);
                     ThaumicAugmentation.proxy.getRenderHelper().renderWisp(entity.posX, entity.posY + world.rand.nextFloat(), entity.posZ, entity);
                     particles = true;
                 }

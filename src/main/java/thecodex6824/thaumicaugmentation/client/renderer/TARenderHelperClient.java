@@ -70,6 +70,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.client.fx.FXArcCustom;
+import thecodex6824.thaumicaugmentation.client.fx.FXGenericP2ECustomSpeed;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.common.block.trait.IRenderableSides;
@@ -551,13 +552,13 @@ public class TARenderHelperClient implements ITARenderHelper {
     }
     
     @Override
-    public void renderObeliskConnection(World world, double x, double y, double z, double vx, double vy, double vz) {
+    public void renderParticleTrail(World world, double x, double y, double z, double vx, double vy, double vz, float r, float g, float b) {
         for (int i = 0; i < 2 + world.rand.nextInt(4); ++i) {
             FXGeneric fx = new FXGeneric(world, x + (world.rand.nextFloat() - world.rand.nextFloat()) / 2.0, y + (world.rand.nextFloat() - world.rand.nextFloat()) / 2.0,
                     z + (world.rand.nextFloat() - world.rand.nextFloat()) / 2.0, vx, vy, vz);
             fx.setMaxAge(80 + world.rand.nextInt(20));
-            fx.setRBGColorF(0.05F, 0.05F, 0.05F);
-            fx.setAlphaF(0.0F, 0.75F, 0.0F);
+            fx.setRBGColorF(r, g, b);
+            fx.setAlphaF(0.0F, 0.5F, 0.0F);
             fx.setGridSize(64);
             fx.setParticles(264, 8, 1);
             fx.setScale(2.0F, 1.0F);
@@ -582,6 +583,22 @@ public class TARenderHelperClient implements ITARenderHelper {
     @Override
     public void renderWispParticles(double x, double y, double z, double vx, double vy, double vz, int color, int delay) {
         FXDispatcher.INSTANCE.drawWispParticles(x, y, z, vx, vy, vz, color, delay);
+    }
+    
+    @Override
+    public void renderFollowingParticles(World world, double x, double y, double z, Entity toFollow, float r, float g, float b) {
+        FXGenericP2ECustomSpeed orb = new FXGenericP2ECustomSpeed(world, x, y, z, toFollow, -0.2, 0.2);
+        orb.setRBGColorF(r, g, b);
+        orb.setMaxAge(200);
+        orb.setAlphaF(0.75F, 1.0F, 0.0F);
+        orb.setGridSize(64);
+        orb.setParticles(264, 8, 1);
+        orb.setScale(2.0F);
+        orb.setLayer(1);
+        orb.setLoop(true);
+        orb.setNoClip(false);
+        orb.setRotationSpeed(world.rand.nextFloat(), world.rand.nextBoolean() ? 1.0F : -1.0F);
+        ParticleEngine.addEffect(world, orb);
     }
     
     @Nullable

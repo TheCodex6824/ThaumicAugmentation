@@ -63,7 +63,7 @@ public interface ITARenderHelper {
     
     public void renderObeliskParticles(World world, double x, double y, double z);
     
-    public void renderObeliskConnection(World world, double x, double y, double z, double vx, double vy, double vz);
+    public void renderParticleTrail(World world, double x, double y, double z, double vx, double vy, double vz, float r, float g, float b);
     
     public void renderStarfieldGlass(ShaderType type, TileStarfieldGlass tile, double pX, double pY, double pZ);
     
@@ -76,6 +76,8 @@ public interface ITARenderHelper {
     public void renderVent(double x, double y, double z, double vx, double vy, double vz, int color, float scale);
     
     public void renderWispParticles(double x, double y, double z, double vx, double vy, double vz, int color, int delay);
+    
+    public void renderFollowingParticles(World world, double x, double y, double z, Entity toFollow, float r, float g, float b);
     
     public void drawCube();
     

@@ -88,7 +88,7 @@ public class TARenderHelperServer implements ITARenderHelper {
     public void renderObeliskParticles(World world, double x, double y, double z) {}
     
     @Override
-    public void renderObeliskConnection(World world, double x, double y, double z, double vx, double vy, double vz) {}
+    public void renderParticleTrail(World world, double x, double y, double z, double vx, double vy, double vz, float r, float g, float b) {}
     
     @Override
     public void renderStarfieldGlass(ShaderType type, TileStarfieldGlass tile, double pX, double pY, double pZ) {}
@@ -108,6 +108,10 @@ public class TARenderHelperServer implements ITARenderHelper {
     @Override
     public void renderWispParticles(double x, double y, double z, double vx, double vy, double vz, int color,
             int delay) {}
+    
+    @Override
+    public void renderFollowingParticles(World world, double x, double y, double z, Entity toFollow, float r, float g,
+            float b) {}
     
     @Override
     public void drawCube() {}

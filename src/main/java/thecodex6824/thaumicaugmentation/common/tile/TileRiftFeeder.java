@@ -43,6 +43,7 @@ import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.IEssentiaTransport;
 import thaumcraft.common.entities.EntityFluxRift;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
@@ -55,6 +56,7 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
     protected static final int MAX_ESSENTIA = 200;
     
     protected int storedEssentia;
+    protected int ticks;
     
     protected double getDistForFace(EnumFacing face, Entity entity) {
         return getDistForFace(face, entity.getPositionVector());
@@ -106,7 +108,7 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
                 }
             }
             
-            if (world.getTotalWorldTime() % 5 == 0) {
+            if (++ticks % 5 == 0) {
                 if (storedEssentia > 0 && state.getValue(IEnabledBlock.ENABLED)) {
                     EntityFluxRift rift = findClosestRift(state.getValue(IDirectionalBlock.DIRECTION));
                     if (rift != null && rift.getRiftSize() < 200 && !rift.getCollapse()) {
@@ -123,6 +125,20 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
                         }
                     }
                 }
+            }
+        }
+        else if (++ticks % 20 == 0) {
+            IBlockState state = world.getBlockState(pos);
+            EntityFluxRift rift = findClosestRift(state.getValue(IDirectionalBlock.DIRECTION));
+            if (rift != null && state.getPropertyKeys().contains(IDirectionalBlock.DIRECTION)) {
+                EnumFacing face = state.getValue(IDirectionalBlock.DIRECTION);
+                Vec3d ourPos = new Vec3d(pos.getX() + 0.5 + face.getXOffset() * 0.5, pos.getY() + 0.5 + face.getYOffset() * 0.5,
+                        pos.getZ() + 0.5 + face.getZOffset() * 0.5);
+                Vec3d sub = rift.getPositionVector().subtract(ourPos);
+                Vec3d dir = sub.normalize();
+                double speed = sub.length() / 40.0;
+                ThaumicAugmentation.proxy.getRenderHelper().renderParticleTrail(world, ourPos.x, ourPos.y, ourPos.z,
+                        dir.x * speed, dir.y * speed, dir.z * speed, 0.35F, 0.0F, 0.35F);
             }
         }
     }

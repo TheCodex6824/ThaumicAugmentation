@@ -384,8 +384,10 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                             currentPos.setPos(currentPos.getX(), currentPos.getY(), currentPos.getZ() + ((currentPos.getX() - pos.getX()) >= 0 ? -1 : 1));
                             
                         ++blocksChecked;
-                        if (blocksChecked >= (radius * 2 - 1) * (radius * 2 - 1) + 1)
+                        if (blocksChecked >= (radius * 2 - 1) * (radius * 2 - 1) + 1) {
                             endTerraforming(false);
+                            break;
+                        }
                         
                         markDirty();
                     }

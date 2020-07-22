@@ -62,6 +62,7 @@ public class MovingSoundRecord extends MovingSound {
         volume = soundVolume;
         pitch = soundPitch;
         setPos(x, y, z);
+        fadeIn = -1;
     }
     
     public void setPos(float x, float y, float z) {

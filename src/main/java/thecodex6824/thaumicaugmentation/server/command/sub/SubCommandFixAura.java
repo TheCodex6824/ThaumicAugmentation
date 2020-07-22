@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.server.command.sub;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiFunction;
 
 import javax.annotation.Nullable;
 
@@ -38,9 +39,23 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import thaumcraft.common.world.aura.AuraHandler;
+import thecodex6824.thaumicaugmentation.common.integration.IntegrationAuraControl;
+import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
 public class SubCommandFixAura implements ISubCommand {
+    
+    private static <A, B, C> C invoke(BiFunction<A, B, C> func, A a, B b) {
+        return func.apply(a, b);
+    }
+    
+    private static final BiFunction<World, ChunkPos, Boolean> AURACONTROL_RESET_AURA = 
+        (world, pos) -> {
+            return invoke((w, p) -> {
+                return ((IntegrationAuraControl) IntegrationHandler.getIntegration(IntegrationHandler.AURACONTROL_MOD_ID)).resetAura(w, p.x, p.z);
+            }, 
+            world, pos);
+        };
     
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
@@ -85,9 +100,13 @@ public class SubCommandFixAura implements ISubCommand {
                         if (AuraHandler.getAuraChunk(dim, x, z) == null)
                             sender.sendMessage(new TextComponentTranslation("thaumicaugmentation.command.fixaura.aura_regen"));
                         
-                        if (!BiomeUtil.generateNewAura(world, new BlockPos(x * 16, 0, z * 16), false))
-                            sender.sendMessage(new TextComponentTranslation("thaumicaugmentation.command.fixaura.warn_rng_failed"));
+                        if (!IntegrationHandler.isIntegrationPresent(IntegrationHandler.AURACONTROL_MOD_ID) ||
+                                !AURACONTROL_RESET_AURA.apply(world, new ChunkPos(x * 16, z * 16))) {
                             
+                            if (!BiomeUtil.generateNewAura(world, new BlockPos(x * 16, 0, z * 16), false))
+                                sender.sendMessage(new TextComponentTranslation("thaumicaugmentation.command.fixaura.warn_rng_failed"));
+                        }    
+                        
                         CopyOnWriteArrayList<ChunkPos> list = AuraHandler.dirtyChunks.get(dim);
                         if (!AuraHandler.dirtyChunks.containsKey(dim)) {
                             list = new CopyOnWriteArrayList<>();

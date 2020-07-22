@@ -118,6 +118,12 @@ public class MapGenEldritchSpire extends MapGenStructure {
         return new Start(world, generator, rand, chunkX, chunkZ);
     }
     
+    @Override
+    @Nullable
+    public StructureStart getStructureAt(BlockPos pos) {
+        return super.getStructureAt(pos);
+    }
+    
     public List<SpawnListEntry> getSpawnableCreatures(EnumCreatureType type, BlockPos pos) {
         // random chance to lessen mob spawn spam
         if (type == EnumCreatureType.MONSTER && ThreadLocalRandom.current().nextBoolean())
