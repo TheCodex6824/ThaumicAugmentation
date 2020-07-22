@@ -38,6 +38,7 @@ import net.minecraft.stats.StatisticsManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
@@ -111,7 +112,8 @@ public final class PlayerEventHandler {
         if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", player.getPosition())) {
             if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERSPIRE")) {
                 ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERSPIRE");
-                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_spire").setStyle(
+                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_spire",
+                        new TextComponentString("Spire").setStyle(new Style().setObfuscated(true))).setStyle(
                         new Style().setColor(TextFormatting.DARK_PURPLE)), true);
             }
             
@@ -169,7 +171,7 @@ public final class PlayerEventHandler {
                     new Style().setColor(TextFormatting.DARK_PURPLE)), true);
         }
         
-        if (stats.readStat(StatList.DIVE_ONE_CM) > 7999 && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_LONGTIMEINWATER")) {
+        if (stats.readStat(StatList.DIVE_ONE_CM) > 14999 && !ThaumcraftCapabilities.knowsResearchStrict(player, "m_LONGTIMEINWATER")) {
             ThaumcraftCapabilities.getKnowledge(player).addResearch("m_LONGTIMEINWATER");
             player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.long_time_in_water").setStyle(
                     new Style().setColor(TextFormatting.DARK_PURPLE)), true);

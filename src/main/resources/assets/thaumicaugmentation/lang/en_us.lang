@@ -206,7 +206,8 @@ thaumicaugmentation.text.mountain=You have visited a mountain.
 thaumicaugmentation.text.desert=You have visited a desert.
 thaumicaugmentation.text.ocean=You have visited an ocean.
 thaumicaugmentation.text.forest=You have visited a forest.
-thaumicaugmentation.text.long_time_in_water=You have become well-acquainted with the watery depths. 
+thaumicaugmentation.text.long_time_in_water=You have become well-acquainted with the watery depths.
+thaumicaugmentation.text.entered_spire=You have entered the %s.
 
 thaumicaugmentation.text.damage.impetus=%s was annihilated
 thaumicaugmentation.text.damage.impetus_attack=%s was annihilated by %s
