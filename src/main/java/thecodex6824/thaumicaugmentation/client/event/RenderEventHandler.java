@@ -164,9 +164,13 @@ public class RenderEventHandler {
                                 return e.getPositionVector();
                             else
                                 return null;
-                        }, (float) entity.posX, (float) entity.posY, (float) entity.posZ, 1.0F, 1.0F, true, 0);
-                if (ThaumicAugmentation.proxy.isEntityRenderView(entity) && handle instanceof SoundHandleSpecialSound)
-                    ((SoundHandleSpecialSound) handle).setAttenuationType(AttenuationType.NONE);
+                        }, (float) entity.posX, (float) entity.posY, (float) entity.posZ, 0.01F, 1.0F, true, 0);
+                if (handle instanceof SoundHandleSpecialSound) {
+                    SoundHandleSpecialSound s = (SoundHandleSpecialSound) handle;
+                    s.setFadeIn(40);
+                    if (ThaumicAugmentation.proxy.isEntityRenderView(entity))
+                        s.setAttenuationType(AttenuationType.NONE);
+                }
             }
         }
     }

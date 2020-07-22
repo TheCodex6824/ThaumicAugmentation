@@ -28,7 +28,7 @@ import thecodex6824.thaumicaugmentation.common.world.TAWorldGenerator;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.WorldProviderEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
-import thecodex6824.thaumicaugmentation.common.world.structure.EldritchSpireComponents;
+import thecodex6824.thaumicaugmentation.common.world.structure.EldritchSpireComponentPlacer;
 
 /**
  *  Thaumic Augmentation
@@ -125,7 +125,7 @@ public final class WorldHandler {
         if (!event.getWorld().isRemote && !TAConfig.disableEmptiness.getValue()) {
             WorldDataCache.addOrUpdateData(event.getWorld());
             if (event.getWorld().provider.getDimension() == TADimensions.EMPTINESS.getId())
-                EldritchSpireComponents.findTemplateVariants(((WorldServer) event.getWorld()).getStructureTemplateManager());
+                EldritchSpireComponentPlacer.findTemplateVariants(((WorldServer) event.getWorld()).getStructureTemplateManager());
         }
     }
     

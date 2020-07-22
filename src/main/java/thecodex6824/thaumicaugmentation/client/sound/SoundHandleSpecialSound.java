@@ -28,6 +28,7 @@ import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 public class SoundHandleSpecialSound implements ISoundHandle {
 
     protected WeakReference<MovingSoundRecord> sound;
+    protected boolean fadeIn;
     
     public SoundHandleSpecialSound(MovingSoundRecord audio) {
         sound = new WeakReference<>(audio);
@@ -37,6 +38,12 @@ public class SoundHandleSpecialSound implements ISoundHandle {
         MovingSoundRecord s = sound.get();
         if (s != null)
             s.setAttenuationType(newType);
+    }
+    
+    public void setFadeIn(int fadeInTicks) {
+        MovingSoundRecord s = sound.get();
+        if (s != null)
+            s.setFadeIn(fadeInTicks);
     }
     
     @Override

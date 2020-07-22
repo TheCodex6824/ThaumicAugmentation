@@ -42,6 +42,7 @@ import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IImpulseCannonAugment;
+import thecodex6824.thaumicaugmentation.api.entity.IStopRailgunBeam;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
@@ -103,12 +104,15 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                 public void onCannonUsage(EntityLivingBase user) {
                     Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonRailgunRange.getValue());
                     List<Entity> ents = RaytraceHelper.raytraceEntities(user, TAConfig.cannonRailgunRange.getValue());
-                    for (Entity e : ents)
+                    for (Entity e : ents) {
                         ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonRailgunDamage.getValue());
+                        if (e instanceof IStopRailgunBeam && ((IStopRailgunBeam) e).shouldStopRailgunBeam(user))
+                            break;
+                    }
                     
                     Random rand = user.getRNG();
                     user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_RAILGUN,
-                            SoundCategory.PLAYERS, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
+                            SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
                     PacketImpulseRailgunProjectile packet = new PacketImpulseRailgunProjectile(user.getEntityId(), target);
                     PacketRecoil recoil = new PacketRecoil(user.getEntityId(), RecoilType.IMPULSE_RAILGUN);
                     TANetwork.INSTANCE.sendToAllTracking(packet, user);
@@ -159,7 +163,7 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                     
                     Random rand = user.getRNG();
                     user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_BURST,
-                            SoundCategory.PLAYERS, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
+                            SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
                     Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonBurstRange.getValue());
                     PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), target, num);
                     TANetwork.INSTANCE.sendToAllTracking(packet, user);

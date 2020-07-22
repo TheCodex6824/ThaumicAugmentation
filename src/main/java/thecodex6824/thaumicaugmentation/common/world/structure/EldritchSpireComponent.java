@@ -445,6 +445,8 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
         }
     }
     
+    public void onPostGeneration(World world, StructureBoundingBox structurebb) {}
+    
     public static class TemplateProcessor implements IAdvancedTemplateProcessor {
         
         protected float chance;

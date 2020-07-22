@@ -874,8 +874,11 @@ public class ClientProxy extends ServerProxy {
                 case IMPULSE_RAILGUN: {
                     ClientEventHandler.onRecoil((EntityLivingBase) e, (entity, time) -> {
                         float mult = isImpulseCannonStable(entity) ? 1.0F : 1.5F;
-                        return -MathHelper.cos(time * (float) Math.PI / 14.0F) * 3.0F * mult;
-                    }, 15);
+                        if (time < 4)
+                            return (float) (Math.pow(time / 3.0F, 2) - 1.0F) * 5.0F * mult;
+                        else
+                            return 1.01875F * mult;
+                    }, 16);
                     break;
                 }
                 default: break;

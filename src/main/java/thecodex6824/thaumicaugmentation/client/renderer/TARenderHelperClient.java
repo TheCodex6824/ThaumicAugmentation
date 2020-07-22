@@ -815,40 +815,57 @@ public class TARenderHelperClient implements ITARenderHelper {
                 ModelBiped biped = (ModelBiped) model;
                 EnumHand hand = findImpulseCannon(entity);
                 EnumHandSide side = hand == EnumHand.MAIN_HAND ? entity.getPrimaryHand() : entity.getPrimaryHand().opposite();
-                ModelRenderer arm = side == EnumHandSide.RIGHT ? biped.bipedRightArm : biped.bipedLeftArm;
-                boolean firstPerson = entity.equals(rv) && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0;
                 float armLength = 0.0F;
-                if (!arm.cubeList.isEmpty()) {
-                    ModelBox box = arm.cubeList.get(0);
-                    armLength = box.posY2 / 16.0F + (firstPerson ? -0.25F : 0.75F);
+                float armHeight = 0.0F;
+                float armHeightFromGround = 0.0F;
+                float armWidth = 0.0F;
+                boolean rightSide = side == EnumHandSide.RIGHT;
+                boolean rotateHeight = true;
+                if (entity.equals(rv) && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
+                    armLength = 0.3F;
+                    armHeightFromGround = 1.525F;
+                    armHeight = 0.0F;
+                    armWidth = rightSide ? -0.125F : 0.125F;
+                    rotateHeight = false;
                 }
-                else
-                    armLength = 0.625F + (firstPerson ? -0.25F : 0.75F);
+                else {
+                    ModelRenderer arm = rightSide ? biped.bipedRightArm : biped.bipedLeftArm;
+                    if (!arm.cubeList.isEmpty()) {
+                        ModelBox box = arm.cubeList.get(0);
+                        armLength = (box.posY2 - box.posY1) / 16.0F + 0.7F;
+                        armHeightFromGround = arm.rotationPointY / 2.0F;
+                        armHeight = (box.posZ2 - box.posZ1) / 16.0F + 0.1F;
+                        armWidth = arm.rotationPointX / 16.0F;
+                    }
+                    else {
+                        armLength = 0.7F;
+                        armHeightFromGround = 0.9F;
+                        armHeight = 0.2F;
+                        armWidth = 0.2F;
+                    }
+                }
                 
                 double lerpX = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
                 double lerpY = entity.prevPosY + (entity.posY - entity.prevPosY) * partialTicks;
                 double lerpZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
                 float lerpPitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
                 float lerpYaw = entity.prevRotationYawHead + (entity.rotationYawHead - entity.prevRotationYawHead) * partialTicks;
-                origin = new Vec3d((firstPerson ? 0.125 : 0.325) * (side == EnumHandSide.RIGHT ? -1.0F : 1.0F), 0.0, armLength).rotatePitch(
-                        (float) -Math.toRadians(lerpPitch)).rotateYaw((float) -Math.toRadians(lerpYaw)).add(
-                                lerpX, lerpY, lerpZ).add(0.0, firstPerson ? 1.525F : entity.getEyeHeight(), 0.0);
+                if (rotateHeight) {
+                    origin = new Vec3d(0.0, armHeight, armLength).rotatePitch((float) -Math.toRadians(lerpPitch)).add(armWidth, 0.0, 0.0).rotateYaw(
+                            (float) -Math.toRadians(lerpYaw)).add(lerpX, lerpY + armHeightFromGround, lerpZ);
+                }
+                else {
+                    origin = new Vec3d(0.0, 0.0, armLength).rotatePitch((float) -Math.toRadians(lerpPitch)).add(armWidth, 0.0, 0.0).rotateYaw(
+                            (float) -Math.toRadians(lerpYaw)).add(lerpX, lerpY + armHeightFromGround, lerpZ);
+                }
             }
         }
         
         if (origin == null) {
-            if (entity.equals(rv)) {
-                double lerpX = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
-                double lerpY = entity.prevPosY + (entity.posY - entity.prevPosY) * partialTicks;
-                double lerpZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
-                origin = new Vec3d(lerpX, lerpY, lerpZ).add(0.0, entity.height / 2.0F, 0.0);
-            }
-            else {
-                double lerpX = rv.prevPosX + (rv.posX - rv.prevPosX) * partialTicks;
-                double lerpY = rv.prevPosY + (rv.posY - rv.prevPosY) * partialTicks;
-                double lerpZ = rv.prevPosZ + (rv.posZ - rv.prevPosZ) * partialTicks;
-                origin = new Vec3d(lerpX, lerpY, lerpZ).add(0.0, rv.height / 2.0F, 0.0);
-            }
+            double lerpX = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
+            double lerpY = entity.prevPosY + (entity.posY - entity.prevPosY) * partialTicks;
+            double lerpZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
+            origin = new Vec3d(lerpX, lerpY, lerpZ).add(0.0, entity.height / 2.0F, 0.0);
         }
         
         return origin;

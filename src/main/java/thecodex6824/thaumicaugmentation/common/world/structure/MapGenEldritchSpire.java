@@ -30,12 +30,10 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
@@ -46,8 +44,6 @@ import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureStart;
-import thaumcraft.api.blocks.BlocksTC;
-import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
@@ -65,7 +61,7 @@ public class MapGenEldritchSpire extends MapGenStructure {
     
     static {
         MapGenStructureIO.registerStructure(Start.class, "EldritchSpire");
-        EldritchSpireComponents.register();
+        EldritchSpireComponentPlacer.register();
     }
     
     protected ITAChunkGenerator generator;
@@ -165,7 +161,7 @@ public class MapGenEldritchSpire extends MapGenStructure {
             if (minHeight >= 2) {
                 BlockPos pos = new BlockPos(chunkX * 16 + 8, minHeight + 1, chunkZ * 16 + 8);
                 List<EldritchSpireComponent> pieces = new ArrayList<>();
-                EldritchSpireComponents.generate(world.getSaveHandler().getStructureTemplateManager(),
+                EldritchSpireComponentPlacer.generate(world, generator, world.getSaveHandler().getStructureTemplateManager(),
                         pos, rot, random, pieces, ward);
                 components.addAll(pieces);
                 updateBoundingBox();
@@ -173,50 +169,15 @@ public class MapGenEldritchSpire extends MapGenStructure {
             }
         }
         
-        protected boolean isEldritchBlock(IBlockState state) {
-            return state.getBlock() == BlocksTC.stoneEldritchTile || state.getBlock() == BlocksTC.slabEldritch ||
-                    state.getBlock() == BlocksTC.doubleSlabEldritch || state.getBlock() == TABlocks.STAIRS_ELDRITCH_TILE;
-        }
-        
         @Override
         public void generateStructure(World world, Random rand, StructureBoundingBox structurebb) {
             // actually generate structure
             super.generateStructure(world, rand, structurebb);
             
-            // fills in blocks below structure
-            int minY = boundingBox.minY;
-            MutableBlockPos mutable = new MutableBlockPos();
-            for (int x = structurebb.minX; x <= structurebb.maxX; ++x) {
-                for (int z = structurebb.minZ; z <= structurebb.maxZ; ++z) {
-                    mutable.setPos(x, minY, z);
-                    if (!world.isAirBlock(mutable) && boundingBox.isVecInside(mutable)) {
-                        boolean hasSomething = false;
-                        for (StructureComponent component : components) {
-                            if ((!(component instanceof EldritchSpireComponent) ||
-                                    ((EldritchSpireComponent) component).shouldFillBlocksBelow()) &&
-                                    getBoundingBox().isVecInside(mutable)) {
-                                
-                                hasSomething = true;
-                                break;
-                            }
-                        }
-
-                        if (hasSomething) {
-                            IBlockState place = BlocksTC.stoneAncient.getDefaultState();
-                            IBlockState above = world.getBlockState(mutable);
-                            if (isEldritchBlock(above))
-                                place = BlocksTC.stoneEldritchTile.getDefaultState();
-                            
-                            for (int y = minY - 1; y >= 0; --y) {
-                                mutable.setPos(x, y, z);
-                                if (!world.isAirBlock(mutable) && !world.getBlockState(mutable).getMaterial().isLiquid())
-                                    break;
-
-                                world.setBlockState(mutable, place, 2);
-                            }
-                        }
-                    }
-                }
+            // do post-gen stuff (including filling below when needed)
+            for (StructureComponent component : components) {
+                if (component instanceof EldritchSpireComponent)
+                    ((EldritchSpireComponent) component).onPostGeneration(world, structurebb);
             }
         }
         

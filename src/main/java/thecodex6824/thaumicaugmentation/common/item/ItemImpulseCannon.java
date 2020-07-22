@@ -150,7 +150,7 @@ public class ItemImpulseCannon extends ItemTABase {
                     if (aug == null) {
                         Random rand = player.getRNG();
                         player.getEntityWorld().playSound(null, new BlockPos(player.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_BEAM_START,
-                                SoundCategory.PLAYERS, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 0.5F, (rand.nextFloat() - rand.nextFloat()) / 4.0F + 1.0F);
+                                SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 4.0F + 1.0F);
                         PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), false);
                         TANetwork.INSTANCE.sendToAllTracking(packet, player);
                         if (player instanceof EntityPlayerMP)
@@ -197,7 +197,7 @@ public class ItemImpulseCannon extends ItemTABase {
                     player.stopActiveHand();
                     Random rand = player.getRNG();
                     player.getEntityWorld().playSound(null, new BlockPos(player.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_BEAM_END,
-                            SoundCategory.PLAYERS, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 0.5F, (rand.nextFloat() - rand.nextFloat()) / 4.0F + 1.0F);
+                            SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 4.0F + 1.0F);
                     PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), true);
                     TANetwork.INSTANCE.sendToAllTracking(packet, player);
                     if (player instanceof EntityPlayerMP)

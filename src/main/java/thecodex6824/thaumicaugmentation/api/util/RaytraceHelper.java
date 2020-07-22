@@ -164,6 +164,7 @@ public class RaytraceHelper {
                 ret.add(entity);
         }
 
+        ret.sort((e1, e2) -> Double.compare(e1.getDistanceSq(user), e2.getDistanceSq(user)));
         return ret;
     }
     
@@ -179,6 +180,7 @@ public class RaytraceHelper {
                 ret.add(entity);
         }
 
+        ret.sort((e1, e2) -> Double.compare(e1.getDistanceSq(start.x, start.y, start.z), e2.getDistanceSq(start.x, start.y, start.z)));
         return ret;
     }
     

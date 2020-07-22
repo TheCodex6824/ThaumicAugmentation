@@ -30,6 +30,8 @@ import net.minecraft.util.math.Vec3d;
 public class MovingSoundRecord extends MovingSound {
 
     protected Function<Vec3d, Vec3d> tickFunc;
+    protected int fadeIn;
+    protected int ticks;
     
     public MovingSoundRecord(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick) {
         
@@ -72,6 +74,10 @@ public class MovingSoundRecord extends MovingSound {
         attenuationType = newType;
     }
     
+    public void setFadeIn(int fade) {
+        fadeIn = fade;
+    }
+    
     public void stop() {
         donePlaying = true;
     }
@@ -81,8 +87,13 @@ public class MovingSoundRecord extends MovingSound {
         Vec3d pos = tickFunc.apply(new Vec3d(xPosF, yPosF, zPosF));
         if (pos == null)
             donePlaying = true;
-        else
+        else {
             setPos((float) pos.x, (float) pos.y, (float) pos.z);
+            if (ticks <= fadeIn)
+                volume = (float) ticks / fadeIn;
+        }
+        
+        ++ticks;
     }
     
 }
