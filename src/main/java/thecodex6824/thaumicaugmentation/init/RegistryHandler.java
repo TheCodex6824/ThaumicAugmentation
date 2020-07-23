@@ -140,6 +140,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumostaticHarness;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
+import thecodex6824.thaumicaugmentation.common.item.ItemVisBatteryCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemVoidBoots;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockRiftJar;
@@ -358,6 +359,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemEldritchLockKey(), "eldritch_lock_key"));
         registry.register(setupItem(new ItemObeliskPlacer(), "obelisk_placer"));
         registry.register(setupItem(new ItemResearchNotes(), "research_notes"));
+        registry.register(setupItem(new ItemVisBatteryCasterAugment(), "augment_vis_battery"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }
@@ -472,11 +474,15 @@ public final class RegistryHandler {
         proxy.registerComplexObjectTag(new ItemStack(TAItems.MATERIAL, 1, 0), new AspectList().add(Aspect.AURA, 7).add(Aspect.PLANT, 6));
         proxy.registerObjectTag(new ItemStack(TAItems.MATERIAL, 1, 1), new AspectList().add(Aspect.PROTECT, 15).add(Aspect.MIND, 10));
         proxy.registerObjectTag(new ItemStack(TAItems.MATERIAL, 1, 3), new AspectList().add(Aspect.ELDRITCH, 10).add(Aspect.VOID, 15).add(Aspect.MECHANISM, 5));
+        proxy.registerObjectTag(new ItemStack(TAItems.MATERIAL, 1, 5), new AspectList().add(Aspect.ORDER, 15).add(Aspect.ENERGY, 10));
         proxy.registerObjectTag(new ItemStack(TAItems.RIFT_SEED), new AspectList());
         proxy.registerObjectTag(new ItemStack(TAItems.SEAL_COPIER), new AspectList().add(Aspect.MIND, 15).add(Aspect.TOOL, 5));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.VOID_BOOTS), new AspectList().add(Aspect.ELDRITCH, 43).add(Aspect.VOID, 23));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.FRACTURE_LOCATOR), new AspectList().add(Aspect.VOID, 3).add(Aspect.TOOL, 5));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.AUGMENT_CASTER_RIFT_ENERGY_STORAGE), new AspectList().add(Aspect.AVERSION, 3).add(Aspect.TOOL, 5).add(Aspect.MECHANISM, 5).add(Aspect.VOID, 5));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.THAUMOSTATIC_HARNESS), new AspectList().add(Aspect.FLIGHT, 55));
+        proxy.registerComplexObjectTag(new ItemStack(TAItems.ELYTRA_HARNESS), new AspectList().add(Aspect.FLIGHT, 35));
+        proxy.registerObjectTag(new ItemStack(TAItems.FOCUS_ANCIENT), new AspectList().add(Aspect.CRYSTAL, 30).add(Aspect.ENERGY, 20).add(Aspect.AURA, 25).add(Aspect.ELDRITCH, 50).add(Aspect.MAGIC, 15));
         
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.ARCANE_TRAPDOOR_METAL), new AspectList().add(Aspect.PROTECT, 7));
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.ARCANE_TRAPDOOR_WOOD), new AspectList().add(Aspect.PROTECT, 7));
@@ -491,10 +497,22 @@ public final class RegistryHandler {
         proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 7), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.ENTROPY, 3).add(Aspect.LIFE, 3).add(Aspect.LIGHT, 10));
         proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 8), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.ORDER, 3));
         proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 9), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.ORDER, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STONE, 1, 11), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.LIGHT, 10));
         proxy.registerObjectTag(new ItemStack(TABlocks.TAINT_FLOWER), new AspectList().add(Aspect.FLUX, 10).add(Aspect.PLANT, 5));
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.VIS_REGENERATOR), new AspectList().add(Aspect.AURA, 20).add(Aspect.MECHANISM, 15).add(Aspect.ENERGY, 5));
         proxy.registerComplexObjectTag(new ItemStack(TABlocks.WARDED_CHEST), new AspectList().add(Aspect.PROTECT, 7));
-    
+        proxy.registerObjectTag(new ItemStack(TABlocks.BARS), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.TRAP, 5));
+        proxy.registerObjectTag(new ItemStack(TABlocks.FORTIFIED_GLASS), new AspectList().add(Aspect.CRYSTAL, 30).add(Aspect.PROTECT, 12));
+        proxy.registerObjectTag(new ItemStack(TABlocks.FORTIFIED_GLASS_PANE), new AspectList().add(Aspect.CRYSTAL, 5).add(Aspect.PROTECT, 2));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STARFIELD_GLASS, 1, 0), new AspectList().add(Aspect.CRYSTAL, 30).add(Aspect.PROTECT, 12).add(Aspect.ELDRITCH, 10));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STARFIELD_GLASS, 1, 1), new AspectList().add(Aspect.CRYSTAL, 30).add(Aspect.PROTECT, 12).add(Aspect.VOID, 5).add(Aspect.FLUX, 5));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STARFIELD_GLASS, 1, 1), new AspectList().add(Aspect.CRYSTAL, 30).add(Aspect.PROTECT, 12).add(Aspect.MAGIC, 5).add(Aspect.AURA, 5));
+        proxy.registerObjectTag(new ItemStack(TABlocks.STRANGE_CRYSTAL), new AspectList().add(Aspect.AIR, 25).add(Aspect.EARTH, 25).add(Aspect.ENTROPY, 25).add(Aspect.FIRE, 25).add(Aspect.ORDER, 25).add(Aspect.WATER, 25));
+        proxy.registerObjectTag(new ItemStack(TABlocks.RIFT_JAR), new AspectList());
+        proxy.registerObjectTag(new ItemStack(TABlocks.URN, 1, 0), new AspectList().add(Aspect.DESIRE, 15).add(Aspect.EARTH, 5));
+        proxy.registerObjectTag(new ItemStack(TABlocks.URN, 1, 1), new AspectList().add(Aspect.DESIRE, 30).add(Aspect.EARTH, 5));
+        proxy.registerObjectTag(new ItemStack(TABlocks.URN, 1, 2), new AspectList().add(Aspect.DESIRE, 50).add(Aspect.EARTH, 5));
+        
         AspectElementInteractionManager.init();
     }
     

@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
@@ -31,13 +33,13 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 
 public class TileCastedLight extends TileEntity implements ITickable {
 
-    protected static final int DELAY = 5;
-
     protected boolean lastRenderState;
+    protected int ticks;
 
     public TileCastedLight() {
         super();
         lastRenderState = TAConfig.reducedEffects.getValue();
+        ticks = ThreadLocalRandom.current().nextInt(20);
     }
 
     @Override
@@ -47,7 +49,7 @@ public class TileCastedLight extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        if (world.isRemote && world.getTotalWorldTime() % DELAY == 0) {
+        if (world.isRemote && ticks++ % 5 == 0) {
             if (lastRenderState != TAConfig.reducedEffects.getValue()) {
                 lastRenderState = !lastRenderState;
                 world.markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());

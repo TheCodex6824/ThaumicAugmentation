@@ -67,6 +67,7 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
         actionTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/vis_regenerator.json"), 
                 ImmutableMap.of("cycle_length", cycleLength, "act_time", actionTime, "delay", new VariableValue(delay)));
+        ticks = ThreadLocalRandom.current().nextInt(20);
     }
 
     private float getAuraOffset() {

@@ -102,7 +102,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                 if (energy != null && energy.extractEnergy(10, true) == 10)
                     focusPackage.setFocusPower(focusPackage.getFocusPower() * 1.1F);
                 
-                return super.onCastPre(caster, focusPackage, user);
+                return false;
             }
             
             @Override
@@ -120,7 +120,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                     }
                 }
                 
-                return super.onTick(user);
+                return false;
             }
             
             @Override
@@ -137,7 +137,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                     }
                 }
                 
-                return super.onInteractBlock(user, used, target, face, hand);
+                return false;
             }
             
             @Override
@@ -160,7 +160,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                     }
                 }
                 
-                return super.onInteractEntity(user, used, target, hand);
+                return false;
             }
             
             @Override

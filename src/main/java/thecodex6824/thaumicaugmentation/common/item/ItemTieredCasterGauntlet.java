@@ -154,7 +154,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         else {
             int voidseerArea = TAConfig.voidseerArea.getValue();
             float totalVis = 0.0F;
-            TreeMap<Float, BlockPos> visAmounts = new TreeMap<>((f1, f2) -> Float.compare(f2, f1));
+            TreeMap<Float, BlockPos> visAmounts = new TreeMap<>((f1, f2) -> Float.compare(f1, f2));
             for (int x = -voidseerArea / 2; x < (int) Math.ceil(voidseerArea / 2.0); ++x) {
                 for (int z = -voidseerArea / 2; z < (int) Math.ceil(voidseerArea / 2.0); ++z) {
                     BlockPos loc = user.getPosition().add(x * 16, 0, z * 16);

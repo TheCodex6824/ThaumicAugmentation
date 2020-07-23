@@ -71,7 +71,6 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
             new BlockPos(1, 0, -3)
     };
     
-    protected int ticks;
     protected int openTicks;
     
     public TileAltar() {

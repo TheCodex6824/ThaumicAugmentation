@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.common.tile;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
 
@@ -44,7 +45,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     // Rifts: 0 = size, 1 = stability
     // Fractures: 0 = biome, 1 = opened
     protected boolean mode;
-    protected int timer;
+    protected int ticks;
     protected int lastResult;
     protected WeakReference<Entity> target;
     
@@ -56,6 +57,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
         lastResult = -1;
         target = new WeakReference<>(null);
         clientTargetID = -1;
+        ticks = ThreadLocalRandom.current().nextInt(20);
     }
     
     @Nullable
@@ -143,7 +145,7 @@ public class TileRiftMonitor extends TileEntity implements ITickable {
     @Override
     public void update() {
         if (!world.isRemote) {
-            if (timer++ % 20 == 0 && (target.get() == null || target.get().isDead)) {
+            if (ticks++ % 20 == 0 && (target.get() == null || target.get().isDead)) {
                 if (serverTargetID != null)
                     loadTargetFromID();
                 

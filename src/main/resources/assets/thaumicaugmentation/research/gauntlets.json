@@ -158,8 +158,8 @@
                 "GAUNTLET_AUGMENTATION"
             ],
             "location": [
-                6,
-                -1.5
+                7,
+                -2
             ],
             "stages": [
                 {
@@ -199,8 +199,8 @@
                 "HIDDEN"
             ],
             "location": [
-                8.5,
-                -1.5
+                9,
+                -1
             ],
             "stages": [
                 {
@@ -278,6 +278,40 @@
                     "text": "thaumicaugmentation.research.experience_modifier.1",
                     "recipes": [
                         "thaumicaugmentation:strength_provider_experience"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "VIS_BATTERY_AUGMENT",
+            "name": "thaumicaugmentation.research.vis_battery_augment.title",
+            "icons": [
+                "thaumicaugmentation:augment_vis_battery"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "GAUNTLET_AUGMENTATION",
+                "~VISBATTERY"
+            ],
+            "location": [
+                6,
+                -2
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.vis_battery_augment.0",
+                    "required_item": [
+                        "thaumcraft:vis_battery"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.vis_battery_augment.1",
+                    "recipes": [
+                        "thaumicaugmentation:augment_vis_battery"
                     ]
                 }
             ]

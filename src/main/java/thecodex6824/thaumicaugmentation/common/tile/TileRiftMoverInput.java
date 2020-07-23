@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.tile;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
 
@@ -72,6 +73,10 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
     protected UUID loadedRiftUUID;
     protected int ticks;
     protected ISoundHandle loop;
+    
+    public TileRiftMoverInput() {
+        ticks = ThreadLocalRandom.current().nextInt(20);
+    }
     
     protected EntityFluxRift findRift() {
         BlockPos pos1 = pos.add(-1, 1, -1);

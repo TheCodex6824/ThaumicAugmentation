@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
@@ -38,6 +40,10 @@ import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 public class TileObelisk extends TileEntity implements ITickable, IShaderRenderingCallback {
     
     protected int ticks;
+    
+    public TileObelisk() {
+        ticks = ThreadLocalRandom.current().nextInt(20);
+    }
     
     protected int getHealCycleLength() {
         switch (world.getDifficulty()) {

@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.common.tile;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
 
@@ -100,6 +101,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/stability_field_generator.json"),
                 ImmutableMap.of("cycle_length", cycleLength, "act_time", actionTime));
         maxStabilityPerOperation = MAX_STABILITY;
+        ticks = ThreadLocalRandom.current().nextInt(20);
     }
     
     protected double getDistForFace(EnumFacing face, Entity entity) {

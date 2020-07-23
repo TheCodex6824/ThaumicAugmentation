@@ -117,11 +117,12 @@ public final class PlayerEventHandler {
                         new Style().setColor(TextFormatting.DARK_PURPLE)), true);
             }
             
-            if (player.capabilities.isFlying && !player.isCreative() && !player.isSpectator()) {
+            if ((player.capabilities.isFlying || player.isElytraFlying()) && !player.isCreative() && !player.isSpectator()) {
                 MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(player.getPosition());
                 IWardStorage storage = w.getChunk(player.getPosition()).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                 if (storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard())) {
                     player.capabilities.isFlying = false;
+                    player.setFlag(7, false);
                     player.sendPlayerAbilities();
                     player.sendStatusMessage(new TextComponentTranslation("tc.break.fly").setStyle(
                             new Style().setColor(TextFormatting.DARK_PURPLE)), true);

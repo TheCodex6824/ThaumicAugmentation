@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.common.tile;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
 
@@ -57,6 +58,10 @@ public class TileRiftFeeder extends TileEntity implements ITickable, IEssentiaTr
     
     protected int storedEssentia;
     protected int ticks;
+    
+    public TileRiftFeeder() {
+        ticks = ThreadLocalRandom.current().nextInt(20);
+    }
     
     protected double getDistForFace(EnumFacing face, Entity entity) {
         return getDistForFace(face, entity.getPositionVector());

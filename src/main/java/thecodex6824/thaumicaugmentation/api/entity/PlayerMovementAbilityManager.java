@@ -220,8 +220,11 @@ public final class PlayerMovementAbilityManager {
     public static boolean popAndApplyFlyState(EntityPlayer player) {
         FlyData data = flyData.remove(player);
         if (data != null) {
-            player.capabilities.allowFlying = data.flyEnabled;
-            player.capabilities.isFlying &= data.wasFlying;
+            if (!player.isCreative() && !player.isSpectator()) {
+                player.capabilities.allowFlying = data.flyEnabled;
+                player.capabilities.isFlying &= data.wasFlying;
+            }
+            
             player.capabilities.flySpeed = data.flySpeed;
             player.sendPlayerAbilities();
             return true;

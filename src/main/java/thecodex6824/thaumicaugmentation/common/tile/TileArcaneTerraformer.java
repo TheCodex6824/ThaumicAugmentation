@@ -24,6 +24,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -126,6 +127,7 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
         essentia = new Object2IntOpenHashMap<>(5);
         circle = true;
         chunks = new HashSet<>();
+        ticks = ThreadLocalRandom.current().nextInt(20);
     }
     
     @Nullable

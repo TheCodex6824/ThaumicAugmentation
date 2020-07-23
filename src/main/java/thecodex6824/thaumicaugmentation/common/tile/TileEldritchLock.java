@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.tile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
 
@@ -62,6 +63,7 @@ public class TileEldritchLock extends TileEntity implements ITickable, IInteract
     public TileEldritchLock() {
         super();
         openTicks = Integer.MIN_VALUE;
+        ticks = ThreadLocalRandom.current().nextInt(20);
     }
     
     public boolean isClosed() {

@@ -1,0 +1,33 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "VIS_BATTERY_AUGMENT",
+  "vis": 50,
+  "aspects": {
+    "aer": 2,
+    "aqua": 1,
+    "ignis": 2,
+    "ordo": 2,
+    "perditio": 2,
+    "terra": 1
+  },
+  "pattern": [
+    "SBS",
+    "BRB",
+    "SBS"
+  ],
+  "key": {
+    "S": {
+      "item": "thaumcraft:stone_arcane"
+    },
+    "B": {
+      "item": "thaumcraft:vis_battery",
+      "data": 0
+    },
+    "R": {
+      "item": "thaumcraft:morphic_resonator"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:augment_vis_battery"
+  }
+}

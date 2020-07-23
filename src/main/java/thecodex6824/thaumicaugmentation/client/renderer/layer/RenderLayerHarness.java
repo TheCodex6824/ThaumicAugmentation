@@ -123,37 +123,45 @@ public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
                     thaumostatic.renderAll();
                     GlStateManager.disableRescaleNormal();
                     GlStateManager.popMatrix();
-                    render.bindTexture(TATextures.LIGHTNING_TEXTURE);
-                    GlStateManager.scale(1.5F, 1.5F, 1.0F);
-                    GlStateManager.pushMatrix();
-                    GlStateManager.translate(-0.5F, -0.35F, 0.5F);
-                    double offset = player.ticksExisted % 16 / 16.0;
-                    Tessellator t = Tessellator.getInstance();
-                    BufferBuilder buffer = t.getBuffer();
-                    buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-                    buffer.pos(0.0, 1.0, 0.0).tex(offset, 1.0).endVertex();
-                    buffer.pos(1.0, 1.0, 0.0).tex(offset + 0.0625, 1.0).endVertex();
-                    buffer.pos(1.0, 0.0, 0.0).tex(offset + 0.0625, 0.0).endVertex();
-                    buffer.pos(0.0, 0.0, 0.0).tex(offset, 0.0).endVertex();
-                    t.draw();
-                    GlStateManager.popMatrix();
-                    GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
-                    GlStateManager.translate(-0.5F, -0.35F, -0.5F);
-                    buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-                    buffer.pos(0.0, 1.0, 0.0).tex(offset, 1.0).endVertex();
-                    buffer.pos(1.0, 1.0, 0.0).tex(offset + 0.0625, 1.0).endVertex();
-                    buffer.pos(1.0, 0.0, 0.0).tex(offset + 0.0625, 0.0).endVertex();
-                    buffer.pos(0.0, 0.0, 0.0).tex(offset, 0.0).endVertex();
-                    t.draw();
+                    
+                    if (player.capabilities.isFlying) {
+                        render.bindTexture(TATextures.LIGHTNING_TEXTURE);
+                        GlStateManager.scale(1.5F, 1.5F, 1.0F);
+                        GlStateManager.pushMatrix();
+                        GlStateManager.translate(-0.5F, -0.35F, 0.5F);
+                        double offset = player.ticksExisted % 16 / 16.0;
+                        Tessellator t = Tessellator.getInstance();
+                        BufferBuilder buffer = t.getBuffer();
+                        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+                        buffer.pos(0.0, 1.0, 0.0).tex(offset, 1.0).endVertex();
+                        buffer.pos(1.0, 1.0, 0.0).tex(offset + 0.0625, 1.0).endVertex();
+                        buffer.pos(1.0, 0.0, 0.0).tex(offset + 0.0625, 0.0).endVertex();
+                        buffer.pos(0.0, 0.0, 0.0).tex(offset, 0.0).endVertex();
+                        t.draw();
+                        GlStateManager.popMatrix();
+                        GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
+                        GlStateManager.translate(-0.5F, -0.35F, -0.5F);
+                        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+                        buffer.pos(0.0, 1.0, 0.0).tex(offset, 1.0).endVertex();
+                        buffer.pos(1.0, 1.0, 0.0).tex(offset + 0.0625, 1.0).endVertex();
+                        buffer.pos(1.0, 0.0, 0.0).tex(offset + 0.0625, 0.0).endVertex();
+                        buffer.pos(0.0, 0.0, 0.0).tex(offset, 0.0).endVertex();
+                        t.draw();
+                    }
+                    
                     GlStateManager.popMatrix();
                 }
-                Vec3d backOrig = new Vec3d(0.0, 1.25, -0.4);
-                Vec3d back = backOrig.rotateYaw((float) Math.toRadians(-player.renderYawOffset)).add(player.posX, player.posY, player.posZ);
-                for (int i = 0; i < 3; ++i) {
-                    Vec3d target = new Vec3d((player.world.rand.nextFloat() - player.world.rand.nextFloat()) * 2,
-                            backOrig.y + (player.world.rand.nextFloat() - player.world.rand.nextFloat()) * 2, backOrig.z - 0.2).rotateYaw((float) Math.toRadians(-player.renderYawOffset)).add(player.posX, player.posY, player.posZ);
-                    FXDispatcher.INSTANCE.arcBolt(back.x, back.y, back.z, target.x, target.y, target.z, 0.5F, 0.5F, 1.0F, 0.075F);
+                
+                if (player.capabilities.isFlying) {
+                    Vec3d backOrig = new Vec3d(0.0, 1.25, -0.4);
+                    Vec3d back = backOrig.rotateYaw((float) Math.toRadians(-player.renderYawOffset)).add(player.posX, player.posY, player.posZ);
+                    for (int i = 0; i < 3; ++i) {
+                        Vec3d target = new Vec3d((player.world.rand.nextFloat() - player.world.rand.nextFloat()) * 2,
+                                backOrig.y + (player.world.rand.nextFloat() - player.world.rand.nextFloat()) * 2, backOrig.z - 0.2).rotateYaw((float) Math.toRadians(-player.renderYawOffset)).add(player.posX, player.posY, player.posZ);
+                        FXDispatcher.INSTANCE.arcBolt(back.x, back.y, back.z, target.x, target.y, target.z, 0.5F, 0.5F, 1.0F, 0.075F);
+                    }
                 }
+                
                 GlStateManager.disableBlend();
             }
             else if (harness.getItem() == TAItems.ELYTRA_HARNESS) {
