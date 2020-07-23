@@ -84,7 +84,7 @@ import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
 public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable, IEssentiaTransport {
 
-    protected static final int MAX_ESSENTIA = 20; // per aspect
+    protected static final int MAX_ESSENTIA = 30; // per aspect
     protected static final Cache<Biome, Object2IntOpenHashMap<Aspect>> BIOME_COSTS =
             CacheBuilder.newBuilder().softValues().concurrencyLevel(1).build();
     protected static final EnumFacing[] VALID_SIDES = new EnumFacing[] {EnumFacing.DOWN, EnumFacing.NORTH,
@@ -367,15 +367,36 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                         essentiaPaid = false;
                         visPaid = false;
                         if (!skipSet) {
-                            if (activeBiome.equals(IBiomeSelector.RESET))
+                            Biome biome = null;
+                            if (activeBiome.equals(IBiomeSelector.RESET)) {
+                                biome = BiomeUtil.getNaturalBiome(world, currentPos, Biomes.PLAINS);
                                 BiomeUtil.resetBiome(world, currentPos);
-                            else
-                                BiomeUtil.setBiome(world, currentPos, Biome.REGISTRY.getObject(activeBiome));
+                            }
+                            else {
+                                biome = Biome.REGISTRY.getObject(activeBiome);
+                                BiomeUtil.setBiome(world, currentPos, biome);
+                            }
                             
                             chunks.add(new ChunkPos(currentPos));
                             int y = world.getHeight(currentPos.getX(), currentPos.getZ());
-                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, currentPos.getX(), y, currentPos.getZ(), 8.0, Aspect.EXCHANGE.getColor()),
-                                    new TargetPoint(world.provider.getDimension(), currentPos.getX(), y, currentPos.getZ(), 64.0));
+                            TargetPoint track = new TargetPoint(world.provider.getDimension(), currentPos.getX(), y, currentPos.getZ(), 64.0);
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, currentPos.getX(),
+                                    y, currentPos.getZ(), 8.0, Aspect.EXCHANGE.getColor()), track);
+                            
+                            int color = world.rand.nextInt(3);
+                            if (color == 0)
+                                color = biome.getGrassColorAtPos(pos);
+                            else if (color == 1)
+                                color = biome.getFoliageColorAtPos(pos);
+                            else {
+                                if (biome == Biomes.HELL)
+                                    color = 0xFF4500;
+                                else
+                                    color = biome.getWaterColor() & 0x3F76E4;
+                            }
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.TERRAFORMER_WORK, pos.getX(),
+                                    pos.getY(), pos.getZ(), color), track);
+                            
                             world.playSound(null, currentPos, SoundsTC.zap, SoundCategory.BLOCKS, 0.15F, 1.0F);
                             break;
                         }
@@ -396,19 +417,6 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                     else
                         break;
                 }
-            }
-        }
-        else if (world.isRemote && activeBiome != null) {
-            Biome biome = null;
-            if (activeBiome.equals(IBiomeSelector.RESET))
-                biome = BiomeUtil.getNaturalBiome(world, pos, Biomes.PLAINS);
-            else
-                biome = Biome.REGISTRY.getObject(activeBiome);
-            
-            if (biome != null) {
-                ThaumicAugmentation.proxy.getRenderHelper().renderTerraformerParticle(world, pos.getX() + 0.5, pos.getY() + 1.6,
-                        pos.getZ() + 0.5, (world.rand.nextFloat() - world.rand.nextFloat()) / 8.0, 0.125, (world.rand.nextFloat() - world.rand.nextFloat()) / 8.0, pos, biome);
-                ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.5, pos.getY() + 1.25, pos.getZ() + 0.5, 5.0F, Aspect.ELDRITCH.getColor(), false);
             }
         }
     }

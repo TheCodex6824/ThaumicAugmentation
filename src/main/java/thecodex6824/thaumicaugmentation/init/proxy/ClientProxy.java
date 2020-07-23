@@ -602,6 +602,18 @@ public class ClientProxy extends ServerProxy {
                     
                     break;
                 }
+                case TERRAFORMER_WORK: {
+                    if (d.length == 4) {
+                        double x = d[0], y = d[1], z = d[2];
+                        int color = (int) d[3];
+                        World world = Minecraft.getMinecraft().world;
+                        ThaumicAugmentation.proxy.getRenderHelper().renderTerraformerParticle(world, x + 0.5, y + 1.6,
+                                z + 0.5, (world.rand.nextFloat() - world.rand.nextFloat()) / 8.0, 0.125, (world.rand.nextFloat() - world.rand.nextFloat()) / 8.0, color);
+                        ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, x + 0.5, y + 1.25, z + 0.5, 5.0F, Aspect.ELDRITCH.getColor(), false);
+                    }
+                    
+                    break;
+                }
              
                 default: {break;}
             }

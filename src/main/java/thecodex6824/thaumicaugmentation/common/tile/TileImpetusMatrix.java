@@ -153,7 +153,10 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         }
         
         public void validateEnergy() {
+            long old = energy;
             energy = Math.max(Math.min(energy, getTotalCells() * CELL_CAPACITY), 0);
+            if (old != energy)
+                onEnergyChanged();
         }
         
     }

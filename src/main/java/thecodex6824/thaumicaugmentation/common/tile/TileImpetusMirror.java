@@ -145,23 +145,25 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
     @Override
     public void update() {
         if (!world.isRemote) {
-            if (ticks++ % 20 == 0 && !linked.isInvalid() &&
+            if (ticks++ % 20 == 0) {
+                if (!linked.isInvalid() &&
                     !node.getLocation().isInvalid() && node.getGraph().findNodeByPosition(linked) == null) {
-                
-                World targetWorld = DimensionManager.getWorld(linked.getDimension());
-                if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
-                    TileEntity tile = world.getTileEntity(linked.getPos());
-                    if (tile != null) {
-                        IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
-                        if (otherNode != null) {
-                            if (tile instanceof TileImpetusMirror) {
-                                TileImpetusMirror otherMirror = (TileImpetusMirror) tile;
-                                if (otherMirror.getLink().isInvalid() || otherMirror.getLink().equals(node.getLocation())) {
-                                    otherMirror.setLink(node.getLocation());
-                                    node.addInput(otherNode);
-                                    node.addOutput(otherNode);
-                                    markDirty();
-                                    needsSync = true;
+                    
+                    World targetWorld = DimensionManager.getWorld(linked.getDimension());
+                    if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
+                        TileEntity tile = world.getTileEntity(linked.getPos());
+                        if (tile != null) {
+                            IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                            if (otherNode != null) {
+                                if (tile instanceof TileImpetusMirror) {
+                                    TileImpetusMirror otherMirror = (TileImpetusMirror) tile;
+                                    if (otherMirror.getLink().isInvalid() || otherMirror.getLink().equals(node.getLocation())) {
+                                        otherMirror.setLink(node.getLocation());
+                                        node.addInput(otherNode);
+                                        node.addOutput(otherNode);
+                                        markDirty();
+                                        needsSync = true;
+                                    }
                                 }
                             }
                         }
@@ -169,7 +171,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
                 }
                 
                 while (fluxProgress >= 1000) {
-                    AuraHelper.polluteAura(world, pos, world.rand.nextInt(4) + 1, true);
+                    AuraHelper.polluteAura(world, pos, world.rand.nextInt(3) + 1, true);
                     fluxProgress -= 1000;
                     markDirty();
                 }

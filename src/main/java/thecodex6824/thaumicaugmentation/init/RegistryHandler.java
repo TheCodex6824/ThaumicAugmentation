@@ -47,6 +47,7 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
+import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectEventProxy;
 import thaumcraft.api.aspects.AspectList;
@@ -461,6 +462,7 @@ public final class RegistryHandler {
     }
     
     @SubscribeEvent
+    @SuppressWarnings("deprecation")
     public static void registerAspects(AspectRegistryEvent event) {
         AspectEventProxy proxy = event.register;
         proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 0), new AspectList().add(Aspect.PROTECT, 19));
@@ -512,6 +514,21 @@ public final class RegistryHandler {
         proxy.registerObjectTag(new ItemStack(TABlocks.URN, 1, 0), new AspectList().add(Aspect.DESIRE, 15).add(Aspect.EARTH, 5));
         proxy.registerObjectTag(new ItemStack(TABlocks.URN, 1, 1), new AspectList().add(Aspect.DESIRE, 30).add(Aspect.EARTH, 5));
         proxy.registerObjectTag(new ItemStack(TABlocks.URN, 1, 2), new AspectList().add(Aspect.DESIRE, 50).add(Aspect.EARTH, 5));
+        proxy.registerObjectTag(new ItemStack(TABlocks.CAPSTONE, 1, 0), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 10));
+        proxy.registerObjectTag(new ItemStack(TABlocks.CAPSTONE, 1, 1), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 10));
+        proxy.registerObjectTag(new ItemStack(TABlocks.CAPSTONE, 1, 2), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MAGIC, 5).add(Aspect.SOUL, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.CAPSTONE, 1, 3), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MAGIC, 5).add(Aspect.SOUL, 3));
+        proxy.registerObjectTag(new ItemStack(TABlocks.OBELISK), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 10));
+        proxy.registerObjectTag(new ItemStack(TABlocks.ELDRITCH_LOCK), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MECHANISM, 15));
+        proxy.registerObjectTag(new ItemStack(TABlocks.ELDRITCH_LOCK_IMPETUS), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MECHANISM, 15).add(Aspect.ENERGY, 10));
+        
+        // no idea why this is deprecated, because it calls internals and there is no replacement
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".Autocaster", new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.AVERSION, 5).add(Aspect.SENSES, 3));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".AutocasterEldritch", new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.ELDRITCH, 15).add(Aspect.AVERSION, 5).add(Aspect.SENSES, 3));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".EldritchGuardian", new AspectList().add(Aspect.ELDRITCH, 20).add(Aspect.DEATH, 20).add(Aspect.UNDEAD, 20));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".EldritchWarden", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.DEATH, 40).add(Aspect.UNDEAD, 40));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".EldritchGolem", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.ENERGY, 40).add(Aspect.MECHANISM, 40));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".PrimalWisp", new AspectList().add(Aspect.AIR, 30).add(Aspect.EARTH, 30).add(Aspect.ENTROPY, 30).add(Aspect.FIRE, 30).add(Aspect.ORDER, 30).add(Aspect.WATER, 30));
         
         AspectElementInteractionManager.init();
     }

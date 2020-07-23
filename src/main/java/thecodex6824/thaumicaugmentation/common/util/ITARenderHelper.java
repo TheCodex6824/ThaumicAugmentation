@@ -22,10 +22,8 @@ package thecodex6824.thaumicaugmentation.common.util;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
@@ -57,7 +55,7 @@ public interface ITARenderHelper {
     
     public void renderSmokeSpiral(World world, double x, double y, double z, float rad, int start, int minY, int color);
 
-    public void renderTerraformerParticle(World world, double x, double y, double z, double vx, double vy, double vz, BlockPos pos, Biome biome);
+    public void renderTerraformerParticle(World world, double x, double y, double z, double vx, double vy, double vz, int color);
     
     public void renderRiftMoverParticle(World world, double x, double y, double z, double vx, double vy, double vz);
     

@@ -47,7 +47,6 @@ import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Biomes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -58,7 +57,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
@@ -489,19 +487,7 @@ public class TARenderHelperClient implements ITARenderHelper {
     
     @Override
     public void renderTerraformerParticle(World world, double x, double y, double z, double vx, double vy, double vz,
-            BlockPos pos, Biome biome) {
-        
-        int color = world.rand.nextInt(3);
-        if (color == 0)
-            color = biome.getGrassColorAtPos(pos);
-        else if (color == 1)
-            color = biome.getFoliageColorAtPos(pos);
-        else {
-            if (biome == Biomes.HELL)
-                color = 0xFF4500;
-            else
-                color = biome.getWaterColor() & 0x3F76E4;
-        }
+            int color) {
         
         FXGeneric fx = new FXGeneric(world, x, y, z, vx, vy, vz);
         fx.setMaxAge(30 + world.rand.nextInt(12));

@@ -114,7 +114,8 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         }
         catch (Exception ex) {
             // just to give the exception a bit more context than a random reflection error
-            FMLCommonHandler.instance().raiseException(ex, "Failed to access Thaumcraft's CasterManager#isOnCooldown", true);
+            ThaumicAugmentation.getLogger().error("Failed to access Thaumcraft's CasterManager#isOnCooldown");
+            throw new RuntimeException(ex);
         }
 
         CASTER_IS_ON_COOLDOWN = cooldown;

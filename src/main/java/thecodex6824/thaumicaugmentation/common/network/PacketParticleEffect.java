@@ -49,7 +49,8 @@ public class PacketParticleEffect implements IMessage {
         BLOCK_RUNES(15),
         FLUX(16),
         FLUX_BATCH(17),
-        ARC(18);
+        ARC(18),
+        TERRAFORMER_WORK(19);
         
         private int id;
         

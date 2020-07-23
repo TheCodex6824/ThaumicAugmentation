@@ -80,9 +80,8 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
         if (!world.isRemote && ticks++ % DELAY == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) &&
                 AuraHelper.getVis(world, pos) + AuraHelper.getFlux(world, pos) < AuraHelper.getAuraBase(world, pos)) { 
 
-            if (AuraHelper.getFlux(world, pos) > AuraHelper.getVis(world, pos)) {
+            if (AuraHelper.getFlux(world, pos) > AuraHelper.getVis(world, pos))
                 AuraHelper.polluteAura(world, pos, getAuraOffset(), true);
-            }
             else {
                 AuraHelper.addVis(world, pos, getAuraOffset());
 

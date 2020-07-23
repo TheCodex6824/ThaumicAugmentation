@@ -20,7 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -55,7 +54,6 @@ import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.WeakImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
-import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
@@ -92,14 +90,6 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
             @Override
             public Vec3d getBeamEndpoint() {
                 return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.4375, pos.getZ() + 0.5);
-            }
-            
-            @Override
-            public long onTransaction(Deque<IImpetusNode> path, long energy, boolean simulate) {
-                if (!simulate)
-                    markDirty();
-                
-                return energy;
             }
         };
         
