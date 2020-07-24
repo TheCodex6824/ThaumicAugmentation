@@ -29,6 +29,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
@@ -123,6 +124,12 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldri
         targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityCultist.class, true));
         targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityCultistPortalGreater.class, true));
         targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityCultistPortalLesser.class, true));
+    }
+    
+    @Override
+    protected void applyEntityAttributes() {
+        super.applyEntityAttributes();
+        getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(20.0);
     }
     
     @Override

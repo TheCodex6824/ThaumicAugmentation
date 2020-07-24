@@ -534,6 +534,7 @@ public final class RegistryHandler {
         ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_warden", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.DEATH, 40).add(Aspect.UNDEAD, 40));
         ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_golem", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.ENERGY, 40).add(Aspect.MECHANISM, 40));
         ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".primal_wisp", new AspectList().add(Aspect.AIR, 30).add(Aspect.EARTH, 30).add(Aspect.ENTROPY, 30).add(Aspect.FIRE, 30).add(Aspect.ORDER, 30).add(Aspect.WATER, 30));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".shield_focus", new AspectList().add(Aspect.PROTECT, 20).add(Aspect.MAGIC, 10).add(Aspect.ENERGY, 5).add(Aspect.VOID, 5));
         
         AspectElementInteractionManager.init();
     }

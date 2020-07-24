@@ -36,6 +36,7 @@ import net.minecraftforge.common.IRarity;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IWardOpenedBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHalf;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHalf.ArcaneDoorHalf;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHinge;
@@ -102,7 +103,7 @@ public class ItemArcaneDoor extends ItemTABase {
 
         BlockPos blockpos2 = pos.up();
         worldIn.setBlockState(pos, door.getDefaultState().withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.LOWER).withProperty(IArcaneDoorHinge.HINGE_SIDE, isRightHinge ? BlockDoor.EnumHingePosition.RIGHT : BlockDoor.EnumHingePosition.LEFT).withProperty(IArcaneDoorOpen.DOOR_OPEN, false), 2);
-        worldIn.setBlockState(blockpos2, door.getDefaultState().withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.UPPER).withProperty(IHorizontallyDirectionalBlock.DIRECTION, facing), 2);
+        worldIn.setBlockState(blockpos2, door.getDefaultState().withProperty(IArcaneDoorHalf.DOOR_HALF, ArcaneDoorHalf.UPPER).withProperty(IHorizontallyDirectionalBlock.DIRECTION, facing).withProperty(IWardOpenedBlock.WARD_OPENED, false), 2);
         worldIn.getBlockState(pos).getBlock().onBlockPlacedBy(worldIn, pos, worldIn.getBlockState(pos), player, stack);
         worldIn.notifyNeighborsOfStateChange(pos, door, false);
         worldIn.notifyNeighborsOfStateChange(blockpos2, door, false);

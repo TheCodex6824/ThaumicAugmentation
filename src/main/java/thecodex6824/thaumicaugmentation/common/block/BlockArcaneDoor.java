@@ -169,7 +169,7 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
                     IWardedTile warded = tile.getCapability(CapabilityWardedTile.WARDED_TILE, null);
                     if (warded != null && warded.hasPermission(player)) {
                         state = lower.cycleProperty(IArcaneDoorOpen.DOOR_OPEN);
-                        world.setBlockState(blockpos, state, 10);
+                        world.setBlockState(blockpos, state, 3);
                         world.markBlockRangeForRenderUpdate(blockpos, pos);
                         world.playSound(null, blockpos, state.getValue(IArcaneDoorOpen.DOOR_OPEN) ? getOpenSound(state) : getCloseSound(state),
                                 SoundCategory.BLOCKS, 1.0F, 1.0F);
@@ -221,7 +221,7 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
             meta = BitUtil.setBit(meta, 2, state.getValue(IArcaneDoorHinge.HINGE_SIDE) == EnumHingePosition.RIGHT);
         }
         else {
-            meta = state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex();
+            meta = BitUtil.setBits(meta, 1, 3, state.getValue(IHorizontallyDirectionalBlock.DIRECTION).getHorizontalIndex());
             meta = BitUtil.setBit(meta, 3, state.getValue(IWardOpenedBlock.WARD_OPENED));
         }
 
@@ -232,19 +232,15 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         if (state.getValue(IArcaneDoorHalf.DOOR_HALF) == ArcaneDoorHalf.LOWER && world.getBlockState(pos.up()).getBlock() == this) {
             IBlockState upper = world.getBlockState(pos.up());
-            if (upper.getBlock() == this) {
-                return state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, 
-                        upper.getValue(IHorizontallyDirectionalBlock.DIRECTION)).withProperty(
-                        IWardOpenedBlock.WARD_OPENED, upper.getValue(IWardOpenedBlock.WARD_OPENED));
-            }
+            return state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, 
+                    upper.getValue(IHorizontallyDirectionalBlock.DIRECTION)).withProperty(
+                    IWardOpenedBlock.WARD_OPENED, upper.getValue(IWardOpenedBlock.WARD_OPENED));
         }
         else if (world.getBlockState(pos.down()).getBlock() == this){
             IBlockState lower = world.getBlockState(pos.down());
-            if (lower.getBlock() == this) {
-                state = state.withProperty(IArcaneDoorOpen.DOOR_OPEN, lower.getValue(IArcaneDoorOpen.DOOR_OPEN));
-                state = state.withProperty(IArcaneDoorHinge.HINGE_SIDE, lower.getValue(IArcaneDoorHinge.HINGE_SIDE));
-                return state;
-            }
+            state = state.withProperty(IArcaneDoorOpen.DOOR_OPEN, lower.getValue(IArcaneDoorOpen.DOOR_OPEN));
+            state = state.withProperty(IArcaneDoorHinge.HINGE_SIDE, lower.getValue(IArcaneDoorHinge.HINGE_SIDE));
+            return state;
         }
 
         return state;
@@ -495,11 +491,6 @@ public class BlockArcaneDoor extends BlockTABase implements IHorizontallyDirecti
             return super.removedByPlayer(state, world, pos, player, willHarvest);
         else
             return false;
-    }
-
-    @Override
-    public boolean hasTileEntity() {
-        return true;
     }
 
     @Override
