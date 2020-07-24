@@ -79,6 +79,7 @@ import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.PacketTerraformerWork;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
@@ -189,6 +190,11 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     
     public boolean isRunning() {
         return activeBiome != null;
+    }
+    
+    @Nullable
+    public ResourceLocation getActiveBiome() {
+        return activeBiome;
     }
     
     @Override
@@ -367,36 +373,17 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                         essentiaPaid = false;
                         visPaid = false;
                         if (!skipSet) {
-                            Biome biome = null;
-                            if (activeBiome.equals(IBiomeSelector.RESET)) {
-                                biome = BiomeUtil.getNaturalBiome(world, currentPos, Biomes.PLAINS);
+                            if (activeBiome.equals(IBiomeSelector.RESET))
                                 BiomeUtil.resetBiome(world, currentPos);
-                            }
-                            else {
-                                biome = Biome.REGISTRY.getObject(activeBiome);
-                                BiomeUtil.setBiome(world, currentPos, biome);
-                            }
+                            else
+                                BiomeUtil.setBiome(world, currentPos, Biome.REGISTRY.getObject(activeBiome));
                             
                             chunks.add(new ChunkPos(currentPos));
                             int y = world.getHeight(currentPos.getX(), currentPos.getZ());
                             TargetPoint track = new TargetPoint(world.provider.getDimension(), currentPos.getX(), y, currentPos.getZ(), 64.0);
                             TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, currentPos.getX(),
                                     y, currentPos.getZ(), 8.0, Aspect.EXCHANGE.getColor()), track);
-                            
-                            int color = world.rand.nextInt(3);
-                            if (color == 0)
-                                color = biome.getGrassColorAtPos(pos);
-                            else if (color == 1)
-                                color = biome.getFoliageColorAtPos(pos);
-                            else {
-                                if (biome == Biomes.HELL)
-                                    color = 0xFF4500;
-                                else
-                                    color = biome.getWaterColor() & 0x3F76E4;
-                            }
-                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.TERRAFORMER_WORK, pos.getX(),
-                                    pos.getY(), pos.getZ(), color), track);
-                            
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketTerraformerWork(pos.getX(), pos.getY(), pos.getZ()), track);
                             world.playSound(null, currentPos, SoundsTC.zap, SoundCategory.BLOCKS, 0.15F, 1.0F);
                             break;
                         }

@@ -44,6 +44,7 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Biomes;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -200,6 +201,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChan
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketRecoil;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
+import thecodex6824.thaumicaugmentation.common.network.PacketTerraformerWork;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketWispZap;
 import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
@@ -256,6 +258,7 @@ public class ClientProxy extends ServerProxy {
         handlers.put(PacketFlightState.class, (message, ctx) -> handleFlightStatePacket((PacketFlightState) message, ctx));
         handlers.put(PacketBoostState.class, (message, ctx) -> handleBoostStatePacket((PacketBoostState) message, ctx));
         handlers.put(PacketRecoil.class, (message, ctx) -> handleRecoilPacket((PacketRecoil) message, ctx));
+        handlers.put(PacketTerraformerWork.class, (message, ctx) -> handleTerraformerWorkPacket((PacketTerraformerWork) message, ctx));
     }
     
     @Override
@@ -602,18 +605,6 @@ public class ClientProxy extends ServerProxy {
                     
                     break;
                 }
-                case TERRAFORMER_WORK: {
-                    if (d.length == 4) {
-                        double x = d[0], y = d[1], z = d[2];
-                        int color = (int) d[3];
-                        World world = Minecraft.getMinecraft().world;
-                        ThaumicAugmentation.proxy.getRenderHelper().renderTerraformerParticle(world, x + 0.5, y + 1.6,
-                                z + 0.5, (world.rand.nextFloat() - world.rand.nextFloat()) / 8.0, 0.125, (world.rand.nextFloat() - world.rand.nextFloat()) / 8.0, color);
-                        ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, x + 0.5, y + 1.25, z + 0.5, 5.0F, Aspect.ELDRITCH.getColor(), false);
-                    }
-                    
-                    break;
-                }
              
                 default: {break;}
             }
@@ -894,6 +885,42 @@ public class ClientProxy extends ServerProxy {
                     break;
                 }
                 default: break;
+            }
+        }
+    }
+    
+    protected void handleTerraformerWorkPacket(PacketTerraformerWork message, MessageContext context) {
+        World world = Minecraft.getMinecraft().world;
+        BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileArcaneTerraformer) {
+            ResourceLocation activeBiome = ((TileArcaneTerraformer) tile).getActiveBiome();
+            if (activeBiome != null) {
+                Biome biome = null;
+                if (activeBiome.equals(IBiomeSelector.RESET)) {
+                    biome = BiomeUtil.getNaturalBiome(world, pos, Biomes.PLAINS);
+                    BiomeUtil.resetBiome(world, pos);
+                }
+                else {
+                    biome = Biome.REGISTRY.getObject(activeBiome);
+                    BiomeUtil.setBiome(world, pos, biome);
+                }
+                
+                int color = world.rand.nextInt(3);
+                if (color == 0)
+                    color = biome.getGrassColorAtPos(pos);
+                else if (color == 1)
+                    color = biome.getFoliageColorAtPos(pos);
+                else {
+                    if (biome == Biomes.HELL)
+                        color = 0xFF4500;
+                    else
+                        color = biome.getWaterColor() & 0x3F76E4;
+                }
+                
+                ThaumicAugmentation.proxy.getRenderHelper().renderTerraformerParticle(world, pos.getX() + 0.5, pos.getY() + 1.6,
+                        pos.getZ() + 0.5, (world.rand.nextFloat() - world.rand.nextFloat()) / 8.0, 0.125, (world.rand.nextFloat() - world.rand.nextFloat()) / 8.0, color);
+                ThaumicAugmentation.proxy.getRenderHelper().renderSpark(world, pos.getX() + 0.5, pos.getY() + 1.25, pos.getZ() + 0.5, 5.0F, Aspect.ELDRITCH.getColor(), false);
             }
         }
     }

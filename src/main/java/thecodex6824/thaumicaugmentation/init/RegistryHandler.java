@@ -519,16 +519,21 @@ public final class RegistryHandler {
         proxy.registerObjectTag(new ItemStack(TABlocks.CAPSTONE, 1, 2), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MAGIC, 5).add(Aspect.SOUL, 3));
         proxy.registerObjectTag(new ItemStack(TABlocks.CAPSTONE, 1, 3), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MAGIC, 5).add(Aspect.SOUL, 3));
         proxy.registerObjectTag(new ItemStack(TABlocks.OBELISK), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 10));
-        proxy.registerObjectTag(new ItemStack(TABlocks.ELDRITCH_LOCK), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MECHANISM, 15));
-        proxy.registerObjectTag(new ItemStack(TABlocks.ELDRITCH_LOCK_IMPETUS), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MECHANISM, 15).add(Aspect.ENERGY, 10));
+        AspectList shared = new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MECHANISM, 15);
+        for (int i = 0; i < 16; ++i)
+            proxy.registerObjectTag(new ItemStack(TABlocks.ELDRITCH_LOCK, 1, i), shared.copy());
         
-        // no idea why this is deprecated, because it calls internals and there is no replacement
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".Autocaster", new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.AVERSION, 5).add(Aspect.SENSES, 3));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".AutocasterEldritch", new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.ELDRITCH, 15).add(Aspect.AVERSION, 5).add(Aspect.SENSES, 3));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".EldritchGuardian", new AspectList().add(Aspect.ELDRITCH, 20).add(Aspect.DEATH, 20).add(Aspect.UNDEAD, 20));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".EldritchWarden", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.DEATH, 40).add(Aspect.UNDEAD, 40));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".EldritchGolem", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.ENERGY, 40).add(Aspect.MECHANISM, 40));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".PrimalWisp", new AspectList().add(Aspect.AIR, 30).add(Aspect.EARTH, 30).add(Aspect.ENTROPY, 30).add(Aspect.FIRE, 30).add(Aspect.ORDER, 30).add(Aspect.WATER, 30));
+        shared = new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MECHANISM, 15).add(Aspect.ENERGY, 10);
+        for (int i = 0; i < 4; ++i)
+            proxy.registerObjectTag(new ItemStack(TABlocks.ELDRITCH_LOCK_IMPETUS, 1, i), shared.copy());
+        
+        // string name needs to be same as EntityList#getEntityString
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".autocaster", new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.AVERSION, 5).add(Aspect.SENSES, 3));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".autocaster_eldritch", new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.ELDRITCH, 15).add(Aspect.AVERSION, 5).add(Aspect.SENSES, 3));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_guardian", new AspectList().add(Aspect.ELDRITCH, 20).add(Aspect.DEATH, 20).add(Aspect.UNDEAD, 20));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_warden", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.DEATH, 40).add(Aspect.UNDEAD, 40));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_golem", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.ENERGY, 40).add(Aspect.MECHANISM, 40));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".primal_wisp", new AspectList().add(Aspect.AIR, 30).add(Aspect.EARTH, 30).add(Aspect.ENTROPY, 30).add(Aspect.FIRE, 30).add(Aspect.ORDER, 30).add(Aspect.WATER, 30));
         
         AspectElementInteractionManager.init();
     }
