@@ -485,7 +485,7 @@ public final class TAConfigHolder {
         @Comment({
             "The approximate distance, in chunks, between generated Eldritch Spires."
         })
-        public int spireSpacing = 50;
+        public int spireSpacing = 30;
         
     }
     

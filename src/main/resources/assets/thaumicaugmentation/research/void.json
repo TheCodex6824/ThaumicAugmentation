@@ -279,6 +279,21 @@
                 {
                     "text": "thaumicaugmentation.research.eldritch_spire.1",
                     "required_research": [
+                        "m_BOSSROOM"
+                    ],
+                    "recipes": [
+                        "thaumicaugmentation:ancient_bricks",
+                        "thaumicaugmentation:ancient_pillar",
+                        "thaumicaugmentation:ancient_stairs",
+                        "thaumcraft:StairsAncient",
+                        "thaumicaugmentation:ancient_tile",
+                        "thaumicaugmentation:ancient_tile_slab",
+                        "thaumicaugmentation:chiseled_ancient_bricks"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.eldritch_spire.2",
+                    "required_research": [
                         "m_ELDRITCHBOSS"
                     ],
                     "recipes": [
@@ -293,7 +308,7 @@
                     "warp": 3
                 },
                 {
-                    "text": "thaumicaugmentation.research.eldritch_spire.2",
+                    "text": "thaumicaugmentation.research.eldritch_spire.3",
                     "recipes": [
                         "thaumicaugmentation:ancient_bricks",
                         "thaumicaugmentation:ancient_pillar",
@@ -301,10 +316,33 @@
                         "thaumcraft:StairsAncient",
                         "thaumicaugmentation:ancient_tile",
                         "thaumicaugmentation:ancient_tile_slab",
-                        "thaumicaugmentation:chiseled_ancient_bricks",
-                        "thaumicaugmentation:impetus_jewel",
-                        "thaumicaugmentation:ancient_lantern"
+                        "thaumicaugmentation:chiseled_ancient_bricks"
                     ]
+                }
+            ]
+        },
+        {
+            "key": "ELDRITCH_EPIPHANY",
+            "name": "thaumicaugmentation.research.eldritch_epiphany.title",
+            "icons": [
+                "thaumcraft:textures/research/r_eldritchminor.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "ELDRITCH_SPIRE"
+            ],
+            "location": [
+                10.5,
+                2
+            ],
+            "meta": [
+                "ROUND",
+                "SPIKY",
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.eldritch_epiphany.0"
                 }
             ]
         },

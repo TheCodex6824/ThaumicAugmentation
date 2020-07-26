@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.common.tile;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicates;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,6 +33,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
@@ -38,12 +41,18 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraft.world.gen.structure.StructureStart;
 import net.minecraftforge.common.util.Constants.NBT;
+import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
@@ -72,6 +81,7 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
     };
     
     protected int openTicks;
+    protected boolean research;
     
     public TileAltar() {
         super();
@@ -91,6 +101,14 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
         return openTicks;
     }
     
+    public boolean isStructureAltar() {
+        return research;
+    }
+    
+    public void setStructureAltar(boolean structure) {
+        research = structure;
+    }
+    
     protected EntityLiving createBoss() {
         if (world.rand.nextBoolean())
             return new EntityTAEldritchGolem(world);
@@ -99,11 +117,27 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
     }
     
     @Override
+    @SuppressWarnings("null")
     public void update() {
         if (openTicks > 0)
             --openTicks;
         
-        if (!world.isRemote && openTicks >= 0) {
+        if (!world.isRemote) {
+            if (research) {
+                for (EntityPlayer player : world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos).grow(9.0, 3.0, 9.0),
+                        Predicates.and(Predicates.notNull(), EntitySelectors.NOT_SPECTATING))) {
+                    if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_BOSSROOM")) {
+                        RayTraceResult result = world.rayTraceBlocks(player.getPositionEyes(1.0F),
+                                new Vec3d(pos.getX() + 0.5, pos.getY() + 1.15, pos.getZ() + 0.5), false, false, false);
+                        if (result == null) {
+                            ThaumcraftCapabilities.getKnowledge(player).addResearch("m_BOSSROOM");
+                            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.boss_room_spire").setStyle(
+                                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+                        }
+                    }
+                }
+            }
+            
             if (openTicks == 0) {
                 BlockPos check = pos.up(2);
                 IBlockState state = world.getBlockState(check);
@@ -212,6 +246,7 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setInteger("openTicks", openTicks);
+        compound.setBoolean("structureAltar", research);
         return super.writeToNBT(compound);
     }
     
@@ -219,6 +254,7 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         openTicks = compound.getInteger("openTicks");
+        research = compound.getBoolean("structureAltar");
     }
     
 }

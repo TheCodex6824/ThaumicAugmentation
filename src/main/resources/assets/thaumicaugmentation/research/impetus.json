@@ -8,7 +8,7 @@
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-                "ELDRITCH_SPIRE"
+                "ELDRITCH_EPIPHANY"
             ],
             "meta": [
                 "HIDDEN"
@@ -39,7 +39,8 @@
                         "thaumicaugmentation:impetus_drainer",
                         "thaumicaugmentation:impetus_relay",
                         "thaumicaugmentation:impetus_diffuser",
-                        "thaumicaugmentation:impetus_linker"
+                        "thaumicaugmentation:impetus_linker",
+                        "thaumicaugmentation:ancient_lantern"
                     ]
                 }
             ]

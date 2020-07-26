@@ -79,6 +79,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.IUrnType.UrnType;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
+import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
 
 public class EldritchSpireComponent extends StructureComponentTemplate {
     
@@ -412,6 +413,10 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
                     IObeliskPart.OBELISK_PART, ObeliskPart.INNER).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
             world.setBlockState(pos.up(6), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.CAP).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
+        
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile instanceof TileAltar)
+                ((TileAltar) tile).setStructureAltar(true);
         }
         else if (function.equals("eg_mb")) {
             EntityTAEldritchGuardian entity = new EntityTAEldritchGuardian(world);

@@ -110,7 +110,7 @@ public final class PlayerEventHandler {
     protected static void checkFrequent(EntityPlayer player) {
         WorldServer w = (WorldServer) player.getEntityWorld();
         if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", player.getPosition())) {
-            if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERSPIRE")) {
+            if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERSPIRE") && w.isAirBlock(player.getPosition())) {
                 ThaumcraftCapabilities.getKnowledge(player).addResearch("m_ENTERSPIRE");
                 player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.entered_spire",
                         new TextComponentString("Spire").setStyle(new Style().setObfuscated(true))).setStyle(
@@ -119,13 +119,15 @@ public final class PlayerEventHandler {
             
             if ((player.capabilities.isFlying || player.isElytraFlying()) && !player.isCreative() && !player.isSpectator()) {
                 MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(player.getPosition());
-                IWardStorage storage = w.getChunk(player.getPosition()).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                if (storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard())) {
-                    player.capabilities.isFlying = false;
-                    player.setFlag(7, false);
-                    player.sendPlayerAbilities();
-                    player.sendStatusMessage(new TextComponentTranslation("tc.break.fly").setStyle(
-                            new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+                if (start != null) {
+                    IWardStorage storage = w.getChunk(player.getPosition()).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                    if (storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard())) {
+                        player.capabilities.isFlying = false;
+                        player.setFlag(7, false);
+                        player.sendPlayerAbilities();
+                        player.sendStatusMessage(new TextComponentTranslation("tc.break.fly").setStyle(
+                                new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+                    }
                 }
             }
         }

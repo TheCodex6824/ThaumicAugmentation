@@ -41,7 +41,7 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
-import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
+import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterBase;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.research.ScanEntityWithPeacefulFallback;
 import thecodex6824.thaumicaugmentation.common.research.ScanTool;
@@ -94,7 +94,7 @@ public final class ResearchHandler {
                 new ScanItem("m_CREEPER", new ItemStack(Items.GUNPOWDER))));
         
         ScanningManager.addScannableThing(new ScanItem("!ELYTRA", new ItemStack(Items.ELYTRA)));
-        ScanningManager.addScannableThing(new ScanEntity("!AUTOCASTER", EntityAutocasterEldritch.class, true));
+        ScanningManager.addScannableThing(new ScanEntity("!AUTOCASTER", EntityAutocasterBase.class, true));
         
         ScanningManager.addScannableThing(new ScanItem("m_ELDRITCHBOSS", new ItemStack(TAItems.RESEARCH_NOTES, 1, 0)));
         

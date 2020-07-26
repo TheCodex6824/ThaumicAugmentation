@@ -259,19 +259,22 @@ public final class NodeHelper {
         HashSet<IImpetusNode> changed = new HashSet<>();
         for (IImpetusNode output : node.getOutputs()) {
             if (sharedWorld.provider.getDimension() == node.getLocation().getDimension() &&
-                    sharedWorld.provider.getDimension() == output.getLocation().getDimension() &&
-                    (node.shouldEnforceBeamLimitsWith(output) || output.shouldEnforceBeamLimitsWith(node))) {
+                    sharedWorld.provider.getDimension() == output.getLocation().getDimension()) {
                 
-                double dist = node.getLocation().getPos().distanceSq(output.getLocation().getPos());
-                if (dist > node.getMaxConnectDistance(output) * node.getMaxConnectDistance(output) ||
-                        dist > output.getMaxConnectDistance(node) * output.getMaxConnectDistance(node) ||
-                        !NodeHelper.nodesPassDefaultCollisionCheck(sharedWorld, node, output)) {
-                
-                    node.removeOutput(output);
-                    changed.add(node);
-                    changed.add(output);
-                    NodeHelper.syncRemovedImpetusNodeOutput(node, output.getLocation());
-                    NodeHelper.syncRemovedImpetusNodeInput(output, node.getLocation());
+                boolean enforce1 = node.shouldEnforceBeamLimitsWith(output);
+                boolean enforce2 = output.shouldEnforceBeamLimitsWith(node);
+                if (enforce1 || enforce2) {
+                    double dist = node.getLocation().getPos().distanceSq(output.getLocation().getPos());
+                    if ((enforce1 && dist > node.getMaxConnectDistance(output) * node.getMaxConnectDistance(output)) ||
+                            (enforce2 && dist > output.getMaxConnectDistance(node) * output.getMaxConnectDistance(node)) ||
+                            !nodesPassDefaultCollisionCheck(sharedWorld, node, output)) {
+                    
+                        node.removeOutput(output);
+                        changed.add(node);
+                        changed.add(output);
+                        syncRemovedImpetusNodeOutput(node, output.getLocation());
+                        syncRemovedImpetusNodeInput(output, node.getLocation());
+                    }
                 }
             }
         }
