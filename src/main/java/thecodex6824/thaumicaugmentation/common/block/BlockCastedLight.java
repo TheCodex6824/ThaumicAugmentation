@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.block;
 
 import java.util.Random;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
@@ -57,6 +58,7 @@ public class BlockCastedLight extends BlockTABase implements ILightSourceBlock, 
         setHardness(0.0F);
         setResistance(0.0F);
         setLightOpacity(0);
+        setSoundType(SoundType.CLOTH);
         setDefaultState(getDefaultState().withProperty(ILightSourceBlock.LIGHT_LEVEL, 0));
     }
 
