@@ -56,8 +56,8 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
             throw new RuntimeException("Coremod loading twice (?)");
         
         config = new Configuration(new File("config", ThaumicAugmentationAPI.MODID + ".cfg"));
-        enabled = !config.getBoolean("disableCoremod", "general", false, "");
-        excludedTransformers = ImmutableSet.copyOf(config.getStringList("disabledTransformers", "general", new String[0], ""));
+        enabled = !config.getBoolean("DisableCoremod", "general", false, "");
+        excludedTransformers = ImmutableSet.copyOf(config.getStringList("DisabledTransformers", "general", new String[0], ""));
     }
     
     public static Logger getLogger() {
@@ -133,6 +133,8 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
         
         if (enabled)
             ThaumicAugmentationAPI.setCoremodAvailable();
+        else
+            log.info("Thaumic Augmentation coremod disabled by config request");
     }
     
 }

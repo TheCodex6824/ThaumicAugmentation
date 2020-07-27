@@ -39,6 +39,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketEntityAction;
@@ -86,8 +87,9 @@ public final class TAHooksClient {
         return sprint;
     }
     
-    public static void checkElytra(ItemStack chestArmorStack, EntityPlayerSP player) {
+    public static void checkElytra(EntityPlayerSP player) {
         // if regular elytra is also being worn, let vanilla send the packet
+        ItemStack chestArmorStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
         if (chestArmorStack.getItem() != Items.ELYTRA || !ItemElytra.isUsable(chestArmorStack)) {
             IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
             if (baubles != null) {

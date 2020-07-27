@@ -55,11 +55,10 @@ public class TransformerElytraClientCheck extends Transformer {
                 livingUpdate.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
                         TransformUtil.HOOKS_CLIENT,
                         "checkElytra",
-                        "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/entity/EntityPlayerSP;)V",
+                        "(Lnet/minecraft/client/entity/EntityPlayerSP;)V",
                         false
                 ));
                 livingUpdate.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
-                livingUpdate.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 9));
             }
             else
                 throw new TransformerException("Could not locate required instructions");
