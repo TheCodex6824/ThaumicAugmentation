@@ -51,7 +51,8 @@ public interface IEldritchLockType {
         }
         
         public boolean isKey(ItemStack input) {
-            return ItemStack.areItemStacksEqual(keyGen.get(), input);
+            ItemStack key = keyGen.get();
+            return key.getItem() == input.getItem() && key.getMetadata() == input.getMetadata();
         }
         
         public ItemStack getKey() {
