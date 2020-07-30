@@ -162,7 +162,6 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                         if (rift.getCollapse())
                             rift.setCollapse(false);
                         
-                        rift.setRiftSize(oldSize);
                         rift.setRiftStability(-150.0F);
                         rift.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
                         Vec3d riftCenter = RiftHelper.getRiftCenter(rift);
@@ -241,7 +240,6 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                 if (rift.getCollapse())
                     rift.setCollapse(false);
                 
-                rift.setRiftSize(oldSize);
                 rift.setRiftStability(-150.0F);
                 rift.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 0.75F);
                 Vec3d riftCenter = RiftHelper.getRiftCenter(rift);

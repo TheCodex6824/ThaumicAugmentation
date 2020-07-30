@@ -221,6 +221,7 @@ thaumicaugmentation.text.config.client=Client
 thaumicaugmentation.text.config.ward=Ward Focus and Blocks
 thaumicaugmentation.text.config.impetus=Impetus
 thaumicaugmentation.text.config.impulse_cannon=Impulse Cannon
+thaumicaugmentation.text.config.augment=Augment
 
 champion.mod.bold=Bold
 champion.mod.spine=Spined

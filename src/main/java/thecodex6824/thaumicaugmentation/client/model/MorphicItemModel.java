@@ -50,9 +50,6 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import thecodex6824.thaumicaugmentation.client.renderer.item.MorphicWrappingTEISR;
 
 public abstract class MorphicItemModel implements IModel {
-
-    private static final ImmutableList<ResourceLocation> DEPS = ImmutableList.of(
-            new ResourceLocation("thaumcraft", "item/enchanted_placeholder"));
     
     @Override
     public IModelState getDefaultState() {
@@ -61,7 +58,7 @@ public abstract class MorphicItemModel implements IModel {
     
     @Override
     public Collection<ResourceLocation> getDependencies() {
-        return DEPS;
+        return Collections.emptyList();
     }
     
     @Override
@@ -87,7 +84,7 @@ public abstract class MorphicItemModel implements IModel {
                     
                     ItemStack disp = getMorphicItem(stack);
                     if (disp.isEmpty())
-                        return wrappedFallback;
+                        return wrappedFallback.getOverrides().handleItemState(wrappedFallback, stack, world, entity);
                     else {
                         if (!(stack.getItem().getTileEntityItemStackRenderer() instanceof MorphicWrappingTEISR)) {
                             stack.getItem().setTileEntityItemStackRenderer(new MorphicWrappingTEISR(stack.getItem().getTileEntityItemStackRenderer()) {

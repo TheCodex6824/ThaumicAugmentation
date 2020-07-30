@@ -20,7 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.client.model;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -39,11 +43,19 @@ import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 
 public class MorphicToolModel extends MorphicItemModel {
     
+    protected static final List<ResourceLocation> DEPS = ImmutableList.of(
+            new ResourceLocation("thaumcraft", "item/enchanted_placeholder"));
+    
+    @Override
+    public Collection<ResourceLocation> getDependencies() {
+        return DEPS;
+    }
+    
     @Override
     public IBakedModel bake(IModelState state, VertexFormat format,
             Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         
-        IModel base = ModelLoaderRegistry.getModelOrLogError(getDependencies().iterator().next(), "Could not get base item model");
+        IModel base = ModelLoaderRegistry.getModelOrLogError(DEPS.get(0), "Could not get base item model");
         IBakedModel baseBaked = base.bake(base.getDefaultState(), DefaultVertexFormats.ITEM,
                 ModelLoader.defaultTextureGetter());
         

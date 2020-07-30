@@ -22,7 +22,8 @@ package thecodex6824.thaumicaugmentation.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+
+import com.google.common.collect.ImmutableSet;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -49,10 +50,10 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionEnum;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionFloat;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntSet;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringArray;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringList;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
 import thecodex6824.thaumicaugmentation.api.config.IEnumSerializer;
 import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
 import thecodex6824.thaumicaugmentation.common.network.PacketConfigSync;
@@ -115,6 +116,9 @@ public final class TAConfigHolder {
         
         @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.impetus")
         public Impetus impetus = new Impetus();
+        
+        @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.augment")
+        public Augment augment = new Augment();
         
         public static class WardOptions {
             
@@ -253,6 +257,143 @@ public final class TAConfigHolder {
                 public double burstRange = 24.0;
                 
             }
+        }
+        
+        public static class Augment {
+            
+            @Name("ExperienceModifierCap")
+            @Comment({
+                "The maximum benefit the Experience Modifier can provide."
+            })
+            public double experienceModifierCap = 2.0;
+            
+            @Name("ExperienceModifierBase")
+            @Comment({
+                "The minimum benefit the Experience Modifier can provide.",
+                "1.0 is no benefit, and lower values will reduce effectiveness."
+            })
+            public double experienceModifierBase = 1.0;
+            
+            @Name("ExperienceModifierScaleFactor")
+            @Comment({
+                "The number the player's level is multiplied by, before being clamped.",
+                "In other words, this controls how many levels it takes to reach the maximum value."
+            })
+            public double experienceModifierScale = 0.04;
+            
+            @Name("ElementalModifierPostiveFactor")
+            @Comment({
+                "The number to be multiplied into the total effectiveness of the Elemental Modifier for a postive aspect."
+            })
+            public double elementalModifierPositiveFactor = 2.0;
+            
+            @Name("ElementalModifierNegativeFactor")
+            @Comment({
+                "The number to be multiplied into the total effectiveness of the Elemental Modifier for a postive aspect."
+            })
+            public double elementalModifierNegativeFactor = 0.75;
+            
+            @Name("DimensionalModifierOverworldPostiveFactor")
+            @Comment({
+                "The strength of the dimensional modifier in the correct dimension."
+            })
+            public double dimensionalModifierOverworldPositiveFactor = 1.25;
+            
+            @Name("DimensionalModifierOverworldNegativeFactor")
+            @Comment({
+                "The strength of the dimensional modifier in the incorrect dimension."
+            })
+            public double dimensionalModifierOverworldNegativeFactor = 1.0;
+            
+            @Name("DimensionalModifierOverworldDims")
+            @Comment({
+                "The list of dimensions that should count as being in the Overworld for the overworld modifier."
+            })
+            public Integer[] dimensionalModifierOverworldDims = new Integer[] {
+                    0
+            };
+            
+            @Name("DimensionalModifierNetherPostiveFactor")
+            @Comment({
+                "The strength of the dimensional modifier in the correct dimension."
+            })
+            public double dimensionalModifierNetherPositiveFactor = 1.5;
+            
+            @Name("DimensionalModifierNetherNegativeFactor")
+            @Comment({
+                "The strength of the dimensional modifier in the incorrect dimension."
+            })
+            public double dimensionalModifierNetherNegativeFactor = 1.0;
+            
+            @Name("DimensionalModifierNetherDims")
+            @Comment({
+                "The list of dimensions that should count as being in the Nether for the overworld modifier."
+            })
+            public Integer[] dimensionalModifierNetherDims = new Integer[] {
+                    -1
+            };
+            
+            @Name("DimensionalModifierEndPostiveFactor")
+            @Comment({
+                "The strength of the dimensional modifier in the correct dimension."
+            })
+            public double dimensionalModifierEndPositiveFactor = 1.5;
+            
+            @Name("DimensionalModifierEndNegativeFactor")
+            @Comment({
+                "The strength of the dimensional modifier in the incorrect dimension."
+            })
+            public double dimensionalModifierEndNegativeFactor = 1.0;
+            
+            @Name("DimensionalModifierEndDims")
+            @Comment({
+                "The list of dimensions that should count as being in the End for the overworld modifier."
+            })
+            public Integer[] dimensionalModifierEndDims = new Integer[] {
+                    1
+            };
+            
+            @Name("DimensionalModifierEmptinessPostiveFactor")
+            @Comment({
+                "The strength of the dimensional modifier in the correct dimension."
+            })
+            public double dimensionalModifierEmptinessPositiveFactor = 1.5;
+            
+            @Name("DimensionalModifierEmptinessNegativeFactor")
+            @Comment({
+                "The strength of the dimensional modifier in the incorrect dimension."
+            })
+            public double dimensionalModifierEmptinessNegativeFactor = 1.0;
+            
+            @Name("DimensionalModifierEmptinessDims")
+            @Comment({
+                "The list of dimensions that should count as being in the Emptiness for the overworld modifier.",
+                "If the game automatically changes the Emptiness dim ID, it will be updated here,",
+                "otherwise, you will need to specify it manually if changed."
+            })
+            public Integer[] dimensionalModifierEmptinessDims = new Integer[] {
+                    14676
+            };
+            
+            @Name("FrenzyModifierCooldown")
+            @Comment({
+                "The amount of ticks without hurting things until the frenzy boost wears off."
+            })
+            public int frenzyModifierCooldown = 100;
+            
+            @Name("FrenzyModifierScaleFactor")
+            @Comment({
+                "The number the player's frenzy level is multiplied by, before being clamped.",
+                "In other words, this controls how many levels it takes to reach the maximum value."
+            })
+            public double frenzyModifierScale = 1.0 / 15.0;
+            
+            @Name("FrenzyModifierMaxLevel")
+            @Comment({
+                "The maximum frenzy level allowed."
+            })
+            public int frenzyModifierMaxLevel = 20;
+            
         }
         
         @Name("GauntletVisDiscounts")
@@ -407,41 +548,22 @@ public final class TAConfigHolder {
         @Name("FractureDimList")
         @Comment({
             "Lists the whitelisted dimensions for fractures (not including the Emptiness dim), and their associated weights.",
-            "Higher weights (compared to lower weights) will be more likely to spawn.",
+            "The format for each line is dim=weight, with higher weights (compared to lower weights) being more likely to spawn.",
             "This WILL affect worldgen, so use with caution on existing worlds.",
-            "The config GUI does not seem to support the addition or removal of entries, edit this",
-            "value in a text editor outside Minecraft instead.",
             "Default dimensions: 0 = Overworld, -1 = Nether, 1 = End, 7 = Twilight Forest, 17 = Atum 2,",
             "20 = Betweenlands, 111 = Lost Cities, 66 = Erebus, 33 = Wizardry (Underworld)"
         })
-        @RequiresMcRestart
-        public HashMap<String, Integer> fractureDimList = new HashMap<>();
-        
-        public WorldOptions() {
-            // vanilla
-            fractureDimList.put("0", 35);
-            fractureDimList.put("-1", 15);
-            fractureDimList.put("1", 10);
-            
-            // twilight forest
-            fractureDimList.put("7", 5);
-            
-            // atum 2
-            fractureDimList.put("17", 5);
-            
-            // betweenlands
-            fractureDimList.put("20", 5);
-            
-            // lost cities
-            fractureDimList.put("111", 5);
-            
-            // erebus
-            fractureDimList.put("66", 5);
-            
-            // wizardry (slightly less because 2 dims)
-            fractureDimList.put("33", 5);
-            //fractureDimList.put("34", 4); dimension currently crashes due to unfinished biome
-        }
+        public String[] fractureDimList = new String[] {
+            "0=35",
+            "-1=15",
+            "1=10",
+            "7=5", // twilight forest
+            "17=5", // atum 2
+            "20=5", // betweenlands
+            "111=5", // lost cities
+            "66=5", // erebus
+            "33=5" // wizardry
+        };
         
         @Name("FractureLocatorUpdateInterval")
         @Comment({
@@ -651,7 +773,8 @@ public final class TAConfigHolder {
         TAConfig.emptinessDimID = TAConfigManager.addOption(new ConfigOptionInt(true, world.emptinessDimID));
         TAConfig.emptinessMoveFactor = TAConfigManager.addOption(new ConfigOptionDouble(true, world.emptinessMoveFactor));
         TAConfig.fractureGenChance = TAConfigManager.addOption(new ConfigOptionInt(false, world.fractureGenChance));
-        TAConfig.fractureDimList = TAConfigManager.addOption(new ConfigOptionStringToIntMap(false, world.fractureDimList));
+        
+        TAConfig.fractureDimList = TAConfigManager.addOption(new ConfigOptionStringList(false, world.fractureDimList));
         TAConfig.fractureLocatorUpdateInterval = TAConfigManager.addOption(new ConfigOptionInt(false, world.fractureLocatorUpdateInterval));
         TAConfig.fracturesAlwaysTeleport = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.fracturesAlwaysTeleport));
         TAConfig.disableEmptiness = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.disableEmptiness));
@@ -685,6 +808,34 @@ public final class TAConfigHolder {
         TAConfig.generateSpires = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.generateSpires));
         TAConfig.spireMinDist = TAConfigManager.addOption(new ConfigOptionInt(false, world.spireMinDist));
         TAConfig.spireSpacing = TAConfigManager.addOption(new ConfigOptionInt(false, world.spireSpacing));
+    
+        TAConfig.experienceModifierCap = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.experienceModifierCap));
+        TAConfig.experienceModifierBase = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.experienceModifierBase));
+        TAConfig.experienceModifierScale = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.experienceModifierScale));
+    
+        TAConfig.elementalModifierPositiveFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.elementalModifierPositiveFactor));
+        TAConfig.elementalModifierNegativeFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.elementalModifierNegativeFactor));
+    
+        TAConfig.dimensionalModifierOverworldPostiveFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierOverworldPositiveFactor));
+        TAConfig.dimensionalModifierOverworldNegativeFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierOverworldNegativeFactor));
+        TAConfig.dimensionalModifierOverworldDims = TAConfigManager.addOption(new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierOverworldDims)));
+    
+        TAConfig.dimensionalModifierNetherPostiveFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierNetherPositiveFactor));
+        TAConfig.dimensionalModifierNetherNegativeFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierNetherNegativeFactor));
+        TAConfig.dimensionalModifierNetherDims = TAConfigManager.addOption(new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierNetherDims)));
+        
+        TAConfig.dimensionalModifierEndPostiveFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEndPositiveFactor));
+        TAConfig.dimensionalModifierEndNegativeFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEndNegativeFactor));
+        TAConfig.dimensionalModifierEndDims = TAConfigManager.addOption(new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEndDims)));
+        
+        TAConfig.dimensionalModifierEmptinessPostiveFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEmptinessPositiveFactor));
+        TAConfig.dimensionalModifierEmptinessNegativeFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEmptinessNegativeFactor));
+        TAConfig.dimensionalModifierEmptinessDims = TAConfigManager.addOption(new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEmptinessDims)));
+    
+        TAConfig.frenzyModifierScaleFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.frenzyModifierScale));
+        TAConfig.frenzyModifierCooldown = TAConfigManager.addOption(new ConfigOptionInt(false, gameplay.augment.frenzyModifierCooldown));
+        TAConfig.frenzyModifierMaxLevel = TAConfigManager.addOption(new ConfigOptionInt(false, gameplay.augment.frenzyModifierMaxLevel));
+        
     }
 
 }

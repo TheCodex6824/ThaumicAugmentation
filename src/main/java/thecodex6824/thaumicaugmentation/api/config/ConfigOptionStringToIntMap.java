@@ -30,6 +30,8 @@ import io.netty.buffer.ByteBuf;
 /**
  * Config option class for Map{@literal <}String, Integer{@literal >} values.
  * @author TheCodex6824
+ * @deprecated Forge config maps seem to be a hack using categories, and they have issues with removing
+ * default entries. Avoid if possible.
  */
 public class ConfigOptionStringToIntMap extends ConfigOption<Map<String, Integer>>{
 

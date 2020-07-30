@@ -62,7 +62,7 @@ public class BlockTAUrn extends BlockTABase implements IUrnType, IItemBlockProvi
     
     public BlockTAUrn() {
         super(Material.ROCK);
-        setHardness(1.0F);
+        setHardness(0.25F);
         setResistance(3.0F);
         setDefaultState(getDefaultState().withProperty(IUrnType.URN_TYPE, UrnType.URN_COMMON));
     }

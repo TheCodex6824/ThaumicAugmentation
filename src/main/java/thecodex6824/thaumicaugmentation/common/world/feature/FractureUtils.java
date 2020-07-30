@@ -21,7 +21,6 @@
 package thecodex6824.thaumicaugmentation.common.world.feature;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
@@ -44,28 +43,48 @@ public final class FractureUtils {
     
     private FractureUtils() {}
     
-    private static HashSet<Integer> possibleDims;
     private static WeightedRandom<Integer> dimPicker;
-    
-    static {
-        possibleDims = new HashSet<>(TAConfig.fractureDimList.getValue().size() + 1);
-        possibleDims.add(TAConfig.emptinessDimID.getValue());
-        for (String s : TAConfig.fractureDimList.getValue().keySet()) {
-            try {
-                possibleDims.add(Integer.parseInt(s));
-            }
-            catch (NumberFormatException ex) {}
-        }
-    }
     
     private static void reloadDimensionCache() {
         HashMap<Integer, Integer> map = new HashMap<>();
-        for (int dim : WorldDataCache.listAllDimensions()) {
-            if (dim != TADimensions.EMPTINESS.getId() && TAConfig.fractureDimList.getValue().containsKey(Integer.valueOf(dim).toString()))
-                map.put(dim, TAConfig.fractureDimList.getValue().get(Integer.toString(dim)));
+        for (String s : TAConfig.fractureDimList.getValue()) {
+            String[] components = s.split("=", 2);
+            if (components.length == 2) {
+                int dim = 0;
+                try {
+                    dim = Integer.parseInt(components[0]);
+                }
+                catch (NumberFormatException ex) {
+                    ThaumicAugmentation.getLogger().error("Invalid FractureDimList dim entry, invalid dim: " + s);
+                    continue;
+                }
+                
+                int chance = 0;
+                try {
+                    chance = Integer.parseInt(components[1]);
+                }
+                catch (NumberFormatException ex) {
+                    ThaumicAugmentation.getLogger().error("Invalid FractureDimList chance entry, invalid chance: " + s);
+                    continue;
+                }
+                
+                if (dim != TADimensions.EMPTINESS.getId()) {
+                    if (chance > 0) {
+                        if (WorldDataCache.getData(dim) != null)
+                            map.put(dim, chance);
+                        else
+                            ThaumicAugmentation.getLogger().error("Invalid FractureDimList dim entry, dim not present: " + s);
+                    }
+                    else if (chance < 0)
+                        ThaumicAugmentation.getLogger().error("Invalid FractureDimList chance entry, negative chance: " + s);
+                }
+                else
+                    ThaumicAugmentation.getLogger().error("Invalid FractureDimList dim entry, cannot specify Emptiness dim: " + s);
+            }
+            else
+                ThaumicAugmentation.getLogger().error("Invalid FractureDimList entry, wrong format: " + s);
         }
         
-        possibleDims = new HashSet<>(map.keySet());
         dimPicker = new WeightedRandom<>(ImmutableList.copyOf(map.keySet()),
                 ImmutableList.copyOf(map.values()));
     }

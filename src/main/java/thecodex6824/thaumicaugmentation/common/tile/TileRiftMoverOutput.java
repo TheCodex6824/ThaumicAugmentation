@@ -121,9 +121,10 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                         else {
                             rift = null;
                             AuraHelper.polluteAura(world, pos, jar.getRift().getRiftSize(), true);
-                            jar.setRift(new FluxRiftReconstructor(0, 0));
                             world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
                         }
+                        
+                        jar.setRift(new FluxRiftReconstructor(0, 0));
                     }
                 }
             }
@@ -211,17 +212,13 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                 if (rift == null || rift.isDead || rift.getRiftSize() < 1 || rift.getCollapse() ||
                         below == null) {
                     
-                    IRiftJar jar = below != null ? below.getCapability(CapabilityRiftJar.RIFT_JAR, null) : null;
-                    if (jar == null || !jar.hasRift()) {
+                    if (below == null || !below.hasCapability(CapabilityRiftJar.RIFT_JAR, null)) {
                         if (rift != null) {
                             if (rift.getCollapse())
                                 rift.setCollapse(false);
                             
                             rift.setRiftSize(0);
                         }
-                        
-                        if (jar != null)
-                            jar.setRift(new FluxRiftReconstructor(0, 0));
                         
                         AuraHelper.polluteAura(world, pos, targetSize, true);
                         operating = false;
@@ -233,7 +230,6 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                 else if (AuraHelper.drainVis(world, pos, 0.25F, false) >= 0.25F - 0.0001) {
                     rift.setRiftSize(rift.getRiftSize() + 1);
                     if (rift.getRiftSize() == targetSize) {
-                        below.getCapability(CapabilityRiftJar.RIFT_JAR, null).setRift(new FluxRiftReconstructor(0, 0));
                         rift = null;
                         operating = false;
                         markDirty();

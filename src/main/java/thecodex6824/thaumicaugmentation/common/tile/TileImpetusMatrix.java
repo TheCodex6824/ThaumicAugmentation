@@ -400,7 +400,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         if (max <= 0)
             return -0.05F;
         else
-            return (float) (((double) buffer.getEnergyStored() / max) * 0.5);
+            return (float) ((double) buffer.getEnergyStored() / (getTotalCells() * CELL_CAPACITY));
     }
     
     @Override

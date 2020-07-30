@@ -36,6 +36,7 @@ import thaumcraft.api.casters.FocusModSplit;
 import thaumcraft.api.casters.FocusNode;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.IFocusElement;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectUtil;
@@ -44,7 +45,6 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.caster.IBuilderCaste
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.IBuilderCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
-import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 
 public class AugmentHandler {
 
@@ -54,7 +54,8 @@ public class AugmentHandler {
             public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
                 if (entity instanceof EntityPlayer) {
                     EntityPlayer player = (EntityPlayer) entity;
-                    return Math.max(Math.min((player.experienceLevel - 2.0) / 28.0, 2.0), 1.0);
+                    return Math.max(Math.min(player.experienceLevel / TAConfig.experienceModifierScale.getValue(),
+                            TAConfig.experienceModifierCap.getValue()), TAConfig.experienceModifierBase.getValue());
                 }
                 else
                     return 1.0;
@@ -89,14 +90,14 @@ public class AugmentHandler {
                 while (!nodes.isEmpty()) {
                     IFocusElement node = nodes.pop();
                     if (node instanceof FocusEffect && ((FocusEffect) node).getAspect() == getAspect(augment.getStrengthProvider()))
-                        totalMultiplier *= 2.0;
+                        totalMultiplier *= TAConfig.elementalModifierPositiveFactor.getValue();
                     else if (node instanceof FocusModSplit) {
                         for (FocusPackage f : ((FocusModSplit) node).getSplitPackages())
                             nodes.addAll(f.nodes);
                     }
                     else if (node instanceof FocusNode && AspectElementInteractionManager.getNegativeAspects(
                             getAspect(augment.getStrengthProvider())).contains(((FocusNode) node).getAspect())) {
-                        totalMultiplier *= 0.75;
+                        totalMultiplier *= TAConfig.elementalModifierNegativeFactor.getValue();
                     }
                 }
                 
@@ -109,25 +110,33 @@ public class AugmentHandler {
         CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_overworld"), new IBuilderCasterStrengthProvider() {
             @Override
             public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
-                return entity.dimension == 0 ? 1.25 : 1.0;
+                return TAConfig.dimensionalModifierOverworldDims.getValue().contains(entity.dimension) ?
+                        TAConfig.dimensionalModifierOverworldPostiveFactor.getValue() :
+                        TAConfig.dimensionalModifierOverworldNegativeFactor.getValue();
             }
         });
         CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_nether"), new IBuilderCasterStrengthProvider() {
             @Override
             public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
-                return entity.dimension == -1 ? 1.5 : 1.0;
+                return TAConfig.dimensionalModifierNetherDims.getValue().contains(entity.dimension) ?
+                        TAConfig.dimensionalModifierNetherPostiveFactor.getValue() :
+                        TAConfig.dimensionalModifierNetherNegativeFactor.getValue();
             }
         });
         CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_end"), new IBuilderCasterStrengthProvider() {
             @Override
             public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
-                return entity.dimension == 1 ? 1.75 : 1.0;
+                return TAConfig.dimensionalModifierEndDims.getValue().contains(entity.dimension) ?
+                        TAConfig.dimensionalModifierEndPostiveFactor.getValue() :
+                        TAConfig.dimensionalModifierEndNegativeFactor.getValue();
             }
         });
         CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_emptiness"), new IBuilderCasterStrengthProvider() {
             @Override
             public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
-                return entity.dimension == TADimensions.EMPTINESS.getId() ? 1.75 : 1.0;
+                return TAConfig.dimensionalModifierEmptinessDims.getValue().contains(entity.dimension) ?
+                        TAConfig.dimensionalModifierEmptinessPostiveFactor.getValue() :
+                        TAConfig.dimensionalModifierEmptinessNegativeFactor.getValue();
             }
         });
         
@@ -163,8 +172,8 @@ public class AugmentHandler {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
-                stack.getTagCompound().setInteger("frenzy", Math.min(stack.getTagCompound().getInteger("frenzy") + 1, 20));
-                stack.getTagCompound().setInteger("frenzyCooldown", 100);
+                stack.getTagCompound().setInteger("frenzy", Math.min(stack.getTagCompound().getInteger("frenzy") + 1, TAConfig.frenzyModifierMaxLevel.getValue()));
+                stack.getTagCompound().setInteger("frenzyCooldown", TAConfig.frenzyModifierCooldown.getValue());
             }
             
             @Override
@@ -173,7 +182,7 @@ public class AugmentHandler {
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
                 
-                return 1.0 + stack.getTagCompound().getInteger("frenzy") / 15.0;
+                return 1.0 + stack.getTagCompound().getInteger("frenzy") * TAConfig.frenzyModifierScaleFactor.getValue();
             }
         });
         

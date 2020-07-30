@@ -27,10 +27,10 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionEnum;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionFloat;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
+import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntSet;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringArray;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringList;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringToIntMap;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
 /**
@@ -77,7 +77,7 @@ public final class TAConfig {
     public static ConfigOptionBoolean disableEmptiness;
     public static ConfigOptionDouble emptinessMoveFactor;
     public static ConfigOptionInt fractureGenChance;
-    public static ConfigOptionStringToIntMap fractureDimList;
+    public static ConfigOptionStringList fractureDimList;
     public static ConfigOptionInt fractureLocatorUpdateInterval;
     public static ConfigOptionBoolean fracturesAlwaysTeleport;
     
@@ -110,6 +110,33 @@ public final class TAConfig {
     public static ConfigOptionBoolean generateSpires;
     public static ConfigOptionInt spireMinDist;
     public static ConfigOptionInt spireSpacing;
+    
+    public static ConfigOptionDouble experienceModifierCap;
+    public static ConfigOptionDouble experienceModifierBase;
+    public static ConfigOptionDouble experienceModifierScale;
+    
+    public static ConfigOptionDouble elementalModifierPositiveFactor;
+    public static ConfigOptionDouble elementalModifierNegativeFactor;
+    
+    public static ConfigOptionDouble dimensionalModifierOverworldPostiveFactor;
+    public static ConfigOptionDouble dimensionalModifierOverworldNegativeFactor;
+    public static ConfigOptionIntSet dimensionalModifierOverworldDims;
+    
+    public static ConfigOptionDouble dimensionalModifierNetherPostiveFactor;
+    public static ConfigOptionDouble dimensionalModifierNetherNegativeFactor;
+    public static ConfigOptionIntSet dimensionalModifierNetherDims;
+    
+    public static ConfigOptionDouble dimensionalModifierEndPostiveFactor;
+    public static ConfigOptionDouble dimensionalModifierEndNegativeFactor;
+    public static ConfigOptionIntSet dimensionalModifierEndDims;
+    
+    public static ConfigOptionDouble dimensionalModifierEmptinessPostiveFactor;
+    public static ConfigOptionDouble dimensionalModifierEmptinessNegativeFactor;
+    public static ConfigOptionIntSet dimensionalModifierEmptinessDims;
+    
+    public static ConfigOptionInt frenzyModifierCooldown;
+    public static ConfigOptionDouble frenzyModifierScaleFactor;
+    public static ConfigOptionInt frenzyModifierMaxLevel;
     
     /**
      * Registers a callback to be notified when the config is synced or updated.

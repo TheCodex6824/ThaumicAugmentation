@@ -313,8 +313,10 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     }
     
     protected void updateBeamColor() {
-        if (beam != null && ((FXBeamBore) beam).isAlive())
-            ((FXBeamBore) beam).setRBGColorF(maxStabilityPerOperation / MAX_STABILITY, 0.75F * (maxStabilityPerOperation / MAX_STABILITY), 0);
+        if (beam != null && ((FXBeamBore) beam).isAlive()) {
+            ((FXBeamBore) beam).setRBGColorF(Math.max(maxStabilityPerOperation / MAX_STABILITY, 0.01F),
+                    Math.max(0.75F * (maxStabilityPerOperation / MAX_STABILITY), 0.0075F), 0);
+        }
     }
     
     @Override
@@ -367,6 +369,14 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     }
     
     @Override
+    public void invalidate() {
+        targetedRift.clear();
+        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+        if (world.isRemote)
+            updateBeam();
+    }
+    
+    @Override
     @Nullable
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound compound = new NBTTagCompound();
@@ -389,6 +399,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
         
         energy.setEnergy(pkt.getNbtCompound().getInteger("energy"));
         maxStabilityPerOperation = pkt.getNbtCompound().getFloat("stabRegen");
+        updateBeamColor();
     }
     
     @Override
