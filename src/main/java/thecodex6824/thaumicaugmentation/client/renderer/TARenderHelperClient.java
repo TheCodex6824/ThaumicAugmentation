@@ -827,6 +827,9 @@ public class TARenderHelperClient implements ITARenderHelper {
                 if (entity.equals(rv) && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
                     armLength = 0.3F;
                     armHeightFromGround = 1.525F;
+                    if (entity.isSneaking())
+                        armHeightFromGround -= 0.08F;
+                        
                     armHeight = 0.0F;
                     armWidth = rightSide ? -0.125F : 0.125F;
                     rotateHeight = false;
@@ -837,12 +840,15 @@ public class TARenderHelperClient implements ITARenderHelper {
                         ModelBox box = arm.cubeList.get(0);
                         armLength = (box.posY2 - box.posY1) / 16.0F + 0.7F;
                         armHeightFromGround = arm.rotationPointY / 2.0F;
+                        if (entity.isSneaking())
+                            armHeightFromGround -= 0.3F;
+                        
                         armHeight = (box.posZ2 - box.posZ1) / 16.0F + 0.1F;
                         armWidth = arm.rotationPointX / 16.0F;
                     }
                     else {
                         armLength = 0.7F;
-                        armHeightFromGround = 0.9F;
+                        armHeightFromGround = entity.isSneaking() ? 0.6F : 0.9F;
                         armHeight = 0.2F;
                         armWidth = 0.2F;
                     }

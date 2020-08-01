@@ -106,7 +106,9 @@ public class RenderEventHandler {
     private static final Cache<Integer, Boolean> CAST_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterWrite(
             3000, TimeUnit.MILLISECONDS).maximumSize(250).build();
     private static final Cache<EntityLivingBase, FXImpulseBeam> IMPULSE_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterAccess(
-            3000, TimeUnit.MILLISECONDS).weakKeys().maximumSize(50).build();
+            3000, TimeUnit.MILLISECONDS).weakKeys().maximumSize(50).<EntityLivingBase, FXImpulseBeam>removalListener(k -> {
+                k.getValue().setExpired();
+            }).build();
     
     private static final Object2LongOpenHashMap<DimensionalBlockPos[]> TRANSACTIONS = new Object2LongOpenHashMap<>();
     private static final Object2IntOpenHashMap<DimensionalBlockPos> FRAME_COLORS = new Object2IntOpenHashMap<>();
@@ -615,10 +617,18 @@ public class RenderEventHandler {
             }
         }
         
+        ArrayList<EntityLivingBase> toRemove = new ArrayList<>();
         for (Map.Entry<EntityLivingBase, FXImpulseBeam> entry : IMPULSE_CACHE.asMap().entrySet()) {
-            Vec3d dest = RaytraceHelper.raytracePosition(entry.getKey(), TAConfig.cannonBeamRange.getValue(), event.getPartialTicks());
-            entry.getValue().updateBeamTarget(dest.x, dest.y, dest.z);
+            if (findImpulseCannon(entry.getKey()) != null) {
+                Vec3d dest = RaytraceHelper.raytracePosition(entry.getKey(), TAConfig.cannonBeamRange.getValue(), event.getPartialTicks());
+                entry.getValue().updateBeamTarget(dest.x, dest.y, dest.z);
+            }
+            else
+                toRemove.add(entry.getKey());
         }
+        
+        for (EntityLivingBase e : toRemove)
+            IMPULSE_CACHE.invalidate(e);
         
         GlStateManager.popMatrix();
     }
