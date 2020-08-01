@@ -43,14 +43,16 @@ public final class AutocasterFocusRegistry {
     public static double getMaxDistance(ItemStack focusStack) {
         if (focusStack.getItem() instanceof ItemFocus) {
             FocusPackage f = ItemFocus.getPackage(focusStack);
-            double min = Double.MAX_VALUE;
-            for (IFocusElement element : f.nodes) {
-                double dist = getMaxDistance(element.getKey());
-                if (dist < min)
-                    min = dist;
+            if (f != null) {
+                double min = Double.MAX_VALUE;
+                for (IFocusElement element : f.nodes) {
+                    double dist = getMaxDistance(element.getKey());
+                    if (dist < min)
+                        min = dist;
+                }
+                
+                return min;
             }
-            
-            return min;
         }
         
         return 0;

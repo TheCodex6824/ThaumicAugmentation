@@ -192,23 +192,25 @@ public abstract class EntityAutocasterBase extends EntityCreature {
             double d = getDistanceSq(getAttackTarget());
             if (d <= getMaxFocusDistanceSquared(held)) {
                 FocusPackage f = ItemFocus.getPackage(held);
-                fixFoci(f);
-                f.setCasterUUID(this.getUniqueID());
-                float visCost = ((ItemFocus) held.getItem()).getVisCost(held);
-                ItemStack tempHold = new ItemStack(ItemsTC.casterBasic);
-                ((ItemCaster) tempHold.getItem()).setFocus(tempHold, held);
-                setHeldItem(EnumHand.MAIN_HAND, tempHold);
-                CastEvent.Pre preEvent = new CastEvent.Pre(this, tempHold, new FocusWrapper(f, 
-                        (int) (((ItemFocus) held.getItem()).getActivationTime(held)), visCost));
-                MinecraftForge.EVENT_BUS.post(preEvent);
-                visCost = preEvent.getFocus().getVisCost();
-                if (!preEvent.isCanceled() && DoubleMath.fuzzyEquals(AuraHelper.drainVis(world, getPosition(), visCost, false), visCost, 0.00001)) {
-                    FocusEngine.castFocusPackage(this, f, true);
-                    cooldown = preEvent.getFocus().getCooldown();
-                    MinecraftForge.EVENT_BUS.post(new CastEvent.Post(this, tempHold, preEvent.getFocus()));
+                if (f != null) {
+                    fixFoci(f);
+                    f.setCasterUUID(this.getUniqueID());
+                    float visCost = ((ItemFocus) held.getItem()).getVisCost(held);
+                    ItemStack tempHold = new ItemStack(ItemsTC.casterBasic);
+                    ((ItemCaster) tempHold.getItem()).setFocus(tempHold, held);
+                    setHeldItem(EnumHand.MAIN_HAND, tempHold);
+                    CastEvent.Pre preEvent = new CastEvent.Pre(this, tempHold, new FocusWrapper(f, 
+                            (int) (((ItemFocus) held.getItem()).getActivationTime(held)), visCost));
+                    MinecraftForge.EVENT_BUS.post(preEvent);
+                    visCost = preEvent.getFocus().getVisCost();
+                    if (!preEvent.isCanceled() && DoubleMath.fuzzyEquals(AuraHelper.drainVis(world, getPosition(), visCost, false), visCost, 0.00001)) {
+                        FocusEngine.castFocusPackage(this, f, true);
+                        cooldown = preEvent.getFocus().getCooldown();
+                        MinecraftForge.EVENT_BUS.post(new CastEvent.Post(this, tempHold, preEvent.getFocus()));
+                    }
+                    
+                    setHeldItem(EnumHand.MAIN_HAND, ((ItemCaster) tempHold.getItem()).getFocusStack(tempHold));
                 }
-                
-                setHeldItem(EnumHand.MAIN_HAND, ((ItemCaster) tempHold.getItem()).getFocusStack(tempHold));
             }
         }
     }

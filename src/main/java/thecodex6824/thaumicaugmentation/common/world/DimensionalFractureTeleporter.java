@@ -48,5 +48,11 @@ public class DimensionalFractureTeleporter implements ITeleporter {
                     yaw, entity.rotationPitch);
         }
     }
+    
+    @Override
+    public boolean isVanilla() {
+        // the default impl should be fine, but just to be sure
+        return false;
+    }
 
 }

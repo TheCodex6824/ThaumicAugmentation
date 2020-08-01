@@ -21,10 +21,8 @@
 package thecodex6824.thaumicaugmentation.api.entity;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
-import java.util.WeakHashMap;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -35,13 +33,13 @@ public final class PortalStateManager {
 
     private PortalStateManager() {}
     
-    private static final Set<Entity> TRACKED = Collections.newSetFromMap(new WeakHashMap<>());
+    private static final Object2IntOpenHashMap<Entity> TRACKED = new Object2IntOpenHashMap<>();
     
     public static void markEntityInPortal(Entity entity) {
         IPortalState state = entity.getCapability(CapabilityPortalState.PORTAL_STATE, null);
-        if (state != null && !TRACKED.contains(entity)) {
+        if (state != null && !TRACKED.containsKey(entity)) {
             state.setInPortal(true);
-            TRACKED.add(entity);
+            TRACKED.put(entity, 20);
         }
     }
     
@@ -82,19 +80,26 @@ public final class PortalStateManager {
     
     public static void tick() {
         ArrayList<Entity> toGetRidOf = new ArrayList<>();
-        for (Entity entity : TRACKED) {
+        for (Entity entity : TRACKED.keySet()) {
             if (!findPortalBlock(entity)) {
                 if (!findPortalEntity(entity)) {
-                    IPortalState state = entity.getCapability(CapabilityPortalState.PORTAL_STATE, null);
-                    if (state != null)
-                        state.setInPortal(false);
+                    if (TRACKED.addTo(entity, -1) == 1) {
+                        IPortalState state = entity.getCapability(CapabilityPortalState.PORTAL_STATE, null);
+                        if (state != null)
+                            state.setInPortal(false);
+                        
+                        toGetRidOf.add(entity);
+                    }
                     
-                    toGetRidOf.add(entity);
+                    continue;
                 }
             }
+            
+            TRACKED.put(entity, 20);
         }
         
-        TRACKED.removeAll(toGetRidOf);
+        for (Entity e : toGetRidOf)
+            TRACKED.removeInt(e);
     }
     
 }

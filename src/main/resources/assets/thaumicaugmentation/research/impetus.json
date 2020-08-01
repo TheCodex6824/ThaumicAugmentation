@@ -232,7 +232,7 @@
                     "text": "thaumicaugmentation.research.arcane_terraformer.0",
                     "required_research": [
                         "m_OCEAN",
-                        "m_MOUNTAINS",
+                        "m_MOUNTAIN",
                         "m_DESERT",
                         "m_FOREST",
                         "m_hellandback",

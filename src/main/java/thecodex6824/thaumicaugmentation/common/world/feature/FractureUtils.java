@@ -55,7 +55,7 @@ public final class FractureUtils {
                     dim = Integer.parseInt(components[0]);
                 }
                 catch (NumberFormatException ex) {
-                    ThaumicAugmentation.getLogger().error("Invalid FractureDimList dim entry, invalid dim: " + s);
+                    ThaumicAugmentation.getLogger().warn("Invalid FractureDimList dim entry, invalid dim: " + s);
                     continue;
                 }
                 
@@ -64,7 +64,7 @@ public final class FractureUtils {
                     chance = Integer.parseInt(components[1]);
                 }
                 catch (NumberFormatException ex) {
-                    ThaumicAugmentation.getLogger().error("Invalid FractureDimList chance entry, invalid chance: " + s);
+                    ThaumicAugmentation.getLogger().warn("Invalid FractureDimList chance entry, invalid chance: " + s);
                     continue;
                 }
                 
@@ -73,16 +73,16 @@ public final class FractureUtils {
                         if (WorldDataCache.getData(dim) != null)
                             map.put(dim, chance);
                         else
-                            ThaumicAugmentation.getLogger().error("Invalid FractureDimList dim entry, dim not present: " + s);
+                            ThaumicAugmentation.getLogger().warn("Invalid FractureDimList dim entry, dim not present: " + s);
                     }
                     else if (chance < 0)
-                        ThaumicAugmentation.getLogger().error("Invalid FractureDimList chance entry, negative chance: " + s);
+                        ThaumicAugmentation.getLogger().warn("Invalid FractureDimList chance entry, negative chance: " + s);
                 }
                 else
-                    ThaumicAugmentation.getLogger().error("Invalid FractureDimList dim entry, cannot specify Emptiness dim: " + s);
+                    ThaumicAugmentation.getLogger().warn("Invalid FractureDimList dim entry, cannot specify Emptiness dim: " + s);
             }
             else
-                ThaumicAugmentation.getLogger().error("Invalid FractureDimList entry, wrong format: " + s);
+                ThaumicAugmentation.getLogger().warn("Invalid FractureDimList entry, wrong format: " + s);
         }
         
         dimPicker = new WeightedRandom<>(ImmutableList.copyOf(map.keySet()),
