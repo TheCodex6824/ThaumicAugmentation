@@ -39,8 +39,7 @@
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-                "HARNESS_BASE",
-                "~LEVITATOR"
+                "HARNESS_BASE"
             ],
             "location": [
                 -2,
@@ -50,6 +49,7 @@
                 {
                     "text": "thaumicaugmentation.research.thaumostatic_harness.0",
                     "required_research": [
+                        "m_endoftheworld",
                         "m_LEVITATE"
                     ],
                     "required_knowledge": [

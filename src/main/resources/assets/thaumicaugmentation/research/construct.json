@@ -33,7 +33,7 @@
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
                 "MORE_GOLEMANCY",
-                "~BASEINFUSION"
+                "~INFUSION"
             ],
             "location": [
                 -5,
@@ -112,7 +112,7 @@
                 "ELDRITCH_SPIRE",
                 "!AUTOCASTER",
                 "~MINDBIOTHAUMIC",
-                "~BASEAUROMANCY",
+                "~BASEAUROMANCY@1",
                 "~BASICTURRET"
             ],
             "meta": [

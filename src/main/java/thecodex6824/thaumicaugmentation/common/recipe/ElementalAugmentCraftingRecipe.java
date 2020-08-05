@@ -38,7 +38,7 @@ public class ElementalAugmentCraftingRecipe extends ShapelessArcaneRecipe {
                 new AspectList().add(Aspect.AIR, 1).add(Aspect.EARTH, 1).add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 1).add(
                 Aspect.ORDER, 1).add(Aspect.WATER, 1), CasterAugmentBuilder.createStackForStrengthProvider(
                         new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental")), new Object[] {
-                        new ItemStack(ItemsTC.plate, 1, 2), new ItemStack(ItemsTC.crystalEssence), new ItemStack(ItemsTC.visResonator)
+                        new ItemStack(ItemsTC.plate, 1, 2), ItemsTC.crystalEssence, ItemsTC.visResonator
                 }
         );
     }

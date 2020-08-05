@@ -10,7 +10,7 @@
             "parents": [
                 "THAUMIC_AUGMENTATION_BASE",
                 "~UNLOCKELDRITCH",
-                "~BASEINFUSION"
+                "~INFUSION"
             ],
             "location": [
                 0,

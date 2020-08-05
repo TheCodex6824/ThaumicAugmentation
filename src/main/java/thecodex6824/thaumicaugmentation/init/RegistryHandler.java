@@ -383,7 +383,7 @@ public final class RegistryHandler {
         
         RecipeHandler.initInfusionRecipes();
         RecipeHandler.initCrucibleRecipes();
-        RecipeHandler.initFakeArcaneCraftingRecipes();
+        RecipeHandler.initArcaneCraftingRecipes();
         RecipeHandler.initMultiblocks();
         
         event.getRegistry().register(new DyeableItemRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "dyeable_item")));

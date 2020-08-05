@@ -36,7 +36,7 @@
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
                 "THAUMIC_AUGMENTATION_BASE",
-                "METALLURGY@2"
+                "METALLURGY@1"
             ],
             "location": [
                 -1.5,

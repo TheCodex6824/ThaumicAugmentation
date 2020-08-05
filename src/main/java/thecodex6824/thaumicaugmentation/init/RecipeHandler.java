@@ -39,6 +39,7 @@ import thaumcraft.api.crafting.CrucibleRecipe;
 import thaumcraft.api.crafting.IDustTrigger;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.crafting.Part;
+import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 import thaumcraft.api.golems.GolemHelper;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.blocks.basic.BlockPillar;
@@ -56,6 +57,7 @@ import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
+import thecodex6824.thaumicaugmentation.common.recipe.ElementalAugmentCraftingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.FluxSeedGrowthRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicArmorBindingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicToolBindingRecipe;
@@ -290,18 +292,27 @@ public final class RecipeHandler {
                 "ELDRITCH_BOSS", new ItemStack(TABlocks.STONE, 1, 10), BlocksTC.stoneAncient, new AspectList().add(Aspect.ENTROPY, 2)));
     }
     
-    public static void initFakeArcaneCraftingRecipes() {
+    public static void initArcaneCraftingRecipes() {
         // so the "group" is just a recipe book thing, which we don't have to care about
         ResourceLocation defaultGroup = new ResourceLocation("");
+        
+        ItemStack elemental = CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental"));
+        ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_provider_elemental_fake"), new ShapelessArcaneRecipe(
+                defaultGroup, "GAUNTLET_AUGMENTATION@2", 25, new AspectList().add(Aspect.AIR, 1).add(Aspect.EARTH, 1).add(Aspect.FIRE, 1).add(
+                Aspect.ENTROPY, 1).add(Aspect.ORDER, 1).add(Aspect.WATER, 1), elemental, new Object[] { new ItemStack(ItemsTC.plate, 1, 2),
+                ThaumcraftApiHelper.makeCrystal(Aspect.ORDER, 1), ItemsTC.visResonator }));
+        
         ItemStack customAugment = new ItemStack(TAItems.AUGMENT_CUSTOM);
         IAugment aug = customAugment.getCapability(CapabilityAugment.AUGMENT, null);
         if (aug instanceof ICustomCasterAugment) {
             ICustomCasterAugment custom = (ICustomCasterAugment) aug;
-            custom.setStrengthProvider(CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental")));
+            custom.setStrengthProvider(elemental);
             custom.setEffectProvider(CasterAugmentBuilder.createStackForEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_power")));
             ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "custom_augment_example"), new ShapelessOreRecipe(
                     defaultGroup, customAugment, custom.getStrengthProvider(), custom.getEffectProvider()));
         }
+        
+        ThaumcraftApi.addArcaneCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_provider_elemental"), new ElementalAugmentCraftingRecipe());
         
         ItemStack biomeResult = new ItemStack(TAItems.BIOME_SELECTOR, 1);
         IBiomeSelector selector = biomeResult.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null);

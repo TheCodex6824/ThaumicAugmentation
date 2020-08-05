@@ -8,8 +8,8 @@
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-                "~BASEAUROMANCY",
-                "~METALLURGY",
+                "~UNLOCKAUROMANCY",
+                "~METALLURGY@2",
                 "THAUMIC_AUGMENTATION_BASE"
             ],
             "location": [
@@ -46,9 +46,7 @@
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-                "~BASEAUROMANCY",
-                "~BASEINFUSION",
-                "~METALLURGY",
+                "~INFUSION",
                 "~BASEELDRITCH",
                 "GAUNTLET_THAUMIUM"
             ],
@@ -126,7 +124,7 @@
                         "thaumicaugmentation:augment_custom"
                     ],
                     "recipes": [
-                        "thaumicaugmentation:strength_provider_elemental",
+                        "thaumicaugmentation:strength_provider_elemental_fake",
                         "thaumicaugmentation:effect_provider_power",
                         "thaumicaugmentation:effect_provider_cast_speed",
                         "thaumicaugmentation:effect_provider_cost",
@@ -136,7 +134,7 @@
                 {
                     "text": "thaumicaugmentation.research.gauntlet_augmentation.2",
                     "recipes": [
-                        "thaumicaugmentation:strength_provider_elemental",
+                        "thaumicaugmentation:strength_provider_elemental_fake",
                         "thaumicaugmentation:effect_provider_power",
                         "thaumicaugmentation:effect_provider_cast_speed",
                         "thaumicaugmentation:effect_provider_cost",
