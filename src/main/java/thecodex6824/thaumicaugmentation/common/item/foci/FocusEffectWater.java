@@ -49,6 +49,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
@@ -137,11 +138,6 @@ public class FocusEffectWater extends FocusEffect {
     @Override
     public boolean execute(RayTraceResult result, @Nullable Trajectory trajectory, float power, int something) {
         World world = getPackage().world;
-        if (world.provider.doesWaterVaporize()) {
-            world.playSound(null, result.getBlockPos(), TASounds.FOCUS_WATER_IMPACT, SoundCategory.PLAYERS, 0.25F, 1.0F);
-            return false;
-        }
-        
         Vec3d hit = result.hitVec;
         TANetwork.INSTANCE.sendToAllTracking(new PacketFXFocusPartImpact(hit.x, hit.y, hit.z, new String[] { getKey() }), new TargetPoint(
             world.provider.getDimension(), hit.x, hit.y, hit.z, 64.0D));
@@ -159,7 +155,7 @@ public class FocusEffectWater extends FocusEffect {
                 base.setAir(Math.max(base.getAir(), 300));
             }
             else {
-                float damageMultiplier = 1.0F;
+                float damageMultiplier = world.provider.doesWaterVaporize() ? 0.75F : 1.0F;
                 if (result.entityHit instanceof EntityBlaze || result.entityHit instanceof EntityMagmaCube)
                     damageMultiplier = 2.0F;
                 else if (result.entityHit instanceof EntitySlime || result.entityHit instanceof EntityWitch)
@@ -189,6 +185,9 @@ public class FocusEffectWater extends FocusEffect {
         
         if (pos != null) {
             int maxDist = (int) ((getSettingValue("power") + 1) * rangeMod);
+            if (world.provider.doesWaterVaporize())
+                maxDist = MathHelper.ceil(maxDist / 2.0F);
+            
             if (maxDist > 0) {
                 BlockPos start = pos.toImmutable();
                 List<Entity> entities = world.getEntitiesInAABBexcluding(exclude, new AxisAlignedBB(start.getX() - maxDist / 2, start.getY() - maxDist / 2,
@@ -213,44 +212,47 @@ public class FocusEffectWater extends FocusEffect {
                             pos.setY(y + start.getY());
                             if (x * x + y * y + z * z <= maxDist * maxDist) {
                                 IBlockState state = world.getBlockState(pos);
-                                if (state.getMaterial() == Material.LAVA && state.getPropertyKeys().contains(BlockLiquid.LEVEL) && 
-                                        x == 0 && y == 0 && z == 0) {
-                                    
-                                    if (state.getValue(BlockLiquid.LEVEL) == 0)
-                                        world.setBlockState(pos, Blocks.OBSIDIAN.getDefaultState());
-                                    else
-                                        world.setBlockState(pos, Blocks.COBBLESTONE.getDefaultState());
-                                    
-                                    world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, SoundCategory.BLOCKS, 0.25F, 1.0F);
-                                    splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
-                                }
-                                else if (state.getMaterial() == Material.FIRE) {
+                                if (state.getMaterial() == Material.FIRE) {
                                     world.setBlockToAir(pos);
                                     world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, SoundCategory.BLOCKS, 0.25F, 1.0F);
                                     splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
                                 }
-                                else if (state.getPropertyKeys().contains(BlockFarmland.MOISTURE)) {
-                                    world.setBlockState(pos, state.withProperty(BlockFarmland.MOISTURE, 7));
-                                    world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, SoundCategory.BLOCKS, 0.25F, 1.0F);
-                                    splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
-                                }
-                                else if (state.getPropertyKeys().contains(BlockCauldron.LEVEL)) {
-                                    world.setBlockState(pos, state.withProperty(BlockCauldron.LEVEL, Math.min(state.getValue(BlockCauldron.LEVEL) + 1, 3)));
-                                    world.playSound(null, pos, SoundEvents.ITEM_BOTTLE_EMPTY, SoundCategory.BLOCKS, 0.25F, 1.0F);
-                                    splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
-                                }
-                                else {
-                                    TileEntity tile = world.getTileEntity(pos);
-                                    if (tile != null) {
-                                        if (IntegrationHandler.isIntegrationPresent(IntegrationHandler.BOTANIA_MOD_ID) && IS_APOTHECARY.test(tile))
-                                            FILL_APOTHECARY.accept(tile);
-                                        else {
-                                            IFluidHandler fluid = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-                                            if (fluid != null) {
-                                                fluid.fill(new FluidStack(FluidRegistry.WATER, 334), true);
-                                                if (tile instanceof TileThaumcraft) {
-                                                    tile.markDirty();
-                                                    ((TileThaumcraft) tile).syncTile(false);
+                                else if (!world.provider.doesWaterVaporize()) {
+                                    if (state.getMaterial() == Material.LAVA && state.getPropertyKeys().contains(BlockLiquid.LEVEL) && 
+                                            x == 0 && y == 0 && z == 0) {
+                                        
+                                        if (state.getValue(BlockLiquid.LEVEL) == 0)
+                                            world.setBlockState(pos, Blocks.OBSIDIAN.getDefaultState());
+                                        else
+                                            world.setBlockState(pos, Blocks.COBBLESTONE.getDefaultState());
+                                        
+                                        world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, SoundCategory.BLOCKS, 0.25F, 1.0F);
+                                        splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
+                                    }
+                                    
+                                    else if (state.getPropertyKeys().contains(BlockFarmland.MOISTURE)) {
+                                        world.setBlockState(pos, state.withProperty(BlockFarmland.MOISTURE, 7));
+                                        world.playSound(null, pos, TASounds.FOCUS_WATER_IMPACT, SoundCategory.BLOCKS, 0.25F, 1.0F);
+                                        splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
+                                    }
+                                    else if (state.getPropertyKeys().contains(BlockCauldron.LEVEL)) {
+                                        world.setBlockState(pos, state.withProperty(BlockCauldron.LEVEL, Math.min(state.getValue(BlockCauldron.LEVEL) + 1, 3)));
+                                        world.playSound(null, pos, SoundEvents.ITEM_BOTTLE_EMPTY, SoundCategory.BLOCKS, 0.25F, 1.0F);
+                                        splashPositions.add(new Vec3d(pos).add(0.5, 0.5, 0.5));
+                                    }
+                                    else {
+                                        TileEntity tile = world.getTileEntity(pos);
+                                        if (tile != null) {
+                                            if (IntegrationHandler.isIntegrationPresent(IntegrationHandler.BOTANIA_MOD_ID) && IS_APOTHECARY.test(tile))
+                                                FILL_APOTHECARY.accept(tile);
+                                            else {
+                                                IFluidHandler fluid = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+                                                if (fluid != null) {
+                                                    fluid.fill(new FluidStack(FluidRegistry.WATER, 334), true);
+                                                    if (tile instanceof TileThaumcraft) {
+                                                        tile.markDirty();
+                                                        ((TileThaumcraft) tile).syncTile(false);
+                                                    }
                                                 }
                                             }
                                         }

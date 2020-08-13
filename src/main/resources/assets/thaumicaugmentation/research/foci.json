@@ -118,6 +118,14 @@
                 {
                     "text": "thaumicaugmentation.research.focus_water.1"
                 }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.focus_water.2",
+                    "required_research": [
+                        "m_hellandback"
+                    ]
+                }
             ]
         }
     ]

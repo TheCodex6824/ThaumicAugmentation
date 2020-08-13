@@ -328,16 +328,16 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                                 }
                                 
                                 boolean enoughEssentia = true;
-                                for (Map.Entry<Aspect, Integer> entry : neededAspects.entrySet()) {
-                                    if (essentia.getInt(entry.getKey()) < entry.getValue()) {
+                                for (Object2IntOpenHashMap.Entry<Aspect> entry : neededAspects.object2IntEntrySet()) {
+                                    if (essentia.getInt(entry.getKey()) < entry.getIntValue()) {
                                         enoughEssentia = false;
                                         break;
                                     }
                                 }
                                 
                                 if (enoughEssentia) {
-                                    for (Map.Entry<Aspect, Integer> entry : neededAspects.entrySet())
-                                        essentia.addTo(entry.getKey(), -entry.getValue());
+                                    for (Object2IntOpenHashMap.Entry<Aspect> entry : neededAspects.object2IntEntrySet())
+                                        essentia.addTo(entry.getKey(), -entry.getIntValue());
                                     
                                     essentiaPaid = true;
                                     markDirty();

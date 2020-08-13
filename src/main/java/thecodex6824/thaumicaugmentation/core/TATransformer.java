@@ -40,6 +40,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCBlueprintC
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCRobesElytraFlapping;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerUpdateElytra;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerVoidRobesArmorBarFix;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFireEncouragement;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFlammability;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockHardness;
@@ -117,6 +118,10 @@ public class TATransformer implements IClassTransformer {
         // required because any attempt by TC to render a tile entity in a blueprint that is
         // an AnimationTESR will crash the game
         TRANSFORMERS.add(new TransformerTCBlueprintCrashFix());
+        
+        // fixes armor counting twice visually for void robe armor
+        // I get a lot of reports/questions about it, so here it is
+        TRANSFORMERS.add(new TransformerVoidRobesArmorBarFix());
     }
     
     public TATransformer() {}

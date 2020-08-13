@@ -76,6 +76,9 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.IUrnType;
 import thecodex6824.thaumicaugmentation.api.block.property.IUrnType.UrnType;
+import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
@@ -159,6 +162,13 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
         setup(new EldritchSpireTemplate(template), templatePosition, settings);
     }
     
+    protected void setBlockStateClearWard(World world, BlockPos pos, IBlockState toPlace, int flags) {
+        world.setBlockState(pos, toPlace, flags);
+        IWardStorage storage = world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+        if (storage instanceof IWardStorageServer)
+            ((IWardStorageServer) storage).clearWard(pos, world);
+    }
+    
     @Override
     protected void handleDataMarker(String function, BlockPos pos, World world, Random rand,
             StructureBoundingBox sbb) {
@@ -173,7 +183,7 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
             else
                 toPlace = toPlace.withProperty(IUrnType.URN_TYPE, UrnType.URN_COMMON);
             
-            world.setBlockState(pos, toPlace, 2);
+            setBlockStateClearWard(world, pos, toPlace, 2);
         }
         else if (function.startsWith("pedestal_")) {
             IBlockState toPlace = null;
@@ -192,7 +202,7 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
             else if (type.equals("1"))
                 tableNum = 1;
             
-            world.setBlockState(pos, toPlace, 2);
+            setBlockStateClearWard(world, pos, toPlace, 2);
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TilePedestal) {
                 LootTable table = null;
@@ -284,7 +294,7 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
                 }
             }
             
-            world.setBlockState(pos, vent, 2);
+            setBlockStateClearWard(world, pos, vent, 2);
         }
         else if (function.startsWith("obelisk_")) {
             String type = function.substring(8);
@@ -294,15 +304,15 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
             else
                 oType = ObeliskType.ANCIENT;
         
-            world.setBlockState(pos, TABlocks.OBELISK.getDefaultState().withProperty(
+            setBlockStateClearWard(world, pos, TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.CAP).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
-            world.setBlockState(pos.up(), TABlocks.OBELISK.getDefaultState().withProperty(
+            setBlockStateClearWard(world, pos.up(), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.INNER).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
-            world.setBlockState(pos.up(2), TABlocks.OBELISK.getDefaultState().withProperty(
+            setBlockStateClearWard(world, pos.up(2), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.MIDDLE).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
-            world.setBlockState(pos.up(3), TABlocks.OBELISK.getDefaultState().withProperty(
+            setBlockStateClearWard(world, pos.up(3), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.INNER).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
-            world.setBlockState(pos.up(4), TABlocks.OBELISK.getDefaultState().withProperty(
+            setBlockStateClearWard(world, pos.up(4), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.CAP).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
         }
         else if (function.startsWith("lock_front_")) {
@@ -319,7 +329,7 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
             
             IBlockState state = TABlocks.ELDRITCH_LOCK_IMPETUS.getDefaultState();
             state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, face);
-            world.setBlockState(pos, state, 2);
+            setBlockStateClearWard(world, pos, state, 2);
         }
         else if (function.startsWith("lock_")) {
             EnumFacing face = null;
@@ -347,7 +357,7 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
             IBlockState state = TABlocks.ELDRITCH_LOCK.getDefaultState();
             state = state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, face);
             state = state.withProperty(IEldritchLockType.LOCK_TYPE, lock);
-            world.setBlockState(pos, state, 2);
+            setBlockStateClearWard(world, pos, state, 2);
         }
         else if (function.startsWith("key_")) {
             IBlockState toPlace = null;
@@ -370,7 +380,7 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
             else
                 lock = LockType.BOSS;
             
-            world.setBlockState(pos, toPlace, 2);
+            setBlockStateClearWard(world, pos, toPlace, 2);
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TilePedestal)
                 ((TilePedestal) tile).setInventorySlotContents(0, lock.getKey());
@@ -385,7 +395,7 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
             else
                 spawn = EntityRegistry.getEntry(EntityWisp.class).getRegistryName();
             
-            world.setBlockState(pos, Blocks.MOB_SPAWNER.getDefaultState(), 2);
+            setBlockStateClearWard(world, pos, Blocks.MOB_SPAWNER.getDefaultState(), 2);
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntityMobSpawner) {
                 MobSpawnerBaseLogic logic = ((TileEntityMobSpawner) tile).getSpawnerBaseLogic();
@@ -402,16 +412,16 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
             else
                 obeliskType = ObeliskType.ANCIENT;
             
-            world.setBlockState(pos, toPlace.withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
-            world.setBlockState(pos.up(2), TABlocks.OBELISK.getDefaultState().withProperty(
+            setBlockStateClearWard(world, pos, toPlace.withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
+            setBlockStateClearWard(world, pos.up(2), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.CAP).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
-            world.setBlockState(pos.up(3), TABlocks.OBELISK.getDefaultState().withProperty(
+            setBlockStateClearWard(world, pos.up(3), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.INNER).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
-            world.setBlockState(pos.up(4), TABlocks.OBELISK.getDefaultState().withProperty(
+            setBlockStateClearWard(world, pos.up(4), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.MIDDLE).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
-            world.setBlockState(pos.up(5), TABlocks.OBELISK.getDefaultState().withProperty(
+            setBlockStateClearWard(world, pos.up(5), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.INNER).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
-            world.setBlockState(pos.up(6), TABlocks.OBELISK.getDefaultState().withProperty(
+            setBlockStateClearWard(world, pos.up(6), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.CAP).withProperty(IObeliskType.OBELISK_TYPE, obeliskType), 2);
         
             TileEntity tile = world.getTileEntity(pos);

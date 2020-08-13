@@ -547,7 +547,7 @@ public class RenderEventHandler {
         }
         
         long time = world.getTotalWorldTime();
-        Iterator<Map.Entry<DimensionalBlockPos[], Long>> iterator = TRANSACTIONS.entrySet().iterator();
+        Iterator<Object2LongOpenHashMap.Entry<DimensionalBlockPos[]>> iterator = TRANSACTIONS.object2LongEntrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<DimensionalBlockPos[], Long> entry = iterator.next();
             DimensionalBlockPos[] array = entry.getKey();

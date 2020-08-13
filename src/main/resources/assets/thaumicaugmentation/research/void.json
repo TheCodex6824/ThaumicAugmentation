@@ -49,9 +49,6 @@
                 "thaumicaugmentation:stone;1;0"
             ],
             "category": "THAUMIC_AUGMENTATION",
-            "parents": [
-                "~UNLOCKELDRITCH"
-            ],
             "location": [
                 -4,
                 -3
@@ -528,6 +525,9 @@
                 "thaumcraft:textures/research/r_nodes_2.png"
             ],
             "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "!PRIMALWISP"
+            ],
             "location": [
                 9,
                 2

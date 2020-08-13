@@ -213,6 +213,13 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldri
     }
     
     @Override
+    public void onUpdate() {
+        super.onUpdate();
+        if (isDead)
+            handleStructureWard();
+    }
+    
+    @Override
     protected void updateAITasks() {
         super.updateAITasks();
         if (getAttackTarget() != null && (!getAttackTarget().isEntityAlive() || getAttackTarget() == this))
@@ -265,9 +272,7 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldri
         return isHeadless() ? 30 : 10;
     }
     
-    @Override
-    public void onDeath(DamageSource cause) {
-        super.onDeath(cause);
+    protected void handleStructureWard() {
         if (!world.isRemote && !structurePos.isInvalid()) {
             WorldServer structureDim = DimensionManager.getWorld(structurePos.getDimension());
             if (structureDim != null) {
@@ -284,8 +289,8 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldri
                                 if (start instanceof MapGenEldritchSpire.Start) {
                                     UUID ward = ((MapGenEldritchSpire.Start) start).getWard();
                                     StructureBoundingBox bb = start.getBoundingBox();     
-                                    for (int z = bb.minZ >> 4; z < bb.maxZ >> 4; z += 16) {
-                                        for (int x = bb.minX >> 4; x < bb.minX >> 4; x += 16) {
+                                    for (int z = bb.minZ >> 4; z <= bb.maxZ >> 4; ++z) {
+                                        for (int x = bb.minX >> 4; x <= bb.maxX >> 4; ++x) {
                                             IWardStorage storage = world.getChunk(x, z).getCapability(
                                                     CapabilityWardStorage.WARD_STORAGE, null);
                                             if (storage instanceof IWardStorageServer) {
@@ -299,8 +304,16 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldri
                         }
                     }
                 }
+                
+                structurePos = DimensionalBlockPos.INVALID;
             }
         }
+    }
+    
+    @Override
+    public void onDeath(DamageSource cause) {
+        super.onDeath(cause);
+        handleStructureWard();
     }
     
     @Override

@@ -229,6 +229,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                 if (state != null)
                     state.setInPortal(true);
                 
+                guardian.onInitialSpawn(world.getDifficultyForLocation(guardian.getPosition()), null);
                 world.spawnEntity(guardian);
             }
         }

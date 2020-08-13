@@ -20,13 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.client.gui;
 
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import it.unimi.dsi.fastutil.objects.Object2IntAVLTreeMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -211,8 +211,8 @@ public class GUIArcaneTerraformer extends GuiContainer {
                     GlStateManager.enableBlend();
                     int drawX = 14;
                     int drawY = 14;
-                    for (Map.Entry<Aspect, Integer> entry : costs.entrySet()) {
-                        UtilsFX.drawTag(drawX, drawY, entry.getKey(), entry.getValue(), 0, 0.0);
+                    for (Object2IntOpenHashMap.Entry<Aspect> entry : costs.object2IntEntrySet()) {
+                        UtilsFX.drawTag(drawX, drawY, entry.getKey(), entry.getIntValue(), 0, 0.0);
                         drawX += 17;
                         if (drawX > 31) {
                             drawX = 14;

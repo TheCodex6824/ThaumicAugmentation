@@ -214,9 +214,50 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden implements IEld
                 ChampionModifier.mods[cIndex].getModNameLocalized()).getFormattedText());
     }
     
+    protected void handleStructureWard() {
+        if (!world.isRemote && !structurePos.isInvalid()) {
+            WorldServer structureDim = DimensionManager.getWorld(structurePos.getDimension());
+            if (structureDim != null) {
+                MapGenStructureData data = (MapGenStructureData) structureDim.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "EldritchSpire");
+                if (data != null) {
+                    NBTTagCompound nbt = data.getTagCompound();
+                    for (String s : nbt.getKeySet()) {
+                        NBTTagCompound tag = nbt.getCompoundTag(s);
+                        if (tag.hasKey("ChunkX", NBT.TAG_INT) && tag.hasKey("ChunkZ", NBT.TAG_INT)) {
+                            int testX = tag.getInteger("ChunkX");
+                            int testZ = tag.getInteger("ChunkZ");
+                            if (testX == structurePos.getPos().getX() >> 4 && testZ == structurePos.getPos().getZ() >> 4) {
+                                StructureStart start = MapGenStructureIO.getStructureStart(tag, structureDim);
+                                if (start instanceof MapGenEldritchSpire.Start) {
+                                    UUID ward = ((MapGenEldritchSpire.Start) start).getWard();
+                                    StructureBoundingBox bb = start.getBoundingBox();     
+                                    for (int z = bb.minZ >> 4; z <= bb.maxZ >> 4; ++z) {
+                                        for (int x = bb.minX >> 4; x <= bb.maxX >> 4; ++x) {
+                                            IWardStorage storage = world.getChunk(x, z).getCapability(
+                                                    CapabilityWardStorage.WARD_STORAGE, null);
+                                            if (storage instanceof IWardStorageServer) {
+                                                ((IWardStorageServer) storage).removeOwner(ward);
+                                                WardSyncManager.markChunkForFullSync(world, new BlockPos(x << 4, 0, z << 4));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                structurePos = DimensionalBlockPos.INVALID;
+            }
+        }
+    }
+    
     @Override
     public void onUpdate() {
         super.onUpdate();
+        if (dead)
+            handleStructureWard();
+        
         if (!world.isRemote && getSpawnTimer() == 1) {
             if (world.getDifficulty() == EnumDifficulty.HARD) {
                 for (int i = 0; i < 3; ++i) {
@@ -344,39 +385,7 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden implements IEld
     @Override
     public void onDeath(DamageSource cause) {
         super.onDeath(cause);
-        if (!world.isRemote && !structurePos.isInvalid()) {
-            WorldServer structureDim = DimensionManager.getWorld(structurePos.getDimension());
-            if (structureDim != null) {
-                MapGenStructureData data = (MapGenStructureData) structureDim.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "EldritchSpire");
-                if (data != null) {
-                    NBTTagCompound nbt = data.getTagCompound();
-                    for (String s : nbt.getKeySet()) {
-                        NBTTagCompound tag = nbt.getCompoundTag(s);
-                        if (tag.hasKey("ChunkX", NBT.TAG_INT) && tag.hasKey("ChunkZ", NBT.TAG_INT)) {
-                            int testX = tag.getInteger("ChunkX");
-                            int testZ = tag.getInteger("ChunkZ");
-                            if (testX == structurePos.getPos().getX() >> 4 && testZ == structurePos.getPos().getZ() >> 4) {
-                                StructureStart start = MapGenStructureIO.getStructureStart(tag, structureDim);
-                                if (start instanceof MapGenEldritchSpire.Start) {
-                                    UUID ward = ((MapGenEldritchSpire.Start) start).getWard();
-                                    StructureBoundingBox bb = start.getBoundingBox();     
-                                    for (int z = bb.minZ >> 4; z <= bb.maxZ >> 4; ++z) {
-                                        for (int x = bb.minX >> 4; x <= bb.maxX >> 4; ++x) {
-                                            IWardStorage storage = world.getChunk(x, z).getCapability(
-                                                    CapabilityWardStorage.WARD_STORAGE, null);
-                                            if (storage instanceof IWardStorageServer) {
-                                                ((IWardStorageServer) storage).removeOwner(ward);
-                                                WardSyncManager.markChunkForFullSync(world, new BlockPos(x << 4, 0, z << 4));
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        handleStructureWard();
     }
     
     @Override

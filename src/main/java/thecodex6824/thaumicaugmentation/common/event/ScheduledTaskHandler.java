@@ -50,7 +50,7 @@ public class ScheduledTaskHandler {
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == Phase.END) {
             iterating = true;
-            Iterator<Entry<ISchedulableTask, Integer>> iterator = ENTRIES.entrySet().iterator();
+            Iterator<Object2IntOpenHashMap.Entry<ISchedulableTask>> iterator = ENTRIES.object2IntEntrySet().iterator();
             while (iterator.hasNext()) {
                 Entry<ISchedulableTask, Integer> task = iterator.next();
                 if (task.getValue() == 0) {

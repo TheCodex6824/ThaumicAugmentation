@@ -283,8 +283,8 @@ public class EntityPrimalWisp extends EntityFlying implements IMob, IRangedAttac
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
         NBTTagCompound aspects = new NBTTagCompound();
-        for (Entry<Aspect, Integer> entry : aspectTotals.entrySet())
-            aspects.setInteger(entry.getKey().getTag(), entry.getValue());
+        for (Object2IntOpenHashMap.Entry<Aspect> entry : aspectTotals.object2IntEntrySet())
+            aspects.setInteger(entry.getKey().getTag(), entry.getIntValue());
         
         compound.setTag("aspectTotals", aspects);
     }

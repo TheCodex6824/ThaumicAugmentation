@@ -28,6 +28,8 @@
     }
   },
   "result": {
-    "item": "#SIGIL"
+    "item": "thaumicaugmentation:material",
+    "data": 1,
+    "count": 3
   }
 }

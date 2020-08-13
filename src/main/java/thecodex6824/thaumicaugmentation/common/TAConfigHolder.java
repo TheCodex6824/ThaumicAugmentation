@@ -561,8 +561,7 @@ public final class TAConfigHolder {
             "17=5", // atum 2
             "20=5", // betweenlands
             "111=5", // lost cities
-            "66=5", // erebus
-            "33=5" // wizardry
+            "66=5" // erebus
         };
         
         @Name("FractureLocatorUpdateInterval")

@@ -25,6 +25,7 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.oredict.OreDictionary;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.blocks.BlocksTC;
@@ -43,6 +44,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterBase;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
+import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 import thecodex6824.thaumicaugmentation.common.research.ScanEntityWithPeacefulFallback;
 import thecodex6824.thaumicaugmentation.common.research.ScanTool;
 import thecodex6824.thaumicaugmentation.common.research.theorycraft.ResearchAidRiftJar;
@@ -89,7 +91,7 @@ public final class ResearchHandler {
         ScanningManager.addScannableThing(new ScanItem("!VOIDSTONETAINTEDSOIL", new ItemStack(TABlocks.STONE, 1, StoneType.SOIL_STONE_TAINT_NODECAY.getMeta())));
         
         ScanningManager.addScannableThing(new ScanTool("f_STRONGPICKAXE", "pickaxe", 3));
-        ScanningManager.addScannableThing(new ScanItem("f_FLINTANDSTEEL", new ItemStack(Items.FLINT_AND_STEEL)));
+        ScanningManager.addScannableThing(new ScanItem("f_FLINTANDSTEEL", new ItemStack(Items.FLINT_AND_STEEL, 1, OreDictionary.WILDCARD_VALUE)));
         ScanningManager.addScannableThing(new ScanEntityWithPeacefulFallback("m_CREEPER", new ScanEntity("m_CREEPER", EntityCreeper.class, true),
                 new ScanItem("m_CREEPER", new ItemStack(Items.GUNPOWDER))));
         
@@ -97,6 +99,8 @@ public final class ResearchHandler {
         ScanningManager.addScannableThing(new ScanEntity("!AUTOCASTER", EntityAutocasterBase.class, true));
         
         ScanningManager.addScannableThing(new ScanItem("m_ELDRITCHBOSS", new ItemStack(TAItems.RESEARCH_NOTES, 1, 0)));
+        
+        ScanningManager.addScannableThing(new ScanEntity("!PRIMALWISP", EntityPrimalWisp.class, true));
         
         TheorycraftManager.registerCard(ResearchCardRiftJar.class);
         TheorycraftManager.registerCard(ResearchCardRiftMonitor.class);

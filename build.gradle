@@ -61,20 +61,18 @@ runServer {
 dependencies {
     deobfCompile "curse.maven:thaumcraft:2629023"
     deobfCompile "curse.maven:baubles:2518667"
-    deobfCompile "curse.maven:librarianlib:2725449"
-    deobfCompile "curse.maven:wizardry-mod:2726334"
-    deobfCompile "curse.maven:jeid:2810213"
+    deobfCompile "curse.maven:jeid:2919737"
     deobfCompile "curse.maven:botania:2846950"
     deobfCompile "curse.maven:auracontrol:3013979"
+    deobfCompile "curse.maven:electroblobs-wizardry:2929294"
     
     testCompile "junit:junit:4.12"
     testCompile "org.hamcrest:hamcrest:2.1"
     
-    runtime "curse.maven:shadowfacts-forgelin:2785465"
-    runtime "curse.maven:jei:2803400"
+    runtime "curse.maven:jei:2995897"
     runtime "curse.maven:thaumic-jei:2705304"
     runtime "curse.maven:the-one-probe:2667280"
-    runtime "curse.maven:ctm:2832564"
+    runtime "curse.maven:ctm:2915363"
 }
 
 processResources {
