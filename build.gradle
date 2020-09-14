@@ -6,11 +6,13 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'com.wynprice.cursemaven:CurseMaven:2.1.1'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'com.wynprice.cursemaven'
+
+repositories {
+    maven { url = "https://www.cursemaven.com" }
+}
 
 version = "${mcversion}-${version}"
 group = "thecodex6824.thaumicaugmentation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -59,20 +61,30 @@ runServer {
 }
 
 dependencies {
-    deobfCompile "curse.maven:thaumcraft:2629023"
-    deobfCompile "curse.maven:baubles:2518667"
-    deobfCompile "curse.maven:jeid:2919737"
-    deobfCompile "curse.maven:botania:2846950"
-    deobfCompile "curse.maven:auracontrol:3013979"
-    deobfCompile "curse.maven:electroblobs-wizardry:2929294"
+    deobfCompile 'curse.maven:thaumcraft:2629023'
+    deobfCompile 'curse.maven:baubles:2518667'
+    deobfCompile 'curse.maven:jeid:2919737'
+    deobfCompile 'curse.maven:botania:2846950'
+    deobfCompile 'curse.maven:auracontrol:3013979'
+    deobfCompile 'curse.maven:electroblobs-wizardry:2929294'
     
-    testCompile "junit:junit:4.12"
-    testCompile "org.hamcrest:hamcrest:2.1"
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest:2.1'
     
-    runtime "curse.maven:jei:2995897"
-    runtime "curse.maven:thaumic-jei:2705304"
-    runtime "curse.maven:the-one-probe:2667280"
-    runtime "curse.maven:ctm:2915363"
+    runtime 'curse.maven:jei:2995897'
+    runtime 'curse.maven:thaumic-jei:2705304'
+    runtime 'curse.maven:the-one-probe:2667280'
+    runtime 'curse.maven:ctm:2915363'
+    
+    // if the curse maven is down or otherwise not working:
+    // comment the above "deobfCompile" and "runtime" entries
+    // uncomment the following and put jars into subfolders in the "lib" folder
+    
+    //compile fileTree(dir: 'lib/compile', include: '*.jar')
+    //runtime fileTree(dir: 'lib/runtime', include: '*.jar')
+    
+    // note that the first line above says compile, not deobfCompile - if you need deobf use BON2 or something
+    // to avoid needing test jars, comment the "testCompile" lines and put "-x test" on the command line
 }
 
 processResources {
