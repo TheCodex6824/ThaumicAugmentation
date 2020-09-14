@@ -343,7 +343,6 @@ public class RenderEventHandler {
         GlStateManager.enableDepth();
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
-        GlStateManager.disableLighting();
         GlStateManager.disableCull();
         GlStateManager.pushMatrix();
         Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.BEAM);
@@ -367,7 +366,7 @@ public class RenderEventHandler {
         }
         
         GlStateManager.enableCull();
-        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
         GlStateManager.popMatrix();
     }
@@ -380,7 +379,6 @@ public class RenderEventHandler {
         GlStateManager.enableDepth();
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
-        GlStateManager.disableLighting();
         GlStateManager.disableCull();
         GlStateManager.pushMatrix();
         Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.LASER);
@@ -404,7 +402,7 @@ public class RenderEventHandler {
         }
         
         GlStateManager.enableCull();
-        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
         GlStateManager.popMatrix();
     }
@@ -415,13 +413,10 @@ public class RenderEventHandler {
         GlStateManager.depthMask(false);
         GlStateManager.disableDepth();
         GlStateManager.enableBlend();
-        GlStateManager.disableLighting();
-        
-        Vec3d pos = new Vec3d(blockPosition);
-        
-        Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.FRAME);
         GlStateManager.disableCull();
         
+        Vec3d pos = new Vec3d(blockPosition);
+        Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.FRAME);
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
         buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX_COLOR);
@@ -442,7 +437,7 @@ public class RenderEventHandler {
         t.draw();
         
         GlStateManager.enableCull();
-        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);
     }
