@@ -73,7 +73,7 @@ public final class FractureUtils {
                         if (WorldDataCache.getData(dim) != null)
                             map.put(dim, chance);
                         else
-                            ThaumicAugmentation.getLogger().warn("Invalid FractureDimList dim entry, dim not present: " + s);
+                            ThaumicAugmentation.getLogger().debug("Invalid FractureDimList dim entry, dim not present: " + s);
                     }
                     else if (chance < 0)
                         ThaumicAugmentation.getLogger().warn("Invalid FractureDimList chance entry, negative chance: " + s);
