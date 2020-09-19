@@ -42,6 +42,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -103,28 +106,35 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
             TileEntity below = world.getTileEntity(pos.down());
             if (below != null) {
                 IRiftJar jar = below.getCapability(CapabilityRiftJar.RIFT_JAR, null);
-                if (jar != null) {
+                if (jar != null && jar.hasRift()) {
                     Vec3d riftPos = findRiftPos();
                     if (riftPos != null) {
-                        rift = new EntityFluxRift(world);
-                        EnumFacing facing = world.getBlockState(pos.down()).getValue(IHorizontallyDirectionalBlock.DIRECTION);
-                        rift.setPositionAndRotation(riftPos.x, riftPos.y, riftPos.z, facing != null ? facing.getHorizontalAngle() : 0.0F, 0.0F);
-                        if (world.spawnEntity(rift)) {
-                            rift.setRiftSize(1);
-                            rift.setRiftSeed(jar.getRift().getRiftSeed());
-                            operating = true;
-                            targetSize = jar.getRift().getRiftSize();
-                            markDirty();
-                            world.playSound(null, pos, SoundsTC.craftstart, SoundCategory.BLOCKS, 0.5F, 1.0F);
-                            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+                        List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class, new AxisAlignedBB(riftPos, riftPos).grow(32.0F));
+                        if (rifts.isEmpty()) {
+                            rift = new EntityFluxRift(world);
+                            EnumFacing facing = world.getBlockState(pos.down()).getValue(IHorizontallyDirectionalBlock.DIRECTION);
+                            rift.setPositionAndRotation(riftPos.x, riftPos.y, riftPos.z, facing != null ? facing.getHorizontalAngle() : 0.0F, 0.0F);
+                            if (world.spawnEntity(rift)) {
+                                rift.setRiftSize(1);
+                                rift.setRiftSeed(jar.getRift().getRiftSeed());
+                                operating = true;
+                                targetSize = jar.getRift().getRiftSize();
+                                markDirty();
+                                world.playSound(null, pos, SoundsTC.craftstart, SoundCategory.BLOCKS, 0.5F, 1.0F);
+                                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+                            }
+                            else {
+                                rift = null;
+                                AuraHelper.polluteAura(world, pos, jar.getRift().getRiftSize(), true);
+                                world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
+                            }
+                            
+                            jar.setRift(new FluxRiftReconstructor(0, 0));
                         }
                         else {
-                            rift = null;
-                            AuraHelper.polluteAura(world, pos, jar.getRift().getRiftSize(), true);
-                            world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
+                            player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.rift_too_close").setStyle(
+                                    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
                         }
-                        
-                        jar.setRift(new FluxRiftReconstructor(0, 0));
                     }
                 }
             }
@@ -229,7 +239,7 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                 }
                 else if (AuraHelper.drainVis(world, pos, 0.25F, false) >= 0.25F - 0.0001) {
                     rift.setRiftSize(rift.getRiftSize() + 1);
-                    if (rift.getRiftSize() == targetSize) {
+                    if (rift.getRiftSize() >= targetSize) {
                         rift = null;
                         operating = false;
                         markDirty();

@@ -97,8 +97,10 @@ public class ItemRiftSeed extends ItemTABase {
                 if (!player.capabilities.isCreativeMode)
                     player.getHeldItem(hand).shrink(1);
             }
-            else if (stack.getMetadata() == 0)
-                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.rift_too_close"), true);
+            else if (stack.getMetadata() == 0) {
+                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.rift_too_close").setStyle(
+                        new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+            }
             else {
                 // flux particles don't seem to render at very high flux numbers in one call
                 for (int i = 0; i < stack.getTagCompound().getInteger("flux") / 100; ++i) {
