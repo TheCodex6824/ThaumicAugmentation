@@ -138,13 +138,10 @@ public class EldritchSpireTemplate extends Template {
             for (Template.BlockInfo info : wrapped.blocks) {
                 if (replaced == null || replaced != info.blockState.getBlock()) {
                     BlockPos position = transformedBlockPos(placement, info.pos).add(pos);
-                    if (bb == null || bb.isVecInside(position)) {
-                        world.notifyNeighborsRespectDebug(position, info.blockState.getBlock(), false);
-                        if (info.tileentityData != null) {
-                            TileEntity tile = world.getTileEntity(position);
-                            if (tile != null)
-                                tile.markDirty();
-                        }
+                    if ((bb == null || bb.isVecInside(position)) && info.tileentityData != null) {
+                        TileEntity tile = world.getTileEntity(position);
+                        if (tile != null)
+                            tile.markDirty();
                     }
                 }
             }

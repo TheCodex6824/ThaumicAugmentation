@@ -48,10 +48,13 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
     @VisibleForTesting
     static final class StorageManagersServer {
         
-        public static final int CHUNK_X_SIZE = 16;
-        public static final int CHUNK_Y_SIZE = 256;
-        public static final int CHUNK_Z_SIZE = 16;
-        public static final int CHUNK_DATA_SIZE = CHUNK_X_SIZE * CHUNK_Y_SIZE * CHUNK_Z_SIZE;
+        // these are not final in case someone wants to take a shot at making this work
+        // with stuff like cubic chunks in the future
+        // obviously, this is not officially supported
+        public static int CHUNK_X_SIZE = 16;
+        public static int CHUNK_Y_SIZE = 256;
+        public static int CHUNK_Z_SIZE = 16;
+        public static int CHUNK_DATA_SIZE = CHUNK_X_SIZE * CHUNK_Y_SIZE * CHUNK_Z_SIZE;
         
         private StorageManagersServer() {}
         
@@ -224,13 +227,13 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & (CHUNK_X_SIZE - 1)) + (pos.getY() & (CHUNK_Y_SIZE - 1)) * CHUNK_X_SIZE + (pos.getZ() & (CHUNK_Z_SIZE - 1)) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 return (data[index / 8] & (1 << (index % 8))) != 0 ? owner : NIL_UUID;
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
-                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & (CHUNK_X_SIZE - 1)) + (pos.getY() & (CHUNK_Y_SIZE - 1)) * CHUNK_X_SIZE + (pos.getZ() & (CHUNK_Z_SIZE - 1)) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 if (owner.equals(this.owner) && !owner.equals(NIL_UUID) && (data[index / 8] & (1 << (index % 8))) >>> (index % 8) == 0) {
                     if ((data[index / 8] & (1 << (index % 8))) == 0) {
                         ++count;
@@ -384,14 +387,14 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & (CHUNK_X_SIZE - 1)) + (pos.getY() & (CHUNK_Y_SIZE - 1)) * CHUNK_X_SIZE + (pos.getZ() & (CHUNK_Z_SIZE - 1)) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = ((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2);
                 return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
-                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & (CHUNK_X_SIZE - 1)) + (pos.getY() & (CHUNK_Y_SIZE - 1)) * CHUNK_X_SIZE + (pos.getZ() & (CHUNK_Z_SIZE - 1)) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int toSet = !owner.equals(NIL_UUID) ? reverseMap.getByte(owner) + 1 : 0;
                 
                 if (toSet != 0 && toSet != ((data[index / 4] & (3 << (index % 4 * 2)))) >>> (index % 4 * 2)) {
@@ -560,14 +563,14 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & (CHUNK_X_SIZE - 1)) + (pos.getY() & (CHUNK_Y_SIZE - 1)) * CHUNK_X_SIZE + (pos.getZ() & (CHUNK_Z_SIZE - 1)) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = ((data[index / 2] & (15 << (index % 2 * 4)))) >>> (index % 2 * 4);
                 return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
-                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & (CHUNK_X_SIZE - 1)) + (pos.getY() & (CHUNK_Y_SIZE - 1)) * CHUNK_X_SIZE + (pos.getZ() & (CHUNK_Z_SIZE - 1)) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int toSet = !owner.equals(NIL_UUID) ? reverseMap.getByte(owner) + 1 : 0;
                 
                 if (toSet != 0 && toSet != ((data[index / 2] & (15 << (index % 2 * 4)))) >>> (index % 2 * 4)) {
@@ -739,14 +742,14 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & (CHUNK_X_SIZE - 1)) + (pos.getY() & (CHUNK_Y_SIZE - 1)) * CHUNK_X_SIZE + (pos.getZ() & (CHUNK_Z_SIZE - 1)) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = data[index] + 128;
                 return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
-                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & (CHUNK_X_SIZE - 1)) + (pos.getY() & (CHUNK_Y_SIZE - 1)) * CHUNK_X_SIZE + (pos.getZ() & (CHUNK_Z_SIZE - 1)) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int toSet = !owner.equals(NIL_UUID) ? reverseMap.getByte(owner) + 1 : -128;
                 if (toSet != -128 && toSet != data[index]) {
                     ++counts[toSet + 127];
@@ -907,14 +910,14 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
             
             @Override
             public UUID getOwner(BlockPos pos) {
-                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & (CHUNK_X_SIZE - 1)) + (pos.getY() & (CHUNK_Y_SIZE - 1)) * CHUNK_X_SIZE + (pos.getZ() & (CHUNK_Z_SIZE - 1)) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int result = data[index] + 32768;
                 return result == 0 ? NIL_UUID : owners[result - 1];
             }
             
             @Override
             public void setOwner(BlockPos pos, UUID owner) {
-                int index = (pos.getX() & 15) + (pos.getY() & 255) * CHUNK_X_SIZE + (pos.getZ() & 15) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
+                int index = (pos.getX() & (CHUNK_X_SIZE - 1)) + (pos.getY() & (CHUNK_Y_SIZE - 1)) * CHUNK_X_SIZE + (pos.getZ() & (CHUNK_Z_SIZE - 1)) * CHUNK_X_SIZE * CHUNK_Y_SIZE;
                 int toSet = !owner.equals(NIL_UUID) ? reverseMap.getShort(owner) + 1 : -32768;
                 if (toSet != -32768 && toSet != data[index]) {
                     ++counts[toSet + 32767];
@@ -1029,12 +1032,14 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
     
     @Override
     public void clearWard(BlockPos pos, World syncTo) {
-        BlockWardEvent.DewardedServer event = new BlockWardEvent.DewardedServer.Pre(syncTo, pos);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (!event.isCanceled()) {
-            manager.setOwner(pos, NIL_UUID);
-            WardSyncManager.markPosForClear(syncTo, pos);
-            MinecraftForge.EVENT_BUS.post(new BlockWardEvent.DewardedServer.Post(syncTo, pos));
+        if (hasWard(pos)) {
+            BlockWardEvent.DewardedServer event = new BlockWardEvent.DewardedServer.Pre(syncTo, pos);
+            MinecraftForge.EVENT_BUS.post(event);
+            if (!event.isCanceled()) {
+                manager.setOwner(pos, NIL_UUID);
+                WardSyncManager.markPosForClear(syncTo, pos);
+                MinecraftForge.EVENT_BUS.post(new BlockWardEvent.DewardedServer.Post(syncTo, pos));
+            }
         }
     }
     
@@ -1087,19 +1092,21 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
     
     @Override
     public void setWard(BlockPos pos, UUID owner, World syncTo) {
-        BlockWardEvent.WardedServer event = new BlockWardEvent.WardedServer.Pre(syncTo, pos, owner);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (!event.isCanceled()) {
-            if (!manager.isOwner(owner)) {
-                if (manager.getNumCurrentOwners() == manager.getMaxAllowedOwners())
-                    manager = createIncreasedSizeManager();
+        if (!getWard(pos).equals(owner)) {
+            BlockWardEvent.WardedServer event = new BlockWardEvent.WardedServer.Pre(syncTo, pos, owner);
+            MinecraftForge.EVENT_BUS.post(event);
+            if (!event.isCanceled()) {
+                if (!manager.isOwner(owner)) {
+                    if (manager.getNumCurrentOwners() == manager.getMaxAllowedOwners())
+                        manager = createIncreasedSizeManager();
+                    
+                    manager.addOwner(owner);
+                }
                 
-                manager.addOwner(owner);
+                manager.setOwner(pos, owner);
+                WardSyncManager.markPosForNewOwner(syncTo, pos, owner);
+                MinecraftForge.EVENT_BUS.post(new BlockWardEvent.WardedServer.Post(syncTo, pos, owner));
             }
-            
-            manager.setOwner(pos, owner);
-            WardSyncManager.markPosForNewOwner(syncTo, pos, owner);
-            MinecraftForge.EVENT_BUS.post(new BlockWardEvent.WardedServer.Post(syncTo, pos, owner));
         }
     }
     

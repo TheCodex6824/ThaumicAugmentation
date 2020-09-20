@@ -20,11 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
@@ -34,15 +38,21 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import thaumcraft.api.entities.IEldritchMob;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 public class TileObelisk extends TileEntity implements ITickable, IShaderRenderingCallback {
     
     protected int ticks;
+    protected UUID wardOwner;
     
     public TileObelisk() {
         ticks = ThreadLocalRandom.current().nextInt(20);
+        wardOwner = IWardStorageServer.NIL_UUID;
     }
     
     protected int getHealCycleLength() {
@@ -55,16 +65,28 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
     
     @Override
     public void update() {
-        if (!world.isRemote && ++ticks % getHealCycleLength() == 0) {
-            boolean hard = world.getDifficulty() == EnumDifficulty.HARD;
-            for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(6.0))) {
-                if (!entity.isDead && entity instanceof IEldritchMob) {
-                    if (entity.isPotionApplicable(new PotionEffect(MobEffects.REGENERATION, 1, 0))) {
-                        entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, hard ? 1 : 0, true, true));
-                        entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, hard ? 1 : 0, true, true));
+        if (!world.isRemote) {
+            if (ticks % 40 == 0 && !wardOwner.equals(IWardStorageServer.NIL_UUID)) {
+                IWardStorage s = world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                if (s instanceof IWardStorageServer && !((IWardStorageServer) s).isWardOwner(wardOwner)) {
+                    if (world.getBlockState(pos.down(4)).getBlock() == TABlocks.CAPSTONE)
+                        world.setBlockToAir(pos.down(4));
+                    
+                    world.setBlockToAir(pos);
+                    return;
+                }
+            }
+            if (++ticks % getHealCycleLength() == 0) {
+                boolean hard = world.getDifficulty() == EnumDifficulty.HARD;
+                for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(6.0))) {
+                    if (!entity.isDead && entity instanceof IEldritchMob) {
+                        if (entity.isPotionApplicable(new PotionEffect(MobEffects.REGENERATION, 1, 0))) {
+                            entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, hard ? 1 : 0, true, true));
+                            entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, hard ? 1 : 0, true, true));
+                        }
+                        else
+                            entity.setHealth(entity.getHealth() + 1);
                     }
-                    else
-                        entity.setHealth(entity.getHealth() + 1);
                 }
             }
         }
@@ -84,6 +106,15 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
                         pos.getY() + world.rand.nextFloat() * 1.5F, pos.getZ() + world.rand.nextFloat() * 1.5F);
             }
         }
+    }
+    
+    public void setBoundWard(UUID ward) {
+        wardOwner = ward;
+    }
+    
+    @Nullable
+    public UUID getBoundWard() {
+        return wardOwner;
     }
     
     @Override
@@ -114,6 +145,18 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
     @Override
     public void renderWithShader(ShaderType type, double pX, double pY, double pZ) {
         ThaumicAugmentation.proxy.getRenderHelper().renderObelisk(type, this, pX, pY, pZ);
+    }
+    
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        compound.setUniqueId("wardOwner", wardOwner);
+        return super.writeToNBT(compound);
+    }
+    
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        wardOwner = compound.getUniqueId("wardOwner");
     }
     
 }

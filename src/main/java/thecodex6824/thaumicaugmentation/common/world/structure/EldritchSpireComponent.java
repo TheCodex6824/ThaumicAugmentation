@@ -83,6 +83,7 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
+import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
 
 public class EldritchSpireComponent extends StructureComponentTemplate {
     
@@ -314,6 +315,10 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
                     IObeliskPart.OBELISK_PART, ObeliskPart.INNER).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
             setBlockStateClearWard(world, pos.up(4), TABlocks.OBELISK.getDefaultState().withProperty(
                     IObeliskPart.OBELISK_PART, ObeliskPart.CAP).withProperty(IObeliskType.OBELISK_TYPE, oType), 2);
+        
+            TileEntity tile = world.getTileEntity(pos.up(2));
+            if (tile instanceof TileObelisk)
+                ((TileObelisk) tile).setBoundWard(ward);
         }
         else if (function.startsWith("lock_front_")) {
             EnumFacing face = null;
