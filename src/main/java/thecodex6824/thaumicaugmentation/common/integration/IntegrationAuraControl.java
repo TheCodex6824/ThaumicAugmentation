@@ -46,9 +46,14 @@ public class IntegrationAuraControl implements IIntegrationHolder {
         IOriginalAuraInfo info = world.getChunk(chunkX, chunkZ).getCapability(CapabilityOriginalAuraInfo.AURA_INFO, null);
         if (info != null) {
             AuraChunk c = AuraHandler.getAuraChunk(world.provider.getDimension(), chunkX, chunkZ);
-            c.setBase(info.getBase());
-            c.setVis(info.getVis());
-            c.setFlux(info.getFlux());
+            if (c == null)
+                AuraHandler.addAuraChunk(world.provider.getDimension(), world.getChunk(chunkX, chunkZ), info.getBase(), info.getVis(), info.getFlux());
+            else {
+                c.setBase(info.getBase());
+                c.setVis(info.getVis());
+                c.setFlux(info.getFlux());
+            }
+            
             return true;
         }
         

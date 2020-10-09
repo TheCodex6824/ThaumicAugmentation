@@ -148,7 +148,7 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldri
     }
     
     @Override
-    public IEntityLivingData onInitialSpawn(DifficultyInstance diff, IEntityLivingData data) {
+    public IEntityLivingData onInitialSpawn(DifficultyInstance diff, @Nullable IEntityLivingData data) {
         EntityUtils.makeChampion(this, true);
         return super.onInitialSpawn(diff, data);
     }

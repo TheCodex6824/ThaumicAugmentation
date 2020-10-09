@@ -118,7 +118,7 @@ public class EntityTAEldritchGuardian extends EntityEldritchGuardian {
     }
     
     @Override
-    public IEntityLivingData onInitialSpawn(DifficultyInstance diff, IEntityLivingData data) {
+    public IEntityLivingData onInitialSpawn(DifficultyInstance diff, @Nullable IEntityLivingData data) {
         IEntityLivingData d = super.onInitialSpawn(diff, data); 
         EntityInOuterLandsEvent event = new EntityInOuterLandsEvent(this);
         MinecraftForge.EVENT_BUS.post(event);

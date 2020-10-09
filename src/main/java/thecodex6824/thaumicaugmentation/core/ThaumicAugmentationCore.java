@@ -21,8 +21,6 @@
 package thecodex6824.thaumicaugmentation.core;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
@@ -98,39 +96,6 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
     @Override
     public void injectData(Map<String, Object> data) {
-        /* 
-         * Note: this seems to have been reverted in 1.8.0_252, keeping this here until
-         * the update has existed for a while and distros get around to packaging it.
-         * 
-         * This is here because GradleStart sets the sys_paths to null.
-         * It expects it to be repopulated by the JVM, which was the behavior until java 8 version 242.
-         * Starting with version 242 it just asserts that it's not null, and does not repopulate it.
-         * This will make any native library loading attempt crash, which for me manifests as LWJGL crashing when loading AWT.
-         * See the change in openjdk source here: https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/rev/1d666f78532a
-         */
-        Object deobf = data.get("runtimeDeobfuscationEnabled");
-        if (deobf instanceof Boolean && (Boolean) deobf == false) {
-            String[] versions = System.getProperty("java.version").split("_");
-            if (versions.length >= 2 && versions[0].equals("1.8.0")) {
-                int version = Integer.parseInt(versions[versions.length - 1]);
-                if (version >= 242 && version < 252) {
-                    log.info("Java version 1.8.0_[242, 252) detected in dev env, working around native loading crash...");
-                    try {
-                        Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
-                        sysPathsField.setAccessible(true);
-                        if (sysPathsField.get(null) == null) {
-                            Method init = ClassLoader.class.getDeclaredMethod("initLibraryPaths");
-                            init.setAccessible(true);
-                            init.invoke(null);
-                        }
-                    }
-                    catch(Exception ex) {
-                        // just ignore it, this JVM is probably unaffected
-                    }
-                }
-            }
-        }
-        
         if (enabled)
             ThaumicAugmentationAPI.setCoremodAvailable();
         else

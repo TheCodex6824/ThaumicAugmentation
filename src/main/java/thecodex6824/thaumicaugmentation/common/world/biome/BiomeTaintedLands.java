@@ -43,6 +43,7 @@ import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenTaintFlower
 public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFluxBiome, IBiomeSpecificSpikeBlockProvider {
 
     protected static final WorldGenTaintFlower FLOWER_GENERATOR = new WorldGenTaintFlower();
+    protected static final Random POS_RNG = new Random();
     
     public BiomeTaintedLands() {
         super(new BiomeProperties("Tainted Lands").setBaseHeight(-1.8F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
@@ -91,7 +92,7 @@ public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFlux
     public void genTerrainBlocks(World world, Random rand, ChunkPrimer primer, int x, int z, double noiseVal) {
         int cX = x & 15;
         int cZ = z & 15;
-        for (int y = world.getActualHeight(); y >= 0; --y) {
+        for (int y = Math.min(world.getActualHeight(), 255); y >= 0; --y) {
             IBlockState current = primer.getBlockState(cZ, y, cX);
             if (!current.getBlock().isAir(current, world, new BlockPos(x, y, z)))
                 primer.setBlockState(cZ, y, cX, primer.getBlockState(cZ, y + 1, cX).isNormalCube() ? fillerBlock : topBlock);
@@ -111,6 +112,20 @@ public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFlux
     @Override
     public EnumFlowerType pickRandomFlower(Random rand, BlockPos pos) {
         return EnumFlowerType.ALLIUM;
+    }
+    
+    @Override
+    public int getFoliageColorAtPos(BlockPos pos) {
+        POS_RNG.setSeed(pos.getX() + pos.getZ() * Long.MAX_VALUE);
+        int colorMod = POS_RNG.nextInt(64) - POS_RNG.nextInt(64);
+        return getModdedBiomeFoliageColor(((0x66 + colorMod) << 16) + 0x66 + colorMod);
+    }
+    
+    @Override
+    public int getGrassColorAtPos(BlockPos pos) {
+        POS_RNG.setSeed(pos.getX() + pos.getZ() * Long.MAX_VALUE);
+        int colorMod = POS_RNG.nextInt(64) - POS_RNG.nextInt(64);
+        return getModdedBiomeGrassColor(((0x66 + colorMod) << 16) + 0x66 + colorMod);
     }
     
 }

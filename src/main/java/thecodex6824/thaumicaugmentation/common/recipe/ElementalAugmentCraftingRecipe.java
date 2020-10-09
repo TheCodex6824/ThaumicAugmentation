@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.recipe;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -44,6 +46,8 @@ public class ElementalAugmentCraftingRecipe extends ShapelessArcaneRecipe {
     }
     
     @Override
+    @Nonnull
+    @SuppressWarnings("null")
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         ItemStack crystal = ItemStack.EMPTY;
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {

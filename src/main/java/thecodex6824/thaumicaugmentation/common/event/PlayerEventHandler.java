@@ -127,7 +127,7 @@ public final class PlayerEventHandler {
     protected static void checkFrequent(EntityPlayer player) {
         WorldServer w = (WorldServer) player.getEntityWorld();
         if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", player.getPosition())) {
-            if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERSPIRE") && w.isAirBlock(player.getPosition())) {
+            if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERSPIRE")) {
                 IPlayerKnowledge knowledge = ThaumcraftCapabilities.getKnowledge(player);
                 if (knowledge.addResearch("m_ENTERSPIRE")) {
                     knowledge.sync((EntityPlayerMP) player);

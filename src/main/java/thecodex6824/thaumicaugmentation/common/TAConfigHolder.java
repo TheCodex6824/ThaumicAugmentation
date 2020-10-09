@@ -512,7 +512,9 @@ public final class TAConfigHolder {
                 "THAUMIC_WONDERS",
                 "RUSTIC_THAUMATURGY",
                 "PERIPHERY",
-                "ENGINEERED_GOLEMS"
+                "ENGINEERED_GOLEMS",
+                "EXPANDEDARCANUM",
+                "MECHANICS"
         };
         
     }

@@ -89,14 +89,12 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
     
     protected void verifyChunk(World worldToVerify, BlockPos pos) {
         IChunkProvider provider = worldToVerify.getChunkProvider();
-        if (!worldToVerify.isChunkGeneratedAt(pos.getX() >> 4, pos.getZ() >> 4)) {
+        if (provider.getLoadedChunk(pos.getX() >> 4, pos.getZ() >> 4) == null) {
             worldToVerify.getChunk(pos.add(16, 0, 0));
             worldToVerify.getChunk(pos.add(0, 0, 16));
             worldToVerify.getChunk(pos.add(16, 0, 16));
             worldToVerify.getChunk(pos);
         }
-        else if (provider.getLoadedChunk(pos.getX() >> 4, pos.getZ() >> 4) == null)
-            worldToVerify.getChunk(pos);
     }
     
     @Override
@@ -109,7 +107,7 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
             IPortalState state = entity.getCapability(CapabilityPortalState.PORTAL_STATE, null);
             if (state == null || !state.isInPortal()) {
                 if (isOpen()) {
-                    if (linkInvalid) {
+                    if (linkInvalid && !TAConfig.fracturesAlwaysTeleport.getValue()) {
                         if (world.getTotalWorldTime() % 20 == 0 && entity instanceof EntityPlayer)
                             ((EntityPlayer) entity).sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.no_fracture_target"), true);
                     }
@@ -147,7 +145,16 @@ public class EntityDimensionalFracture extends Entity implements IDimensionalFra
                                 ThaumicAugmentation.getLogger().debug("Src pos: " + getPosition());
                                 
                                 FractureUtils.redoFractureLinkage(this);
-                                targetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(linkedDim);
+                                try {
+                                    targetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(linkedDim);
+                                }
+                                catch (IllegalArgumentException ex) {}
+                                if (targetWorld == null) {
+                                    ThaumicAugmentation.getLogger().warn("Fracture relink failed. The requested dimension (" + linkedDim + ") was not able to be used.");
+                                    linkInvalid = true;
+                                    return;
+                                }
+                                
                                 BlockPos toComplete = linkedTo;
                                 verifyChunk(targetWorld, toComplete);
                                 for (int y = targetWorld.getActualHeight() - 1; y >= 0; --y) {

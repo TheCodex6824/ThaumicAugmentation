@@ -187,7 +187,7 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden implements IEld
     }
     
     @Override
-    public IEntityLivingData onInitialSpawn(DifficultyInstance diff, IEntityLivingData data) {
+    public IEntityLivingData onInitialSpawn(DifficultyInstance diff, @Nullable IEntityLivingData data) {
         EntityUtils.makeChampion(this, true);
         IEntityLivingData d = super.onInitialSpawn(diff, data);
         bossInfo.setName(getDisplayName());
