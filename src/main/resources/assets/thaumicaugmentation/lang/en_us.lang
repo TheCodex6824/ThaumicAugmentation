@@ -210,6 +210,7 @@ thaumicaugmentation.text.forest=You have visited a forest.
 thaumicaugmentation.text.long_time_in_water=You have become well-acquainted with the watery depths.
 thaumicaugmentation.text.entered_spire=You have discovered the %s.
 thaumicaugmentation.text.boss_room_spire=You have found the heart of the spire.
+thaumicaugmentation.text.elytra_fly=You have soared through the skies with the Elytra.
 
 thaumicaugmentation.text.damage.impetus=%s was annihilated
 thaumicaugmentation.text.damage.impetus_attack=%s was annihilated by %s
