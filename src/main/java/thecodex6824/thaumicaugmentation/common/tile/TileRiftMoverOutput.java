@@ -109,7 +109,8 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                 if (jar != null && jar.hasRift()) {
                     Vec3d riftPos = findRiftPos();
                     if (riftPos != null) {
-                        List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class, new AxisAlignedBB(riftPos, riftPos).grow(32.0F));
+                        List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class,
+                                new AxisAlignedBB(riftPos.x, riftPos.y, riftPos.z, riftPos.x, riftPos.y, riftPos.z).grow(32.0F));
                         if (rifts.isEmpty()) {
                             rift = new EntityFluxRift(world);
                             EnumFacing facing = world.getBlockState(pos.down()).getValue(IHorizontallyDirectionalBlock.DIRECTION);
