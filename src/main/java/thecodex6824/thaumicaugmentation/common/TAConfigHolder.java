@@ -183,7 +183,7 @@ public final class TAConfigHolder {
                     "so while this damage can theoretically be seen per tick, in practice this is",
                     "extremely unlikely and would take a large crowd and good aim to achieve."
                 })
-                public float beamDamage = 6.0F;
+                public float beamDamage = 7.0F;
                 
                 @Name("BeamCost")
                 @Comment({
@@ -285,7 +285,7 @@ public final class TAConfigHolder {
             @Comment({
                 "The number to be multiplied into the total effectiveness of the Elemental Modifier for a postive aspect."
             })
-            public double elementalModifierPositiveFactor = 2.0;
+            public double elementalModifierPositiveFactor = 1.75;
             
             @Name("ElementalModifierNegativeFactor")
             @Comment({
@@ -384,15 +384,16 @@ public final class TAConfigHolder {
             @Name("FrenzyModifierScaleFactor")
             @Comment({
                 "The number the player's frenzy level is multiplied by, before being clamped.",
-                "In other words, this controls how many levels it takes to reach the maximum value."
+                "In other words, this controls how many levels it takes to reach the maximum value,",
+                "and what that maximum value is."
             })
-            public double frenzyModifierScale = 1.0 / 15.0;
+            public double frenzyModifierScale = 1.0 / 20.0;
             
             @Name("FrenzyModifierMaxLevel")
             @Comment({
                 "The maximum frenzy level allowed."
             })
-            public int frenzyModifierMaxLevel = 20;
+            public int frenzyModifierMaxLevel = 15;
             
         }
         
