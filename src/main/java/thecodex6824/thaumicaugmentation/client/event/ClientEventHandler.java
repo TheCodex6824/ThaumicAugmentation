@@ -239,7 +239,7 @@ public final class ClientEventHandler {
             }
             
             Boolean boost = ELYTRA_BOOSTS.contains(player);
-            if (!boost && ThaumicAugmentation.proxy.isEntityRenderView(player) && ThaumicAugmentation.proxy.isJumpDown() &&
+            if (!boost && ThaumicAugmentation.proxy.isEntityRenderView(player) && ThaumicAugmentation.proxy.isElytraBoostKeyDown() &&
                     player.isElytraFlying() && player.getTicksElytraFlying() >= 2) {
                 
                 IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
@@ -271,7 +271,7 @@ public final class ClientEventHandler {
                 }
             }
             else if (boost && ThaumicAugmentation.proxy.isEntityRenderView(player)) {
-                boolean stopping = !ThaumicAugmentation.proxy.isJumpDown() || !player.isElytraFlying() || player.getTicksElytraFlying() < 2;
+                boolean stopping = !ThaumicAugmentation.proxy.isElytraBoostKeyDown() || !player.isElytraFlying() || player.getTicksElytraFlying() < 2;
                 if (!stopping) {
                     IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
                     stopping = true;

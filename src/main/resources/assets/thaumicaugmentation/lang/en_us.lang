@@ -224,6 +224,9 @@ thaumicaugmentation.text.config.impetus=Impetus
 thaumicaugmentation.text.config.impulse_cannon=Impulse Cannon
 thaumicaugmentation.text.config.augment=Augment
 
+thaumicaugmentation.key.category=Thaumic Augmentation
+thaumicaugmentation.key.elytra_boost=Activate Impetus Thruster (Hold)
+
 champion.mod.bold=Bold
 champion.mod.spine=Spined
 champion.mod.armor=Armoured

@@ -112,7 +112,7 @@ public class ServerProxy implements ISidedProxy {
     }
     
     @Override
-    public boolean isJumpDown() {
+    public boolean isElytraBoostKeyDown() {
         return false;
     }
     

@@ -72,7 +72,7 @@ public interface ISidedProxy {
     
     public boolean isSingleplayer();
     
-    public boolean isJumpDown();
+    public boolean isElytraBoostKeyDown();
     
     public boolean isPvPEnabled();
     

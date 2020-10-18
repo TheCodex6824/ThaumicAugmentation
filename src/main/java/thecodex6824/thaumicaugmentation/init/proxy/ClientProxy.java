@@ -29,6 +29,8 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
+import org.lwjgl.input.Keyboard;
+
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.block.state.IBlockState;
@@ -41,6 +43,7 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -231,9 +234,13 @@ import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 
 public class ClientProxy extends ServerProxy {
 
+    private KeyBinding elytraBoost;
     private HashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
     
     public ClientProxy() {
+        elytraBoost = new KeyBinding(ThaumicAugmentationAPI.MODID + ".key.elytra_boost",
+                Keyboard.KEY_SPACE, ThaumicAugmentationAPI.MODID + ".key.category");
+        
         handlers = new HashMap<>();
         handlers.put(PacketParticleEffect.class, (message, ctx) -> handleParticlePacket((PacketParticleEffect) message, ctx));
         handlers.put(PacketConfigSync.class, (message, ctx) -> handleConfigSyncPacket((PacketConfigSync) message, ctx));
@@ -300,8 +307,8 @@ public class ClientProxy extends ServerProxy {
     }
     
     @Override
-    public boolean isJumpDown() {
-        return Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown();
+    public boolean isElytraBoostKeyDown() {
+        return elytraBoost.isKeyDown();
     }
     
     @Override
@@ -994,6 +1001,8 @@ public class ClientProxy extends ServerProxy {
         loader.registerLoader(new BuiltInRendererModel.Loader());
         loader.registerLoader(new DirectionalRetexturingModel.Loader());
         ModelLoaderRegistry.registerLoader(loader);
+        
+        ClientRegistry.registerKeyBinding(elytraBoost);
     }
 
     @Override
