@@ -58,6 +58,7 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
+import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
 
 public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile {
 
@@ -137,7 +138,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
             if (enabled != lastState) {
                 lastState = enabled;
                 actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
-                asm.transition(lastState ? "starting" : "stopping");
+                AnimationHelper.transitionSafely(asm, lastState ? "starting" : "stopping");
             }
         }
         

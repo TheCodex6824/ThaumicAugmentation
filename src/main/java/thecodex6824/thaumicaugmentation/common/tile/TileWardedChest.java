@@ -44,6 +44,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.api.ward.tile.WardedInventory;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
+import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
 
 public class TileWardedChest extends TileWarded implements IAnimatedTile {
 
@@ -69,7 +70,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile {
             world.playSound(null, pos, SoundEvents.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5F, 1.0F);
         else {
             openTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
-            asm.transition("opening");
+            AnimationHelper.transitionSafely(asm, "opening");
         }
     }
 
@@ -78,7 +79,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile {
             world.playSound(null, pos, SoundEvents.BLOCK_CHEST_CLOSE, SoundCategory.BLOCKS, 0.5F, 1.0F);
         else {
             openTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
-            asm.transition("closing");
+            AnimationHelper.transitionSafely(asm, "closing");
         }
     }
     

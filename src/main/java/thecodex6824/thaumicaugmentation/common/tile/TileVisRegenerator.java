@@ -49,6 +49,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
+import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
 
 public class TileVisRegenerator extends TileEntity implements ITickable, IAnimatedTile {
 
@@ -98,7 +99,7 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
             if (enabled != lastState) {
                 lastState = enabled;
                 actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
-                asm.transition(lastState ? "starting" : "stopping");
+                AnimationHelper.transitionSafely(asm, lastState ? "starting" : "stopping");
             }
         }
     }

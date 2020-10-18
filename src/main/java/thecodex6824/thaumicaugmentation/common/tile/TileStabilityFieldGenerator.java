@@ -63,6 +63,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
+import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
 
 public class TileStabilityFieldGenerator extends TileEntity implements ITickable, IBreakCallback, IAnimatedTile {
 
@@ -300,12 +301,12 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
             ((FXBeamBore) beam).setMaxAge(Integer.MAX_VALUE);
             updateBeamColor();
             actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
-            asm.transition("opening");
+            AnimationHelper.transitionSafely(asm, "opening");
         }
         else if ((rift == null || rift.isDead || !lastEnabledState) && beam != null) {
             if (((FXBeamBore) beam).isAlive()) {
                 actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
-                asm.transition("closing");
+                AnimationHelper.transitionSafely(asm, "closing");
             }
             
             ((FXBeamBore) beam).setExpired();
