@@ -79,27 +79,29 @@ public final class PortalStateManager {
     }
     
     public static void tick() {
-        ArrayList<Entity> toGetRidOf = new ArrayList<>();
-        for (Entity entity : TRACKED.keySet()) {
-            if (!findPortalBlock(entity)) {
-                if (!findPortalEntity(entity)) {
-                    if (TRACKED.addTo(entity, -1) == 1) {
-                        IPortalState state = entity.getCapability(CapabilityPortalState.PORTAL_STATE, null);
-                        if (state != null)
-                            state.setInPortal(false);
+        if (!TRACKED.isEmpty()) {
+            ArrayList<Entity> toGetRidOf = new ArrayList<>();
+            for (Entity entity : TRACKED.keySet()) {
+                if (!findPortalBlock(entity)) {
+                    if (!findPortalEntity(entity)) {
+                        if (TRACKED.addTo(entity, -1) == 1) {
+                            IPortalState state = entity.getCapability(CapabilityPortalState.PORTAL_STATE, null);
+                            if (state != null)
+                                state.setInPortal(false);
+                            
+                            toGetRidOf.add(entity);
+                        }
                         
-                        toGetRidOf.add(entity);
+                        continue;
                     }
-                    
-                    continue;
                 }
+                
+                TRACKED.put(entity, 20);
             }
             
-            TRACKED.put(entity, 20);
+            for (Entity e : toGetRidOf)
+                TRACKED.removeInt(e);
         }
-        
-        for (Entity e : toGetRidOf)
-            TRACKED.removeInt(e);
     }
     
 }

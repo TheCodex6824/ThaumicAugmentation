@@ -48,7 +48,7 @@ public class ScheduledTaskHandler {
     
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == Phase.END) {
+        if (event.phase == Phase.END && !ENTRIES.isEmpty()) {
             iterating = true;
             Iterator<Object2IntOpenHashMap.Entry<ISchedulableTask>> iterator = ENTRIES.object2IntEntrySet().iterator();
             while (iterator.hasNext()) {

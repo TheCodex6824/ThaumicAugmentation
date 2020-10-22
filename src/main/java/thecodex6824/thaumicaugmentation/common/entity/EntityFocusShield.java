@@ -253,8 +253,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
             return false;
         else if (reflect && !world.isRemote) {
             Entity entity = source.getImmediateSource();
-            if ((entity instanceof IProjectile || entity instanceof EntityFireball) && entity.isEntityAlive() &&
-                    getEntityBoundingBox().intersects(entity.getEntityBoundingBox())) {
+            if ((entity instanceof IProjectile || entity instanceof EntityFireball) && entity.isEntityAlive()) {
                 
                 Entity newEntity = EntityList.newEntity(entity.getClass(), entity.world);
                 if (newEntity != null) {
@@ -265,7 +264,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                     newEntity.motionX = -entity.motionX;
                     newEntity.motionY = -entity.motionY;
                     newEntity.motionZ = -entity.motionZ;
-                    while (newEntity.getEntityBoundingBox().intersects(getEntityBoundingBox()))
+                    int attempts = 0;
+                    while (newEntity.getEntityBoundingBox().intersects(getEntityBoundingBox()) && attempts++ < 10)
                         newEntity.setPosition(newEntity.posX + newEntity.motionX, newEntity.posY + newEntity.motionY, newEntity.posZ + newEntity.motionZ);
                     
                     if (entity instanceof EntityFireball && newEntity instanceof EntityFireball) {
@@ -397,7 +397,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     @Override
     @Nullable
     public AxisAlignedBB getCollisionBoundingBox() {
-        return getEntityBoundingBox();
+        // TODO investigate selective shield collision without lag
+        return null;//getEntityBoundingBox();
     }
     
     @Override
