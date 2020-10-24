@@ -60,9 +60,26 @@ public class TransformerElytraClientCheck extends Transformer {
                 ));
                 livingUpdate.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
             }
-            else
-                throw new TransformerException("Could not locate required instructions");
-            
+            else {
+                // Player API deletes the entire method, and moves it to its own (!)
+                livingUpdate = TransformUtil.findMethod(classNode, "localOnLivingUpdate", "()V");
+                ret = TransformUtil.findFirstInstanceOfMethodCall(livingUpdate, 0, TransformUtil.remapMethodName("net/minecraft/client/entity/EntityPlayerSP",
+                        "func_184582_a", Type.getType("Lnet/minecraft/item/ItemStack;"), Type.getType("Lnet/minecraft/inventory/EntityEquipmentSlot;")),
+                        "(Lnet/minecraft/inventory/EntityEquipmentSlot;)Lnet/minecraft/item/ItemStack;", "net/minecraft/client/entity/EntityPlayerSP");
+                if (ret != -1) {
+                    AbstractInsnNode insertAfter = livingUpdate.instructions.get(ret).getNext();
+                    livingUpdate.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                            TransformUtil.HOOKS_CLIENT,
+                            "checkElytra",
+                            "(Lnet/minecraft/client/entity/EntityPlayerSP;)V",
+                            false
+                    ));
+                    livingUpdate.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
+                }
+                else
+                    throw new TransformerException("Could not locate required instructions");
+            }
+                
             return true;
         }
         catch (Throwable anything) {

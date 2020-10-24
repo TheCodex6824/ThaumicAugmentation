@@ -60,8 +60,26 @@ public class TransformerThaumostaticHarnessSprintCheck extends Transformer {
                         false
                 ));
             }
-            else
-                throw new TransformerException("Could not locate required invokespecial instruction");
+            else {
+                // Player API deletes the entire method, and moves it to its own (!)
+                // in this case, just hooking at the start is fine though
+                // I hook the super call above to be compatible with other things that might also hook before
+                ret = TransformUtil.findFirstInstanceOfMethodCall(sprint, 0, "setSprinting",
+                        "(Lapi/player/client/IClientPlayerAPI;Z)V", "api/player/client/ClientPlayerAPI");
+                if (ret != -1) {
+                    AbstractInsnNode insertAfter = sprint.instructions.get(ret).getPrevious();
+                    sprint.instructions.insert(insertAfter, new InsnNode(Opcodes.SWAP));
+                    sprint.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
+                    sprint.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                            TransformUtil.HOOKS_CLIENT,
+                            "checkPlayerSprintState",
+                            "(Lnet/minecraft/client/entity/EntityPlayerSP;Z)Z",
+                            false
+                    ));
+                }
+                else
+                    throw new TransformerException("Could not locate required instructions");
+            }
             
             return true;
         }
