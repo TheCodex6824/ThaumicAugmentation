@@ -69,6 +69,7 @@ public final class TAConfig {
 
     public static ConfigOptionBoolean reducedEffects;
     public static ConfigOptionBoolean optimizedFluxRiftRenderer;
+    public static ConfigOptionBoolean enableBoosterKeybind;
 
     public static ConfigOptionIntList defaultGauntletColors;
     public static ConfigOptionInt defaultVoidBootsColor;

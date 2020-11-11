@@ -238,9 +238,6 @@ public class ClientProxy extends ServerProxy {
     private HashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
     
     public ClientProxy() {
-        elytraBoost = new KeyBinding(ThaumicAugmentationAPI.MODID + ".key.elytra_boost",
-                Keyboard.KEY_SPACE, ThaumicAugmentationAPI.MODID + ".key.category");
-        
         handlers = new HashMap<>();
         handlers.put(PacketParticleEffect.class, (message, ctx) -> handleParticlePacket((PacketParticleEffect) message, ctx));
         handlers.put(PacketConfigSync.class, (message, ctx) -> handleConfigSyncPacket((PacketConfigSync) message, ctx));
@@ -308,7 +305,10 @@ public class ClientProxy extends ServerProxy {
     
     @Override
     public boolean isElytraBoostKeyDown() {
-        return elytraBoost.isKeyDown();
+        if (elytraBoost != null)
+            return elytraBoost.isKeyDown();
+        else
+            return Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown();
     }
     
     @Override
@@ -1002,7 +1002,12 @@ public class ClientProxy extends ServerProxy {
         loader.registerLoader(new DirectionalRetexturingModel.Loader());
         ModelLoaderRegistry.registerLoader(loader);
         
-        ClientRegistry.registerKeyBinding(elytraBoost);
+        if (TAConfig.enableBoosterKeybind.getValue()) {
+            elytraBoost = new KeyBinding(ThaumicAugmentationAPI.MODID + ".key.elytra_boost",
+                    Keyboard.KEY_SPACE, ThaumicAugmentationAPI.MODID + ".key.category");
+            
+            ClientRegistry.registerKeyBinding(elytraBoost);
+        }
     }
 
     @Override

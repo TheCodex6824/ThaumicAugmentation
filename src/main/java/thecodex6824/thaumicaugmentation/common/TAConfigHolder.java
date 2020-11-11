@@ -638,6 +638,17 @@ public final class TAConfigHolder {
         })
         public boolean gauntletCastAnimation = true;
         
+        @Name("EnableImpetusThrusterKeybind")
+        @Comment({
+            "Allows the Impetus Thruster boost key to be rebindable (with caveats).",
+            "By default, the Impetus Thruster requires holding the jump key to activate it, and is not rebindable.",
+            "This is required to not mess with other mods/content that checks for the jump key, as a normal keybind would conflict.",
+            "However, if you'd rather not use jump for that, enabling this and restarting will make it appear as a normal keybind.",
+            "To properly set it to jump again, you will need to disable this option and restart the game."
+        })
+        @RequiresMcRestart
+        public boolean enableBoosterKeybind = false;
+        
     }
     
     private static ArrayList<Runnable> listeners = new ArrayList<>();
@@ -674,6 +685,7 @@ public final class TAConfigHolder {
 
         TAConfig.reducedEffects.setValue(client.reducedEffects, side);
         TAConfig.optimizedFluxRiftRenderer.setValue(client.optimizedFluxRiftRenderer, side);
+        TAConfig.enableBoosterKeybind.setValue(client.enableBoosterKeybind, side);
 
         TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
         TAConfig.defaultVoidBootsColor.setValue(gameplay.defaultVoidBootsColor, side);
@@ -768,6 +780,7 @@ public final class TAConfigHolder {
         
         TAConfig.reducedEffects = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.reducedEffects));
         TAConfig.optimizedFluxRiftRenderer = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.optimizedFluxRiftRenderer));
+        TAConfig.enableBoosterKeybind = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.enableBoosterKeybind));
         
         TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
         TAConfig.defaultVoidBootsColor = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));
