@@ -40,6 +40,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
@@ -49,6 +50,7 @@ import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
 public final class TAHooksCommon {
 
@@ -127,10 +129,14 @@ public final class TAHooksCommon {
     }
     
     public static ItemStack getLeftoverInfusionIngredientStack(ItemStack input, Object output) {
-        if (output instanceof ItemStack && ((ItemStack) output).getItem() == TAItems.MORPHIC_TOOL)
-            return ItemStack.EMPTY;
-        else
-            return input;
+        if (output instanceof ItemStack && input.getItem() != ItemsTC.primordialPearl) {
+            if (((ItemStack) output).getItem() == TAItems.MORPHIC_TOOL)
+                return ItemStack.EMPTY;
+            else if (MorphicArmorHelper.hasMorphicArmor((ItemStack) output))
+                return ItemStack.EMPTY;
+        }
+            
+        return input;
     }
     
     public static void onBaubleChanged(@Nullable EntityLivingBase entity) {
