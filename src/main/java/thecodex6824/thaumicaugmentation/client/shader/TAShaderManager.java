@@ -37,6 +37,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
 public final class TAShaderManager {
@@ -59,6 +60,7 @@ public final class TAShaderManager {
     
     private static final String EMPTY_SHADER_NAME = "__reserved_empty_shader";
     private static final HashMap<String, Shader> SHADERS = new HashMap<>();
+    private static boolean disabled = false;
     
     static {
         SHADERS.put(new ResourceLocation(ThaumicAugmentationAPI.MODID, EMPTY_SHADER_NAME).toString(), new Shader(0));
@@ -138,8 +140,12 @@ public final class TAShaderManager {
         return 0;
     }
     
+    public static void init() {
+        disabled = TAConfig.disableShaders.getValue();
+    }
+    
     public static boolean shouldUseShaders() {
-        return OpenGlHelper.shadersSupported;
+        return OpenGlHelper.shadersSupported && !disabled;
     }
     
     public static Shader registerShader(ResourceLocation shader) {

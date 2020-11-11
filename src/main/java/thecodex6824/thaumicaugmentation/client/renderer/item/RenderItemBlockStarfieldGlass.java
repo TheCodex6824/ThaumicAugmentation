@@ -83,7 +83,7 @@ public class RenderItemBlockStarfieldGlass extends TileEntityItemStackRenderer {
                 break;
             }
             default: {
-                // pro strat: people will report it if it looks ugly
+                // should be unreachable
                 Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.RIFT);
                 break;
             }

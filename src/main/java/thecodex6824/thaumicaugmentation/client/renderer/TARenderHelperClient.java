@@ -392,7 +392,9 @@ public class TARenderHelperClient implements ITARenderHelper {
         boolean isRevealing = !ignoreGoggles && EntityUtils.hasGoggles(Minecraft.getMinecraft().getRenderViewEntity() != null ?
                 Minecraft.getMinecraft().getRenderViewEntity() : Minecraft.getMinecraft().player);
         Minecraft.getMinecraft().renderEngine.bindTexture(open ? FRACTURE_TEXTURE_OPEN : FRACTURE_TEXTURE_CLOSED);
-        TAShaderManager.enableShader(TAShaders.FRACTURE, TAShaders.SHADER_CALLBACK_GENERIC_SPHERE);
+        if (TAShaderManager.shouldUseShaders())
+            TAShaderManager.enableShader(TAShaders.FRACTURE, TAShaders.SHADER_CALLBACK_GENERIC_SPHERE);
+        
         GlStateManager.enableBlend();
         for (int layer = 0; layer < 4; ++layer) {
             if (layer != 3) {
@@ -444,7 +446,9 @@ public class TARenderHelperClient implements ITARenderHelper {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
-        TAShaderManager.disableShader();
+        if (TAShaderManager.shouldUseShaders())
+            TAShaderManager.disableShader();
+        
         GlStateManager.popMatrix();
     }
     

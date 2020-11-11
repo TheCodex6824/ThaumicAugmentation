@@ -479,12 +479,11 @@ public class RenderEventHandler {
                                 if (TAShaderManager.shouldUseShaders())
                                     TAShaderManager.enableShader(TAShaders.MIRROR, TAShaders.SHADER_CALLBACK_GENERIC_SPHERE);
                                 
-                                
                                 Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.MIRROR);
                                 break;
                             }
                             default: {
-                                // pro strat: people will report it if it looks ugly
+                                // should be unreachable
                                 Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.RIFT);
                                 break;
                             }

@@ -1049,6 +1049,7 @@ public class ClientProxy extends ServerProxy {
     public void postInit() {
         super.postInit();
         TATextures.setupTextures();
+        TAShaderManager.init();
         if (TAShaderManager.shouldUseShaders()) {
             TAShaders.FRACTURE = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture"));
             TAShaders.EMPTINESS_SKY = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_sky"));

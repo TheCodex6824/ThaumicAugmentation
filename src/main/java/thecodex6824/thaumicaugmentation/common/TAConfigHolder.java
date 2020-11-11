@@ -649,6 +649,14 @@ public final class TAConfigHolder {
         @RequiresMcRestart
         public boolean enableBoosterKeybind = false;
         
+        @Name("DisableShaders")
+        @Comment({
+            "Disables all shaders used by TA for rendering.",
+            "This will make certain things look ugly, but should prevent issues with shader mods.",
+            "This does not change things for vanilla TC, except for flux rifts if \"OptimizedFluxRiftRenderer\" is enabled."
+        })
+        @RequiresMcRestart
+        public boolean disableShaders = false;
     }
     
     private static ArrayList<Runnable> listeners = new ArrayList<>();
@@ -686,6 +694,7 @@ public final class TAConfigHolder {
         TAConfig.reducedEffects.setValue(client.reducedEffects, side);
         TAConfig.optimizedFluxRiftRenderer.setValue(client.optimizedFluxRiftRenderer, side);
         TAConfig.enableBoosterKeybind.setValue(client.enableBoosterKeybind, side);
+        TAConfig.disableShaders.setValue(client.disableShaders, side);
 
         TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
         TAConfig.defaultVoidBootsColor.setValue(gameplay.defaultVoidBootsColor, side);
@@ -781,6 +790,7 @@ public final class TAConfigHolder {
         TAConfig.reducedEffects = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.reducedEffects));
         TAConfig.optimizedFluxRiftRenderer = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.optimizedFluxRiftRenderer));
         TAConfig.enableBoosterKeybind = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.enableBoosterKeybind));
+        TAConfig.disableShaders = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableShaders));
         
         TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
         TAConfig.defaultVoidBootsColor = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));
