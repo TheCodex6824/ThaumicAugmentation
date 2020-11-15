@@ -93,7 +93,7 @@ public class TARenderHelperClient implements ITARenderHelper {
     protected static final FloatBuffer BUFFER_Z = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(0.0F).put(0.0F).put(1.0F).put(0.0F).flip();
     protected static final FloatBuffer BUFFER_W = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(0.0F).put(0.0F).put(0.0F).put(1.0F).flip();
     
-    protected static final double Z_CLOSE_NEG = Math.pow(2.0, -10.0);
+    protected static final double Z_CLOSE_NEG = Math.pow(2.0, -12.0);
     protected static final double Z_CLOSE_POS = 1.0 - Z_CLOSE_NEG;
     
     protected static final ResourceLocation FRACTURE_TEXTURE_CLOSED = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
