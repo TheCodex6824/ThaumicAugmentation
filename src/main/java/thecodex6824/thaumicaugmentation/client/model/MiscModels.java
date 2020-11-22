@@ -34,6 +34,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -52,7 +53,7 @@ public class MiscModels {
         return manager.getModel(SHIELD_MODEL_LOC);
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void onModelBake(ModelBakeEvent event) {
         IRegistry<ModelResourceLocation, IBakedModel> registry = event.getModelRegistry();
         IModel shield = ModelLoaderRegistry.getModelOrMissing(SHIELD_MODEL);
