@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.client.model;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 
@@ -53,6 +54,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.model.IModelState;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 
@@ -96,6 +98,8 @@ public class MorphicToolModel implements IModel {
     
     public static class BakedModel implements IBakedModel {
         
+        protected static final HashSet<ResourceLocation> WARNED_ITEMS = new HashSet<>();
+        
         protected IBakedModel wrappedFallback;
         protected ItemOverrideList handler;
         
@@ -107,18 +111,35 @@ public class MorphicToolModel implements IModel {
                 public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world,
                         @Nullable EntityLivingBase entity) {
                     
+                    IBakedModel model = null;
+                    ItemStack disp = ItemStack.EMPTY;
                     IMorphicTool tool = stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
                     if (tool != null) {
-                        ItemStack attempt = tool.getDisplayStack();
-                        if (attempt.isEmpty())
-                            attempt = tool.getFunctionalStack();
+                        disp = tool.getDisplayStack();
+                        if (disp.isEmpty())
+                            disp = tool.getFunctionalStack();
                         
-                        if (!attempt.isEmpty()) {
-                            return Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(attempt, world, entity);
-                        }
+                        if (!disp.isEmpty())
+                            model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(disp, world, entity);
                     }
                     
-                    return wrappedFallback.getOverrides().handleItemState(wrappedFallback, stack, world, entity);
+                    if (model == null) {
+                        model = wrappedFallback.getOverrides().handleItemState(wrappedFallback, stack, world, entity);
+                        disp = stack;
+                    }
+                
+                    for (int i = 0; i < 10; ++i) {
+                        IBakedModel next = model.getOverrides().handleItemState(model, disp, world, entity);
+                        if (next == model)
+                            return model;
+                        else
+                            model = next;
+                    }
+                    
+                    if (WARNED_ITEMS.add(stack.getItem().getRegistryName()))
+                        ThaumicAugmentation.getLogger().debug("Model for item {} was too recursive, this might be a bug", stack.getItem().getRegistryName());
+                    
+                    return model;
                 }
             };
         }

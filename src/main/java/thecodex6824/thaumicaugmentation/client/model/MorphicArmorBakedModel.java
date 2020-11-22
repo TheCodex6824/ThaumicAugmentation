@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.client.model;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -41,13 +42,17 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.client.renderer.item.MorphicArmorWrappingTEISR;
 import thecodex6824.thaumicaugmentation.client.renderer.item.MorphicWrappingTEISR;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
 public class MorphicArmorBakedModel implements IBakedModel {
         
+    protected static final HashSet<ResourceLocation> WARNED_ITEMS = new HashSet<>();
+    
     protected IBakedModel wrappedFallback;
     protected ItemOverrideList handler;
     
@@ -59,9 +64,12 @@ public class MorphicArmorBakedModel implements IBakedModel {
             public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world,
                     @Nullable EntityLivingBase entity) {
                 
+                IBakedModel model = null;
                 ItemStack disp = MorphicArmorHelper.getMorphicArmor(stack);
-                if (disp.isEmpty())
-                    return wrappedFallback.getOverrides().handleItemState(wrappedFallback, stack, world, entity);
+                if (disp.isEmpty()) {
+                    model = wrappedFallback.getOverrides().handleItemState(wrappedFallback, stack, world, entity);
+                    disp = stack;
+                }
                 else {
                     // this works because it will only ever get called if the
                     // original model in question was already builtin
@@ -69,8 +77,21 @@ public class MorphicArmorBakedModel implements IBakedModel {
                     if (!(stack.getItem().getTileEntityItemStackRenderer() instanceof MorphicWrappingTEISR))
                         stack.getItem().setTileEntityItemStackRenderer(new MorphicArmorWrappingTEISR());
                     
-                    return Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(disp, world, entity);
+                    model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(disp, world, entity);
                 }
+                
+                for (int i = 0; i < 10; ++i) {
+                    IBakedModel next = model.getOverrides().handleItemState(model, disp, world, entity);
+                    if (next == model)
+                        return model;
+                    else
+                        model = next;
+                }
+                
+                if (WARNED_ITEMS.add(stack.getItem().getRegistryName()))
+                    ThaumicAugmentation.getLogger().debug("Model for armor item {} was too recursive, this might be a bug", stack.getItem().getRegistryName());
+                
+                return model;
             }
         };
     }

@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.client.model;
 
+import java.util.HashSet;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelManager;
@@ -64,10 +66,13 @@ public class MiscModels {
         ModelLoader loader = event.getModelLoader();
         for (Item item : Item.REGISTRY) {
             if (item instanceof ItemArmor) {
+                HashSet<String> visited = new HashSet<>();
                 for (String s : loader.getVariantNames(item)) {
                     ModelResourceLocation model = ModelLoader.getInventoryVariant(s);
-                    IBakedModel old = registry.getObject(model);
-                    registry.putObject(model, new MorphicArmorBakedModel(old));
+                    if (visited.add(s)) {
+                        IBakedModel old = registry.getObject(model);
+                        registry.putObject(model, new MorphicArmorBakedModel(old));
+                    }
                 }
             }
         }
