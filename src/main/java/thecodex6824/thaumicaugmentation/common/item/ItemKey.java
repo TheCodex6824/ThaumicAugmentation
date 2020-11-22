@@ -155,7 +155,9 @@ public class ItemKey extends ItemTABase {
                     key.setBoundType(warded.getUniqueTypeID());
                     key.setBoundTypeName(world.getBlockState(pos).getBlock().getTranslationKey() + ".name");
     
-                    stack.setTagCompound(new NBTTagCompound());
+                    if (!stack.hasTagCompound())
+                        stack.setTagCompound(new NBTTagCompound());
+                    
                     stack.getTagCompound().setInteger("boundToColor", generateKeyColor(player.getUniqueID()));
                     
                     player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_bound_object", 
@@ -179,14 +181,16 @@ public class ItemKey extends ItemTABase {
                 if (!player.isSneaking() && !stack.hasTagCompound() && stack.getMetadata() != 2) {
                     key.setOwner(player.getUniqueID());
                     key.setOwnerName(player.getName());
-                    stack.setTagCompound(new NBTTagCompound());
+                    if (!stack.hasTagCompound())
+                        stack.setTagCompound(new NBTTagCompound());
+                    
                     stack.getTagCompound().setInteger("boundToColor", generateKeyColor(player.getUniqueID()));
                     player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_bound"), true);
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                 }
                 else if (player.isSneaking() && stack.hasTagCompound()) {
                     key.reset();
-                    stack.setTagCompound(null);
+                    stack.getTagCompound().removeTag("boundToColor");
                     player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_unbound"), true);
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                 }
