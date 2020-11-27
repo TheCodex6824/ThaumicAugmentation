@@ -33,17 +33,20 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ItemModelMesherForge;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.client.renderer.item.MorphicArmorWrappingTEISR;
 import thecodex6824.thaumicaugmentation.client.renderer.item.MorphicWrappingTEISR;
@@ -54,9 +57,10 @@ public class MorphicArmorBakedModel implements IBakedModel {
     protected static final HashSet<ResourceLocation> WARNED_ITEMS = new HashSet<>();
     
     protected IBakedModel wrappedFallback;
+    protected ModelResourceLocation wrappedLoc;
     protected ItemOverrideList handler;
     
-    protected MorphicArmorBakedModel(IBakedModel wrappedModel) {
+    public MorphicArmorBakedModel(IBakedModel wrappedModel) {
         wrappedFallback = wrappedModel;
         handler = new ItemOverrideList(ImmutableList.of()) {
             
@@ -92,6 +96,30 @@ public class MorphicArmorBakedModel implements IBakedModel {
                     ThaumicAugmentation.getLogger().debug("Model for armor item {} was too recursive, this might be a bug", stack.getItem().getRegistryName());
                 
                 return model;
+            }
+            
+            @Override
+            @Nullable
+            @SuppressWarnings({"deprecation", "null"})
+            public ResourceLocation applyOverride(ItemStack stack, @Nullable World world,
+                    @Nullable EntityLivingBase entity) {
+                
+                ItemModelMesher m = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
+                ItemStack disp = MorphicArmorHelper.getMorphicArmor(stack);
+                if (!disp.isEmpty()) {
+                    ResourceLocation r = m.getItemModel(disp).getOverrides().applyOverride(disp, world, entity);
+                    if (r == null)
+                        r = MiscModels.getOriginalArmorModel(((ItemModelMesherForge) m).getLocation(disp));
+                    
+                    return r;
+                }
+                else {
+                    ResourceLocation r = wrappedFallback.getOverrides().applyOverride(stack, world, entity);
+                    if (r == null)
+                        r = MiscModels.getOriginalArmorModel(((ItemModelMesherForge) m).getLocation(stack));
+                    
+                    return r;
+                }
             }
         };
     }

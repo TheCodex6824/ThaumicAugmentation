@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 import io.netty.buffer.ByteBuf;
 
 /**
- * Config option class for int[] values.
+ * Config option class for String[] values.
  * @author TheCodex6824
  */
 public class ConfigOptionStringList extends ConfigOption<String[]> {
@@ -34,7 +34,8 @@ public class ConfigOptionStringList extends ConfigOption<String[]> {
 
     public ConfigOptionStringList(boolean enforceServer, String[] defaultValue) {
         super(enforceServer);
-        value = defaultValue;
+        value = new String[defaultValue.length];
+        System.arraycopy(defaultValue, 0, value, 0, value.length);
     }
 
     @Override
@@ -53,6 +54,7 @@ public class ConfigOptionStringList extends ConfigOption<String[]> {
         value = new String[Math.min(size, 256)];
         for (int i = 0; i < value.length; ++i) {
             byte[] data = new byte[Math.min(buf.readInt(), Short.MAX_VALUE)];
+            buf.readBytes(data);
             value[i] = new String(data, StandardCharsets.UTF_8);
         }
     }
@@ -64,7 +66,8 @@ public class ConfigOptionStringList extends ConfigOption<String[]> {
 
     @Override
     public void setValue(String[] value) {
-        this.value = value;
+        this.value = new String[value.length];
+        System.arraycopy(value, 0, this.value, 0, this.value.length);
     }
 
 }

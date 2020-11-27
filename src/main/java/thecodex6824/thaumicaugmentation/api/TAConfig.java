@@ -29,7 +29,6 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntSet;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringArray;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringList;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
@@ -71,6 +70,7 @@ public final class TAConfig {
     public static ConfigOptionBoolean optimizedFluxRiftRenderer;
     public static ConfigOptionBoolean enableBoosterKeybind;
     public static ConfigOptionBoolean disableShaders;
+    public static ConfigOptionStringList morphicArmorExclusions;
 
     public static ConfigOptionIntList defaultGauntletColors;
     public static ConfigOptionInt defaultVoidBootsColor;
@@ -107,7 +107,7 @@ public final class TAConfig {
     
     public static ConfigOptionFloat primalCutterDamage;
     
-    public static ConfigOptionStringArray deniedCategories;
+    public static ConfigOptionStringList deniedCategories;
     
     public static ConfigOptionBoolean generateSpires;
     public static ConfigOptionInt spireMinDist;

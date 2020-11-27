@@ -20,10 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.client.model;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -46,6 +47,8 @@ public class MiscModels {
 
     protected static final ResourceLocation SHIELD_MODEL = new ResourceLocation(ThaumicAugmentationAPI.MODID, "block/impetus_gate_shield");
     protected static final ModelResourceLocation SHIELD_MODEL_LOC = new ModelResourceLocation(SHIELD_MODEL, "normal");
+    protected static final HashMap<ModelResourceLocation, ModelResourceLocation> ARMOR_REPLACEMENTS = new HashMap<>();
+    
     protected static ModelManager manager;
     
     public static IBakedModel getImpetusGateShieldModel() {
@@ -66,16 +69,23 @@ public class MiscModels {
         ModelLoader loader = event.getModelLoader();
         for (Item item : Item.REGISTRY) {
             if (item instanceof ItemArmor) {
-                HashSet<String> visited = new HashSet<>();
                 for (String s : loader.getVariantNames(item)) {
                     ModelResourceLocation model = ModelLoader.getInventoryVariant(s);
-                    if (visited.add(s)) {
+                    if (!MorphicArmorExclusions.isModelExcluded(model.toString())) {
                         IBakedModel old = registry.getObject(model);
                         registry.putObject(model, new MorphicArmorBakedModel(old));
+                        ModelResourceLocation oldLoc = new ModelResourceLocation(ThaumicAugmentationAPI.MODID + "_" +
+                                model.getNamespace() + ":" + model.getPath(), model.getVariant());
+                        registry.putObject(oldLoc, old);
+                        ARMOR_REPLACEMENTS.put(model, oldLoc);
                     }
                 }
             }
         }
+    }
+    
+    public static ModelResourceLocation getOriginalArmorModel(ModelResourceLocation loc) {
+        return ARMOR_REPLACEMENTS.getOrDefault(loc, ModelBakery.MODEL_MISSING);
     }
     
 }

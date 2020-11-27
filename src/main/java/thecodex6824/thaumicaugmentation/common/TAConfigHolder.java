@@ -52,7 +52,6 @@ import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntSet;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringArray;
 import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringList;
 import thecodex6824.thaumicaugmentation.api.config.IEnumSerializer;
 import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
@@ -657,6 +656,18 @@ public final class TAConfigHolder {
         })
         @RequiresMcRestart
         public boolean disableShaders = false;
+        
+        @Name("MorphicArmorExclusions")
+        @Comment({
+            "Due to the way Morphic Armor works, some armor items may not play nicely with it.",
+            "This most commonly appears as the armor being invisible in the inventory.",
+            "If that occurs, add its model name here (including variant names, if needed).",
+            "Regular expressions are supported."
+        })
+        @RequiresMcRestart
+        public String[] morphicArmorExclusions = new String[] {
+            "extrabitmanipulation:moving_part*" // incompatible model retrieval method 
+        };
     }
     
     private static ArrayList<Runnable> listeners = new ArrayList<>();
@@ -695,6 +706,7 @@ public final class TAConfigHolder {
         TAConfig.optimizedFluxRiftRenderer.setValue(client.optimizedFluxRiftRenderer, side);
         TAConfig.enableBoosterKeybind.setValue(client.enableBoosterKeybind, side);
         TAConfig.disableShaders.setValue(client.disableShaders, side);
+        TAConfig.morphicArmorExclusions.setValue(client.morphicArmorExclusions, side);
 
         TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
         TAConfig.defaultVoidBootsColor.setValue(gameplay.defaultVoidBootsColor, side);
@@ -791,6 +803,7 @@ public final class TAConfigHolder {
         TAConfig.optimizedFluxRiftRenderer = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.optimizedFluxRiftRenderer));
         TAConfig.enableBoosterKeybind = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.enableBoosterKeybind));
         TAConfig.disableShaders = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableShaders));
+        TAConfig.morphicArmorExclusions = TAConfigManager.addOption(new ConfigOptionStringList(false, client.morphicArmorExclusions));
         
         TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
         TAConfig.defaultVoidBootsColor = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));
@@ -828,7 +841,7 @@ public final class TAConfigHolder {
     
         TAConfig.primalCutterDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.primalCutterDamage));
     
-        TAConfig.deniedCategories = TAConfigManager.addOption(new ConfigOptionStringArray(true, gameplay.deniedCategories));
+        TAConfig.deniedCategories = TAConfigManager.addOption(new ConfigOptionStringList(true, gameplay.deniedCategories));
     
         TAConfig.generateSpires = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.generateSpires));
         TAConfig.spireMinDist = TAConfigManager.addOption(new ConfigOptionInt(false, world.spireMinDist));

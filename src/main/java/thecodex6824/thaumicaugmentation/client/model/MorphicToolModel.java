@@ -35,6 +35,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -49,6 +50,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ItemModelMesherForge;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -140,6 +142,37 @@ public class MorphicToolModel implements IModel {
                         ThaumicAugmentation.getLogger().debug("Model for item {} was too recursive, this might be a bug", stack.getItem().getRegistryName());
                     
                     return model;
+                }
+                
+                @Override
+                @Nullable
+                @SuppressWarnings("deprecation")
+                public ResourceLocation applyOverride(ItemStack stack, @Nullable World world,
+                        @Nullable EntityLivingBase entity) {
+                    
+                    ItemStack disp = ItemStack.EMPTY;
+                    IMorphicTool tool = stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null);
+                    if (tool != null) {
+                        disp = tool.getDisplayStack();
+                        if (disp.isEmpty())
+                            disp = tool.getFunctionalStack();
+                    }
+                    
+                    ItemModelMesher m = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
+                    if (!disp.isEmpty()) {
+                        ResourceLocation r = m.getItemModel(disp).getOverrides().applyOverride(disp, world, entity);
+                        if (r == null)
+                            r = ((ItemModelMesherForge) m).getLocation(disp);
+                        
+                        return r;
+                    }
+                    else {
+                        ResourceLocation r = wrappedFallback.getOverrides().applyOverride(stack, world, entity);
+                        if (r == null)
+                            r = ((ItemModelMesherForge) m).getLocation(disp);
+                        
+                        return r;
+                    }
                 }
             };
         }

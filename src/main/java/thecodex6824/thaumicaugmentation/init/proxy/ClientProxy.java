@@ -137,6 +137,7 @@ import thecodex6824.thaumicaugmentation.client.model.BuiltInRendererModel;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
 import thecodex6824.thaumicaugmentation.client.model.DirectionalRetexturingModel;
 import thecodex6824.thaumicaugmentation.client.model.ModelEldritchGuardianFixed;
+import thecodex6824.thaumicaugmentation.client.model.MorphicArmorExclusions;
 import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
 import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
@@ -1008,6 +1009,9 @@ public class ClientProxy extends ServerProxy {
             
             ClientRegistry.registerKeyBinding(elytraBoost);
         }
+        
+        for (String s : TAConfig.morphicArmorExclusions.getValue())
+            MorphicArmorExclusions.addExcludedModelPattern(s);
     }
 
     @Override
