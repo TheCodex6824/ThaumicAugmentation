@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
@@ -232,6 +233,11 @@ public class EntityTAEldritchGuardian extends EntityEldritchGuardian {
     @Override
     protected Item getDropItem() {
         return null;
+    }
+    
+    @Override
+    public EnumCreatureAttribute getCreatureAttribute() {
+        return EnumCreatureAttribute.UNDEFINED;
     }
     
 }
