@@ -93,11 +93,12 @@ public class ItemBlockImpetusMirror extends ItemBlock implements IModelProvider<
             if (target instanceof TileImpetusMirror) {
                 TileImpetusMirror mirror = (TileImpetusMirror) target;
                 IImpetusNode node = mirror.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
-                if (mirror.getLink().isInvalid() || (node != null && node.getGraph().findNodeByPosition(mirror.getLink()) == null)) {
+                DimensionalBlockPos ourPos = new DimensionalBlockPos(mirror.getPos(), mirror.getWorld().provider.getDimension());
+                if (mirror.getLink().isInvalid() || node.getGraph().findNodeByPosition(mirror.getLink()) == null) {
                     ItemStack copy = player.getHeldItem(hand).copy();
                     copy.setCount(1);
                     NBTTagCompound tag = new NBTTagCompound();
-                    tag.setIntArray("link", new DimensionalBlockPos(mirror.getPos(), mirror.getWorld().provider.getDimension()).toArray());
+                    tag.setIntArray("link", ourPos.toArray());
                     copy.setTagCompound(tag);
                     world.playSound(null, pos, SoundsTC.jar, SoundCategory.BLOCKS, 1.0F, 2.0F);
                     if (!player.isCreative())

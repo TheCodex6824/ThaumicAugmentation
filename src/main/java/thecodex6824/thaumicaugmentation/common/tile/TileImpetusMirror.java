@@ -151,19 +151,17 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
                     
                     World targetWorld = DimensionManager.getWorld(linked.getDimension());
                     if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
-                        TileEntity tile = world.getTileEntity(linked.getPos());
-                        if (tile != null) {
+                        TileEntity tile = targetWorld.getTileEntity(linked.getPos());
+                        if (tile instanceof TileImpetusMirror) {
                             IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                             if (otherNode != null) {
-                                if (tile instanceof TileImpetusMirror) {
-                                    TileImpetusMirror otherMirror = (TileImpetusMirror) tile;
-                                    if (otherMirror.getLink().isInvalid() || otherMirror.getLink().equals(node.getLocation())) {
-                                        otherMirror.setLink(node.getLocation());
-                                        node.addInput(otherNode);
-                                        node.addOutput(otherNode);
-                                        markDirty();
-                                        needsSync = true;
-                                    }
+                                TileImpetusMirror otherMirror = (TileImpetusMirror) tile;
+                                if (otherMirror.getLink().isInvalid() || !otherNode.getInputLocations().contains(otherMirror.getLink())) {
+                                    otherMirror.setLink(node.getLocation());
+                                    node.addInput(otherNode);
+                                    node.addOutput(otherNode);
+                                    markDirty();
+                                    needsSync = true;
                                 }
                             }
                         }
@@ -193,7 +191,7 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
     public void setLink(DimensionalBlockPos linkTo) {
         if (!linkTo.equals(linked)) {
             boolean removed = false;
-            IImpetusNode link = node.getGraph().findNodeByPosition(linkTo);
+            IImpetusNode link = node.getGraph().findNodeByPosition(linked);
             if (link != null) {
                 removed = node.removeInput(link);
                 removed |= node.removeOutput(link);
@@ -215,36 +213,6 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
                 markDirty();
                 // client may not have the TE data yet
                 needsSync = true;
-                if (!world.isRemote) {
-                    World targetWorld = DimensionManager.getWorld(linked.getDimension());
-                    if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
-                        TileEntity tile = world.getTileEntity(linked.getPos());
-                        if (tile instanceof TileImpetusMirror) {
-                            IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
-                            if (otherNode != null) {
-                                ((TileImpetusMirror) tile).setLink(node.getLocation());
-                                node.addInput(otherNode);
-                                node.addOutput(otherNode);
-                                open = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        else if (!world.isRemote && !open && node.getGraph().findNodeByPosition(linked) == null) {
-            World targetWorld = DimensionManager.getWorld(linked.getDimension());
-            if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
-                TileEntity tile = world.getTileEntity(linked.getPos());
-                if (tile instanceof TileImpetusMirror) {
-                    IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
-                    if (otherNode != null) {
-                        node.addInput(otherNode);
-                        node.addOutput(otherNode);
-                        open = true;
-                        needsSync = true;
-                    }
-                }
             }
         }
     }
