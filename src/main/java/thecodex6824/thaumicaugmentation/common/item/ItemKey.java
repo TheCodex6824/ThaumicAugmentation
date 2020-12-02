@@ -147,22 +147,24 @@ public class ItemKey extends ItemTABase {
             TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
                 IWardedTile warded = tile.getCapability(CapabilityWardedTile.WARDED_TILE, null);
-                if (!player.isSneaking() && !stack.hasTagCompound() && warded != null) {
+                if (!player.isSneaking() && warded != null) {
                     WardAuthenticatorThaumiumKey key = (WardAuthenticatorThaumiumKey) stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
-                    key.setOwner(player.getUniqueID());
-                    key.setOwnerName(player.getName());
-                    key.setBoundPosition(pos);
-                    key.setBoundType(warded.getUniqueTypeID());
-                    key.setBoundTypeName(world.getBlockState(pos).getBlock().getTranslationKey() + ".name");
-    
-                    if (!stack.hasTagCompound())
-                        stack.setTagCompound(new NBTTagCompound());
-                    
-                    stack.getTagCompound().setInteger("boundToColor", generateKeyColor(player.getUniqueID()));
-                    
-                    player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_bound_object", 
-                            new TextComponentTranslation(world.getBlockState(pos).getBlock().getTranslationKey() + ".name"), formatBlockPos(pos)), true);
-                    return EnumActionResult.SUCCESS;
+                    if (key != null && !key.hasOwner()) {
+                        key.setOwner(player.getUniqueID());
+                        key.setOwnerName(player.getName());
+                        key.setBoundPosition(pos);
+                        key.setBoundType(warded.getUniqueTypeID());
+                        key.setBoundTypeName(world.getBlockState(pos).getBlock().getTranslationKey() + ".name");
+        
+                        if (!stack.hasTagCompound())
+                            stack.setTagCompound(new NBTTagCompound());
+                        
+                        stack.getTagCompound().setInteger("boundToColor", generateKeyColor(player.getUniqueID()));
+                        
+                        player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_bound_object", 
+                                new TextComponentTranslation(world.getBlockState(pos).getBlock().getTranslationKey() + ".name"), formatBlockPos(pos)), true);
+                        return EnumActionResult.SUCCESS;
+                    }
                 }
             }
         }
@@ -178,7 +180,7 @@ public class ItemKey extends ItemTABase {
             IWardAuthenticator auth = stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
             if (auth instanceof WardAuthenticatorKey) {
                 WardAuthenticatorKey key = (WardAuthenticatorKey) auth;
-                if (!player.isSneaking() && !stack.hasTagCompound() && stack.getMetadata() != 2) {
+                if (!player.isSneaking() && stack.getMetadata() != 2 && !key.hasOwner()) {
                     key.setOwner(player.getUniqueID());
                     key.setOwnerName(player.getName());
                     if (!stack.hasTagCompound())
@@ -188,7 +190,7 @@ public class ItemKey extends ItemTABase {
                     player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_bound"), true);
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                 }
-                else if (player.isSneaking() && stack.hasTagCompound()) {
+                else if (player.isSneaking() && key.hasOwner()) {
                     key.reset();
                     stack.getTagCompound().removeTag("boundToColor");
                     player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.key_unbound"), true);
@@ -241,10 +243,13 @@ public class ItemKey extends ItemTABase {
     public ItemStack getContainerItem(ItemStack stack) {
         if (stack.getMetadata() == 1)
             return stack.copy();
-        else if (stack.getMetadata() == 2 && stack.hasTagCompound())
-            return stack.copy();
-        else
-            return ItemStack.EMPTY;
+        else if (stack.getMetadata() == 2) {
+            IWardAuthenticator auth = stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null);
+            if (auth instanceof WardAuthenticatorKey && ((WardAuthenticatorKey) auth).hasOwner())
+                return stack.copy();
+        }
+        
+        return ItemStack.EMPTY;
     }
     
     @Override
