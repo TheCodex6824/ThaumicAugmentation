@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.ImmutableList;
 
@@ -130,12 +131,22 @@ public class MorphicToolModel implements IModel {
                         disp = stack;
                     }
                 
-                    for (int i = 0; i < 10; ++i) {
-                        IBakedModel next = model.getOverrides().handleItemState(model, disp, world, entity);
-                        if (next == model)
-                            return model;
-                        else
-                            model = next;
+                    try {
+                        for (int i = 0; i < 10; ++i) {
+                            IBakedModel next = model.getOverrides().handleItemState(model, disp, world, entity);
+                            if (next == model)
+                                return model;
+                            else
+                                model = next;
+                        }
+                    }
+                    catch (Exception ex) {
+                        if (WARNED_ITEMS.add(stack.getItem().getRegistryName())) {
+                            ThaumicAugmentation.getLogger().debug("Model for item {} threw an exception", stack.getItem().getRegistryName());
+                            ThaumicAugmentation.getLogger().catching(Level.DEBUG, ex);
+                        }
+                        
+                        return model;
                     }
                     
                     if (WARNED_ITEMS.add(stack.getItem().getRegistryName()))
