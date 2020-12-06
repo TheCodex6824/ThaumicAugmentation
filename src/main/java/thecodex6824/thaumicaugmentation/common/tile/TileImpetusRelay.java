@@ -39,8 +39,9 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusRelay extends TileEntity implements ITickable {
+public class TileImpetusRelay extends TileEntity implements ITickable, IBreakCallback {
 
     protected ImpetusNode node;
     protected int ticks;
@@ -95,7 +96,10 @@ public class TileImpetusRelay extends TileEntity implements ITickable {
     }
     
     @Override
-    public void invalidate() {
+    public void onBlockBroken() {
+        if (!world.isRemote)
+            NodeHelper.syncDestroyedImpetusNode(node);
+        
         node.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }

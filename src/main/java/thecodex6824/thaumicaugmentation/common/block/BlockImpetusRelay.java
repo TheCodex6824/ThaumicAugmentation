@@ -47,6 +47,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock, IItemBlockProvider {
@@ -115,6 +116,15 @@ public class BlockImpetusRelay extends BlockTABase implements IDirectionalBlock,
             dropBlockAsItem(world, pos, state, 0);
             world.setBlockToAir(pos);
         }
+    }
+    
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity t = world.getTileEntity(pos);
+        if (t instanceof IBreakCallback)
+            ((IBreakCallback) t).onBlockBroken();
+        
+        super.breakBlock(world, pos, state);
     }
     
     @Override

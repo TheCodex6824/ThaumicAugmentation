@@ -50,8 +50,9 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusGenerator extends TileEntity implements ITickable {
+public class TileImpetusGenerator extends TileEntity implements ITickable, IBreakCallback {
 
     protected static class CustomEnergyStorage extends EnergyStorage {
         
@@ -153,7 +154,10 @@ public class TileImpetusGenerator extends TileEntity implements ITickable {
     }
     
     @Override
-    public void invalidate() {
+    public void onBlockBroken() {
+        if (!world.isRemote)
+            NodeHelper.syncDestroyedImpetusNode(node);
+        
         node.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }

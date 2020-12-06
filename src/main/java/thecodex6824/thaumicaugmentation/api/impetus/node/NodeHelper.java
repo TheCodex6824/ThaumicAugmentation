@@ -244,15 +244,6 @@ public final class NodeHelper {
             
             toRemove.clear();
         }
-        
-        // clean up orphan nodes
-        for (IImpetusNode node : graph.getNodes()) {
-            if (node.getNumInputs() == 0 && node.getNumOutputs() == 0)
-                toRemove.add(node);
-        }
-        
-        for (IImpetusNode node : toRemove)
-            graph.removeNode(node);
     }
     
     public static void validateOutputs(World sharedWorld, IImpetusNode node) {
@@ -340,6 +331,14 @@ public final class NodeHelper {
     
     public static void syncRemovedImpetusNodeOutput(IImpetusNode node, DimensionalBlockPos output) {
         TAInternals.updateImpetusNode(node, output, true, true);
+    }
+    
+    public static void syncDestroyedImpetusNode(IImpetusNode node) {
+        for (IImpetusNode n : node.getInputs())
+            NodeHelper.syncRemovedImpetusNodeOutput(n, node.getLocation());
+        
+        for (IImpetusNode n : node.getOutputs())
+            NodeHelper.syncRemovedImpetusNodeInput(n, node.getLocation());
     }
     
 }

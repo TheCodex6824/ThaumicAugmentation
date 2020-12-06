@@ -50,6 +50,7 @@ public class TestImpetusGraph {
         DimensionalBlockPos first = new DimensionalBlockPos(0, 0, 0, 0);
         DimensionalBlockPos second = new DimensionalBlockPos(0, 0, 0, 0);
         assertEquals(first, second);
+        assertTrue(first.hashCode() == second.hashCode());
         
         first = new DimensionalBlockPos(0, 0, 0, 1);
         assertNotEquals(first, second);
@@ -62,6 +63,17 @@ public class TestImpetusGraph {
         
         second = DimensionalBlockPos.INVALID;
         assertEquals(first, second);
+        assertTrue(first.hashCode() == second.hashCode());
+    }
+    
+    @Test
+    public void testInvalidNodeLocation() {
+        // nodes without a location should not be in a graph
+        ImpetusNode node = new ImpetusNode(2, 2);
+        assertTrue(node.getGraph().isEmpty());
+        
+        node.setLocation(new DimensionalBlockPos(0, 0, 0, 0));
+        assertTrue(!node.getGraph().isEmpty());
     }
     
     @Test

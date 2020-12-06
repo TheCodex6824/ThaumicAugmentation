@@ -71,9 +71,10 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
 
-public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnimatedTile {
+public class TileImpetusDiffuser extends TileEntity implements ITickable, IBreakCallback, IAnimatedTile {
     
     protected SimpleImpetusConsumer consumer;
     protected IAnimationStateMachine asm;
@@ -260,7 +261,10 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
     }
     
     @Override
-    public void invalidate() {
+    public void onBlockBroken() {
+        if (!world.isRemote)
+            NodeHelper.syncDestroyedImpetusNode(consumer);
+        
         consumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
     }

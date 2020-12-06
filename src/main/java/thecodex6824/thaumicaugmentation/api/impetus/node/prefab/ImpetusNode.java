@@ -59,7 +59,7 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
         inputs = new HashSet<>();
         outputs = new HashSet<>();
         graph = new ImpetusGraph();
-        if (loc != null)
+        if (!loc.isInvalid())
             graph.addNode(this);
     }
     
@@ -231,7 +231,7 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     
     @Override
     public void setLocation(DimensionalBlockPos location) {
-        if (loc != null)
+        if (!loc.isInvalid())
             graph.removeNode(this);
         
         loc = location;

@@ -53,6 +53,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 import thecodex6824.thaumicaugmentation.init.GUIHandler;
 
@@ -164,6 +165,10 @@ public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraf
             IBlockState up = world.getBlockState(pos.up());
             if (up.getBlock() != this || up.getValue(IArcaneTerraformerHalf.TERRAFORMER_HALF) == ArcaneTerraformerHalf.UPPER)
                 world.setBlockToAir(pos.up());
+            
+            TileEntity t = world.getTileEntity(pos);
+            if (t instanceof IBreakCallback)
+                ((IBreakCallback) t).onBlockBroken();
         }
         else {
             IBlockState down = world.getBlockState(pos.down());

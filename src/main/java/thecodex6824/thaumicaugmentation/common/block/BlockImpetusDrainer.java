@@ -44,6 +44,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 public class BlockImpetusDrainer extends BlockTABase implements IEnabledBlock, IItemBlockProvider {
 
@@ -103,6 +104,15 @@ public class BlockImpetusDrainer extends BlockTABase implements IEnabledBlock, I
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         update(state, world, pos);
+    }
+    
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity t = world.getTileEntity(pos);
+        if (t instanceof IBreakCallback)
+            ((IBreakCallback) t).onBlockBroken();
+        
+        super.breakBlock(world, pos, state);
     }
     
     @Override

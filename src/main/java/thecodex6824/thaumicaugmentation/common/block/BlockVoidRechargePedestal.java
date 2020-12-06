@@ -45,6 +45,7 @@ import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
+import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 public class BlockVoidRechargePedestal extends BlockTABase implements IItemBlockProvider {
 
@@ -136,6 +137,9 @@ public class BlockVoidRechargePedestal extends BlockTABase implements IItemBlock
                 }
             }
         }
+        
+        if (tile instanceof IBreakCallback)
+            ((IBreakCallback) tile).onBlockBroken();
         
         super.breakBlock(world, pos, state);
     }

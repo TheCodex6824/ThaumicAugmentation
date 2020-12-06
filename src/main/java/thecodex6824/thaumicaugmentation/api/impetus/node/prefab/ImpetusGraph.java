@@ -196,35 +196,37 @@ public class ImpetusGraph implements IImpetusGraph {
             other.onDisconnected(splitAt);
         
         nodes.remove(splitAt.getLocation());
-        Map<IImpetusNode, Integer> tags = new IdentityHashMap<>();
-        int tag = 0;
-        while (tags.size() < nodes.size()) {
-            ArrayDeque<IImpetusNode> toCheck = new ArrayDeque<>();
-            toCheck.add(nodes.values().stream().filter(node -> !tags.containsKey(node)).findFirst().get());
-            while (!toCheck.isEmpty()) {
-                IImpetusNode node = toCheck.pop();
-                if (!tags.containsKey(node)) {
-                    tags.put(node, tag);
-                    toCheck.addAll(node.getInputs());
-                    toCheck.addAll(node.getOutputs());
+        if (!nodes.isEmpty()) {
+            Map<IImpetusNode, Integer> tags = new IdentityHashMap<>();
+            int tag = 0;
+            while (tags.size() < nodes.size()) {
+                ArrayDeque<IImpetusNode> toCheck = new ArrayDeque<>();
+                toCheck.add(nodes.values().stream().filter(node -> !tags.containsKey(node)).findFirst().get());
+                while (!toCheck.isEmpty()) {
+                    IImpetusNode node = toCheck.pop();
+                    if (!tags.containsKey(node)) {
+                        tags.put(node, tag);
+                        toCheck.addAll(node.getInputs());
+                        toCheck.addAll(node.getOutputs());
+                    }
                 }
+                
+                ++tag;
             }
             
-            ++tag;
-        }
-        
-        if (tag > 0) {
-            for (int i = 0; i < tag; ++i) {
-                final int currentTag = i;
-                ImpetusGraph newGraph = new ImpetusGraph();
-                tags.entrySet().removeIf(entry -> {
-                    if (entry.getValue() == currentTag) {
-                        newGraph.addNode(entry.getKey());
-                        return true;
-                    }
-                    else
-                        return false;
-                });
+            if (tag > 0) {
+                for (int i = 0; i < tag; ++i) {
+                    final int currentTag = i;
+                    ImpetusGraph newGraph = new ImpetusGraph();
+                    tags.entrySet().removeIf(entry -> {
+                        if (entry.getValue() == currentTag) {
+                            newGraph.addNode(entry.getKey());
+                            return true;
+                        }
+                        else
+                            return false;
+                    });
+                }
             }
         }
     }
