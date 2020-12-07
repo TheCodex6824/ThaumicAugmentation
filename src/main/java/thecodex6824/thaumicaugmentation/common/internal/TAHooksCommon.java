@@ -156,4 +156,8 @@ public final class TAHooksCommon {
                 entity.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId());
     }
     
+    public static boolean shouldAllowRunicShield(ItemStack stack) {
+        return stack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+    }
+    
 }

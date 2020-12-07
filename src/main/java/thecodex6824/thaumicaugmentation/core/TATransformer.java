@@ -36,6 +36,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClient
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderEntities;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerRunicShieldingAllowBaublesCap;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCBlueprintCrashFix;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCRobesElytraFlapping;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
@@ -122,6 +123,10 @@ public class TATransformer implements IClassTransformer {
         // fixes armor counting twice visually for void robe armor
         // I get a lot of reports/questions about it, so here it is
         TRANSFORMERS.add(new TransformerVoidRobesArmorBarFix());
+        
+        // makes runic shielding infusion work on items with baubles capability
+        // TC only checks for the interface on the item...
+        TRANSFORMERS.add(new TransformerRunicShieldingAllowBaublesCap());
     }
     
     public TATransformer() {}
