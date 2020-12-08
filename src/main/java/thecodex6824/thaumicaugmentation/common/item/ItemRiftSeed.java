@@ -47,7 +47,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.aura.AuraHelper;
+import thaumcraft.common.config.ModConfig;
 import thaumcraft.common.entities.EntityFluxRift;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
@@ -87,7 +89,9 @@ public class ItemRiftSeed extends ItemTABase {
             BlockPos offset = pos.offset(facing);
             Vec3d position = new Vec3d(offset.getX() + 0.5, offset.getY() + 0.5, offset.getZ() + 0.5);
             ItemStack stack = player.getHeldItem(hand);
-            if (stack.getMetadata() == 0 && getEntitiesInRange(EntityFluxRift.class, world, position, 32.0).isEmpty()) {
+            if (stack.getMetadata() == 0 && (!ModConfig.CONFIG_MISC.wussMode || TAConfig.allowWussRiftSeed.getValue()) &&
+                    getEntitiesInRange(EntityFluxRift.class, world, position, 32.0).isEmpty()) {
+                
                 EntityFluxRift rift = new EntityFluxRift(world);
                 rift.setRiftSeed(world.rand.nextInt());
                 rift.setLocationAndAngles(position.x, position.y, position.z, world.rand.nextInt(360), 0.0F);
@@ -98,8 +102,14 @@ public class ItemRiftSeed extends ItemTABase {
                     player.getHeldItem(hand).shrink(1);
             }
             else if (stack.getMetadata() == 0) {
-                player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.rift_too_close").setStyle(
-                        new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+                if (ModConfig.CONFIG_MISC.wussMode && !TAConfig.allowWussRiftSeed.getValue()) {
+                    player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.rift_not_allowed").setStyle(
+                            new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+                }
+                else {
+                    player.sendStatusMessage(new TextComponentTranslation("thaumicaugmentation.text.rift_too_close").setStyle(
+                            new Style().setColor(TextFormatting.DARK_PURPLE)), true);
+                }
             }
             else {
                 // flux particles don't seem to render at very high flux numbers in one call

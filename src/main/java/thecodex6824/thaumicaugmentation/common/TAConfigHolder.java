@@ -517,6 +517,10 @@ public final class TAConfigHolder {
                 "MECHANICS"
         };
         
+        @Name("AllowWussRiftSeed")
+        @Comment("Allows rift seeds to create Flux Rifts, even if Thaumcraft's wuss mode is enabled.")
+        public boolean allowWussRiftSeed = false;
+        
     }
     
     public static class WorldOptions {
@@ -721,6 +725,8 @@ public final class TAConfigHolder {
         TAConfig.terraformerImpetusCost.setValue((long) gameplay.impetus.terraformerCost);
         TAConfig.shieldFocusImpetusCost.setValue((long) gameplay.impetus.shieldFocusCost);
         
+        TAConfig.allowWussRiftSeed.setValue(gameplay.allowWussRiftSeed);
+        
         TAConfig.cannonBeamDamage.setValue(gameplay.impetus.cannon.beamDamage);
         TAConfig.cannonBeamCost.setValue((long) gameplay.impetus.cannon.beamCost);
         TAConfig.cannonBeamRange.setValue(gameplay.impetus.cannon.beamRange);
@@ -825,6 +831,8 @@ public final class TAConfigHolder {
         TAConfig.terraformerImpetusCost = TAConfigManager.addOption(new ConfigOptionLong(false, (long) gameplay.impetus.terraformerCost));
         TAConfig.shieldFocusImpetusCost = TAConfigManager.addOption(new ConfigOptionLong(false, (long) gameplay.impetus.shieldFocusCost));
     
+        TAConfig.allowWussRiftSeed = TAConfigManager.addOption(new ConfigOptionBoolean(false, gameplay.allowWussRiftSeed));
+        
         TAConfig.cannonBeamDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannon.beamDamage));
         TAConfig.cannonBeamCost = TAConfigManager.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannon.beamCost));
         TAConfig.cannonBeamRange = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.beamRange));
