@@ -1,9 +1,9 @@
 tile.thaumicaugmentation.vis_regenerator.name=Vis Regenerator
 tile.thaumicaugmentation.warded_chest.name=Warded Chest
-tile.thaumicaugmentation.arcane_door.name=아케인 도어
+tile.thaumicaugmentation.arcane_door.name=아케인 문
 tile.thaumicaugmentation.arcane_door_greatwood.name=그레이트우드 아케인 문
 tile.thaumicaugmentation.arcane_door_thaumium.name=사우뮴 아케인 문
-tile.thaumicaugmentation.arcane_door_silverwood.name=실버우드 아케인 도어
+tile.thaumicaugmentation.arcane_door_silverwood.name=실버우드 아케인 문
 tile.thaumicaugmentation.temporary_light.name=Casted Light
 tile.thaumicaugmentation.stone.stone_void.name=Void Stone
 tile.thaumicaugmentation.stone.stone_taint_nodecay.name=Tainted Void Stone
