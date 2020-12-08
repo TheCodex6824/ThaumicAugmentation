@@ -36,7 +36,10 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart;
 import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart.ObeliskPart;
 import thecodex6824.thaumicaugmentation.api.block.property.IObeliskType;
@@ -88,8 +91,10 @@ public class ItemObeliskPlacer extends ItemTABase {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
+        if (!TAConfig.disableCreativeOnlyText.getValue())
+            tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
     }
     
 }

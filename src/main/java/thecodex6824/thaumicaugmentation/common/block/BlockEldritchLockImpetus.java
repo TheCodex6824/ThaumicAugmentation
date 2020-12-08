@@ -53,6 +53,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IEldritchLock;
@@ -77,10 +78,13 @@ public class BlockEldritchLockImpetus extends BlockTABase implements IHorizontal
             public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip,
                     ITooltipFlag flagIn) {
                 
+                if (!TAConfig.disableCreativeOnlyText.getValue()) {
+                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
+                            new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
+                }
+                
                 tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.eldritch_lock_type", new TextComponentTranslation(
                         "thaumicaugmentation.text.impetus")).getFormattedText());
-                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
-                        new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
             }
         };
     }

@@ -51,6 +51,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.items.ItemsTC;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
@@ -81,8 +82,10 @@ public class BlockCrabVent extends BlockTABase implements IDirectionalBlock, IIt
             public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip,
                     ITooltipFlag flagIn) {
                 
-                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
-                        new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
+                if (!TAConfig.disableCreativeOnlyText.getValue()) {
+                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
+                            new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
+                }
             }
         };
     }

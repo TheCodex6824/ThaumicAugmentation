@@ -57,6 +57,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType;
@@ -92,14 +93,16 @@ public class BlockEldritchLock extends BlockTABase implements IHorizontallyDirec
             public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip,
                     ITooltipFlag flagIn) {
                 
+                if (!TAConfig.disableCreativeOnlyText.getValue()) {
+                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
+                            new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
+                }
+                
                 LockType type = LockType.fromMeta(stack.getMetadata());
                 if (type != null) {
                     tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.eldritch_lock_type", new TextComponentTranslation(
                             type.getKey().getTranslationKey() + ".name")).getFormattedText());
                 }
-                
-                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
-                        new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
             }
             
             @Override

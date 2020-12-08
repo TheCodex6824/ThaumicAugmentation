@@ -42,6 +42,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterBase;
@@ -109,8 +112,9 @@ public class ItemAutocasterPlacer extends ItemTABase {
     }
     
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        if (stack.getMetadata() == 1)
+        if (stack.getMetadata() == 1 && !TAConfig.disableCreativeOnlyText.getValue())
             tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
     }
     

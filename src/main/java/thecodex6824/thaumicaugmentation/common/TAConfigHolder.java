@@ -672,6 +672,13 @@ public final class TAConfigHolder {
         public String[] morphicArmorExclusions = new String[] {
             "extrabitmanipulation:moving_part*" // incompatible model retrieval method 
         };
+        
+        @Name("DisableCreativeOnlyText")
+        @Comment({
+            "Removes the \"Creative Only\" text on items that are creative-only normally.",
+            "This is for modpack authors that might want to make these items obtainable."
+        })
+        public boolean disableCreativeOnlyText = false;
     }
     
     private static ArrayList<Runnable> listeners = new ArrayList<>();
@@ -711,7 +718,8 @@ public final class TAConfigHolder {
         TAConfig.enableBoosterKeybind.setValue(client.enableBoosterKeybind, side);
         TAConfig.disableShaders.setValue(client.disableShaders, side);
         TAConfig.morphicArmorExclusions.setValue(client.morphicArmorExclusions, side);
-
+        TAConfig.disableCreativeOnlyText.setValue(client.disableCreativeOnlyText, side);
+        
         TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
         TAConfig.defaultVoidBootsColor.setValue(gameplay.defaultVoidBootsColor, side);
 
@@ -810,6 +818,7 @@ public final class TAConfigHolder {
         TAConfig.enableBoosterKeybind = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.enableBoosterKeybind));
         TAConfig.disableShaders = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableShaders));
         TAConfig.morphicArmorExclusions = TAConfigManager.addOption(new ConfigOptionStringList(false, client.morphicArmorExclusions));
+        TAConfig.disableCreativeOnlyText = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableCreativeOnlyText));
         
         TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
         TAConfig.defaultVoidBootsColor = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));

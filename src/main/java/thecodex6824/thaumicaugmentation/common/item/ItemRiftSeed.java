@@ -159,8 +159,11 @@ public class ItemRiftSeed extends ItemTABase {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         if (stack.hasTagCompound()) {
             if (stack.getMetadata() == 0) {
-                tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
-                        new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
+                if (!TAConfig.disableCreativeOnlyText.getValue()) {
+                    tooltip.add(new TextComponentTranslation("thaumicaugmentation.text.creative_only").setStyle(
+                            new Style().setColor(TextFormatting.DARK_PURPLE)).getFormattedText());
+                }
+                
                 tooltip.add(new TextComponentTranslation(
                         "thaumicaugmentation.text.rift_seed_size", stack.getTagCompound().getInteger("riftSize")).getFormattedText());
             }
