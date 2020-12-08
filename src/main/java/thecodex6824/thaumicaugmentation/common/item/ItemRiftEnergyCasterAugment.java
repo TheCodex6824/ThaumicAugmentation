@@ -49,6 +49,7 @@ import thaumcraft.api.casters.ICaster;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.TASounds;
@@ -100,7 +101,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
                 IImpetusStorage energy = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
                 // not actually removing energy is intentional
                 if (energy != null && energy.extractEnergy(10, true) == 10)
-                    focusPackage.setFocusPower(focusPackage.getFocusPower() * 1.1F);
+                    focusPackage.setFocusPower(focusPackage.getFocusPower() * TAConfig.impetusConductorFactor.getValue().floatValue());
                 
                 return false;
             }

@@ -143,6 +143,8 @@ public final class TAConfig {
     public static ConfigOptionDouble frenzyModifierScaleFactor;
     public static ConfigOptionInt frenzyModifierMaxLevel;
     
+    public static ConfigOptionDouble impetusConductorFactor;
+    
     /**
      * Registers a callback to be notified when the config is synced or updated.
      * @param listener The callback

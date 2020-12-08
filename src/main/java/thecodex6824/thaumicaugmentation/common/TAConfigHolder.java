@@ -394,6 +394,9 @@ public final class TAConfigHolder {
             })
             public int frenzyModifierMaxLevel = 15;
             
+            @Name("ImpetusConductorFactor")
+            @Comment("The amount the focus power is multiplied by when the gauntlet has a charged Impetus Conductor.")
+            public double impetusConductorFactor = 1.1;
         }
         
         @Name("GauntletVisDiscounts")
@@ -714,10 +717,6 @@ public final class TAConfigHolder {
         TAConfig.tileWardMode.setValue(gameplay.ward.tileWardMode, side);
 
         TAConfig.reducedEffects.setValue(client.reducedEffects, side);
-        TAConfig.optimizedFluxRiftRenderer.setValue(client.optimizedFluxRiftRenderer, side);
-        TAConfig.enableBoosterKeybind.setValue(client.enableBoosterKeybind, side);
-        TAConfig.disableShaders.setValue(client.disableShaders, side);
-        TAConfig.morphicArmorExclusions.setValue(client.morphicArmorExclusions, side);
         TAConfig.disableCreativeOnlyText.setValue(client.disableCreativeOnlyText, side);
         
         TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
@@ -756,6 +755,35 @@ public final class TAConfigHolder {
         TAConfig.generateSpires.setValue(world.generateSpires);
         TAConfig.spireMinDist.setValue(world.spireMinDist);
         TAConfig.spireSpacing.setValue(world.spireSpacing);
+        
+        TAConfig.experienceModifierCap.setValue(gameplay.augment.experienceModifierCap);
+        TAConfig.experienceModifierBase.setValue(gameplay.augment.experienceModifierBase);
+        TAConfig.experienceModifierScale.setValue(gameplay.augment.experienceModifierScale);
+    
+        TAConfig.elementalModifierPositiveFactor.setValue(gameplay.augment.elementalModifierPositiveFactor);
+        TAConfig.elementalModifierNegativeFactor.setValue(gameplay.augment.elementalModifierNegativeFactor);
+    
+        TAConfig.dimensionalModifierOverworldPostiveFactor.setValue(gameplay.augment.dimensionalModifierOverworldPositiveFactor);
+        TAConfig.dimensionalModifierOverworldNegativeFactor.setValue(gameplay.augment.dimensionalModifierOverworldNegativeFactor);
+        TAConfig.dimensionalModifierOverworldDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierOverworldDims));
+    
+        TAConfig.dimensionalModifierNetherPostiveFactor.setValue(gameplay.augment.dimensionalModifierNetherPositiveFactor);
+        TAConfig.dimensionalModifierNetherNegativeFactor.setValue(gameplay.augment.dimensionalModifierNetherNegativeFactor);
+        TAConfig.dimensionalModifierNetherDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierNetherDims));
+        
+        TAConfig.dimensionalModifierEndPostiveFactor.setValue(gameplay.augment.dimensionalModifierEndPositiveFactor);
+        TAConfig.dimensionalModifierEndNegativeFactor.setValue(gameplay.augment.dimensionalModifierEndNegativeFactor);
+        TAConfig.dimensionalModifierEndDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEndDims));
+        
+        TAConfig.dimensionalModifierEmptinessPostiveFactor.setValue(gameplay.augment.dimensionalModifierEmptinessPositiveFactor);
+        TAConfig.dimensionalModifierEmptinessNegativeFactor.setValue(gameplay.augment.dimensionalModifierEmptinessNegativeFactor);
+        TAConfig.dimensionalModifierEmptinessDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEmptinessDims));
+    
+        TAConfig.frenzyModifierScaleFactor.setValue(gameplay.augment.frenzyModifierScale);
+        TAConfig.frenzyModifierCooldown.setValue(gameplay.augment.frenzyModifierCooldown);
+        TAConfig.frenzyModifierMaxLevel.setValue(gameplay.augment.frenzyModifierMaxLevel);
+        
+        TAConfig.impetusConductorFactor.setValue(gameplay.augment.impetusConductorFactor);
     }
 
     public static void syncLocally() {
@@ -891,6 +919,7 @@ public final class TAConfigHolder {
         TAConfig.frenzyModifierCooldown = TAConfigManager.addOption(new ConfigOptionInt(false, gameplay.augment.frenzyModifierCooldown));
         TAConfig.frenzyModifierMaxLevel = TAConfigManager.addOption(new ConfigOptionInt(false, gameplay.augment.frenzyModifierMaxLevel));
         
+        TAConfig.impetusConductorFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.impetusConductorFactor));
     }
 
 }
