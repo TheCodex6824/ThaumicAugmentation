@@ -192,36 +192,43 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IBreak
                             if (tile instanceof TileVoidSiphon) {
                                 TileVoidSiphon siphon = (TileVoidSiphon) tile;
                                 if (BlockStateUtils.isEnabled(state)) {
-                                    ConsumeResult result = consumer.consume(75, false);
-                                    if (result.energyConsumed > 0) {
-                                        NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
-                                        for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
-                                            NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+                                    ItemStack initial = siphon.getStackInSlot(0);
+                                    if (initial.isEmpty() ||
+                                            (initial.getItem() == ItemsTC.voidSeed && initial.getCount() < initial.getMaxStackSize())) {
                                         
-                                        siphon.progress += (int) (result.energyConsumed / 1.5F);
-                                        if ((ticks - 1) % 40 == 0) {
-                                            ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.65, 0.5),
-                                                    new Vec3d(check).add(0.5, 0.85, 0.5));
-                                        }
-                                        
-                                        boolean sync = false;
-                                        while (siphon.progress >= 2000) {
-                                            ItemStack contained = siphon.getStackInSlot(0);
-                                            if (contained.isEmpty() ||
-                                                    (contained.getItem() == ItemsTC.voidSeed && contained.getCount() < contained.getMaxStackSize())) {
-                                                
-                                                siphon.progress -= 2000;
-                                                if (contained.isEmpty())
-                                                  siphon.setInventorySlotContents(0, new ItemStack(ItemsTC.voidSeed));
-                                                else
-                                                  siphon.setInventorySlotContents(0, new ItemStack(contained.getItem(), contained.getCount() + 1));
-                                                
-                                                sync = true;
+                                        ConsumeResult result = consumer.consume(75, false);
+                                        if (result.energyConsumed > 0) {
+                                            NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+                                            for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+                                                NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+                                            
+                                            siphon.progress += (int) (result.energyConsumed / 1.5F);
+                                            if ((ticks - 1) % 40 == 0) {
+                                                ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.65, 0.5),
+                                                        new Vec3d(check).add(0.5, 0.85, 0.5));
                                             }
+                                            
+                                            boolean sync = false;
+                                            while (siphon.progress >= 2000) {
+                                                ItemStack contained = siphon.getStackInSlot(0);
+                                                if (contained.isEmpty() ||
+                                                        (contained.getItem() == ItemsTC.voidSeed && contained.getCount() < contained.getMaxStackSize())) {
+                                                    
+                                                    siphon.progress -= 2000;
+                                                    if (contained.isEmpty())
+                                                      siphon.setInventorySlotContents(0, new ItemStack(ItemsTC.voidSeed));
+                                                    else
+                                                      siphon.setInventorySlotContents(0, new ItemStack(contained.getItem(), contained.getCount() + 1));
+                                                    
+                                                    sync = true;
+                                                }
+                                                else
+                                                    break;
+                                            }
+                                            
+                                            if (sync)
+                                                siphon.syncTile(false);
                                         }
-                                        
-                                        if (sync)
-                                            siphon.syncTile(false);
                                     }
                                 }
                             }

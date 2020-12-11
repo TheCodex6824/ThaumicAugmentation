@@ -33,7 +33,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -61,7 +60,7 @@ import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
-public class ItemBlockImpetusMirror extends ItemBlock implements IModelProvider<Item> {
+public class ItemBlockImpetusMirror extends ItemBlockNoImpetusNodeNBT implements IModelProvider<Item> {
 
     public ItemBlockImpetusMirror() {
         super(TABlocks.IMPETUS_MIRROR);

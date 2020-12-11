@@ -48,6 +48,7 @@ import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
+import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockNoImpetusNodeNBT;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGate;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
@@ -71,7 +72,7 @@ public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, 
     
     @Override
     public ItemBlock createItemBlock() {
-        return new ItemBlock(this) {
+        return new ItemBlockNoImpetusNodeNBT(this) {
             @Override
             public IRarity getForgeRarity(ItemStack stack) {
                 return TAMaterials.RARITY_ELDRITCH;
