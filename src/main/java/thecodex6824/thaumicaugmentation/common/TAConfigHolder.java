@@ -450,10 +450,11 @@ public final class TAConfigHolder {
         @Name("VoidBootsJumpFactor")
         @Comment({
             "The boost applied to player movement while in the air.",
-            "This itself is a speed, so it can make movement faster in the air than on the ground."
+            "This itself is a speed, so it can make movement faster in the air than on the ground.",
+            "Note that sprinting's jump modifier uses this value as well."
         })
         @RangeDouble(min = 0.0F, max = 10.0F)
-        public double voidBootsJumpFactor = 0.04;
+        public double voidBootsJumpFactor = 0.03;
 
         @Name("VoidBootsStepHeight")
         @Comment({

@@ -40,7 +40,6 @@ import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
 import vazkii.botania.api.item.IBaubleRender.RenderType;
@@ -83,11 +82,11 @@ public class IntegrationBotania implements IIntegrationHolder {
     @SubscribeEvent
     public void onAttachCapabilityItemStack(AttachCapabilitiesEvent<ItemStack> event) {
         if (event.getObject().getItem() instanceof ItemFlightTiara) {
-            event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "elytra_harness_augment"), new SimpleCapabilityProviderNoSave<IAugment>(new IElytraHarnessAugment() {
+            event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "elytra_harness_augment"), new SimpleCapabilityProviderNoSave<>(new IElytraHarnessAugment() {
                 @Override
                 public boolean isCosmetic() {
                     return true;
-                }
+                }   
                 
                 @Override
                 public boolean hasAdditionalAugmentTooltip() {

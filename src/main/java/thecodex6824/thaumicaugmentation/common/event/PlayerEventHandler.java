@@ -28,7 +28,6 @@ import java.util.function.Consumer;
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
@@ -56,8 +55,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import thaumcraft.api.capabilities.IPlayerKnowledge.EnumResearchFlag;
 import thaumcraft.api.capabilities.IPlayerKnowledge;
+import thaumcraft.api.capabilities.IPlayerKnowledge.EnumResearchFlag;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
@@ -97,7 +96,6 @@ public final class PlayerEventHandler {
         event);
     };
     
-    private static final WeakHashMap<Entity, Float> FALL_DAMAGE = new WeakHashMap<>();
     private static final Set<EntityPlayer> CREATIVE_FLIGHT = Collections.newSetFromMap(new WeakHashMap<>());
     private static final Set<EntityPlayer> ELYTRA_BOOSTS = Collections.newSetFromMap(new WeakHashMap<>());
     
@@ -320,7 +318,7 @@ public final class PlayerEventHandler {
 
     @SubscribeEvent
     public static void onFallFirst(LivingAttackEvent event) {
-        // damage can't be reduced to non-zero here, but cancelling it removes the screen shake and damage sound
+        // damage can't be reduced to non-zero here, but canceling it removes the screen shake and damage sound
         if (event.getSource() == DamageSource.FALL) {
             float damage = event.getAmount();
             for (ItemStack stack : event.getEntityLiving().getArmorInventoryList()) {
@@ -332,16 +330,22 @@ public final class PlayerEventHandler {
             damage = Math.max(0.0F, damage);
             if (damage < 1.0F) 
                 event.setCanceled(true);
-            else
-                FALL_DAMAGE.put(event.getEntity(), damage);
         }
     }
 
     @SubscribeEvent
     public static void onFallHurt(LivingHurtEvent event) {
         // this is needed to actually reduce damage if it's not 0
-        if (event.getSource() == DamageSource.FALL && FALL_DAMAGE.containsKey(event.getEntity())) {
-            float damage = FALL_DAMAGE.remove(event.getEntity());
+        // rerun damage calc here because damage might have changed
+        if (event.getSource() == DamageSource.FALL) {
+            float damage = event.getAmount();
+            for (ItemStack stack : event.getEntityLiving().getArmorInventoryList()) {
+                if (stack.getItem() instanceof IArmorReduceFallDamage) {
+                    damage = ((IArmorReduceFallDamage) stack.getItem()).getNewFallDamage(stack, damage, event.getEntityLiving().fallDistance);
+                }
+            }
+
+            damage = Math.max(0.0F, damage);
             if (damage < 1.0F) {
                 event.setAmount(0.0F);
                 event.setCanceled(true);

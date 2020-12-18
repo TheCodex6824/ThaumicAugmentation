@@ -82,11 +82,11 @@ public final class PlayerMovementAbilityManager {
 
         public OldMovementData(float s, float j) {
             stepHeight = s;
-            jumpMovementFactor = j;
+            speedInAir = j;
         }
 
         public float stepHeight;
-        public float jumpMovementFactor;
+        public float speedInAir;
     }
 
     private static final class FlyData {
@@ -119,7 +119,7 @@ public final class PlayerMovementAbilityManager {
     
     public static void put(EntityPlayer player, BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> continueApplying) {
         if (!oldMovementValues.containsKey(player))
-            oldMovementValues.put(player, new OldMovementData(player.stepHeight, player.jumpMovementFactor));
+            oldMovementValues.put(player, new OldMovementData(0.0F, 0.0F));
 
         if (players.containsKey(player))
             players.get(player).add(new PlayerFunctions(func, continueApplying));
@@ -133,10 +133,9 @@ public final class PlayerMovementAbilityManager {
     public static boolean remove(EntityPlayer player, BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> pred) {
         boolean result = players.remove(player.getCachedUniqueIdString(), new PlayerFunctions(func, pred));
         if (players.containsKey(player) && players.get(player).size() == 0) {
-
             OldMovementData data = oldMovementValues.get(player);
-            player.stepHeight -= player.stepHeight - data.stepHeight;
-            player.jumpMovementFactor -= player.jumpMovementFactor - data.jumpMovementFactor;
+            player.stepHeight -= data.stepHeight;
+            player.speedInAir -= data.speedInAir;
             players.remove(player);
             if (oldMovementValues.containsKey(player))
                 oldMovementValues.remove(player);
@@ -170,8 +169,10 @@ public final class PlayerMovementAbilityManager {
     public static void tick(EntityPlayer player) {
         if (players.containsKey(player)) {
             OldMovementData data = oldMovementValues.get(player);
-            float stepHeight = data.stepHeight;
-            float jumpMovementFactor = data.jumpMovementFactor;
+            player.stepHeight -= data.stepHeight;
+            player.speedInAir -= data.speedInAir;
+            data.stepHeight = 0.0F;
+            data.speedInAir = 0.0F;
             ListIterator<PlayerFunctions> it = players.get(player).listIterator();
             while (it.hasNext()) {
                 PlayerFunctions func = it.next();
@@ -180,8 +181,6 @@ public final class PlayerMovementAbilityManager {
                     if (players.containsKey(player) && players.get(player).size() == 0 &&
                             oldMovementValues.containsKey(player)) {
 
-                        player.stepHeight -= player.stepHeight - data.stepHeight;
-                        player.jumpMovementFactor -= player.jumpMovementFactor - data.jumpMovementFactor;
                         players.remove(player);
                         oldMovementValues.remove(player);
                     }
@@ -189,19 +188,16 @@ public final class PlayerMovementAbilityManager {
                     continue;
                 }
 
-                stepHeight += func.tickFunction.apply(player, MovementType.STEP_HEIGHT);
+                data.stepHeight += func.tickFunction.apply(player, MovementType.STEP_HEIGHT);
+                data.speedInAir += func.tickFunction.apply(player, MovementType.JUMP_FACTOR);
                 if (player.onGround && isPlayerMovingNotVertically(player))
                     movePlayer(player, func.tickFunction.apply(player, player.isInWater() ? MovementType.WATER_GROUND : MovementType.DRY_GROUND));
-                else {
-                    if (player.moveForward > 0.0F && player.isInWater())
-                        movePlayer(player, func.tickFunction.apply(player, MovementType.WATER_SWIM));
-
-                    jumpMovementFactor += func.tickFunction.apply(player, MovementType.JUMP_FACTOR);
-                }
+                else if (player.moveForward > 0.0F && player.isInWater())
+                    movePlayer(player, func.tickFunction.apply(player, MovementType.WATER_SWIM));
             }
             
-            player.stepHeight = stepHeight;
-            player.jumpMovementFactor = jumpMovementFactor;
+            player.stepHeight += data.stepHeight;
+            player.speedInAir += data.speedInAir;
         }
         
     }

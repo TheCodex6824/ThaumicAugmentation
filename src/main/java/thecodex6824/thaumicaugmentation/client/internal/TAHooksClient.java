@@ -151,7 +151,7 @@ public final class TAHooksClient {
             try {
                 if (tesr instanceof AnimationTESR) {
                     // Animation TESRs do special things that won't work without actually being in the world
-                    // Luckilly, they still have models we can fall back to
+                    // Luckily, they still have models we can fall back to
                     tile.setWorld(Minecraft.getMinecraft().world);
                     BlockRendererDispatcher render = Minecraft.getMinecraft().getBlockRendererDispatcher();
                     IBlockState fake = world.getBlockState(pos);
