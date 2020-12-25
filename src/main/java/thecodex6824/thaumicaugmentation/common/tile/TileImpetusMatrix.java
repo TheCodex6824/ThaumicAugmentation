@@ -407,13 +407,14 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IBreakCa
     @Override
     public void setPos(BlockPos posIn) {
         super.setPos(posIn);
-        prosumer.setLocation(new DimensionalBlockPos(pos, world.provider.getDimension()));
+        if (world != null)
+            prosumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
     
     @Override
     public void setWorld(World worldIn) {
         super.setWorld(worldIn);
-        prosumer.setLocation(new DimensionalBlockPos(pos, world.provider.getDimension()));
+        prosumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
     
     @Override

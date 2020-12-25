@@ -150,13 +150,14 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IBreakC
     @Override
     public void setPos(BlockPos posIn) {
         super.setPos(posIn);
-        provider.setLocation(new DimensionalBlockPos(pos, world.provider.getDimension()));
+        if (world != null)
+            provider.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
     
     @Override
     public void setWorld(World worldIn) {
         super.setWorld(worldIn);
-        provider.setLocation(new DimensionalBlockPos(pos, world.provider.getDimension()));
+        provider.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
     
     @Override
