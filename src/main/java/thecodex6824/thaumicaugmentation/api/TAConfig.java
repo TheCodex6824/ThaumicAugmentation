@@ -95,7 +95,8 @@ public final class TAConfig {
     public static ConfigOptionBoolean allowWussRiftSeed;
     
     public static ConfigOptionFloat cannonBeamDamage;
-    public static ConfigOptionLong cannonBeamCost;
+    public static ConfigOptionLong cannonBeamCostInitial;
+    public static ConfigOptionDouble cannonBeamCostTick;
     public static ConfigOptionDouble cannonBeamRange;
     
     public static ConfigOptionFloat cannonRailgunDamage;

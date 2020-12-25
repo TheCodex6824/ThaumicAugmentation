@@ -144,7 +144,7 @@ public class ItemImpulseCannon extends ItemTABase {
                 }
             }
             else if (((aug != null && aug.isTickable(player)) || aug == null) && buffer != null) {
-                long cost = aug != null ? aug.getImpetusCostPerTick(player, -1) : TAConfig.cannonBeamCost.getValue();
+                long cost = aug != null ? aug.getImpetusCostPerUsage(player) : TAConfig.cannonBeamCostInitial.getValue();
                 if (buffer.canExtract() && buffer.getEnergyStored() >= cost) {
                     player.setActiveHand(hand);
                     if (aug == null) {
@@ -171,9 +171,21 @@ public class ItemImpulseCannon extends ItemTABase {
     public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         IImpetusStorage buffer = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
         IImpulseCannonAugment aug = getAugment(stack);
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+        
         if (!player.getEntityWorld().isRemote) {
             if (aug != null && buffer != null) {
-                if (ImpetusAPI.tryExtractFully(buffer, aug.getImpetusCostPerTick(player, count), player))
+                double cost = aug.getImpetusCostPerTick(player, count);
+                double accumulated = stack.getTagCompound().getDouble("acc") + cost;
+                if (accumulated >= 1.0) {
+                    long remove = (long) Math.floor(accumulated);
+                    if (ImpetusAPI.tryExtractFully(buffer, remove, player))
+                        accumulated -= remove;
+                }
+                
+                stack.getTagCompound().setDouble("acc", accumulated);
+                if (accumulated < 1.0)
                     aug.onCannonTick(player, count);
                 else {
                     player.stopActiveHand();
@@ -181,10 +193,25 @@ public class ItemImpulseCannon extends ItemTABase {
                 }
             }
             else if (buffer != null) {
-                if (ImpetusAPI.tryExtractFully(buffer, TAConfig.cannonBeamCost.getValue(), player)) {
+                double cost = TAConfig.cannonBeamCostTick.getValue();
+                double accumulated = stack.getTagCompound().getDouble("acc") + cost;
+                if (accumulated >= 1.0) {
+                    long remove = (long) Math.floor(accumulated);
+                    if (ImpetusAPI.tryExtractFully(buffer, remove, player))
+                        accumulated -= remove;
+                }
+                
+                stack.getTagCompound().setDouble("acc", accumulated);
+                if (accumulated < 1.0) {
                     Entity e = RaytraceHelper.raytraceEntity(player, TAConfig.cannonBeamRange.getValue());
-                    if (e != null)
+                    if (e != null) {
                         ImpetusAPI.causeImpetusDamage(player, e, TAConfig.cannonBeamDamage.getValue());
+                        if (e instanceof EntityLivingBase) {
+                            EntityLivingBase base = (EntityLivingBase) e;
+                            base.hurtResistantTime = Math.min(base.hurtResistantTime, 2);
+                            base.lastDamage = 0.0F;
+                        }
+                    }
                     
                     if (player.ticksExisted % 20 == 0) {
                         PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), false);

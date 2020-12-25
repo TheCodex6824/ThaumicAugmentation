@@ -22,8 +22,10 @@ package thecodex6824.thaumicaugmentation.api.entity;
 
 import net.minecraft.entity.EntityLivingBase;
 
-public interface IStopRailgunBeam {
+public interface IImpulseSpecialEntity {
 
     public boolean shouldStopRailgunBeam(EntityLivingBase beamShooter);
+    
+    public boolean shouldImpulseCannonIgnore(EntityLivingBase beamShooter);
     
 }

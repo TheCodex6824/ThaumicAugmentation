@@ -177,39 +177,44 @@ public final class TAConfigHolder {
                 @Name("BeamDamage")
                 @Comment({
                     "The amount of damage that the Impulse Cannon's beam attack does.",
-                    "The beam attack is the default attack with no augments.",
-                    "The beam does not reset the damage cooldowns of entities damaged by it,",
-                    "so while this damage can theoretically be seen per tick, in practice this is",
-                    "extremely unlikely and would take a large crowd and good aim to achieve."
+                    "The beam attack is the default attack with no augments."
                 })
-                public float beamDamage = 7.0F;
+                public float beamDamage = 4.0F;
                 
-                @Name("BeamCost")
+                @Name("BeamCostInitial")
+                @Comment({
+                    "The amount of Impetus used by the Impulse Cannon's beam attack on initial activation.",
+                    "This cost is paid once at the start, and then BeamCostTick will be applied."
+                })
+                public int beamCostInitial = 3;
+                
+                @Name("BeamCostTick")
                 @Comment({
                     "The amount of Impetus used by the Impulse Cannon's beam attack per tick.",
-                    "This cost is paid even if nothing is being hit by the beam."
+                    "This cost is paid even if nothing is being hit by the beam.",
+                    "Supports taking away less than 1 impetus per tick."
                 })
-                public int beamCost = 1;
+                public double beamCostTick = 0.1;
                 
                 @Name("BeamRange")
                 @Comment({
                     "The range in meters of the Impulse Cannon's beam attack."
                 })
-                public double beamRange = 32.0;
+                public double beamRange = 64.0;
                 
                 @Name("RailgunDamage")
                 @Comment({
                     "The amount of damage that the Impulse Cannon's railgun attack does.",
                     "Note that the beam can pierce through multiple entities, but not blocks."
                 })
-                public float railgunDamage = 30.0F;
+                public float railgunDamage = 42.0F;
                 
                 @Name("RailgunCost")
                 @Comment({
                     "The amount of Impetus used by the Impulse Cannon's railgun attack per shot.",
                     "This cost is paid even if nothing is being hit by the shot."
                 })
-                public int railgunCost = 5;
+                public int railgunCost = 3;
                 
                 @Name("RailgunCooldown")
                 @Comment({
@@ -217,13 +222,13 @@ public final class TAConfigHolder {
                     "Note that this will lock the player out of all Impulse Cannons in their inventory for",
                     "this duration."
                 })
-                public int railgunCooldown = 100;
+                public int railgunCooldown = 70;
                 
                 @Name("RailgunRange")
                 @Comment({
                     "The range in meters of the Impulse Cannon's railgun attack."
                 })
-                public double railgunRange = 64.0;
+                public double railgunRange = 128.0;
                 
                 @Name("BurstDamage")
                 @Comment({
@@ -232,14 +237,14 @@ public final class TAConfigHolder {
                     "to allow the other rounds to do damage.",
                     "Since there are three shots fired by the burst, the effective damage is three times this value."
                 })
-                public float burstDamage = 8.0F;
+                public float burstDamage = 12.0F;
                 
                 @Name("BurstCost")
                 @Comment({
                     "The amount of Impetus used by the Impulse Cannon's burst attack per burst.",
                     "This cost is paid even if nothing is being hit by the shot."
                 })
-                public int burstCost = 4;
+                public int burstCost = 2;
                 
                 @Name("BurstCooldown")
                 @Comment({
@@ -247,13 +252,13 @@ public final class TAConfigHolder {
                     "Note that this will lock the player out of all Impulse Cannons in their inventory for",
                     "this duration."
                 })
-                public int burstCooldown = 26;
+                public int burstCooldown = 24;
                 
                 @Name("BurstRange")
                 @Comment({
                     "The range in meters of the Impulse Cannon's burst attack."
                 })
-                public double burstRange = 24.0;
+                public double burstRange = 48.0;
                 
             }
         }
@@ -737,7 +742,8 @@ public final class TAConfigHolder {
         TAConfig.allowWussRiftSeed.setValue(gameplay.allowWussRiftSeed);
         
         TAConfig.cannonBeamDamage.setValue(gameplay.impetus.cannon.beamDamage);
-        TAConfig.cannonBeamCost.setValue((long) gameplay.impetus.cannon.beamCost);
+        TAConfig.cannonBeamCostInitial.setValue((long) gameplay.impetus.cannon.beamCostInitial);
+        TAConfig.cannonBeamCostTick.setValue(gameplay.impetus.cannon.beamCostTick);
         TAConfig.cannonBeamRange.setValue(gameplay.impetus.cannon.beamRange);
         
         TAConfig.cannonRailgunDamage.setValue(gameplay.impetus.cannon.railgunDamage);
@@ -873,7 +879,8 @@ public final class TAConfigHolder {
         TAConfig.allowWussRiftSeed = TAConfigManager.addOption(new ConfigOptionBoolean(false, gameplay.allowWussRiftSeed));
         
         TAConfig.cannonBeamDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannon.beamDamage));
-        TAConfig.cannonBeamCost = TAConfigManager.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannon.beamCost));
+        TAConfig.cannonBeamCostInitial = TAConfigManager.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannon.beamCostInitial));
+        TAConfig.cannonBeamCostTick = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.beamCostTick));
         TAConfig.cannonBeamRange = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.beamRange));
         
         TAConfig.cannonRailgunDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannon.railgunDamage));

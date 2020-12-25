@@ -68,12 +68,12 @@ import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.network.fx.PacketFXShield;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.entity.ICastedEntity;
-import thecodex6824.thaumicaugmentation.api.entity.IStopRailgunBeam;
+import thecodex6824.thaumicaugmentation.api.entity.IImpulseSpecialEntity;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-public class EntityFocusShield extends EntityLivingBase implements IEntityOwnable, ICastedEntity, IStopRailgunBeam {
+public class EntityFocusShield extends EntityLivingBase implements IEntityOwnable, ICastedEntity, IImpulseSpecialEntity {
 
     protected static final DataParameter<Optional<UUID>> OWNER_ID = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.OPTIONAL_UNIQUE_ID);
     protected static final DataParameter<Optional<UUID>> CASTER_ID = EntityDataManager.createKey(EntityFocusShield.class, DataSerializers.OPTIONAL_UNIQUE_ID);
@@ -227,6 +227,11 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     @Override
     public boolean shouldStopRailgunBeam(EntityLivingBase beamShooter) {
         return canReflect();
+    }
+    
+    @Override
+    public boolean shouldImpulseCannonIgnore(EntityLivingBase beamShooter) {
+        return beamShooter.equals(ownerRef.get());
     }
     
     protected float getCloudPower(EntityFocusCloud cloud) {
