@@ -459,10 +459,11 @@ public final class TAConfigHolder {
         @Name("VoidBootsStepHeight")
         @Comment({
             "The boost applied to the player's step height (while not sneaking).",
-            "This is added to the vanilla default value of 0.6."
+            "This is in units of the base step height, which is about 1/3 of the player's height.",
+            "This is added to the vanilla default value."
         })
         @RangeDouble(min = 0.0F, max = 10.0F)
-        public double voidBootsStepHeight = 0.47;
+        public double voidBootsStepHeight = 1.0;
 
         @Name("VoidBootsSneakReduction")
         @Comment({
