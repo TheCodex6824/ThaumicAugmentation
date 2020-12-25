@@ -252,13 +252,14 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IBreak
     @Override
     public void setPos(BlockPos posIn) {
         super.setPos(posIn);
-        consumer.setLocation(new DimensionalBlockPos(pos, world.provider.getDimension()));
+        if (world != null)
+            consumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
     
     @Override
     public void setWorld(World worldIn) {
         super.setWorld(worldIn);
-        consumer.setLocation(new DimensionalBlockPos(pos, world.provider.getDimension()));
+        consumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
     
     @Override

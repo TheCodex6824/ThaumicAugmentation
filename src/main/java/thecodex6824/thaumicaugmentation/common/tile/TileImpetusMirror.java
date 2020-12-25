@@ -229,13 +229,14 @@ public class TileImpetusMirror extends TileEntity implements ITickable, IBreakCa
     @Override
     public void setPos(BlockPos posIn) {
         super.setPos(posIn);
-        node.setLocation(new DimensionalBlockPos(pos, world.provider.getDimension()));
+        if (world != null)
+            node.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
     
     @Override
     public void setWorld(World worldIn) {
         super.setWorld(worldIn);
-        node.setLocation(new DimensionalBlockPos(pos, world.provider.getDimension()));
+        node.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
     
     @Override
