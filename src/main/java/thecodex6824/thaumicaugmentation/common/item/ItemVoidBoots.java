@@ -93,7 +93,7 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
                 }
                 case JUMP_BEGIN: return TAConfig.voidBootsJumpBoost.getValue().floatValue();
                 case JUMP_FACTOR: return TAConfig.voidBootsJumpFactor.getValue().floatValue();
-                case STEP_HEIGHT: return !player.isSneaking() ? TAConfig.voidBootsStepHeight.getValue().floatValue() : 0.0F;
+                case STEP_HEIGHT: return !player.isSneaking() ? (TAConfig.voidBootsStepHeight.getValue().floatValue() * player.height * (1.0F / 3.0F)) : 0.0F;
                 case WATER_GROUND: {
                     float boost = Math.max(TAConfig.voidBootsLandSpeedBoost.getValue().floatValue() / 4.0F, TAConfig.voidBootsWaterSpeedBoost.getValue().floatValue());
                     return player.isSneaking() ? boost / TAConfig.voidBootsSneakReduction.getValue().floatValue() : boost;
