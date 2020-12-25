@@ -25,7 +25,8 @@ If you want to contribute to the mod or just mess around with it, here's how to 
    
    -Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore
 
-At the end of this, all the dependencies and such should be set up automatically, as they are downloaded from CurseForge using a Gradle plugin. If weird HTTP errors come back when trying to download them, try updating the "CurseMaven" plugin in build.gradle (and then come yell at me to keep the plugin up-to-date).
+At the end of this, all the dependencies and such should be set up automatically, as they are downloaded from CurseForge using a Gradle plugin. If weird HTTP errors come back when trying to download them, then something is probably going wrong with the CurseMaven service that is used to resolve dependencies. There are instructions to work around this in [build.gradle], but you will need to source the required jar files manually.
 
 [issues]: https://github.com/TheCodex6824/ThaumicAugmentation/issues
 [lang]: https://github.com/TheCodex6824/ThaumicAugmentation/tree/master/src/main/resources/assets/thaumicaugmentation/lang
+[build.gradle]: https://github.com/TheCodex6824/ThaumicAugmentation/blob/master/build.gradle
