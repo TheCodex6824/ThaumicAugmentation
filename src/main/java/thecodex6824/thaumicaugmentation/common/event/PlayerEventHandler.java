@@ -270,7 +270,7 @@ public final class PlayerEventHandler {
         return canKeepFlying;
     }
     
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void onTick(PlayerTickEvent event) {
         if (event.phase == Phase.END) {
             EntityPlayer player = event.player;
