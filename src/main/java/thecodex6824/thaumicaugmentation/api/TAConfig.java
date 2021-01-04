@@ -146,6 +146,8 @@ public final class TAConfig {
     
     public static ConfigOptionDouble impetusConductorFactor;
     
+    public static ConfigOptionBoolean movementCompat;
+    
     /**
      * Registers a callback to be notified when the config is synced or updated.
      * @param listener The callback

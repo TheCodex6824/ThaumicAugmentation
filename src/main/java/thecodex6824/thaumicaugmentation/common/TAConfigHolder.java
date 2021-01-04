@@ -468,7 +468,7 @@ public final class TAConfigHolder {
             "This is added to the vanilla default value."
         })
         @RangeDouble(min = 0.0F, max = 10.0F)
-        public double voidBootsStepHeight = 1.0;
+        public double voidBootsStepHeight = 0.67;
 
         @Name("VoidBootsSneakReduction")
         @Comment({
@@ -531,6 +531,12 @@ public final class TAConfigHolder {
         @Comment("Allows rift seeds to create Flux Rifts, even if Thaumcraft's wuss mode is enabled.")
         public boolean allowWussRiftSeed = false;
         
+        @Name("MovementCompat")
+        @Comment({
+            "Makes a few changes to how certain movement, like step height bonuses, are applied.",
+            "This is intended to allow it to work when misbehaving mods are constantly overwriting TA's changes."
+        })
+        public boolean movementCompat = false;
     }
     
     public static class WorldOptions {
@@ -736,62 +742,64 @@ public final class TAConfigHolder {
         
         TAConfig.gauntletCastAnimation.setValue(client.gauntletCastAnimation, side);
         
-        TAConfig.terraformerImpetusCost.setValue((long) gameplay.impetus.terraformerCost);
-        TAConfig.shieldFocusImpetusCost.setValue((long) gameplay.impetus.shieldFocusCost);
+        TAConfig.terraformerImpetusCost.setValue((long) gameplay.impetus.terraformerCost, side);
+        TAConfig.shieldFocusImpetusCost.setValue((long) gameplay.impetus.shieldFocusCost, side);
         
-        TAConfig.allowWussRiftSeed.setValue(gameplay.allowWussRiftSeed);
+        TAConfig.allowWussRiftSeed.setValue(gameplay.allowWussRiftSeed, side);
         
-        TAConfig.cannonBeamDamage.setValue(gameplay.impetus.cannon.beamDamage);
-        TAConfig.cannonBeamCostInitial.setValue((long) gameplay.impetus.cannon.beamCostInitial);
-        TAConfig.cannonBeamCostTick.setValue(gameplay.impetus.cannon.beamCostTick);
-        TAConfig.cannonBeamRange.setValue(gameplay.impetus.cannon.beamRange);
+        TAConfig.cannonBeamDamage.setValue(gameplay.impetus.cannon.beamDamage, side);
+        TAConfig.cannonBeamCostInitial.setValue((long) gameplay.impetus.cannon.beamCostInitial, side);
+        TAConfig.cannonBeamCostTick.setValue(gameplay.impetus.cannon.beamCostTick, side);
+        TAConfig.cannonBeamRange.setValue(gameplay.impetus.cannon.beamRange, side);
         
-        TAConfig.cannonRailgunDamage.setValue(gameplay.impetus.cannon.railgunDamage);
-        TAConfig.cannonRailgunCost.setValue((long) gameplay.impetus.cannon.railgunCost);
-        TAConfig.cannonRailgunCooldown.setValue(gameplay.impetus.cannon.railgunCooldown);
-        TAConfig.cannonRailgunRange.setValue(gameplay.impetus.cannon.railgunRange);
+        TAConfig.cannonRailgunDamage.setValue(gameplay.impetus.cannon.railgunDamage, side);
+        TAConfig.cannonRailgunCost.setValue((long) gameplay.impetus.cannon.railgunCost, side);
+        TAConfig.cannonRailgunCooldown.setValue(gameplay.impetus.cannon.railgunCooldown, side);
+        TAConfig.cannonRailgunRange.setValue(gameplay.impetus.cannon.railgunRange, side);
         
-        TAConfig.cannonBurstDamage.setValue(gameplay.impetus.cannon.burstDamage);
-        TAConfig.cannonBurstCost.setValue((long) gameplay.impetus.cannon.burstCost);
-        TAConfig.cannonBurstCooldown.setValue(gameplay.impetus.cannon.burstCooldown);
-        TAConfig.cannonBurstRange.setValue(gameplay.impetus.cannon.burstRange);
+        TAConfig.cannonBurstDamage.setValue(gameplay.impetus.cannon.burstDamage, side);
+        TAConfig.cannonBurstCost.setValue((long) gameplay.impetus.cannon.burstCost, side);
+        TAConfig.cannonBurstCooldown.setValue(gameplay.impetus.cannon.burstCooldown, side);
+        TAConfig.cannonBurstRange.setValue(gameplay.impetus.cannon.burstRange, side);
         
-        TAConfig.primalCutterDamage.setValue(gameplay.primalCutterDamage);
+        TAConfig.primalCutterDamage.setValue(gameplay.primalCutterDamage, side);
         
-        TAConfig.deniedCategories.setValue(gameplay.deniedCategories);
+        TAConfig.deniedCategories.setValue(gameplay.deniedCategories, side);
         
-        TAConfig.generateSpires.setValue(world.generateSpires);
-        TAConfig.spireMinDist.setValue(world.spireMinDist);
-        TAConfig.spireSpacing.setValue(world.spireSpacing);
+        TAConfig.generateSpires.setValue(world.generateSpires, side);
+        TAConfig.spireMinDist.setValue(world.spireMinDist, side);
+        TAConfig.spireSpacing.setValue(world.spireSpacing, side);
         
-        TAConfig.experienceModifierCap.setValue(gameplay.augment.experienceModifierCap);
-        TAConfig.experienceModifierBase.setValue(gameplay.augment.experienceModifierBase);
-        TAConfig.experienceModifierScale.setValue(gameplay.augment.experienceModifierScale);
+        TAConfig.experienceModifierCap.setValue(gameplay.augment.experienceModifierCap, side);
+        TAConfig.experienceModifierBase.setValue(gameplay.augment.experienceModifierBase, side);
+        TAConfig.experienceModifierScale.setValue(gameplay.augment.experienceModifierScale, side);
     
-        TAConfig.elementalModifierPositiveFactor.setValue(gameplay.augment.elementalModifierPositiveFactor);
-        TAConfig.elementalModifierNegativeFactor.setValue(gameplay.augment.elementalModifierNegativeFactor);
+        TAConfig.elementalModifierPositiveFactor.setValue(gameplay.augment.elementalModifierPositiveFactor, side);
+        TAConfig.elementalModifierNegativeFactor.setValue(gameplay.augment.elementalModifierNegativeFactor, side);
     
-        TAConfig.dimensionalModifierOverworldPostiveFactor.setValue(gameplay.augment.dimensionalModifierOverworldPositiveFactor);
-        TAConfig.dimensionalModifierOverworldNegativeFactor.setValue(gameplay.augment.dimensionalModifierOverworldNegativeFactor);
-        TAConfig.dimensionalModifierOverworldDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierOverworldDims));
+        TAConfig.dimensionalModifierOverworldPostiveFactor.setValue(gameplay.augment.dimensionalModifierOverworldPositiveFactor, side);
+        TAConfig.dimensionalModifierOverworldNegativeFactor.setValue(gameplay.augment.dimensionalModifierOverworldNegativeFactor, side);
+        TAConfig.dimensionalModifierOverworldDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierOverworldDims), side);
     
-        TAConfig.dimensionalModifierNetherPostiveFactor.setValue(gameplay.augment.dimensionalModifierNetherPositiveFactor);
-        TAConfig.dimensionalModifierNetherNegativeFactor.setValue(gameplay.augment.dimensionalModifierNetherNegativeFactor);
-        TAConfig.dimensionalModifierNetherDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierNetherDims));
+        TAConfig.dimensionalModifierNetherPostiveFactor.setValue(gameplay.augment.dimensionalModifierNetherPositiveFactor, side);
+        TAConfig.dimensionalModifierNetherNegativeFactor.setValue(gameplay.augment.dimensionalModifierNetherNegativeFactor, side);
+        TAConfig.dimensionalModifierNetherDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierNetherDims), side);
         
-        TAConfig.dimensionalModifierEndPostiveFactor.setValue(gameplay.augment.dimensionalModifierEndPositiveFactor);
-        TAConfig.dimensionalModifierEndNegativeFactor.setValue(gameplay.augment.dimensionalModifierEndNegativeFactor);
-        TAConfig.dimensionalModifierEndDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEndDims));
+        TAConfig.dimensionalModifierEndPostiveFactor.setValue(gameplay.augment.dimensionalModifierEndPositiveFactor, side);
+        TAConfig.dimensionalModifierEndNegativeFactor.setValue(gameplay.augment.dimensionalModifierEndNegativeFactor, side);
+        TAConfig.dimensionalModifierEndDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEndDims), side);
         
-        TAConfig.dimensionalModifierEmptinessPostiveFactor.setValue(gameplay.augment.dimensionalModifierEmptinessPositiveFactor);
-        TAConfig.dimensionalModifierEmptinessNegativeFactor.setValue(gameplay.augment.dimensionalModifierEmptinessNegativeFactor);
-        TAConfig.dimensionalModifierEmptinessDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEmptinessDims));
+        TAConfig.dimensionalModifierEmptinessPostiveFactor.setValue(gameplay.augment.dimensionalModifierEmptinessPositiveFactor, side);
+        TAConfig.dimensionalModifierEmptinessNegativeFactor.setValue(gameplay.augment.dimensionalModifierEmptinessNegativeFactor, side);
+        TAConfig.dimensionalModifierEmptinessDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEmptinessDims), side);
     
-        TAConfig.frenzyModifierScaleFactor.setValue(gameplay.augment.frenzyModifierScale);
-        TAConfig.frenzyModifierCooldown.setValue(gameplay.augment.frenzyModifierCooldown);
-        TAConfig.frenzyModifierMaxLevel.setValue(gameplay.augment.frenzyModifierMaxLevel);
+        TAConfig.frenzyModifierScaleFactor.setValue(gameplay.augment.frenzyModifierScale, side);
+        TAConfig.frenzyModifierCooldown.setValue(gameplay.augment.frenzyModifierCooldown, side);
+        TAConfig.frenzyModifierMaxLevel.setValue(gameplay.augment.frenzyModifierMaxLevel, side);
         
-        TAConfig.impetusConductorFactor.setValue(gameplay.augment.impetusConductorFactor);
+        TAConfig.impetusConductorFactor.setValue(gameplay.augment.impetusConductorFactor, side);
+        
+        TAConfig.movementCompat.setValue(gameplay.movementCompat, side);
     }
 
     public static void syncLocally() {
@@ -929,6 +937,8 @@ public final class TAConfigHolder {
         TAConfig.frenzyModifierMaxLevel = TAConfigManager.addOption(new ConfigOptionInt(false, gameplay.augment.frenzyModifierMaxLevel));
         
         TAConfig.impetusConductorFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.impetusConductorFactor));
+    
+        TAConfig.movementCompat = TAConfigManager.addOption(new ConfigOptionBoolean(true, gameplay.movementCompat));
     }
 
 }

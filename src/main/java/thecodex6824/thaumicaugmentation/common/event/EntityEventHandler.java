@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.event;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
@@ -29,13 +30,16 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.IPortalState;
+import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
@@ -93,6 +97,15 @@ public class EntityEventHandler {
             TANetwork.INSTANCE.sendToAllTracking(packet, entity);
             if (entity instanceof EntityPlayerMP)
                 TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);
+        }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onLivingUpdate(LivingUpdateEvent event) {
+        if (event.getEntityLiving() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+            if (PlayerMovementAbilityManager.isValidSideForMovement(player))
+                PlayerMovementAbilityManager.tick(player);
         }
     }
     
