@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import thecodex6824.thaumicaugmentation.api.graph.IGraph;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
-public interface IImpetusGraph extends IGraph<IImpetusNode, IImpetusGraph> {
+public interface IImpetusGraph extends IGraph<IImpetusNode> {
     
     public Set<IImpetusProvider> findDirectProviders(IImpetusNode node);
     
