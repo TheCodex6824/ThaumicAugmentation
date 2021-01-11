@@ -207,7 +207,7 @@ public final class TAConfigHolder {
                     "The amount of damage that the Impulse Cannon's railgun attack does.",
                     "Note that the beam can pierce through multiple entities, but not blocks."
                 })
-                public float railgunDamage = 42.0F;
+                public float railgunDamage = 38.0F;
                 
                 @Name("RailgunCost")
                 @Comment({
@@ -237,7 +237,7 @@ public final class TAConfigHolder {
                     "to allow the other rounds to do damage.",
                     "Since there are three shots fired by the burst, the effective damage is three times this value."
                 })
-                public float burstDamage = 12.0F;
+                public float burstDamage = 11.0F;
                 
                 @Name("BurstCost")
                 @Comment({

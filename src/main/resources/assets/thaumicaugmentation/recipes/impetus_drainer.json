@@ -25,8 +25,8 @@
       "item": "#IMPETUS_RESONATOR"
     },
     "I": {
-      "item": "minecraft:iron_bars",
-      "data": 0
+      "type": "forge:ore_dict",
+      "ore": "barsIron"
     },
     "S": {
       "item": "thaumcraft:stone_eldritch_tile",

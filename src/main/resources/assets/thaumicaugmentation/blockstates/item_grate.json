@@ -1,0 +1,17 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "ta_enabled": {
+            "false": {
+                "model": "thaumicaugmentation:item_grate_closed"
+            },
+            "true": {
+                "model": "thaumicaugmentation:item_grate_open"
+            }
+        },
+        "inventory": {
+            "transform": "forge:default-block",
+            "model": "thaumicaugmentation:item_grate_open"
+        }
+    }
+}

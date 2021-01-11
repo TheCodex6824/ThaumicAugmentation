@@ -28,6 +28,7 @@ import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -79,6 +80,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrixBase;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusRelay;
+import thecodex6824.thaumicaugmentation.common.block.BlockItemGrate;
 import thecodex6824.thaumicaugmentation.common.block.BlockObelisk;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftBarrier;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftFeeder;
@@ -171,6 +173,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
+import thecodex6824.thaumicaugmentation.common.tile.TileItemGrate;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
 import thecodex6824.thaumicaugmentation.common.tile.TileObeliskVisual;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
@@ -270,6 +273,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockWardedPressurePlate(Material.WOOD, Sensitivity.EVERYTHING, SoundType.WOOD), "warded_pressure_plate_silverwood"));
         registry.register(setupBlock(new BlockWardedPressurePlate(Material.ROCK, Sensitivity.MOBS, SoundType.STONE), "warded_pressure_plate_arcane_stone"));
         registry.register(setupBlock(new BlockTAUrn(), "urn"));
+        registry.register(setupBlock(new BlockItemGrate(), "item_grate"));
         
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -300,6 +304,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileRiftBarrier.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_barrier"));
         GameRegistry.registerTileEntity(TileWardedButton.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_button"));
         GameRegistry.registerTileEntity(TileWardedPressurePlate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_pressure_plate"));
+        GameRegistry.registerTileEntity(TileItemGrate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_grate"));
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)
@@ -370,16 +375,14 @@ public final class RegistryHandler {
         SealHandler.registerSeal(new SealAttack());
         SealHandler.registerSeal(new SealAttackAdvanced());
     }
-    
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public static void registerOreDict(RegistryEvent.Register<Item> event) {
-        OreDictionary.registerOre("blockAmber", BlocksTC.amberBlock);
-        OreDictionary.registerOre("blockAmber", BlocksTC.amberBrick);
-    }
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         OreDictionary.registerOre("stoneVoid", new ItemStack(TABlocks.STONE, 1, StoneType.STONE_VOID.getMeta()));
+        OreDictionary.registerOre("barsIron", Blocks.IRON_BARS);
+        OreDictionary.registerOre("trapdoorWood", Blocks.TRAPDOOR);
+        OreDictionary.registerOre("blockAmber", BlocksTC.amberBlock);
+        OreDictionary.registerOre("blockAmber", BlocksTC.amberBrick);
         
         RecipeHandler.initInfusionRecipes();
         RecipeHandler.initCrucibleRecipes();
