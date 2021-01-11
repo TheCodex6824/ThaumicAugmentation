@@ -26,6 +26,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.tileentity.TileEntity;
@@ -87,11 +88,18 @@ public class BlockItemGrate extends BlockTABase implements IEnabledBlock, IItemB
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         boolean powered = world.isBlockPowered(pos);
-        if ((powered || block.getDefaultState().canProvidePower()) && powered != state.getValue(IEnabledBlock.ENABLED)) {
-            world.setBlockState(pos, state.withProperty(IEnabledBlock.ENABLED, powered), 3);
+        if ((powered || block.getDefaultState().canProvidePower()) && powered == state.getValue(IEnabledBlock.ENABLED)) {
+            world.setBlockState(pos, state.withProperty(IEnabledBlock.ENABLED, !powered), 3);
             world.playSound(null, pos, !state.getValue(IEnabledBlock.ENABLED) ? 
                     SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, 1.0F);
         }
+    }
+    
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
+            float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        
+        return getDefaultState();
     }
 
     @Override

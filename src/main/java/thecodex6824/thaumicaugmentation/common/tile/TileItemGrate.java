@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.common.tile;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
@@ -45,21 +46,21 @@ public class TileItemGrate extends TileEntity implements ITickable {
     
     public TileItemGrate() {
         ticks = ThreadLocalRandom.current().nextInt(20);
-        inventory = new ItemStackHandler(1);
+        inventory = new ItemStackHandler(1) {
+            @Override
+            @Nonnull
+            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+                if (world.getBlockState(pos).getValue(IEnabledBlock.ENABLED))
+                    return super.insertItem(slot, stack, simulate);
+                else
+                    return stack;
+            }
+        };
     }
     
     @Override
     public void update() {
-        if (!world.isRemote && ticks++ % 5 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED)) {
-            List<EntityItem> above = world.getEntitiesWithinAABB(EntityItem.class,
-                    new AxisAlignedBB(pos.getX(), pos.getY() + 1, pos.getZ(), pos.getX() + 1, pos.getY() + 1.125, pos.getZ() + 1));
-            for (EntityItem e : above) {
-                e.motionX = 0.0;
-                e.motionZ = 0.0;
-                e.velocityChanged = true;
-                e.setPosition(e.posX, pos.getY() + 0.75 - e.height, e.posZ);
-            }
-            
+        if (!world.isRemote && ticks++ % 5 == 0) {
             ItemStack extracted = inventory.extractItem(0, 64, false);
             if (!extracted.isEmpty()) {
                 Entity item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, extracted);
@@ -70,6 +71,17 @@ public class TileItemGrate extends TileEntity implements ITickable {
                 item.motionZ = 0.0;
                 item.velocityChanged = true;
                 world.spawnEntity(item);
+            }
+            
+            if (world.getBlockState(pos).getValue(IEnabledBlock.ENABLED)) {
+                List<EntityItem> above = world.getEntitiesWithinAABB(EntityItem.class,
+                        new AxisAlignedBB(pos.getX(), pos.getY() + 1, pos.getZ(), pos.getX() + 1, pos.getY() + 1.125, pos.getZ() + 1));
+                for (EntityItem e : above) {
+                    e.motionX = 0.0;
+                    e.motionZ = 0.0;
+                    e.velocityChanged = true;
+                    e.setPosition(e.posX, pos.getY() + 0.75 - e.height, e.posZ);
+                }
             }
         }
     }

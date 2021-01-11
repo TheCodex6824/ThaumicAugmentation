@@ -251,6 +251,37 @@
                     ]
                 }
             ]
+        },
+        {
+            "key": "ITEM_GRATE",
+            "name": "thaumicaugmentation.research.item_grate.title",
+            "icons": [
+                "thaumicaugmentation:item_grate"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "THAUMIC_AUGMENTATION_BASE"
+            ],
+            "location": [
+                1,
+                -1
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.item_grate.0",
+                    "recipes": [
+                        "thaumicaugmentation:item_grate"
+                    ]
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.item_grate.1",
+                    "required_research": [
+                        "SEALSTORE"
+                    ]
+                }
+            ]
         }
     ]
 }
