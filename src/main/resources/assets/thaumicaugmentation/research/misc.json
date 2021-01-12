@@ -262,6 +262,9 @@
             "parents": [
                 "THAUMIC_AUGMENTATION_BASE"
             ],
+            "meta": [
+                "ROUND"
+            ],
             "location": [
                 1,
                 -1

@@ -20,13 +20,19 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.tileentity.TileEntity;
@@ -58,6 +64,15 @@ public class BlockItemGrate extends BlockTABase implements IEnabledBlock, IItemB
     }
     
     @Override
+    @SuppressWarnings("deprecation")
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox,
+            List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean isActualState) {
+        
+        if (entity != null && (!(entity instanceof EntityItem) || !world.getBlockState(pos).getValue(IEnabledBlock.ENABLED)))
+            super.addCollisionBoxToList(state, world, pos, entityBox, collidingBoxes, entity, isActualState);
+    }
+    
+    @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, IEnabledBlock.ENABLED);
     }
@@ -79,7 +94,7 @@ public class BlockItemGrate extends BlockTABase implements IEnabledBlock, IItemB
         if (!world.isRemote) {
             world.setBlockState(pos, state.cycleProperty(IEnabledBlock.ENABLED), 3);
             world.playSound(null, pos, !state.getValue(IEnabledBlock.ENABLED) ? 
-                    SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN : SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, 1.0F);
         }
 
         return true;
