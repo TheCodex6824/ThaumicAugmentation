@@ -148,6 +148,17 @@ public final class TAConfig {
     
     public static ConfigOptionBoolean movementCompat;
     
+    public static ConfigOptionFloat baseHarnessSpeed;
+    public static ConfigOptionDouble baseHarnessCost;
+    
+    public static ConfigOptionFloat gyroscopeHarnessSpeed;
+    public static ConfigOptionDouble gyroscopeHarnessCost;
+    
+    public static ConfigOptionFloat girdleHarnessSpeed;
+    public static ConfigOptionDouble girdleHarnessCost;
+    
+    public static ConfigOptionDouble elytraHarnessBoostCost;
+    
     /**
      * Registers a callback to be notified when the config is synced or updated.
      * @param listener The callback

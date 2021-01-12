@@ -29,7 +29,6 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public abstract class ConfigOption<T> {
 
-    protected T value;
     protected boolean enforceServer;
 
     /**

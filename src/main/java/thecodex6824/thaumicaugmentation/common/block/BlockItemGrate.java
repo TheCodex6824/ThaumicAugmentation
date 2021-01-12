@@ -138,12 +138,17 @@ public class BlockItemGrate extends BlockTABase implements IEnabledBlock, IItemB
     }
 
     @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return !state.getValue(IEnabledBlock.ENABLED);
+    }
+    
+    @Override
     public boolean isFullCube(IBlockState state) {
         return false;
     }
-
+    
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
         return false;
     }
 

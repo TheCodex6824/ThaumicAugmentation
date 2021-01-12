@@ -225,6 +225,7 @@ thaumicaugmentation.text.config.ward=Ward Focus and Blocks
 thaumicaugmentation.text.config.impetus=Impetus
 thaumicaugmentation.text.config.impulse_cannon=Impulse Cannon
 thaumicaugmentation.text.config.augment=Augment
+thaumicaugmentation.text.config.harness=Harness
 
 thaumicaugmentation.key.category=Thaumic Augmentation
 thaumicaugmentation.key.elytra_boost=Activate Impetus Thruster (Hold)

@@ -33,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
 import net.minecraft.stats.StatisticsManager;
 import net.minecraft.util.DamageSource;
@@ -251,8 +252,20 @@ public final class PlayerEventHandler {
                     if (augmentable != null) {
                         for (ItemStack aug : augmentable.getAllAugments()) {
                             if (aug.getItem() == TAItems.ELYTRA_HARNESS_AUGMENT && aug.getMetadata() == 0) {
-                                IImpetusStorage impetus = aug.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                                if (impetus != null && ImpetusAPI.tryExtractFully(impetus, 1, player)) {
+                                if (!aug.hasTagCompound())
+                                    aug.setTagCompound(new NBTTagCompound());
+                                
+                                double current = aug.getTagCompound().getDouble("acc") + TAConfig.elytraHarnessBoostCost.getValue();
+                                if (current >= 1.0) {
+                                    long remove = (long) Math.floor(current);
+                                    IImpetusStorage impetus = aug.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                                    System.out.println(impetus.getEnergyStored());
+                                    if (impetus != null && ImpetusAPI.tryExtractFully(impetus, remove, player))
+                                        current -= remove;
+                                }
+                                
+                                aug.getTagCompound().setDouble("acc", current);
+                                if (current < 1.0) {
                                     canKeepFlying = true;
                                     break;
                                 }

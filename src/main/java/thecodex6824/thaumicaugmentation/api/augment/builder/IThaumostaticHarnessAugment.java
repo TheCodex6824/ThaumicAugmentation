@@ -27,7 +27,7 @@ public interface IThaumostaticHarnessAugment extends IAugment {
 
     public float getFlySpeed(EntityPlayer wearer);
     
-    public int getVisCostPerThreeSeconds(EntityPlayer wearer);
+    public double getVisCostPerTick(EntityPlayer wearer);
     
     public int getVisCapacity();
     

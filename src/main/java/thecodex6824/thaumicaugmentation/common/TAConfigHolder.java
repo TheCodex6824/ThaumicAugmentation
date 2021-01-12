@@ -119,6 +119,9 @@ public final class TAConfigHolder {
         @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.augment")
         public Augment augment = new Augment();
         
+        @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.harness")
+        public Harness harness = new Harness();
+        
         public static class WardOptions {
             
             @Name("AllowSingleplayerWardOverride")
@@ -402,6 +405,38 @@ public final class TAConfigHolder {
             @Name("ImpetusConductorFactor")
             @Comment("The amount the focus power is multiplied by when the gauntlet has a charged Impetus Conductor.")
             public double impetusConductorFactor = 1.1;
+        }
+        
+        public static class Harness {
+            
+            @Name("BaseHarnessSpeed")
+            @Comment("The fly speed of the unaugmented thaumostatic harness.")
+            public float baseHarnessSpeed = 0.05F;
+            
+            @Name("BaseHarnessCost")
+            @Comment("The vis cost per tick of the unaugmented thaumostatic harness.")
+            public double baseHarnessCost = 0.1;
+            
+            @Name("GyroscopeHarnessSpeed")
+            @Comment("The fly speed of the thaumostatic harness with the gyroscope augment.")
+            public float gyroscopeHarnessSpeed = 0.035F;
+            
+            @Name("GyroscopeHarnessCost")
+            @Comment("The vis cost per tick of the thaumostatic harness with the gyroscope augment.")
+            public double gyroscopeHarnessCost = 0.05;
+            
+            @Name("GirdleHarnessSpeed")
+            @Comment("The fly speed of the thaumostatic harness with the girdle augment.")
+            public float girdleHarnessSpeed = 0.065F;
+            
+            @Name("GirdleHarnessCost")
+            @Comment("The vis cost per tick of the thaumostatic harness with the girdle augment.")
+            public double girdleHarnessCost = 0.2;
+            
+            @Name("ElytraHarnessBoostCost")
+            @Comment("The impetus cost per tick of the elytra harness while boosting.")
+            public double elytraHarnessBoostCost = 0.0375;
+            
         }
         
         @Name("GauntletVisDiscounts")
@@ -800,6 +835,17 @@ public final class TAConfigHolder {
         TAConfig.impetusConductorFactor.setValue(gameplay.augment.impetusConductorFactor, side);
         
         TAConfig.movementCompat.setValue(gameplay.movementCompat, side);
+        
+        TAConfig.baseHarnessSpeed.setValue(gameplay.harness.baseHarnessSpeed, side);
+        TAConfig.baseHarnessCost.setValue(gameplay.harness.baseHarnessCost, side);
+        
+        TAConfig.gyroscopeHarnessSpeed.setValue(gameplay.harness.gyroscopeHarnessSpeed, side);
+        TAConfig.gyroscopeHarnessCost.setValue(gameplay.harness.gyroscopeHarnessCost, side);
+        
+        TAConfig.girdleHarnessSpeed.setValue(gameplay.harness.girdleHarnessSpeed, side);
+        TAConfig.girdleHarnessCost.setValue(gameplay.harness.girdleHarnessCost, side);
+        
+        TAConfig.elytraHarnessBoostCost.setValue(gameplay.harness.elytraHarnessBoostCost, side);
     }
 
     public static void syncLocally() {
@@ -939,6 +985,17 @@ public final class TAConfigHolder {
         TAConfig.impetusConductorFactor = TAConfigManager.addOption(new ConfigOptionDouble(false, gameplay.augment.impetusConductorFactor));
     
         TAConfig.movementCompat = TAConfigManager.addOption(new ConfigOptionBoolean(true, gameplay.movementCompat));
+    
+        TAConfig.baseHarnessSpeed = TAConfigManager.addOption(new ConfigOptionFloat(true, gameplay.harness.baseHarnessSpeed));
+        TAConfig.baseHarnessCost = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.harness.baseHarnessCost));
+        
+        TAConfig.gyroscopeHarnessSpeed = TAConfigManager.addOption(new ConfigOptionFloat(true, gameplay.harness.gyroscopeHarnessSpeed));
+        TAConfig.gyroscopeHarnessCost = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.harness.gyroscopeHarnessCost));
+        
+        TAConfig.girdleHarnessSpeed = TAConfigManager.addOption(new ConfigOptionFloat(true, gameplay.harness.girdleHarnessSpeed));
+        TAConfig.girdleHarnessCost = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.harness.girdleHarnessCost));
+    
+        TAConfig.elytraHarnessBoostCost = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.harness.elytraHarnessBoostCost));
     }
 
 }

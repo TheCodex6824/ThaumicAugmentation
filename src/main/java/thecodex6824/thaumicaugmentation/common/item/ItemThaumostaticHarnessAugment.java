@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
+import java.security.InvalidParameterException;
+
 import javax.annotation.Nullable;
 
 import com.google.common.math.DoubleMath;
@@ -29,6 +31,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
@@ -66,8 +69,8 @@ public class ItemThaumostaticHarnessAugment extends ItemTABase {
                 }
                 
                 @Override
-                public int getVisCostPerThreeSeconds(EntityPlayer wearer) {
-                    return 1;
+                public double getVisCostPerTick(EntityPlayer wearer) {
+                    return TAConfig.gyroscopeHarnessCost.getValue();
                 }
                 
                 @Override
@@ -77,7 +80,7 @@ public class ItemThaumostaticHarnessAugment extends ItemTABase {
                 
                 @Override
                 public float getFlySpeed(EntityPlayer wearer) {
-                    return 0.035F;
+                    return TAConfig.gyroscopeHarnessSpeed.getValue();
                 }
                 
                 @Override
@@ -101,8 +104,8 @@ public class ItemThaumostaticHarnessAugment extends ItemTABase {
                 }
                 
                 @Override
-                public int getVisCostPerThreeSeconds(EntityPlayer wearer) {
-                    return 3;
+                public double getVisCostPerTick(EntityPlayer wearer) {
+                    return TAConfig.girdleHarnessCost.getValue();
                 }
                 
                 @Override
@@ -112,47 +115,24 @@ public class ItemThaumostaticHarnessAugment extends ItemTABase {
                 
                 @Override
                 public float getFlySpeed(EntityPlayer wearer) {
-                    return 0.075F;
+                    return TAConfig.girdleHarnessSpeed.getValue();
                 }
                 
                 @Override
                 public void applyDrift(EntityPlayer wearer) {
-                    if (wearer.moveForward == 0.0F && wearer.moveStrafing == 0.0F) {
-                        wearer.motionX *= 1.0199999F;
-                        wearer.motionY *= 1.0199999F;
-                        wearer.motionZ *= 1.0199999F;
-                    }
+                    double factor = 1.0;
+                    if (DoubleMath.fuzzyEquals(wearer.moveForward, 0.0, 0.001) && DoubleMath.fuzzyEquals(wearer.moveStrafing, 0.0, 0.001))
+                        factor = 1.0199999;
+                    
+                    wearer.motionX *= factor;
+                    wearer.motionY *= factor;
+                    wearer.motionZ *= factor;
                 }
                 
             };
         }
-        else {
-            return new HarnessAugment() {
-                @Override
-                public boolean shouldAllowSprintFly(EntityPlayer wearer) {
-                    return false;
-                }
-                
-                @Override
-                public int getVisCostPerThreeSeconds(EntityPlayer wearer) {
-                    return 100000;
-                }
-                
-                @Override
-                public int getVisCapacity() {
-                    return 0;
-                }
-                
-                @Override
-                public float getFlySpeed(EntityPlayer wearer) {
-                    return 0;
-                }
-                
-                @Override
-                public void applyDrift(EntityPlayer wearer) {}
-                
-            };
-        }
+        else
+            throw new InvalidParameterException("Invalid thaumostatic harness type");
     }
     
     @Override
