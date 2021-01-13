@@ -37,6 +37,8 @@ import net.minecraft.client.audio.ISound.AttenuationType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -151,9 +153,9 @@ public final class ClientEventHandler {
             }
         }
         
-        if (!TAConfig.disableStabilizerText.getValue() && event.getEntityPlayer() != null && event.getItemStack().getItem() instanceof ItemBlock) {
-            ItemBlock item = (ItemBlock) event.getItemStack().getItem();
-            if (item.getBlock() instanceof IInfusionStabiliser) {
+        if (!TAConfig.disableStabilizerText.getValue() && event.getEntityPlayer() != null) {
+            Item item = event.getItemStack().getItem();
+            if ((item instanceof ItemBlock && ((ItemBlock) item).getBlock() instanceof IInfusionStabiliser) || item == Items.SKULL) {
                 IPlayerKnowledge knowledge = ThaumcraftCapabilities.getKnowledge(event.getEntityPlayer());
                 if (knowledge != null && knowledge.isResearchComplete("INFUSION")) {
                     event.getToolTip().add(TextFormatting.DARK_PURPLE +
