@@ -213,6 +213,7 @@ thaumicaugmentation.text.long_time_in_water=물의 깊이에 대해 통달해졌
 thaumicaugmentation.text.entered_spire=%s를 발견했다.
 thaumicaugmentation.text.boss_room_spire=첨탑의 심장부를 찾았다.
 thaumicaugmentation.text.elytra_fly=겉날개와 함께 하늘로 날아올랐다.
+thaumicaugmentation.text.infusion_stabilizer=인퓨전 안정장치
 
 thaumicaugmentation.text.damage.impetus=%s이(가) 소멸되었습니다
 thaumicaugmentation.text.damage.impetus_attack=%s이(가) %s에게 소멸당했습니다
@@ -225,6 +226,7 @@ thaumicaugmentation.text.config.ward=결계 포커스와 블록
 thaumicaugmentation.text.config.impetus=임페투스
 thaumicaugmentation.text.config.impulse_cannon=임펄스 캐논
 thaumicaugmentation.text.config.augment=증강
+thaumicaugmentation.text.config.harness=하네스
 
 thaumicaugmentation.key.category=사우믹 아그멘테이션 Thaumic Augmentation
 thaumicaugmentation.key.elytra_boost=임페투스 추진기 활성화 (홀드)
