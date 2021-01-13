@@ -730,6 +730,13 @@ public final class TAConfigHolder {
             "This is for modpack authors that might want to make these items obtainable."
         })
         public boolean disableCreativeOnlyText = false;
+        
+        @Name("DisableStabilizerText")
+        @Comment({
+            "Removes the \"Infusion Stabilizer\" text on items that act as infusion stabilizers when placed.",
+            "Note that this text only appears after completing the \"Infusion\" research."
+        })
+        public boolean disableStabilizerText = false;
     }
     
     private static ArrayList<Runnable> listeners = new ArrayList<>();
@@ -766,6 +773,7 @@ public final class TAConfigHolder {
 
         TAConfig.reducedEffects.setValue(client.reducedEffects, side);
         TAConfig.disableCreativeOnlyText.setValue(client.disableCreativeOnlyText, side);
+        TAConfig.disableStabilizerText.setValue(client.disableStabilizerText, side);
         
         TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
         TAConfig.defaultVoidBootsColor.setValue(gameplay.defaultVoidBootsColor, side);
@@ -909,6 +917,7 @@ public final class TAConfigHolder {
         TAConfig.disableShaders = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableShaders));
         TAConfig.morphicArmorExclusions = TAConfigManager.addOption(new ConfigOptionStringList(false, client.morphicArmorExclusions));
         TAConfig.disableCreativeOnlyText = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableCreativeOnlyText));
+        TAConfig.disableStabilizerText = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableStabilizerText));
         
         TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
         TAConfig.defaultVoidBootsColor = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));

@@ -72,6 +72,7 @@ public final class TAConfig {
     public static ConfigOptionBoolean disableShaders;
     public static ConfigOptionStringList morphicArmorExclusions;
     public static ConfigOptionBoolean disableCreativeOnlyText;
+    public static ConfigOptionBoolean disableStabilizerText;
 
     public static ConfigOptionIntList defaultGauntletColors;
     public static ConfigOptionInt defaultVoidBootsColor;
