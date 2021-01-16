@@ -80,7 +80,7 @@ public final class PlayerMovementAbilityManager {
 
     private static final class OldMovementData {
 
-        public OldMovementData(float s, float j) {
+        public OldMovementData(float s, float j, int d) {
             stepHeight = s;
             speedInAir = j;
         }
@@ -119,7 +119,7 @@ public final class PlayerMovementAbilityManager {
     
     public static void put(EntityPlayer player, BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> continueApplying) {
         if (!oldMovementValues.containsKey(player))
-            oldMovementValues.put(player, new OldMovementData(0.0F, 0.0F));
+            oldMovementValues.put(player, new OldMovementData(0.0F, 0.0F, player.dimension));
 
         if (players.containsKey(player))
             players.get(player).add(new PlayerFunctions(func, continueApplying));
@@ -215,9 +215,18 @@ public final class PlayerMovementAbilityManager {
     }
 
     public static void onJump(EntityPlayer player) {
-        if (players.containsKey(player)) {
-            for (PlayerFunctions func : players.get(player))
+        LinkedList<PlayerFunctions> funcs = players.get(player);
+        if (funcs != null) {
+            for (PlayerFunctions func : funcs)
                 player.motionY += func.tickFunction.apply(player, MovementType.JUMP_BEGIN);
+        }
+    }
+    
+    public static void onPlayerRecreation(EntityPlayer player) {
+        OldMovementData data = oldMovementValues.get(player);
+        if (data != null) {
+            data.speedInAir = 0.0F;
+            data.stepHeight = 0.0F;
         }
     }
     

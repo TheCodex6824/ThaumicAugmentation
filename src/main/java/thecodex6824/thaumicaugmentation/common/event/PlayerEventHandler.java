@@ -46,6 +46,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -121,6 +122,12 @@ public final class PlayerEventHandler {
     public static void onJump(LivingEvent.LivingJumpEvent event) {
         if (event.getEntity() instanceof EntityPlayer && PlayerMovementAbilityManager.isValidSideForMovement((EntityPlayer) event.getEntity()))
             PlayerMovementAbilityManager.onJump((EntityPlayer) event.getEntity());
+    }
+    
+    @SubscribeEvent
+    public static void onPlayerSpawn(EntityJoinWorldEvent event) {
+        if (event.getEntity() instanceof EntityPlayer && PlayerMovementAbilityManager.isValidSideForMovement((EntityPlayer) event.getEntity()))
+            PlayerMovementAbilityManager.onPlayerRecreation((EntityPlayer) event.getEntity());
     }
 
     protected static void checkFrequent(EntityPlayer player) {
