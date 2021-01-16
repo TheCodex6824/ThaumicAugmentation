@@ -436,7 +436,7 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     
     @Override
     public int getSuctionAmount(EnumFacing facing) {
-        return facing == EnumFacing.UP ? 0 : 64;
+        return facing == EnumFacing.UP ? 0 : 128;
     }
     
     @Override
