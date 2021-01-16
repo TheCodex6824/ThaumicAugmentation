@@ -43,7 +43,6 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -52,8 +51,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardParticles;
@@ -82,16 +79,6 @@ public class BlockWardedPressurePlate extends BlockTABase implements IWardOpenin
         setResistance(Float.MAX_VALUE / 16.0F);
         setTickRandomly(true);
         setDefaultState(getDefaultState().withProperty(IWardOpeningBlock.WARD_OPENING, false));
-    }
-    
-    @Override
-    public ItemBlock createItemBlock() {
-        return new ItemBlock(this) {
-            @Override
-            public IRarity getForgeRarity(ItemStack stack) {
-                return TAMaterials.RARITY_ARCANE;
-            }
-        };
     }
     
     @Override

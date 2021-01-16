@@ -36,12 +36,10 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.property.Properties;
 import thaumcraft.api.blocks.BlocksTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.block.property.IImpetusCellInfo;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
@@ -60,12 +58,7 @@ public class BlockImpetusMatrix extends BlockTABase implements IItemBlockProvide
     
     @Override
     public ItemBlock createItemBlock() {
-        return new ItemBlockNoImpetusNodeNBT(this) {
-            @Override
-            public IRarity getForgeRarity(ItemStack stack) {
-                return TAMaterials.RARITY_ELDRITCH;
-            }
-        };
+        return new ItemBlockNoImpetusNodeNBT(this);
     }
     
     @Override

@@ -46,13 +46,11 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
@@ -72,11 +70,6 @@ public class ItemBlockImpetusMirror extends ItemBlockNoImpetusNodeNBT implements
                         1.0F : 0.0F;
             }
         });
-    }
-    
-    @Override
-    public IRarity getForgeRarity(ItemStack stack) {
-        return TAMaterials.RARITY_ELDRITCH;
     }
     
     @Override

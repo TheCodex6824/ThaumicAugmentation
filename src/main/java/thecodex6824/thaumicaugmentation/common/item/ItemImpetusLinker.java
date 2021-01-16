@@ -31,13 +31,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityImpetusLinker;
@@ -77,11 +75,6 @@ public class ItemImpetusLinker extends ItemTABase {
         }
         
         return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
-    }
-    
-    @Override
-    public IRarity getForgeRarity(ItemStack stack) {
-        return TAMaterials.RARITY_ELDRITCH;
     }
     
     @Override

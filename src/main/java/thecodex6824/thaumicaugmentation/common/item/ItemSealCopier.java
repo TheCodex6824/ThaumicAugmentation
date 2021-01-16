@@ -41,7 +41,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.relauncher.Side;
@@ -54,7 +53,6 @@ import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.golems.seals.SealEntity;
 import thaumcraft.common.golems.seals.SealHandler;
 import thaumcraft.common.lib.SoundsTC;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
@@ -134,11 +132,6 @@ public class ItemSealCopier extends ItemTABase implements ISealDisplayer {
         }
         else
             return super.onItemRightClick(world, player, hand);
-    }
-    
-    @Override
-    public IRarity getForgeRarity(ItemStack stack) {
-        return TAMaterials.RARITY_MAGICAL;
     }
     
     @Override

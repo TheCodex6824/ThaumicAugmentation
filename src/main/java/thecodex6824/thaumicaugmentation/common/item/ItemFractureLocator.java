@@ -30,10 +30,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.PacketFractureLocatorUpdate;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -59,11 +57,6 @@ public class ItemFractureLocator extends ItemTABase {
                 FractureLocatorSearchManager.resetPlayerLocationTime((EntityPlayer) entity);
             }
         }
-    }
-    
-    @Override
-    public IRarity getForgeRarity(ItemStack stack) {
-        return TAMaterials.RARITY_ARCANE;
     }
     
     @SideOnly(Side.CLIENT)

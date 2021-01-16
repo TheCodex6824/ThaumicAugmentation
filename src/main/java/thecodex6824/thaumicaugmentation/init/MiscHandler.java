@@ -43,6 +43,8 @@ import thaumcraft.api.capabilities.IPlayerWarp;
 import thaumcraft.api.capabilities.IPlayerWarp.EnumWarpType;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.casters.FocusEngine;
+import thaumcraft.api.items.ItemsTC;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.api.entity.AutocasterFocusRegistry;
@@ -100,6 +102,9 @@ public final class MiscHandler {
                 "SSS",
                 'S', BlocksTC.stoneAncientTile
         );
+        
+        TAMaterials.VOID_BOOTS.repairMaterial = new ItemStack(ItemsTC.ingots, 1, 1);
+        TAMaterials.THAUMIUM_ROBES.repairMaterial = new ItemStack(ItemsTC.ingots, 1, 2);
     }
     
     protected static void registerWispAttacks() {

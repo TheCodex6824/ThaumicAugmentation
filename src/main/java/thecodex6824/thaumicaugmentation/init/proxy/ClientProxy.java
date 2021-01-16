@@ -1089,7 +1089,7 @@ public class ClientProxy extends ServerProxy {
             }
         }, TAItems.KEY);
 
-        registerTo.registerItemColorHandler(new IItemColor() {
+        IItemColor dye = new IItemColor() {
             @Override
             public int colorMultiplier(ItemStack stack, int tintIndex) {
                 if (tintIndex == 1 && stack.getItem() instanceof IDyeableItem)
@@ -1097,7 +1097,8 @@ public class ClientProxy extends ServerProxy {
 
                 return -1;
             }
-        }, TAItems.VOID_BOOTS);
+        };
+        registerTo.registerItemColorHandler(dye, TAItems.VOID_BOOTS);
         
         registerTo.registerItemColorHandler(new IItemColor() {
             @Override
@@ -1194,6 +1195,11 @@ public class ClientProxy extends ServerProxy {
                     return -1;
             }
         }, TABlocks.IMPETUS_MATRIX);
+        
+        
+        registerTo.registerItemColorHandler(dye, TAItems.THAUMIUM_ROBES_HOOD);
+        registerTo.registerItemColorHandler(dye, TAItems.THAUMIUM_ROBES_CHESTPLATE);
+        registerTo.registerItemColorHandler(dye, TAItems.THAUMIUM_ROBES_LEGGINGS);
     }
     
     private static void registerBlockColorHandlers() {

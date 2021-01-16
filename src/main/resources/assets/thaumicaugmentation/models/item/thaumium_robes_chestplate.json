@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "thaumicaugmentation:items/thaumium_robes_chestplate",
+        "layer1": "thaumicaugmentation:items/thaumium_robes_chestplate_overlay"
+    }
+}

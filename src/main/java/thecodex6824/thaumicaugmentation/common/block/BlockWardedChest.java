@@ -31,7 +31,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -44,11 +43,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.property.Properties;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardParticles;
@@ -73,16 +70,6 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
         setBlockUnbreakable();
         setResistance(Float.MAX_VALUE / 16.0F);
         setDefaultState(getDefaultState().withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.SOUTH));
-    }
-    
-    @Override
-    public ItemBlock createItemBlock() {
-        return new ItemBlock(this) {
-            @Override
-            public IRarity getForgeRarity(ItemStack stack) {
-                return TAMaterials.RARITY_ARCANE;
-            }
-        };
     }
 
     @Override

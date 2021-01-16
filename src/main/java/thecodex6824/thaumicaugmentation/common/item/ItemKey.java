@@ -37,14 +37,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedTile;
@@ -250,11 +248,6 @@ public class ItemKey extends ItemTABase {
         }
         
         return ItemStack.EMPTY;
-    }
-    
-    @Override
-    public IRarity getForgeRarity(ItemStack stack) {
-        return TAMaterials.RARITY_MAGICAL;
     }
 
     @Override

@@ -261,11 +261,6 @@ public class ItemVoidBoots extends ItemArmor implements IDyeableItem, IModelProv
     }
 
     @Override
-    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-        return repair.getItem() == getArmorMaterial().repairMaterial.getItem();
-    }
-
-    @Override
     public float getNewFallDamage(ItemStack stack, float origDamage, float distance) {
         if (RechargeHelper.getCharge(stack) > 0)
             return origDamage / 6.0F - 1.0F;

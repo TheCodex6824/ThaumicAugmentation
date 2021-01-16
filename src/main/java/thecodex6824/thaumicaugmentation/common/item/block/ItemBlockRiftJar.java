@@ -35,12 +35,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
 import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
@@ -55,11 +53,6 @@ public class ItemBlockRiftJar extends ItemBlock implements IModelProvider<Item> 
         super(TABlocks.RIFT_JAR);
         setMaxStackSize(1);
         setHasSubtypes(true);
-    }
-    
-    @Override
-    public IRarity getForgeRarity(ItemStack stack) {
-        return TAMaterials.RARITY_ELDRITCH;
     }
     
     @Override

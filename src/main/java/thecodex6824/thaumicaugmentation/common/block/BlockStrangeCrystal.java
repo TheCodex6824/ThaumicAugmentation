@@ -85,7 +85,7 @@ public class BlockStrangeCrystal extends BlockTABase implements IDirectionalBloc
         return new ItemBlock(this) {
             @Override
             public IRarity getForgeRarity(ItemStack stack) {
-                return TAMaterials.RARITY_ELDRITCH;
+                return TAMaterials.RARITY_ARCANE;
             }
         };
     }

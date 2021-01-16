@@ -32,9 +32,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardOpenedBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.door.IArcaneDoorHalf;
@@ -47,11 +45,6 @@ public class ItemArcaneDoor extends ItemTABase {
 
     public ItemArcaneDoor() {
         super(new String[] {"greatwood", "thaumium", "silverwood"});
-    }
-    
-    @Override
-    public IRarity getForgeRarity(ItemStack stack) {
-        return TAMaterials.RARITY_ARCANE;
     }
         
     @Override

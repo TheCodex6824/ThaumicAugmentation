@@ -26,13 +26,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.common.config.ConfigItems;
 import thaumcraft.common.items.casters.ItemFocus;
 import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
@@ -45,11 +43,6 @@ public class ItemFocusAncient extends ItemFocus implements IModelProvider<Item> 
         setTranslationKey(ThaumicAugmentationAPI.MODID + ".focus_ancient");
         setCreativeTab(TAItems.CREATIVE_TAB);
         ConfigItems.ITEM_VARIANT_HOLDERS.remove(this);
-    }
-    
-    @Override
-    public IRarity getForgeRarity(ItemStack stack) {
-        return TAMaterials.RARITY_ARCANE;
     }
     
     @Override

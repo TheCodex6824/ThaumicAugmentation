@@ -29,6 +29,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -37,7 +38,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -57,7 +57,6 @@ import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.common.golems.seals.SealHandler;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
@@ -140,6 +139,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemResearchNotes;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
+import thecodex6824.thaumicaugmentation.common.item.ItemThaumiumRobes;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumostaticHarness;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
@@ -323,21 +323,7 @@ public final class RegistryHandler {
         }
 
         registry.register(setupItem(new ItemTieredCasterGauntlet(), "gauntlet"));
-        registry.register(setupItem(new ItemTABase("lattice", "warding_sigil", "amalgamated_gear", "rift_energy_cell", "harness_base", "impetus_resonator") {
-            @Override
-            public IRarity getForgeRarity(ItemStack stack) {
-                switch (stack.getMetadata()) {
-                    case 0:
-                    case 1:
-                    case 2: return TAMaterials.RARITY_MAGICAL;
-                    
-                    case 3: 
-                    case 5: return TAMaterials.RARITY_ELDRITCH;
-                    
-                    default: return super.getForgeRarity(stack);
-                }
-            }
-        }, "material"));
+        registry.register(setupItem(new ItemTABase("lattice", "warding_sigil", "amalgamated_gear", "rift_energy_cell", "harness_base", "impetus_resonator"), "material"));
         registry.register(setupItem(new ItemSealCopier(), "seal_copier"));
         registry.register(setupItem(new ItemArcaneDoor(), "arcane_door"));
         registry.register(setupItem(new ItemKey(), "key"));
@@ -366,6 +352,9 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemObeliskPlacer(), "obelisk_placer"));
         registry.register(setupItem(new ItemResearchNotes(), "research_notes"));
         registry.register(setupItem(new ItemVisBatteryCasterAugment(), "augment_vis_battery"));
+        registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.HEAD), "thaumium_robes_hood"));
+        registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.CHEST), "thaumium_robes_chestplate"));
+        registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.LEGS), "thaumium_robes_leggings"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }
