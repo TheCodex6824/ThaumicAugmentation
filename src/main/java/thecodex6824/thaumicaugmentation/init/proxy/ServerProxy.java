@@ -112,6 +112,11 @@ public class ServerProxy implements ISidedProxy {
     }
     
     @Override
+    public boolean isInGame() {
+        return true;
+    }
+    
+    @Override
     public boolean isElytraBoostKeyDown() {
         return false;
     }

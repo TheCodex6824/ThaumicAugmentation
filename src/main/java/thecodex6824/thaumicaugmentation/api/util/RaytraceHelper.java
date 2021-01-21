@@ -36,8 +36,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class RaytraceHelper {
+public final class RaytraceHelper {
 
+    private RaytraceHelper() {}
+    
     public static Vec3d raytracePosition(EntityLivingBase user, double maxDistance) {
         Vec3d eyes = user.getPositionEyes(1.0F);
         Vec3d look = user.getLook(1.0F);

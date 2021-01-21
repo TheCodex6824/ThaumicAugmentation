@@ -305,6 +305,11 @@ public class ClientProxy extends ServerProxy {
     }
     
     @Override
+    public boolean isInGame() {
+        return Minecraft.getMinecraft().getRenderViewEntity() != null;
+    }
+    
+    @Override
     public boolean isElytraBoostKeyDown() {
         if (elytraBoost != null)
             return elytraBoost.isKeyDown();

@@ -266,7 +266,6 @@ public final class PlayerEventHandler {
                                 if (current >= 1.0) {
                                     long remove = (long) Math.floor(current);
                                     IImpetusStorage impetus = aug.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                                    System.out.println(impetus.getEnergyStored());
                                     if (impetus != null && ImpetusAPI.tryExtractFully(impetus, remove, player))
                                         current -= remove;
                                 }

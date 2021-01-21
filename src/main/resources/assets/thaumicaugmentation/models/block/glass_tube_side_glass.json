@@ -1,0 +1,18 @@
+{
+	"ambientocclusion": false,
+	"textures": {
+		"2": "thaumicaugmentation:blocks/glass_tube_sides"
+	},
+	"elements": [
+		{
+			"from": [6.5, 0, 6.5],
+			"to": [9.5, 6.5, 9.5],
+			"faces": {
+				"north": {"uv": [8, 4, 0, 8], "rotation": 90, "texture": "#2", "tintindex": 1},
+				"east": {"uv": [8, 4, 0, 8], "rotation": 90, "texture": "#2", "tintindex": 1},
+				"south": {"uv": [8, 4, 0, 8], "rotation": 90, "texture": "#2", "tintindex": 1},
+				"west": {"uv": [8, 4, 0, 8], "rotation": 90, "texture": "#2", "tintindex": 1}
+			}
+		}
+	]
+}
