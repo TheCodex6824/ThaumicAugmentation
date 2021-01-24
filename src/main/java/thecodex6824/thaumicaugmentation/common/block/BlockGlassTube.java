@@ -96,6 +96,8 @@ public class BlockGlassTube extends BlockTABase implements IItemBlockProvider {
     public static final PropertyEnum<ConnectionType> UP = PropertyEnum.create("up", ConnectionType.class);
     public static final PropertyEnum<ConnectionType> DOWN = PropertyEnum.create("down", ConnectionType.class);
     
+    
+    
     protected static RayTracer raytracer = new RayTracer();
     
     public BlockGlassTube() {
@@ -347,8 +349,8 @@ public class BlockGlassTube extends BlockTABase implements IItemBlockProvider {
     }
     
     @Override
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT || layer == BlockRenderLayer.TRANSLUCENT;
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
     
 }

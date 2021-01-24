@@ -76,6 +76,8 @@ public class TATextures {
     public static final ResourceLocation TC_PARTICLES = new ResourceLocation("thaumcraft", "textures/misc/particles.png");
     public static final ResourceLocation NODE = new ResourceLocation("thaumcraft", "textures/misc/auranodes.png");
     
+    public static final ResourceLocation ESSENTIA = new ResourceLocation("thaumcraft", "blocks/animatedglow");
+    
     public static void setupTextures() {
         SimpleTexture tex = new SimpleTexture(MIRROR);
         if (Minecraft.getMinecraft().getTextureManager().loadTexture(MIRROR, tex))

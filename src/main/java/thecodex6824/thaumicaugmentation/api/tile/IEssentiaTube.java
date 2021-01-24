@@ -20,7 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.api.tile;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.util.EnumFacing;
+import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.IEssentiaTransport;
 
 public interface IEssentiaTube extends IEssentiaTransport {
@@ -28,5 +31,7 @@ public interface IEssentiaTube extends IEssentiaTransport {
     public boolean isSideOpen(EnumFacing side);
     
     public void setSideOpen(EnumFacing side, boolean open);
+    
+    public void setEssentiaDirect(@Nullable Aspect aspect, int amount);
     
 }

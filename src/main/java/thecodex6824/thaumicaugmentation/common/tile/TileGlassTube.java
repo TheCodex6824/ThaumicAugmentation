@@ -41,6 +41,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.IEssentiaTransport;
@@ -49,12 +50,14 @@ import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.tiles.essentia.TileTube;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.aspect.AspectUtil;
 import thecodex6824.thaumicaugmentation.api.tile.IEssentiaTube;
+import thecodex6824.thaumicaugmentation.common.network.PacketEssentiaUpdate;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public class TileGlassTube extends TileEntity implements IEssentiaTube, IInteractWithCaster,
     ITickable {
 
-    protected int color;
     protected byte sides = 0b00111111;
     protected Aspect containedAspect;
     protected int amount;
@@ -65,6 +68,11 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     protected float ventX = -1.0F;
     protected float ventY = -1.0F;
     protected int ticks = ThreadLocalRandom.current().nextInt(20);
+    
+    protected void syncEssentia() {
+        PacketEssentiaUpdate update = new PacketEssentiaUpdate(pos, AspectUtil.getAspectID(containedAspect), amount);
+        TANetwork.INSTANCE.sendToAllTracking(update, new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
+    }
     
     @Override
     public void update() {
@@ -160,7 +168,10 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
         if (amount == 0 && addAmount != 0 && canInputFrom(from)) {
             containedAspect = aspect;
             ++amount;
-            markDirty();
+            if (!world.isRemote) {
+                markDirty();
+                syncEssentia();
+            }
             return 1;
         }
         else
@@ -263,6 +274,16 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     }
     
     @Override
+    public void setEssentiaDirect(@Nullable Aspect aspect, int amount) {
+        containedAspect = aspect;
+        this.amount = amount;
+        if (!world.isRemote) {
+            markDirty();
+            syncEssentia();
+        }
+    }
+    
+    @Override
     public void setSideOpen(EnumFacing side, boolean open) {
         if (open)
             sides |= (1 << side.getIndex());
@@ -285,7 +306,10 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
         if (containedAspect == aspect && amount == 1 && takeAmount > 0 && canOutputTo(face)) {
             --amount;
             containedAspect = null;
-            markDirty();
+            if (!world.isRemote) {
+                markDirty();
+                syncEssentia();
+            }
             return 1;
         }
         else
@@ -311,7 +335,6 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound tag = super.getUpdateTag();
-        tag.setInteger("color", color);
         tag.setByte("sides", sides);
         tag.setString("containedAspect", containedAspect != null ? containedAspect.getTag() : "");
         tag.setInteger("amount", amount);
@@ -321,7 +344,6 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
-        color = tag.getInteger("color");
         sides = tag.getByte("sides");
         containedAspect = Aspect.getAspect(tag.getString("containedAspect"));
         amount = tag.getInteger("amount");
@@ -331,7 +353,6 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     @Nullable
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setInteger("color", color);
         tag.setByte("sides", sides);
         tag.setString("containedAspect", containedAspect != null ? containedAspect.getTag() : "");
         tag.setInteger("amount", amount);
@@ -340,7 +361,6 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        color = pkt.getNbtCompound().getInteger("color");
         sides = pkt.getNbtCompound().getByte("sides");
         containedAspect = Aspect.getAspect(pkt.getNbtCompound().getString("containedAspect"));
         amount = pkt.getNbtCompound().getInteger("amount");
@@ -349,7 +369,6 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setInteger("color", color);
         compound.setByte("sides", sides);
         compound.setString("containedAspect", containedAspect != null ? containedAspect.getTag() : "");
         compound.setInteger("amount", amount);
@@ -361,12 +380,16 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        color = compound.getInteger("color");
         sides = compound.getByte("sides");
         containedAspect = Aspect.getAspect(compound.getString("containedAspect"));
         amount = compound.getInteger("amount");
         suctionAspect = Aspect.getAspect(compound.getString("suctionAspect"));
         suction = compound.getInteger("suction");
+    }
+    
+    @Override
+    public boolean hasFastRenderer() {
+        return true;
     }
     
 }

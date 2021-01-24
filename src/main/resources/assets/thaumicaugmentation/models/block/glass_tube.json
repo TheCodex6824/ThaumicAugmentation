@@ -1,7 +1,0 @@
-{
-	"ambientocclusion": false,
-	"textures": {
-		"particle": "thaumicaugmentation:blocks/glass_tube_base"
-	},
-	"elements": []
-}

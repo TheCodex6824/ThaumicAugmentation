@@ -1,7 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "thaumicaugmentation:items/glass_tube_base",
-        "layer1": "thaumicaugmentation:items/glass_tube_overlay"
+        "layer0": "thaumicaugmentation:items/glass_tube"
     }
 }

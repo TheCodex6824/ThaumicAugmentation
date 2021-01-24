@@ -1,260 +1,126 @@
 {    
     "forge_marker": 1,
     "defaults": {
-        "model": "thaumicaugmentation:glass_tube"
+        "model": "ta_special:glass_tube"
     },
     "variants": {
         "north": {
-            "none": {
-                "submodel": {
-                    "nn": {
-                        "model": "forge:multi-layer",
-                        "y": 180,
-                        "x": 90,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#core_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#core_glass"
-                        }
-                    }
-                }
-            },
+            "none": {},
             "glass": {
                 "submodel": {
                     "ng": {
-                        "model": "forge:multi-layer",
+                        "model": "thaumicaugmentation:glass_tube_side",
                         "y": 180,
-                        "x": 90,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#side_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#side_glass"
-                        }
+                        "x": 90
                     }
                 }
             },
             "connector": {
                 "submodel": {
                     "nc": {
-                        "model": "forge:multi-layer",
+                        "model": "thaumicaugmentation:glass_tube_connector",
                         "y": 180,
-                        "x": 90,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#connector_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#connector_glass"
-                        }
+                        "x": 90
                     }
                 }
             }
         },
         "south": {
-            "none": {
-                "submodel": {
-                    "sn": {
-                        "model": "forge:multi-layer",
-                        "x": 90,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#core_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#core_glass"
-                        }
-                    }
-                }
-            },
+            "none": {},
             "glass": {
                 "submodel": {
                     "sg": {
-                        "model": "forge:multi-layer",
-                        "x": 90,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#side_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#side_glass"
-                        }
+                        "model": "thaumicaugmentation:glass_tube_side",
+                        "x": 90
                     }
                 }
             },
             "connector": {
                 "submodel": {
                     "sc": {
-                        "model": "forge:multi-layer",
-                        "x": 90,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#connector_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#connector_glass"
-                        }
+                        "model": "thaumicaugmentation:glass_tube_connector",
+                        "x": 90
                     }
                 }
             }
         },
         "east": {
-            "none": {
-                "submodel": {
-                    "en": {
-                        "model": "forge:multi-layer",
-                        "x": 90,
-                        "y": 270,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#core_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#core_glass"
-                        }
-                    }
-                }
-            },
+            "none": {},
             "glass": {
                 "submodel": {
                     "eg": {
-                        "model": "forge:multi-layer",
+                        "model": "thaumicaugmentation:glass_tube_side",
                         "x": 90,
-                        "y": 270,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#side_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#side_glass"
-                        }
+                        "y": 270
                     }
                 }
             },
             "connector": {
                 "submodel": {
                     "ec": {
-                        "model": "forge:multi-layer",
+                        "model": "thaumicaugmentation:glass_tube_connector",
                         "x": 90,
-                        "y": 270,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#connector_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#connector_glass"
-                        }
+                        "y": 270
                     }
                 }
             }
         },
         "west": {
-            "none": {
-                "submodel": {
-                    "wn": {
-                        "model": "forge:multi-layer",
-                        "x": 90,
-                        "y": 90,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#core_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#core_glass"
-                        }
-                    }
-                }
-            },
+            "none": {},
             "glass": {
                 "submodel": {
                     "wg": {
-                        "model": "forge:multi-layer",
+                        "model": "thaumicaugmentation:glass_tube_side",
                         "x": 90,
-                        "y": 90,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#side_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#side_glass"
-                        }
+                        "y": 90
                     }
                 }
             },
             "connector": {
                 "submodel": {
                     "wc": {
-                        "model": "forge:multi-layer",
+                        "model": "thaumicaugmentation:glass_tube_connector",
                         "x": 90,
-                        "y": 90,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#connector_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#connector_glass"
-                        }
+                        "y": 90
                     }
                 }
             }
         },
         "up": {
-            "none": {
-                "submodel": {
-                    "un": {
-                        "model": "forge:multi-layer",
-                        "x": 180,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#core_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#core_glass"
-                        }
-                    }
-                }
-            },
+            "none": {},
             "glass": {
                 "submodel": {
                     "ug": {
-                        "model": "forge:multi-layer",
-                        "x": 180,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#side_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#side_glass"
-                        }
+                        "model": "thaumicaugmentation:glass_tube_side",
+                        "x": 180
                     }
                 }
             },
             "connector": {
                 "submodel": {
                     "uc": {
-                        "model": "forge:multi-layer",
-                        "x": 180,
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#connector_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#connector_glass"
-                        }
+                        "model": "thaumicaugmentation:glass_tube_connector",
+                        "x": 180
                     }
                 }
             }
         },
         "down": {
-            "none": {
-                "submodel": {
-                    "dn": {
-                        "model": "forge:multi-layer",
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#core_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#core_glass"
-                        }
-                    }
-                }
-            },
+            "none": {},
             "glass": {
                 "submodel": {
                     "dg": {
-                        "model": "forge:multi-layer",
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#side_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#side_glass"
-                        }
+                        "model": "thaumicaugmentation:glass_tube_side"
                     }
                 }
             },
             "connector": {
                 "submodel": {
                     "dc": {
-                        "model": "forge:multi-layer",
-                        "custom": {
-                            "Cutout": "thaumicaugmentation:glass_tube#connector_solid",
-                            "Translucent": "thaumicaugmentation:glass_tube#connector_glass"
-                        }
+                        "model": "thaumicaugmentation:glass_tube_connector"
                     }
                 }
             }
-        },
-        "core_solid": [{
-            "model": "thaumicaugmentation:glass_tube_core_solid"
-        }],
-        "core_glass": [{
-            "model": "thaumicaugmentation:glass_tube_core_glass"
-        }],
-        "side_solid": [{
-            "model": "thaumicaugmentation:glass_tube_side_solid"
-        }],
-        "side_glass": [{
-            "model": "thaumicaugmentation:glass_tube_side_glass"
-        }],
-        "connector_solid": [{
-            "model": "thaumicaugmentation:glass_tube_side_connector_solid"
-        }],
-        "connector_glass": [{
-            "model": "thaumicaugmentation:glass_tube_side_connector_glass"
-        }]
+        }
     }
 }
