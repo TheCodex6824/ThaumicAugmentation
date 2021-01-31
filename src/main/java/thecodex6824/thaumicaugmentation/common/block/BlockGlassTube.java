@@ -147,7 +147,7 @@ public class BlockGlassTube extends BlockTABase implements IItemBlockProvider {
         if (tile instanceof IEssentiaTube) {
             IEssentiaTube tube = (IEssentiaTube) tile;
             for (EnumFacing f : EnumFacing.VALUES) {
-                if (tube.isConnectable(f)) {
+                if (tube.isConnectable(f) && (!(world instanceof World) || ((World) world).isBlockLoaded(pos.offset(f)))) {
                     TileEntity other = ThaumcraftApiHelper.getConnectableTile(world, pos, f);
                     if (other instanceof TileGlassTube)
                         state = state.withProperty((IProperty<ConnectionType>) blockState.getProperty(f.getName()), ConnectionType.GLASS);
@@ -166,29 +166,31 @@ public class BlockGlassTube extends BlockTABase implements IItemBlockProvider {
         float minY = 0.3125F, maxY = 0.6875F;
         float minZ = 0.3125F, maxZ = 0.6875F;
         for (EnumFacing side : EnumFacing.VALUES) {
-            TileEntity te = ThaumcraftApiHelper.getConnectableTile(source, pos, side);
-            if (te != null) {
-                switch (side) {
-                    case DOWN:
-                        minY = 0.0F;
-                        break;
-                    case UP:
-                        maxY = 1.0F;
-                        break;
-                    case NORTH:
-                        minZ = 0.0F;
-                        break;
-                    case SOUTH:
-                        maxZ = 1.0F;
-                        break;
-                    case WEST:
-                        minX = 0.0F;
-                        break;
-                    case EAST:
-                        maxX = 1.0F;
-                        break;
-                    default: break;
-                }  
+            if (!(source instanceof World) || ((World) source).isBlockLoaded(pos.offset(side))) {
+                TileEntity te = ThaumcraftApiHelper.getConnectableTile(source, pos, side);
+                if (te != null) {
+                    switch (side) {
+                        case DOWN:
+                            minY = 0.0F;
+                            break;
+                        case UP:
+                            maxY = 1.0F;
+                            break;
+                        case NORTH:
+                            minZ = 0.0F;
+                            break;
+                        case SOUTH:
+                            maxZ = 1.0F;
+                            break;
+                        case WEST:
+                            minX = 0.0F;
+                            break;
+                        case EAST:
+                            maxX = 1.0F;
+                            break;
+                        default: break;
+                    }  
+                }
             }
         } 
         

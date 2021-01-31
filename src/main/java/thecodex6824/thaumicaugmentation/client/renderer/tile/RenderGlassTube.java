@@ -73,9 +73,14 @@ public class RenderGlassTube extends FastTESR<TileGlassTube> {
     public void renderTileEntityFast(TileGlassTube te, double x, double y, double z, float partialTicks,
             int destroyStage, float partial, BufferBuilder buffer) {
         
-        if (te.getEssentiaAmount(EnumFacing.UP) > 0) {
+        int fluid = te.getFluidStartTicks();
+        if (fluid > 0) {
             Aspect aspect = te.getEssentiaType(EnumFacing.UP);
+            if (aspect == null || te.getEssentiaAmount(EnumFacing.UP) == 0)
+                aspect = te.getLastFluid();
+            
             if (aspect != null) {
+                float levelMod = fluid / 20.0F;
                 int color = aspect.getColor();
                 float r = ((color >> 16) & 0xFF) / 255.0F;
                 float g = ((color >> 8) & 0xFF) / 255.0F;
@@ -87,7 +92,7 @@ public class RenderGlassTube extends FastTESR<TileGlassTube> {
                         sPos = state.getValue(BlockGlassTube.SOUTH) != ConnectionType.NONE;
                 if (sNeg || sPos) {
                     Vec3d p1 = new Vec3d(x + 0.45, y + 0.45, z + (sNeg ? 0.0 : 0.445));
-                    Vec3d p2 = new Vec3d(x + 0.55, y + 0.55, z + (sPos ? 1.0 : 0.555));
+                    Vec3d p2 = new Vec3d(x + 0.55, y + 0.45 + 0.1 * levelMod, z + (sPos ? 1.0 : 0.555));
                     drawRectPrism(buffer, texture, p1, p2, r, g, b);
                 }
                 
@@ -95,20 +100,20 @@ public class RenderGlassTube extends FastTESR<TileGlassTube> {
                 sPos = state.getValue(BlockGlassTube.EAST) != ConnectionType.NONE;
                 if (sNeg || sPos) {
                     Vec3d p1 = new Vec3d(x + (sNeg ? 0.0 : 0.445), y + 0.45, z + 0.45);
-                    Vec3d p2 = new Vec3d(x + (sPos ? 1.0 : 0.555), y + 0.55, z + 0.55);
+                    Vec3d p2 = new Vec3d(x + (sPos ? 1.0 : 0.555), y + 0.45 + 0.1 * levelMod, z + 0.55);
                     drawRectPrism(buffer, texture, p1, p2, r, g, b);
                 }
                 
                 sNeg = state.getValue(BlockGlassTube.DOWN) != ConnectionType.NONE;
                 sPos = state.getValue(BlockGlassTube.UP) != ConnectionType.NONE;
                 if (sNeg || sPos) {
-                    Vec3d p1 = new Vec3d(x + 0.45, y + (sNeg ? 0.0 : 0.445), z + 0.45);
-                    Vec3d p2 = new Vec3d(x + 0.55, y + (sPos ? 1.0 : 0.555), z + 0.55);
+                    double width = 0.1 * levelMod;
+                    Vec3d p1 = new Vec3d(x + 0.45 + (0.1 - width), y + (sNeg ? 0.0 : 0.445), z + 0.45 + (0.1 - width));
+                    Vec3d p2 = new Vec3d(x + 0.45 + width, y + (sPos ? 1.0 : 0.555), z + 0.45 + width);
                     drawRectPrism(buffer, texture, p1, p2, r, g, b);
                 }
             }
         }
-        
     }
-    
+   
 }

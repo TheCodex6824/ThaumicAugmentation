@@ -182,7 +182,7 @@ public final class TAConfigHolder {
                     "The amount of damage that the Impulse Cannon's beam attack does.",
                     "The beam attack is the default attack with no augments."
                 })
-                public float beamDamage = 4.0F;
+                public float beamDamage = 2.5F;
                 
                 @Name("BeamCostInitial")
                 @Comment({

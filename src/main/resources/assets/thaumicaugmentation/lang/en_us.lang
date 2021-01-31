@@ -74,6 +74,7 @@ tile.thaumicaugmentation.urn.urn_common.name=Common Urn
 tile.thaumicaugmentation.urn.urn_uncommon.name=Uncommon Urn
 tile.thaumicaugmentation.urn.urn_rare.name=Rare Urn
 tile.thaumicaugmentation.item_grate.name=Item Grate
+tile.thaumicaugmentation.glass_tube.name=Glass Essentia Tube
 
 tile.thaumcraft.stairs_ancient_tile.name=Ancient Stone Tile Stairs
 

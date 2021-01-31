@@ -64,10 +64,15 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     protected int suction;
     protected Aspect suctionAspect;
     protected int ventingTicks;
+    protected int ticks = ThreadLocalRandom.current().nextInt(20);
+    
+    // client vars
     protected int ventingColor;
     protected float ventX = -1.0F;
     protected float ventY = -1.0F;
-    protected int ticks = ThreadLocalRandom.current().nextInt(20);
+    protected int fluidStartTicks = 20;
+    protected boolean fluidStartTicksUp = true;
+    protected Aspect lastFluid;
     
     protected void syncEssentia() {
         PacketEssentiaUpdate update = new PacketEssentiaUpdate(pos, AspectUtil.getAspectID(containedAspect), amount);
@@ -149,17 +154,28 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
                 }
             }
         }
-        else if (world.isRemote && ventingTicks > 0 && ThaumicAugmentation.proxy.isInGame()) {
-            if (ventX < 0.0F)
-                ventX = world.rand.nextFloat() * (float) Math.PI * 2.0F;
-            if (ventY < 0.0F)
-                ventY = world.rand.nextFloat() * (float) Math.PI * 2.0F;
+        else if (world.isRemote && ThaumicAugmentation.proxy.isInGame()) {
+            if (fluidStartTicksUp) {
+                if (fluidStartTicks < 20)
+                    ++fluidStartTicks;
+            }
+            else {
+                if (fluidStartTicks > 0)
+                    --fluidStartTicks;
+            }
             
-            double fX = (-MathHelper.sin(ventX) * MathHelper.cos(ventY));
-            double fZ = (MathHelper.cos(ventX) * MathHelper.cos(ventY));
-            double fY = -MathHelper.sin(ventY);
-            FXDispatcher.INSTANCE.drawVentParticles(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                    fX / 5.0, fY / 5.0, fZ / 5.0, ventingColor);
+            if (ventingTicks > 0) {
+                if (ventX < 0.0F)
+                    ventX = world.rand.nextFloat() * (float) Math.PI * 2.0F;
+                if (ventY < 0.0F)
+                    ventY = world.rand.nextFloat() * (float) Math.PI * 2.0F;
+                
+                double fX = (-MathHelper.sin(ventX) * MathHelper.cos(ventY));
+                double fZ = (MathHelper.cos(ventX) * MathHelper.cos(ventY));
+                double fY = -MathHelper.sin(ventY);
+                FXDispatcher.INSTANCE.drawVentParticles(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                        fX / 5.0, fY / 5.0, fZ / 5.0, ventingColor);
+            }
         }
     }
     
@@ -275,6 +291,12 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     
     @Override
     public void setEssentiaDirect(@Nullable Aspect aspect, int amount) {
+        if (aspect == null || amount == 0)
+            fluidStartTicksUp = false;
+        else
+            fluidStartTicksUp = true;
+        
+        lastFluid = containedAspect;
         containedAspect = aspect;
         this.amount = amount;
         if (!world.isRemote) {
@@ -321,6 +343,18 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
         return oldState.getBlock() != newState.getBlock();
     }
     
+    public int getFluidStartTicks() {
+        return fluidStartTicks;
+    }
+    
+    public void setFluidStartTicks(int newTicks) {
+        fluidStartTicks = newTicks;
+    }
+    
+    public Aspect getLastFluid() {
+        return lastFluid;
+    }
+    
     @Override
     public boolean receiveClientEvent(int id, int type) {
         if (id == 1) {
@@ -347,6 +381,7 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
         sides = tag.getByte("sides");
         containedAspect = Aspect.getAspect(tag.getString("containedAspect"));
         amount = tag.getInteger("amount");
+        lastFluid = containedAspect;
     }
     
     @Override
