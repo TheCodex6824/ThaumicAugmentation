@@ -61,20 +61,20 @@ runServer {
 }
 
 dependencies {
-    deobfCompile 'curse.maven:thaumcraft:2629023'
-    deobfCompile 'curse.maven:baubles:2518667'
-    deobfCompile 'curse.maven:jeid:2919737'
-    deobfCompile 'curse.maven:botania:2846950'
-    deobfCompile 'curse.maven:auracontrol:3013979'
-    deobfCompile 'curse.maven:electroblobs-wizardry:2929294'
+	deobfCompile 'curse.maven:thaumcraft-223628:2629023'
+    deobfCompile 'curse.maven:baubles-227083:2518667'
+    deobfCompile 'curse.maven:jeid-296289:2919737'
+    deobfCompile 'curse.maven:botania-225643:2846950'
+    deobfCompile 'curse.maven:auracontrol-397104:3013979'
+    deobfCompile 'curse.maven:electroblobs-wizardry-265642:2929294'
     
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest:2.1'
     
-    runtime 'curse.maven:jei:2995897'
-    runtime 'curse.maven:thaumic-jei:2705304'
-    runtime 'curse.maven:the-one-probe:2667280'
-    runtime 'curse.maven:ctm:2915363'
+    runtime 'curse.maven:jei-238222:2995897'
+    runtime 'curse.maven:thaumic-jei-285492:2705304'
+    runtime 'curse.maven:the-one-probe-245211:2667280'
+    runtime 'curse.maven:ctm-267602:2915363'
     
     // if the curse maven is down or otherwise not working:
     // comment the above "deobfCompile" and "runtime" entries
