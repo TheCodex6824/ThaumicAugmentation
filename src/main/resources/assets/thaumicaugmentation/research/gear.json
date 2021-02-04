@@ -14,8 +14,8 @@
                 "~INFUSION"
             ],
             "location": [
-                -5,
-                -2
+                -3,
+                -1
             ],
             "stages": [
                 {
@@ -52,7 +52,7 @@
                 "HIDDEN"
             ],
             "location": [
-                -3,
+                -5,
                 -1
             ],
             "stages": [
@@ -88,7 +88,7 @@
                 "HIDDEN"
             ],
             "location": [
-                -5,
+                -7,
                 -1.5
             ],
             "stages": [
@@ -152,7 +152,7 @@
                 "HIDDEN"
             ],
             "location": [
-                -5,
+                -7,
                 1.5
             ],
             "stages": [
