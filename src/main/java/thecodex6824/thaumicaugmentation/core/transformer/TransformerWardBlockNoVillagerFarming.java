@@ -47,6 +47,11 @@ public class TransformerWardBlockNoVillagerFarming extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return false;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode farm = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/ai/EntityAIHarvestFarmland", "func_179488_a",

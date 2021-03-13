@@ -134,6 +134,7 @@ import thecodex6824.thaumicaugmentation.client.fx.FXGenericP2ECustomSpeed;
 import thecodex6824.thaumicaugmentation.client.fx.FXImpulseBeam;
 import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
+import thecodex6824.thaumicaugmentation.client.gui.GUICelestialObserver;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
 import thecodex6824.thaumicaugmentation.client.model.BuiltInRendererModel;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
@@ -146,6 +147,7 @@ import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderAutocaster;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderCelestialObserver;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFluxRiftOptimized;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
@@ -176,8 +178,10 @@ import thecodex6824.thaumicaugmentation.client.sound.MovingSoundRecord;
 import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
+import thecodex6824.thaumicaugmentation.common.container.ContainerCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
+import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
@@ -350,6 +354,7 @@ public class ClientProxy extends ServerProxy {
             case WARDED_CHEST: return new GUIWardedChest(getServerGUIElement(ID, player, world, x, y, z), player.inventory);
             case ARCANE_TERRAFORMER: return new GUIArcaneTerraformer((ContainerArcaneTerraformer) getServerGUIElement(ID, player, world, x, y, z));
             case AUTOCASTER: return new GUIAutocaster((ContainerAutocaster) getServerGUIElement(ID, player, world, x, y, z));
+            case CELESTIAL_OBSERVER: return new GUICelestialObserver((ContainerCelestialObserver) getServerGUIElement(ID, player, world, x, y, z));
             default: return null;
         }
     }
@@ -1018,7 +1023,12 @@ public class ClientProxy extends ServerProxy {
                 return new RenderTAGolemOrb(manager);
             }
         });
-        
+        RenderingRegistry.registerEntityRenderingHandler(EntityCelestialObserver.class, new IRenderFactory<EntityCelestialObserver>() {
+            @Override
+            public Render<? super EntityCelestialObserver> createRenderFor(RenderManager manager) {
+                return new RenderCelestialObserver(manager);
+            }
+        });
         
         TAModelLoader loader = new TAModelLoader();
         loader.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/strength_provider"),

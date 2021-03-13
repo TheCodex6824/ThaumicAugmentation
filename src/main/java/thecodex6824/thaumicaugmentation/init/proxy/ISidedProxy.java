@@ -20,13 +20,17 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
+import java.util.UUID;
 import java.util.function.Function;
+
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -81,6 +85,11 @@ public interface ISidedProxy {
     public boolean isEntityClientPlayer(Entity e);
     
     public boolean isEntityRenderView(Entity e);
+    
+    @Nullable
+    public NBTTagCompound getOfflinePlayerNBT(UUID uuid);
+    
+    public void saveOfflinePlayerNBT(UUID uuid, NBTTagCompound tag);
     
     public float getPartialTicks();
     

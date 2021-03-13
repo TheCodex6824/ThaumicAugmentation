@@ -572,6 +572,16 @@ public final class TAConfigHolder {
             "This is intended to allow it to work when misbehaving mods are constantly overwriting TA's changes."
         })
         public boolean movementCompat = false;
+        
+        @Name("AllowOfflinePlayerResearch")
+        @Comment({
+            "Allows TA to apply research to players that are not online.",
+            "This will make things like the Celestial Observer work for them.",
+            "However, it will also cause the player data to be loaded and then written back to disk.",
+            "Due to how this could potentially be misused, it is off by default.",
+            "It is recommended to only enable this for private servers with trusted players."
+        })
+        public boolean allowOfflinePlayerResearch = false;
     }
     
     public static class WorldOptions {
@@ -737,6 +747,15 @@ public final class TAConfigHolder {
             "Note that this text only appears after completing the \"Infusion\" research."
         })
         public boolean disableStabilizerText = false;
+        
+        @Name("DisableFramebuffers")
+        @Comment({
+            "Disables all framebuffers used by TA for rendering.",
+            "This will make certain things look ugly, but might fix other issues.",
+            "Currently, only the display in the Celestial Observer uses framebuffers."
+        })
+        @RequiresMcRestart
+        public boolean disableFramebuffers = false;
     }
     
     private static ArrayList<Runnable> listeners = new ArrayList<>();
@@ -854,6 +873,8 @@ public final class TAConfigHolder {
         TAConfig.girdleHarnessCost.setValue(gameplay.harness.girdleHarnessCost, side);
         
         TAConfig.elytraHarnessBoostCost.setValue(gameplay.harness.elytraHarnessBoostCost, side);
+        
+        TAConfig.allowOfflinePlayerResearch.setValue(gameplay.allowOfflinePlayerResearch, side);
     }
 
     public static void syncLocally() {
@@ -918,6 +939,7 @@ public final class TAConfigHolder {
         TAConfig.morphicArmorExclusions = TAConfigManager.addOption(new ConfigOptionStringList(false, client.morphicArmorExclusions));
         TAConfig.disableCreativeOnlyText = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableCreativeOnlyText));
         TAConfig.disableStabilizerText = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableStabilizerText));
+        TAConfig.disableFramebuffers = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableFramebuffers));
         
         TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
         TAConfig.defaultVoidBootsColor = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));
@@ -1005,6 +1027,8 @@ public final class TAConfigHolder {
         TAConfig.girdleHarnessCost = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.harness.girdleHarnessCost));
     
         TAConfig.elytraHarnessBoostCost = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.harness.elytraHarnessBoostCost));
+    
+        TAConfig.allowOfflinePlayerResearch = TAConfigManager.addOption(new ConfigOptionBoolean(false, gameplay.allowOfflinePlayerResearch));
     }
 
 }

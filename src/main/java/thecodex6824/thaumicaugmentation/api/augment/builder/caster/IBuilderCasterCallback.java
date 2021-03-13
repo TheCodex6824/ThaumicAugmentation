@@ -22,10 +22,10 @@ package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
+import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 
 public interface IBuilderCasterCallback {
     
@@ -35,13 +35,13 @@ public interface IBuilderCasterCallback {
     
     public default void onTick(ICustomCasterAugment augment, Entity user) {}
     
-    public default void onHurtEntity(ICustomCasterAugment augment, Entity user, Entity attacked) {}
+    public default void onHurtEntity(ICustomCasterAugment augment, DamageSource source, Entity attacked, DamageWrapper damage) {}
     
-    public default void onDamagedEntity(ICustomCasterAugment augment, Entity user, Entity attacked) {}
+    public default void onDamagedEntity(ICustomCasterAugment augment, DamageSource source, Entity attacked, DamageWrapper damage) {}
     
-    public default void onHurt(ICustomCasterAugment augment, Entity user, @Nullable Entity attacker) {}
+    public default void onHurt(ICustomCasterAugment augment, Entity attacked, DamageSource source, DamageWrapper damage) {}
     
-    public default void onDamaged(ICustomCasterAugment augment, Entity user, @Nullable Entity attacker) {}
+    public default void onDamaged(ICustomCasterAugment augment, Entity attacked, DamageSource source, DamageWrapper damage) {}
     
     public default void appendAdditionalTooltip(ItemStack component, List<String> tooltip) {}
     

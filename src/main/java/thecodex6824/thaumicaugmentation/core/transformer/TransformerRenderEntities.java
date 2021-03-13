@@ -43,6 +43,11 @@ public class TransformerRenderEntities  extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return false;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode render = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/renderer/RenderGlobal", "func_180446_a",

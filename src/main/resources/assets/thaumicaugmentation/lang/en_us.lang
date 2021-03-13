@@ -125,6 +125,7 @@ item.thaumicaugmentation.augment_vis_battery.name=Vis Battery Augment
 item.thaumicaugmentation.thaumium_robes_hood.name=Hood of the Adept
 item.thaumicaugmentation.thaumium_robes_chestplate.name=Robe of the Adept
 item.thaumicaugmentation.thaumium_robes_leggings.name=Leggings of the Adept
+item.thaumicaugmentation.celestial_observer_placer.name=Celestial Observer
 
 item.thaumicaugmentation.strength_experience.name=Modifier: Experience
 item.thaumicaugmentation.strength_overworld.name=Modifier: Overworld
@@ -143,6 +144,8 @@ item.seal.attack_advanced.name=Advanced Control Seal: Secure
 golem.prop.other=Target Others
 golem.prop.sight=Require Sight
 
+thaumicaugmentation.gui.scans=Scan:
+
 entity.thaumicaugmentation.dimensional_fracture.name=Dimensional Fracture
 entity.thaumicaugmentation.shield_focus.name=Void Shield
 entity.thaumicaugmentation.autocaster.name=Autocaster
@@ -152,6 +155,7 @@ entity.thaumicaugmentation.eldritch_warden.name=Eldritch Warden
 entity.thaumicaugmentation.primal_wisp.name=Primordial Wisp
 entity.thaumicaugmentation.eldritch_golem.name=Eldritch Construct
 entity.thaumicaugmentation.golem_orb.name=Energy Orb
+entity.thaumicaugmentation.celestial_observer.name=Celestial Observer
 
 itemGroup.thaumicaugmentation=Thaumic Augmentation
 itemGroup.thaumicaugmentation.biome_selector=TA: Biome Foci
@@ -251,6 +255,9 @@ champion.mod.infested=Infested
 champion.mod.tainted=Tainted
 
 thaumicaugmentation.gui.redstone=Enable Redstone Control
+thaumicaugmentation.gui.scan_sun=Sun
+thaumicaugmentation.gui.scan_moon=Moon
+thaumicaugmentation.gui.scan_stars=Stars
 
 thaumicaugmentation.command.subcommands=[thaumicaugmentation] Available subcommands:
 thaumicaugmentation.command.not_entity=You must provide a location as you are not an entity in the world

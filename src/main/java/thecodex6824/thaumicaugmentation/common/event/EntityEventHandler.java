@@ -27,21 +27,28 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.init.MobEffects;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.IPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
+import thecodex6824.thaumicaugmentation.common.item.ItemThaumiumRobes.MaskType;
 import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
@@ -106,6 +113,29 @@ public class EntityEventHandler {
             EntityPlayer player = (EntityPlayer) event.getEntityLiving();
             if (PlayerMovementAbilityManager.isValidSideForMovement(player))
                 PlayerMovementAbilityManager.tick(player);
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onEntityHurt(LivingHurtEvent event) {
+        ItemStack head = event.getEntityLiving().getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+        if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD && head.hasTagCompound() && head.getTagCompound().getInteger("maskType") == MaskType.WITHER.getID() &&
+                event.getSource().getTrueSource() instanceof EntityLivingBase &&
+                event.getEntity().getEntityWorld().rand.nextFloat() < event.getAmount() / 10.0F) {
+            
+            PotionEffect wither = new PotionEffect(MobEffects.WITHER, 80);
+            EntityLivingBase base = (EntityLivingBase) event.getSource().getTrueSource();
+            if (base.isPotionApplicable(wither))
+                base.addPotionEffect(wither);
+        }
+        
+        if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
+            head = ((EntityLivingBase) event.getSource().getTrueSource()).getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+            if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD && head.hasTagCompound() && head.getTagCompound().getInteger("maskType") == MaskType.LIFTSTEAL.getID() &&
+                    event.getEntity().getEntityWorld().rand.nextFloat() < event.getAmount() / 12.0F) {
+                
+                ((EntityLivingBase) event.getSource().getTrueSource()).heal(1.0F);
+            }
         }
     }
     

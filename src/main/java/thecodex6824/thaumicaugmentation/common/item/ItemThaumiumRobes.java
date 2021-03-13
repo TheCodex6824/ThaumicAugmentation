@@ -62,6 +62,8 @@ import thaumcraft.api.items.IRevealer;
 import thaumcraft.api.items.IVisDiscountGear;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.event.AugmentEventHelper;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.client.model.ModelTARobes;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
@@ -75,6 +77,34 @@ public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
 
     protected static final String TEXTURE_PATH_OVERLAY = 
             new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/armor/thaumium_robes_overlay.png").toString();
+    
+    public static enum MaskType {
+        
+        WARP_REDUCTION(0),
+        WITHER(1),
+        LIFTSTEAL(2);
+        
+        private int id;
+        
+        private MaskType(int i) {
+            id = i;
+        }
+        
+        public int getID() {
+            return id;
+        }
+        
+        @Nullable
+        public static MaskType fromID(int id) {
+            for (MaskType t : values()) {
+                if (t.getID() == id)
+                    return t;
+            }
+            
+            return null;
+        }
+        
+    }
     
     @SideOnly(Side.CLIENT)
     protected ModelBiped model;
@@ -93,7 +123,7 @@ public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
     
     @Override
     public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
-        return 0;
+        return AugmentEventHelper.fireArmorDisplayEvent(armor.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), armor, player, 0);
     }
     
     @Override
@@ -111,7 +141,8 @@ public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
             ratio = 0.0;
         }
 
-        return new ArmorProperties(priority, ratio, armor.getMaxDamage() + 1 - armor.getItemDamage());
+        ArmorProperties ap = new ArmorProperties(priority, ratio, armor.getMaxDamage() + 1 - armor.getItemDamage());
+        return AugmentEventHelper.fireArmorCalcEvent(armor.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), armor, player, source, ap);
     }
     
     @Override

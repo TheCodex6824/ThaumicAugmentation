@@ -47,6 +47,11 @@ public class TransformerWardBlockNoEndermanPickup extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return false;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode pickup = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/monster/EntityEnderman$AITakeBlock", "func_75246_d", Type.VOID_TYPE),

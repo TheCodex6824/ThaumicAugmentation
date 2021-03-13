@@ -107,6 +107,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockWardedPressurePlate;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
+import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
@@ -121,6 +122,7 @@ import thecodex6824.thaumicaugmentation.common.golem.SealAttackAdvanced;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemAutocasterPlacer;
 import thecodex6824.thaumicaugmentation.common.item.ItemBiomeSelector;
+import thecodex6824.thaumicaugmentation.common.item.ItemCelestialObserverPlacer;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
@@ -359,6 +361,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.HEAD), "thaumium_robes_hood"));
         registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.CHEST), "thaumium_robes_chestplate"));
         registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.LEGS), "thaumium_robes_leggings"));
+        registry.register(setupItem(new ItemCelestialObserverPlacer(), "celestial_observer_placer"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }
@@ -450,6 +453,9 @@ public final class RegistryHandler {
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityTAGolemOrb.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "golem_orb"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".golem_orb").tracker(64, 1, true).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityCelestialObserver.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "celestial_observer"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".celestial_observer").tracker(64, 1, true).build());
     }
     
     @SubscribeEvent

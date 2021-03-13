@@ -20,10 +20,16 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+
+import javax.annotation.Nullable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -33,7 +39,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -55,8 +64,10 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
+import thecodex6824.thaumicaugmentation.common.container.ContainerCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
+import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.event.PlayerEventHandler;
 import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
 import thecodex6824.thaumicaugmentation.common.network.PacketElytraBoost;
@@ -137,6 +148,46 @@ public class ServerProxy implements ISidedProxy {
     }
     
     @Override
+    @Nullable
+    public NBTTagCompound getOfflinePlayerNBT(UUID uuid) {
+        // still need to try in SP as this could be a LAN server
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        try {
+            File file = new File(server.worlds[0].getSaveHandler().getWorldDirectory(),
+                    "playerdata" + File.pathSeparator + uuid.toString() + ".dat");
+            if (file.isFile()) {
+                try (FileInputStream fs = new FileInputStream(file)) {
+                    return CompressedStreamTools.readCompressed(fs);
+                }
+            }
+        }
+        catch (Exception ex) {
+            ThaumicAugmentation.getLogger().error("Could not load player data file for UUID " +
+                    uuid.toString(), ex);
+        }
+        
+        return null;
+    }
+    
+    @Override
+    public void saveOfflinePlayerNBT(UUID uuid, NBTTagCompound tag) {
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        File playerDir = new File(server.worlds[0].getSaveHandler().getWorldDirectory(), "playerdata");
+        if (playerDir.isDirectory()) {
+            // note that we do NOT touch the backup here, in case this ever has a bug
+            // that way, we don't potentially clobber player data if that happens
+            File realFile = new File(playerDir, uuid.toString() + ".dat");
+            try (FileOutputStream fs = new FileOutputStream(realFile)) {
+                CompressedStreamTools.writeCompressed(tag, fs);
+            }
+            catch (IOException ex) {
+                ThaumicAugmentation.getLogger().error("Could not write player data file for UUID " +
+                        uuid.toString(), ex);
+            }
+        }
+    }
+    
+    @Override
     public float getPartialTicks() {
         return 1.0F;
     }
@@ -149,6 +200,7 @@ public class ServerProxy implements ISidedProxy {
             case ARCANE_TERRAFORMER: return new ContainerArcaneTerraformer(player.inventory, 
                     (TileArcaneTerraformer) world.getTileEntity(new BlockPos(x, y, z)));
             case AUTOCASTER: return new ContainerAutocaster(player.inventory, (EntityAutocaster) world.getEntityByID(x));
+            case CELESTIAL_OBSERVER: return new ContainerCelestialObserver(player.inventory, (EntityCelestialObserver) world.getEntityByID(x));
             default: return null;
         }
     }
@@ -281,6 +333,30 @@ public class ServerProxy implements ISidedProxy {
                 }
                 case 4: {
                     autocaster.setRedstoneControl(message.getSelectionValue() > 0);
+                    break;
+                }
+                default: {
+                    if (!isSingleplayer()) {
+                        ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: invalid component ID", sender.getName(), sender.getGameProfile().getId());
+                        context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+                    }
+                    break;
+                }
+            }
+        }
+        else if (sender != null && sender.openContainer instanceof ContainerCelestialObserver) {
+            EntityCelestialObserver e = ((ContainerCelestialObserver) sender.openContainer).getEntity();
+            switch (message.getComponentID()) {
+                case 0: {
+                    e.setScanSun(message.getSelectionValue() > 0);
+                    break;
+                }
+                case 1: {
+                    e.setScanMoon(message.getSelectionValue() > 0);
+                    break;
+                }
+                case 2: {
+                    e.setScanStars(message.getSelectionValue() > 0);
                     break;
                 }
                 default: {

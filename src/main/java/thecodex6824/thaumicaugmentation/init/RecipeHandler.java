@@ -311,7 +311,7 @@ public final class RecipeHandler {
                 "IMPETUS", new ItemStack(TAItems.MATERIAL, 2, 5), ItemsTC.voidSeed, new AspectList().add(Aspect.ORDER, 25).add(Aspect.ENERGY, 10)));
     
         ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "ancient_cobblestone"), new CrucibleRecipe(
-                "ELDRITCH_BOSS", new ItemStack(TABlocks.STONE, 1, 10), BlocksTC.stoneAncient, new AspectList().add(Aspect.ENTROPY, 2)));
+                "ELDRITCH_SPIRE@1", new ItemStack(TABlocks.STONE, 1, 10), BlocksTC.stoneAncient, new AspectList().add(Aspect.ENTROPY, 2)));
     }
     
     public static void initArcaneCraftingRecipes() {

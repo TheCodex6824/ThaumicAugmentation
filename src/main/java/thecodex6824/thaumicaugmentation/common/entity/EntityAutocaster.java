@@ -27,6 +27,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -56,6 +57,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAItems;
@@ -245,10 +247,22 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     @Nullable
     public Entity getOwner() {
         if (ownerRef.get() == null && dataManager.get(OWNER_ID).isPresent()) {
-            if (ownerRef.get() == null) {
-                List<Entity> entities = world.getEntities(Entity.class, entity -> entity != null && entity.getPersistentID().equals(dataManager.get(OWNER_ID).get()));
-                if (!entities.isEmpty())
-                    ownerRef = new WeakReference<>(entities.get(0));
+            List<Entity> entities = world.getEntities(Entity.class, entity -> entity != null && entity.getPersistentID().equals(dataManager.get(OWNER_ID).get()));
+            if (!entities.isEmpty())
+                ownerRef = new WeakReference<>(entities.get(0));
+            else {
+                List<? extends EntityPlayer> players;
+                if (!world.isRemote)
+                    players = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
+                else
+                    players = world.getPlayers(EntityPlayer.class, Predicates.alwaysTrue());
+                
+                for (EntityPlayer p : players) {
+                    if (p.getUniqueID().equals(dataManager.get(OWNER_ID).get())) {
+                        ownerRef = new WeakReference<>(p);
+                        break;
+                    }
+                }
             }
         }
         

@@ -141,11 +141,11 @@ public final class TAShaderManager {
     }
     
     public static void init() {
-        disabled = TAConfig.disableShaders.getValue();
+        disabled = TAConfig.disableShaders.getValue() || !OpenGlHelper.shadersSupported;
     }
     
     public static boolean shouldUseShaders() {
-        return OpenGlHelper.shadersSupported && !disabled;
+        return !disabled;
     }
     
     public static Shader registerShader(ResourceLocation shader) {

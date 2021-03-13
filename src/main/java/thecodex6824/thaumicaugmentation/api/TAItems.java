@@ -69,6 +69,7 @@ public final class TAItems {
     public static final Item THAUMIUM_ROBES_HOOD = null;
     public static final Item THAUMIUM_ROBES_CHESTPLATE = null;
     public static final Item THAUMIUM_ROBES_LEGGINGS = null;
+    public static final Item CELESTIAL_OBSERVER_PLACER = null;
 
     public static CreativeTabs CREATIVE_TAB = new CreativeTabs(ThaumicAugmentationAPI.MODID) {
         @Override
@@ -103,7 +104,7 @@ public final class TAItems {
                 PRIMAL_CUTTER, RIFT_JAR, IMPETUS_MIRROR, IMPETUS_LINKER, BIOME_SELECTOR, THAUMOSTATIC_HARNESS, THAUMOSTATIC_HARNESS_AUGMENT,
                 ELYTRA_HARNESS, ELYTRA_HARNESS_AUGMENT, AUTOCASTER_PLACER, IMPULSE_CANNON, IMPULSE_CANNON_AUGMENT,
                 FOCUS_ANCIENT, ELDRITCH_LOCK_KEY, STARFIELD_GLASS, OBELISK_PLACER, RESEARCH_NOTES, THAUMIUM_ROBES_HOOD, THAUMIUM_ROBES_CHESTPLATE,
-                THAUMIUM_ROBES_LEGGINGS};
+                THAUMIUM_ROBES_LEGGINGS, CELESTIAL_OBSERVER_PLACER};
     }
 
 }

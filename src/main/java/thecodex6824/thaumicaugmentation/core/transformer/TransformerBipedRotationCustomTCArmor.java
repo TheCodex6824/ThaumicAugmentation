@@ -50,6 +50,11 @@ public class TransformerBipedRotationCustomTCArmor extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return true;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }

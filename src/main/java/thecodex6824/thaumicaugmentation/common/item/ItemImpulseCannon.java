@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -250,6 +251,16 @@ public class ItemImpulseCannon extends ItemTABase {
             else if (aug.isTickable(entity))
                 aug.onStopCannonTick(entity, timeLeft);
         }
+    }
+    
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return false;
+    }
+    
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return false;
     }
     
     @Override

@@ -18,20 +18,28 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.core.transformer;
+package thecodex6824.thaumicaugmentation.api.util;
 
-import org.objectweb.asm.tree.ClassNode;
+public class DamageWrapper {
 
-public interface ITransformer {
-
-    public boolean isTransformationNeeded(String transformedName);
+    protected float originalDamage;
+    protected float damage;
     
-    public boolean transform(ClassNode classNode, String name, String transformedName);
+    public DamageWrapper(float dmg) {
+        originalDamage = dmg;
+        damage = dmg;
+    }
     
-    public RuntimeException getRaisedException();
+    public float getOriginalDamage() {
+        return originalDamage;
+    }
     
-    public boolean needToComputeFrames();
+    public float getDamage() {
+        return damage;
+    }
     
-    public boolean isAllowedToFail();
+    public void setDamage(float dmg) {
+        damage = dmg;
+    }
     
 }

@@ -73,6 +73,7 @@ public final class TAConfig {
     public static ConfigOptionStringList morphicArmorExclusions;
     public static ConfigOptionBoolean disableCreativeOnlyText;
     public static ConfigOptionBoolean disableStabilizerText;
+    public static ConfigOptionBoolean disableFramebuffers;
 
     public static ConfigOptionIntList defaultGauntletColors;
     public static ConfigOptionInt defaultVoidBootsColor;
@@ -159,6 +160,8 @@ public final class TAConfig {
     public static ConfigOptionDouble girdleHarnessCost;
     
     public static ConfigOptionDouble elytraHarnessBoostCost;
+    
+    public static ConfigOptionBoolean allowOfflinePlayerResearch;
     
     /**
      * Registers a callback to be notified when the config is synced or updated.

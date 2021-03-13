@@ -41,6 +41,11 @@ public class TransformerVoidRobesArmorBarFix extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return true;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode disp = TransformUtil.findMethod(classNode, "getArmorDisplay", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;I)I");

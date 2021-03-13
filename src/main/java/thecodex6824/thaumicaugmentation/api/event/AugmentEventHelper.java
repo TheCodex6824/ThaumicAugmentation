@@ -23,12 +23,16 @@ package thecodex6824.thaumicaugmentation.api.event;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.armor.IArmorAugment;
+import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -76,45 +80,45 @@ public final class AugmentEventHelper {
         }
     }
     
-    public static boolean fireHurtEntityEvent(IAugmentableItem cap, Entity attacker, Entity attacked) {
+    public static boolean fireHurtEntityEvent(IAugmentableItem cap, DamageSource source, Entity attacked, DamageWrapper damage) {
         boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             IAugment aug = a.getCapability(CapabilityAugment.AUGMENT, null);
             if (aug != null)
-                res |= aug.onHurtEntity(attacker, attacked);
+                res |= aug.onHurtEntity(source, attacked, damage);
         }
         
         return res;
     }
     
-    public static boolean fireHurtByEntityEvent(IAugmentableItem cap, Entity attacked, Entity attacker) {
+    public static boolean fireHurtByEntityEvent(IAugmentableItem cap, Entity attacked, DamageSource source, DamageWrapper damage) {
         boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             IAugment aug = a.getCapability(CapabilityAugment.AUGMENT, null);
             if (aug != null)
-                res |= aug.onHurt(attacked, attacker);
+                res |= aug.onHurt(attacked, source, damage);
         }
         
         return res;
     }
     
-    public static boolean fireDamageEntityEvent(IAugmentableItem cap, Entity attacker, Entity attacked) {
+    public static boolean fireDamageEntityEvent(IAugmentableItem cap, DamageSource source, Entity attacked, DamageWrapper damage) {
         boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             IAugment aug = a.getCapability(CapabilityAugment.AUGMENT, null);
             if (aug != null)
-                res |= aug.onDamagedEntity(attacker, attacked);
+                res |= aug.onDamagedEntity(source, attacked, damage);
         }
         
         return res;
     }
     
-    public static boolean fireDamagedByEntityEvent(IAugmentableItem cap, Entity attacked, Entity attacker) {
+    public static boolean fireDamagedByEntityEvent(IAugmentableItem cap, Entity attacked, DamageSource source, DamageWrapper damage) {
         boolean res = false;
         for (ItemStack a : cap.getAllAugments()) {
             IAugment aug = a.getCapability(CapabilityAugment.AUGMENT, null);
             if (aug != null)
-                res |= aug.onDamaged(attacked, attacker);
+                res |= aug.onDamaged(attacked, source, damage);
         }
         
         return res;
@@ -173,6 +177,26 @@ public final class AugmentEventHelper {
         }
         
         return res;
+    }
+    
+    public static ArmorProperties fireArmorCalcEvent(IAugmentableItem cap, ItemStack worn, Entity user, DamageSource source, ArmorProperties input) {
+        for (ItemStack a : cap.getAllAugments()) {
+            IAugment aug = a.getCapability(CapabilityAugment.AUGMENT, null);
+            if (aug instanceof IArmorAugment)
+                input = ((IArmorAugment) aug).onArmorCalc(user, worn, source, input);
+        }
+        
+        return input;
+    }
+    
+    public static int fireArmorDisplayEvent(IAugmentableItem cap, ItemStack worn, Entity user, int input) {
+        for (ItemStack a : cap.getAllAugments()) {
+            IAugment aug = a.getCapability(CapabilityAugment.AUGMENT, null);
+            if (aug instanceof IArmorAugment)
+                input = ((IArmorAugment) aug).onArmorDisplay(user, worn, input);
+        }
+        
+        return input;
     }
     
     public static void handleSync(IAugmentableItem cap, Entity entity, int index) {

@@ -80,7 +80,7 @@ public abstract class EntityAutocasterBase extends EntityCreature {
     
     public EntityAutocasterBase(World world) {
         super(world);
-        lookHelper = new EntityLookHelperUnlimitedPitch(this);
+        lookHelper = new EntityLookHelperUnlimitedPitch(this, false);
         setSize(1.0F, 1.0F);
         stepHeight = 0.0F;
         cachedMaxDistanceSquared = -1.0;

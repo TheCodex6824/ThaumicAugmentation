@@ -100,6 +100,17 @@ public final class TAHooksClient {
         }
     }
     
+    public static boolean shouldRenderCape(EntityPlayerSP player) {
+        IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+        if (baubles != null) {
+            ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
+            if (stack.getItem() instanceof IElytraCompat)
+                return false;
+        }
+        
+        return true;
+    }
+    
     public static void handleBipedRotation(ModelBiped model, Entity entity) {
         RenderEventHandler.onRotationAngles(model, entity);
     }

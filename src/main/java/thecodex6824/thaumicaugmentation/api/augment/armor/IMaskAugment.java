@@ -18,20 +18,10 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.core.transformer;
+package thecodex6824.thaumicaugmentation.api.augment.armor;
 
-import org.objectweb.asm.tree.ClassNode;
-
-public interface ITransformer {
-
-    public boolean isTransformationNeeded(String transformedName);
+public interface IMaskAugment extends IArmorAugment {
     
-    public boolean transform(ClassNode classNode, String name, String transformedName);
     
-    public RuntimeException getRaisedException();
-    
-    public boolean needToComputeFrames();
-    
-    public boolean isAllowedToFail();
     
 }

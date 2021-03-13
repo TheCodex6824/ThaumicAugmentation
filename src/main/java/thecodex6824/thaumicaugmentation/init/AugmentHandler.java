@@ -27,6 +27,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -44,6 +45,7 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugment
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.IBuilderCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.IBuilderCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
 public class AugmentHandler {
@@ -167,7 +169,7 @@ public class AugmentHandler {
             }
             
             @Override
-            public void onHurtEntity(ICustomCasterAugment augment, Entity user, Entity attacked) {
+            public void onHurtEntity(ICustomCasterAugment augment, DamageSource source, Entity attacked, DamageWrapper damage) {
                 ItemStack stack = augment.getStrengthProvider();
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());

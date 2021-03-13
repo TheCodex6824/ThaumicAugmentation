@@ -50,14 +50,9 @@ minecraft {
         replace '@FINGERPRINT@', ""
         replaceIn 'ThaumicAugmentation.java'
     }
-}
-
-runClient {
-    jvmArgs '-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
-}
-
-runServer {
-    jvmArgs '-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
+    
+    clientRunArgs += '-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
+    serverRunArgs += '-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
 }
 
 dependencies {

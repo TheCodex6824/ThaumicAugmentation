@@ -35,6 +35,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerEldritchGuar
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderCape;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderEntities;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRunicShieldingAllowBaublesCap;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCBlueprintCrashFix;
@@ -127,6 +128,10 @@ public class TATransformer implements IClassTransformer {
         // makes runic shielding infusion work on items with baubles capability
         // TC only checks for the interface on the item...
         TRANSFORMERS.add(new TransformerRunicShieldingAllowBaublesCap());
+        
+        // allow disabling cape render when wearing custom elytra
+        // the special render event from forge seems to be unimplemented?
+        TRANSFORMERS.add(new TransformerRenderCape());
     }
     
     public TATransformer() {}
@@ -161,9 +166,10 @@ public class TATransformer implements IClassTransformer {
                         ThaumicAugmentationCore.getLogger().error("Class: " + transformedName + ", Transformer: " + transformer.getClass());
                         if (transformer.getRaisedException() != null) {
                             ThaumicAugmentationCore.getLogger().error("Additional information: ", transformer.getRaisedException());
-                            throw transformer.getRaisedException();
+                            if (!transformer.isAllowedToFail())
+                                throw transformer.getRaisedException();
                         }
-                        else
+                        else if (!transformer.isAllowedToFail())
                             throw new RuntimeException();
                     }
                     else {

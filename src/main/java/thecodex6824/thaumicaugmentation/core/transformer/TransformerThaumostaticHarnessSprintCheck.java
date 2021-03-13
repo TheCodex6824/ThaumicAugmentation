@@ -44,6 +44,11 @@ public class TransformerThaumostaticHarnessSprintCheck extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return false;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode sprint = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/entity/EntityPlayerSP", "func_70031_b",

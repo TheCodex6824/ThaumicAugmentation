@@ -21,20 +21,27 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class TransformerInfusionLeftoverItems extends Transformer {
+public class TransformerRenderCape  extends Transformer {
 
-    private static final String CLASS = "thaumcraft.common.tiles.crafting.TileInfusionMatrix";
+    private static final String CLASS = "net.minecraft.client.renderer.entity.layers.LayerCape";
     
     @Override
     public boolean needToComputeFrames() {
         return false;
+    }
+    
+    @Override
+    public boolean isAllowedToFail() {
+        return true;
     }
     
     @Override
@@ -43,27 +50,24 @@ public class TransformerInfusionLeftoverItems extends Transformer {
     }
     
     @Override
-    public boolean isAllowedToFail() {
-        return false;
-    }
-    
-    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode finish = TransformUtil.findMethod(classNode, "craftCycle", "()V");
-            int offset = TransformUtil.findLastInstanceOfMethodCall(finish, finish.instructions.size(), "getContainerItem",
-                    "(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;", "net/minecraft/item/Item");
-            if (offset != -1) {
-                AbstractInsnNode insertAfter = finish.instructions.get(offset);
-                finish.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON,
-                        "getLeftoverInfusionIngredientStack",
-                        "(Lnet/minecraft/item/ItemStack;Ljava/lang/Object;)Lnet/minecraft/item/ItemStack;",
+            MethodNode render = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/renderer/entity/layers/LayerCape", "func_177141_a",
+                    Type.VOID_TYPE, Type.getType("Lnet/minecraft/client/entity/AbstractClientPlayer;"), Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE),
+                    "(Lnet/minecraft/client/entity/AbstractClientPlayer;FFFFFFF)V");
+            
+            int check = TransformUtil.findFirstInstanceOfOpcode(render, 0, Opcodes.IF_ACMPEQ);
+            if (check != -1) {
+                AbstractInsnNode insertAfter = render.instructions.get(check);
+                LabelNode label = ((JumpInsnNode) insertAfter).label;
+                render.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, label));
+                render.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        TransformUtil.HOOKS_CLIENT,
+                        "shouldRenderCape",
+                        "(Lnet/minecraft/client/entity/AbstractClientPlayer;)Z",
                         false
                 ));
-                finish.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD, "thaumcraft/common/tiles/crafting/TileInfusionMatrix",
-                        "recipeOutput", "Ljava/lang/Object;"));
-                finish.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
+                render.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
             }
             else
                 throw new TransformerException("Could not locate required instructions");

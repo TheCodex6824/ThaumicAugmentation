@@ -43,6 +43,11 @@ public class TransformerUpdateElytra  extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return false;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode update = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/EntityLivingBase", "func_184616_r",
