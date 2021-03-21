@@ -111,6 +111,7 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
+import thecodex6824.thaumicaugmentation.common.entity.EntityItemImportant;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemIndestructible;
 import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGolem;
@@ -424,7 +425,7 @@ public final class RegistryHandler {
                         ThaumicAugmentationAPI.MODID + ".item_rift_jar").tracker(64, 20, true).build());
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityItemIndestructible.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_indestructible"), id++).name(
-                        ThaumicAugmentationAPI.MODID + ".item_rift_jar").tracker(64, 20, true).build());
+                        ThaumicAugmentationAPI.MODID + ".item_important").tracker(64, 20, true).build());
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityFocusShield.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "shield_focus"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".shield_focus").tracker(256, 1, false).build());
@@ -456,6 +457,9 @@ public final class RegistryHandler {
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityCelestialObserver.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "celestial_observer"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".celestial_observer").tracker(64, 1, true).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityItemImportant.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_important"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".item_important").tracker(64, 20, true).build());
     }
     
     @SubscribeEvent

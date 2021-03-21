@@ -18,13 +18,41 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.client.renderer.item;
+package thecodex6824.thaumicaugmentation.common.entity;
 
-import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
-public abstract class MorphicWrappingTEISR extends TileEntityItemStackRenderer {
+public class EntityItemImportant extends EntityItemIndestructible {
+
+    public EntityItemImportant(World world) {
+        super(world);
+    }
     
-    public abstract void renderByItemWrapped(ItemStack stack);
+    public EntityItemImportant(World world, double x, double y, double z) {
+        super(world, x, y, z);
+    }
+    
+    public EntityItemImportant(World world, double x, double y, double z, ItemStack stack) {
+        super(world, x, y, z, stack);
+    }
+    
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
+        motionX *= 0.9;
+        motionY *= 0.9;
+        motionZ *= 0.9;
+    }
+    
+    @Override
+    public boolean hasNoGravity() {
+        return true;
+    }
+    
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 0 || pass == 1;
+    }
     
 }

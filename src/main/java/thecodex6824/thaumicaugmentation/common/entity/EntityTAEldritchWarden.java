@@ -70,7 +70,6 @@ import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.capabilities.IPlayerWarp.EnumWarpType;
 import thaumcraft.api.entities.IEldritchMob;
 import thaumcraft.api.items.ItemsTC;
-import thaumcraft.common.entities.EntitySpecialItem;
 import thaumcraft.common.entities.ai.combat.AILongRangeAttack;
 import thaumcraft.common.entities.monster.boss.EntityCultistLeader;
 import thaumcraft.common.entities.monster.boss.EntityCultistPortalGreater;
@@ -83,6 +82,7 @@ import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.network.PacketHandler;
 import thaumcraft.common.lib.network.fx.PacketFXSonic;
 import thaumcraft.common.lib.utils.EntityUtils;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
@@ -419,8 +419,8 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden implements IEld
             return null;
         else {
             EntityItem entity = null;
-            if (stack.getItem() == ItemsTC.primordialPearl) {
-                entity = new EntitySpecialItem(world, posX, posY + offsetY, posZ, stack);
+            if (stack.getItem() == ItemsTC.primordialPearl || stack.getItem() == TAItems.RESEARCH_NOTES) {
+                entity = new EntityItemImportant(world, posX, posY + offsetY, posZ, stack);
                 entity.motionX = 0.0;
                 entity.motionY = 0.1;
                 entity.motionZ = 0.0;
@@ -429,6 +429,7 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden implements IEld
                 entity = new EntityItem(world, posX, posY + offsetY, posZ, stack);
             
             entity.setDefaultPickupDelay();
+            entity.setNoDespawn();
             if (captureDrops)
                 capturedDrops.add(entity);
             else

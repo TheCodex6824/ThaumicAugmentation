@@ -221,12 +221,6 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     }
     
     @Override
-    public void onUpdate() {
-        super.onUpdate();
-        
-    }
-    
-    @Override
     protected void updateEntityActionState() {
         if (isDisabled()) {
             targeting.resetTask();

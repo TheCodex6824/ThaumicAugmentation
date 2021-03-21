@@ -31,6 +31,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBaubleSlotChanged;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationCustomTCArmor;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationVanilla;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerTouchTrajectoryEntitySelection;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerEldritchGuardianFog;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
@@ -41,6 +42,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerRunicShieldi
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCBlueprintCrashFix;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCRobesElytraFlapping;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerTouchTargetEntitySelection;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerUpdateElytra;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerVoidRobesArmorBarFix;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFireEncouragement;
@@ -132,6 +134,12 @@ public class TATransformer implements IClassTransformer {
         // allow disabling cape render when wearing custom elytra
         // the special render event from forge seems to be unimplemented?
         TRANSFORMERS.add(new TransformerRenderCape());
+        
+        // allow bolts to ignore certain entities (for void shield)
+        // also the trajectory and target code is pretty much copy pasted with a different return value
+        // so 2 transformers are required
+        TRANSFORMERS.add(new TransformerTouchTrajectoryEntitySelection());
+        TRANSFORMERS.add(new TransformerTouchTargetEntitySelection());
     }
     
     public TATransformer() {}

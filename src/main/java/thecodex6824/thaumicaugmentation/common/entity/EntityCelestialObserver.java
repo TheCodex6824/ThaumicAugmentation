@@ -53,6 +53,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
@@ -125,7 +126,6 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
     @Override
     protected void initEntityAI() {
         tasks.addTask(0, new EntityAILookAtScan());
-        tasks.addTask(1, new EntityAILookAtCelestialBody());
     }
     
     protected boolean hasPaper() {
@@ -166,7 +166,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
     }
     
     @SuppressWarnings("null")
-    protected boolean checkOrBypassResearch(String key, int cacheIndex) {
+    protected boolean checkOrBypassResearch(String key, int cacheIndex, int day) {
         if (!dataManager.get(OWNER_ID).isPresent())
             return true;
         
@@ -196,7 +196,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
             cap.addResearch(key);
             ArrayList<String> list = new ArrayList<>();
             for (String k : cap.getResearchList()) {
-                if (k.startsWith("CEL_") && !k.startsWith(key))
+                if (k.startsWith("CEL_") && !k.startsWith("CEL_" + day))
                     list.add(k); 
             } 
             for (String k : list)
@@ -217,7 +217,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
-            rotationYaw = rotationYawHead;
+            rotationYaw = rotationYawHead = MathHelper.wrapDegrees(rotationYawHead);
             prevRotationYaw = prevRotationYawHead;
             if (ticksExisted % 20 == 0) {
                 if (ticksExisted % 120 == 0)
@@ -230,27 +230,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                     if (other != null) {
                         for (int i = 0; i < other.getSlots(); ++i) {
                             ItemStack contained = other.getStackInSlot(i);
-                            ItemStack result = inventory.insertItem(0, contained, true);
-                            if (result != contained) {
-                                ItemStack extract = other.extractItem(i, inventory.getSlotLimit(0) - inventory.getStackInSlot(0).getCount(), false);
-                                ItemStack remain = inventory.insertItem(0, extract, false);
-                                if (!remain.isEmpty())
-                                    other.insertItem(i, remain, false);
-                                
-                                filled = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                if (!filled && (posY - (int) posY) < 0.51) {
-                    test = world.getTileEntity(getPosition().down());
-                    if (test != null) {
-                        IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-                        if (other != null) {
-                            for (int i = 0; i < other.getSlots(); ++i) {
-                                ItemStack contained = other.getStackInSlot(i);
+                            if (OreDictionary.itemMatches(PAPER, contained, false)) {
                                 ItemStack result = inventory.insertItem(0, contained, true);
                                 if (result != contained) {
                                     ItemStack extract = other.extractItem(i, inventory.getSlotLimit(0) - inventory.getStackInSlot(0).getCount(), false);
@@ -259,7 +239,33 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                                         other.insertItem(i, remain, false);
                                     
                                     filled = true;
+                                    world.playSound(null, getPosition(), SoundsTC.page, SoundCategory.NEUTRAL, 0.5F, 1.0F);
                                     break;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                if (!filled && (posY - (int) posY) > 0.51) {
+                    test = world.getTileEntity(getPosition().down());
+                    if (test != null) {
+                        IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+                        if (other != null) {
+                            for (int i = 0; i < other.getSlots(); ++i) {
+                                ItemStack contained = other.getStackInSlot(i);
+                                if (OreDictionary.itemMatches(PAPER, contained, false)) {
+                                    ItemStack result = inventory.insertItem(0, contained, true);
+                                    if (result != contained) {
+                                        ItemStack extract = other.extractItem(i, inventory.getSlotLimit(0) - inventory.getStackInSlot(0).getCount(), false);
+                                        ItemStack remain = inventory.insertItem(0, extract, false);
+                                        if (!remain.isEmpty())
+                                            other.insertItem(i, remain, false);
+                                        
+                                        filled = true;
+                                        world.playSound(null, getPosition(), SoundsTC.page, SoundCategory.NEUTRAL, 0.5F, 1.0F);
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -325,7 +331,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                         ItemStack toMake = new ItemStack(ItemsTC.celestialNotes, 1, meta);
                         if (lastScanTimes[night ? 1 : 0] != day) {
                             if (ItemHandlerHelper.insertItem(inventory, toMake, true).isEmpty() &&
-                                    checkOrBypassResearch("CEL_" + day + "_" + (night ? "Moon" + (meta - 5) : "Sun"), night ? 1 : 0)) {
+                                    checkOrBypassResearch("CEL_" + day + "_" + (night ? "Moon" + (meta - 5) : "Sun"), night ? 1 : 0, day)) {
                                 
                                 ItemHandlerHelper.insertItem(inventory, toMake, false);
                                 consumePaper();
@@ -343,7 +349,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                         ItemStack toMake = new ItemStack(ItemsTC.celestialNotes, 1, meta);
                         if (lastScanTimes[face.getIndex()] != day) {
                             if (ItemHandlerHelper.insertItem(inventory, toMake, true).isEmpty() &&
-                                    checkOrBypassResearch("CEL_" + day + "_Star" + (meta - 1), face.getIndex())) {
+                                    checkOrBypassResearch("CEL_" + day + "_Star" + (meta - 1), face.getIndex(), day)) {
                                 
                                 ItemHandlerHelper.insertItem(inventory, toMake, false);
                                 consumePaper();
@@ -594,42 +600,6 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
             return super.getCapability(capability, facing);
     }
     
-    protected class EntityAILookAtCelestialBody extends EntityAIBase {
-        
-        public EntityAILookAtCelestialBody() {
-            setMutexBits(2);
-        }
-        
-        @Override
-        public boolean shouldExecute() {
-            return true;
-        }
-        
-        @Override
-        public boolean shouldContinueExecuting() {
-            return true;
-        }
-        
-        @Override
-        public void updateTask() {
-            float angle = ((world.getCelestialAngle(0.0F) + 0.25F) * 360.0F) % 180.0F;
-            float x = 0.0F, y = 0.0F;
-            if (angle > 90.0F) {
-                x = -(180.0F - angle);
-                y = 90.0F;
-            }
-            else {
-                x = -angle;
-                y = -90.0F;
-            }
-            
-            Vec3d target = getVectorForRotation(x, y).scale(40.0);
-            getLookHelper().setLookPosition(posX + target.x, posY + target.y, posZ + target.z,
-                    getHorizontalFaceSpeed() / 5.0F, getVerticalFaceSpeed() / 5.0F);
-        }
-        
-    }
-    
     protected class EntityAILookAtScan extends EntityAIBase {
         
         protected int currentTask = -1;
@@ -692,14 +662,15 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                     float x = 0.0F, y = 0.0F;
                     if (angle > 90) {
                         x = -(angle - 90);
-                        y = 180 - angle;
+                        y = 90;
                     }
                     else {
-                        x = 90 - angle;
-                        y = angle;
+                        x = -angle;
+                        y = 270;
                     }
                     
-                    getLookHelper().setLookPosition(posX + x * 128.0F, posY + y * 128.0F, posZ,
+                    Vec3d target = getVectorForRotation(x, y).scale(48.0);
+                    getLookHelper().setLookPosition(posX + target.x, posY + target.y, posZ + target.z,
                             getHorizontalFaceSpeed(), getVerticalFaceSpeed());
                     break;
                 }
@@ -708,7 +679,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                 case 4:
                 case 5: {
                     EnumFacing f = EnumFacing.byIndex(currentTask);
-                    getLookHelper().setLookPosition(posX + f.getXOffset() * 128.0F, posY + 16.0F, posZ + f.getZOffset() * 128.0F,
+                    getLookHelper().setLookPosition(posX + f.getXOffset() * 128.0F, posY + 64.0F, posZ + f.getZOffset() * 128.0F,
                             getHorizontalFaceSpeed(), getVerticalFaceSpeed());
                     break;
                 }

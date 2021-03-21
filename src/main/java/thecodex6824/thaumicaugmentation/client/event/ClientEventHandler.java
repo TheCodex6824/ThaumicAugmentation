@@ -52,10 +52,12 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -99,6 +101,10 @@ public final class ClientEventHandler {
     private static final Set<EntityPlayer> CREATIVE_FLIGHT = Collections.newSetFromMap(new WeakHashMap<>());
     private static final Set<EntityPlayer> ELYTRA_BOOSTS = Collections.newSetFromMap(new WeakHashMap<>());
     
+    private static float lastFogR;
+    private static float lastFogG;
+    private static float lastFogB;
+    
     private static class RecoilEntry {
         
         public final long start;
@@ -139,6 +145,25 @@ public final class ClientEventHandler {
             
             ++num;
         }
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onFogColor(EntityViewRenderEvent.FogColors event) {
+        lastFogR = event.getRed();
+        lastFogG = event.getGreen();
+        lastFogB = event.getBlue();
+    }
+    
+    public static float getLastFogR() {
+        return lastFogR;
+    }
+    
+    public static float getLastFogG() {
+        return lastFogG;
+    }
+    
+    public static float getLastFogB() {
+        return lastFogB;
     }
     
     @SubscribeEvent

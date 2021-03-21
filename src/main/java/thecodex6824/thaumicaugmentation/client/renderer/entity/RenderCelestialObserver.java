@@ -58,10 +58,10 @@ public class RenderCelestialObserver extends Render<EntityCelestialObserver> {
                 0.0F, -1.0F, 0.0F);
         GlStateManager.translate(-entity.width / 2.0F, -0.95F, -entity.width / 2.0F);
         model.renderPart("pivot");
-        GlStateManager.translate(entity.width / 2.0F, 0.95F, entity.width / 2.0F);
+        GlStateManager.translate(entity.width / 2.0F, 0.875F, entity.width / 2.0F);
         GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks,
                 1.0F, 0.0F, 0.0F);
-        GlStateManager.translate(-entity.width / 2.0F, -0.95F, -entity.width / 2.0F);
+        GlStateManager.translate(-entity.width / 2.0F, -0.875F, -entity.width / 2.0F);
         model.renderPart("body");
         bindTexture(TATextures.THAUMOMETER);
         model.renderPart("thaumometer_solid");
@@ -71,12 +71,12 @@ public class RenderCelestialObserver extends Render<EntityCelestialObserver> {
     protected void renderTransparent(EntityCelestialObserver entity, double x, double y, double z, float entityYaw, float partialTicks) {
         bindTexture(TATextures.THAUMOMETER_GLASS);
         GlStateManager.pushMatrix();
-        GlStateManager.translate(entity.width / 2.0F, 0.95F, entity.width / 2.0F);
+        GlStateManager.translate(entity.width / 2.0F, 0.875F, entity.width / 2.0F);
         GlStateManager.rotate(entity.prevRotationYawHead + (entity.rotationYawHead - entity.prevRotationYawHead) * partialTicks,
                 0.0F, -1.0F, 0.0F);
         GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks,
                 1.0F, 0.0F, 0.0F);
-        GlStateManager.translate(-entity.width / 2.0F, -0.95F, -entity.width / 2.0F);
+        GlStateManager.translate(-entity.width / 2.0F, -0.875F, -entity.width / 2.0F);
         model.renderPart("thaumometer_transparent");
         GlStateManager.popMatrix();
     }
@@ -119,8 +119,10 @@ public class RenderCelestialObserver extends Render<EntityCelestialObserver> {
         
         if (MinecraftForgeClient.getRenderPass() == 0)
             renderSolid(entity, x, y, z, entityYaw, partialTicks);
-        else
+        else {
+            GlStateManager.enableBlend();
             renderTransparent(entity, x, y, z, entityYaw, partialTicks);
+        }
         
         GlStateManager.popMatrix();
     }

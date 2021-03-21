@@ -151,9 +151,9 @@ public final class TAConfigHolder {
                 "Optionally allows tile entities to be warded in addition to normal blocks.",
                 "While \"all\" and \"none\" should be self explanatory, \"notick\" will",
                 "only allow tiles that do not tick (aka do not implement ITickable).",
-                "Allowing all tiles may be very overpowered - use at your own risk!"
+                "Allowing all tiles may be very overpowered - if that is the case, try notick or none."
             })
-            public TileWardMode tileWardMode = TileWardMode.NOTICK;
+            public TileWardMode tileWardMode = TileWardMode.ALL;
             
         }
         

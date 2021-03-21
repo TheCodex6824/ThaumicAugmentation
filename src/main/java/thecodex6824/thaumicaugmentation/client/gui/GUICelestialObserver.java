@@ -32,7 +32,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer.EnumChatVisibility;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
@@ -119,32 +118,6 @@ public class GUICelestialObserver extends GuiContainer {
         EntityCelestialObserver e = ((ContainerCelestialObserver) inventorySlots).getEntity();
         BlockPos base = new BlockPos(new BlockPos(e.getLookVec().add(e.posX, e.posY + 1.0, e.posZ)));
         boolean skyVisible = e.getEntityWorld().provider.isSurfaceWorld() && e.getEntityWorld().canSeeSky(base);
-        int color = 0xFF111111;
-        if (skyVisible) {
-            Vec3d sky = e.getEntityWorld().provider.getSkyColor(e, partialTicks);
-            color = 0xFF << 24 | (int) (sky.x * 255) << 16 | (int) (sky.y * 255) << 8 | (int) (sky.z * 255);
-        }
-        else {
-            IBlockState blocking = null;
-            MutableBlockPos finder = new MutableBlockPos(base);
-            while (finder.getY() < 256) {
-                blocking = e.getEntityWorld().getBlockState(finder);
-                if (!blocking.getBlock().isAir(blocking, e.getEntityWorld(), finder))
-                    break;
-                
-                finder.setY(finder.getY() + 1);
-            }
-            
-            if (blocking != null) {
-                int baseColor = blocking.getMapColor(e.getEntityWorld(), finder).colorValue;
-                float brightness = e.getEntityWorld().getLight(finder.down()) / 15.0F;
-                int r = (int) (((baseColor & 0xFF0000) >>> 16) * brightness);
-                int g = (int) (((baseColor & 0x00FF00) >>> 8) * brightness);
-                int b = (int) ((baseColor & 0x0000FF) * brightness);
-                color = 0xFF << 24 | r << 16 | g << 8 | b;
-            }
-        }
-        
         Minecraft mc = Minecraft.getMinecraft();
         if (fb != null && !mc.skipRenderWorld) {
             int w = mc.displayWidth;
@@ -154,7 +127,6 @@ public class GUICelestialObserver extends GuiContainer {
             // does this even still work in 1.12?
             boolean a = mc.gameSettings.anaglyph;
             float fov = mc.gameSettings.fovSetting;
-            EnumChatVisibility chat = mc.gameSettings.chatVisibility;
             Entity rv = mc.getRenderViewEntity();
             try {
                 mc.displayWidth = FB_WIDTH;
@@ -163,15 +135,14 @@ public class GUICelestialObserver extends GuiContainer {
                 mc.gameSettings.hideGUI = true;
                 mc.gameSettings.anaglyph = false;
                 mc.gameSettings.fovSetting = 15.0F;
-                mc.gameSettings.chatVisibility = EnumChatVisibility.HIDDEN;
                 mc.setRenderViewEntity(e);
                 mc.profiler.startSection("ta_world_fbo");
-                fb.bindFramebuffer(true);
-                int fps = Math.max(Math.min(Minecraft.getDebugFPS(), mc.gameSettings.limitFramerate), 60);
+                fb.bindFramebuffer(false);
                 GlStateManager.matrixMode(GL11.GL_PROJECTION);
                 GlStateManager.pushMatrix();
                 GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                 GlStateManager.pushMatrix();
+                int fps = Math.max(Math.min(Minecraft.getDebugFPS(), mc.gameSettings.limitFramerate), 60);
                 mc.entityRenderer.renderWorld(partialTicks, System.nanoTime() + Math.max(1000000000 / fps / 4, 0));
                 GlStateManager.popMatrix();
                 GlStateManager.matrixMode(GL11.GL_PROJECTION);
@@ -198,7 +169,6 @@ public class GUICelestialObserver extends GuiContainer {
                 mc.gameSettings.hideGUI = hg;
                 mc.gameSettings.anaglyph = a;
                 mc.gameSettings.fovSetting = fov;
-                mc.gameSettings.chatVisibility = chat;
                 mc.setRenderViewEntity(rv);
             }
             
@@ -206,17 +176,47 @@ public class GUICelestialObserver extends GuiContainer {
             int xMax = (this.width - this.xSize) / 2 + 114;
             int yMin = (this.height - this.ySize) / 2 + 14;
             int yMax = (this.height - this.ySize) / 2 + 66;
-            fb.bindFramebufferTexture();
+            GlStateManager.disableAlpha();
+            GlStateManager.disableBlend();
             Tessellator t = Tessellator.getInstance();
             BufferBuilder buffer = t.getBuffer();
+            fb.bindFramebufferTexture();
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
             buffer.pos(xMin, yMax, zLevel).tex(0.0F, 0.0F).endVertex();
             buffer.pos(xMax, yMax, zLevel).tex(1.0F, 0.0F).endVertex();
             buffer.pos(xMax, yMin, zLevel).tex(1.0F, 1.0F).endVertex();
             buffer.pos(xMin, yMin, zLevel).tex(0.0F, 1.0F).endVertex();
             t.draw();
+            GlStateManager.enableBlend();
+            GlStateManager.enableAlpha();
         }
         else {
+            int color = 0xFF111111;
+            if (skyVisible) {
+                Vec3d sky = e.getEntityWorld().provider.getSkyColor(e, partialTicks);
+                color = 0xFF << 24 | (int) (sky.x * 255) << 16 | (int) (sky.y * 255) << 8 | (int) (sky.z * 255);
+            }
+            else {
+                IBlockState blocking = null;
+                MutableBlockPos finder = new MutableBlockPos(base);
+                while (finder.getY() < 256) {
+                    blocking = e.getEntityWorld().getBlockState(finder);
+                    if (!blocking.getBlock().isAir(blocking, e.getEntityWorld(), finder))
+                        break;
+                    
+                    finder.setY(finder.getY() + 1);
+                }
+                
+                if (blocking != null) {
+                    int baseColor = blocking.getMapColor(e.getEntityWorld(), finder).colorValue;
+                    float brightness = e.getEntityWorld().getLight(finder.down()) / 15.0F;
+                    int r = (int) (((baseColor & 0xFF0000) >>> 16) * brightness);
+                    int g = (int) (((baseColor & 0x00FF00) >>> 8) * brightness);
+                    int b = (int) ((baseColor & 0x0000FF) * brightness);
+                    color = 0xFF << 24 | r << 16 | g << 8 | b;
+                }
+            }
+            
             drawRect((this.width - this.xSize) / 2 + 62, (this.height - this.ySize) / 2 + 14, (this.width - this.xSize) / 2 + 114, (this.height - this.ySize) / 2 + 66, color);
             if (skyVisible && e.getEntityWorld().provider.isSurfaceWorld()) {
                 GlStateManager.enableBlend();

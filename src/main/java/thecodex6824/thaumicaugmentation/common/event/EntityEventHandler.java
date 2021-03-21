@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.event;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,6 +33,8 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -47,6 +51,8 @@ import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.IPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
+import thecodex6824.thaumicaugmentation.api.event.FocusTouchGetEntityEvent;
+import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumiumRobes.MaskType;
 import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
@@ -135,6 +141,22 @@ public class EntityEventHandler {
                     event.getEntity().getEntityWorld().rand.nextFloat() < event.getAmount() / 12.0F) {
                 
                 ((EntityLivingBase) event.getSource().getTrueSource()).heal(1.0F);
+            }
+        }
+    }
+    
+    // we want to do the same thing for both target and trajectory events
+    @SubscribeEvent
+    public static void onTouchTrajectory(FocusTouchGetEntityEvent event) {
+        if (event.getRay() != null && event.getRay().entityHit instanceof EntityFocusShield) {
+            EntityFocusShield hit = (EntityFocusShield) event.getRay().entityHit;
+            EntityLivingBase caster = event.getFocus().getPackage().getCaster();
+            if (hit.getOwnerId() != null && hit.getOwnerId().equals(caster.getUniqueID())) {
+                Pair<Entity, Vec3d> p = RaytraceHelper.raytraceEntityAndPos(caster, event.getRange(), e -> e != hit);
+                if (p != null)
+                    event.setRay(new RayTraceResult(p.getKey(), p.getValue()));
+                else
+                    event.setRay(null);
             }
         }
     }

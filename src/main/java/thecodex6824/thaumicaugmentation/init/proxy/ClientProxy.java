@@ -151,6 +151,7 @@ import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderCelestialOb
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFluxRiftOptimized;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderItemImportant;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderPrimalWisp;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGolem;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGuardian;
@@ -184,6 +185,7 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
+import thecodex6824.thaumicaugmentation.common.entity.EntityItemImportant;
 import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGolem;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
@@ -1027,6 +1029,12 @@ public class ClientProxy extends ServerProxy {
             @Override
             public Render<? super EntityCelestialObserver> createRenderFor(RenderManager manager) {
                 return new RenderCelestialObserver(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityItemImportant.class, new IRenderFactory<EntityItemImportant>() {
+            @Override
+            public Render<? super EntityItemImportant> createRenderFor(RenderManager manager) {
+                return new RenderItemImportant(manager, Minecraft.getMinecraft().getRenderItem());
             }
         });
         
