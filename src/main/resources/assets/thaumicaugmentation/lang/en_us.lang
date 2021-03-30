@@ -254,7 +254,7 @@ champion.mod.vampiric=Vampiric
 champion.mod.infested=Infested
 champion.mod.tainted=Tainted
 
-thaumicaugmentation.gui.redstone=Enable Redstone Control
+thaumicaugmentation.gui.redstone=Redstone Control
 thaumicaugmentation.gui.scan_sun=Sun
 thaumicaugmentation.gui.scan_moon=Moon
 thaumicaugmentation.gui.scan_stars=Stars

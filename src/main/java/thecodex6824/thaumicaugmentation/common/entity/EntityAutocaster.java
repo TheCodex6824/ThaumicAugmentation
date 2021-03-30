@@ -29,6 +29,8 @@ import javax.annotation.Nullable;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 
+import net.minecraft.block.BlockRailPowered;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityOwnable;
@@ -58,6 +60,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAItems;
@@ -314,7 +317,17 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     
     @Override
     protected boolean isDisabled() {
-        return BitUtil.isBitSet(dataManager.get(TARGETS), 4) && world.isBlockPowered(getPosition());
+        if (BitUtil.isBitSet(dataManager.get(TARGETS), 4)) {
+            if (world.isBlockPowered(getPosition()))
+                return true;
+            else {
+                IBlockState rail = world.getBlockState(getPosition().down());
+                if (rail.getBlock() == BlocksTC.activatorRail && rail.getValue(BlockRailPowered.POWERED).booleanValue())
+                    return true;
+            }
+        }
+        
+        return false;
     }
     
     @Override

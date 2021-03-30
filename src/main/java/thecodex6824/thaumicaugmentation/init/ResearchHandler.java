@@ -108,6 +108,9 @@ public final class ResearchHandler {
         
         TheorycraftManager.registerAid(new ResearchAidRiftJar());
         TheorycraftManager.registerAid(new ResearchAidRiftMonitor());
+        
+        // disabled for now because TC won't render aids that are entities in the table
+        //TheorycraftManager.registerAid(new ResearchAidCelestialObserver());
     }
 
 }

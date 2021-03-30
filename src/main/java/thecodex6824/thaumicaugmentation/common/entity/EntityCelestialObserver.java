@@ -32,6 +32,8 @@ import javax.annotation.Nullable;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 
+import net.minecraft.block.BlockRailPowered;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.IEntityOwnable;
@@ -68,6 +70,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.oredict.OreDictionary;
+import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.api.capabilities.IPlayerKnowledge;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.items.ItemsTC;
@@ -113,7 +116,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
     @Override
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30.0);
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(13.0);
     }
     
     @Override
@@ -126,6 +129,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
     @Override
     protected void initEntityAI() {
         tasks.addTask(0, new EntityAILookAtScan());
+        tasks.addTask(1, new EntityAILookAtCelestialBody());
     }
     
     protected boolean hasPaper() {
@@ -213,42 +217,31 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
         }
     }
     
+    public boolean isDisabled() {
+        if (world.isBlockPowered(getPosition()))
+            return true;
+        else {
+            IBlockState rail = world.getBlockState(getPosition().down());
+            if (rail.getBlock() == BlocksTC.activatorRail && rail.getValue(BlockRailPowered.POWERED).booleanValue())
+                return true;
+        }
+        
+        return false;
+    }
+    
     @Override
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
             rotationYaw = rotationYawHead = MathHelper.wrapDegrees(rotationYawHead);
             prevRotationYaw = prevRotationYawHead;
-            if (ticksExisted % 20 == 0) {
-                if (ticksExisted % 120 == 0)
-                    heal(1.0F);
-                
-                boolean filled = false;
-                TileEntity test = world.getTileEntity(getPosition());
-                if (test != null) {
-                    IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-                    if (other != null) {
-                        for (int i = 0; i < other.getSlots(); ++i) {
-                            ItemStack contained = other.getStackInSlot(i);
-                            if (OreDictionary.itemMatches(PAPER, contained, false)) {
-                                ItemStack result = inventory.insertItem(0, contained, true);
-                                if (result != contained) {
-                                    ItemStack extract = other.extractItem(i, inventory.getSlotLimit(0) - inventory.getStackInSlot(0).getCount(), false);
-                                    ItemStack remain = inventory.insertItem(0, extract, false);
-                                    if (!remain.isEmpty())
-                                        other.insertItem(i, remain, false);
-                                    
-                                    filled = true;
-                                    world.playSound(null, getPosition(), SoundsTC.page, SoundCategory.NEUTRAL, 0.5F, 1.0F);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                if (!filled && (posY - (int) posY) > 0.51) {
-                    test = world.getTileEntity(getPosition().down());
+            if (!isDisabled()) {
+                if (ticksExisted % 20 == 0) {
+                    if (ticksExisted % 120 == 0)
+                        heal(1.0F);
+                    
+                    boolean filled = false;
+                    TileEntity test = world.getTileEntity(getPosition());
                     if (test != null) {
                         IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
                         if (other != null) {
@@ -270,98 +263,134 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                             }
                         }
                     }
-                }
-                
-                ArrayList<IItemHandler> outputs = new ArrayList<>();
-                for (EnumFacing f : EnumFacing.HORIZONTALS) {
-                    test = world.getTileEntity(getPosition().offset(f));
-                    if (test != null) {
-                        IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, f.getOpposite());
-                        if (other != null)
-                            outputs.add(other);
+                    
+                    if (!filled && (posY - Math.floor(posY)) < 0.51) {
+                        test = world.getTileEntity(getPosition().down());
+                        if (test != null) {
+                            IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+                            if (other != null) {
+                                for (int i = 0; i < other.getSlots(); ++i) {
+                                    ItemStack contained = other.getStackInSlot(i);
+                                    if (OreDictionary.itemMatches(PAPER, contained, false)) {
+                                        ItemStack result = inventory.insertItem(0, contained, true);
+                                        if (result != contained) {
+                                            ItemStack extract = other.extractItem(i, inventory.getSlotLimit(0) - inventory.getStackInSlot(0).getCount(), false);
+                                            ItemStack remain = inventory.insertItem(0, extract, false);
+                                            if (!remain.isEmpty())
+                                                other.insertItem(i, remain, false);
+                                            
+                                            filled = true;
+                                            world.playSound(null, getPosition(), SoundsTC.page, SoundCategory.NEUTRAL, 0.5F, 1.0F);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    ArrayList<IItemHandler> outputs = new ArrayList<>();
+                    for (EnumFacing f : EnumFacing.HORIZONTALS) {
+                        test = world.getTileEntity(getPosition().offset(f));
+                        if (test != null) {
+                            IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, f.getOpposite());
+                            if (other != null)
+                                outputs.add(other);
+                        }
+                    }
+                    
+                    if (!outputs.isEmpty()) {
+                        for (int slot = 1; slot < inventory.getSlots(); ++slot) {
+                            ItemStack contained = inventory.getStackInSlot(slot);
+                            if (!contained.isEmpty()) {
+                                for (IItemHandler output : outputs) {
+                                    if (ItemHandlerHelper.insertItem(output, contained, true) != contained) {
+                                        ItemStack out = inventory.extractItem(slot, contained.getCount(), false);
+                                        ItemStack remain = ItemHandlerHelper.insertItem(output, out, false);
+                                        if (!remain.isEmpty()) {
+                                            inventory.insertItem(slot, remain, false);
+                                            contained = inventory.getStackInSlot(slot);
+                                        }
+                                        else
+                                            break;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                
-                if (!outputs.isEmpty()) {
-                    for (int slot = 1; slot < inventory.getSlots(); ++slot) {
-                        ItemStack contained = inventory.getStackInSlot(slot);
-                        if (!contained.isEmpty()) {
-                            for (IItemHandler output : outputs) {
-                                if (ItemHandlerHelper.insertItem(output, contained, true) != contained) {
-                                    ItemStack out = inventory.extractItem(slot, contained.getCount(), false);
-                                    ItemStack remain = ItemHandlerHelper.insertItem(output, out, false);
-                                    if (!remain.isEmpty()) {
-                                        inventory.insertItem(slot, remain, false);
-                                        contained = inventory.getStackInSlot(slot);
-                                    }
-                                    else
-                                        break;
+                else if (!isAIDisabled() && ticksExisted % 50 == 0 && hasPaper() && !world.isRainingAt(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ))) &&
+                        world.canSeeSky(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ))) &&
+                        world.provider.getDimensionType() == DimensionType.OVERWORLD) {
+                    
+                    float y = (rotationYaw + 90.0F) % 360.0F;
+                    float x = -rotationPitch;
+                    float angle = ((world.getCelestialAngle(0.0F) + 0.25F) * 360.0F) % 360.0F;
+                    boolean night = angle > 180;
+                    if ((!night && angle > 15.0F) || (night && angle > 195.0F)) {
+                        boolean inRangeYaw = false;
+                        boolean inRangePitch = false;
+                        if (night)
+                            angle -= 180.0F;
+                        if (angle > 90) {
+                            inRangeYaw = Math.abs(Math.abs(y) - 180) < 1.0F;
+                            inRangePitch = Math.abs(180 - angle - x) < 1.0F;
+                        }
+                        else {
+                            inRangeYaw = Math.abs(y) < 1.0F;
+                            inRangePitch = Math.abs(angle - x) < 1.0F;
+                        } 
+                        
+                        boolean scanned = false;
+                        if (inRangeYaw && inRangePitch && (night ? getScanMoon() : getScanSun())) {
+                            int day = (int) (world.getTotalWorldTime() / 24000);
+                            int meta = night ? (5 + world.provider.getMoonPhase(world.getWorldTime())) : 0;
+                            ItemStack toMake = new ItemStack(ItemsTC.celestialNotes, 1, meta);
+                            if (lastScanTimes[night ? 1 : 0] != day) {
+                                if (ItemHandlerHelper.insertItem(inventory, toMake, true).isEmpty() &&
+                                        checkOrBypassResearch("CEL_" + day + "_" + (night ? "Moon" + (meta - 5) : "Sun"), night ? 1 : 0, day)) {
+                                    
+                                    ItemHandlerHelper.insertItem(inventory, toMake, false);
+                                    consumePaper();
+                                    lastScanTimes[night ? 1 : 0] = day;
+                                    world.playSound(null, getPosition(), SoundsTC.scan, SoundCategory.NEUTRAL, 0.5F, 0.8F);
+                                    scanned = true;
+                                }
+                            }
+                        }
+                        
+                        if (night && !scanned && getScanStars()) {
+                            EnumFacing face = getAdjustedHorizontalFacing();
+                            int day = (int) (world.getTotalWorldTime() / 24000);
+                            int meta = face.getIndex() - 1;
+                            ItemStack toMake = new ItemStack(ItemsTC.celestialNotes, 1, meta);
+                            if (lastScanTimes[face.getIndex()] != day && Math.abs(y - face.getHorizontalAngle()) < 1.0F) {
+                                if (ItemHandlerHelper.insertItem(inventory, toMake, true).isEmpty() &&
+                                        checkOrBypassResearch("CEL_" + day + "_Star" + (meta - 1), face.getIndex(), day)) {
+                                    
+                                    ItemHandlerHelper.insertItem(inventory, toMake, false);
+                                    consumePaper();
+                                    lastScanTimes[face.getIndex()] = day;
+                                    world.playSound(null, getPosition(), SoundsTC.scan, SoundCategory.NEUTRAL, 0.5F, 0.8F);
+                                    scanned = true;
                                 }
                             }
                         }
                     }
                 }
             }
-            else if (!isAIDisabled() && ticksExisted % 50 == 0 && hasPaper() &&
-                    world.canSeeSky(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ))) &&
-                    world.provider.getDimensionType() == DimensionType.OVERWORLD) {
-                
-                float y = (rotationYaw + 90.0F) % 360.0F;
-                float x = -rotationPitch;
-                float angle = ((world.getCelestialAngle(0.0F) + 0.25F) * 360.0F) % 360.0F;
-                boolean night = angle > 180;
-                if ((!night && angle > 15.0F) || (night && angle > 195.0F)) {
-                    boolean inRangeYaw = false;
-                    boolean inRangePitch = false;
-                    if (night)
-                        angle -= 180.0F;
-                    if (angle > 90) {
-                        inRangeYaw = Math.abs(Math.abs(y) - 180) < 10;
-                        inRangePitch = Math.abs(180 - angle - x) < 7;
-                    }
-                    else {
-                        inRangeYaw = Math.abs(y) < 10;
-                        inRangePitch = Math.abs(angle - x) < 7;
-                    } 
-                    
-                    boolean scanned = false;
-                    if (inRangeYaw && inRangePitch && (night ? getScanMoon() : getScanSun())) {
-                        int day = (int) (world.getTotalWorldTime() / 24000);
-                        int meta = night ? (5 + world.provider.getMoonPhase(world.getWorldTime())) : 0;
-                        ItemStack toMake = new ItemStack(ItemsTC.celestialNotes, 1, meta);
-                        if (lastScanTimes[night ? 1 : 0] != day) {
-                            if (ItemHandlerHelper.insertItem(inventory, toMake, true).isEmpty() &&
-                                    checkOrBypassResearch("CEL_" + day + "_" + (night ? "Moon" + (meta - 5) : "Sun"), night ? 1 : 0, day)) {
-                                
-                                ItemHandlerHelper.insertItem(inventory, toMake, false);
-                                consumePaper();
-                                lastScanTimes[night ? 1 : 0] = day;
-                                world.playSound(null, getPosition(), SoundsTC.scan, SoundCategory.NEUTRAL, 0.5F, 0.8F);
-                                scanned = true;
-                            }
-                        }
-                    }
-                    
-                    if (night && !scanned && getScanStars()) {
-                        EnumFacing face = getAdjustedHorizontalFacing();
-                        int day = (int) (world.getTotalWorldTime() / 24000);
-                        int meta = face.getIndex() - 1;
-                        ItemStack toMake = new ItemStack(ItemsTC.celestialNotes, 1, meta);
-                        if (lastScanTimes[face.getIndex()] != day) {
-                            if (ItemHandlerHelper.insertItem(inventory, toMake, true).isEmpty() &&
-                                    checkOrBypassResearch("CEL_" + day + "_Star" + (meta - 1), face.getIndex(), day)) {
-                                
-                                ItemHandlerHelper.insertItem(inventory, toMake, false);
-                                consumePaper();
-                                lastScanTimes[face.getIndex()] = day;
-                                world.playSound(null, getPosition(), SoundsTC.scan, SoundCategory.NEUTRAL, 0.5F, 0.8F);
-                                scanned = true;
-                            }
-                        }
-                    }
-                }
-            }
         }
+    }
+    
+    @Override
+    protected void updateEntityActionState() {
+        if (isDisabled()) {
+            Vec3d base = new Vec3d(posX + 0.35, posY + 0.35, posZ);
+            lookHelper.setLookPosition(base.x, base.y, base.z, getHorizontalFaceSpeed(), getVerticalFaceSpeed());
+            lookHelper.onUpdateLook();
+        }
+        else
+            super.updateEntityActionState();
     }
     
     @Override
@@ -515,7 +544,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
     
     @Override
     public int getHorizontalFaceSpeed() {
-        return 1;
+        return 2;
     }
     
     @Override
@@ -600,6 +629,32 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
             return super.getCapability(capability, facing);
     }
     
+    protected class EntityAILookAtCelestialBody extends EntityAIBase {
+        
+        public EntityAILookAtCelestialBody() {
+            setMutexBits(2);
+        }
+        
+        @Override
+        public boolean shouldExecute() {
+            return !isDisabled() && !world.isRainingAt(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ)));
+        }
+        
+        @Override
+        public boolean shouldContinueExecuting() {
+            return false;
+        }
+        
+        @Override
+        public void startExecuting() {
+            float angle = ((world.getCelestialAngle(0.0F) + 0.25F) * 360.0F) % 180.0F;
+            Vec3d target = getVectorForRotation(-angle, 270).scale(48.0F);
+            getLookHelper().setLookPosition(posX + target.x, posY + target.y, posZ + target.z,
+                    getHorizontalFaceSpeed(), getVerticalFaceSpeed());
+        }
+        
+    }
+    
     protected class EntityAILookAtScan extends EntityAIBase {
         
         protected int currentTask = -1;
@@ -610,26 +665,32 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
         
         @Override
         public boolean shouldExecute() {
-            int day = (int) (world.getTotalWorldTime() / 24000);
-            float angle = (world.getCelestialAngle(0.0F) + 0.25F) * 360.0F % 360.0F;
-            if (angle > 195.0F) {
-                for (int i = 1; i < lastScanTimes.length; ++i) {
-                    if (lastScanTimes[i] != day && (i == 1 ? getScanMoon() : getScanStars()))
-                        return true;
+            if (!isDisabled() && !world.isRainingAt(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ)))) {
+                int day = (int) (world.getTotalWorldTime() / 24000);
+                float angle = (world.getCelestialAngle(0.0F) + 0.25F) * 360.0F % 360.0F;
+                if (angle > 195.0F) {
+                    for (int i = 1; i < lastScanTimes.length; ++i) {
+                        if (lastScanTimes[i] != day && (i == 1 ? getScanMoon() : getScanStars()))
+                            return true;
+                    }
+                    
+                    return false;
                 }
-                
-                return false;
+                else if (angle > 15.0F && getScanSun())
+                    return lastScanTimes[0] != day;
             }
-            else if (angle > 15.0F && getScanSun())
-                return lastScanTimes[0] != day;
-            else
-                return false;
+            
+            return false;
         }
         
         @Override
         public boolean shouldContinueExecuting() {
-            int day = (int) (world.getTotalWorldTime() / 24000);
-            return currentTask != -1 && lastScanTimes[currentTask] != day;
+            if (!isDisabled()) {
+                int day = (int) (world.getTotalWorldTime() / 24000);
+                return currentTask != -1 && lastScanTimes[currentTask] != day;
+            }
+            
+            return false;
         }
         
         @Override
@@ -659,17 +720,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                 case 0:
                 case 1: {
                     float angle = ((world.getCelestialAngle(0.0F) + 0.25F) * 360.0F) % 180.0F;
-                    float x = 0.0F, y = 0.0F;
-                    if (angle > 90) {
-                        x = -(angle - 90);
-                        y = 90;
-                    }
-                    else {
-                        x = -angle;
-                        y = 270;
-                    }
-                    
-                    Vec3d target = getVectorForRotation(x, y).scale(48.0);
+                    Vec3d target = getVectorForRotation(-angle, 270).scale(48.0F);
                     getLookHelper().setLookPosition(posX + target.x, posY + target.y, posZ + target.z,
                             getHorizontalFaceSpeed(), getVerticalFaceSpeed());
                     break;
