@@ -133,7 +133,7 @@ public final class NodeHelper {
             if (amount < providers.size()) {
                 int remove = providers.size() - (int) amount;
                 for (int i = 0; i < remove; ++i)
-                    providers.remove(providers.size() - 1 - i);
+                    providers.remove(providers.size() - 1);
             }
             
             ArrayList<Deque<IImpetusNode>> paths = new ArrayList<>(providers.size());

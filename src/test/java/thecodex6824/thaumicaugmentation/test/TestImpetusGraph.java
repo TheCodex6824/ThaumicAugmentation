@@ -160,14 +160,20 @@ public class TestImpetusGraph {
         BufferedImpetusProvider provider1 = new BufferedImpetusProvider(5, 5, new DimensionalBlockPos(0, 1, 0, 0), new ImpetusStorage(1000, 1000, 20));
         BufferedImpetusProvider provider2 = new BufferedImpetusProvider(5, 5, new DimensionalBlockPos(0, 1, 1, 0), new ImpetusStorage(1000, 1000, 20));
         BufferedImpetusProvider provider3 = new BufferedImpetusProvider(5, 5, new DimensionalBlockPos(1, 1, 1, 0), new ImpetusStorage(1000, 1000, 20));
+        BufferedImpetusProvider provider4 = new BufferedImpetusProvider(5, 5, new DimensionalBlockPos(2, 3, 1, 0), new ImpetusStorage(1000, 1000, 20));
+        BufferedImpetusProvider provider5 = new BufferedImpetusProvider(5, 5, new DimensionalBlockPos(3, 1, 2, 0), new ImpetusStorage(1000, 1000, 20));
     
         consumer.addInput(provider1);
         consumer.addInput(provider2);
         consumer.addInput(provider3);
+        consumer.addInput(provider4);
+        consumer.addInput(provider5);
         
         provider1.getProvider().receiveEnergy(Long.MAX_VALUE, false);
         provider2.getProvider().receiveEnergy(Long.MAX_VALUE, false);
         provider3.getProvider().receiveEnergy(Long.MAX_VALUE, false);
+        provider4.getProvider().receiveEnergy(Long.MAX_VALUE, false);
+        provider5.getProvider().receiveEnergy(Long.MAX_VALUE, false);
         
         consumer.consume(1, false);
         assertEquals(1, consumer.getConsumer().getEnergyStored());
@@ -178,6 +184,10 @@ public class TestImpetusGraph {
         if (provider2.getProvider().getEnergyStored() != provider2.getProvider().getMaxEnergyStored())
             ++taken;
         if (provider3.getProvider().getEnergyStored() != provider3.getProvider().getMaxEnergyStored())
+            ++taken;
+        if (provider4.getProvider().getEnergyStored() != provider3.getProvider().getMaxEnergyStored())
+            ++taken;
+        if (provider5.getProvider().getEnergyStored() != provider3.getProvider().getMaxEnergyStored())
             ++taken;
         
         assertEquals(taken, 1);
