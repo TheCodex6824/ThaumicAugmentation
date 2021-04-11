@@ -25,9 +25,11 @@ import java.lang.reflect.Field;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApi.BluePrint;
@@ -57,6 +59,7 @@ import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
+import thecodex6824.thaumicaugmentation.common.item.ItemThaumiumRobes.MaskType;
 import thecodex6824.thaumicaugmentation.common.recipe.ElementalAugmentCraftingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.FluxSeedGrowthRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicArmorBindingRecipe;
@@ -271,6 +274,27 @@ public final class RecipeHandler {
                 new ItemStack(TAItems.MATERIAL, 1, 3), new Object[] {
                         BlocksTC.stabilizer, ItemsTC.focus3, "plateBrass", ItemsTC.morphicResonator, BlocksTC.inlay, "plateVoid", new ItemStack(TAItems.MATERIAL, 1, 5), ItemsTC.mechanismComplex,
                         "plateThaumium", "plateVoid"
+                }
+        ));
+        
+        ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_hood_warp"), new InfusionRecipe(
+                "THAUMIUM_ROBES&&FORTRESSMASK", new Object[] {"maskType", new NBTTagInt(MaskType.WARP_REDUCTION.getID())}, 8, new AspectList().add(Aspect.MIND, 80).add(Aspect.LIFE, 80).add(Aspect.PROTECT, 20),
+                new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE), new Object[] {
+                        "plateIron", "dyeBlack", "plateIron", "leather", BlocksTC.shimmerleaf, ItemsTC.brain
+                }
+        ));
+        
+        ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_hood_wither"), new InfusionRecipe(
+                "THAUMIUM_ROBES&&FORTRESSMASK", new Object[] {"maskType", new NBTTagInt(MaskType.WITHER.getID())}, 8, new AspectList().add(Aspect.ENTROPY, 80).add(Aspect.DEATH, 80).add(Aspect.PROTECT, 20),
+                new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE), new Object[] {
+                        "plateIron", "dyeWhite", "plateIron", "leather", Items.POISONOUS_POTATO, new ItemStack(Items.SKULL, 1, 1)
+                }
+        ));
+        
+        ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_hood_lifesteal"), new InfusionRecipe(
+                "THAUMIUM_ROBES&&FORTRESSMASK", new Object[] {"maskType", new NBTTagInt(MaskType.LIFESTEAL.getID())}, 8, new AspectList().add(Aspect.UNDEAD, 80).add(Aspect.LIFE, 80).add(Aspect.PROTECT, 20),
+                new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE), new Object[] {
+                        "plateIron", "dyeRed", "plateIron", "leather", Items.GHAST_TEAR, Items.MILK_BUCKET
                 }
         ));
     }

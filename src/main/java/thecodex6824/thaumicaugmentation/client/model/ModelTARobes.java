@@ -27,9 +27,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
+import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.common.item.ItemThaumiumRobes.MaskType;
 
 public class ModelTARobes extends ModelBiped {
 
@@ -91,6 +94,7 @@ public class ModelTARobes extends ModelBiped {
     protected ModelRenderer legPanelL2;
     protected ModelRenderer legPanelL3;
     protected ModelRenderer sidePanelL1;
+    protected ModelRenderer mask;
     
     protected boolean leftLess = false;
     
@@ -352,6 +356,12 @@ public class ModelTARobes extends ModelBiped {
         fociPouch.addBox(3.5F, 0.5F, -2.5F, 3, 6, 5);
         fociPouch.setTextureSize(128, 64);
         setRotation(fociPouch, 0.0F, 0.0F, -0.122173F);
+        mask = new ModelRenderer(this, 24, 2);
+        mask.addBox(-4.5F, -6.0F, -4.65F, 9, 5, 1);
+        mask.setRotationPoint(0.0F, 0.0F, 0.0F);
+        mask.setTextureSize(128, 64);
+        setRotation(mask, 0.0F, 0.0F, 0.0F);
+        mask.isHidden = true;
         
         bipedHeadwear.cubeList.clear();
         bipedHead.cubeList.clear();
@@ -359,6 +369,7 @@ public class ModelTARobes extends ModelBiped {
         bipedHead.addChild(hood2);
         bipedHead.addChild(hood3);
         bipedHead.addChild(hood4);
+        bipedHead.addChild(mask);
         bipedBody.cubeList.clear();
         bipedBody.addChild(mBelt);
         bipedBody.addChild(mBeltB);
@@ -477,6 +488,20 @@ public class ModelTARobes extends ModelBiped {
                 rightArmPose = offPose;
                 leftArmPose = mainPose;
             } 
+            
+            // hide / unhide mask and set texture
+            if (bipedHead.showModel) {
+                ItemStack head = living.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD) {
+                    int maskType = head.hasTagCompound() ? head.getTagCompound().getInteger("maskType") : 0;
+                    if (maskType > 0 && maskType < MaskType.values().length) {
+                        mask.setTextureOffset(24 + (maskType - 1) * 24, 2);
+                        mask.isHidden = false;
+                    }
+                    else
+                        mask.isHidden = true;
+                }
+            }
         }
         
         if (entity instanceof EntityArmorStand) {

@@ -48,6 +48,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -62,8 +63,6 @@ import thaumcraft.api.items.IRevealer;
 import thaumcraft.api.items.IVisDiscountGear;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.event.AugmentEventHelper;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.client.model.ModelTARobes;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
@@ -80,18 +79,25 @@ public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
     
     public static enum MaskType {
         
-        WARP_REDUCTION(0),
-        WITHER(1),
-        LIFTSTEAL(2);
+        NONE(0, ""),
+        WARP_REDUCTION(1, "item.fortress_helm.mask.0"),
+        WITHER(2, "item.fortress_helm.mask.1"),
+        LIFESTEAL(3, "item.fortress_helm.mask.2");
         
         private int id;
+        private String name;
         
-        private MaskType(int i) {
+        private MaskType(int i, String n) {
             id = i;
+            name = n;
         }
         
         public int getID() {
             return id;
+        }
+        
+        public String getName() {
+            return name;
         }
         
         @Nullable
@@ -123,7 +129,10 @@ public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
     
     @Override
     public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
-        return AugmentEventHelper.fireArmorDisplayEvent(armor.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), armor, player, 0);
+        if (armor.hasTagCompound() && armor.getTagCompound().getInteger("mask") != 0)
+            return 1;
+        
+        return 0;
     }
     
     @Override
@@ -142,7 +151,10 @@ public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
         }
 
         ArmorProperties ap = new ArmorProperties(priority, ratio, armor.getMaxDamage() + 1 - armor.getItemDamage());
-        return AugmentEventHelper.fireArmorCalcEvent(armor.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null), armor, player, source, ap);
+        if (armor.hasTagCompound() && armor.getTagCompound().getInteger("mask") != 0)
+            ++ap.Armor;
+        
+        return ap;
     }
     
     @Override
@@ -272,6 +284,13 @@ public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+        if (stack.hasTagCompound()) {
+            int mask = stack.getTagCompound().getInteger("maskType");
+            MaskType t = MaskType.fromID(mask);
+            if (t != null && t != MaskType.NONE)
+                tooltip.add(new TextComponentTranslation(t.getName()).setStyle(new Style().setColor(TextFormatting.GOLD)).getFormattedText());
+        }
+        
         int color = getDyedColor(stack);
         if (color != getDefaultDyedColorForMeta(stack.getMetadata())) {
             if (flag.isAdvanced())

@@ -137,7 +137,7 @@ public class EntityEventHandler {
         
         if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
             head = ((EntityLivingBase) event.getSource().getTrueSource()).getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-            if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD && head.hasTagCompound() && head.getTagCompound().getInteger("maskType") == MaskType.LIFTSTEAL.getID() &&
+            if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD && head.hasTagCompound() && head.getTagCompound().getInteger("maskType") == MaskType.LIFESTEAL.getID() &&
                     event.getEntity().getEntityWorld().rand.nextFloat() < event.getAmount() / 12.0F) {
                 
                 ((EntityLivingBase) event.getSource().getTrueSource()).heal(1.0F);
