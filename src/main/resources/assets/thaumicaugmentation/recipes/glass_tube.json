@@ -1,0 +1,32 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "GLASS_TUBE",
+  "vis": 15,
+  "pattern": [
+    " Q ",
+    "GIG",
+    " B "
+  ],
+  "key": {
+    "Q": {
+      "type": "forge:ore_dict",
+      "ore": "nuggetQuicksilver"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "blockGlass"
+    },
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "plateIron"
+    },
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "nuggetBrass"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:glass_tube",
+    "count": 8
+  }
+}

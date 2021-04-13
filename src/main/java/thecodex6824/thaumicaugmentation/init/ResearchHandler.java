@@ -70,6 +70,7 @@ public final class ResearchHandler {
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/baubles.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/impetus.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/gear.json"));
+        ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/alchemy.json"));
         if (!TAConfig.disableWardFocus.getValue()) {
             if (ThaumicAugmentationAPI.isCoremodAvailable())
                 ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/ward_foci_coremod.json"));
