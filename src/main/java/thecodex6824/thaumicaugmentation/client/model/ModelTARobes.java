@@ -94,7 +94,9 @@ public class ModelTARobes extends ModelBiped {
     protected ModelRenderer legPanelL2;
     protected ModelRenderer legPanelL3;
     protected ModelRenderer sidePanelL1;
-    protected ModelRenderer mask;
+    protected ModelRenderer[] masks;
+    protected ModelRenderer maskStrapL;
+    protected ModelRenderer maskStrapR;
     
     protected boolean leftLess = false;
     
@@ -356,20 +358,41 @@ public class ModelTARobes extends ModelBiped {
         fociPouch.addBox(3.5F, 0.5F, -2.5F, 3, 6, 5);
         fociPouch.setTextureSize(128, 64);
         setRotation(fociPouch, 0.0F, 0.0F, -0.122173F);
-        mask = new ModelRenderer(this, 24, 2);
-        mask.addBox(-4.5F, -6.0F, -4.65F, 9, 5, 1);
-        mask.setRotationPoint(0.0F, 0.0F, 0.0F);
-        mask.setTextureSize(128, 64);
-        setRotation(mask, 0.0F, 0.0F, 0.0F);
-        mask.isHidden = true;
+        masks = new ModelRenderer[MaskType.values().length];
+        for (int i = 0; i < MaskType.values().length; ++i) {
+            masks[i] = new ModelRenderer(this, i == 0 ? 4 : 21 + (i - 1) * 16, 0);
+            masks[i].addBox(i == 0 ? -3.5F : -3.0F, -6.45F, -5.0F, i == 0 ? 7 : 6, 6, 1);
+            masks[i].setRotationPoint(0.0F, 0.0F, 0.0F);
+            masks[i].setTextureSize(128, 64);
+            setRotation(masks[i], 0.0F, 0.0F, 0.0F);
+            if (i != 0)
+                masks[i].isHidden = true;
+        }
+        
+        maskStrapL = new ModelRenderer(this, 0, 0);
+        maskStrapL.mirror = true;
+        maskStrapL.addBox(-3.5F, -3.45F, -4.75F, 1, 1, 1);
+        maskStrapL.setTextureOffset(128, 64);
+        maskStrapL.isHidden = true;
+        setRotation(maskStrapL, 0.0F, 0.0F, 0.0F);
+        maskStrapR = new ModelRenderer(this, 0, 0);
+        maskStrapR.addBox(2.5F, -3.45F, -4.75F, 1, 1, 1);
+        maskStrapR.setTextureOffset(128, 64);
+        maskStrapR.isHidden = true;
+        setRotation(maskStrapR, 0.0F, 0.0F, 0.0F);
         
         bipedHeadwear.cubeList.clear();
+        for (ModelRenderer mask : masks)
+            bipedHeadwear.addChild(mask);
+        
+        bipedHeadwear.addChild(maskStrapL);
+        bipedHeadwear.addChild(maskStrapR);
+        
         bipedHead.cubeList.clear();
         bipedHead.addChild(hood1);
         bipedHead.addChild(hood2);
         bipedHead.addChild(hood3);
         bipedHead.addChild(hood4);
-        bipedHead.addChild(mask);
         bipedBody.cubeList.clear();
         bipedBody.addChild(mBelt);
         bipedBody.addChild(mBeltB);
@@ -489,17 +512,32 @@ public class ModelTARobes extends ModelBiped {
                 leftArmPose = mainPose;
             } 
             
-            // hide / unhide mask and set texture
-            if (bipedHead.showModel) {
+            /* 
+             * we need to set mask models this way rather than just changing uvs because
+             * mc compiles display lists for the model, so we would need to manage all
+             * that ourselves
+             */
+            if (bipedHeadwear.showModel) {
                 ItemStack head = living.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
                 if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD) {
                     int maskType = head.hasTagCompound() ? head.getTagCompound().getInteger("maskType") : 0;
-                    if (maskType > 0 && maskType < MaskType.values().length) {
-                        mask.setTextureOffset(24 + (maskType - 1) * 24, 2);
-                        mask.isHidden = false;
+                    if (maskType >= 0 && maskType < MaskType.values().length) {
+                        for (int i = 0; i < MaskType.values().length; ++i) {
+                            if (i != maskType)
+                                masks[i].isHidden = true;
+                            else
+                                masks[i].isHidden = false;
+                        }
+                        
+                        if (maskType != 0) {
+                            maskStrapL.isHidden = false;
+                            maskStrapR.isHidden = false;
+                        }
+                        else {
+                            maskStrapL.isHidden = true;
+                            maskStrapR.isHidden = true;
+                        }
                     }
-                    else
-                        mask.isHidden = true;
                 }
             }
         }

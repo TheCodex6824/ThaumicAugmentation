@@ -278,21 +278,21 @@ public final class RecipeHandler {
         ));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_hood_warp"), new InfusionRecipe(
-                "THAUMIUM_ROBES&&FORTRESSMASK", new Object[] {"maskType", new NBTTagInt(MaskType.WARP_REDUCTION.getID())}, 8, new AspectList().add(Aspect.MIND, 80).add(Aspect.LIFE, 80).add(Aspect.PROTECT, 20),
+                "THAUMIUM_ROBES", new Object[] {"maskType", new NBTTagInt(MaskType.WARP_REDUCTION.getID())}, 8, new AspectList().add(Aspect.MIND, 80).add(Aspect.LIFE, 80).add(Aspect.PROTECT, 20),
                 new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE), new Object[] {
                         "plateIron", "dyeBlack", "plateIron", "leather", BlocksTC.shimmerleaf, ItemsTC.brain
                 }
         ));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_hood_wither"), new InfusionRecipe(
-                "THAUMIUM_ROBES&&FORTRESSMASK", new Object[] {"maskType", new NBTTagInt(MaskType.WITHER.getID())}, 8, new AspectList().add(Aspect.ENTROPY, 80).add(Aspect.DEATH, 80).add(Aspect.PROTECT, 20),
+                "THAUMIUM_ROBES", new Object[] {"maskType", new NBTTagInt(MaskType.WITHER.getID())}, 8, new AspectList().add(Aspect.ENTROPY, 80).add(Aspect.DEATH, 80).add(Aspect.PROTECT, 20),
                 new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE), new Object[] {
                         "plateIron", "dyeWhite", "plateIron", "leather", Items.POISONOUS_POTATO, new ItemStack(Items.SKULL, 1, 1)
                 }
         ));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_hood_lifesteal"), new InfusionRecipe(
-                "THAUMIUM_ROBES&&FORTRESSMASK", new Object[] {"maskType", new NBTTagInt(MaskType.LIFESTEAL.getID())}, 8, new AspectList().add(Aspect.UNDEAD, 80).add(Aspect.LIFE, 80).add(Aspect.PROTECT, 20),
+                "THAUMIUM_ROBES", new Object[] {"maskType", new NBTTagInt(MaskType.LIFESTEAL.getID())}, 8, new AspectList().add(Aspect.UNDEAD, 80).add(Aspect.LIFE, 80).add(Aspect.PROTECT, 20),
                 new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE), new Object[] {
                         "plateIron", "dyeRed", "plateIron", "leather", Items.GHAST_TEAR, Items.MILK_BUCKET
                 }
