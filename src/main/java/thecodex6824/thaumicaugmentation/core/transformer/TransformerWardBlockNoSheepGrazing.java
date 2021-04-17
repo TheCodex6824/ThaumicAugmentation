@@ -59,40 +59,51 @@ public class TransformerWardBlockNoSheepGrazing extends Transformer {
                     Type.BOOLEAN_TYPE), "()Z");
             int tallGrass = TransformUtil.findLastInstanceOfOpcode(nom, nom.instructions.size(), Opcodes.IFEQ);
             int normalGrass = TransformUtil.findLastInstanceOfOpcode(nom, nom.instructions.size(), Opcodes.IF_ACMPNE);
+            boolean found = false;
             if (tallGrass != -1 && normalGrass != -1) {
                 AbstractInsnNode insertAfter = nom.instructions.get(tallGrass);
                 AbstractInsnNode grassAfter = nom.instructions.get(normalGrass);
-                nom.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
-                nom.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON,
-                        "checkWardGeneric",
-                        "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
-                        false
-                ));
-                nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
-                nom.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
-                        TransformUtil.remapFieldName("net/minecraft/entity/ai/EntityAIEatGrass", "field_151501_c"), "Lnet/minecraft/world/World;"));
-                nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
-                
-                nom.instructions.insert(grassAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) grassAfter).label));
-                nom.instructions.insert(grassAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON,
-                        "checkWardGeneric",
-                        "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
-                        false
-                ));
-                nom.instructions.insert(grassAfter, new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
-                        "net/minecraft/util/math/BlockPos",
-                        TransformUtil.remapMethodName("net/minecraft/util/math/BlockPos", "func_177977_b", Type.getType("Lnet/minecraft/util/math/BlockPos;")),
-                        "()Lnet/minecraft/util/math/BlockPos;",
-                        false
-                ));
-                nom.instructions.insert(grassAfter, new VarInsnNode(Opcodes.ALOAD, 1));
-                nom.instructions.insert(grassAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
-                        TransformUtil.remapFieldName("net/minecraft/entity/ai/EntityAIEatGrass", "field_151501_c"), "Lnet/minecraft/world/World;"));
-                nom.instructions.insert(grassAfter, new VarInsnNode(Opcodes.ALOAD, 0));
+                if (insertAfter.getPrevious() instanceof MethodInsnNode && grassAfter.getPrevious() instanceof FieldInsnNode) {
+                    MethodInsnNode insertPrev = (MethodInsnNode) insertAfter.getPrevious();
+                    FieldInsnNode grassPrev = (FieldInsnNode) grassAfter.getPrevious();
+                    if (insertPrev.name.equals("apply") && insertPrev.owner.equals("com/google/common/base/Predicate") && insertPrev.itf &&
+                            grassPrev.name.equals(TransformUtil.remapFieldName("net/minecraft/init/Blocks", "field_150349_c")) && grassPrev.owner.equals("net/minecraft/init/Blocks") && grassPrev.desc.equals("Lnet/minecraft/block/BlockGrass;")) {
+                        
+                        nom.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
+                        nom.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                TransformUtil.HOOKS_COMMON,
+                                "checkWardGeneric",
+                                "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                                false
+                        ));
+                        nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
+                        nom.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
+                                TransformUtil.remapFieldName("net/minecraft/entity/ai/EntityAIEatGrass", "field_151501_c"), "Lnet/minecraft/world/World;"));
+                        nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
+                        
+                        nom.instructions.insert(grassAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) grassAfter).label));
+                        nom.instructions.insert(grassAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                TransformUtil.HOOKS_COMMON,
+                                "checkWardGeneric",
+                                "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                                false
+                        ));
+                        nom.instructions.insert(grassAfter, new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
+                                "net/minecraft/util/math/BlockPos",
+                                TransformUtil.remapMethodName("net/minecraft/util/math/BlockPos", "func_177977_b", Type.getType("Lnet/minecraft/util/math/BlockPos;")),
+                                "()Lnet/minecraft/util/math/BlockPos;",
+                                false
+                        ));
+                        nom.instructions.insert(grassAfter, new VarInsnNode(Opcodes.ALOAD, 1));
+                        nom.instructions.insert(grassAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
+                                TransformUtil.remapFieldName("net/minecraft/entity/ai/EntityAIEatGrass", "field_151501_c"), "Lnet/minecraft/world/World;"));
+                        nom.instructions.insert(grassAfter, new VarInsnNode(Opcodes.ALOAD, 0));
+                        found = true;
+                    }
+                }
             }
-            else
+            
+            if (!found)
                 throw new TransformerException("Could not locate required instructions, locations: " + tallGrass + ", " + normalGrass);
             
             return true;

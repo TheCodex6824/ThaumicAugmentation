@@ -60,17 +60,21 @@ public class TransformerWardBlockNoEndermanPickup extends Transformer {
             int ret = pickup.instructions.size();
             while ((ret = TransformUtil.findLastInstanceOfOpcode(pickup, ret, Opcodes.IFEQ)) != -1) {
                 AbstractInsnNode insertAfter = pickup.instructions.get(ret);
-                pickup.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
-                pickup.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON,
-                        "checkWardGeneric",
-                        "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
-                        false
-                ));
-                pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 6));
-                pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
-                ret -= 5;
-                found = true;
+                if (insertAfter.getPrevious() instanceof VarInsnNode && ((VarInsnNode) insertAfter.getPrevious()).var == 10) {
+                    pickup.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
+                    pickup.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                            TransformUtil.HOOKS_COMMON,
+                            "checkWardGeneric",
+                            "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                            false
+                    ));
+                    pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 6));
+                    pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
+                    found = true;
+                    break;
+                }
+                else
+                    --ret;
             }
             
             if (!found)
