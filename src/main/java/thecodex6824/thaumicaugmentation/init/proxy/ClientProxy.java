@@ -180,6 +180,7 @@ import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
 import thecodex6824.thaumicaugmentation.common.container.ContainerCelestialObserver;
+import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
 import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
@@ -353,7 +354,7 @@ public class ClientProxy extends ServerProxy {
     @Override
     public Object getClientGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (TAInventory.values()[ID]) {
-            case WARDED_CHEST: return new GUIWardedChest(getServerGUIElement(ID, player, world, x, y, z), player.inventory);
+            case WARDED_CHEST: return new GUIWardedChest((ContainerWardedChest) getServerGUIElement(ID, player, world, x, y, z), player.inventory);
             case ARCANE_TERRAFORMER: return new GUIArcaneTerraformer((ContainerArcaneTerraformer) getServerGUIElement(ID, player, world, x, y, z));
             case AUTOCASTER: return new GUIAutocaster((ContainerAutocaster) getServerGUIElement(ID, player, world, x, y, z));
             case CELESTIAL_OBSERVER: return new GUICelestialObserver((ContainerCelestialObserver) getServerGUIElement(ID, player, world, x, y, z));

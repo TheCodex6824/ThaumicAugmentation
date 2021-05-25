@@ -39,18 +39,21 @@ import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
+import net.minecraftforge.common.util.Constants.NBT;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.tile.INameableTile;
 import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.api.ward.tile.WardedInventory;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
 
-public class TileWardedChest extends TileWarded implements IAnimatedTile {
+public class TileWardedChest extends TileWarded implements IAnimatedTile, INameableTile {
 
     protected WardedInventory inventory;
     protected IAnimationStateMachine asm;
     protected VariableValue openTime;
+    protected String name;
 
     public TileWardedChest() {
         super();
@@ -86,12 +89,18 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setTag("inventory", inventory.serializeNBT());
+        if (name != null)
+            compound.setString("CustomName", name);
+        
         return super.writeToNBT(compound);
     }
     
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         inventory.deserializeNBT(compound.getCompoundTag("inventory"));
+        if (compound.hasKey("CustomName", NBT.TAG_STRING))
+            name = compound.getString("CustomName");
+        
         super.readFromNBT(compound);
     }
 
@@ -103,6 +112,23 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile {
     @Override
     public void handleEvents(float time, Iterable<Event> pastEvents) {
         // nope
+    }
+    
+    @Override
+    public boolean hasCustomName() {
+        return name != null;
+    }
+    
+    @Override
+    @Nullable
+    public String getCustomName() {
+        return name;
+    }
+    
+    @Override
+    public void setCustomName(String name) {
+        this.name = name;
+        markDirty();
     }
 
     @Override

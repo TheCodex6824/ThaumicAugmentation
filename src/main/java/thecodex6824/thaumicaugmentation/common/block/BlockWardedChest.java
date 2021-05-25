@@ -49,6 +49,7 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardParticles;
+import thecodex6824.thaumicaugmentation.api.tile.INameableTile;
 import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
 import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedTile;
@@ -164,14 +165,17 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
             ItemStack stack) {
 
+        TileEntity tile = world.getTileEntity(pos);
         if (!world.isRemote) {
-            TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
                 IWardedTile warded = tile.getCapability(CapabilityWardedTile.WARDED_TILE, null);
                 if (warded != null)
                     warded.setOwner(placer.getUniqueID());
             }
         }
+        
+        if (stack.hasDisplayName() && tile instanceof INameableTile)
+            ((INameableTile) tile).setCustomName(stack.getDisplayName());
 
         super.onBlockPlacedBy(world, pos, state, placer, stack);
     }
