@@ -27,6 +27,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
@@ -37,9 +39,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
+import thaumcraft.api.aspects.Aspect;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.client.gui.component.ButtonToggle;
+import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.container.ContainerCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.network.PacketInteractGUI;
@@ -50,6 +55,10 @@ public class GUICelestialObserver extends GuiContainer {
     protected static final ResourceLocation TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/gui/celestial_observer.png");
     protected static final ResourceLocation SUN = new ResourceLocation("minecraft", "textures/environment/sun.png");
     protected static final ResourceLocation MOON = new ResourceLocation("minecraft", "textures/environment/moon_phases.png");
+    
+    // can't use TC's field as it is in the AuraThread itself server side
+    // some of the lower values are fudged a bit to make them easier to see
+    protected static final float[] AURA_STRENGTH = new float[] {32.0F, 19.2F, 13.3F, 7.4F, 2.0F, 7.4F, 13.3F, 19.2F};
     
     protected static Framebuffer fb;
     
@@ -266,6 +275,28 @@ public class GUICelestialObserver extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         fontRenderer.drawString(I18n.format(ThaumicAugmentationAPI.MODID + ".gui.scans"), 8, 6, 0xFFFFFF);
+        World world = ((ContainerCelestialObserver) inventorySlots).getEntity().getEntityWorld();
+        float aura = AURA_STRENGTH[world.provider.getMoonPhase(world.getWorldInfo().getWorldTime())];
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        int auraColor = Aspect.ENERGY.getColor();
+        GlStateManager.color(((auraColor >> 16) & 0xFF) / 255.0F, ((auraColor >> 8) & 0xFF) / 255.0F, (auraColor & 0xFF) / 255.0F, 1.0F);
+        Tessellator t = Tessellator.getInstance();
+        BufferBuilder buffer = t.getBuffer();
+        Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.TC_HUD);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        buffer.pos((this.width - this.xSize) / 2 - 20, (this.height - this.ySize) / 2 + 46, 0.0).tex(0.40625, 0.1171875).endVertex();
+        buffer.pos((this.width - this.xSize) / 2 - 20 + aura * 2, (this.height - this.ySize) / 2 + 46, 0.0).tex(0.40625, 0.0).endVertex();
+        buffer.pos((this.width - this.xSize) / 2 - 20 + aura * 2, (this.height - this.ySize) / 2 + 40, 0.0).tex(0.4375, 0.0).endVertex();
+        buffer.pos((this.width - this.xSize) / 2 - 20, (this.height - this.ySize) / 2 + 40, 0.0).tex(0.4375, 0.1171875).endVertex();
+        t.draw();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        buffer.pos((this.width - this.xSize) / 2 + 16, (this.height - this.ySize) / 2 + 36, 0.0).tex(0.28125, 0.0078125).endVertex();
+        buffer.pos((this.width - this.xSize) / 2 - 22, (this.height - this.ySize) / 2 + 36, 0.0).tex(0.28125, 0.16796875).endVertex();
+        buffer.pos((this.width - this.xSize) / 2 - 22, (this.height - this.ySize) / 2 + 50, 0.0).tex(0.34375, 0.16796875).endVertex();
+        buffer.pos((this.width - this.xSize) / 2 + 16, (this.height - this.ySize) / 2 + 50, 0.0).tex(0.34375, 0.0078125).endVertex();
+        t.draw();
     }
     
 }
