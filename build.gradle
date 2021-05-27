@@ -21,6 +21,7 @@ archivesBaseName = "ThaumicAugmentation"
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
+    options.encoding = 'UTF-8'
 }
 
 minecraft {
@@ -51,8 +52,8 @@ minecraft {
         replaceIn 'ThaumicAugmentation.java'
     }
     
-    clientRunArgs += '-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
-    serverRunArgs += '-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
+    clientJvmArgs += ('-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore' + System.getProperty("line.separator"))
+    serverJvmArgs += ('-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore' + System.getProperty("line.separator"))
 }
 
 dependencies {
@@ -104,6 +105,7 @@ processResources {
 
 javadoc {
     include 'thecodex6824/thaumicaugmentation/api/**'
+    options.encoding = 'UTF-8'
 }
 
 task signJar(type: SignJar, dependsOn: reobfJar) {

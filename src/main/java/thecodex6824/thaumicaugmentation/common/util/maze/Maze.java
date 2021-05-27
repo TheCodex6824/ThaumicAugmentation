@@ -65,13 +65,13 @@ public class Maze {
                     }
                     
                     if (open == EnumFacing.NORTH)
-                        result.append('\u2575'); // ╵
+                        result.append('\u2575');
                     else if (open == EnumFacing.EAST)
-                        result.append('\u2576'); // ╶
+                        result.append('\u2576');
                     else if (open == EnumFacing.SOUTH)
-                        result.append('\u2577'); // ╷
+                        result.append('\u2577');
                     else
-                        result.append('\u2574'); // ╴
+                        result.append('\u2574');
                 }
                 else if (cell.getNumWalls() == 2) {
                     EnumFacing open1 = null;
@@ -89,9 +89,9 @@ public class Maze {
                     
                     if (open1.getOpposite() == open2) {
                         if (open1.getAxis() == Axis.X)
-                            result.append('\u2500'); // ─
+                            result.append('\u2500');
                         else
-                            result.append('\u2502'); // │
+                            result.append('\u2502');
                     }
                     else {
                         int angle1 = (int) open1.getHorizontalAngle();
@@ -103,13 +103,13 @@ public class Maze {
                         }
                         
                         if (angle1 == 0 && angle2 == 90)
-                            result.append('\u2510'); // ┐
+                            result.append('\u2510');
                         else if (angle1 == 90 && angle2 == 180)
-                            result.append('\u2518'); // ┘
+                            result.append('\u2518');
                         else if (angle1 == 180 && angle2 == 270)
-                            result.append('\u2514'); // └
+                            result.append('\u2514');
                         else
-                            result.append('\u250c'); // ┌
+                            result.append('\u250c');
                     }
                 }
                 else if (cell.getNumWalls() == 1) {
@@ -122,16 +122,16 @@ public class Maze {
                     }
                     
                     if (closed == EnumFacing.NORTH)
-                        result.append('\u252c'); // ┬
+                        result.append('\u252c');
                     else if (closed == EnumFacing.EAST)
-                        result.append('\u2524'); // ┤
+                        result.append('\u2524');
                     else if (closed == EnumFacing.SOUTH)
-                        result.append('\u2534'); // ┴
+                        result.append('\u2534');
                     else
-                        result.append('\u251c'); // ├
+                        result.append('\u251c');
                 }
                 else
-                    result.append('\u253c'); // ┼
+                    result.append('\u253c');
             }
             
             if (z < length - 1)
