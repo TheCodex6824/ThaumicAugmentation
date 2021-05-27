@@ -285,17 +285,17 @@ public class GUICelestialObserver extends GuiContainer {
         BufferBuilder buffer = t.getBuffer();
         Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.TC_HUD);
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos((this.width - this.xSize) / 2 - 20, (this.height - this.ySize) / 2 + 46, 0.0).tex(0.40625, 0.1171875).endVertex();
-        buffer.pos((this.width - this.xSize) / 2 - 20 + aura, (this.height - this.ySize) / 2 + 46, 0.0).tex(0.40625, 0.0).endVertex();
-        buffer.pos((this.width - this.xSize) / 2 - 20 + aura, (this.height - this.ySize) / 2 + 40, 0.0).tex(0.4375, 0.0).endVertex();
-        buffer.pos((this.width - this.xSize) / 2 - 20, (this.height - this.ySize) / 2 + 40, 0.0).tex(0.4375, 0.1171875).endVertex();
+        buffer.pos(132, 64, 0.0).tex(0.40625, 0.1171875).endVertex();
+        buffer.pos(132 + aura, 64, 0.0).tex(0.40625, 0.0).endVertex();
+        buffer.pos(132 + aura, 58, 0.0).tex(0.4375, 0.0).endVertex();
+        buffer.pos(132, 58, 0.0).tex(0.4375, 0.1171875).endVertex();
         t.draw();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos((this.width - this.xSize) / 2 + 16, (this.height - this.ySize) / 2 + 36, 0.0).tex(0.28125, 0.0078125).endVertex();
-        buffer.pos((this.width - this.xSize) / 2 - 22, (this.height - this.ySize) / 2 + 36, 0.0).tex(0.28125, 0.16796875).endVertex();
-        buffer.pos((this.width - this.xSize) / 2 - 22, (this.height - this.ySize) / 2 + 50, 0.0).tex(0.34375, 0.16796875).endVertex();
-        buffer.pos((this.width - this.xSize) / 2 + 16, (this.height - this.ySize) / 2 + 50, 0.0).tex(0.34375, 0.0078125).endVertex();
+        buffer.pos(128, 68, 0.0).tex(0.34375, 0.0078125).endVertex();
+        buffer.pos(168, 68, 0.0).tex(0.34375, 0.16796875).endVertex();
+        buffer.pos(168, 54, 0.0).tex(0.28125, 0.16796875).endVertex();
+        buffer.pos(128, 54, 0.0).tex(0.28125, 0.0078125).endVertex();
         t.draw();
     }
     

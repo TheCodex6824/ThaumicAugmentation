@@ -333,12 +333,12 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                         if (night)
                             angle -= 180.0F;
                         if (angle > 90) {
-                            inRangeYaw = Math.abs(Math.abs(y) - 180) < 1.0F;
-                            inRangePitch = Math.abs(180 - angle - x) < 1.0F;
+                            inRangeYaw = Math.abs(Math.abs(y) - 180) < 1.5F;
+                            inRangePitch = Math.abs(180 - angle - x) < 1.5F;
                         }
                         else {
-                            inRangeYaw = Math.abs(y) < 1.0F;
-                            inRangePitch = Math.abs(angle - x) < 1.0F;
+                            inRangeYaw = Math.abs(y) < 1.5F;
+                            inRangePitch = Math.abs(angle - x) < 1.5F;
                         } 
                         
                         boolean scanned = false;
@@ -364,7 +364,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                             int day = (int) (world.getTotalWorldTime() / 24000);
                             int meta = face.getIndex() - 1;
                             ItemStack toMake = new ItemStack(ItemsTC.celestialNotes, 1, meta);
-                            if (lastScanTimes[face.getIndex()] != day && Math.abs(y - face.getHorizontalAngle()) < 1.0F) {
+                            if (lastScanTimes[face.getIndex()] != day && Math.abs(MathHelper.wrapDegrees(rotationYaw - face.getHorizontalAngle())) < 1.5F) {
                                 if (ItemHandlerHelper.insertItem(inventory, toMake, true).isEmpty() &&
                                         checkOrBypassResearch("CEL_" + day + "_Star" + (meta - 1), face.getIndex(), day)) {
                                     
