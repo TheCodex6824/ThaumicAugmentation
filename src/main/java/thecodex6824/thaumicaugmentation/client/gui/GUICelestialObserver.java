@@ -37,9 +37,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import thaumcraft.api.aspects.Aspect;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -227,7 +227,7 @@ public class GUICelestialObserver extends GuiContainer {
             }
             
             drawRect((this.width - this.xSize) / 2 + 62, (this.height - this.ySize) / 2 + 14, (this.width - this.xSize) / 2 + 114, (this.height - this.ySize) / 2 + 66, color);
-            if (skyVisible && e.getEntityWorld().provider.isSurfaceWorld()) {
+            if (skyVisible) {
                 GlStateManager.enableBlend();
                 int xMin = (this.width - this.xSize) / 2 + 76;
                 int xMax = (this.width - this.xSize) / 2 + 100;
@@ -275,8 +275,15 @@ public class GUICelestialObserver extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         fontRenderer.drawString(I18n.format(ThaumicAugmentationAPI.MODID + ".gui.scans"), 8, 6, 0xFFFFFF);
-        World world = ((ContainerCelestialObserver) inventorySlots).getEntity().getEntityWorld();
-        float aura = AURA_STRENGTH[world.provider.getMoonPhase(world.getWorldInfo().getWorldTime())];
+        EntityCelestialObserver e = ((ContainerCelestialObserver) inventorySlots).getEntity();
+        BlockPos base = new BlockPos(new BlockPos(e.getLookVec().add(e.posX, e.posY + 1.0, e.posZ)));
+        boolean skyVisible = e.getEntityWorld().provider.isSurfaceWorld() && e.getEntityWorld().canSeeSky(base);
+        float aura = 16.0F;
+        if (skyVisible)
+            aura = AURA_STRENGTH[e.getEntityWorld().provider.getMoonPhase(e.getEntityWorld().getWorldInfo().getWorldTime())];
+        else
+            aura += MathHelper.sin(e.ticksExisted + mc.getRenderPartialTicks()) * 16.0F;
+        
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         int auraColor = Aspect.ENERGY.getColor();

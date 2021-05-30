@@ -61,7 +61,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -321,7 +320,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                 }
                 else if (!isAIDisabled() && ticksExisted % 50 == 0 && hasPaper() && !world.isRainingAt(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ))) &&
                         world.canSeeSky(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ))) &&
-                        world.provider.getDimensionType() == DimensionType.OVERWORLD) {
+                        world.provider.isSurfaceWorld()) {
                     
                     float y = (rotationYaw + 90.0F) % 360.0F;
                     float x = -rotationPitch;
