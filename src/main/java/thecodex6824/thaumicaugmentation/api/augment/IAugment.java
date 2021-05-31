@@ -22,13 +22,13 @@ package thecodex6824.thaumicaugmentation.api.augment;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
 /**
@@ -86,41 +86,45 @@ public interface IAugment {
     
     /**
      * Called when the user hurts another entity.
-     * @param user The entity that has this augment
-     * @param attacked The entity that was attacked
+     * @param source The source of the damage that attacked the entity (the augment holder)
+     * @param attacked The entity that was damaged (not the augment holder)
+     * @param damage The current and original amount of damage done
      * @return If this action should be cancelled
      */
-    public default boolean onHurtEntity(Entity user, Entity attacked) {
+    public default boolean onHurtEntity(DamageSource source, Entity attacked, DamageWrapper damage) {
         return false;
     }
     
     /**
      * Called when the user damages another entity.
-     * @param user The entity that has this augment
-     * @param attacked The entity that was damages
+     * @param source The source of the damage that attacked the entity (the augment holder)
+     * @param attacked The entity that was damaged (not the augment holder)
+     * @param damage The current and original amount of damage done
      * @return If this action should be cancelled
      */
-    public default boolean onDamagedEntity(Entity user, Entity attacked) {
+    public default boolean onDamagedEntity(DamageSource source, Entity attacked, DamageWrapper damage) {
         return false;
     }
     
     /**
      * Called when the user is hurt by another entity.
-     * @param user The entity that has this augment
-     * @param attacker The entity that attacked the user
+     * @param attacked The entity that was hurt (the entity with the augment)
+     * @param source The source of the damage that attacked the user (not the augment holder)
+     * @param damage The current and original amount of damage done
      * @return If this action should be cancelled
      */
-    public default boolean onHurt(Entity user, @Nullable Entity attacker) {
+    public default boolean onHurt(Entity attacked, DamageSource source, DamageWrapper damage) {
         return false;
     }
     
     /**
      * Called when the user is damaged by another entity.
-     * @param user The entity that has this augment
-     * @param attacker The entity that damaged the user
+     * @param attacked The entity that was damaged (the entity with the augment)
+     * @param source The source of the damage that attacked the user (not the augment holder)
+     * @param damage The current and original amount of damage done
      * @return If this action should be cancelled
      */
-    public default boolean onDamaged(Entity user, @Nullable Entity attacker) {
+    public default boolean onDamaged(Entity attacked, DamageSource source, DamageWrapper damage) {
         return false;
     }
     
@@ -210,6 +214,24 @@ public interface IAugment {
      */
     public default boolean shouldSync() {
         return false;
+    }
+    
+    /**
+     * Returns if this augment can use the generic TA crafting recipe system.
+     * Set to false if you plan on using another way of attaching the augment.
+     * @return If the augment addition recipe is enabled for this augment
+     */
+    public default boolean shouldAllowDefaultAddition() {
+        return true;
+    }
+    
+    /**
+     * Returns if this augment can use the generic TA crafting recipe system.
+     * Set to false if you plan on using another way of removing the augment.
+     * @return If the augment removal recipe is enabled for this augment
+     */
+    public default boolean shouldAllowDefaultRemoval() {
+        return true;
     }
     
 }

@@ -31,7 +31,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -44,14 +43,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.property.Properties;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IUnwardableBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardParticles;
+import thecodex6824.thaumicaugmentation.api.tile.INameableTile;
 import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
 import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedTile;
@@ -73,16 +71,6 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
         setBlockUnbreakable();
         setResistance(Float.MAX_VALUE / 16.0F);
         setDefaultState(getDefaultState().withProperty(IHorizontallyDirectionalBlock.DIRECTION, EnumFacing.SOUTH));
-    }
-    
-    @Override
-    public ItemBlock createItemBlock() {
-        return new ItemBlock(this) {
-            @Override
-            public IRarity getForgeRarity(ItemStack stack) {
-                return TAMaterials.RARITY_ARCANE;
-            }
-        };
     }
 
     @Override
@@ -177,14 +165,17 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
             ItemStack stack) {
 
+        TileEntity tile = world.getTileEntity(pos);
         if (!world.isRemote) {
-            TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
                 IWardedTile warded = tile.getCapability(CapabilityWardedTile.WARDED_TILE, null);
                 if (warded != null)
                     warded.setOwner(placer.getUniqueID());
             }
         }
+        
+        if (stack.hasDisplayName() && tile instanceof INameableTile)
+            ((INameableTile) tile).setCustomName(stack.getDisplayName());
 
         super.onBlockPlacedBy(world, pos, state, placer, stack);
     }

@@ -88,6 +88,8 @@ public final class TABlocks {
     public static final Block WARDED_PRESSURE_PLATE_SILVERWOOD = null;
     public static final Block WARDED_PRESSURE_PLATE_ARCANE_STONE = null;
     public static final Block URN = null;
+    public static final Block ITEM_GRATE = null;
+    public static final Block GLASS_TUBE = null;
 
     /**
      * Returns all blocks in the mod.
@@ -105,7 +107,7 @@ public final class TABlocks {
                BUTTON_GREATWOOD, BUTTON_SILVERWOOD, BUTTON_ARCANE_STONE, WARDED_BUTTON_GREATWOOD, WARDED_BUTTON_SILVERWOOD,
                WARDED_BUTTON_ARCANE_STONE, PRESSURE_PLATE_GREATWOOD, PRESSURE_PLATE_SILVERWOOD, PRESSURE_PLATE_ARCANE_STONE,
                WARDED_PRESSURE_PLATE_GREATWOOD, WARDED_PRESSURE_PLATE_SILVERWOOD, WARDED_PRESSURE_PLATE_ARCANE_STONE,
-               URN};
+               URN, ITEM_GRATE, GLASS_TUBE};
     }
 
 }

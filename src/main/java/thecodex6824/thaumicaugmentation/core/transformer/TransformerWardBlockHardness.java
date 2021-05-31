@@ -46,6 +46,11 @@ public class TransformerWardBlockHardness extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return false;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode hardness = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/block/state/BlockStateContainer$StateImplementation",

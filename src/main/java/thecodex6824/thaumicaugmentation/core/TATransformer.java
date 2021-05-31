@@ -31,15 +31,18 @@ import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBaubleSlotChanged;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationCustomTCArmor;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationVanilla;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerTouchTrajectoryEntitySelection;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerEldritchGuardianFog;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderCape;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderEntities;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRunicShieldingAllowBaublesCap;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCBlueprintCrashFix;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCRobesElytraFlapping;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerTouchTargetEntitySelection;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerUpdateElytra;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerVoidRobesArmorBarFix;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFireEncouragement;
@@ -49,6 +52,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoE
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoRabbitSnacking;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoSheepGrazing;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoVillagerFarming;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockGrassPath;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockRandomTick;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockResistance;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockTaintImmunity;
@@ -69,6 +73,8 @@ public class TATransformer implements IClassTransformer {
         // required to cancel random updates for warded blocks
         // scheduled and neighbor updates are handled in event handlers
         TRANSFORMERS.add(new TransformerWardBlockRandomTick());
+        // required to prevent shoveling warded grass
+        TRANSFORMERS.add(new TransformerWardBlockGrassPath());
         
         // required as EntityMobGriefingEvent does not provide a blockpos
         // the position is also not determined and put into the AI fields until the event has already passed, so no reflection
@@ -127,6 +133,16 @@ public class TATransformer implements IClassTransformer {
         // makes runic shielding infusion work on items with baubles capability
         // TC only checks for the interface on the item...
         TRANSFORMERS.add(new TransformerRunicShieldingAllowBaublesCap());
+        
+        // allow disabling cape render when wearing custom elytra
+        // the special render event from forge seems to be unimplemented?
+        TRANSFORMERS.add(new TransformerRenderCape());
+        
+        // allow bolts to ignore certain entities (for void shield)
+        // also the trajectory and target code is pretty much copy pasted with a different return value
+        // so 2 transformers are required
+        TRANSFORMERS.add(new TransformerTouchTrajectoryEntitySelection());
+        TRANSFORMERS.add(new TransformerTouchTargetEntitySelection());
     }
     
     public TATransformer() {}
@@ -161,9 +177,10 @@ public class TATransformer implements IClassTransformer {
                         ThaumicAugmentationCore.getLogger().error("Class: " + transformedName + ", Transformer: " + transformer.getClass());
                         if (transformer.getRaisedException() != null) {
                             ThaumicAugmentationCore.getLogger().error("Additional information: ", transformer.getRaisedException());
-                            throw transformer.getRaisedException();
+                            if (!transformer.isAllowedToFail())
+                                throw transformer.getRaisedException();
                         }
-                        else
+                        else if (!transformer.isAllowedToFail())
                             throw new RuntimeException();
                     }
                     else {

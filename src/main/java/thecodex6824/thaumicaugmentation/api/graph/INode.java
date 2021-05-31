@@ -22,7 +22,7 @@ package thecodex6824.thaumicaugmentation.api.graph;
 
 import java.util.Set;
 
-public interface INode<Graph extends IGraph<Self, ?>, Self> {
+public interface INode<Graph extends IGraph<Self>, Self> {
 
     public Graph getGraph();
     

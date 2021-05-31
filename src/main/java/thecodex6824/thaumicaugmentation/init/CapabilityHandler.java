@@ -209,19 +209,17 @@ public final class CapabilityHandler {
             
             @Override
             public void readNBT(Capability<IWardStorage> capability, IWardStorage instance, EnumFacing side, NBTBase nbt) {
-                if (!(instance instanceof WardStorageServer) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation (or non-server implementations)");
-                
-                ((WardStorageServer) instance).deserializeNBT((NBTTagCompound) nbt);
+                if (instance instanceof WardStorageServer && nbt instanceof NBTTagCompound)
+                    ((WardStorageServer) instance).deserializeNBT((NBTTagCompound) nbt);
             }
             
             @Override
             @Nullable
             public NBTBase writeNBT(Capability<IWardStorage> capability, IWardStorage instance, EnumFacing side) {
-                if (!(instance instanceof WardStorageServer))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation (or non-server implementations)");
-                
-                return ((WardStorageServer) instance).serializeNBT();
+                if (instance instanceof WardStorageServer)
+                    return ((WardStorageServer) instance).serializeNBT();
+                else
+                    return new NBTTagCompound();
             }
             
         }, WardStorageServer::new);

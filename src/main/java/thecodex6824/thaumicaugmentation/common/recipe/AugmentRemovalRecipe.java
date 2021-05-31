@@ -26,7 +26,9 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 
 public class AugmentRemovalRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
@@ -53,7 +55,21 @@ public class AugmentRemovalRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
             }
         }
 
-        return !augmentable.isEmpty() && augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getNextAvailableSlot() != 0;
+        if (!augmentable.isEmpty()) {
+            IAugmentableItem augmentableCap = augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+            int toRemove = -1;
+            for (int i = augmentableCap.getUsedAugmentSlots() - 1; i >= 0; --i) {
+                IAugment aug = augmentableCap.getAugment(i).getCapability(CapabilityAugment.AUGMENT, null);
+                if (aug.shouldAllowDefaultRemoval()) {
+                    toRemove = i;
+                    break;
+                }
+            }
+            
+            return toRemove != -1;
+        }
+        
+        return false;
     }
 
     @Override
@@ -73,9 +89,21 @@ public class AugmentRemovalRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
             }
         }
         
+        // already verified if recipe is allowed in matches, but still need to find augment
         IAugmentableItem cap = augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-        ItemStack removed = cap.getAugment(cap.getNextAvailableSlot() == -1 ? cap.getTotalAugmentSlots() - 1 : cap.getNextAvailableSlot() - 1);
-        return removed.copy();
+        int toRemove = -1;
+        for (int i = cap.getUsedAugmentSlots() - 1; i >= 0; --i) {
+            IAugment aug = cap.getAugment(i).getCapability(CapabilityAugment.AUGMENT, null);
+            if (aug.shouldAllowDefaultRemoval()) {
+                toRemove = i;
+                break;
+            }
+        }
+        
+        if (toRemove != -1)
+            return cap.getAugment(toRemove).copy();
+        else
+            return ItemStack.EMPTY;
     }
     
     @Override

@@ -59,6 +59,10 @@ public class ContainerWardedChest extends Container {
 
         chest.onOpenInventory();
     }
+    
+    public TileWardedChest getTile() {
+        return chest;
+    }
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {

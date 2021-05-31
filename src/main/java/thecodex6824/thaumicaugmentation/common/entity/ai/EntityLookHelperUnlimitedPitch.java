@@ -26,8 +26,11 @@ import net.minecraft.util.math.MathHelper;
 
 public class EntityLookHelperUnlimitedPitch extends EntityLookHelper {
 
-    public EntityLookHelperUnlimitedPitch(EntityLiving entity) {
+    protected boolean doWeirdStuff;
+    
+    public EntityLookHelperUnlimitedPitch(EntityLiving entity, boolean doRenderYawOffset) {
         super(entity);
+        doWeirdStuff = doRenderYawOffset;
     }
     
     @Override
@@ -43,17 +46,18 @@ public class EntityLookHelperUnlimitedPitch extends EntityLookHelper {
             entity.rotationPitch = updateRotation(entity.rotationPitch, f1, deltaLookPitch);
             entity.rotationYawHead = updateRotation(entity.rotationYawHead, f, deltaLookYaw);
         }
-        else
+        else if (doWeirdStuff)
             entity.rotationYawHead = updateRotation(entity.rotationYawHead, entity.renderYawOffset, 10.0F);
 
-        float f2 = MathHelper.wrapDegrees(entity.rotationYawHead - entity.renderYawOffset);
-        if (!entity.getNavigator().noPath()) {
-            if (f2 < -75.0F)
-                entity.rotationYawHead = entity.renderYawOffset - 75.0F;
-
-            if (f2 > 75.0F)
-                entity.rotationYawHead = entity.renderYawOffset + 75.0F;
-            
+        if (doWeirdStuff) {
+            float f2 = MathHelper.wrapDegrees(entity.rotationYawHead - entity.renderYawOffset);
+            if (!entity.getNavigator().noPath()) {
+                if (f2 < -75.0F)
+                    entity.rotationYawHead = entity.renderYawOffset - 75.0F;
+    
+                if (f2 > 75.0F)
+                    entity.rotationYawHead = entity.renderYawOffset + 75.0F;
+            }
         }
     }
     

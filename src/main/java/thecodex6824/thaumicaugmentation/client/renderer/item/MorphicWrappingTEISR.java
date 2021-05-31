@@ -21,5 +21,10 @@
 package thecodex6824.thaumicaugmentation.client.renderer.item;
 
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
+import net.minecraft.item.ItemStack;
 
-public abstract class MorphicWrappingTEISR extends TileEntityItemStackRenderer {}
+public abstract class MorphicWrappingTEISR extends TileEntityItemStackRenderer {
+    
+    public abstract void renderByItemWrapped(ItemStack stack);
+    
+}

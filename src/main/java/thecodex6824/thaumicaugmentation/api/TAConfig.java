@@ -72,6 +72,8 @@ public final class TAConfig {
     public static ConfigOptionBoolean disableShaders;
     public static ConfigOptionStringList morphicArmorExclusions;
     public static ConfigOptionBoolean disableCreativeOnlyText;
+    public static ConfigOptionBoolean disableStabilizerText;
+    public static ConfigOptionBoolean disableFramebuffers;
 
     public static ConfigOptionIntList defaultGauntletColors;
     public static ConfigOptionInt defaultVoidBootsColor;
@@ -95,7 +97,8 @@ public final class TAConfig {
     public static ConfigOptionBoolean allowWussRiftSeed;
     
     public static ConfigOptionFloat cannonBeamDamage;
-    public static ConfigOptionLong cannonBeamCost;
+    public static ConfigOptionLong cannonBeamCostInitial;
+    public static ConfigOptionDouble cannonBeamCostTick;
     public static ConfigOptionDouble cannonBeamRange;
     
     public static ConfigOptionFloat cannonRailgunDamage;
@@ -144,6 +147,21 @@ public final class TAConfig {
     public static ConfigOptionInt frenzyModifierMaxLevel;
     
     public static ConfigOptionDouble impetusConductorFactor;
+    
+    public static ConfigOptionBoolean movementCompat;
+    
+    public static ConfigOptionFloat baseHarnessSpeed;
+    public static ConfigOptionDouble baseHarnessCost;
+    
+    public static ConfigOptionFloat gyroscopeHarnessSpeed;
+    public static ConfigOptionDouble gyroscopeHarnessCost;
+    
+    public static ConfigOptionFloat girdleHarnessSpeed;
+    public static ConfigOptionDouble girdleHarnessCost;
+    
+    public static ConfigOptionDouble elytraHarnessBoostCost;
+    
+    public static ConfigOptionBoolean allowOfflinePlayerResearch;
     
     /**
      * Registers a callback to be notified when the config is synced or updated.

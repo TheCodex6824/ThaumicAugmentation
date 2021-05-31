@@ -33,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
 import net.minecraft.stats.StatisticsManager;
 import net.minecraft.util.DamageSource;
@@ -45,13 +46,13 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -121,6 +122,12 @@ public final class PlayerEventHandler {
     public static void onJump(LivingEvent.LivingJumpEvent event) {
         if (event.getEntity() instanceof EntityPlayer && PlayerMovementAbilityManager.isValidSideForMovement((EntityPlayer) event.getEntity()))
             PlayerMovementAbilityManager.onJump((EntityPlayer) event.getEntity());
+    }
+    
+    @SubscribeEvent
+    public static void onPlayerSpawn(EntityJoinWorldEvent event) {
+        if (event.getEntity() instanceof EntityPlayer && PlayerMovementAbilityManager.isValidSideForMovement((EntityPlayer) event.getEntity()))
+            PlayerMovementAbilityManager.onPlayerRecreation((EntityPlayer) event.getEntity());
     }
 
     protected static void checkFrequent(EntityPlayer player) {
@@ -252,8 +259,19 @@ public final class PlayerEventHandler {
                     if (augmentable != null) {
                         for (ItemStack aug : augmentable.getAllAugments()) {
                             if (aug.getItem() == TAItems.ELYTRA_HARNESS_AUGMENT && aug.getMetadata() == 0) {
-                                IImpetusStorage impetus = aug.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                                if (impetus != null && ImpetusAPI.tryExtractFully(impetus, 1, player)) {
+                                if (!aug.hasTagCompound())
+                                    aug.setTagCompound(new NBTTagCompound());
+                                
+                                double current = aug.getTagCompound().getDouble("acc") + TAConfig.elytraHarnessBoostCost.getValue();
+                                if (current >= 1.0) {
+                                    long remove = (long) Math.floor(current);
+                                    IImpetusStorage impetus = aug.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                                    if (impetus != null && ImpetusAPI.tryExtractFully(impetus, remove, player))
+                                        current -= remove;
+                                }
+                                
+                                aug.getTagCompound().setDouble("acc", current);
+                                if (current < 1.0) {
                                     canKeepFlying = true;
                                     break;
                                 }
@@ -270,13 +288,10 @@ public final class PlayerEventHandler {
         return canKeepFlying;
     }
     
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent
     public static void onTick(PlayerTickEvent event) {
         if (event.phase == Phase.END) {
             EntityPlayer player = event.player;
-            if (PlayerMovementAbilityManager.isValidSideForMovement(player))
-                PlayerMovementAbilityManager.tick(player);
-            
             if (!player.getEntityWorld().isRemote) {
                 if (player.ticksExisted % 2 == 0) {
                     checkFrequent(player);

@@ -32,4 +32,6 @@ public interface ITransformer {
     
     public boolean needToComputeFrames();
     
+    public boolean isAllowedToFail();
+    
 }

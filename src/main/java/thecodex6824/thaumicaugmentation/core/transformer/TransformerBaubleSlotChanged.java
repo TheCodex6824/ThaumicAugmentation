@@ -38,6 +38,11 @@ public class TransformerBaubleSlotChanged extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return false;
+    }
+    
+    @Override
     public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }

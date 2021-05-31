@@ -64,7 +64,7 @@ public class WeightedRandom<T extends Comparable<T>> {
         weight = Arrays.copyOf(toCopy.weight, toCopy.weight.length);
     }
     
-    private int binarySearch(double n) {
+    private int binarySearch(int n) {
         int left = 0;
         int right = weight.length - 1;
         while (left < right) {

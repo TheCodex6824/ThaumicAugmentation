@@ -46,6 +46,11 @@ private static final String CLASS = "thaumcraft.common.blocks.world.taint.TaintH
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return false;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode spread = TransformUtil.findMethod(classNode, "spreadFibres", "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Z)V");

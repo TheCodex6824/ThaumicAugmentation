@@ -27,6 +27,7 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
@@ -47,6 +48,11 @@ public class TransformerWardBlockNoRabbitSnacking extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return false;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode nom = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/passive/EntityRabbit$AIRaidFarm", "func_179488_a",
@@ -55,17 +61,21 @@ public class TransformerWardBlockNoRabbitSnacking extends Transformer {
             int ret = nom.instructions.size();
             while ((ret = TransformUtil.findLastInstanceOfOpcode(nom, ret, Opcodes.IFEQ)) != -1) {
                 AbstractInsnNode insertAfter = nom.instructions.get(ret);
-                nom.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
-                nom.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON,
-                        "checkWardGeneric",
-                        "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
-                        false
-                ));
-                nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
-                nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
-                ret -= 5;
-                found = true;
+                if (insertAfter.getPrevious() instanceof TypeInsnNode && ((TypeInsnNode) insertAfter.getPrevious()).desc.equals("net/minecraft/block/BlockCarrot")) {
+                    nom.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
+                    nom.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                            TransformUtil.HOOKS_COMMON,
+                            "checkWardGeneric",
+                            "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                            false
+                    ));
+                    nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
+                    nom.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
+                    found = true;
+                    break;
+                }
+                else
+                    --ret;
             }
             
             if (!found)

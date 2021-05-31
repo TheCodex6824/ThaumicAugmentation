@@ -80,7 +80,7 @@ public final class PlayerMovementAbilityManager {
 
     private static final class OldMovementData {
 
-        public OldMovementData(float s, float j) {
+        public OldMovementData(float s, float j, int d) {
             stepHeight = s;
             speedInAir = j;
         }
@@ -119,7 +119,7 @@ public final class PlayerMovementAbilityManager {
     
     public static void put(EntityPlayer player, BiFunction<EntityPlayer, MovementType, Float> func, Predicate<EntityPlayer> continueApplying) {
         if (!oldMovementValues.containsKey(player))
-            oldMovementValues.put(player, new OldMovementData(0.0F, 0.0F));
+            oldMovementValues.put(player, new OldMovementData(0.0F, 0.0F, player.dimension));
 
         if (players.containsKey(player))
             players.get(player).add(new PlayerFunctions(func, continueApplying));
@@ -169,10 +169,15 @@ public final class PlayerMovementAbilityManager {
     public static void tick(EntityPlayer player) {
         if (players.containsKey(player)) {
             OldMovementData data = oldMovementValues.get(player);
-            player.stepHeight -= data.stepHeight;
-            player.speedInAir -= data.speedInAir;
+            boolean compat = TAConfig.movementCompat.getValue();
+            if (!compat) {
+                player.stepHeight -= data.stepHeight;
+                player.speedInAir -= data.speedInAir;
+            }
+            
             data.stepHeight = 0.0F;
             data.speedInAir = 0.0F;
+            boolean didSomething = false;
             ListIterator<PlayerFunctions> it = players.get(player).listIterator();
             while (it.hasNext()) {
                 PlayerFunctions func = it.next();
@@ -188,6 +193,7 @@ public final class PlayerMovementAbilityManager {
                     continue;
                 }
 
+                didSomething = true;
                 data.stepHeight += func.tickFunction.apply(player, MovementType.STEP_HEIGHT);
                 data.speedInAir += func.tickFunction.apply(player, MovementType.JUMP_FACTOR);
                 if (player.onGround && isPlayerMovingNotVertically(player))
@@ -196,16 +202,31 @@ public final class PlayerMovementAbilityManager {
                     movePlayer(player, func.tickFunction.apply(player, MovementType.WATER_SWIM));
             }
             
-            player.stepHeight += data.stepHeight;
-            player.speedInAir += data.speedInAir;
+            if (!compat) {
+                player.stepHeight += data.stepHeight;
+                player.speedInAir += data.speedInAir;
+            }
+            else if (didSomething) {
+                player.stepHeight = player.height * (1.0F / 3.0F) + data.stepHeight;
+                player.speedInAir = 0.02F * (player.height / 1.8F) + data.speedInAir;
+            }
         }
         
     }
 
     public static void onJump(EntityPlayer player) {
-        if (players.containsKey(player)) {
-            for (PlayerFunctions func : players.get(player))
+        LinkedList<PlayerFunctions> funcs = players.get(player);
+        if (funcs != null) {
+            for (PlayerFunctions func : funcs)
                 player.motionY += func.tickFunction.apply(player, MovementType.JUMP_BEGIN);
+        }
+    }
+    
+    public static void onPlayerRecreation(EntityPlayer player) {
+        OldMovementData data = oldMovementValues.get(player);
+        if (data != null) {
+            data.speedInAir = 0.0F;
+            data.stepHeight = 0.0F;
         }
     }
     

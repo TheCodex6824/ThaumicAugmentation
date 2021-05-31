@@ -43,6 +43,7 @@ public class TATextures {
 
     public static final ResourceLocation AUTOCASTER_NORMAL = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/entities/autocaster.png");
     public static final ResourceLocation AUTOCASTER_ELDRITCH = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/entities/autocaster_eldritch.png");
+    public static final ResourceLocation CELESTIAL_OBSERVER = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/entities/celestial_observer.png");
     
     public static final ResourceLocation EMPTINESS_SKY = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
     
@@ -75,6 +76,10 @@ public class TATextures {
     public static final ResourceLocation TC_HUD = new ResourceLocation("thaumcraft", "textures/gui/hud.png");
     public static final ResourceLocation TC_PARTICLES = new ResourceLocation("thaumcraft", "textures/misc/particles.png");
     public static final ResourceLocation NODE = new ResourceLocation("thaumcraft", "textures/misc/auranodes.png");
+    public static final ResourceLocation THAUMOMETER = new ResourceLocation("thaumcraft", "textures/items/scanner.png");
+    public static final ResourceLocation THAUMOMETER_GLASS = new ResourceLocation("thaumcraft", "textures/items/scanscreen.png");
+    
+    public static final ResourceLocation ESSENTIA = new ResourceLocation("thaumcraft", "blocks/animatedglow");
     
     public static void setupTextures() {
         SimpleTexture tex = new SimpleTexture(MIRROR);

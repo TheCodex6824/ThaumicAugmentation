@@ -42,7 +42,7 @@ import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IImpulseCannonAugment;
-import thecodex6824.thaumicaugmentation.api.entity.IStopRailgunBeam;
+import thecodex6824.thaumicaugmentation.api.entity.IImpulseSpecialEntity;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
@@ -105,9 +105,11 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                     Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonRailgunRange.getValue());
                     List<Entity> ents = RaytraceHelper.raytraceEntities(user, TAConfig.cannonRailgunRange.getValue());
                     for (Entity e : ents) {
-                        ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonRailgunDamage.getValue());
-                        if (e instanceof IStopRailgunBeam && ((IStopRailgunBeam) e).shouldStopRailgunBeam(user))
-                            break;
+                        if (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(user)) {
+                            ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonRailgunDamage.getValue());
+                            if (e instanceof IImpulseSpecialEntity && ((IImpulseSpecialEntity) e).shouldStopRailgunBeam(user))
+                                break;
+                        }
                     }
                     
                     Random rand = user.getRNG();
@@ -153,8 +155,8 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                 
                 private void tick(EntityLivingBase user, int num) {
                     Entity e = RaytraceHelper.raytraceEntity(user, TAConfig.cannonBurstRange.getValue());
-                    if (e != null && ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonBurstDamage.getValue()) && num < 2
-                            && e instanceof EntityLivingBase) {
+                    if (e != null && (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(user)) &&
+                            ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonBurstDamage.getValue()) && num < 2 && e instanceof EntityLivingBase) {
                             
                         EntityLivingBase base = (EntityLivingBase) e;
                         base.hurtResistantTime = Math.min(base.hurtResistantTime, 1);
@@ -171,7 +173,7 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                         TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);
                     
                     if (num < 2)
-                        ScheduledTaskHandler.registerTask(() -> tick(user, num + 1), 1);
+                        ScheduledTaskHandler.registerTask(() -> tick(user, num + 1), 2);
                 }
                 
                 @Override

@@ -34,15 +34,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import thaumcraft.api.casters.Trajectory;
 import thaumcraft.api.items.ItemsTC;
+import thaumcraft.common.items.casters.foci.FocusMediumTouch;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
+import thecodex6824.thaumicaugmentation.api.event.FocusTouchGetEntityEvent;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
@@ -158,6 +162,32 @@ public final class TAHooksCommon {
     
     public static boolean shouldAllowRunicShield(ItemStack stack) {
         return stack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+    }
+    
+    public static RayTraceResult fireTrajectoryGetEntityEvent(RayTraceResult original, FocusMediumTouch touch, Trajectory trajectory, double range) {
+        if (original != null && original.entityHit != null) {
+            FocusTouchGetEntityEvent.Trajectory event = new FocusTouchGetEntityEvent.Trajectory(touch, trajectory, original, range);
+            MinecraftForge.EVENT_BUS.post(event);
+            if (!event.isCanceled())
+                return event.getRay();
+            else
+                return new RayTraceResult(null);
+        }
+        
+        return original;
+    }
+    
+    public static RayTraceResult fireTargetGetEntityEvent(RayTraceResult original, FocusMediumTouch touch, Trajectory trajectory, double range) {
+        if (original != null && original.entityHit != null) {
+            FocusTouchGetEntityEvent.Target event = new FocusTouchGetEntityEvent.Target(touch, trajectory, original, range);
+            MinecraftForge.EVENT_BUS.post(event);
+            if (!event.isCanceled())
+                return event.getRay();
+            else
+                return new RayTraceResult(null);
+        }
+        
+        return original;
     }
     
 }

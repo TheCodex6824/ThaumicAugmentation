@@ -18,12 +18,20 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.entity;
+package thecodex6824.thaumicaugmentation.api.tile;
 
-import net.minecraft.entity.EntityLivingBase;
+import javax.annotation.Nullable;
 
-public interface IStopRailgunBeam {
+import net.minecraft.util.EnumFacing;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.IEssentiaTransport;
 
-    public boolean shouldStopRailgunBeam(EntityLivingBase beamShooter);
+public interface IEssentiaTube extends IEssentiaTransport {
+
+    public boolean isSideOpen(EnumFacing side);
+    
+    public void setSideOpen(EnumFacing side, boolean open);
+    
+    public void setEssentiaDirect(@Nullable Aspect aspect, int amount);
     
 }

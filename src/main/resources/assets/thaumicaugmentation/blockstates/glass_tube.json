@@ -1,0 +1,126 @@
+{    
+    "forge_marker": 1,
+    "defaults": {
+        "model": "ta_special:glass_tube"
+    },
+    "variants": {
+        "north": {
+            "none": {},
+            "glass": {
+                "submodel": {
+                    "ng": {
+                        "model": "thaumicaugmentation:glass_tube_side",
+                        "y": 180,
+                        "x": 90
+                    }
+                }
+            },
+            "connector": {
+                "submodel": {
+                    "nc": {
+                        "model": "thaumicaugmentation:glass_tube_connector",
+                        "y": 180,
+                        "x": 90
+                    }
+                }
+            }
+        },
+        "south": {
+            "none": {},
+            "glass": {
+                "submodel": {
+                    "sg": {
+                        "model": "thaumicaugmentation:glass_tube_side",
+                        "x": 90
+                    }
+                }
+            },
+            "connector": {
+                "submodel": {
+                    "sc": {
+                        "model": "thaumicaugmentation:glass_tube_connector",
+                        "x": 90
+                    }
+                }
+            }
+        },
+        "east": {
+            "none": {},
+            "glass": {
+                "submodel": {
+                    "eg": {
+                        "model": "thaumicaugmentation:glass_tube_side",
+                        "x": 90,
+                        "y": 270
+                    }
+                }
+            },
+            "connector": {
+                "submodel": {
+                    "ec": {
+                        "model": "thaumicaugmentation:glass_tube_connector",
+                        "x": 90,
+                        "y": 270
+                    }
+                }
+            }
+        },
+        "west": {
+            "none": {},
+            "glass": {
+                "submodel": {
+                    "wg": {
+                        "model": "thaumicaugmentation:glass_tube_side",
+                        "x": 90,
+                        "y": 90
+                    }
+                }
+            },
+            "connector": {
+                "submodel": {
+                    "wc": {
+                        "model": "thaumicaugmentation:glass_tube_connector",
+                        "x": 90,
+                        "y": 90
+                    }
+                }
+            }
+        },
+        "up": {
+            "none": {},
+            "glass": {
+                "submodel": {
+                    "ug": {
+                        "model": "thaumicaugmentation:glass_tube_side",
+                        "x": 180
+                    }
+                }
+            },
+            "connector": {
+                "submodel": {
+                    "uc": {
+                        "model": "thaumicaugmentation:glass_tube_connector",
+                        "x": 180
+                    }
+                }
+            }
+        },
+        "down": {
+            "none": {},
+            "glass": {
+                "submodel": {
+                    "dg": {
+                        "model": "thaumicaugmentation:glass_tube_side"
+                    }
+                }
+            },
+            "connector": {
+                "submodel": {
+                    "dc": {
+                        "model": "thaumicaugmentation:glass_tube_connector"
+                    }
+                }
+            }
+        }
+    }
+}

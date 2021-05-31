@@ -37,6 +37,9 @@ import net.minecraft.client.audio.ISound.AttenuationType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -49,17 +52,22 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
+import thaumcraft.api.capabilities.IPlayerKnowledge;
+import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IFocusElement;
+import thaumcraft.api.crafting.IInfusionStabiliser;
 import thaumcraft.api.items.RechargeHelper;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.items.casters.ItemFocus;
@@ -86,11 +94,16 @@ import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
+@SuppressWarnings("deprecation")
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public final class ClientEventHandler {
 
     private static final Set<EntityPlayer> CREATIVE_FLIGHT = Collections.newSetFromMap(new WeakHashMap<>());
     private static final Set<EntityPlayer> ELYTRA_BOOSTS = Collections.newSetFromMap(new WeakHashMap<>());
+    
+    private static float lastFogR;
+    private static float lastFogG;
+    private static float lastFogB;
     
     private static class RecoilEntry {
         
@@ -134,7 +147,27 @@ public final class ClientEventHandler {
         }
     }
     
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onFogColor(EntityViewRenderEvent.FogColors event) {
+        lastFogR = event.getRed();
+        lastFogG = event.getGreen();
+        lastFogB = event.getBlue();
+    }
+    
+    public static float getLastFogR() {
+        return lastFogR;
+    }
+    
+    public static float getLastFogG() {
+        return lastFogG;
+    }
+    
+    public static float getLastFogB() {
+        return lastFogB;
+    }
+    
     @SubscribeEvent
+    @SuppressWarnings("null")
     public static void onTooltip(ItemTooltipEvent event) {
         ItemStack disp = MorphicArmorHelper.getMorphicArmor(event.getItemStack());
         if (!disp.isEmpty()) {
@@ -142,6 +175,17 @@ public final class ClientEventHandler {
             if (!newTooltip.isEmpty()) {
                 event.getToolTip().remove(0);
                 event.getToolTip().add(0, newTooltip.get(0));
+            }
+        }
+        
+        if (!TAConfig.disableStabilizerText.getValue() && event.getEntityPlayer() != null) {
+            Item item = event.getItemStack().getItem();
+            if ((item instanceof ItemBlock && ((ItemBlock) item).getBlock() instanceof IInfusionStabiliser) || item == Items.SKULL) {
+                IPlayerKnowledge knowledge = ThaumcraftCapabilities.getKnowledge(event.getEntityPlayer());
+                if (knowledge != null && knowledge.isResearchComplete("INFUSION")) {
+                    event.getToolTip().add(TextFormatting.DARK_PURPLE +
+                            new TextComponentTranslation("thaumicaugmentation.text.infusion_stabilizer").getFormattedText());
+                }
             }
         }
         

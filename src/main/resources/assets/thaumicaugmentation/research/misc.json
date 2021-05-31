@@ -72,141 +72,6 @@
             ]
         },
         {
-            "key": "BOOTS_VOID",
-            "name": "thaumicaugmentation.research.boots_void.title",
-            "icons": [
-                "thaumicaugmentation:void_boots"
-            ],
-            "category": "THAUMIC_AUGMENTATION",
-            "parents": [
-                "THAUMIC_AUGMENTATION_BASE",
-                "~BOOTSTRAVELLER",
-                "~BASEELDRITCH"
-            ],
-            "meta": [
-                "HIDDEN"
-            ],
-            "location": [
-                -3,
-                -1
-            ],
-            "stages": [
-                {
-                    "text": "thaumicaugmentation.research.boots_void.0",
-                    "required_knowledge": [
-                        "OBSERVATION;INFUSION;1",
-                        "THEORY;INFUSION;1",
-                        "THEORY;ELDRITCH;1"
-                    ],
-                    "warp": 2
-                },
-                {
-                    "text": "thaumicaugmentation.research.boots_void.1",
-                    "recipes": [
-                        "thaumicaugmentation:boots_void"
-                    ]
-                }
-            ]
-        },
-        {
-            "key": "MORPHIC_TOOL",
-            "name": "thaumicaugmentation.research.morphic_tool.title",
-            "icons": [
-                "thaumcraft:enchanted_placeholder"
-            ],
-            "category": "THAUMIC_AUGMENTATION",
-            "parents": [
-                "THAUMIC_AUGMENTATION_BASE",
-                "~PRIMALCRUSHER"
-            ],
-            "meta": [
-                "HIDDEN"
-            ],
-            "location": [
-                -5,
-                -1.5
-            ],
-            "stages": [
-                {
-                    "text": "thaumicaugmentation.research.morphic_tool.0",
-                    "required_knowledge": [
-                        "OBSERVATION;ELDRITCH;2"
-                    ]
-                },
-                {
-                    "text": "thaumicaugmentation.research.morphic_tool.1",
-                    "recipes": [
-                        "thaumicaugmentation:morphic_tool_binding_fake"
-                    ]
-                }
-            ]
-        },
-        {
-            "key": "MORPHIC_ARMOR",
-            "name": "thaumicaugmentation.research.morphic_armor.title",
-            "icons": [
-                "thaumcraft:enchanted_placeholder"
-            ],
-            "category": "THAUMIC_AUGMENTATION",
-            "parents": [
-                "MORPHIC_TOOL",
-                "~VOIDROBEARMOR"
-            ],
-            "location": [
-                -7,
-                -3
-            ],
-            "stages": [
-                {
-                    "text": "thaumicaugmentation.research.morphic_armor.0",
-                    "required_knowledge": [
-                        "OBSERVATION;ELDRITCH;1",
-                        "THEORY;ELDRITCH;1"
-                    ]
-                },
-                {
-                    "text": "thaumicaugmentation.research.morphic_armor.1",
-                    "recipes": [
-                        "thaumicaugmentation:morphic_armor_binding_fake"
-                    ]
-                }
-            ]
-        },
-        {
-            "key": "PRIMAL_CUTTER",
-            "name": "thaumicaugmentation.research.primal_cutter.title",
-            "icons": [
-                "thaumicaugmentation:primal_cutter"
-            ],
-            "category": "THAUMIC_AUGMENTATION",
-            "parents": [
-                "THAUMIC_AUGMENTATION_BASE",
-                "~PRIMALCRUSHER"
-            ],
-            "meta": [
-                "HIDDEN"
-            ],
-            "location": [
-                -5,
-                1.5
-            ],
-            "stages": [
-                {
-                    "text": "thaumicaugmentation.research.primal_cutter.0",
-                    "required_knowledge": [
-                        "OBSERVATION;ELDRITCH;1",
-                        "THEORY;ELDRITCH;1"
-                    ]
-                },
-                {
-                    "text": "thaumicaugmentation.research.primal_cutter.1",
-                    "recipes": [
-                        "thaumicaugmentation:primal_cutter"
-                    ]
-                }
-            ]
-        },
-        {
             "key": "MORE_MECHANISMS",
             "name": "thaumicaugmentation.research.more_mechanisms.title",
             "icons": [
@@ -248,6 +113,46 @@
                         "thaumicaugmentation:pressure_plate_greatwood",
                         "thaumicaugmentation:pressure_plate_silverwood",
                         "thaumicaugmentation:pressure_plate_arcane_stone"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ITEM_GRATE",
+            "name": "thaumicaugmentation.research.item_grate.title",
+            "icons": [
+                "thaumicaugmentation:item_grate"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "THAUMIC_AUGMENTATION_BASE"
+            ],
+            "meta": [
+                "ROUND"
+            ],
+            "location": [
+                1,
+                -1
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.item_grate.0",
+                    "recipes": [
+                        "thaumicaugmentation:item_grate"
+                    ]
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.item_grate.1",
+                    "required_research": [
+                        "SEALSTORE"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.item_grate.2",
+                    "required_research": [
+                        "LEVITATOR"
                     ]
                 }
             ]

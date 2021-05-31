@@ -38,10 +38,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockNoImpetusNodeNBT;
@@ -60,12 +58,7 @@ public class BlockVoidRechargePedestal extends BlockTABase implements IItemBlock
     
     @Override
     public ItemBlock createItemBlock() {
-        return new ItemBlockNoImpetusNodeNBT(this) {
-            @Override
-            public IRarity getForgeRarity(ItemStack stack) {
-                return TAMaterials.RARITY_ELDRITCH;
-            }
-        };
+        return new ItemBlockNoImpetusNodeNBT(this);
     }
     
     @Override

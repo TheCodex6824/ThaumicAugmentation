@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "B",
+    "T"
+  ],
+  "key": {
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "barsIron"
+    },
+    "T": {
+      "type": "forge:ore_dict",
+      "ore": "trapdoorWood"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:item_grate",
+    "data": 0
+  }
+}

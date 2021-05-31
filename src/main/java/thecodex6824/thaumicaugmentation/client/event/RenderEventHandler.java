@@ -37,9 +37,6 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import baubles.api.BaubleType;
-import baubles.api.cap.BaublesCapabilities;
-import baubles.api.cap.IBaublesItemHandler;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.client.Minecraft;
@@ -66,7 +63,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -94,7 +90,6 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.block.trait.INoBlockOutline;
-import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
@@ -265,17 +260,6 @@ public class RenderEventHandler {
                     }
                 }
             }
-        }
-    }
-    
-    @SubscribeEvent
-    @SuppressWarnings("deprecation")
-    public static void onRenderPlayerSpecials(RenderPlayerEvent.Specials.Pre event) {
-        IBaublesItemHandler baubles = event.getEntityPlayer().getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
-        if (baubles != null) {
-            ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
-            if (stack.getItem() instanceof IElytraCompat)
-                event.setRenderCape(false);
         }
     }
     

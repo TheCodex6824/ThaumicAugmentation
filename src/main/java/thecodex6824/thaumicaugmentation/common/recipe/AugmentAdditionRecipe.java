@@ -64,14 +64,16 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         if (!augmentable.isEmpty() && !augment.isEmpty()) {
             IAugmentableItem augmentableCap = augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
             IAugment augmentCap = augment.getCapability(CapabilityAugment.AUGMENT, null);
-            int nextSlot = augmentableCap.getNextAvailableSlot();
-            return !augmentable.isEmpty() && !augment.isEmpty() && nextSlot != -1 &&
-                    augmentCap.canBeAppliedToItem(augmentable) &&
-                    augmentableCap.isAugmentAcceptable(
-                    augment, nextSlot);
+            if (augmentableCap.shouldAllowDefaultAddition() && augmentCap.shouldAllowDefaultAddition()) {
+                int nextSlot = augmentableCap.getNextAvailableSlot();
+                return !augmentable.isEmpty() && !augment.isEmpty() && nextSlot != -1 &&
+                        augmentCap.canBeAppliedToItem(augmentable) &&
+                        augmentableCap.isAugmentAcceptable(
+                        augment, nextSlot);
+            }
         }
-        else
-            return false;
+        
+        return false;
     }
 
     @Override
@@ -98,6 +100,7 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
             }
         }
         
+        // already verified if recipe is allowed in matches
         ItemStack copy = augmentable.copy();
         IAugmentableItem cap = copy.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
         cap.setAugment(augment.copy(), cap.getNextAvailableSlot());

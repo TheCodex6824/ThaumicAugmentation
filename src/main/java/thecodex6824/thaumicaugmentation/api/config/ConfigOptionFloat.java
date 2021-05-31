@@ -37,7 +37,7 @@ public class ConfigOptionFloat extends ConfigOption<Float> {
 
     @Override
     public void serialize(ByteBuf buf) {
-        buf.writeDouble(value);
+        buf.writeFloat(value);
     }
 
     @Override

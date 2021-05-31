@@ -63,12 +63,14 @@ public final class ResearchHandler {
         );
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/misc.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/foci.json"));
-        ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/gauntlets.json"));
+        ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/casting.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/warded.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/void.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/construct.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/baubles.json"));
         ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/impetus.json"));
+        ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/gear.json"));
+        ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/alchemy.json"));
         if (!TAConfig.disableWardFocus.getValue()) {
             if (ThaumicAugmentationAPI.isCoremodAvailable())
                 ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/ward_foci_coremod.json"));
@@ -107,6 +109,9 @@ public final class ResearchHandler {
         
         TheorycraftManager.registerAid(new ResearchAidRiftJar());
         TheorycraftManager.registerAid(new ResearchAidRiftMonitor());
+        
+        // disabled for now because TC won't render aids that are entities in the table
+        //TheorycraftManager.registerAid(new ResearchAidCelestialObserver());
     }
 
 }

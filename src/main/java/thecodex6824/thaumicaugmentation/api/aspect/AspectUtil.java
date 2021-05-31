@@ -27,8 +27,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.util.text.TextFormatting;
 import thaumcraft.api.aspects.Aspect;
+import thaumcraft.common.config.ModConfig;
 
 /**
  * Contains random utilities for working with Thaumcraft's aspects.
@@ -40,6 +42,7 @@ public final class AspectUtil {
     
     private static final HashMap<TextFormatting, Integer> CHAT_COLORS;
     private static ArrayList<String> ASPECT_KEYS;
+    private static Object2IntOpenHashMap<Aspect> ASPECT_TO_ID;
     
     static {
         CHAT_COLORS = new HashMap<>();
@@ -112,6 +115,17 @@ public final class AspectUtil {
             return Aspect.getAspect(ASPECT_KEYS.get(rand.nextInt(ASPECT_KEYS.size())));
         else
             return Aspect.ORDER;
+    }
+    
+    public static int getAspectID(Aspect aspect) {
+        if (ASPECT_TO_ID == null) {
+            ASPECT_TO_ID = new Object2IntOpenHashMap<>();
+            ASPECT_TO_ID.defaultReturnValue(-1);
+            for (int i = 0; i < ModConfig.aspectOrder.size(); ++i)
+                ASPECT_TO_ID.put(ModConfig.aspectOrder.get(i), i);
+        }
+        
+        return ASPECT_TO_ID.getInt(aspect);
     }
     
 }

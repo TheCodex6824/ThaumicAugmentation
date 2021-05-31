@@ -1,0 +1,37 @@
+{
+    "entries": [
+        {
+            "key": "GLASS_TUBE",
+            "name": "thaumicaugmentation.research.glass_tube.title",
+            "icons": [
+                "thaumicaugmentation:glass_tube"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "THAUMIC_AUGMENTATION_BASE",
+                "~TUBES"
+            ],
+            "location": [
+                -1,
+                1
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.glass_tube.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ALCHEMY;1"
+                    ],
+                    "required_item": [
+                        "thaumcraft:jar_normal"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.glass_tube.1",
+                    "recipes": [
+                        "thaumicaugmentation:glass_tube"
+                    ]
+                }
+            ]
+        }
+    ]
+}

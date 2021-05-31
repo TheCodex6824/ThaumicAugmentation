@@ -71,6 +71,7 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
     protected boolean operating;
     protected EntityFluxRift rift;
     protected int targetSize;
+    protected int lastSize;
     protected UUID loadedRiftUUID;
     protected int ticks;
     protected ISoundHandle loop;
@@ -120,6 +121,7 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                                 rift.setRiftSeed(jar.getRift().getRiftSeed());
                                 operating = true;
                                 targetSize = jar.getRift().getRiftSize();
+                                lastSize = 1;
                                 markDirty();
                                 world.playSound(null, pos, SoundsTC.craftstart, SoundCategory.BLOCKS, 0.5F, 1.0F);
                                 world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
@@ -156,13 +158,6 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
                     rift.setCollapse(false);
                 
                 rift.setRiftSize(0);
-            }
-            
-            TileEntity below = world.getTileEntity(pos.down());
-            if (below != null) {
-                IRiftJar jar = below.getCapability(CapabilityRiftJar.RIFT_JAR, null);
-                if (jar != null)
-                    jar.setRift(new FluxRiftReconstructor(0, 0));
             }
             
             AuraHelper.polluteAura(world, pos, targetSize, true);
@@ -221,25 +216,24 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
             if (!world.isRemote && ticks++ % 10 == 0) {
                 TileEntity below = world.getTileEntity(pos.down());
                 if (rift == null || rift.isDead || rift.getRiftSize() < 1 || rift.getCollapse() ||
-                        below == null) {
+                        rift.getRiftSize() < lastSize || below == null || !below.hasCapability(CapabilityRiftJar.RIFT_JAR, null)) {
                     
-                    if (below == null || !below.hasCapability(CapabilityRiftJar.RIFT_JAR, null)) {
-                        if (rift != null) {
-                            if (rift.getCollapse())
-                                rift.setCollapse(false);
-                            
-                            rift.setRiftSize(0);
-                        }
+                    if (rift != null) {
+                        if (rift.getCollapse())
+                            rift.setCollapse(false);
                         
-                        AuraHelper.polluteAura(world, pos, targetSize, true);
-                        operating = false;
-                        markDirty();
-                        world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
-                        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
+                        rift.setRiftSize(0);
                     }
+                    
+                    AuraHelper.polluteAura(world, pos, targetSize, true);
+                    operating = false;
+                    markDirty();
+                    world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
+                    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                 }
                 else if (AuraHelper.drainVis(world, pos, 0.25F, false) >= 0.25F - 0.0001) {
                     rift.setRiftSize(rift.getRiftSize() + 1);
+                    lastSize = rift.getRiftSize();
                     if (rift.getRiftSize() >= targetSize) {
                         rift = null;
                         operating = false;
@@ -335,6 +329,7 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
         compound.setBoolean("operating", operating);
         if (operating) {
             compound.setInteger("size", targetSize);
+            compound.setInteger("lastSize", lastSize);
             if (rift != null)
                 compound.setUniqueId("rift", rift.getUniqueID());
         }
@@ -348,6 +343,9 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
         operating = compound.getBoolean("operating");
         if (operating) {
             targetSize = compound.getInteger("size");
+            // will be ok if not present as no size would be less than 0
+            // so no rifts going boom on update
+            lastSize = compound.getInteger("lastSize");
             loadedRiftUUID = compound.getUniqueId("rift");
         }
     }

@@ -35,6 +35,7 @@ import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -58,6 +59,7 @@ import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.internal.CommonInternals;
+import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.entities.monster.mods.ChampionModifier;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.utils.EntityUtils;
@@ -277,6 +279,33 @@ public class EntityPrimalWisp extends EntityFlying implements IMob, IRangedAttac
     public void removeTrackingPlayer(EntityPlayerMP player) {
         super.removeTrackingPlayer(player);
         boss.removePlayer(player);
+    }
+    
+    @Override
+    @Nullable
+    public EntityItem entityDropItem(ItemStack stack, float offsetY) {
+        if (stack.isEmpty())
+            return null;
+        else {
+            EntityItem entity = null;
+            if (stack.getItem() == ItemsTC.primordialPearl) {
+                entity = new EntityItemImportant(world, posX, posY + offsetY, posZ, stack);
+                entity.motionX = 0.0;
+                entity.motionY = 0.1;
+                entity.motionZ = 0.0;
+            }
+            else
+                entity = new EntityItem(world, posX, posY + offsetY, posZ, stack);
+            
+            entity.setDefaultPickupDelay();
+            entity.setNoDespawn();
+            if (captureDrops)
+                capturedDrops.add(entity);
+            else
+                world.spawnEntity(entity);
+            
+            return entity;
+        }
     }
     
     @Override

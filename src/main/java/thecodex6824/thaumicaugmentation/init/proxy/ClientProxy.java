@@ -87,6 +87,7 @@ import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.client.renderers.models.entity.ModelEldritchGolem;
+import thaumcraft.common.config.ModConfig;
 import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.golems.client.gui.SealBaseGUI;
 import thaumcraft.common.items.casters.ItemFocus;
@@ -117,6 +118,7 @@ import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
+import thecodex6824.thaumicaugmentation.api.tile.IEssentiaTube;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.ClientWardStorageValue;
@@ -132,10 +134,12 @@ import thecodex6824.thaumicaugmentation.client.fx.FXGenericP2ECustomSpeed;
 import thecodex6824.thaumicaugmentation.client.fx.FXImpulseBeam;
 import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
+import thecodex6824.thaumicaugmentation.client.gui.GUICelestialObserver;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
 import thecodex6824.thaumicaugmentation.client.model.BuiltInRendererModel;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
 import thecodex6824.thaumicaugmentation.client.model.DirectionalRetexturingModel;
+import thecodex6824.thaumicaugmentation.client.model.GlassTubeModel;
 import thecodex6824.thaumicaugmentation.client.model.ModelEldritchGuardianFixed;
 import thecodex6824.thaumicaugmentation.client.model.MorphicArmorExclusions;
 import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
@@ -143,9 +147,11 @@ import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
 import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderAutocaster;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderCelestialObserver;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFluxRiftOptimized;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderItemImportant;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderPrimalWisp;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGolem;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGuardian;
@@ -155,6 +161,7 @@ import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderAltar;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderEldritchLock;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderGlassTube;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusGate;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObelisk;
@@ -172,10 +179,14 @@ import thecodex6824.thaumicaugmentation.client.sound.MovingSoundRecord;
 import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
+import thecodex6824.thaumicaugmentation.common.container.ContainerCelestialObserver;
+import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
+import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
+import thecodex6824.thaumicaugmentation.common.entity.EntityItemImportant;
 import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGolem;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
@@ -191,6 +202,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketBiomeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
 import thecodex6824.thaumicaugmentation.common.network.PacketConfigSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
+import thecodex6824.thaumicaugmentation.common.network.PacketEssentiaUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
 import thecodex6824.thaumicaugmentation.common.network.PacketFollowingOrb;
 import thecodex6824.thaumicaugmentation.common.network.PacketFractureLocatorUpdate;
@@ -211,6 +223,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketWispZap;
 import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
+import thecodex6824.thaumicaugmentation.common.tile.TileGlassTube;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGate;
@@ -264,6 +277,7 @@ public class ClientProxy extends ServerProxy {
         handlers.put(PacketBoostState.class, (message, ctx) -> handleBoostStatePacket((PacketBoostState) message, ctx));
         handlers.put(PacketRecoil.class, (message, ctx) -> handleRecoilPacket((PacketRecoil) message, ctx));
         handlers.put(PacketTerraformerWork.class, (message, ctx) -> handleTerraformerWorkPacket((PacketTerraformerWork) message, ctx));
+        handlers.put(PacketEssentiaUpdate.class, (message, ctx) -> handleEssentiaUpdatePacket((PacketEssentiaUpdate) message, ctx));
     }
     
     @Override
@@ -305,6 +319,11 @@ public class ClientProxy extends ServerProxy {
     }
     
     @Override
+    public boolean isInGame() {
+        return Minecraft.getMinecraft().getRenderViewEntity() != null;
+    }
+    
+    @Override
     public boolean isElytraBoostKeyDown() {
         if (elytraBoost != null)
             return elytraBoost.isKeyDown();
@@ -335,9 +354,10 @@ public class ClientProxy extends ServerProxy {
     @Override
     public Object getClientGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (TAInventory.values()[ID]) {
-            case WARDED_CHEST: return new GUIWardedChest(getServerGUIElement(ID, player, world, x, y, z), player.inventory);
+            case WARDED_CHEST: return new GUIWardedChest((ContainerWardedChest) getServerGUIElement(ID, player, world, x, y, z), player.inventory);
             case ARCANE_TERRAFORMER: return new GUIArcaneTerraformer((ContainerArcaneTerraformer) getServerGUIElement(ID, player, world, x, y, z));
             case AUTOCASTER: return new GUIAutocaster((ContainerAutocaster) getServerGUIElement(ID, player, world, x, y, z));
+            case CELESTIAL_OBSERVER: return new GUICelestialObserver((ContainerCelestialObserver) getServerGUIElement(ID, player, world, x, y, z));
             default: return null;
         }
     }
@@ -932,6 +952,22 @@ public class ClientProxy extends ServerProxy {
             }
         }
     }
+    
+    protected void handleEssentiaUpdatePacket(PacketEssentiaUpdate message, MessageContext context) {
+        World world = Minecraft.getMinecraft().world;
+        if (world.isBlockLoaded(message.getPosition())) {
+            
+            TileEntity tile = world.getTileEntity(message.getPosition());
+            if (tile instanceof IEssentiaTube) {
+                if (message.getEssentiaAmount() > 0 && message.getAspectID() >= 0 && message.getAspectID() < ModConfig.aspectOrder.size()) {
+                    ((IEssentiaTube) tile).setEssentiaDirect(ModConfig.aspectOrder.get(message.getAspectID()),
+                            message.getEssentiaAmount());
+                }
+                else
+                    ((IEssentiaTube) tile).setEssentiaDirect(null, 0);
+            }
+        }
+    }
 
     @Override
     public void preInit() {
@@ -990,7 +1026,18 @@ public class ClientProxy extends ServerProxy {
                 return new RenderTAGolemOrb(manager);
             }
         });
-        
+        RenderingRegistry.registerEntityRenderingHandler(EntityCelestialObserver.class, new IRenderFactory<EntityCelestialObserver>() {
+            @Override
+            public Render<? super EntityCelestialObserver> createRenderFor(RenderManager manager) {
+                return new RenderCelestialObserver(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityItemImportant.class, new IRenderFactory<EntityItemImportant>() {
+            @Override
+            public Render<? super EntityItemImportant> createRenderFor(RenderManager manager) {
+                return new RenderItemImportant(manager, Minecraft.getMinecraft().getRenderItem());
+            }
+        });
         
         TAModelLoader loader = new TAModelLoader();
         loader.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/strength_provider"),
@@ -1001,6 +1048,7 @@ public class ClientProxy extends ServerProxy {
         loader.registerLoader(new MorphicToolModel.Loader());
         loader.registerLoader(new BuiltInRendererModel.Loader());
         loader.registerLoader(new DirectionalRetexturingModel.Loader());
+        loader.registerLoader(new GlassTubeModel.Loader());
         ModelLoaderRegistry.registerLoader(loader);
         
         if (TAConfig.enableBoosterKeybind.getValue()) {
@@ -1037,6 +1085,7 @@ public class ClientProxy extends ServerProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileAltar.class, new RenderAltar());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEldritchLock.class, new RenderEldritchLock());
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftBarrier.class, new RenderRiftBarrier());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileGlassTube.class, new RenderGlassTube());
         registerItemColorHandlers();
         registerBlockColorHandlers();
         for (RenderPlayer render : Minecraft.getMinecraft().getRenderManager().getSkinMap().values())
@@ -1089,7 +1138,7 @@ public class ClientProxy extends ServerProxy {
             }
         }, TAItems.KEY);
 
-        registerTo.registerItemColorHandler(new IItemColor() {
+        IItemColor dye = new IItemColor() {
             @Override
             public int colorMultiplier(ItemStack stack, int tintIndex) {
                 if (tintIndex == 1 && stack.getItem() instanceof IDyeableItem)
@@ -1097,7 +1146,8 @@ public class ClientProxy extends ServerProxy {
 
                 return -1;
             }
-        }, TAItems.VOID_BOOTS);
+        };
+        registerTo.registerItemColorHandler(dye, TAItems.VOID_BOOTS);
         
         registerTo.registerItemColorHandler(new IItemColor() {
             @Override
@@ -1194,6 +1244,11 @@ public class ClientProxy extends ServerProxy {
                     return -1;
             }
         }, TABlocks.IMPETUS_MATRIX);
+        
+        
+        registerTo.registerItemColorHandler(dye, TAItems.THAUMIUM_ROBES_HOOD);
+        registerTo.registerItemColorHandler(dye, TAItems.THAUMIUM_ROBES_CHESTPLATE);
+        registerTo.registerItemColorHandler(dye, TAItems.THAUMIUM_ROBES_LEGGINGS);
     }
     
     private static void registerBlockColorHandlers() {

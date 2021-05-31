@@ -22,11 +22,10 @@ package thecodex6824.thaumicaugmentation.common.capability;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -35,6 +34,7 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
@@ -75,47 +75,47 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
                     CasterAugmentBuilder.getStrengthProvider(strengthLoc).calculateStrength(this, focus, user));
         }
         
-        return super.onCastPre(caster, focus, user);
+        return false;
     }
     
     @Override
-    public boolean onDamaged(Entity user, @Nullable Entity attacker) {
+    public boolean onDamaged(Entity attacked, DamageSource source, DamageWrapper damage) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onDamaged(this, user, attacker);
+            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onDamaged(this, attacked, source, damage);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onDamaged(this, user, attacker);
+            CasterAugmentBuilder.getEffectProvider(effectLoc).onDamaged(this, attacked, source, damage);
         
-        return super.onDamaged(user, attacker);
+        return false;
     }
     
     @Override
-    public boolean onHurt(Entity user, @Nullable Entity attacker) {
+    public boolean onHurt(Entity attacked, DamageSource source, DamageWrapper damage) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onHurt(this, user, attacker);
+            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onHurt(this, attacked, source, damage);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onHurt(this, user, attacker);
+            CasterAugmentBuilder.getEffectProvider(effectLoc).onHurt(this, attacked, source, damage);
         
-        return super.onHurt(user, attacker);
+        return false;
     }
     
     @Override
-    public boolean onDamagedEntity(Entity user, Entity attacked) {
+    public boolean onDamagedEntity(DamageSource source, Entity attacked, DamageWrapper damage) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onDamagedEntity(this, user, attacked);
+            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onDamagedEntity(this, source, attacked, damage);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onDamagedEntity(this, user, attacked);
+            CasterAugmentBuilder.getEffectProvider(effectLoc).onDamagedEntity(this, source, attacked, damage);
         
-        return super.onDamagedEntity(user, attacked);
+        return false;
     }
     
     @Override
-    public boolean onHurtEntity(Entity user, Entity attacked) {
+    public boolean onHurtEntity(DamageSource source, Entity attacked, DamageWrapper damage) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onHurtEntity(this, user, attacked);
+            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onHurtEntity(this, source, attacked, damage);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onHurtEntity(this, user, attacked);
+            CasterAugmentBuilder.getEffectProvider(effectLoc).onHurtEntity(this, source, attacked, damage);
         
-        return super.onHurtEntity(user, attacked);
+        return false;
     }
     
     @Override
@@ -125,7 +125,7 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
         if (!effect.isEmpty() && effectLoc != null)
             CasterAugmentBuilder.getEffectProvider(effectLoc).onTick(this, user);
         
-        return super.onTick(user);
+        return false;
     }
     
     @Override

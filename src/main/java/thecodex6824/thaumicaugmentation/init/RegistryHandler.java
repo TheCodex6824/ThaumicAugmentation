@@ -28,6 +28,8 @@ import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -36,7 +38,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -53,10 +54,11 @@ import thaumcraft.api.aspects.AspectEventProxy;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.AspectRegistryEvent;
 import thaumcraft.api.blocks.BlocksTC;
+import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.golems.seals.SealHandler;
+import thaumcraft.common.items.ItemTCBase;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
@@ -71,6 +73,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockEldritchLock;
 import thecodex6824.thaumicaugmentation.common.block.BlockEldritchLockImpetus;
 import thecodex6824.thaumicaugmentation.common.block.BlockFortifiedGlass;
 import thecodex6824.thaumicaugmentation.common.block.BlockFortifiedGlassPane;
+import thecodex6824.thaumicaugmentation.common.block.BlockGlassTube;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusGate;
@@ -79,6 +82,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMatrixBase;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusRelay;
+import thecodex6824.thaumicaugmentation.common.block.BlockItemGrate;
 import thecodex6824.thaumicaugmentation.common.block.BlockObelisk;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftBarrier;
 import thecodex6824.thaumicaugmentation.common.block.BlockRiftFeeder;
@@ -105,9 +109,11 @@ import thecodex6824.thaumicaugmentation.common.block.BlockWardedPressurePlate;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
+import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemBlockRiftJar;
+import thecodex6824.thaumicaugmentation.common.entity.EntityItemImportant;
 import thecodex6824.thaumicaugmentation.common.entity.EntityItemIndestructible;
 import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGolem;
@@ -119,6 +125,7 @@ import thecodex6824.thaumicaugmentation.common.golem.SealAttackAdvanced;
 import thecodex6824.thaumicaugmentation.common.item.ItemArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.item.ItemAutocasterPlacer;
 import thecodex6824.thaumicaugmentation.common.item.ItemBiomeSelector;
+import thecodex6824.thaumicaugmentation.common.item.ItemCelestialObserverPlacer;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
@@ -138,6 +145,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemResearchNotes;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftEnergyCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemRiftSeed;
 import thecodex6824.thaumicaugmentation.common.item.ItemSealCopier;
+import thecodex6824.thaumicaugmentation.common.item.ItemThaumiumRobes;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumostaticHarness;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
@@ -164,6 +172,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileCrabVent;
 import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
+import thecodex6824.thaumicaugmentation.common.tile.TileGlassTube;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGate;
@@ -171,6 +180,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusRelay;
+import thecodex6824.thaumicaugmentation.common.tile.TileItemGrate;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
 import thecodex6824.thaumicaugmentation.common.tile.TileObeliskVisual;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
@@ -270,6 +280,8 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockWardedPressurePlate(Material.WOOD, Sensitivity.EVERYTHING, SoundType.WOOD), "warded_pressure_plate_silverwood"));
         registry.register(setupBlock(new BlockWardedPressurePlate(Material.ROCK, Sensitivity.MOBS, SoundType.STONE), "warded_pressure_plate_arcane_stone"));
         registry.register(setupBlock(new BlockTAUrn(), "urn"));
+        registry.register(setupBlock(new BlockItemGrate(), "item_grate"));
+        registry.register(setupBlock(new BlockGlassTube(), "glass_tube"));
         
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -300,6 +312,8 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileRiftBarrier.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_barrier"));
         GameRegistry.registerTileEntity(TileWardedButton.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_button"));
         GameRegistry.registerTileEntity(TileWardedPressurePlate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_pressure_plate"));
+        GameRegistry.registerTileEntity(TileItemGrate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_grate"));
+        GameRegistry.registerTileEntity(TileGlassTube.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "glass_tube"));
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)
@@ -318,21 +332,7 @@ public final class RegistryHandler {
         }
 
         registry.register(setupItem(new ItemTieredCasterGauntlet(), "gauntlet"));
-        registry.register(setupItem(new ItemTABase("lattice", "warding_sigil", "amalgamated_gear", "rift_energy_cell", "harness_base", "impetus_resonator") {
-            @Override
-            public IRarity getForgeRarity(ItemStack stack) {
-                switch (stack.getMetadata()) {
-                    case 0:
-                    case 1:
-                    case 2: return TAMaterials.RARITY_MAGICAL;
-                    
-                    case 3: 
-                    case 5: return TAMaterials.RARITY_ELDRITCH;
-                    
-                    default: return super.getForgeRarity(stack);
-                }
-            }
-        }, "material"));
+        registry.register(setupItem(new ItemTABase("lattice", "warding_sigil", "amalgamated_gear", "rift_energy_cell", "harness_base", "impetus_resonator"), "material"));
         registry.register(setupItem(new ItemSealCopier(), "seal_copier"));
         registry.register(setupItem(new ItemArcaneDoor(), "arcane_door"));
         registry.register(setupItem(new ItemKey(), "key"));
@@ -361,6 +361,10 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemObeliskPlacer(), "obelisk_placer"));
         registry.register(setupItem(new ItemResearchNotes(), "research_notes"));
         registry.register(setupItem(new ItemVisBatteryCasterAugment(), "augment_vis_battery"));
+        registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.HEAD), "thaumium_robes_hood"));
+        registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.CHEST), "thaumium_robes_chestplate"));
+        registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.LEGS), "thaumium_robes_leggings"));
+        registry.register(setupItem(new ItemCelestialObserverPlacer(), "celestial_observer_placer"));
         
         AugmentHandler.registerAugmentBuilderComponents();
     }
@@ -370,16 +374,17 @@ public final class RegistryHandler {
         SealHandler.registerSeal(new SealAttack());
         SealHandler.registerSeal(new SealAttackAdvanced());
     }
-    
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public static void registerOreDict(RegistryEvent.Register<Item> event) {
-        OreDictionary.registerOre("blockAmber", BlocksTC.amberBlock);
-        OreDictionary.registerOre("blockAmber", BlocksTC.amberBrick);
-    }
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         OreDictionary.registerOre("stoneVoid", new ItemStack(TABlocks.STONE, 1, StoneType.STONE_VOID.getMeta()));
+        OreDictionary.registerOre("barsIron", Blocks.IRON_BARS);
+        OreDictionary.registerOre("trapdoorWood", Blocks.TRAPDOOR);
+        OreDictionary.registerOre("blockAmber", BlocksTC.amberBlock);
+        OreDictionary.registerOre("blockAmber", BlocksTC.amberBrick);
+        // need to register this way so TC cycles through them in research page
+        for (int i = 0; i < ((ItemTCBase) ItemsTC.celestialNotes).getVariantMeta().length; ++i)
+            OreDictionary.registerOre("notesCelestial", new ItemStack(ItemsTC.celestialNotes, 1, i));
         
         RecipeHandler.initInfusionRecipes();
         RecipeHandler.initCrucibleRecipes();
@@ -425,7 +430,7 @@ public final class RegistryHandler {
                         ThaumicAugmentationAPI.MODID + ".item_rift_jar").tracker(64, 20, true).build());
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityItemIndestructible.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_indestructible"), id++).name(
-                        ThaumicAugmentationAPI.MODID + ".item_rift_jar").tracker(64, 20, true).build());
+                        ThaumicAugmentationAPI.MODID + ".item_important").tracker(64, 20, true).build());
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityFocusShield.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "shield_focus"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".shield_focus").tracker(256, 1, false).build());
@@ -454,6 +459,12 @@ public final class RegistryHandler {
         event.getRegistry().register(EntityEntryBuilder.create().entity(EntityTAGolemOrb.class).id(
                 new ResourceLocation(ThaumicAugmentationAPI.MODID, "golem_orb"), id++).name(
                         ThaumicAugmentationAPI.MODID + ".golem_orb").tracker(64, 1, true).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityCelestialObserver.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "celestial_observer"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".celestial_observer").tracker(64, 1, true).build());
+        event.getRegistry().register(EntityEntryBuilder.create().entity(EntityItemImportant.class).id(
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_important"), id++).name(
+                        ThaumicAugmentationAPI.MODID + ".item_important").tracker(64, 20, true).build());
     }
     
     @SubscribeEvent

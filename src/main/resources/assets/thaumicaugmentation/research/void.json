@@ -86,7 +86,8 @@
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
-                "!VOIDSTONE"
+                "!VOIDSTONE",
+                "~CrimsonRites"
             ],
             "location": [
                 -2.5,
@@ -533,7 +534,7 @@
                 2
             ],
             "meta": [
-                "ROUND",
+                "HEX",
                 "HIDDEN"
             ],
             "stages": [

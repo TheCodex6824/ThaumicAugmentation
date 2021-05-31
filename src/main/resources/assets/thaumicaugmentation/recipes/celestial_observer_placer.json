@@ -1,0 +1,41 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "CELESTIAL_OBSERVER",
+  "vis": 100,
+  "aspects": {
+    "ordo": 1,
+    "aer": 1
+  },
+  "pattern": [
+    "TGO",
+    "GCO",
+    "WMW"
+  ],
+  "key": {
+    "T": {
+      "item": "thaumcraft:thaumometer"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "blockGlass"
+    },
+    "O": {
+      "type": "forge:ore_dict",
+      "ore": "ingotGold"
+    },
+    "C": {
+      "item": "thaumcraft:mind",
+      "data": 0
+    },
+    "W": {
+      "item": "thaumcraft:plank_greatwood"
+    },
+    "M": {
+      "item": "thaumcraft:mechanism_simple"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:celestial_observer_placer",
+    "data": 0
+  }
+}

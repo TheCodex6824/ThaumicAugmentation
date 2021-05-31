@@ -37,6 +37,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import thaumcraft.api.items.IRechargable;
 import thaumcraft.api.items.RechargeHelper;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
@@ -54,8 +55,6 @@ import vazkii.botania.api.item.IPhantomInkable;
 public class ItemThaumostaticHarness extends ItemTABase implements IRechargable, IPhantomInkable {
 
     protected static final int DEFAULT_VIS_CAPACITY = 200;
-    protected static final int DEFAULT_VIS_COST = 2;
-    protected static final float DEFAULT_FLY_SPEED = 0.05F;
     
     public ItemThaumostaticHarness() {
         super();
@@ -74,15 +73,15 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
         return DEFAULT_VIS_CAPACITY;
     }
     
-    protected static int getHarnessVisCost(ItemStack stack, EntityPlayer player) {
+    protected static double getHarnessVisCost(ItemStack stack, EntityPlayer player) {
         IAugmentableItem item = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
         if (item != null) {
             IAugment aug = item.getAugment(0).getCapability(CapabilityAugment.AUGMENT, null);
             if (aug instanceof IThaumostaticHarnessAugment)
-                return ((IThaumostaticHarnessAugment) aug).getVisCostPerThreeSeconds(player);
+                return ((IThaumostaticHarnessAugment) aug).getVisCostPerTick(player);
         }
         
-        return DEFAULT_VIS_COST;
+        return TAConfig.baseHarnessCost.getValue();
     }
     
     protected static float getHarnessFlySpeed(ItemStack stack, EntityPlayer player) {
@@ -93,7 +92,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
                 return ((IThaumostaticHarnessAugment) aug).getFlySpeed(player);
         }
         
-        return DEFAULT_FLY_SPEED;
+        return TAConfig.baseHarnessSpeed.getValue();
     }
     
     protected static void applyHarnessDrift(ItemStack stack, EntityPlayer player) {
@@ -156,7 +155,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
             public void onEquipped(ItemStack itemstack, EntityLivingBase entity) {
                 if (!entity.world.isRemote && entity instanceof EntityPlayer) {
                     EntityPlayer player = (EntityPlayer) entity;
-                    int cost = getHarnessVisCost(itemstack, player);
+                    double cost = getHarnessVisCost(itemstack, player);
                     float speed = getHarnessFlySpeed(itemstack, player);
                     if (RechargeHelper.getCharge(itemstack) >= cost) {
                         PlayerMovementAbilityManager.recordFlyState(player);
@@ -173,19 +172,19 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
             public void onWornTick(ItemStack itemstack, EntityLivingBase entity) {
                 if (entity instanceof EntityPlayer) {
                     EntityPlayer player = (EntityPlayer) entity;
-                    int cost = getHarnessVisCost(itemstack, player);
+                    double cost = getHarnessVisCost(itemstack, player);
                     if (player.capabilities.isFlying) {
-                        int current = 0;
-                        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("energyRemaining", NBT.TAG_INT))
-                            current = stack.getTagCompound().getInteger("energyRemaining");
-                        else if (!stack.hasTagCompound())
+                        if (!stack.hasTagCompound())
                             stack.setTagCompound(new NBTTagCompound());
-
-                        if (current > 0)
-                            --current;
-                        if (current <= 0 && RechargeHelper.consumeCharge(stack, player, cost))
-                            current = 60;
-                        else if (current <= 0 && !player.world.isRemote) {
+                        
+                        double current = stack.getTagCompound().getDouble("acc") + cost;
+                        if (current >= 1.0) {
+                            int remove = (int) Math.floor(current);
+                            if (RechargeHelper.consumeCharge(stack, entity, remove))
+                                current -= remove;
+                        }
+                        
+                        if (current >= 1.0 && !player.world.isRemote) {
                             if (!PlayerMovementAbilityManager.popAndApplyFlyState(player)) {
                                 if (!player.isCreative() && !player.isSpectator()) {
                                     player.capabilities.allowFlying = false;
@@ -197,7 +196,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
                             }
                         }
 
-                        stack.getTagCompound().setInteger("energyRemaining", current);
+                        stack.getTagCompound().setDouble("acc", current);
                         if (player.capabilities.isFlying && player.isSprinting() && !allowSprintFlying(stack, player))
                             player.setSprinting(false);
                         if (player.capabilities.isFlying)

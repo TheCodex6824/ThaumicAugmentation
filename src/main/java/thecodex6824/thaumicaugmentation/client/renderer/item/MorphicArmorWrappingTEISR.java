@@ -20,19 +20,35 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer.item;
 
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.item.ItemStack;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
 public class MorphicArmorWrappingTEISR extends MorphicWrappingTEISR {
     
+    protected TileEntityItemStackRenderer wrapped;
+    
+    public MorphicArmorWrappingTEISR(TileEntityItemStackRenderer toWrap) {
+        wrapped = toWrap;
+    }
+    
+    @Override
+    public void renderByItemWrapped(ItemStack stack) {
+        wrapped.renderByItem(stack);
+    }
+    
     @Override
     public void renderByItem(ItemStack stack) {
         if (MorphicArmorHelper.hasMorphicArmor(stack)) {
             ItemStack item = MorphicArmorHelper.getMorphicArmor(stack);
-            item.getItem().getTileEntityItemStackRenderer().renderByItem(item);
+            TileEntityItemStackRenderer r = item.getItem().getTileEntityItemStackRenderer();
+            if (r instanceof MorphicWrappingTEISR)
+                ((MorphicWrappingTEISR) r).renderByItemWrapped(item);
+            else
+                r.renderByItem(item);
         }
         else
-            stack.getItem().getTileEntityItemStackRenderer().renderByItem(stack);
+            renderByItemWrapped(stack);
     }
     
 }

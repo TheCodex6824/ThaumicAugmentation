@@ -39,13 +39,11 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterBase;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
@@ -104,11 +102,6 @@ public class ItemAutocasterPlacer extends ItemTABase {
             
             return EnumActionResult.PASS;
         }
-    }
-    
-    @Override
-    public IRarity getForgeRarity(ItemStack stack) {
-        return TAMaterials.RARITY_ARCANE;
     }
     
     @Override

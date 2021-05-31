@@ -100,6 +100,24 @@ public interface IAugmentableItem {
      */
     public boolean isAugmented();
     
+    /**
+     * Returns if this augmentable item can use the generic TA crafting recipe system.
+     * Set to false if you plan on using another way of adding augments.
+     * @return If the augment addition recipe is enabled for this augmentable item
+     */
+    public default boolean shouldAllowDefaultAddition() {
+        return true;
+    }
+    
+    /**
+     * Returns if this augmentable item can use the generic TA crafting recipe system.
+     * Set to false if you plan on using another way of removing augments.
+     * @return If the augment removal recipe is enabled for this augmentable item
+     */
+    public default boolean shouldAllowDefaultRemoval() {
+        return true;
+    }
+    
     public NBTTagCompound getSyncNBT();
     
     public void readSyncNBT(NBTTagCompound tag);

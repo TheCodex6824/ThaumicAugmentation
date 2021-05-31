@@ -42,12 +42,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IRarity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.block.property.IArcaneTerraformerHalf;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
@@ -73,12 +71,7 @@ public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraf
     
     @Override
     public ItemBlock createItemBlock() {
-        return new ItemBlockNoImpetusNodeNBT(this) {
-            @Override
-            public IRarity getForgeRarity(ItemStack stack) {
-                return TAMaterials.RARITY_ELDRITCH;
-            }
-        };
+        return new ItemBlockNoImpetusNodeNBT(this);
     }
     
     @Override

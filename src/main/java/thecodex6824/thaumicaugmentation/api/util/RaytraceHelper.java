@@ -26,6 +26,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.google.common.base.Predicates;
 
 import net.minecraft.entity.Entity;
@@ -36,8 +38,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class RaytraceHelper {
+public final class RaytraceHelper {
 
+    private RaytraceHelper() {}
+    
     public static Vec3d raytracePosition(EntityLivingBase user, double maxDistance) {
         Vec3d eyes = user.getPositionEyes(1.0F);
         Vec3d look = user.getLook(1.0F);
@@ -137,6 +141,41 @@ public class RaytraceHelper {
                     double newDist = eyes.distanceTo(res.hitVec);
                     if (newDist < dist) {
                         ret = entity;
+                        dist = newDist;
+                    }
+                }
+            }
+        }
+
+        return ret;
+    }
+    
+    @Nullable
+    public static Pair<Entity, Vec3d> raytraceEntityAndPos(EntityLivingBase user, double maxDistance, Predicate<Entity> acceptor) {
+        Vec3d eyes = user.getPositionEyes(1.0F);
+        Vec3d look = user.getLook(1.0F);
+        Vec3d extended = eyes.add(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance);
+        RayTraceResult blockCheck = user.getEntityWorld().rayTraceBlocks(eyes, extended, false, true, true);
+        maxDistance = blockCheck != null ? blockCheck.hitVec.distanceTo(eyes) : maxDistance;
+        List<Entity> list = user.getEntityWorld().getEntitiesInAABBexcluding(user,
+                user.getEntityBoundingBox().expand(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance).grow(1.0, 1.0, 1.0),
+                Predicates.and(entity -> entity != null && entity.canBeCollidedWith(), Predicates.and(EntitySelectors.NOT_SPECTATING, entity -> acceptor.test(entity))
+        ));
+        
+        double dist = maxDistance;
+        Pair<Entity, Vec3d> ret = null;
+        for (Entity entity : list) {
+            AxisAlignedBB aabb = entity.getEntityBoundingBox().grow(entity.getCollisionBorderSize());
+            if (aabb.contains(eyes)) {
+                ret = Pair.of(entity, eyes);
+                break;
+            }
+            else {
+                RayTraceResult res = aabb.calculateIntercept(eyes, extended);
+                if (res != null) {
+                    double newDist = eyes.distanceTo(res.hitVec);
+                    if (newDist < dist) {
+                        ret = Pair.of(entity, res.hitVec);
                         dist = newDist;
                     }
                 }

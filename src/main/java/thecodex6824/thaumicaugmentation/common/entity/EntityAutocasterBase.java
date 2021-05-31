@@ -80,7 +80,7 @@ public abstract class EntityAutocasterBase extends EntityCreature {
     
     public EntityAutocasterBase(World world) {
         super(world);
-        lookHelper = new EntityLookHelperUnlimitedPitch(this);
+        lookHelper = new EntityLookHelperUnlimitedPitch(this, false);
         setSize(1.0F, 1.0F);
         stepHeight = 0.0F;
         cachedMaxDistanceSquared = -1.0;
@@ -161,8 +161,12 @@ public abstract class EntityAutocasterBase extends EntityCreature {
     
     @Override
     public void setHeldItem(EnumHand hand, ItemStack stack) {
+        setHeldItem(hand, stack, true);
+    }
+    
+    public void setHeldItem(EnumHand hand, ItemStack stack, boolean recalc) {
         super.setHeldItem(hand, stack);
-        if (hand == EnumHand.MAIN_HAND)
+        if (hand == EnumHand.MAIN_HAND && recalc)
             cachedMaxDistanceSquared = -1.0;
     }
     
@@ -198,7 +202,7 @@ public abstract class EntityAutocasterBase extends EntityCreature {
                     float visCost = ((ItemFocus) held.getItem()).getVisCost(held);
                     ItemStack tempHold = new ItemStack(ItemsTC.casterBasic);
                     ((ItemCaster) tempHold.getItem()).setFocus(tempHold, held);
-                    setHeldItem(EnumHand.MAIN_HAND, tempHold);
+                    setHeldItem(EnumHand.MAIN_HAND, tempHold, false);
                     CastEvent.Pre preEvent = new CastEvent.Pre(this, tempHold, new FocusWrapper(f, 
                             (int) (((ItemFocus) held.getItem()).getActivationTime(held)), visCost));
                     MinecraftForge.EVENT_BUS.post(preEvent);
@@ -209,7 +213,7 @@ public abstract class EntityAutocasterBase extends EntityCreature {
                         MinecraftForge.EVENT_BUS.post(new CastEvent.Post(this, tempHold, preEvent.getFocus()));
                     }
                     
-                    setHeldItem(EnumHand.MAIN_HAND, ((ItemCaster) tempHold.getItem()).getFocusStack(tempHold));
+                    setHeldItem(EnumHand.MAIN_HAND, ((ItemCaster) tempHold.getItem()).getFocusStack(tempHold), false);
                 }
             }
         }

@@ -51,6 +51,7 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.event.AugmentEventHelper;
 import thecodex6824.thaumicaugmentation.api.event.CastEvent;
+import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
@@ -153,28 +154,26 @@ public final class AugmentEventHandler {
     public static void onHurt(LivingHurtEvent event) {
         if (!event.getEntity().getEntityWorld().isRemote) {
             boolean cancel = false;
+            DamageWrapper damage = new DamageWrapper(event.getAmount());
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
                 if (hasAugments.contains(event.getSource().getTrueSource())) {
                     for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
                         IAugmentableItem cap = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                        if (cap != null) {
-                            cancel |= AugmentEventHelper.fireHurtEntityEvent(cap,
-                                    event.getSource().getTrueSource(), event.getEntity());
-                        }
+                        if (cap != null)
+                            cancel |= AugmentEventHelper.fireHurtEntityEvent(cap, event.getSource(), event.getEntity(), damage);
                     }
                 }
                 
                 if (hasAugments.contains(event.getEntity())) {
                     for (ItemStack stack : func.apply(event.getEntity())) {
                         IAugmentableItem cap = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                        if (cap != null) {
-                            cancel |= AugmentEventHelper.fireHurtByEntityEvent(cap, 
-                                    event.getEntity(), event.getSource().getTrueSource());
-                        }
+                        if (cap != null)
+                            cancel |= AugmentEventHelper.fireHurtByEntityEvent(cap, event.getEntity(), event.getSource(), damage);
                     }
                 }
             }
             
+            event.setAmount(damage.getDamage());
             if (cancel)
                 event.setCanceled(true);
         }
@@ -184,28 +183,26 @@ public final class AugmentEventHandler {
     public static void onDamage(LivingDamageEvent event) {
         if (!event.getEntity().getEntityWorld().isRemote) {
             boolean cancel = false;
+            DamageWrapper damage = new DamageWrapper(event.getAmount());
             for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
                 if (hasAugments.contains(event.getSource().getTrueSource())) {
                     for (ItemStack stack : func.apply(event.getSource().getTrueSource())) {
                         IAugmentableItem cap = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                        if (cap != null) {
-                            cancel |= AugmentEventHelper.fireDamageEntityEvent(cap, 
-                                    event.getSource().getTrueSource(), event.getEntity());
-                        }
+                        if (cap != null)
+                            cancel |= AugmentEventHelper.fireDamageEntityEvent(cap, event.getSource(), event.getEntity(), damage);
                     }
                 }
                 
                 if (hasAugments.contains(event.getEntity())) {
                     for (ItemStack stack : func.apply(event.getEntity())) {
                         IAugmentableItem cap = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                        if (cap != null) {
-                            cancel |= AugmentEventHelper.fireDamagedByEntityEvent(cap, 
-                                    event.getEntity(), event.getSource().getTrueSource());
-                        }
+                        if (cap != null)
+                            cancel |= AugmentEventHelper.fireDamagedByEntityEvent(cap, event.getEntity(), event.getSource(), damage);
                     }
                 }
             }
             
+            event.setAmount(damage.getDamage());
             if (cancel)
                 event.setCanceled(true);
         }

@@ -44,6 +44,11 @@ public class TransformerTCRobesElytraFlapping extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return true;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode render = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("thaumcraft/client/renderers/models/gear/ModelRobe", "func_78088_a",

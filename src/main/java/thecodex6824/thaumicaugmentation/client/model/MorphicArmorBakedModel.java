@@ -80,7 +80,7 @@ public class MorphicArmorBakedModel implements IBakedModel {
                     // original model in question was already builtin
                     // ones where it's not set will just wrap the vanilla handler, which is fine
                     if (!(stack.getItem().getTileEntityItemStackRenderer() instanceof MorphicWrappingTEISR))
-                        stack.getItem().setTileEntityItemStackRenderer(new MorphicArmorWrappingTEISR());
+                        stack.getItem().setTileEntityItemStackRenderer(new MorphicArmorWrappingTEISR(stack.getItem().getTileEntityItemStackRenderer()));
                     
                     model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(disp, world, entity);
                 }

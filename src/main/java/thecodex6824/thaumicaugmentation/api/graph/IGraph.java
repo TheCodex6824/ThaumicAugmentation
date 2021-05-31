@@ -25,7 +25,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-public interface IGraph<Node, Self> {
+public interface IGraph<Node> {
 
     public boolean addNode(Node node);
     

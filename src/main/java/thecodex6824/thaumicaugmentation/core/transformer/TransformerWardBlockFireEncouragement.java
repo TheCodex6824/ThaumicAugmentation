@@ -45,6 +45,11 @@ public class TransformerWardBlockFireEncouragement extends Transformer {
     }
     
     @Override
+    public boolean isAllowedToFail() {
+        return false;
+    }
+    
+    @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode fire = TransformUtil.findMethod(classNode, "getFireSpreadSpeed",

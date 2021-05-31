@@ -47,8 +47,8 @@ public interface IImpulseCannonAugment extends IAugment {
         return 0;
     }
     
-    public default long getImpetusCostPerTick(EntityLivingBase user, int tickCount) {
-        return 0;
+    public default double getImpetusCostPerTick(EntityLivingBase user, int tickCount) {
+        return 0.0;
     }
     
     public int getMaxUsageDuration();

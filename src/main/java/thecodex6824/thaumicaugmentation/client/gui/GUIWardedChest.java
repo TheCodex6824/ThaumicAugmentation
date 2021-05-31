@@ -24,16 +24,17 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
+import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 
 public class GUIWardedChest extends GuiContainer {
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/generic_54.png");
     protected InventoryPlayer inv;
 
-    public GUIWardedChest(Container c, InventoryPlayer i) {
+    public GUIWardedChest(ContainerWardedChest c, InventoryPlayer i) {
         super(c);
         inv = i;
     }
@@ -57,7 +58,13 @@ public class GUIWardedChest extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String name = I18n.format("tile." + TABlocks.WARDED_CHEST.getRegistryName().toString().replace(':', '.') + ".name");
+        TileWardedChest tile = ((ContainerWardedChest) inventorySlots).getTile();
+        String name = "";
+        if (tile.hasCustomName())
+            name = tile.getCustomName();
+        else
+            name = I18n.format("tile." + TABlocks.WARDED_CHEST.getRegistryName().toString().replace(':', '.') + ".name");
+        
         fontRenderer.drawString(name, 8, 6, 0x404040);
         fontRenderer.drawString(inv.getDisplayName().getUnformattedText(), 8, ySize - 96 + 4, 0x404040);
     }

@@ -38,9 +38,9 @@ import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -61,7 +61,6 @@ import net.minecraftforge.common.util.Constants.NBT;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.entities.IEldritchMob;
 import thaumcraft.api.items.ItemsTC;
-import thaumcraft.common.entities.EntitySpecialItem;
 import thaumcraft.common.entities.ai.combat.AILongRangeAttack;
 import thaumcraft.common.entities.monster.boss.EntityCultistLeader;
 import thaumcraft.common.entities.monster.boss.EntityCultistPortalGreater;
@@ -71,6 +70,7 @@ import thaumcraft.common.entities.monster.cult.EntityCultistPortalLesser;
 import thaumcraft.common.entities.monster.mods.ChampionModifier;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.utils.EntityUtils;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.ward.WardSyncManager;
@@ -348,8 +348,8 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldri
             return null;
         else {
             EntityItem entity = null;
-            if (stack.getItem() == ItemsTC.primordialPearl) {
-                entity = new EntitySpecialItem(world, posX, posY + offsetY, posZ, stack);
+            if (stack.getItem() == ItemsTC.primordialPearl || stack.getItem() == TAItems.RESEARCH_NOTES) {
+                entity = new EntityItemImportant(world, posX, posY + offsetY, posZ, stack);
                 entity.motionX = 0.0;
                 entity.motionY = 0.1;
                 entity.motionZ = 0.0;
@@ -358,6 +358,7 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldri
                 entity = new EntityItem(world, posX, posY + offsetY, posZ, stack);
             
             entity.setDefaultPickupDelay();
+            entity.setNoDespawn();
             if (captureDrops)
                 capturedDrops.add(entity);
             else

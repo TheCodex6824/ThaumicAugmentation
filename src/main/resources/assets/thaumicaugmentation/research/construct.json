@@ -149,6 +149,43 @@
                     ] 
                 }
             ]
+        },
+        {
+            "key": "CELESTIAL_OBSERVER",
+            "name": "thaumicaugmentation.research.celestial_observer.title",
+            "icons": [
+                "thaumicaugmentation:textures/items/celestial_observer.png"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "MORE_GOLEMANCY",
+                "~CELESTIALSCANNING",
+                "~MINDCLOCKWORK",
+                "~BASEARTIFICE"
+            ],
+            "location": [
+                -5,
+                5
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.celestial_observer.0",
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;ARTIFICE;1",
+                        "THEORY;GOLEMANCY;1"
+                    ],
+                    "required_item": [
+                        "oredict:notesCelestial"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.celestial_observer.1",
+                    "recipes": [
+                        "thaumicaugmentation:celestial_observer_placer"
+                    ]
+                }
+            ]
         }
     ]
 }

@@ -57,8 +57,9 @@ public class EntityAIFlyWander extends EntityAIBase {
         Random rand = entity.getRNG();
         boolean ground = false;
         for (int i = 1; i < 6; ++i) {
-            IBlockState below = entity.getEntityWorld().getBlockState(entity.getPosition().down(i));
-            AxisAlignedBB box = below.getCollisionBoundingBox(entity.getEntityWorld(), dest);
+            BlockPos test = entity.getPosition().down(i);
+            IBlockState below = entity.getEntityWorld().getBlockState(test);
+            AxisAlignedBB box = below.getCollisionBoundingBox(entity.getEntityWorld(), test);
             if (box != null && box != Block.NULL_AABB) {
                 ground = true;
                 break;
@@ -85,8 +86,9 @@ public class EntityAIFlyWander extends EntityAIBase {
             Random rand = entity.getRNG();
             boolean ground = false;
             for (int i = 1; i < 6; ++i) {
-                IBlockState below = entity.getEntityWorld().getBlockState(entity.getPosition().down(i));
-                AxisAlignedBB box = below.getCollisionBoundingBox(entity.getEntityWorld(), dest);
+                BlockPos test = entity.getPosition().down(i);
+                IBlockState below = entity.getEntityWorld().getBlockState(test);
+                AxisAlignedBB box = below.getCollisionBoundingBox(entity.getEntityWorld(), test);
                 if (box != null && box != Block.NULL_AABB) {
                     ground = true;
                     break;
