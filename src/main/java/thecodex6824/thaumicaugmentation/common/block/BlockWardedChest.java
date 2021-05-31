@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import java.util.Iterator;
+import java.util.Random;
+
 import com.google.common.base.Predicate;
 
 import net.minecraft.block.material.EnumPushReaction;
@@ -38,6 +41,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -136,6 +140,29 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         dropContents(world, pos);
         super.breakBlock(world, pos, state);
+    }
+    
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
+            int fortune) {
+        
+        super.getDrops(drops, world, pos, state, fortune);
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof INameableTile && ((INameableTile) te).hasCustomName()) {
+            Random rand = world instanceof World ? ((World) world).rand : RANDOM;
+            ItemStack renamed = ItemStack.EMPTY;
+            Iterator<ItemStack> it = drops.iterator();
+            while (it.hasNext()) {
+                ItemStack stack = it.next();
+                if (stack.getItem() == getItemDropped(state, rand, fortune)) {
+                    it.remove();
+                    renamed = stack.copy();
+                    renamed.setStackDisplayName(((INameableTile) te).getCustomName());
+                }
+            }
+            
+            drops.add(renamed);
+        }
     }
 
     @Override
