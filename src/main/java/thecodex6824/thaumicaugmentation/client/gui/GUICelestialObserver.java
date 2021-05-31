@@ -126,7 +126,7 @@ public class GUICelestialObserver extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         EntityCelestialObserver e = ((ContainerCelestialObserver) inventorySlots).getEntity();
         BlockPos base = new BlockPos(new BlockPos(e.getLookVec().add(e.posX, e.posY + 1.0, e.posZ)));
-        boolean skyVisible = e.getEntityWorld().provider.isSurfaceWorld() && e.getEntityWorld().canSeeSky(base);
+        boolean skyVisible = e.getEntityWorld().provider.isSurfaceWorld() && e.getEntityWorld().canSeeSky(base) && !e.getEntityWorld().isRaining();
         Minecraft mc = Minecraft.getMinecraft();
         if (fb != null && !mc.skipRenderWorld) {
             int w = mc.displayWidth;
@@ -277,7 +277,7 @@ public class GUICelestialObserver extends GuiContainer {
         fontRenderer.drawString(I18n.format(ThaumicAugmentationAPI.MODID + ".gui.scans"), 8, 6, 0xFFFFFF);
         EntityCelestialObserver e = ((ContainerCelestialObserver) inventorySlots).getEntity();
         BlockPos base = new BlockPos(new BlockPos(e.getLookVec().add(e.posX, e.posY + 1.0, e.posZ)));
-        boolean skyVisible = e.getEntityWorld().provider.isSurfaceWorld() && e.getEntityWorld().canSeeSky(base);
+        boolean skyVisible = e.getEntityWorld().provider.isSurfaceWorld() && e.getEntityWorld().canSeeSky(base) && !e.getEntityWorld().isRaining();
         float aura = 16.0F;
         if (skyVisible)
             aura = AURA_STRENGTH[e.getEntityWorld().provider.getMoonPhase(e.getEntityWorld().getWorldInfo().getWorldTime())];

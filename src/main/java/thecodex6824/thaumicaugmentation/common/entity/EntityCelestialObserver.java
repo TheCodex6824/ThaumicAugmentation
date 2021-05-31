@@ -318,7 +318,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                         }
                     }
                 }
-                else if (!isAIDisabled() && ticksExisted % 50 == 0 && hasPaper() && !world.isRainingAt(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ))) &&
+                else if (!isAIDisabled() && ticksExisted % 50 == 0 && hasPaper() && !world.isRaining() &&
                         world.canSeeSky(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ))) &&
                         world.provider.isSurfaceWorld()) {
                     
@@ -636,7 +636,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
         
         @Override
         public boolean shouldExecute() {
-            return !isDisabled() && !world.isRainingAt(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ)));
+            return !isDisabled() && !world.isRaining();
         }
         
         @Override
@@ -664,7 +664,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
         
         @Override
         public boolean shouldExecute() {
-            if (!isDisabled() && !world.isRainingAt(new BlockPos(getLookVec().add(posX, posY + 1.0, posZ)))) {
+            if (!isDisabled() && !world.isRaining()) {
                 int day = (int) (world.getTotalWorldTime() / 24000);
                 float angle = (world.getCelestialAngle(0.0F) + 0.25F) * 360.0F % 360.0F;
                 if (angle > 195.0F) {
