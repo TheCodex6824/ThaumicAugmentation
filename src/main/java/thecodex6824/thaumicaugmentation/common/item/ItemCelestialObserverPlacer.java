@@ -39,11 +39,6 @@ import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemCelestialObserverPlacer extends ItemTABase {
     
-    public ItemCelestialObserverPlacer() {
-        setHasSubtypes(true);
-        setMaxStackSize(1);
-    }
-    
     @Override
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
             float hitY, float hitZ, EnumHand hand) {
