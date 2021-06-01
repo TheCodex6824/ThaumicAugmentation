@@ -58,11 +58,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXFireMote;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thaumcraft.common.lib.utils.EntityUtils;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
@@ -892,6 +894,12 @@ public class TARenderHelperClient implements ITARenderHelper {
     @Override
     public boolean stencilAvailable() {
         return GL11.glGetInteger(GL11.GL_STENCIL_BITS) > 0;
+    }
+    
+    @Override
+    public boolean framebuffersAvailable() {
+        return Minecraft.getMinecraft().gameSettings.fboEnable && !TAConfig.disableFramebuffers.getValue() &&
+                !FMLClientHandler.instance().hasOptifine();
     }
 
 }

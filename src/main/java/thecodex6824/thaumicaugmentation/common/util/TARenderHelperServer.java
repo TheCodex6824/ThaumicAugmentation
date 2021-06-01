@@ -132,4 +132,9 @@ public class TARenderHelperServer implements ITARenderHelper {
         return false;
     }
     
+    @Override
+    public boolean framebuffersAvailable() {
+        return false;
+    }
+    
 }

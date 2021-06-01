@@ -41,7 +41,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import thaumcraft.api.aspects.Aspect;
-import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.client.gui.component.ButtonToggle;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
@@ -69,7 +69,7 @@ public class GUICelestialObserver extends GuiContainer {
         super(c);
         xSize = 176;
         ySize = 217;
-        if (Minecraft.getMinecraft().gameSettings.fboEnable && !TAConfig.disableFramebuffers.getValue() && fb == null) {
+        if (ThaumicAugmentation.proxy.getRenderHelper().framebuffersAvailable() && fb == null) {
             fb = new Framebuffer(FB_WIDTH, FB_HEIGHT, true);
             fb.setFramebufferColor(0.0F, 0.0F, 0.0F, 1.0F);
             fb.framebufferClear();

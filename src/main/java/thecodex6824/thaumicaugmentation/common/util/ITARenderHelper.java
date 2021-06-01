@@ -87,4 +87,6 @@ public interface ITARenderHelper {
     
     public boolean stencilAvailable();
     
+    public boolean framebuffersAvailable();
+    
 }

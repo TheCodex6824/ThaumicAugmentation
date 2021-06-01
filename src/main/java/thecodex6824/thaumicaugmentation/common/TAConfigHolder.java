@@ -751,7 +751,8 @@ public final class TAConfigHolder {
         @Comment({
             "Disables all framebuffers used by TA for rendering.",
             "This will make certain things look ugly, but might fix other issues.",
-            "Currently, only the display in the Celestial Observer uses framebuffers."
+            "Currently, only the display in the Celestial Observer uses framebuffers.",
+            "This option is always treated as being enabled when Optifine is detected."
         })
         @RequiresMcRestart
         public boolean disableFramebuffers = false;
