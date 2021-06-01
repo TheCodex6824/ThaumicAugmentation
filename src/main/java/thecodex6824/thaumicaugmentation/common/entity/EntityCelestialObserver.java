@@ -37,6 +37,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.IEntityOwnable;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -549,6 +550,11 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
     @Override
     public void knockBack(Entity entity, float strength, double xRatio, double zRatio) {
         super.knockBack(entity, strength / 10.0F, xRatio, zRatio);
+    }
+    
+    @Override
+    public void move(MoverType type, double x, double y, double z) {
+        super.move(type, x / 20.0, y, z / 20.0);
     }
     
     @Override
