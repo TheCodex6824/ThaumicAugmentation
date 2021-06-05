@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.security.InvalidParameterException;
-
 import javax.annotation.Nullable;
 
 import com.google.common.math.DoubleMath;
@@ -96,7 +94,8 @@ public class ItemThaumostaticHarnessAugment extends ItemTABase {
                 
             };
         }
-        else if (stack.getMetadata() == 1) {
+        else {
+            // need to allow all metas for mods that create stacks with wildcard meta
             return new HarnessAugment() {
                 @Override
                 public boolean shouldAllowSprintFly(EntityPlayer wearer) {
@@ -131,8 +130,6 @@ public class ItemThaumostaticHarnessAugment extends ItemTABase {
                 
             };
         }
-        else
-            throw new InvalidParameterException("Invalid thaumostatic harness type");
     }
     
     @Override
