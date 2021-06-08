@@ -103,8 +103,8 @@ public final class MiscHandler {
                 'S', BlocksTC.stoneAncientTile
         );
         
-        TAMaterials.VOID_BOOTS.repairMaterial = new ItemStack(ItemsTC.ingots, 1, 1);
-        TAMaterials.THAUMIUM_ROBES.repairMaterial = new ItemStack(ItemsTC.ingots, 1, 2);
+        TAMaterials.VOID_BOOTS.setRepairItem(new ItemStack(ItemsTC.ingots, 1, 1));
+        TAMaterials.THAUMIUM_ROBES.setRepairItem(new ItemStack(ItemsTC.ingots, 1, 0));
     }
     
     protected static void registerWispAttacks() {
