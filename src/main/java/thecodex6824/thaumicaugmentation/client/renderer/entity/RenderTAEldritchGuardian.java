@@ -62,8 +62,8 @@ public class RenderTAEldritchGuardian extends RenderLiving<EntityLiving> {
         
         float maxDist = e.world.getDifficulty() == EnumDifficulty.HARD ? 576.0F : 1024.0F;
         float distThreshold = 256.0F;
-        if (entity instanceof EntityTAEldritchGuardian && !((EntityTAEldritchGuardian) entity).isTransparent() ||
-                entity instanceof EntityTAEldritchWarden && !((EntityTAEldritchWarden) entity).isTransparent()) {
+        if ((entity instanceof EntityTAEldritchGuardian && !((EntityTAEldritchGuardian) entity).isTransparent()) ||
+                (entity instanceof EntityTAEldritchWarden && !((EntityTAEldritchWarden) entity).isTransparent())) {
             alpha = 1.0F;
         }
         else {
