@@ -73,6 +73,7 @@ public class RenderGlassTube extends FastTESR<TileGlassTube> {
     public void renderTileEntityFast(TileGlassTube te, double x, double y, double z, float partialTicks,
             int destroyStage, float partial, BufferBuilder buffer) {
         
+        buffer.setTranslation(0.0, 0.0, 0.0);
         int fluid = te.getFluidStartTicks();
         if (fluid > 0) {
             Aspect aspect = te.getEssentiaType(EnumFacing.UP);
