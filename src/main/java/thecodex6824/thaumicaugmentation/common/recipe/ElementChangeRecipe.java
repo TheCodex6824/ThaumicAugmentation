@@ -173,4 +173,9 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         return ItemStack.EMPTY;
     }
     
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
+    
 }

@@ -112,4 +112,9 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         return ItemStack.EMPTY;
     }
     
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
+    
 }

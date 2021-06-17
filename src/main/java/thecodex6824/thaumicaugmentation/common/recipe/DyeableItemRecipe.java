@@ -104,5 +104,10 @@ public class DyeableItemRecipe extends RecipesArmorDyes {
 
         return ItemStack.EMPTY;
     }
+    
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
 
 }

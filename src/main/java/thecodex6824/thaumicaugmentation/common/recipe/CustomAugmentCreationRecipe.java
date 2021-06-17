@@ -105,4 +105,9 @@ public class CustomAugmentCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
         return ItemStack.EMPTY;
     }
     
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
+    
 }

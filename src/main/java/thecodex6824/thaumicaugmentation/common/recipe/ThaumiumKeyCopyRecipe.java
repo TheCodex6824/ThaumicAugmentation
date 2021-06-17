@@ -121,5 +121,10 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
     public ItemStack getRecipeOutput() {
         return ItemStack.EMPTY;
     }
+    
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
 
 }

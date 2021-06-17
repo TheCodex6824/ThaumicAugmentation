@@ -1,7 +1,13 @@
 {
     "parent": "item/generated",
-    "textures": {
-        "layer0": "thaumicaugmentation:items/thaumium_robes_hood",
-        "layer1": "thaumicaugmentation:items/thaumium_robes_hood_overlay"
-    }
+    "overrides": [
+        {
+            "predicate": {"thaumicaugmentation:style": 0},
+            "model": "thaumicaugmentation:item/thaumium_robes_hood_0"
+        },
+        {
+            "predicate": {"thaumicaugmentation:style": 1},
+            "model": "thaumicaugmentation:item/thaumium_robes_hood_1"
+        }
+    ]
 }

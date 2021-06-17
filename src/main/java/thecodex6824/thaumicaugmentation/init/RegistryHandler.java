@@ -164,6 +164,7 @@ import thecodex6824.thaumicaugmentation.common.recipe.ElementChangeRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicArmorUnbindingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.MorphicToolUnbindingRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.PrimalCutterAbilityRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumHoodStyleRecipe;
 import thecodex6824.thaumicaugmentation.common.recipe.ThaumiumKeyCopyRecipe;
 import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
@@ -402,6 +403,7 @@ public final class RegistryHandler {
         event.getRegistry().register(new MorphicArmorUnbindingRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_armor_unbinding")));
         event.getRegistry().register(new PrimalCutterAbilityRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "primal_cutter_ability")));
         event.getRegistry().register(new BiomeSelectorSpecialResetRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "biome_focus_special_reset")));
+        event.getRegistry().register(new ThaumiumHoodStyleRecipe().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "style_cycle")));
     }
 
     @SubscribeEvent

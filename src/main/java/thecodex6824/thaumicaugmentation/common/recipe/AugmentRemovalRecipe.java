@@ -128,4 +128,9 @@ public class AugmentRemovalRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
         return ItemStack.EMPTY;
     }
     
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
+    
 }
