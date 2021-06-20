@@ -259,7 +259,6 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         else if (reflect && !world.isRemote) {
             Entity entity = source.getImmediateSource();
             if ((entity instanceof IProjectile || entity instanceof EntityFireball) && entity.isEntityAlive()) {
-                
                 Entity newEntity = EntityList.newEntity(entity.getClass(), entity.world);
                 if (newEntity != null) {
                     NBTTagCompound toCopy = entity.serializeNBT();
@@ -342,7 +341,7 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     
     @Override
     public void onCollideWithPlayer(EntityPlayer entity) {
-        Entity owner = ownerRef.get();
+        Entity owner = getOwner();
         if (owner != null) {
             if (entity.equals(owner))
                 return;
@@ -430,7 +429,6 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     
     @Override
     public void onLivingUpdate() {
-        
         int lifespan = getTotalLifespan();
         if (lifespan > 0) {
             ++timeAlive;
@@ -440,14 +438,13 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
             }
         }
         
-        if (ownerRef.get() == null && dataManager.get(OWNER_ID).isPresent()) {
-            if (ownerRef.get() == null) {
-                List<Entity> entities = world.getEntities(Entity.class, entity -> entity != null && entity.getPersistentID().equals(dataManager.get(OWNER_ID).get()));
-                if (!entities.isEmpty())
-                    ownerRef = new WeakReference<>(entities.get(0));
-                else
-                    ++aloneTicks;
-            }
+        if ((ownerRef.get() == null || ownerRef.get().isDead) && dataManager.get(OWNER_ID).isPresent()) {
+            ownerRef.clear();
+            List<Entity> entities = world.getEntities(Entity.class, entity -> entity != null && entity.getPersistentID().equals(dataManager.get(OWNER_ID).get()));
+            if (!entities.isEmpty())
+                ownerRef = new WeakReference<>(entities.get(0));
+            else
+                ++aloneTicks;
         }
         
         Entity owner = ownerRef.get();
