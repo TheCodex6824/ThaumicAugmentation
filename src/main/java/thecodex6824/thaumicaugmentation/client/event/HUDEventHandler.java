@@ -26,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
@@ -56,12 +57,10 @@ public class HUDEventHandler {
     protected static void renderHeldImpetusLevel(ItemStack stack, IImpetusStorage storage) {
         boolean bottom = ModConfig.CONFIG_GRAPHICS.dialBottom;
         boolean caster = stack.getItem() instanceof ICaster;
-        double yMin = caster ? (bottom ? 432.5 : 50.5) : (bottom ? 484.5 : 3.5);
-        double yMax = caster ? (bottom ? 441.5 : 59.5) : (bottom ? 493.5 : 12.5);
-        float height = 60.0F * (float) (Math.ceil((double) storage.getEnergyStored() / storage.getMaxEnergyStored() * 10.0) / 10.0);
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(30.0, 6.0, 0.0);
-        GlStateManager.scale(0.5, 0.5, 0.5);
+        ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+        double yMin = caster ? (bottom ? res.getScaledHeight() - 37.5 : 32.5) : (bottom ? res.getScaledHeight() - 10.5 : 5.5);
+        double yMax = caster ? (bottom ? res.getScaledHeight() - 32.5 : 37.5) : (bottom ? res.getScaledHeight() - 5.5 : 10.5);
+        float height = 30.0F * (float) (Math.ceil((double) storage.getEnergyStored() / storage.getMaxEnergyStored() * 10.0) / 10.0);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         Tessellator t = Tessellator.getInstance();
@@ -72,10 +71,10 @@ public class HUDEventHandler {
             Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.RIFT);
             TAShaderManager.enableShader(TAShaders.FLUX_RIFT_HUD, TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED_20);
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            buffer.pos(-43.0, yMax, 0.0).tex(1.0, 0.0).endVertex();
-            buffer.pos(-56.0 + height, yMax, 0.0).tex(0.0, 0.0).endVertex();
-            buffer.pos(-56.0 + height, yMin, 0.0).tex(0.0, 1.0).endVertex();
-            buffer.pos(-43.0, yMin, 0.0).tex(1.0, 1.0).endVertex();
+            buffer.pos(8.0, yMax, 0.0).tex(1.0, 0.0).endVertex();
+            buffer.pos(8.0 + height, yMax, 0.0).tex(0.0, 0.0).endVertex();
+            buffer.pos(8.0 + height, yMin, 0.0).tex(0.0, 1.0).endVertex();
+            buffer.pos(8.0, yMin, 0.0).tex(1.0, 1.0).endVertex();
             t.draw();
             TAShaderManager.disableShader();
             GlStateManager.enableBlend();
@@ -85,21 +84,20 @@ public class HUDEventHandler {
             GlStateManager.color(0.4F, 0.4F, 0.5F, 0.8F);
             Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.TC_HUD);
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            buffer.pos(-43.0, yMax, 0.0).tex(0.40625, 0.1171875).endVertex();
-            buffer.pos(-56.0 + height, yMax, 0.0).tex(0.40625, 0.0).endVertex();
-            buffer.pos(-56.0 + height, yMin, 0.0).tex(0.4375, 0.0).endVertex();
-            buffer.pos(-43.0, yMin, 0.0).tex(0.4375, 0.1171875).endVertex();
+            buffer.pos(8.0, yMax, 0.0).tex(0.40625, 0.1171875).endVertex();
+            buffer.pos(8.0 + height, yMax, 0.0).tex(0.40625, 0.0).endVertex();
+            buffer.pos(8.0 + height, yMin, 0.0).tex(0.4375, 0.0).endVertex();
+            buffer.pos(8.0, yMin, 0.0).tex(0.4375, 0.1171875).endVertex();
             t.draw();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         }
         
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos(11.0, yMin - 3.5, 0.0).tex(0.28125, 0.0078125).endVertex();
-        buffer.pos(-49.0, yMin - 3.5, 0.0).tex(0.28125, 0.16796875).endVertex();
-        buffer.pos(-49.0, yMax + 3.5, 0.0).tex(0.34375, 0.16796875).endVertex();
-        buffer.pos(11.0, yMax + 3.5, 0.0).tex(0.34375, 0.0078125).endVertex();
+        buffer.pos(41.5, yMin - 1.75, 0.0).tex(0.28125, 0.0078125).endVertex();
+        buffer.pos(4.5, yMin - 1.75, 0.0).tex(0.28125, 0.16796875).endVertex();
+        buffer.pos(4.5, yMax + 1.75, 0.0).tex(0.34375, 0.16796875).endVertex();
+        buffer.pos(41.5, yMax + 1.75, 0.0).tex(0.34375, 0.0078125).endVertex();
         t.draw();
-        GlStateManager.popMatrix();
     }
     
     @Nullable
