@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
@@ -82,6 +83,7 @@ import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.network.PacketHandler;
 import thaumcraft.common.lib.network.fx.PacketFXSonic;
 import thaumcraft.common.lib.utils.EntityUtils;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
@@ -437,6 +439,12 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden implements IEld
             
             return entity;
         }
+    }
+    
+    @Override
+    public EnumCreatureAttribute getCreatureAttribute() {
+        return TAConfig.undeadEldritchGuardians.getValue() ? EnumCreatureAttribute.UNDEAD :
+            EnumCreatureAttribute.UNDEFINED;
     }
     
 }
