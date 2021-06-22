@@ -38,6 +38,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.api.capabilities.IPlayerWarp;
 import thaumcraft.api.capabilities.IPlayerWarp.EnumWarpType;
@@ -46,6 +47,7 @@ import thaumcraft.api.casters.FocusEngine;
 import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.api.entity.AutocasterFocusRegistry;
 import thecodex6824.thaumicaugmentation.api.entity.PrimalWispAttackRegistry;
@@ -60,6 +62,7 @@ public final class MiscHandler {
     
     public static void preInit() {}
     
+    @SuppressWarnings("deprecation")
     public static void init() {
         FocusEngine.registerElement(FocusEffectLight.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/light.png"), 
                 Aspect.LIGHT.getColor());
@@ -105,6 +108,16 @@ public final class MiscHandler {
         
         TAMaterials.VOID_BOOTS.setRepairItem(new ItemStack(ItemsTC.ingots, 1, 1));
         TAMaterials.THAUMIUM_ROBES.setRepairItem(new ItemStack(ItemsTC.ingots, 1, 0));
+        
+        // string name needs to be same as EntityList#getEntityString
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".autocaster", new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.AVERSION, 5).add(Aspect.SENSES, 3));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".autocaster_eldritch", new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.ELDRITCH, 15).add(Aspect.AVERSION, 5).add(Aspect.SENSES, 3));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_guardian", new AspectList().add(Aspect.ELDRITCH, 20).add(Aspect.DEATH, 20).add(Aspect.UNDEAD, 20));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_warden", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.DEATH, 40).add(Aspect.UNDEAD, 40));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_golem", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.ENERGY, 40).add(Aspect.MECHANISM, 40));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".primal_wisp", new AspectList().add(Aspect.AIR, 30).add(Aspect.EARTH, 30).add(Aspect.ENTROPY, 30).add(Aspect.FIRE, 30).add(Aspect.ORDER, 30).add(Aspect.WATER, 30));
+        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".shield_focus", new AspectList().add(Aspect.PROTECT, 20).add(Aspect.MAGIC, 10).add(Aspect.ENERGY, 5).add(Aspect.VOID, 5));
+        AspectElementInteractionManager.init();
     }
     
     protected static void registerWispAttacks() {

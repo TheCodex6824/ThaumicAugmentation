@@ -48,7 +48,6 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
-import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectEventProxy;
 import thaumcraft.api.aspects.AspectList;
@@ -61,7 +60,6 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.block.BlockArcaneTerraformer;
@@ -475,8 +473,13 @@ public final class RegistryHandler {
     }
     
     @SubscribeEvent
-    @SuppressWarnings("deprecation")
     public static void registerAspects(AspectRegistryEvent event) {
+        /**
+         * =======================================================================================
+         * This must be used for registering aspect tags on objects (aka not entities) ONLY!
+         * Thaumic Speedup only calls this code at first pack load, not when using cached aspects!
+         * =======================================================================================
+         */
         AspectEventProxy proxy = event.register;
         proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 0), new AspectList().add(Aspect.PROTECT, 19));
         proxy.registerComplexObjectTag(new ItemStack(TAItems.ARCANE_DOOR, 1, 1), new AspectList().add(Aspect.PROTECT, 23));
@@ -539,17 +542,6 @@ public final class RegistryHandler {
         shared = new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 15).add(Aspect.MECHANISM, 15).add(Aspect.ENERGY, 10);
         for (int i = 0; i < 4; ++i)
             proxy.registerObjectTag(new ItemStack(TABlocks.ELDRITCH_LOCK_IMPETUS, 1, i), shared.copy());
-        
-        // string name needs to be same as EntityList#getEntityString
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".autocaster", new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.AVERSION, 5).add(Aspect.SENSES, 3));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".autocaster_eldritch", new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.ELDRITCH, 15).add(Aspect.AVERSION, 5).add(Aspect.SENSES, 3));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_guardian", new AspectList().add(Aspect.ELDRITCH, 20).add(Aspect.DEATH, 20).add(Aspect.UNDEAD, 20));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_warden", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.DEATH, 40).add(Aspect.UNDEAD, 40));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".eldritch_golem", new AspectList().add(Aspect.ELDRITCH, 40).add(Aspect.ENERGY, 40).add(Aspect.MECHANISM, 40));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".primal_wisp", new AspectList().add(Aspect.AIR, 30).add(Aspect.EARTH, 30).add(Aspect.ENTROPY, 30).add(Aspect.FIRE, 30).add(Aspect.ORDER, 30).add(Aspect.WATER, 30));
-        ThaumcraftApi.registerEntityTag(ThaumicAugmentationAPI.MODID + ".shield_focus", new AspectList().add(Aspect.PROTECT, 20).add(Aspect.MAGIC, 10).add(Aspect.ENERGY, 5).add(Aspect.VOID, 5));
-        
-        AspectElementInteractionManager.init();
     }
     
     @SubscribeEvent
