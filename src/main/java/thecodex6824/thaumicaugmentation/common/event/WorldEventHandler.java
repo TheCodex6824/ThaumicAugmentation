@@ -36,12 +36,15 @@ public class WorldEventHandler {
     @SubscribeEvent
     public static void onItemVoid(RiftJarVoidItemEvent event) {
         if (event.getItemStack().getItem() == TAItems.ELDRITCH_LOCK_KEY || event.getItemStack().getItem() == TAItems.RESEARCH_NOTES) {
-            BlockPos pos = event.getPosition();
-            event.getWorld().destroyBlock(pos, false);
-            event.getWorld().createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
+            if (!event.isSimulated()) {
+                BlockPos pos = event.getPosition();
+                event.getWorld().destroyBlock(pos, false);
+                event.getWorld().createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
+            }
+            
             event.setCanceled(true);
         }
-        else if (event.getItemStack().getItem() == TAItems.RIFT_JAR) {
+        else if (!event.isSimulated() && event.getItemStack().getItem() == TAItems.RIFT_JAR) {
             NBTTagCompound tag = event.getItemStack().getTagCompound();
             if (tag != null && tag.hasKey("seed", NBT.TAG_INT) && tag.getInteger("size") > 0) {
                 BlockPos pos = event.getPosition();
