@@ -121,12 +121,15 @@ public class HUDEventHandler {
     public static void onRenderHUD(RenderGameOverlayEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
         if (event.getType() == ElementType.POTION_ICONS && mc.inGameHasFocus && Minecraft.isGuiEnabled()) {
-            IImpetusStorage storage = findStorage(mc.player.getHeldItemMainhand());
-            if (storage == null)
-                storage = findStorage(mc.player.getHeldItemOffhand());
+            ItemStack held = mc.player.getHeldItemMainhand();
+            IImpetusStorage storage = findStorage(held);
+            if (storage == null) {
+                held = mc.player.getHeldItemOffhand();
+                storage = findStorage(held);
+            }
         
             if (storage != null)
-                renderHeldImpetusLevel(mc.player.getHeldItemMainhand(), storage);
+                renderHeldImpetusLevel(held, storage);
         }
     }
     
