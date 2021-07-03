@@ -157,7 +157,6 @@ import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchG
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAGolemOrb;
 import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
-import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderAltar;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderEldritchLock;
@@ -1101,7 +1100,6 @@ public class ClientProxy extends ServerProxy {
     @Override
     public void postInit() {
         super.postInit();
-        TATextures.setupTextures();
         TAShaderManager.init();
         if (TAShaderManager.shouldUseShaders()) {
             TAShaders.FRACTURE = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture"));
