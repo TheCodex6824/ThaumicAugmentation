@@ -632,6 +632,25 @@ public class ClientProxy extends ServerProxy {
                     
                     break;
                 }
+                case ENDER_EYE_BREAK: {
+                    if (d.length == 4) {
+                        World world = Minecraft.getMinecraft().world;
+                        double x = d[0], y = d[1], z = d[2];
+                        for (int i = 0; i < 8; ++i) {
+                            world.spawnParticle(EnumParticleTypes.ITEM_CRACK, true, x, y, z, rand.nextGaussian() * 0.15,
+                                    rand.nextDouble() * 0.2, rand.nextGaussian() * 0.15, (int) d[3]);
+                        }
+
+                        for (float angle = 0.0F; angle < Math.PI * 2; angle += (float) (Math.PI * 2 / 40)) {
+                            world.spawnParticle(EnumParticleTypes.PORTAL, true, x + MathHelper.cos(angle) * 5.0F, y - 0.4F,
+                                    z + MathHelper.sin(angle) * 5.0F, MathHelper.cos(angle) * -5.0F, 0.0F, MathHelper.sin(angle) * -5.0F);
+                            world.spawnParticle(EnumParticleTypes.PORTAL, x + MathHelper.cos(angle) * 5.0F, y - 0.4F,
+                                    z + MathHelper.sin(angle) * 5.0F, MathHelper.cos(angle) * -7.0F, 0.0F, MathHelper.sin(angle) * -7.0F);
+                        }
+                    }
+                    
+                    break;
+                }
              
                 default: {break;}
             }

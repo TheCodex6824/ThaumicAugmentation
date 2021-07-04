@@ -24,17 +24,22 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityEnderPearl;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -53,10 +58,17 @@ import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
 import thecodex6824.thaumicaugmentation.api.event.FocusTouchGetEntityEvent;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
+import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumiumRobes.MaskType;
 import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
+import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
+import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class EntityEventHandler {
@@ -70,6 +82,25 @@ public class EntityEventHandler {
     
     @SubscribeEvent
     public static void onProjectileCollide(ProjectileImpactEvent event) {
+        if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityEnderPearl) {
+            WorldServer w = (WorldServer) event.getEntity().getEntityWorld();
+            BlockPos check = event.getEntity().getPosition();
+            if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", check)) {
+                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(check);
+                if (start != null) {
+                    IWardStorage storage = w.getChunk(check).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                    if (storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard())) { 
+                        event.getEntity().setDead();
+                        Vec3d pos = event.getEntity().getPositionVector();
+                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.ENDER_EYE_BREAK, pos.x,
+                                pos.y, pos.z, Item.getIdFromItem(Items.ENDER_PEARL)), event.getEntity());
+                        event.setCanceled(true);
+                        return;
+                    }
+                }
+            }
+        }
+        
         if (event.getRayTraceResult().entityHit instanceof EntityFocusShield) {
             EntityFocusShield s = (EntityFocusShield) event.getRayTraceResult().entityHit;
             if (s.getOwner() != null) {
