@@ -321,7 +321,7 @@ public final class RecipeHandler {
                         ThaumcraftApiHelper.makeCrystal(Aspect.ORDER), new AspectList().add(Aspect.ENERGY, 15).add(Aspect.CRYSTAL, 10).add(Aspect.MAGIC, 5)));
     
         ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "seal_secure"),
-                new CrucibleRecipe("SEAL_SECURE", GolemHelper.getSealStack(ThaumicAugmentationAPI.MODID + ":attack"), ItemsTC.seals,
+                new CrucibleRecipe("SEAL_SECURE", GolemHelper.getSealStack(ThaumicAugmentationAPI.MODID + ":attack"), new ItemStack(ItemsTC.seals, 1, 0),
                         new AspectList().add(Aspect.AVERSION, 30).add(Aspect.PROTECT, 10)));
         
         ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "seal_secure_advanced"),
