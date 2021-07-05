@@ -43,6 +43,8 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -129,6 +131,7 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer;
 import thecodex6824.thaumicaugmentation.client.event.ClientEventHandler;
 import thecodex6824.thaumicaugmentation.client.event.ClientLivingEquipmentChangeEvent;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
+import thecodex6824.thaumicaugmentation.client.event.ResourceReloadDispatcher;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.fx.FXGenericP2ECustomSpeed;
 import thecodex6824.thaumicaugmentation.client.fx.FXImpulseBeam;
@@ -239,6 +242,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
+import thecodex6824.thaumicaugmentation.common.util.IResourceReloadDispatcher;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
@@ -249,6 +253,7 @@ public class ClientProxy extends ServerProxy {
 
     private KeyBinding elytraBoost;
     private HashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
+    private ResourceReloadDispatcher reloadDispatcher;
     
     public ClientProxy() {
         handlers = new HashMap<>();
@@ -277,6 +282,8 @@ public class ClientProxy extends ServerProxy {
         handlers.put(PacketRecoil.class, (message, ctx) -> handleRecoilPacket((PacketRecoil) message, ctx));
         handlers.put(PacketTerraformerWork.class, (message, ctx) -> handleTerraformerWorkPacket((PacketTerraformerWork) message, ctx));
         handlers.put(PacketEssentiaUpdate.class, (message, ctx) -> handleEssentiaUpdatePacket((PacketEssentiaUpdate) message, ctx));
+    
+        reloadDispatcher = new ResourceReloadDispatcher();
     }
     
     @Override
@@ -985,6 +992,20 @@ public class ClientProxy extends ServerProxy {
                     ((IEssentiaTube) tile).setEssentiaDirect(null, 0);
             }
         }
+    }
+    
+    @Override
+    public IResourceReloadDispatcher getResourceReloadDispatcher() {
+        return reloadDispatcher;
+    }
+    
+    @Override
+    public void initResourceReloadDispatcher() {
+        IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+        if (manager instanceof IReloadableResourceManager)
+            ((IReloadableResourceManager) manager).registerReloadListener(reloadDispatcher);
+        else
+            ThaumicAugmentation.getLogger().warn("Resource manager not reloadable, some models may break on resource reload");
     }
 
     @Override

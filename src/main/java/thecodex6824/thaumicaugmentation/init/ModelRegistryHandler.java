@@ -30,6 +30,7 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -51,7 +52,7 @@ public final class ModelRegistryHandler {
     
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
-
+        ThaumicAugmentation.proxy.initResourceReloadDispatcher();
         OBJLoader.INSTANCE.addDomain(ThaumicAugmentationAPI.MODID);
         
         ModelLoader.setCustomStateMapper(TABlocks.TEMPORARY_LIGHT, new StateMap.Builder().ignore(ILightSourceBlock.LIGHT_LEVEL).build());

@@ -75,6 +75,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketInteractGUI;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
+import thecodex6824.thaumicaugmentation.common.util.IResourceReloadDispatcher;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperServer;
@@ -83,6 +84,7 @@ import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 public class ServerProxy implements ISidedProxy {
 
     protected static ITARenderHelper renderHelper;
+    protected static IResourceReloadDispatcher reloadDispatcher;
     protected static Cache<UUID, Integer> invalidBoosts = CacheBuilder.newBuilder().concurrencyLevel(1).
             expireAfterAccess(5, TimeUnit.MINUTES).build();
 
@@ -225,6 +227,16 @@ public class ServerProxy implements ISidedProxy {
             float y, float z, float vol, float pitch, boolean repeat, int repeatDelay) {
         
         return new ISoundHandle.Noop();
+    }
+    
+    @Override
+    public IResourceReloadDispatcher getResourceReloadDispatcher() {
+        return reloadDispatcher;
+    }
+    
+    @Override
+    public void initResourceReloadDispatcher() {
+        reloadDispatcher = new IResourceReloadDispatcher.Noop();
     }
     
     @Override
