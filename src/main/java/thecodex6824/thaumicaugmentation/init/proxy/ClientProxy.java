@@ -164,7 +164,6 @@ import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTE
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderAltar;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderEldritchLock;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderGlassTube;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusGate;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObelisk;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObeliskVisual;
@@ -1115,7 +1114,6 @@ public class ClientProxy extends ServerProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftMoverOutput.class, new RenderRiftMoverOutput());
         ClientRegistry.bindTileEntitySpecialRenderer(TileVoidRechargePedestal.class, new RenderVoidRechargePedestal());
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusMirror.class, new RenderImpetusMirror());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusGate.class, new RenderImpetusGate());
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftMonitor.class, new RenderRiftMonitor());
         ClientRegistry.bindTileEntitySpecialRenderer(TileStabilityFieldGenerator.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileStarfieldGlass.class, new RenderStarfieldGlass());

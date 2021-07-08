@@ -1,0 +1,9 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:impetus_gate"
+    },
+    "variants": {
+        "normal": [{}]
+    }
+}
