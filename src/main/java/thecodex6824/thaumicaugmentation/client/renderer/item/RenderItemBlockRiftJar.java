@@ -37,15 +37,17 @@ import net.minecraft.util.math.AxisAlignedBB;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
+import thecodex6824.thaumicaugmentation.client.model.CachedBakedModel;
 
 public class RenderItemBlockRiftJar extends TileEntityItemStackRenderer {
 
     protected Cache<ItemStack, FluxRiftReconstructor> rifts;
-    protected IBakedModel jar;
+    protected CachedBakedModel<IBakedModel> jar;
     
     public RenderItemBlockRiftJar() {
         rifts = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterAccess(
                 3000, TimeUnit.MILLISECONDS).maximumSize(250).build();
+        jar = new CachedBakedModel<>(() -> Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(TABlocks.RIFT_JAR.getDefaultState()));
     }
     
     @Override
@@ -88,13 +90,10 @@ public class RenderItemBlockRiftJar extends TileEntityItemStackRenderer {
             }
         }
         
-        if (jar == null)
-            jar = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(TABlocks.RIFT_JAR.getDefaultState());
-        
         GlStateManager.translate(0.0F, 0.375F, 0.0F);
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.enableBlend();
-        Minecraft.getMinecraft().getRenderItem().renderItem(stack, jar);
+        Minecraft.getMinecraft().getRenderItem().renderItem(stack, jar.get());
         GlStateManager.popMatrix();
     }
     

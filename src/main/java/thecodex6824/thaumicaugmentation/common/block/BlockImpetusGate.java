@@ -43,6 +43,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockNoImpetusNodeNBT;
@@ -50,7 +51,8 @@ import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGate;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
-public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, IItemBlockProvider {
+public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, IEnabledBlock,
+    IItemBlockProvider {
 
     protected static final AxisAlignedBB DOWN_BOX = new AxisAlignedBB(0.3125, 0.46875, 0.3125, 0.6875, 1.0, 0.6875);
     protected static final AxisAlignedBB EAST_BOX = new AxisAlignedBB(0.0, 0.3125, 0.3125, 0.53125, 0.6875, 0.6875);
@@ -64,7 +66,7 @@ public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, 
         setHardness(3.0F);
         setResistance(35.0F);
         setSoundType(SoundType.METAL);
-        setDefaultState(getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.UP));
+        setDefaultState(getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.UP).withProperty(IEnabledBlock.ENABLED, false));
     }
     
     @Override
@@ -74,17 +76,18 @@ public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, 
     
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, IDirectionalBlock.DIRECTION);
+        return new BlockStateContainer(this, IDirectionalBlock.DIRECTION, IEnabledBlock.ENABLED);
     }
     
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.byIndex(BitUtil.getBits(meta, 0, 3)));
+        return getDefaultState().withProperty(IDirectionalBlock.DIRECTION, EnumFacing.byIndex(BitUtil.getBits(meta, 0, 3))).withProperty(
+                IEnabledBlock.ENABLED, BitUtil.isBitSet(meta, 3));
     }
     
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(IDirectionalBlock.DIRECTION).getIndex();
+        return BitUtil.setBit(state.getValue(IDirectionalBlock.DIRECTION).getIndex(), 3, state.getValue(IEnabledBlock.ENABLED));
     }
     
     @Override
@@ -104,6 +107,18 @@ public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, 
         return state.withRotation(mirror.toRotation(state.getValue(IDirectionalBlock.DIRECTION)));
     }
     
+    protected void update(IBlockState state, World world, BlockPos pos) {
+        boolean powered = world.isBlockPowered(pos);
+        if (powered == state.getValue(IEnabledBlock.ENABLED))
+            world.setBlockState(pos, state.cycleProperty(IEnabledBlock.ENABLED), 3);
+    }
+
+    @Override
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+        update(state, world, pos);
+        super.onBlockAdded(world, pos, state);
+    }
+    
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
         EnumFacing dir = state.getValue(IDirectionalBlock.DIRECTION).getOpposite();
@@ -111,6 +126,8 @@ public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, 
             dropBlockAsItem(world, pos, state, 0);
             world.setBlockToAir(pos);
         }
+        else
+            update(state, world, pos);
     }
     
     @Override
@@ -189,8 +206,8 @@ public class BlockImpetusGate extends BlockTABase implements IDirectionalBlock, 
     }
 
     @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.SOLID;
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override

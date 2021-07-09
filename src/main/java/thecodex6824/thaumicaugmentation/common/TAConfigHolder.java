@@ -581,6 +581,13 @@ public final class TAConfigHolder {
             "It is recommended to only enable this for private servers with trusted players."
         })
         public boolean allowOfflinePlayerResearch = false;
+        
+        @Name("UndeadEldritchGuardians")
+        @Comment({
+            "Makes TA eldritch guardians and wardens be undead mobs.",
+            "In vanilla TC, eldritch guardians are undead while wardens are not."
+        })
+        public boolean undeadEldritchGuardians = true;
     }
     
     public static class WorldOptions {
@@ -875,6 +882,8 @@ public final class TAConfigHolder {
         TAConfig.elytraHarnessBoostCost.setValue(gameplay.harness.elytraHarnessBoostCost, side);
         
         TAConfig.allowOfflinePlayerResearch.setValue(gameplay.allowOfflinePlayerResearch, side);
+        
+        TAConfig.undeadEldritchGuardians.setValue(gameplay.undeadEldritchGuardians, side);
     }
 
     public static void syncLocally() {
@@ -1029,6 +1038,8 @@ public final class TAConfigHolder {
         TAConfig.elytraHarnessBoostCost = TAConfigManager.addOption(new ConfigOptionDouble(true, gameplay.harness.elytraHarnessBoostCost));
     
         TAConfig.allowOfflinePlayerResearch = TAConfigManager.addOption(new ConfigOptionBoolean(false, gameplay.allowOfflinePlayerResearch));
+    
+        TAConfig.undeadEldritchGuardians = TAConfigManager.addOption(new ConfigOptionBoolean(true, gameplay.undeadEldritchGuardians));
     }
 
 }

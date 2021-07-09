@@ -66,6 +66,7 @@ import thaumcraft.common.entities.projectile.EntityEldritchOrb;
 import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.network.PacketHandler;
 import thaumcraft.common.lib.network.fx.PacketFXSonic;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
@@ -237,7 +238,8 @@ public class EntityTAEldritchGuardian extends EntityEldritchGuardian {
     
     @Override
     public EnumCreatureAttribute getCreatureAttribute() {
-        return EnumCreatureAttribute.UNDEFINED;
+        return TAConfig.undeadEldritchGuardians.getValue() ? EnumCreatureAttribute.UNDEAD :
+            EnumCreatureAttribute.UNDEFINED;
     }
     
 }

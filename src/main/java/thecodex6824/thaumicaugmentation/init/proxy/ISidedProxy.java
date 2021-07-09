@@ -45,6 +45,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.common.util.IResourceReloadDispatcher;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
@@ -95,6 +96,10 @@ public interface ISidedProxy {
     
     public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick,
             float x, float y, float z, float vol, float pitch, boolean repeat, int repeatDelay);
+    
+    public IResourceReloadDispatcher getResourceReloadDispatcher();
+    
+    public void initResourceReloadDispatcher();
     
     public void preInit();
 

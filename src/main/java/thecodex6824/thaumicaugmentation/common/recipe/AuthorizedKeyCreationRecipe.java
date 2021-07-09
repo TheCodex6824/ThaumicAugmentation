@@ -106,5 +106,10 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
     public ItemStack getRecipeOutput() {
         return ItemStack.EMPTY;
     }
+    
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
 
 }

@@ -97,9 +97,10 @@ public class TileCrabVent extends TileEntity implements ITickable {
                     ticks = getBaseSpawnDelay() + world.rand.nextInt(61);
                     EnumFacing face = world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION);
                     EntityEldritchCrab crab = new EntityEldritchCrab(world);
-                    double offsetX = face.getAxis() == Axis.X ? face.getXOffset() * 0.33 : 0.5;
-                    double offsetY = face.getAxis() == Axis.Y ? face.getYOffset() * 0.33 : 0.5 - crab.height / 2.0;
-                    double offsetZ = face.getAxis() == Axis.Z ? face.getZOffset() * 0.33 : 0.5;
+                    double offsetX = face.getAxis() == Axis.X ? crab.width / 2.0 : 0.5;
+                    double offsetY = face.getAxis() == Axis.Y ? (face.getAxisDirection() == AxisDirection.NEGATIVE ?
+                            0.75 - crab.height : 0.25) : 0.5 - crab.height / 2.0;
+                    double offsetZ = face.getAxis() == Axis.Z ? crab.width / 2.0 : 0.5;
                     crab.setLocationAndAngles(pos.getX() + offsetX, pos.getY() + offsetY, pos.getZ() + offsetZ,
                             face.getHorizontalAngle(), 0.0F);
                     crab.motionX = face.getXOffset() * 0.2F;

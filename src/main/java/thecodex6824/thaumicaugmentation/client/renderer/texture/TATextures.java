@@ -21,10 +21,17 @@
 package thecodex6824.thaumicaugmentation.client.renderer.texture;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
+@EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = {Side.CLIENT})
 public class TATextures {
 
     public static final ResourceLocation GRID = new ResourceLocation("thaumcraft", "textures/misc/gridblock.png");
@@ -81,10 +88,18 @@ public class TATextures {
     
     public static final ResourceLocation ESSENTIA = new ResourceLocation("thaumcraft", "blocks/animatedglow");
     
-    public static void setupTextures() {
-        SimpleTexture tex = new SimpleTexture(MIRROR);
-        if (Minecraft.getMinecraft().getTextureManager().loadTexture(MIRROR, tex))
+    @SubscribeEvent
+    public static void onTextureStitch(TextureStitchEvent.Post event) {
+        ITextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(MIRROR);
+        if (tex == null) {
+            Minecraft.getMinecraft().getTextureManager().loadTexture(MIRROR, new SimpleTexture(MIRROR));
+            tex = Minecraft.getMinecraft().getTextureManager().getTexture(MIRROR);
+        }
+        
+        if (tex != null) {
+            GlStateManager.bindTexture(tex.getGlTextureId());
             tex.setBlurMipmap(true, false);
+        }
     }
     
 }

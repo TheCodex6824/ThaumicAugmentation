@@ -163,6 +163,8 @@ public final class TAConfig {
     
     public static ConfigOptionBoolean allowOfflinePlayerResearch;
     
+    public static ConfigOptionBoolean undeadEldritchGuardians;
+    
     /**
      * Registers a callback to be notified when the config is synced or updated.
      * @param listener The callback

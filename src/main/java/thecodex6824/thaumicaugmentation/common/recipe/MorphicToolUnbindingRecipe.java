@@ -113,4 +113,9 @@ public class MorphicToolUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecipe
         return ItemStack.EMPTY;
     }
     
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
+    
 }

@@ -37,6 +37,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
@@ -117,6 +118,14 @@ public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
     
     public ItemThaumiumRobes(EntityEquipmentSlot slot) {
         super(TAMaterials.THAUMIUM_ROBES, 4, slot);
+        if (slot == EntityEquipmentSlot.HEAD) {
+            addPropertyOverride(new ResourceLocation(ThaumicAugmentationAPI.MODID, "style"), new IItemPropertyGetter() {
+                @Override
+                public float apply(ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
+                    return stack.hasTagCompound() ? stack.getTagCompound().getInteger("style") : 0;
+                }
+            });
+        }
     }
     
     @Override

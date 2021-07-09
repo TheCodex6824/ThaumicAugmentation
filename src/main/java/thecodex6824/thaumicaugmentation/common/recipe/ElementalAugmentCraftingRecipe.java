@@ -68,4 +68,9 @@ public class ElementalAugmentCraftingRecipe extends ShapelessArcaneRecipe {
         return ItemStack.EMPTY;
     }
     
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
+    
 }

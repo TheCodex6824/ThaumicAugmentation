@@ -286,12 +286,28 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
             }
         }
         else if (function.equals("vent")) {
+            boolean dirFound = false;
             IBlockState vent = TABlocks.CRAB_VENT.getDefaultState();
             for (EnumFacing facing : EnumFacing.VALUES) {
                 BlockPos checkPos = pos.offset(facing.getOpposite());
                 if (world.getBlockState(checkPos).isSideSolid(world, checkPos, facing)) {
                     vent = vent.withProperty(IDirectionalBlock.DIRECTION, facing);
+                    dirFound = true;
                     break;
+                }
+            }
+            
+            // side we need not generated yet, so force one for now
+            // yes this solution is not great but it's better than floating vents
+            if (!dirFound) {
+                for (EnumFacing facing : EnumFacing.VALUES) {
+                    BlockPos checkPos = pos.offset(facing.getOpposite());
+                    if (!sbb.isVecInside(checkPos)) {
+                        setBlockStateClearWard(world, checkPos,
+                                TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_CRUSTED), 2);
+                        vent = vent.withProperty(IDirectionalBlock.DIRECTION, facing);
+                        break;
+                    }
                 }
             }
             

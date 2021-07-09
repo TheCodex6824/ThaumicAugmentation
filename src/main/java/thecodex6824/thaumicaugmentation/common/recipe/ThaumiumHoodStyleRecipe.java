@@ -26,24 +26,24 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import thecodex6824.thaumicaugmentation.common.item.ItemPrimalCutter;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 
-public class PrimalCutterAbilityRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+public class ThaumiumHoodStyleRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
     @Override
     public boolean canFit(int width, int height) {
         return width * height >= 1;
     }
-
+    
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
-        boolean hasCutter = false;
+        boolean hasHood = false;
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof ItemPrimalCutter) {
-                    if (!hasCutter)
-                        hasCutter = true;
+                if (stack.getItem() == TAItems.THAUMIUM_ROBES_HOOD) {
+                    if (!hasHood)
+                        hasHood = true;
                     else
                         return false;
                 }
@@ -51,19 +51,19 @@ public class PrimalCutterAbilityRecipe extends IForgeRegistryEntry.Impl<IRecipe>
                     return false;
             }
         }
-
-        return hasCutter;
+        
+        return hasHood;
     }
-
+    
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
-        ItemStack cutter = ItemStack.EMPTY;
+        ItemStack hood = ItemStack.EMPTY;
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null && !stack.isEmpty()) {
-                if (stack.getItem() instanceof ItemPrimalCutter) {
-                    if (cutter.isEmpty())
-                        cutter = stack;
+                if (stack.getItem() == TAItems.THAUMIUM_ROBES_HOOD) {
+                    if (hood.isEmpty())
+                        hood = stack;
                     else
                         return ItemStack.EMPTY;
                 }
@@ -71,17 +71,18 @@ public class PrimalCutterAbilityRecipe extends IForgeRegistryEntry.Impl<IRecipe>
                     return ItemStack.EMPTY;
             }
         }
-
-        if (!cutter.isEmpty()) {
-            ItemStack output = cutter.copy();
-            if (!output.hasTagCompound())
-                output.setTagCompound(new NBTTagCompound());
-
-            output.getTagCompound().setBoolean("drawingDisabled", !output.getTagCompound().getBoolean("drawingDisabled"));
-            return output;
-        }
+        
+        ItemStack ret = hood.copy();
+        if (!ret.hasTagCompound())
+            ret.setTagCompound(new NBTTagCompound());
+        
+        int style = ret.getTagCompound().getInteger("style");
+        if (style == 0)
+            ret.getTagCompound().setInteger("style", 1);
         else
-            return ItemStack.EMPTY;
+            ret.getTagCompound().setInteger("style", 0);
+        
+        return ret;
     }
     
     @Override

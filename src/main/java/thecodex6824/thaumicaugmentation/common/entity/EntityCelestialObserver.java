@@ -396,7 +396,8 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
     @Override
     @Nullable
     public Entity getOwner() {
-        if (ownerRef.get() == null && dataManager.get(OWNER_ID).isPresent()) {
+        if ((ownerRef.get() == null || ownerRef.get().isDead) && dataManager.get(OWNER_ID).isPresent()) {
+            ownerRef.clear();
             List<Entity> entities = world.getEntities(Entity.class, entity -> entity != null && entity.getPersistentID().equals(dataManager.get(OWNER_ID).get()));
             if (!entities.isEmpty())
                 ownerRef = new WeakReference<>(entities.get(0));

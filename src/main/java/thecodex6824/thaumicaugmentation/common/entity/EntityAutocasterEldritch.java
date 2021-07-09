@@ -44,6 +44,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import thaumcraft.api.casters.FocusMediumRoot;
 import thaumcraft.api.casters.FocusNode;
@@ -183,11 +184,19 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
         tasks.addTask(2, new EntityAIWatchClosest(this, EntityPlayer.class, 12.0F));
         tasks.addTask(3, new EntityAILookIdle(this));
         targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+        targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, 10, true, false,
+                e -> e.getEntityWorld().getDifficulty() != EnumDifficulty.PEACEFUL));
         targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityCultistLeader.class, true));
         targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityCultist.class, true));
         targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityCultistPortalGreater.class, true));
         targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityCultistPortalLesser.class, true));
+    }
+    
+    @Override
+    protected void updateAITasks() {
+        super.updateAITasks();
+        if (world.getDifficulty() == EnumDifficulty.PEACEFUL && getAttackTarget() instanceof EntityPlayer)
+            setAttackTarget(null);
     }
     
     protected void addWord(Random rand, StringBuilder builder) {

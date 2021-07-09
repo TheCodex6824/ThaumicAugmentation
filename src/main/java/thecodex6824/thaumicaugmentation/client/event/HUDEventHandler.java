@@ -26,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
@@ -38,6 +39,8 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import thaumcraft.api.casters.ICaster;
+import thaumcraft.common.config.ModConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
@@ -51,11 +54,13 @@ import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public class HUDEventHandler {
 
-    protected static void renderHeldImpetusLevel(IImpetusStorage storage) {
-        float height = 60.0F * (float) (Math.ceil((double) storage.getEnergyStored() / storage.getMaxEnergyStored() * 10.0) / 10.0);
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(30.0, 6.0, 0.0);
-        GlStateManager.scale(0.5, 0.5, 0.5);
+    protected static void renderHeldImpetusLevel(ItemStack stack, IImpetusStorage storage) {
+        boolean bottom = ModConfig.CONFIG_GRAPHICS.dialBottom;
+        boolean caster = stack.getItem() instanceof ICaster;
+        ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+        double yMin = caster ? (bottom ? res.getScaledHeight() - 37.5 : 32.5) : (bottom ? res.getScaledHeight() - 10.5 : 5.5);
+        double yMax = caster ? (bottom ? res.getScaledHeight() - 32.5 : 37.5) : (bottom ? res.getScaledHeight() - 5.5 : 10.5);
+        float height = 30.0F * (float) (Math.ceil((double) storage.getEnergyStored() / storage.getMaxEnergyStored() * 10.0) / 10.0);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         Tessellator t = Tessellator.getInstance();
@@ -66,10 +71,10 @@ public class HUDEventHandler {
             Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.RIFT);
             TAShaderManager.enableShader(TAShaders.FLUX_RIFT_HUD, TAShaders.SHADER_CALLBACK_CONSTANT_SPHERE_ZOOMED_20);
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            buffer.pos(-43.0, 59.5, 0.0).tex(1.0, 0.0).endVertex();
-            buffer.pos(-56.0 + height, 59.5, 0.0).tex(0.0, 0.0).endVertex();
-            buffer.pos(-56.0 + height, 50.5, 0.0).tex(0.0, 1.0).endVertex();
-            buffer.pos(-43.0, 50.5, 0.0).tex(1.0, 1.0).endVertex();
+            buffer.pos(8.0, yMax, 0.0).tex(1.0, 0.0).endVertex();
+            buffer.pos(8.0 + height, yMax, 0.0).tex(0.0, 0.0).endVertex();
+            buffer.pos(8.0 + height, yMin, 0.0).tex(0.0, 1.0).endVertex();
+            buffer.pos(8.0, yMin, 0.0).tex(1.0, 1.0).endVertex();
             t.draw();
             TAShaderManager.disableShader();
             GlStateManager.enableBlend();
@@ -79,21 +84,20 @@ public class HUDEventHandler {
             GlStateManager.color(0.4F, 0.4F, 0.5F, 0.8F);
             Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.TC_HUD);
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            buffer.pos(-43.0, 59.5, 0.0).tex(0.40625, 0.1171875).endVertex();
-            buffer.pos(-56.0 + height, 59.5, 0.0).tex(0.40625, 0.0).endVertex();
-            buffer.pos(-56.0 + height, 50.5, 0.0).tex(0.4375, 0.0).endVertex();
-            buffer.pos(-43.0, 50.5, 0.0).tex(0.4375, 0.1171875).endVertex();
+            buffer.pos(8.0, yMax, 0.0).tex(0.40625, 0.1171875).endVertex();
+            buffer.pos(8.0 + height, yMax, 0.0).tex(0.40625, 0.0).endVertex();
+            buffer.pos(8.0 + height, yMin, 0.0).tex(0.4375, 0.0).endVertex();
+            buffer.pos(8.0, yMin, 0.0).tex(0.4375, 0.1171875).endVertex();
             t.draw();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         }
         
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos(11.0, 47.0, 0.0).tex(0.28125, 0.0078125).endVertex();
-        buffer.pos(-49.0, 47.0, 0.0).tex(0.28125, 0.16796875).endVertex();
-        buffer.pos(-49.0, 63.0, 0.0).tex(0.34375, 0.16796875).endVertex();
-        buffer.pos(11.0, 63.0, 0.0).tex(0.34375, 0.0078125).endVertex();
+        buffer.pos(41.5, yMin - 1.75, 0.0).tex(0.28125, 0.0078125).endVertex();
+        buffer.pos(4.5, yMin - 1.75, 0.0).tex(0.28125, 0.16796875).endVertex();
+        buffer.pos(4.5, yMax + 1.75, 0.0).tex(0.34375, 0.16796875).endVertex();
+        buffer.pos(41.5, yMax + 1.75, 0.0).tex(0.34375, 0.0078125).endVertex();
         t.draw();
-        GlStateManager.popMatrix();
     }
     
     @Nullable
@@ -117,12 +121,15 @@ public class HUDEventHandler {
     public static void onRenderHUD(RenderGameOverlayEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
         if (event.getType() == ElementType.POTION_ICONS && mc.inGameHasFocus && Minecraft.isGuiEnabled()) {
-            IImpetusStorage storage = findStorage(mc.player.getHeldItemMainhand());
-            if (storage == null)
-                storage = findStorage(mc.player.getHeldItemOffhand());
+            ItemStack held = mc.player.getHeldItemMainhand();
+            IImpetusStorage storage = findStorage(held);
+            if (storage == null) {
+                held = mc.player.getHeldItemOffhand();
+                storage = findStorage(held);
+            }
         
             if (storage != null)
-                renderHeldImpetusLevel(storage);
+                renderHeldImpetusLevel(held, storage);
         }
     }
     

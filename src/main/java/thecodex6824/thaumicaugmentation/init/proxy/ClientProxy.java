@@ -43,6 +43,8 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -129,6 +131,7 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer;
 import thecodex6824.thaumicaugmentation.client.event.ClientEventHandler;
 import thecodex6824.thaumicaugmentation.client.event.ClientLivingEquipmentChangeEvent;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
+import thecodex6824.thaumicaugmentation.client.event.ResourceReloadDispatcher;
 import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.fx.FXGenericP2ECustomSpeed;
 import thecodex6824.thaumicaugmentation.client.fx.FXImpulseBeam;
@@ -157,12 +160,10 @@ import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchG
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAGolemOrb;
 import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
-import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderAltar;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderEldritchLock;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderGlassTube;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusGate;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObelisk;
 import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObeliskVisual;
@@ -240,6 +241,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
+import thecodex6824.thaumicaugmentation.common.util.IResourceReloadDispatcher;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
@@ -250,6 +252,7 @@ public class ClientProxy extends ServerProxy {
 
     private KeyBinding elytraBoost;
     private HashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
+    private ResourceReloadDispatcher reloadDispatcher;
     
     public ClientProxy() {
         handlers = new HashMap<>();
@@ -278,6 +281,8 @@ public class ClientProxy extends ServerProxy {
         handlers.put(PacketRecoil.class, (message, ctx) -> handleRecoilPacket((PacketRecoil) message, ctx));
         handlers.put(PacketTerraformerWork.class, (message, ctx) -> handleTerraformerWorkPacket((PacketTerraformerWork) message, ctx));
         handlers.put(PacketEssentiaUpdate.class, (message, ctx) -> handleEssentiaUpdatePacket((PacketEssentiaUpdate) message, ctx));
+    
+        reloadDispatcher = new ResourceReloadDispatcher();
     }
     
     @Override
@@ -633,6 +638,25 @@ public class ClientProxy extends ServerProxy {
                     
                     break;
                 }
+                case ENDER_EYE_BREAK: {
+                    if (d.length == 4) {
+                        World world = Minecraft.getMinecraft().world;
+                        double x = d[0], y = d[1], z = d[2];
+                        for (int i = 0; i < 8; ++i) {
+                            world.spawnParticle(EnumParticleTypes.ITEM_CRACK, true, x, y, z, rand.nextGaussian() * 0.15,
+                                    rand.nextDouble() * 0.2, rand.nextGaussian() * 0.15, (int) d[3]);
+                        }
+
+                        for (float angle = 0.0F; angle < Math.PI * 2; angle += (float) (Math.PI * 2 / 40)) {
+                            world.spawnParticle(EnumParticleTypes.PORTAL, true, x + MathHelper.cos(angle) * 5.0F, y - 0.4F,
+                                    z + MathHelper.sin(angle) * 5.0F, MathHelper.cos(angle) * -5.0F, 0.0F, MathHelper.sin(angle) * -5.0F);
+                            world.spawnParticle(EnumParticleTypes.PORTAL, x + MathHelper.cos(angle) * 5.0F, y - 0.4F,
+                                    z + MathHelper.sin(angle) * 5.0F, MathHelper.cos(angle) * -7.0F, 0.0F, MathHelper.sin(angle) * -7.0F);
+                        }
+                    }
+                    
+                    break;
+                }
              
                 default: {break;}
             }
@@ -968,6 +992,20 @@ public class ClientProxy extends ServerProxy {
             }
         }
     }
+    
+    @Override
+    public IResourceReloadDispatcher getResourceReloadDispatcher() {
+        return reloadDispatcher;
+    }
+    
+    @Override
+    public void initResourceReloadDispatcher() {
+        IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+        if (manager instanceof IReloadableResourceManager)
+            ((IReloadableResourceManager) manager).registerReloadListener(reloadDispatcher);
+        else
+            ThaumicAugmentation.getLogger().warn("Resource manager not reloadable, some models may break on resource reload");
+    }
 
     @Override
     public void preInit() {
@@ -1076,7 +1114,6 @@ public class ClientProxy extends ServerProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftMoverOutput.class, new RenderRiftMoverOutput());
         ClientRegistry.bindTileEntitySpecialRenderer(TileVoidRechargePedestal.class, new RenderVoidRechargePedestal());
         ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusMirror.class, new RenderImpetusMirror());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileImpetusGate.class, new RenderImpetusGate());
         ClientRegistry.bindTileEntitySpecialRenderer(TileRiftMonitor.class, new RenderRiftMonitor());
         ClientRegistry.bindTileEntitySpecialRenderer(TileStabilityFieldGenerator.class, new ListeningAnimatedTESR<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileStarfieldGlass.class, new RenderStarfieldGlass());
@@ -1101,7 +1138,6 @@ public class ClientProxy extends ServerProxy {
     @Override
     public void postInit() {
         super.postInit();
-        TATextures.setupTextures();
         TAShaderManager.init();
         if (TAShaderManager.shouldUseShaders()) {
             TAShaders.FRACTURE = TAShaderManager.registerShader(new ResourceLocation(ThaumicAugmentationAPI.MODID, "fracture"));

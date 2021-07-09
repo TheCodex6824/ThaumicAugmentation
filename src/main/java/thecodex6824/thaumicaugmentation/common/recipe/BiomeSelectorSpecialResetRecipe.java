@@ -122,4 +122,9 @@ public class BiomeSelectorSpecialResetRecipe extends IForgeRegistryEntry.Impl<IR
         return ItemStack.EMPTY;
     }
     
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
+    
 }

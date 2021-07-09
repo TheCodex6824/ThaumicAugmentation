@@ -27,6 +27,7 @@ import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -100,7 +101,7 @@ public final class TAHooksClient {
         }
     }
     
-    public static boolean shouldRenderCape(EntityPlayerSP player) {
+    public static boolean shouldRenderCape(AbstractClientPlayer player) {
         IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
         if (baubles != null) {
             ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);

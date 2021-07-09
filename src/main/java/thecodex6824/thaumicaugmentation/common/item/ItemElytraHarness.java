@@ -62,6 +62,7 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
         setMaxStackSize(1);
         setHasSubtypes(true);
         setMaxDamage(221);
+        setNoRepair();
     }
     
     @Override

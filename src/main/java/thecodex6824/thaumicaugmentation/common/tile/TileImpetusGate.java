@@ -37,7 +37,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
@@ -58,7 +60,7 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
             public long onTransaction(Deque<IImpetusNode> path, long energy,
                     boolean simulate) {
                 
-                return world.getRedstonePowerFromNeighbors(pos) > 0 ? 0 : energy;
+                return !world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) ? 0 : energy;
             }
             
             @Override
@@ -105,6 +107,12 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     
     @Override
     public void onLoad() {
+        // refresh redstone state, since we changed from checking manually to property
+        // TODO: remove this in a later update?
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() == TABlocks.IMPETUS_GATE)
+            state.getBlock().onBlockAdded(world, pos, state);
+        
         node.init(world);
         ThaumicAugmentation.proxy.registerRenderableImpetusNode(node);
     }
@@ -181,16 +189,6 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
             return CapabilityImpetusNode.IMPETUS_NODE.cast(node);
         else
             return super.getCapability(capability, facing);
-    }
-    
-    @Override
-    public boolean hasFastRenderer() {
-        return true;
-    }
-    
-    @Override
-    public boolean shouldRenderInPass(int pass) {
-        return pass == 1;
     }
     
 }

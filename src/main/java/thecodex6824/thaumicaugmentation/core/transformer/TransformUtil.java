@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.core.transformer;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -165,6 +166,46 @@ public final class TransformUtil {
         }
         
         return -1;
+    }
+    
+    public static int findFirstField(MethodNode node, int startIndex, String name, String desc,
+            String owningClass) {
+        
+        if (startIndex < 0 || startIndex >= node.instructions.size())
+            return -1;
+        
+        for (int i = startIndex; i < node.instructions.size(); ++i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn instanceof FieldInsnNode) {
+                FieldInsnNode field = (FieldInsnNode) insn;
+                if (field.name.equals(name) && field.desc.equals(desc) &&
+                        field.owner.equals(owningClass))
+                    return i;
+            }
+        }
+        
+        return -1;
+        
+    }
+    
+    public static int findLastField(MethodNode node, int endIndex, String name, String desc,
+            String owningClass) {
+        
+        if ((endIndex - 1) < 0 || (endIndex - 1) >= node.instructions.size())
+            return -1;
+        
+        for (int i = endIndex - 1; i >= 0; --i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn instanceof FieldInsnNode) {
+                FieldInsnNode field = (FieldInsnNode) insn;
+                if (field.name.equals(name) && field.desc.equals(desc) &&
+                        field.owner.equals(owningClass))
+                    return i;
+            }
+        }
+        
+        return -1;
+        
     }
     
 }
