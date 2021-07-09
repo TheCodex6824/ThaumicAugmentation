@@ -137,7 +137,8 @@
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
                 "HARNESS_BASE",
-                "!ELYTRA"
+                "!ELYTRA",
+				"~BASEELDRITCH"
             ],
             "meta": [
                 "HIDDEN"  
