@@ -32,7 +32,7 @@ public class RenderRiftBarrier extends FastTESR<TileRiftBarrier> {
     public void renderTileEntityFast(TileRiftBarrier te, double x, double y, double z, float partialTicks,
             int destroyStage, float partial, BufferBuilder buffer) {
         
-        RenderEventHandler.onRenderShaderTile(ShaderType.RIFT, te);
+        RenderEventHandler.onRenderShaderTile(ShaderType.MIRROR, te);
     }
     
 }

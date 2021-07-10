@@ -52,7 +52,7 @@ public class RenderObelisk extends FastTESR<TileObelisk> {
         buffer.setTranslation(oldX, oldY, oldZ);
         
         // safe as it just queues some rendering for later
-        RenderEventHandler.onRenderShaderTile(ShaderType.RIFT, te);
+        RenderEventHandler.onRenderShaderTile(ShaderType.MIRROR, te);
     }
     
 }
