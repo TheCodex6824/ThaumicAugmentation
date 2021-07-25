@@ -126,6 +126,12 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         CapabilityProviderHarness provider = new CapabilityProviderHarness(new AugmentableItem(1) {
             
+            protected void checkVis() {
+                int difference = RechargeHelper.getCharge(stack) - getHarnessVisCapacity(stack);
+                if (difference > 0)
+                    RechargeHelper.consumeCharge(stack, null, difference);
+            }
+            
             @Override
             public boolean isAugmentAcceptable(ItemStack augment, int slot) {
                 return augment.getCapability(CapabilityAugment.AUGMENT, null) instanceof IThaumostaticHarnessAugment;
@@ -134,18 +140,20 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
             @Override
             public void setAugment(ItemStack augment, int slot) {
                 super.setAugment(augment, slot);
-                int difference = RechargeHelper.getCharge(stack) - getHarnessVisCapacity(stack);
-                if (difference > 0)
-                    RechargeHelper.consumeCharge(stack, null, difference);
+                checkVis();
             }
             
             @Override
             public ItemStack[] setAllAugments(ItemStack[] augs) {
                 ItemStack[] ret = super.setAllAugments(augs);
-                int difference = RechargeHelper.getCharge(stack) - getHarnessVisCapacity(stack);
-                if (difference > 0)
-                    RechargeHelper.consumeCharge(stack, null, difference);
-                
+                checkVis();
+                return ret;
+            }
+            
+            @Override
+            public ItemStack removeAugment(int slot) {
+                ItemStack ret = super.removeAugment(slot);
+                checkVis();
                 return ret;
             }
             
