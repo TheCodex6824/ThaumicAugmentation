@@ -37,6 +37,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
 import net.minecraft.stats.StatisticsManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -52,6 +53,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -60,6 +62,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import thaumcraft.api.capabilities.IPlayerKnowledge;
 import thaumcraft.api.capabilities.IPlayerKnowledge.EnumResearchFlag;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
+import thaumcraft.api.items.RechargeHelper;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -404,6 +407,40 @@ public final class PlayerEventHandler {
 
                 if (shouldSilenceFall)
                     event.setCanceled(true);
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onFlyFall(PlayerFlyableFallEvent event) {
+        EntityPlayer player = event.getEntityPlayer();
+        if (!player.isCreative() && !player.isSpectator() && player.capabilities.allowFlying) {
+            IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+            if (baubles != null) {
+                boolean doDamage = false;
+                int visCost = MathHelper.ceil(event.getDistance() / 5.0);
+                for (int slot : BaubleType.BODY.getValidSlots()) {
+                    ItemStack inSlot = baubles.getStackInSlot(slot);
+                    if (inSlot.getItem() == TAItems.THAUMOSTATIC_HARNESS) {
+                        doDamage = true;
+                        IAugmentableItem item = inSlot.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                        if (item != null) {
+                            for (ItemStack augment : item.getAllAugments()) {
+                                if (augment.getItem() == TAItems.THAUMOSTATIC_HARNESS_AUGMENT &&
+                                        augment.getMetadata() == 0 && RechargeHelper.consumeCharge(inSlot, player, visCost)) {
+                                    
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                if (doDamage) {
+                    player.capabilities.allowFlying = false;
+                    player.fall(event.getDistance(), event.getMultiplier());
+                    player.capabilities.allowFlying = true;
+                }
             }
         }
     }
