@@ -291,7 +291,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     
     @Override
     protected boolean processInteract(EntityPlayer player, EnumHand hand) {
-        if (!world.isRemote && !isDead) {
+        if (!world.isRemote && !isDead && getHealth() > 0.0F) {
             if (player.equals(getOwner())) {
                 if (player.isSneaking()) {
                     playSound(SoundsTC.zap, 1.0F, 1.0F);
