@@ -135,6 +135,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
         getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25.0);
+        getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(4.0);
     }
     
     @Override
@@ -233,11 +234,6 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
         }
         else
             super.updateEntityActionState();
-    }
-    
-    @Override
-    public int getTotalArmorValue() {
-        return 4;
     }
     
     @Override
