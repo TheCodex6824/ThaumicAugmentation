@@ -319,12 +319,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     
     @Override
     public boolean canBeCollidedWith() {
-        // I hate this
-        if (world.isRemote && ThaumicAugmentation.proxy.isEntityClientPlayer(ownerRef.get())) {
-            StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-            if (trace.length >= 3 && trace[2].getClassName().equals("net.minecraft.client.renderer.EntityRenderer$1"))
-                return false;
-        }
+        if (world.isRemote && ThaumicAugmentation.proxy.isEntityClientPlayer(ownerRef.get()))
+            return false;
         
         return super.canBeCollidedWith();
     }
