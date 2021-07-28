@@ -31,6 +31,7 @@ import thaumcraft.api.casters.NodeSetting;
 import thaumcraft.api.casters.Trajectory;
 import thaumcraft.common.items.casters.foci.FocusMediumTouch;
 import thaumcraft.common.lib.utils.EntityUtils;
+import thecodex6824.thaumicaugmentation.common.internal.TAHooksCommon;
 
 public class FocusMediumTouchCompat extends FocusMediumTouch {
 
@@ -124,6 +125,7 @@ public class FocusMediumTouchCompat extends FocusMediumTouch {
             for (Trajectory sT : getParent().supplyTrajectories()) {
               Vec3d end = sT.direction.normalize();
               RayTraceResult ray = EntityUtils.getPointedEntityRay(getPackage().world, getPackage().getCaster(), sT.source, end, 0.25D, 4.0, 0.25F, false);
+              ray = TAHooksCommon.fireTargetGetEntityEvent(ray, this, sT, 4.0);
               if (ray == null) {
                   end = end.scale(4.0);
                   end = end.add(sT.source);
@@ -152,6 +154,7 @@ public class FocusMediumTouchCompat extends FocusMediumTouch {
                 Trajectory sT = supplied[i];
                 Vec3d end = sT.direction.normalize();
                 RayTraceResult ray = EntityUtils.getPointedEntityRay(getPackage().world, getPackage().getCaster(), sT.source, end, 0.25D, 4.0, 0.25F, false);
+                ray = TAHooksCommon.fireTrajectoryGetEntityEvent(ray, this, sT, 4.0);
                 if (ray == null) {
                     end = end.scale(4.0);
                     end = end.add(sT.source);
