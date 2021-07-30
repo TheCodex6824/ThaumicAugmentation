@@ -94,6 +94,10 @@ public final class TAConfig {
     public static ConfigOptionLong terraformerImpetusCost;
     public static ConfigOptionLong shieldFocusImpetusCost;
     
+    public static ConfigOptionInt impetusGeneratorEnergyPerImpetus;
+    public static ConfigOptionInt impetusGeneratorMaxExtract;
+    public static ConfigOptionInt impetusGeneratorBufferSize;
+    
     public static ConfigOptionBoolean allowWussRiftSeed;
     
     public static ConfigOptionFloat cannonBeamDamage;

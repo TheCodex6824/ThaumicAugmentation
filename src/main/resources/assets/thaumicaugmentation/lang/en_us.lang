@@ -235,6 +235,7 @@ thaumicaugmentation.text.config.impetus=Impetus
 thaumicaugmentation.text.config.impulse_cannon=Impulse Cannon
 thaumicaugmentation.text.config.augment=Augment
 thaumicaugmentation.text.config.harness=Harness
+thaumicaugmentation.text.config.impetus_generator=Impetus Generator
 
 thaumicaugmentation.key.category=Thaumic Augmentation
 thaumicaugmentation.key.elytra_boost=Activate Impetus Thruster (Hold)
