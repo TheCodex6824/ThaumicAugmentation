@@ -68,7 +68,6 @@ import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IFocusElement;
 import thaumcraft.api.crafting.IInfusionStabiliser;
-import thaumcraft.api.items.RechargeHelper;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.common.items.casters.ItemFocus;
 import thaumcraft.common.lib.SoundsTC;
@@ -374,7 +373,7 @@ public final class ClientEventHandler {
             if (baubles != null) {
                 for (int slot : BaubleType.BODY.getValidSlots()) {
                     ItemStack body = baubles.getStackInSlot(slot);
-                    if (body.getItem() == TAItems.THAUMOSTATIC_HARNESS && RechargeHelper.getCharge(body) > 0) {
+                    if (body.getItem() == TAItems.THAUMOSTATIC_HARNESS) {
                         final int id = player.getEntityId();
                         if (flying) {
                             ISoundHandle handle = ThaumicAugmentation.proxy.playSpecialSound(SoundsTC.hhon, SoundCategory.PLAYERS,
