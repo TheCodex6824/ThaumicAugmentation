@@ -38,13 +38,16 @@ import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IProjectile;
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityTNTPrimed;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumAction;
@@ -53,10 +56,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
@@ -79,6 +84,7 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
+import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -141,8 +147,7 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     
     @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        if (!target.getEntityWorld().isRemote && (!(target instanceof EntityPlayer) ||
-                ThaumicAugmentation.proxy.isPvPEnabled())) {
+        if (!target.getEntityWorld().isRemote && checkEntity(attacker, target)) {
             target.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 60));
             target.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 120));
         }
@@ -175,6 +180,34 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
             stack.setTagCompound(new NBTTagCompound());
         
         return stack.getTagCompound().getBoolean("drawingDisabled");
+    }
+    
+    protected boolean checkEntity(EntityLivingBase user, Entity entity) {
+        if (entity.isDead || !entity.isNonBoss())
+            return false;
+        
+        boolean allowed = false;
+        if (entity instanceof EntityPlayer && ThaumicAugmentation.proxy.isPvPEnabled())
+            allowed = true;
+        else if (entity instanceof EntityItem || entity instanceof EntityBoat || entity instanceof EntityMinecart ||
+                entity instanceof EntityFallingBlock || entity instanceof EntityTNTPrimed || entity instanceof IProjectile ||
+                entity instanceof EntityFireball || entity instanceof EntityXPOrb) {
+            
+            allowed = true;
+        }
+        else if (entity instanceof EntityLivingBase && !(entity instanceof EntityArmorStand))
+            allowed = true;
+        
+        if (allowed) {
+            Team userTeam = user.getTeam();
+            if (userTeam == null || userTeam.getAllowFriendlyFire() ||
+                    !userTeam.isSameTeam(entity.getTeam())) {
+                
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     @Override
@@ -211,40 +244,57 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     @Override
     public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         super.onUsingTick(stack, player, count);
+        double reach = 4.0;
+        if (player instanceof EntityPlayer)
+            reach = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+        
+        Vec3d playerVector = !player.getEntityWorld().isRemote ?
+                RaytraceHelper.raytracePosition(player, reach, null) :
+                RaytraceHelper.raytracePosition(player, reach, ThaumicAugmentation.proxy.getPartialTicks(), null);
         for (Entity target : player.getEntityWorld().getEntitiesWithinAABBExcludingEntity(player,
-                player.getEntityBoundingBox().grow(5.0, 4.5, 5.0))) {
+                new AxisAlignedBB(playerVector.x, playerVector.y, playerVector.z, playerVector.x, playerVector.y, playerVector.z).grow(7.5, 7.5, 7.5))) {
             
-            if (!(target instanceof EntityPlayer) && !target.isDead && (target instanceof EntityLivingBase ||
-                    target instanceof EntityItem || target instanceof EntityFallingBlock || target instanceof EntityBoat || target instanceof EntityMinecart ||
-                    target instanceof IProjectile || target instanceof EntityTNTPrimed) && 
+            if (checkEntity(player, target) && player.canEntityBeSeen(target) &&
                     !target.getRecursivePassengersByType(EntityLivingBase.class).contains(player)) {
-                Vec3d playerVector = player.getPositionVector();
+                
                 Vec3d targetVector = target.getPositionVector();
-                
-                double dist = playerVector.distanceTo(targetVector) + 0.1;
-                Vec3d difference = targetVector.subtract(playerVector);
-                
-                target.motionX -= difference.x / 2.5 / dist;
-                target.motionY -= difference.y / 2.5 / dist;
-                target.motionZ -= difference.z / 2.5 / dist;
+                double dist = playerVector.distanceTo(targetVector);
+                if (dist >= 1.0) {
+                    Vec3d difference = targetVector.subtract(playerVector).normalize();
+                    double sizeMod = Math.max(Math.sqrt(target.width * target.width * target.height), 1.0);
+                    target.motionX -= difference.x / dist / sizeMod;
+                    target.motionY -= difference.y / dist / sizeMod;
+                    target.motionZ -= difference.z / dist / sizeMod;
+                }
             }
         }
         
         if (count % 10 == 0) {
             stack.damageItem(1, player);
-            if (count % 20 == 0) {
-                player.playSound(SoundsTC.craftfail, 0.5F, 0.35F + player.getEntityWorld().rand.nextFloat() * 0.15F);
+            if (count % 50 == 0) {
+                player.playSound(SoundsTC.wind, 0.5F,
+                        0.35F + player.getEntityWorld().rand.nextFloat() * 0.15F);
             }
         }
         
         if (!player.getEntityWorld().isRemote) {
             TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SMOKE_SPIRAL,
-                    player.posX, player.posY, player.posZ, player.width / 2.0, 
-                    player.getEntityWorld().rand.nextInt(360), player.posY - 1.0, 0x221F2F), player);
+                    playerVector.x, playerVector.y, playerVector.z, player.width / 2.0, 
+                    player.getEntityWorld().rand.nextInt(360), playerVector.y - 1.0, 0x221F2F), player);
+            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SMOKE_SPIRAL,
+                    playerVector.x, playerVector.y, playerVector.z, player.width * 2.0, 
+                    player.getEntityWorld().rand.nextInt(360), playerVector.y, 0x221F2F), player);
+            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SMOKE_SPIRAL,
+                    playerVector.x, playerVector.y, playerVector.z, player.width * 4.0, 
+                    player.getEntityWorld().rand.nextInt(360), playerVector.y, 0x221F2F), player);
         }
         else {
-            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, player.posX, player.posY, player.posZ, player.width / 2.0F, 
-                    player.getEntityWorld().rand.nextInt(360), (int) player.posY - 1, 0x221F2F);
+            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, playerVector.x, playerVector.y, playerVector.z, player.width / 2.0F, 
+                    player.getEntityWorld().rand.nextInt(360), (int) playerVector.y - 1, 0x221F2F);
+            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, playerVector.x, playerVector.y, playerVector.z, player.width * 2.0F, 
+                    player.getEntityWorld().rand.nextInt(360), (int) playerVector.y, 0x221F2F);
+            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, playerVector.x, playerVector.y, playerVector.z, player.width * 4.0F, 
+                    player.getEntityWorld().rand.nextInt(360), (int) playerVector.y, 0x221F2F);
         }
     }
     
