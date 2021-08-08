@@ -246,7 +246,7 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
             else if (world.isRemote) {
                 if (loadedRiftUUID != null) {
                     rift = findRift();
-                    if (!rift.getUniqueID().equals(loadedRiftUUID))
+                    if (rift != null && !rift.getUniqueID().equals(loadedRiftUUID))
                         rift = null;
                     
                     loadedRiftUUID = null;

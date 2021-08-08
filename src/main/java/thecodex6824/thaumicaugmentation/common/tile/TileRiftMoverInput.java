@@ -194,7 +194,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
             else if (world.isRemote) {
                 if (loadedRiftUUID != null) {
                     rift = findRift();
-                    if (!rift.getUniqueID().equals(loadedRiftUUID))
+                    if (rift != null && !rift.getUniqueID().equals(loadedRiftUUID))
                         rift = null;
                     else if (rift != null) {
                         if (loop != null)
