@@ -46,6 +46,12 @@ public class SoundHandleSpecialSound implements ISoundHandle {
             s.setFadeIn(fadeInTicks);
     }
     
+    public void setFadeOut(int fadeOutTicks) {
+        MovingSoundRecord s = sound.get();
+        if (s != null)
+            s.setFadeOut(fadeOutTicks);
+    }
+    
     @Override
     public void stop() {
         MovingSoundRecord s = sound.get();

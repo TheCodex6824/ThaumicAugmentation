@@ -243,5 +243,15 @@
                 "stream": false
             }
         ]
+    },
+    "cutter_loop": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "thaumicaugmentation:item/cutter_loop",
+                "subtitle": "thaumicaugmentation.subtitle.cutter_loop",
+                "stream": false
+            }
+        ]
     }
 }

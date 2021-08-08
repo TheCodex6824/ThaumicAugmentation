@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -77,18 +78,17 @@ import net.minecraftforge.oredict.OreDictionary;
 import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.api.items.IWarpingGear;
 import thaumcraft.api.items.ItemsTC;
-import thaumcraft.common.lib.SoundsTC;
 import thaumcraft.common.lib.enchantment.EnumInfusionEnchantment;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
+import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
+import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 
 public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelProvider<Item> {
 
@@ -241,60 +241,76 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
         return slotChanged || oldStack.getItem() != newStack.getItem();
     }
     
+    protected Vec3d calculateVortexCenter(EntityLivingBase player) {
+        if (!player.isSneaking()) {
+            double reach = 4.0;
+            if (player instanceof EntityPlayer)
+                reach = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+            
+            return !player.getEntityWorld().isRemote ?
+                    RaytraceHelper.raytracePosition(player, reach, null) :
+                    RaytraceHelper.raytracePosition(player, reach, ThaumicAugmentation.proxy.getPartialTicks(), null);
+        }
+        else
+            return player.getPositionVector();
+    }
+    
     @Override
     public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         super.onUsingTick(stack, player, count);
-        double reach = 4.0;
-        if (player instanceof EntityPlayer)
-            reach = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
-        
-        Vec3d playerVector = !player.getEntityWorld().isRemote ?
-                RaytraceHelper.raytracePosition(player, reach, null) :
-                RaytraceHelper.raytracePosition(player, reach, ThaumicAugmentation.proxy.getPartialTicks(), null);
+        Vec3d center = calculateVortexCenter(player);
         for (Entity target : player.getEntityWorld().getEntitiesWithinAABBExcludingEntity(player,
-                new AxisAlignedBB(playerVector.x, playerVector.y, playerVector.z, playerVector.x, playerVector.y, playerVector.z).grow(7.5, 7.5, 7.5))) {
+                new AxisAlignedBB(center.x, center.y, center.z, center.x, center.y, center.z).grow(7.5, 7.5, 7.5))) {
             
             if (checkEntity(player, target) && player.canEntityBeSeen(target) &&
                     !target.getRecursivePassengersByType(EntityLivingBase.class).contains(player)) {
                 
                 Vec3d targetVector = target.getPositionVector();
-                double dist = playerVector.distanceTo(targetVector);
+                double dist = center.distanceTo(targetVector);
                 if (dist >= 1.0) {
-                    Vec3d difference = targetVector.subtract(playerVector).normalize();
+                    Vec3d difference = targetVector.subtract(center).normalize();
                     double sizeMod = Math.max(Math.sqrt(target.width * target.width * target.height), 1.0);
                     target.motionX -= difference.x / dist / sizeMod;
-                    target.motionY -= difference.y / dist / sizeMod;
                     target.motionZ -= difference.z / dist / sizeMod;
                 }
             }
         }
         
-        if (count % 10 == 0) {
+        if (count % 10 == 0)
             stack.damageItem(1, player);
-            if (count % 50 == 0) {
-                player.playSound(SoundsTC.wind, 0.5F,
-                        0.35F + player.getEntityWorld().rand.nextFloat() * 0.15F);
-            }
-        }
         
-        if (!player.getEntityWorld().isRemote) {
-            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SMOKE_SPIRAL,
-                    playerVector.x, playerVector.y, playerVector.z, player.width / 2.0, 
-                    player.getEntityWorld().rand.nextInt(360), playerVector.y - 1.0, 0x221F2F), player);
-            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SMOKE_SPIRAL,
-                    playerVector.x, playerVector.y, playerVector.z, player.width * 2.0, 
-                    player.getEntityWorld().rand.nextInt(360), playerVector.y, 0x221F2F), player);
-            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SMOKE_SPIRAL,
-                    playerVector.x, playerVector.y, playerVector.z, player.width * 4.0, 
-                    player.getEntityWorld().rand.nextInt(360), playerVector.y, 0x221F2F), player);
-        }
-        else {
-            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, playerVector.x, playerVector.y, playerVector.z, player.width / 2.0F, 
-                    player.getEntityWorld().rand.nextInt(360), (int) playerVector.y - 1, 0x221F2F);
-            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, playerVector.x, playerVector.y, playerVector.z, player.width * 2.0F, 
-                    player.getEntityWorld().rand.nextInt(360), (int) playerVector.y, 0x221F2F);
-            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, playerVector.x, playerVector.y, playerVector.z, player.width * 4.0F, 
-                    player.getEntityWorld().rand.nextInt(360), (int) playerVector.y, 0x221F2F);
+        if (player.getEntityWorld().isRemote) {
+            if ((getMaxItemUseDuration(stack) - count) % 190 == 0) {
+                final int id = player.getEntityId();
+                ISoundHandle handle = ThaumicAugmentation.proxy.playSpecialSound(TASounds.PRIMAL_CUTTER_VORTEX, player.getSoundCategory(), prev -> {
+                    Entity entity = Minecraft.getMinecraft().world.getEntityByID(id);
+                    if (entity instanceof EntityLivingBase) {
+                        ItemStack active = ((EntityLivingBase) entity).getActiveItemStack();
+                        if (!active.isEmpty() && active.getItem() == TAItems.PRIMAL_CUTTER)
+                            return calculateVortexCenter((EntityLivingBase) entity);
+                    }
+                    
+                    return null;
+                }, (float) center.x, (float) center.y, (float) center.z, 0.75F, 1.0F, false, 0);
+                if (handle instanceof SoundHandleSpecialSound)
+                    ((SoundHandleSpecialSound) handle).setFadeOut(40);
+            }
+            
+            if (player.getEntityWorld().isAirBlock(new BlockPos(center.add(0.0, -0.05, 0.0)))) {
+                ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, center.x, center.y, center.z, player.width / 2.0F, 
+                        player.getEntityWorld().rand.nextInt(360), (int) center.y - 2, 0x221F2F);
+                ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, center.x, center.y, center.z, player.width * 2.0F, 
+                        player.getEntityWorld().rand.nextInt(360), (int) center.y - 3, 0x221F2F);
+                ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, center.x, center.y, center.z, player.width * 4.0F, 
+                        player.getEntityWorld().rand.nextInt(360), (int) center.y - 3, 0x221F2F);
+            }
+            
+            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, center.x, center.y, center.z, player.width / 2.0F, 
+                    player.getEntityWorld().rand.nextInt(360), (int) center.y - 1, 0x221F2F);
+            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, center.x, center.y, center.z, player.width * 2.0F, 
+                    player.getEntityWorld().rand.nextInt(360), (int) center.y, 0x221F2F);
+            ThaumicAugmentation.proxy.getRenderHelper().renderSmokeSpiral(player.world, center.x, center.y, center.z, player.width * 4.0F, 
+                    player.getEntityWorld().rand.nextInt(360), (int) center.y, 0x221F2F);
         }
     }
     

@@ -52,6 +52,7 @@ public final class TASounds {
     public static final SoundEvent IMPULSE_CANNON_BEAM_LOOP = create("impulse_cannon_beam_loop");
     public static final SoundEvent IMPULSE_CANNON_BURST = create("impulse_cannon_burst");
     public static final SoundEvent IMPULSE_CANNON_RAILGUN = create("impulse_cannon_railgun");
+    public static final SoundEvent PRIMAL_CUTTER_VORTEX = create("cutter_loop");
     
     /**
      * Returns all of the sounds in the mod.
@@ -61,7 +62,8 @@ public final class TASounds {
         return new SoundEvent[] {EMPTINESS_AMBIENCE, EMPTINESS_MUSIC, RIFT_ENERGY_ZAP, FOCUS_WATER_IMPACT,
                 RIFT_MOVER_INPUT_LOOP, RIFT_MOVER_OUTPUT_LOOP, ALTAR_SUMMON_START, ALTAR_SUMMON,
                 ELYTRA_BOOST_START, ELYTRA_BOOST_END, ELYTRA_BOOST_LOOP, IMPULSE_CANNON_BEAM_START,
-                IMPULSE_CANNON_BEAM_END, IMPULSE_CANNON_BEAM_LOOP, IMPULSE_CANNON_BURST, IMPULSE_CANNON_RAILGUN};
+                IMPULSE_CANNON_BEAM_END, IMPULSE_CANNON_BEAM_LOOP, IMPULSE_CANNON_BURST, IMPULSE_CANNON_RAILGUN,
+                PRIMAL_CUTTER_VORTEX};
     }
     
 }
