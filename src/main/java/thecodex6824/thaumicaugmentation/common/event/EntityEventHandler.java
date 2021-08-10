@@ -36,9 +36,11 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -50,23 +52,29 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.IPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
+import thecodex6824.thaumicaugmentation.api.event.FluxRiftDestroyBlockEvent;
 import thecodex6824.thaumicaugmentation.api.event.FocusTouchGetEntityEvent;
+import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
+import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
+import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumiumRobes.MaskType;
 import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
@@ -188,6 +196,31 @@ public class EntityEventHandler {
                     event.setRay(new RayTraceResult(p.getKey(), p.getValue()));
                 else
                     event.setRay(null);
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onFluxRiftDestroyBlock(FluxRiftDestroyBlockEvent event) {
+        if (event.getDestroyedBlock().getBlock() == TABlocks.RIFT_JAR) {
+            World world = event.getEntity().getEntityWorld();
+            TileEntity tile = world.getTileEntity(event.getPosition());
+            if (tile instanceof TileRiftJar) {
+                IRiftJar jar = tile.getCapability(CapabilityRiftJar.RIFT_JAR, null);
+                if (jar != null && jar.hasRift()) {
+                    BlockPos pos = event.getPosition();
+                    world.destroyBlock(pos, false);
+                    world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
+                    EntityPrimalWisp wisp = new EntityPrimalWisp(world);
+                    wisp.setPositionAndRotation(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
+                            world.rand.nextInt(360) - 180, 0.0F);
+                    wisp.rotationYawHead = wisp.rotationYaw;
+                    wisp.renderYawOffset = wisp.rotationYaw;
+                    wisp.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+                    world.spawnEntity(wisp);
+                    event.getRift().setDead();
+                    event.setCanceled(true);
+                }
             }
         }
     }

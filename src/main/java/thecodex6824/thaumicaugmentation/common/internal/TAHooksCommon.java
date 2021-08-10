@@ -43,9 +43,11 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import thaumcraft.api.casters.Trajectory;
 import thaumcraft.api.items.ItemsTC;
+import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.items.casters.foci.FocusMediumTouch;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
+import thecodex6824.thaumicaugmentation.api.event.FluxRiftDestroyBlockEvent;
 import thecodex6824.thaumicaugmentation.api.event.FocusTouchGetEntityEvent;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
@@ -188,6 +190,10 @@ public final class TAHooksCommon {
         }
         
         return original;
+    }
+    
+    public static boolean fireFluxRiftDestroyBlockEvent(EntityFluxRift rift, BlockPos pos, IBlockState state) {
+        return MinecraftForge.EVENT_BUS.post(new FluxRiftDestroyBlockEvent(rift, pos, state));
     }
     
 }

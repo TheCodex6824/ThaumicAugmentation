@@ -35,6 +35,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerTouchTraject
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerEldritchGuardianFog;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerFluxRiftDestroyBlock;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderCape;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderEntities;
@@ -143,6 +144,10 @@ public class TATransformer implements IClassTransformer {
         // so 2 transformers are required
         TRANSFORMERS.add(new TransformerTouchTrajectoryEntitySelection());
         TRANSFORMERS.add(new TransformerTouchTargetEntitySelection());
+        
+        // to fire an event when a flux rift tries to eat a block
+        // used for rift jar detection
+        TRANSFORMERS.add(new TransformerFluxRiftDestroyBlock());
     }
     
     public TATransformer() {}
