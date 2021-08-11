@@ -50,7 +50,8 @@ public class PacketParticleEffect implements IMessage {
         FLUX(16),
         FLUX_BATCH(17),
         ARC(18),
-        ENDER_EYE_BREAK(19);
+        ENDER_EYE_BREAK(19),
+        VIS_OPERATION(20);
         
         private int id;
         

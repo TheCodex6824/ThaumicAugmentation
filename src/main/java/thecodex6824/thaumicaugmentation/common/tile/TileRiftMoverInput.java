@@ -179,6 +179,9 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                     world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                 }
                 else if (AuraHelper.drainVis(world, pos, 0.25F, false) >= 0.25F - 0.0001){
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VIS_OPERATION, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                            0.0, 0.0, 0.0, 0.7, 0.875, 0.875, 0.85),
+                            new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
                     rift.setRiftSize(rift.getRiftSize() - 1);
                     rift.setRiftStability(rift.getRiftStability() - 0.5F);
                     if (rift.getRiftSize() == 0) {
@@ -189,6 +192,11 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                         world.playSound(null, pos, SoundsTC.wand, SoundCategory.BLOCKS, 0.5F, 1.0F);
                         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                     }
+                }
+                else {
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VIS_OPERATION, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                            0.0, 0.0, 0.0, 0.1, 0.175, 0.175, 0.85),
+                            new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
                 }
             }
             else if (world.isRemote) {

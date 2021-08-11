@@ -350,6 +350,9 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                                     AuraHelper.drainVis(world, pos, 0.5F, false);
                                     visPaid = true;
                                     markDirty();
+                                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VIS_OPERATION, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                                            0.0, 0.0, 0.0, 0.7, 0.875, 0.875, 0.85),
+                                            new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
                                 }
                             }
                         }
@@ -402,8 +405,15 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                         
                         markDirty();
                     }
-                    else
+                    else {
+                        if (!visPaid) {
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VIS_OPERATION, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                                    0.0, 0.0, 0.0, 0.1, 0.15, 0.15, 0.85),
+                                    new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
+                        }
+                        
                         break;
+                    }
                 }
             }
         }
