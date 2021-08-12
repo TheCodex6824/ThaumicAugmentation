@@ -31,6 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.animation.Event;
@@ -50,6 +51,8 @@ import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
 
 public class TileWardedChest extends TileWarded implements IAnimatedTile, INameableTile {
 
+    protected static final float ANIM_TIME = 0.5F;
+    
     protected WardedInventory inventory;
     protected IAnimationStateMachine asm;
     protected VariableValue openTime;
@@ -60,7 +63,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, INamea
         inventory = new WardedInventory(27);
         openTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/warded_chest.json"), 
-                ImmutableMap.<String, ITimeValue>of("open_speed", new VariableValue(0.5F), "open_time", openTime));
+                ImmutableMap.<String, ITimeValue>of("anim_time", new VariableValue(ANIM_TIME), "open_time", openTime));
     }
 
     @Override
@@ -72,7 +75,10 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, INamea
         if (!world.isRemote)
             world.playSound(null, pos, SoundEvents.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5F, 1.0F);
         else {
-            openTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
+            float time = Animation.getWorldTime(world, Animation.getPartialTickTime());
+            float partialProgress = openTime.apply(time) < 0.0F ? 0.0F :
+                MathHelper.clamp(ANIM_TIME - (time - openTime.apply(time)), 0.0F, ANIM_TIME);
+            openTime.setValue(time - partialProgress);
             AnimationHelper.transitionSafely(asm, "opening");
         }
     }
@@ -81,7 +87,10 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, INamea
         if (!world.isRemote)
             world.playSound(null, pos, SoundEvents.BLOCK_CHEST_CLOSE, SoundCategory.BLOCKS, 0.5F, 1.0F);
         else {
-            openTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
+            float time = Animation.getWorldTime(world, Animation.getPartialTickTime());
+            float partialProgress = openTime.apply(time) < 0.0F ? 0.0F :
+                MathHelper.clamp(ANIM_TIME - (time - openTime.apply(time)), 0.0F, ANIM_TIME);
+            openTime.setValue(time - partialProgress);
             AnimationHelper.transitionSafely(asm, "closing");
         }
     }
