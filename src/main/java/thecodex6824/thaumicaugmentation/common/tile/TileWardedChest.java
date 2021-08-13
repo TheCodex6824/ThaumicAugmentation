@@ -72,27 +72,31 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, INamea
     }
 
     public void onOpenInventory() {
-        if (!world.isRemote)
+        if (!world.isRemote) {
             world.playSound(null, pos, SoundEvents.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5F, 1.0F);
-        else {
-            float time = Animation.getWorldTime(world, Animation.getPartialTickTime());
-            float partialProgress = openTime.apply(time) < 0.0F ? 0.0F :
-                MathHelper.clamp(ANIM_TIME - (time - openTime.apply(time)), 0.0F, ANIM_TIME);
-            openTime.setValue(time - partialProgress);
-            AnimationHelper.transitionSafely(asm, "opening");
+            world.addBlockEvent(pos, getBlockType(), 1, 1);
         }
     }
 
     public void onCloseInventory() {
-        if (!world.isRemote)
+        if (!world.isRemote) {
             world.playSound(null, pos, SoundEvents.BLOCK_CHEST_CLOSE, SoundCategory.BLOCKS, 0.5F, 1.0F);
-        else {
+            world.addBlockEvent(pos, getBlockType(), 1, 0);
+        }
+    }
+    
+    @Override
+    public boolean receiveClientEvent(int id, int type) {
+        if (id == 1) {
             float time = Animation.getWorldTime(world, Animation.getPartialTickTime());
             float partialProgress = openTime.apply(time) < 0.0F ? 0.0F :
                 MathHelper.clamp(ANIM_TIME - (time - openTime.apply(time)), 0.0F, ANIM_TIME);
             openTime.setValue(time - partialProgress);
-            AnimationHelper.transitionSafely(asm, "closing");
+            AnimationHelper.transitionSafely(asm, type == 1 ? "opening" : "closing");
+            return true;
         }
+        
+        return false;
     }
     
     @Override
