@@ -28,63 +28,11 @@
                         "samples": [1]
                     },
                     {
-                        "variable": "origin_y",
-                        "type": "uniform",
-                        "interpolation": "nearest",
-                        "samples": [0.75]
-                    },
-                    {
                         "variable": "angle",
                         "type": "uniform",
                         "interpolation": "linear",
                         "samples": [
                             0, 90, 180, 270
-                        ]
-                    }
-                ]
-            },
-            "events": {}
-        },
-        "starting": {
-            "loop": true,
-            "joint_clips": {
-                "spinY": [
-                    {
-                        "variable": "axis_y",
-                        "type": "uniform",
-                        "interpolation": "nearest",
-                        "samples": [1]
-                    },
-                    {
-                        "variable": "angle",
-                        "type": "uniform",
-                        "interpolation": "linear",
-                        "samples": [
-                            0, 5, 10, 15, 20, 25, 35, 45, 55, 65, 70, 85, 100, 
-                            120, 140, 160, 180, 210, 240, 270, 300, 330, 360
-                        ]
-                    }
-                ]
-            },
-            "events": {}
-        },
-        "stopping": {
-            "loop": true,
-            "joint_clips": {
-                "spinY": [
-                    {
-                        "variable": "axis_y",
-                        "type": "uniform",
-                        "interpolation": "nearest",
-                        "samples": [1]
-                    },
-                    {
-                        "variable": "angle",
-                        "type": "uniform",
-                        "interpolation": "linear",
-                        "samples": [
-                            360, 330, 300, 270, 240, 210, 180, 160, 140, 120, 100, 85, 70, 65, 
-                            55, 45, 35, 25, 20, 15, 10, 5, 0
                         ]
                     }
                 ]

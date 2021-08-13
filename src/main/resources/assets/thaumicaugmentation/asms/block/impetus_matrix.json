@@ -1,6 +1,6 @@
 {
     "parameters": {
-        "time": ["+/", "#delay", "#cycle_length"]
+        "time": ["/", "#cycle_length"]
     },
     "clips": {
         "default": [

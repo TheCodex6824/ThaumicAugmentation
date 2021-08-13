@@ -183,7 +183,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IBreakCa
         };
         ticks = ThreadLocalRandom.current().nextInt(20);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_matrix.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(20), "delay", new VariableValue(ticks)));
+                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(20)));
         lastResult = -1;
         gain = -1.0F;
     }

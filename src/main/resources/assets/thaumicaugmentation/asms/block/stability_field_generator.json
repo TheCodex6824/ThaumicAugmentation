@@ -1,21 +1,12 @@
 {
     "parameters": {
-        "time": ["/", "#cycle_length"],
-        "end_anim": ["compose", ["+", "#cycle_length"], "#act_time"],
-        "trigger_end": ["-", "#end_anim"],
-        "anim_progress": ["-/mM", "#act_time", "#cycle_length", 1.0, 0.0]
+        "trigger_end": ["-", ["compose", ["+", "#cycle_length"], "#act_time"]],
+        "anim_progress": ["-/Mm", "#act_time", "#cycle_length", 0.0, 0.99999]
     },
     "clips": {
-        "closed": [
-            "apply",
-            "thaumicaugmentation:block/stability_field_generator_anim@model",
-            0.0
-        ],
-        "open": [
-            "apply",
-            "thaumicaugmentation:block/stability_field_generator_anim@model",
-            0.5
-        ],
+        "model": "thaumicaugmentation:block/stability_field_generator_anim@model",
+        "closed": ["apply", "#model", 0.0],
+        "open": ["apply", "#model", 0.99],
         "opening": [
             "trigger_positive",
             ["apply", "thaumicaugmentation:block/stability_field_generator_anim@opening", "#anim_progress"],

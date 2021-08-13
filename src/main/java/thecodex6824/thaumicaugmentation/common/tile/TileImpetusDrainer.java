@@ -38,10 +38,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.ITimeValue;
-import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
@@ -67,7 +65,6 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IBreakC
     protected Vec3d lastRiftPos;
     protected WeakImpetusStorage storage;
     protected IAnimationStateMachine asm;
-    protected VariableValue actionTime;
     protected boolean lastState = false;
     protected int ticks;
     
@@ -96,9 +93,8 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IBreakC
         };
         
         ticks = ThreadLocalRandom.current().nextInt(20);
-        actionTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_drainer.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(1), "act_time", actionTime, "delay", new VariableValue(ticks)));
+                ImmutableMap.<String, ITimeValue>of());
     }
     
     protected void findRift() {
@@ -132,14 +128,13 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IBreakC
             findRift();
         else if (!world.isRemote && !world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) && storage.isValid())
             storage.bind(null);
-        else if (world.isRemote && ticks++ % 5 == 0) {
+        else if (world.isRemote && world.getTotalWorldTime() % 20 == 0) {
             IBlockState state = world.getBlockState(pos);
             boolean enabled = state.getPropertyKeys().contains(IEnabledBlock.ENABLED) && 
                     state.getValue(IEnabledBlock.ENABLED);
             if (enabled != lastState) {
                 lastState = enabled;
-                actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
-                AnimationHelper.transitionSafely(asm, lastState ? "starting" : "stopping");
+                AnimationHelper.transitionSafely(asm, lastState ? "enabled" : "disabled");
             }
         }
         

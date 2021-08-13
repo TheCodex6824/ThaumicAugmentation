@@ -44,10 +44,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.ITimeValue;
-import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
@@ -78,7 +76,6 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IBreak
     
     protected SimpleImpetusConsumer consumer;
     protected IAnimationStateMachine asm;
-    protected VariableValue actionTime;
     protected boolean lastState = false;
     protected int ticks;
     
@@ -92,9 +89,8 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IBreak
         };
         
         ticks = ThreadLocalRandom.current().nextInt(20);
-        actionTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_diffuser.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(2), "act_time", actionTime, "delay", new VariableValue(ticks)));
+                ImmutableMap.<String, ITimeValue>of());
     }
     
     @Override
@@ -237,14 +233,13 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IBreak
                 }
             }
         }
-        else if (world.isRemote && ticks++ % 5 == 0) {
+        else if (world.isRemote && world.getTotalWorldTime() % 20 == 0) {
             IBlockState state = world.getBlockState(pos);
             boolean enabled = state.getPropertyKeys().contains(IEnabledBlock.ENABLED) && 
                     state.getValue(IEnabledBlock.ENABLED);
             if (enabled != lastState) {
                 lastState = enabled;
-                actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
-                AnimationHelper.transitionSafely(asm, lastState ? "starting" : "stopping");
+                AnimationHelper.transitionSafely(asm, lastState ? "enabled" : "disabled");
             }
         }
     }
