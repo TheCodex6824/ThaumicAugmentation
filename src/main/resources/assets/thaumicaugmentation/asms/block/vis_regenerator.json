@@ -1,16 +1,11 @@
 {
     "parameters": {
-        "time": ["+/", "#delay", "#cycle_length"],
-        "end_anim": ["compose", ["+", "#cycle_length"], "#act_time"],
-        "trigger_end": ["-", "#end_anim"],
-        "anim_progress": ["-/-", "#act_time", "#cycle_length", 0.01]
+        "trigger_end": ["-", ["compose", ["+", "#cycle_length"], "#act_time"]],
+        "anim_progress": ["-/Mm", "#act_time", "#cycle_length", 0.0, 0.99999]
     },
     "clips": {
-        "enabled": [
-            "apply",
-            "thaumicaugmentation:block/vis_regenerator_anim@enabled",
-            "#time"
-        ],
+        "disabled": "thaumicaugmentation:block/vis_regenerator_anim@disabled",
+        "enabled": "thaumicaugmentation:block/vis_regenerator_anim@enabled",
         "starting": [
             "trigger_positive",
             ["apply", "thaumicaugmentation:block/vis_regenerator_anim@starting", "#anim_progress"],
@@ -22,11 +17,6 @@
             ["apply", "thaumicaugmentation:block/vis_regenerator_anim@stopping", "#anim_progress"],
             "#trigger_end",
             "!transition:disabled"
-        ],
-        "disabled": [
-            "apply",
-            "thaumicaugmentation:block/vis_regenerator_anim@disabled",
-            "#time"
         ]
     },
     "states": [

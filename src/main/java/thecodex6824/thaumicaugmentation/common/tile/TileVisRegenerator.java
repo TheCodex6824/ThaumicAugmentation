@@ -66,13 +66,27 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
         cycleLength = new VariableValue(1);
         actionTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/vis_regenerator.json"), 
-                ImmutableMap.of("cycle_length", cycleLength, "act_time", actionTime, "delay", new VariableValue(delay)));
+                ImmutableMap.of("cycle_length", cycleLength, "act_time", actionTime));
         ticks = ThreadLocalRandom.current().nextInt(20);
     }
 
-    private float getAuraOffset() {
+    protected float getAuraOffset() {
         return Math.max(Math.min((float) Math.pow(2, (-1.0F / 96) * AuraHelper.getAuraBase(world, pos)),
                 AuraHelper.getAuraBase(world, pos) - AuraHelper.getVis(world, pos)) - AuraHelper.getFlux(world, pos), 0);
+    }
+    
+    @Override
+    public void onLoad() {
+        if (world.isRemote) {
+            cycleLength.setValue(getAuraOffset() * 1.25F);
+            IBlockState state = world.getBlockState(pos);
+            boolean enabled = state.getPropertyKeys().contains(IEnabledBlock.ENABLED) && state.getValue(IEnabledBlock.ENABLED);
+            if (enabled != lastState) {
+                lastState = enabled;
+                actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
+                AnimationHelper.transitionSafely(asm, lastState ? "starting" : "stopping");
+            }
+        }
     }
 
     @Override
@@ -90,9 +104,8 @@ public class TileVisRegenerator extends TileEntity implements ITickable, IAnimat
                         pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 48));
             }
         }
-        else if (world.isRemote && (ticks++ + delay) % 5 == 0) {
-            float aura = getAuraOffset();
-            cycleLength.setValue(Math.min(1.0F / Math.max(aura, Float.MIN_VALUE), 15));
+        else if (world.isRemote && world.getTotalWorldTime() % 5 == 0) {
+            cycleLength.setValue(getAuraOffset() * 1.25F);
             IBlockState state = world.getBlockState(pos);
             boolean enabled = state.getPropertyKeys().contains(IEnabledBlock.ENABLED) && state.getValue(IEnabledBlock.ENABLED);
             if (enabled != lastState) {
