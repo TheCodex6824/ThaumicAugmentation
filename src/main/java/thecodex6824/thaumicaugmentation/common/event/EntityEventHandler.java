@@ -109,7 +109,7 @@ public class EntityEventHandler {
             }
         }
         
-        if (event.getRayTraceResult().entityHit instanceof EntityFocusShield) {
+        if (event.getRayTraceResult() != null && event.getRayTraceResult().entityHit instanceof EntityFocusShield) {
             EntityFocusShield s = (EntityFocusShield) event.getRayTraceResult().entityHit;
             if (s.getOwner() != null) {
                 // owner's projectiles should always pass through
