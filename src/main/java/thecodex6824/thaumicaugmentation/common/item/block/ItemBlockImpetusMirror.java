@@ -57,6 +57,7 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 
 public class ItemBlockImpetusMirror extends ItemBlockNoImpetusNodeNBT implements IModelProvider<Item> {
 
@@ -95,8 +96,10 @@ public class ItemBlockImpetusMirror extends ItemBlockNoImpetusNodeNBT implements
                     world.playSound(null, pos, SoundsTC.jar, SoundCategory.BLOCKS, 1.0F, 2.0F);
                     if (!player.isCreative())
                         player.getHeldItem(hand).shrink(1);
-                    if (!player.inventory.addItemStackToInventory(copy))
-                        world.spawnEntity(copy.getItem().createEntity(world, player, copy));
+                    if (!player.inventory.addItemStackToInventory(copy)) {
+                        world.spawnEntity(ItemHelper.makeItemEntity(world, pos.getX() + 0.5F,
+                                pos.getY() + 0.5F, pos.getZ() + 0.5F, copy));
+                    }
                     
                     return EnumActionResult.SUCCESS;
                 }

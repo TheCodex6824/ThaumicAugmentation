@@ -45,6 +45,7 @@ import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockNoImpetusNodeNBT;
 import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 
 public class BlockVoidRechargePedestal extends BlockTABase implements IItemBlockProvider {
 
@@ -84,8 +85,10 @@ public class BlockVoidRechargePedestal extends BlockTABase implements IItemBlock
                     if (!old.isEmpty()) {
                         if (hand != null && player.getHeldItem(hand).isEmpty())
                             player.setHeldItem(hand, old);
-                        else if (!player.inventory.addItemStackToInventory(old))
-                            world.spawnEntity(old.getItem().createEntity(world, player, old));
+                        else if (!player.inventory.addItemStackToInventory(old)) {
+                            world.spawnEntity(ItemHelper.makeItemEntity(world, pos.getX() + 0.5F,
+                                    pos.getY() + 0.5F, pos.getZ() + 0.5F, old));
+                        }
                         
                         didSomething = true;
                     }

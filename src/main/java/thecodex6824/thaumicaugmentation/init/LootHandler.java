@@ -22,6 +22,9 @@ package thecodex6824.thaumicaugmentation.init;
 
 import java.util.stream.Collectors;
 
+import com.google.common.base.Predicates;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -35,6 +38,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import thaumcraft.api.entities.ITaintedMob;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class LootHandler {
@@ -55,12 +59,14 @@ public class LootHandler {
                     .build();
             event.getDrops().addAll(table.generateLootForPools(world.rand, context).stream().map(
                     stack -> {
-                        EntityItem e = (EntityItem) stack.getItem().createEntity(world, event.getEntity(), stack);
-                        if (e == null)
-                            e = new EntityItem(world, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, stack);
-                        
-                        return e;
-                    }).collect(Collectors.toList()));
+                        Entity entity = ItemHelper.makeItemEntity(world, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, stack);
+                        if (entity instanceof EntityItem)
+                            return (EntityItem) entity;
+                        else {
+                            world.spawnEntity(entity);
+                            return null;
+                        }
+                    }).filter(Predicates.notNull()).collect(Collectors.toList()));
         }
     }
     
