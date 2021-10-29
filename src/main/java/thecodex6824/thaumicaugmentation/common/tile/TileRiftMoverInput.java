@@ -60,10 +60,9 @@ import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 
-public class TileRiftMoverInput extends TileEntity implements ITickable, IInteractWithCaster, IBreakCallback {
+public class TileRiftMoverInput extends TileEntity implements ITickable, IInteractWithCaster {
 
     protected boolean operating;
     protected int oldSize;
@@ -240,7 +239,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
     }
     
     @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         if (!world.isRemote && operating) {
             if (rift == null || rift.isDead)
                 AuraHelper.polluteAura(world, pos, oldSize, true);
@@ -262,17 +261,10 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
             operating = false;
             world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
         }
-        else if (world.isRemote) {
-            if (loop != null)
-                loop.stop();
-        }
-    }
-    
-    @Override
-    public void invalidate() {
-        super.invalidate();
-        if (loop != null)
+        else if (world.isRemote && loop != null)
             loop.stop();
+        
+        super.invalidate();
     }
     
     @Override

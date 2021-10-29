@@ -48,7 +48,6 @@ import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockNoImpetusNodeNBT;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGenerator;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockImpetusGenerator extends BlockTABase implements IDirectionalBlock, IEnabledBlock, IItemBlockProvider {
@@ -129,15 +128,6 @@ public class BlockImpetusGenerator extends BlockTABase implements IDirectionalBl
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         update(state, world, pos);
-    }
-    
-    @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        TileEntity t = world.getTileEntity(pos);
-        if (t instanceof IBreakCallback)
-            ((IBreakCallback) t).onBlockBroken();
-        
-        super.breakBlock(world, pos, state);
     }
     
     @Override

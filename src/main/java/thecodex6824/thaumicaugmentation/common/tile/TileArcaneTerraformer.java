@@ -79,12 +79,11 @@ import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.network.PacketTerraformerWork;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
-public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable, IBreakCallback, IEssentiaTransport {
+public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable, IEssentiaTransport {
 
     protected static final int MAX_ESSENTIA = 30; // per aspect
     protected static final Cache<Biome, Object2IntOpenHashMap<Aspect>> BIOME_COSTS =
@@ -504,12 +503,13 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     }
     
     @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         if (!world.isRemote)
             NodeHelper.syncDestroyedImpetusNode(consumer);
         
         consumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+        super.invalidate();
     }
     
     @Override

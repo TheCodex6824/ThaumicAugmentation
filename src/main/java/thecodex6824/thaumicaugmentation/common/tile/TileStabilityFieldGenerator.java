@@ -64,10 +64,9 @@ import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
 
-public class TileStabilityFieldGenerator extends TileEntity implements ITickable, IBreakCallback, IAnimatedTile {
+public class TileStabilityFieldGenerator extends TileEntity implements ITickable, IAnimatedTile {
 
     protected static class CustomEnergyStorage extends EnergyStorage {
         
@@ -330,9 +329,13 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     }
     
     @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         targetedRift.clear();
         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+        if (world.isRemote)
+            updateBeam();
+        
+        super.invalidate();
     }
     
     @Override
@@ -376,14 +379,6 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
             targetedRift.clear();
             updateBeam();
         }
-    }
-    
-    @Override
-    public void invalidate() {
-        targetedRift.clear();
-        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-        if (world.isRemote)
-            updateBeam();
     }
     
     @Override

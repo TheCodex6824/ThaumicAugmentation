@@ -65,12 +65,11 @@ import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 
-public class TileRiftMoverOutput extends TileEntity implements ITickable, IInteractWithCaster, IBreakCallback {
+public class TileRiftMoverOutput extends TileEntity implements ITickable, IInteractWithCaster {
 
     protected boolean operating;
     protected EntityFluxRift rift;
@@ -155,7 +154,7 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
     }
     
     @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         if (!world.isRemote && operating) {
             if (rift != null) {
                 if (rift.getCollapse())
@@ -168,6 +167,10 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
             operating = false;
             world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
         }
+        else if (world.isRemote && loop != null)
+            loop.stop();
+        
+        super.invalidate();
     }
     
     protected EntityFluxRift findRift() {
@@ -289,13 +292,6 @@ public class TileRiftMoverOutput extends TileEntity implements ITickable, IInter
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return oldState.getBlock() != newState.getBlock();
-    }
-    
-    @Override
-    public void invalidate() {
-        super.invalidate();
-        if (loop != null)
-            loop.stop();
     }
     
     @Override

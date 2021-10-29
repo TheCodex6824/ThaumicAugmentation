@@ -47,7 +47,6 @@ import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileStabilityFieldGenerator;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 
 public class BlockStabilityFieldGenerator extends BlockTABase implements IDirectionalBlock, IEnabledBlock, IItemBlockProvider {
@@ -137,15 +136,6 @@ public class BlockStabilityFieldGenerator extends BlockTABase implements IDirect
             case UP:
             default:    return UP_BOX;
         }
-    }
-    
-    @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof IBreakCallback)
-            ((IBreakCallback) tile).onBlockBroken();
-        
-        super.breakBlock(world, pos, state);
     }
     
     @Override

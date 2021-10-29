@@ -83,10 +83,9 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 @SuppressWarnings("deprecation")
-public class TileImpetusMatrix extends TileEntity implements ITickable, IBreakCallback, IAnimatedTile, IGogglesDisplayExtended {
+public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimatedTile, IGogglesDisplayExtended {
 
     protected static final long CELL_CAPACITY = 500;
     protected static final float MIN_STABILITY = -100.0F;
@@ -424,12 +423,13 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IBreakCa
     }
     
     @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         if (!world.isRemote)
             NodeHelper.syncDestroyedImpetusNode(prosumer);
         
         prosumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
+        super.invalidate();
     }
     
     @Override

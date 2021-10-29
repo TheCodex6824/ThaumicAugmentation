@@ -40,7 +40,6 @@ import thecodex6824.thaumicaugmentation.api.tile.CapabilityRiftJar;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
 public class BlockRiftMoverOutput  extends BlockTABase implements IItemBlockProvider {
 
@@ -74,15 +73,6 @@ public class BlockRiftMoverOutput  extends BlockTABase implements IItemBlockProv
             value = tile.hasCapability(CapabilityRiftJar.RIFT_JAR, null);
         
         return state.withProperty(IConnected.CONNECTED, value);
-    }
-    
-    @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof IBreakCallback)
-            ((IBreakCallback) tile).onBlockBroken();
-        
-        super.breakBlock(world, pos, state);
     }
     
     @Override
