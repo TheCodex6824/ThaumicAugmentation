@@ -38,6 +38,12 @@ public class WorldGenVoidStoneSpike extends WorldGenerator {
 
     @Override
     protected void setBlockAndNotifyAdequately(World world, BlockPos pos, IBlockState state) {
+        
+        //Fix java.lang.ArrayIndexOutOfBoundsException: -1
+        if (pos.getY() < 0) {
+            return;
+        }
+        
         world.setBlockState(pos, state, 2 | 16);
     }
     
