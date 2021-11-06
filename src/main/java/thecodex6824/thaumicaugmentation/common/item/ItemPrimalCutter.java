@@ -128,12 +128,6 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
     }
     
     @Override
-    public boolean canHarvestBlock(IBlockState state, ItemStack stack) {
-        Material mat = state.getMaterial();
-        return mat != Material.LEAVES && mat != Material.PLANTS;
-    }
-    
-    @Override
     public float getDestroySpeed(ItemStack stack, IBlockState state) {
         Material mat = state.getMaterial();
         return mat == Material.GOURD || mat == Material.LEAVES || mat == Material.VINE || mat == Material.WEB ||
