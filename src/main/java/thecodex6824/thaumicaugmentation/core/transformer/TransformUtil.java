@@ -28,6 +28,7 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 
@@ -206,6 +207,22 @@ public final class TransformUtil {
         
         return -1;
         
+    }
+    
+    public static int findFirstLoad(MethodNode node, int startIndex, int opcode, int objIndex) {
+        if (startIndex < 0 || startIndex >= node.instructions.size())
+            return -1;
+        
+        for (int i = startIndex; i < node.instructions.size(); ++i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn.getOpcode() == opcode && insn instanceof VarInsnNode) {
+                VarInsnNode var = (VarInsnNode) insn;
+                if (var.var == objIndex)
+                    return i;
+            }
+        }
+        
+        return -1;
     }
     
 }

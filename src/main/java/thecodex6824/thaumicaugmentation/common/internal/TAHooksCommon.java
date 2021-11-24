@@ -51,12 +51,15 @@ import thecodex6824.thaumicaugmentation.api.event.FluxRiftDestroyBlockEvent;
 import thecodex6824.thaumicaugmentation.api.event.FocusTouchGetEntityEvent;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
+import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
+import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
 public final class TAHooksCommon {
 
@@ -194,6 +197,22 @@ public final class TAHooksCommon {
     
     public static boolean fireFluxRiftDestroyBlockEvent(EntityFluxRift rift, BlockPos pos, IBlockState state) {
         return MinecraftForge.EVENT_BUS.post(new FluxRiftDestroyBlockEvent(rift, pos, state));
+    }
+    
+    public static boolean onAttemptTeleport(EntityLivingBase entity, double origX, double origY, double origZ) {
+        if (!entity.getEntityWorld().isRemote) {
+            WorldServer w = (WorldServer) entity.getEntityWorld();
+            BlockPos check = entity.getPosition();
+            if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", check)) {
+                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(check);
+                if (start != null) {
+                    IWardStorage storage = w.getChunk(check).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                    return !(storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard()));
+                }
+            }
+        }
+        
+        return true;
     }
     
 }

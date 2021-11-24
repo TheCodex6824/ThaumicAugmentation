@@ -28,6 +28,7 @@ import org.objectweb.asm.tree.ClassNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerAttemptTeleport;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBaubleSlotChanged;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationCustomTCArmor;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationVanilla;
@@ -148,6 +149,9 @@ public class TATransformer implements IClassTransformer {
         // to fire an event when a flux rift tries to eat a block
         // used for rift jar detection
         TRANSFORMERS.add(new TransformerFluxRiftDestroyBlock());
+        
+        // to prevent chorus fruit and such from breaking into spires
+        TRANSFORMERS.add(new TransformerAttemptTeleport());
     }
     
     public TATransformer() {}
