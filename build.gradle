@@ -1,8 +1,8 @@
 buildscript {
     repositories {
-		maven { url = 'https://maven.minecraftforge.net/' }
-		jcenter()
-		mavenCentral()
+        maven { url = 'https://maven.minecraftforge.net/' }
+        jcenter()
+        mavenCentral()
         maven {
             name 'FancyGradle'
             url 'https://gitlab.com/api/v4/projects/26758973/packages/maven'
@@ -10,7 +10,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-		classpath group: 'wtf.gofancy.fancygradle', name: 'wtf.gofancy.fancygradle.gradle.plugin', version: '1.1.+'
+        classpath group: 'wtf.gofancy.fancygradle', name: 'wtf.gofancy.fancygradle.gradle.plugin', version: '1.1.+'
     }
 }
 
@@ -39,11 +39,11 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 repositories {
     maven {
-		url = 'https://www.cursemaven.com/'
-		content {
+        url = 'https://www.cursemaven.com/'
+        content {
             includeGroup "curse.maven"
         }
-	}
+    }
 }
 
 version = "${mcversion}-${version}"
@@ -54,62 +54,62 @@ archivesBaseName = 'ThaumicAugmentation'
 java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
 
 ext {
-	if (!project.hasProperty('certFingerprint')) {
-		certFingerprint = ''	
-	}
+    if (!project.hasProperty('certFingerprint')) {
+        certFingerprint = ''    
+    }
 }
 
 minecraft {
     mappings channel: 'stable', version: '39-1.12'
-	
+    
     //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     accessTransformer = file('src/main/resources/META-INF/thaumicaugmentation_at.cfg')
-	
-	runs {
-		client {
-			workingDirectory file('run')
-			
-			// Recommended logging data for a userdev environment
+    
+    runs {
+        client {
+            workingDirectory file('run')
+            
+            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-			
-			property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
-			
-			mods {
+            
+            property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
+            
+            mods {
                 thaumicaugmentation {
                     source sourceSets.main
                 }
             }
-		}
-		
-		server {
-			workingDirectory file('run')
-			
-			// Recommended logging data for a userdev environment
+        }
+        
+        server {
+            workingDirectory file('run')
+            
+            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-			
-			property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
-			
-			mods {
+            
+            property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
+            
+            mods {
                 thaumicaugmentation {
                     source sourceSets.main
                 }
             }
-		}
-	}
+        }
+    }
 }
 
 dependencies {
-	minecraft "net.minecraftforge:forge:${mcversion}-${forgeversion}"
-	
+    minecraft "net.minecraftforge:forge:${mcversion}-${forgeversion}"
+    
     implementation fg.deobf('curse.maven:thaumcraft-223628:2629023')
     implementation fg.deobf('curse.maven:baubles-227083:2518667')
-	
+    
     compileOnly 'curse.maven:jeid-296289:2919737'
     compileOnly 'curse.maven:botania-225643:2846950'
     compileOnly 'curse.maven:auracontrol-397104:3013979'
@@ -127,7 +127,7 @@ dependencies {
     // uncomment the following and put jars into subfolders in the "lib" folder
     
     //implementation fileTree(dir: 'lib/implementation', include: '*.jar')
-	//compileOnly fileTree(dir: 'lib/compileOnly', include: '*.jar')
+    //compileOnly fileTree(dir: 'lib/compileOnly', include: '*.jar')
     //runtimeOnly fileTree(dir: 'lib/runtimeOnly', include: '*.jar')
     
     // note that the first line has no deobf - if you need it use BON2 or something
@@ -136,29 +136,29 @@ dependencies {
 
 // https://stackoverflow.com/questions/30038540/replace-token-in-file-before-building-but-keep-token-in-sources/54094378#54094378
 task filterTokens(type: Sync) {
-	// this will ensure that this task is redone when the versions change.
+    // this will ensure that this task is redone when the versions change.
     inputs.property 'version', version
     inputs.property 'apiversion', apiversion
-	inputs.property 'certFingerprint', certFingerprint
-	
-	from sourceSets.main.java
-	filter(ReplaceTokens, tokens: [APIVERSION: apiversion.toString(), VERSION: version.toString(), FINGERPRINT: certFingerprint.toString()])
-	into "$buildDir/filteredSrc"
+    inputs.property 'certFingerprint', certFingerprint
+    
+    from sourceSets.main.java
+    filter(ReplaceTokens, tokens: [APIVERSION: apiversion.toString(), VERSION: version.toString(), FINGERPRINT: certFingerprint.toString()])
+    into "$buildDir/filteredSrc"
 }
 
 compileJava {
-	source = filterTokens.outputs	
+    source = filterTokens.outputs   
 }
 
 processResources {
-	// required to allow file expansion later
+    // required to allow file expansion later
     duplicatesStrategy = 'include'
-	
-	// this will ensure that this task is redone when the versions change.
+    
+    // this will ensure that this task is redone when the versions change.
     inputs.property 'version', version
     inputs.property 'apiversion', apiversion
     inputs.property 'mcversion', mcversion
-	
+    
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
@@ -197,8 +197,8 @@ jar {
         attributes 'FMLCorePlugin': 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
-	
-	afterEvaluate { project.getTasks().getByName('reobfJar').finalizedBy(signJar) }
+    
+    afterEvaluate { project.getTasks().getByName('reobfJar').finalizedBy(signJar) }
 }
 
 jar.finalizedBy('reobfJar')
