@@ -4,27 +4,39 @@ buildscript {
 		maven { url = 'https://maven.minecraftforge.net/' }
 		jcenter()
 		mavenCentral()
+        maven {
+            name 'FancyGradle'
+            url 'https://gitlab.com/api/v4/projects/26758973/packages/maven'
+        }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+		classpath group: 'wtf.gofancy.fancygradle', name: 'wtf.gofancy.fancygradle.gradle.plugin', version: '1.1.+'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
+apply plugin: 'wtf.gofancy.fancygradle'
 
-// eclipse messes up if this isn't here
-sourceSets {
-	main {
-        output.resourcesDir = file('build/combined')
-        java.outputDir = file('build/combined')
+fancyGradle {
+    patches {
+        resources
+        coremods
+        asm
     }
+}
+
+// eclipse thinks test needs resources if this is not here
+// but eclipse is still broken anyway so oh well
+sourceSets {
     test {
         resources.setSrcDirs([])
     }
 }
 
 import net.minecraftforge.gradle.common.tasks.SignJar
+import org.apache.tools.ant.filters.ReplaceTokens
 
 repositories {
     maven {
@@ -41,6 +53,12 @@ archivesBaseName = 'ThaumicAugmentation'
 
 //sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
+
+ext {
+	if (!project.hasProperty('certFingerprint')) {
+		certFingerprint = ''	
+	}
+}
 
 minecraft {
     mappings channel: 'stable', version: '39-1.12'
@@ -106,14 +124,31 @@ dependencies {
     runtimeOnly 'curse.maven:ctm-267602:2915363'
     
     // if the curse maven is down or otherwise not working:
-    // comment the above "deobfCompile" and "runtime" entries
+    // comment the above "implementation", "compileOnly", and "runtimeOnly" entries
     // uncomment the following and put jars into subfolders in the "lib" folder
     
-    //implementation fileTree(dir: 'lib/compile', include: '*.jar')
-    //runtimeOnly fileTree(dir: 'lib/runtime', include: '*.jar')
+    //implementation fileTree(dir: 'lib/implementation', include: '*.jar')
+	//compileOnly fileTree(dir: 'lib/compileOnly', include: '*.jar')
+    //runtimeOnly fileTree(dir: 'lib/runtimeOnly', include: '*.jar')
     
     // note that the first line has no deobf - if you need it use BON2 or something
     // to avoid needing test jars, comment the "testImplementation" lines and put "-x test" on the command line
+}
+
+// https://stackoverflow.com/questions/30038540/replace-token-in-file-before-building-but-keep-token-in-sources/54094378#54094378
+task filterTokens(type: Sync) {
+	// this will ensure that this task is redone when the versions change.
+    inputs.property 'version', version
+    inputs.property 'apiversion', apiversion
+	inputs.property 'certFingerprint', certFingerprint
+	
+	from sourceSets.main.java
+	filter(ReplaceTokens, tokens: [APIVERSION: apiversion.toString(), VERSION: version.toString(), FINGERPRINT: certFingerprint.toString()])
+	into "$buildDir/filteredSrc"
+}
+
+compileJava {
+	source = filterTokens.outputs	
 }
 
 processResources {
@@ -124,20 +159,6 @@ processResources {
     inputs.property 'version', version
     inputs.property 'apiversion', apiversion
     inputs.property 'mcversion', mcversion
-
-	filesMatching('src/main/java/thecodex6824/thaumicaugmentation/api/ThaumicAugmentationAPI.java') {
-        expand('@APIVERSION@': project.apiversion)
-    }
-    
-	def certFingerprint = ''
-    if (project.hasProperty('keyStore')) {
-		certFingerprint = project.certFingerprint
-    }
-	
-	filesMatching('src/main/java/thecodex6824/thaumicaugmentation/ThaumicAugmentation.java') {
-		expand('@VERSION@': project.version)
-		expand('@FINGERPRINT@': certFingerprint)
-	}
 	
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
@@ -157,7 +178,7 @@ javadoc {
     include 'thecodex6824/thaumicaugmentation/api/**'
 }
 
-task signJar(type: SignJar, dependsOn: jar) {
+task signJar(type: SignJar) {
     onlyIf { project.hasProperty('keyStore') }
     
     if (project.hasProperty('keyStore')) { // needed to skip gradle trying to find vars
@@ -178,8 +199,10 @@ jar {
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
 	
-	afterEvaluate { finalizedBy('reobfJar')	}
+	afterEvaluate { project.getTasks().getByName('reobfJar').finalizedBy(signJar) }
 }
+
+jar.finalizedBy('reobfJar')
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     from 'build/docs/javadoc'
