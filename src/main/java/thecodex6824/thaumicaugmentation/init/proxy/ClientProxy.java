@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.BiConsumer;
@@ -1418,7 +1419,9 @@ public class ClientProxy extends ServerProxy {
         }
         
         HashMap<IRegistryDelegate<Item>, IItemColor> toReplace = new HashMap<>();
-        for (Item item : Item.REGISTRY) {
+        Iterator<Item> iter = Item.REGISTRY.iterator();
+        while (iter.hasNext()) {
+            Item item = iter.next();
             if (item instanceof ItemArmor) {
                 final IItemColor original = registry.get(item.delegate);
                 toReplace.put(item.delegate, new IItemColor() {

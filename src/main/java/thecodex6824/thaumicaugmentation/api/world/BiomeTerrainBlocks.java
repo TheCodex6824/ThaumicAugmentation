@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.api.world;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.function.Function;
 
 import net.minecraft.block.Block;
@@ -73,9 +74,11 @@ public final class BiomeTerrainBlocks {
             return Blocks.COBBLESTONE.getDefaultState();
         });
         
-        Biome.REGISTRY.forEach(biome -> {
+        Iterator<Biome> iter = Biome.REGISTRY.iterator();
+        while (iter.hasNext()) {
+            Biome biome = iter.next();
             registerBiomeOverride(biome, biome.topBlock, biome.fillerBlock);
-        });
+        }
     }
 
     private static IBlockState handleReplacements(IBlockState in) {
