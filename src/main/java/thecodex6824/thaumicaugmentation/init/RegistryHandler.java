@@ -72,6 +72,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockEldritchLockImpetus;
 import thecodex6824.thaumicaugmentation.common.block.BlockFortifiedGlass;
 import thecodex6824.thaumicaugmentation.common.block.BlockFortifiedGlassPane;
 import thecodex6824.thaumicaugmentation.common.block.BlockGlassTube;
+import thecodex6824.thaumicaugmentation.common.block.BlockImpetusCreative;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDiffuser;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusDrainer;
 import thecodex6824.thaumicaugmentation.common.block.BlockImpetusGate;
@@ -170,6 +171,8 @@ import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileCrabVent;
+import thecodex6824.thaumicaugmentation.common.tile.TileCreativeImpetusSink;
+import thecodex6824.thaumicaugmentation.common.tile.TileCreativeImpetusSource;
 import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
 import thecodex6824.thaumicaugmentation.common.tile.TileGlassTube;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
@@ -281,6 +284,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockTAUrn(), "urn"));
         registry.register(setupBlock(new BlockItemGrate(), "item_grate"));
         registry.register(setupBlock(new BlockGlassTube(), "glass_tube"));
+        registry.register(setupBlock(new BlockImpetusCreative(), "impetus_creative"));
         
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -313,6 +317,8 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileWardedPressurePlate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_pressure_plate"));
         GameRegistry.registerTileEntity(TileItemGrate.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "item_grate"));
         GameRegistry.registerTileEntity(TileGlassTube.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "glass_tube"));
+        GameRegistry.registerTileEntity(TileCreativeImpetusSource.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_source_creative"));
+        GameRegistry.registerTileEntity(TileCreativeImpetusSink.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_sink_creative"));
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)

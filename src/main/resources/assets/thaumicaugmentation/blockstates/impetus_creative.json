@@ -1,0 +1,23 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "minecraft:cube_all"
+    },
+    "variants": {
+        "ta_creative_impetus_type": {
+            "source": {
+                "textures": {
+                    "all": "thaumicaugmentation:blocks/impetus_source_creative"
+                }
+            },
+            "sink": {
+                "textures": {
+                    "all": "thaumicaugmentation:blocks/impetus_sink_creative"
+                }
+            }
+        },
+        "inventory": {
+            "transform": "forge:default-block"
+        }
+    }
+}
