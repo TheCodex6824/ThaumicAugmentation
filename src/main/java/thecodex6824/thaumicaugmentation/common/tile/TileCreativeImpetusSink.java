@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.Deque;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
@@ -33,6 +35,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
+import thecodex6824.thaumicaugmentation.api.impetus.node.ConsumeResult;
+import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
@@ -50,8 +54,14 @@ public class TileCreativeImpetusSink extends TileEntity implements ITickable {
     
     @Override
     public void update() {
-        if (!world.isRemote && ticks++ % 20 == 0)
-            consumer.consume(Long.MAX_VALUE, false);
+        if (!world.isRemote && ticks++ % 20 == 0) {
+            ConsumeResult result = consumer.consume(Long.MAX_VALUE, false);
+            if (result.energyConsumed > 0) {
+                NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+                for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+                    NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+            }
+        }
     }
     
     @Override
