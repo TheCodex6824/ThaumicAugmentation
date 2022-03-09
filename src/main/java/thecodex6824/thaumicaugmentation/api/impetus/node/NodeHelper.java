@@ -204,7 +204,8 @@ public final class NodeHelper {
                 break;
             else if (r.getBlockPos() != null && r.hitVec != null) {
                 IBlockState state = sharedWorld.getBlockState(r.getBlockPos());
-                if (state.isOpaqueCube() || state.getLightOpacity(sharedWorld, r.getBlockPos()) > 0) {
+                if (!node1.getLocation().getPos().equals(r.getBlockPos()) &&
+                        (state.isOpaqueCube() || state.getLightOpacity(sharedWorld, r.getBlockPos()) > 0)) {
                     clear = false;
                     break;
                 }
