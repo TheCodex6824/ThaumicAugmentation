@@ -28,7 +28,6 @@ fancyGradle {
 }
 
 // eclipse thinks test needs resources if this is not here
-// but eclipse is still broken anyway so oh well
 sourceSets {
     test {
         resources.setSrcDirs([])
@@ -152,7 +151,7 @@ task filterTokens(type: Sync) {
 }
 
 compileJava {
-    source = filterTokens.outputs   
+    source = filterTokens.outputs
 }
 
 processResources {
