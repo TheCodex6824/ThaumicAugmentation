@@ -23,6 +23,7 @@ fancyGradle {
         resources
         coremods
         asm
+        codeChickenLib
     }
 }
 
@@ -77,6 +78,8 @@ minecraft {
             
             property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
             
+            environment 'MC_VERSION', '1.12.2'
+            
             mods {
                 thaumicaugmentation {
                     source sourceSets.main
@@ -94,6 +97,8 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             
             property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
+            
+            environment 'MC_VERSION', '1.12.2'
             
             mods {
                 thaumicaugmentation {
