@@ -1,0 +1,7 @@
+# Blender MTL File: 'augmentstation_export.blend'
+# Material Count: 1
+
+newmtl Material
+Kd 0.800000 0.800000 0.800000
+d 1.000000
+map_Kd thaumicaugmentation:blocks/augmentation_station
