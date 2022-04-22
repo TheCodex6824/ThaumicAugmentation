@@ -46,7 +46,7 @@ public class AugmentConfiguration implements IAugmentConfiguration {
     
     @Override
     public ItemStack[] getAugmentConfig() {
-        return configuration;
+        return configuration.toArray(new ItemStack[configuration.size()]);
     }
 
     @Override
