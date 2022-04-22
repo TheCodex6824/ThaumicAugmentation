@@ -1,6 +1,6 @@
 /**
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 KevoHoff.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -41,7 +41,7 @@ public interface IAugmentConfiguration {
     public void addAugment(ItemStack augment);
 
     /**
-     * removes an augment from the configuration. Pops augment
+     * Removes an augment from the configuration. Pops augment
      * from configuration stack.
      * @return True if the augment was found and removed. False
      * otherwise.
