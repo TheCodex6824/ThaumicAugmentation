@@ -111,6 +111,7 @@ import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.fx.FXGenericP2ECustomSpeed;
 import thecodex6824.thaumicaugmentation.client.fx.FXImpulseBeam;
 import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.client.gui.GUIAugmentationStation;
 import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
 import thecodex6824.thaumicaugmentation.client.gui.GUICelestialObserver;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
@@ -125,6 +126,7 @@ import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.client.sound.MovingSoundRecord;
 import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.common.container.ContainerAugmentationStation;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
 import thecodex6824.thaumicaugmentation.common.container.ContainerCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
@@ -153,9 +155,12 @@ import java.util.function.Function;
 
 public class ClientProxy extends ServerProxy {
 
+    private static final String KEY_CATEGORY = ThaumicAugmentationAPI.MODID + ".key.category";
+    
     private KeyBinding elytraBoost;
-    private final HashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
-    private final ResourceReloadDispatcher reloadDispatcher;
+    private KeyBinding augmentRadial;
+    private HashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
+    private ResourceReloadDispatcher reloadDispatcher;
     
     public ClientProxy() {
         handlers = new HashMap<>();
@@ -266,6 +271,7 @@ public class ClientProxy extends ServerProxy {
             case ARCANE_TERRAFORMER: return new GUIArcaneTerraformer((ContainerArcaneTerraformer) getServerGUIElement(ID, player, world, x, y, z));
             case AUTOCASTER: return new GUIAutocaster((ContainerAutocaster) getServerGUIElement(ID, player, world, x, y, z));
             case CELESTIAL_OBSERVER: return new GUICelestialObserver((ContainerCelestialObserver) getServerGUIElement(ID, player, world, x, y, z));
+            case AUGMENTATION_STATION: return new GUIAugmentationStation((ContainerAugmentationStation) getServerGUIElement(ID, player, world, x, y, z));
             default: return null;
         }
     }
@@ -1034,10 +1040,14 @@ public class ClientProxy extends ServerProxy {
         
         if (TAConfig.enableBoosterKeybind.getValue()) {
             elytraBoost = new KeyBinding(ThaumicAugmentationAPI.MODID + ".key.elytra_boost",
-                    Keyboard.KEY_SPACE, ThaumicAugmentationAPI.MODID + ".key.category");
+                    Keyboard.KEY_SPACE, KEY_CATEGORY);
             
             ClientRegistry.registerKeyBinding(elytraBoost);
         }
+        
+        augmentRadial = new KeyBinding(ThaumicAugmentationAPI.MODID + ".key.augment_radial",
+                    Keyboard.KEY_G, KEY_CATEGORY);
+        ClientRegistry.registerKeyBinding(augmentRadial);
         
         for (String s : TAConfig.morphicArmorExclusions.getValue())
             MorphicArmorExclusions.addExcludedModelPattern(s);

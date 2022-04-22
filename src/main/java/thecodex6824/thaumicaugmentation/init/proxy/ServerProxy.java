@@ -51,6 +51,7 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.common.container.ContainerAugmentationStation;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
 import thecodex6824.thaumicaugmentation.common.container.ContainerCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
@@ -201,6 +202,7 @@ public class ServerProxy implements ISidedProxy {
                     (TileArcaneTerraformer) world.getTileEntity(new BlockPos(x, y, z)));
             case AUTOCASTER: return new ContainerAutocaster(player.inventory, (EntityAutocaster) world.getEntityByID(x));
             case CELESTIAL_OBSERVER: return new ContainerCelestialObserver(player.inventory, (EntityCelestialObserver) world.getEntityByID(x));
+            case AUGMENTATION_STATION: return new ContainerAugmentationStation(player.inventory);
             default: return null;
         }
     }

@@ -33,7 +33,8 @@ public class GUIHandler implements IGuiHandler {
         WARDED_CHEST(0),
         ARCANE_TERRAFORMER(1),
         AUTOCASTER(2),
-        CELESTIAL_OBSERVER(3);
+        CELESTIAL_OBSERVER(3),
+        AUGMENTATION_STATION(4);
 
         private final int id;
 
