@@ -162,6 +162,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockItemGrate(), "item_grate"));
         registry.register(setupBlock(new BlockGlassTube(), "glass_tube"));
         registry.register(setupBlock(new BlockImpetusCreative(), "impetus_creative"));
+        registry.register(setupBlock(new BlockAugmentationStation(), "augmentation_station"));
         
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
