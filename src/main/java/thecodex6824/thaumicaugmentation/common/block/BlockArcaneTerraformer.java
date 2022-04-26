@@ -162,7 +162,7 @@ public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraf
         else {
             IBlockState down = world.getBlockState(pos.down());
             if (down.getBlock() != this || down.getValue(IArcaneTerraformerHalf.TERRAFORMER_HALF) == ArcaneTerraformerHalf.LOWER)
-                world.setBlockToAir(pos.up());
+                world.setBlockToAir(pos.down());
         }
         
         super.breakBlock(world, pos, state);
