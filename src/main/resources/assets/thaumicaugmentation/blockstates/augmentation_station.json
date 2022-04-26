@@ -10,38 +10,38 @@
             "custom": { "flip-v": true },
             "transform": {
                 "firstperson_righthand": {
-                    "rotation": [0, 45.0, 0],
+                    "rotation": [0, 315.0, 0],
                     "translation": [0.0, 0.0, 0.0],
-                    "scale": [0.4, 0.4, 0.4]
+                    "scale": [0.3, 0.3, 0.3]
                 },
                 "firstperson_lefthand": {
-                    "rotation": [0, 225.0, 0],
+                    "rotation": [0, 45.0, 0],
                     "translation": [0.0, 0.0, 0.0],
-                    "scale": [0.4, 0.4, 0.4]
+                    "scale": [0.3, 0.3, 0.3]
                 },
                 "thirdperson_righthand": {
                     "rotation": [75.0, 45.0, 0],
                     "translation": [0.0, 0.15625, 0.0],
-                    "scale": [0.375, 0.375, 0.375]
+                    "scale": [0.275, 0.275, 0.275]
                 },
                 "thirdperson_lefthand": {
-                    "rotation": [75.0, 225.0, 0.0],
+                    "rotation": [75.0, 315.0, 0.0],
                     "translation": [0.0, 0.15625, 0.0],
-                    "scale": [0.375, 0.375, 0.375]
+                    "scale": [0.275, 0.275, 0.275]
                 },
                 "ground": {
                     "rotation": [0.0, 0.0, 0.0],
-                    "translation": [0.0, 0.1875, 0.0],
+                    "translation": [0.0, 0.1, 0.0],
                     "scale": [0.25, 0.25, 0.25]
                 },
                 "gui": {
-                    "rotation": [30.0, 225.0, 0.0],
-                    "translation": [0.0, -0.025, 0.0],
-                    "scale": [0.59, 0.59, 0.59]
+                    "rotation": [30.0, 315.0, 0.0],
+                    "translation": [-0.0875, -0.125, 0.0],
+                    "scale": [0.35, 0.35, 0.35]
                 },
                 "fixed": {
-                    "rotation": [0.0, 0.0, 0.0],
-                    "translation": [0.0, 0.0, 0.0],
+                    "rotation": [0.0, 180.0, 0.0],
+                    "translation": [0.225, -0.175, -0.15],
                     "scale": [0.45, 0.45, 0.45]
                 }
             }

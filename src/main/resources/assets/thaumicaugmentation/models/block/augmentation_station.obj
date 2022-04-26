@@ -1,6 +1,6 @@
 # Blender v2.93.0 OBJ File: 'augmentstation_export.blend'
 # www.blender.org
-mtllib augment_station.mtl
+mtllib augmentation_station.mtl
 o Augmentation_Station_Cube.008
 v -0.015625 1.015625 0.875000
 v -0.015625 1.015625 0.312500
