@@ -38,7 +38,6 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -50,19 +49,15 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.api.capabilities.IPlayerKnowledge;
 import thaumcraft.api.capabilities.IPlayerKnowledge.EnumResearchFlag;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.items.RechargeHelper;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -86,7 +81,6 @@ import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
-import thecodex6824.thaumicaugmentation.init.GUIHandler;
 
 import java.util.Collections;
 import java.util.Set;
@@ -467,19 +461,6 @@ public final class PlayerEventHandler {
                     player.capabilities.allowFlying = true;
                 }
             }
-        }
-    }
-    
-    @SubscribeEvent
-    public static void onInteractAmber(PlayerInteractEvent.RightClickBlock event) {
-        World world = event.getEntityPlayer().getEntityWorld();
-        if (!world.isRemote && world.isBlockLoaded(event.getPos()) && world.getBlockState(event.getPos()).equals(
-                BlocksTC.amberBlock.getDefaultState())) {
-            
-            event.getEntityPlayer().openGui(ThaumicAugmentation.instance, GUIHandler.TAInventory.AUGMENTATION_STATION.getID(),
-                    world, event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
-            event.setUseBlock(Result.DENY);
-            event.setUseItem(Result.DENY);
         }
     }
 

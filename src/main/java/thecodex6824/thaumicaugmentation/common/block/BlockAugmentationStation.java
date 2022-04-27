@@ -1,6 +1,7 @@
 /**
  *  Thaumic Augmentation
  *  Copyright (c) 2022 WillPastor.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -23,23 +24,40 @@ package thecodex6824.thaumicaugmentation.common.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraft.world.World;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
+import thecodex6824.thaumicaugmentation.init.GUIHandler;
 
 public class BlockAugmentationStation extends BlockTABase implements IItemBlockProvider {
-
 	
 	public BlockAugmentationStation() {
 		super(Material.WOOD);
+	}
+	
+	@Override
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
+	        EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	    
+	    if (!world.isRemote) {
+            if (!player.isSneaking()) {
+                player.openGui(ThaumicAugmentation.instance, GUIHandler.TAInventory.AUGMENTATION_STATION.getID(), world, 
+                        pos.getX(), pos.getY(), pos.getZ());
+                return true;
+            }
+            else
+                return false;
+        }
+
+        return true;
 	}
 	
 	@Override
@@ -95,12 +113,6 @@ public class BlockAugmentationStation extends BlockTABase implements IItemBlockP
 		// TODO Auto-generated method stub
 		return EnumBlockRenderType.MODEL;
 	}
-	
-	 @Override
-    public void registerModels() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(
-                getRegistryName().toString(), "inventory"));
-    }
 	
 }
 
