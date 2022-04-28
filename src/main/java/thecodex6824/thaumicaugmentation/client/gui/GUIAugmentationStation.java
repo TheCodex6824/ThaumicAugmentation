@@ -33,7 +33,7 @@ public class GUIAugmentationStation extends GuiContainer {
     public GUIAugmentationStation(ContainerAugmentationStation c) {
         super(c);
         xSize = 176;
-        ySize = 217;
+        ySize = 186;
     }
     
     @Override
