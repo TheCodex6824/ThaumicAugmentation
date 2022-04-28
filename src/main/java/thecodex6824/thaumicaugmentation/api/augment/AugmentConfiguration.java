@@ -22,7 +22,8 @@ package thecodex6824.thaumicaugmentation.api.augment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.item.ItemStack;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentConfiguration;
@@ -34,45 +35,47 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugmentConfiguration;
 */
 public class AugmentConfiguration implements IAugmentConfiguration {
 
-    private Collection<ItemStack> configuration;
+    private Map<Integer, ItemStack> configuration;
     
     public AugmentConfiguration() {
-        configuration = new ArrayList<ItemStack>();
+        configuration = new HashMap<Integer, ItemStack>();
     }
     
     public AugmentConfiguration(ItemStack[] augs) {
-        configuration = new ArrayList<ItemStack>(Arrays.asList(augs));
+        configuration = new HashMap<>();
+        int slot = 0;
+        for (ItemStack aug : augs) {
+            configuration.put(slot, aug);
+            slot++;
+        }
     }
     
     @Override
     public ItemStack[] getAugmentConfig() {
-        return configuration.toArray(new ItemStack[configuration.size()]);
+        return configuration.values().toArray(new ItemStack[0]);
     }
 
     @Override
-    public void addAugment(ItemStack augment) {
-        configuration.add(augment);
+    public void setAugment(ItemStack augment, int slot) {
+        configuration.put(slot, augment);
     }
 
     @Override
-    public boolean removeAugment(ItemStack augment) {
+    public boolean removeAugment(int slot) {
         boolean res = false;
-        for (ItemStack aug : configuration) {
-            if (augment.equals(aug)) {
-                configuration.remove(aug);
-                res = true;
-            }
+        if (configuration.containsKey(slot)) {
+            res = true;
+            configuration.remove(slot);
         }
+        
         return res;
     }
 
     @Override
     public boolean isAugmentAcceptable(ItemStack augment) {
         boolean res = true;
-        for (ItemStack aug : configuration) {
-            if (augment.equals(aug)) {
-                res = false;
-            }
+        if (configuration.containsValue(augment)) {
+            res = false;
         }
         return res;    // TODO: Add augment acceptable method; is it specific to an augmentable item?
     }

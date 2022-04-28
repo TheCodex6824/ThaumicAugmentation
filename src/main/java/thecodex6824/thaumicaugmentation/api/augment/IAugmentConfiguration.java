@@ -35,18 +35,21 @@ public interface IAugmentConfiguration {
     public ItemStack[] getAugmentConfig();
     
     /**
-     * Adds an augment to the augment configuration if the
+     * Sets an augment in the augment configuration if the
      * augment is acceptable.
+     * @param augment The augment to set in some slot
+     * @param slot The slot the augment is being added to
      */
-    public void addAugment(ItemStack augment);
+    public void setAugment(ItemStack augment, int slot);
 
     /**
      * Removes an augment from the configuration. Pops augment
      * from configuration stack.
+     * @param slot The slot the augment is being removed from
      * @return True if the augment was found and removed. False
      * otherwise.
      */
-    public boolean removeAugment(ItemStack augment);
+    public boolean removeAugment(int slot);
 
     /**
      * Returns if the provided augment can be inserted into the configuration.
