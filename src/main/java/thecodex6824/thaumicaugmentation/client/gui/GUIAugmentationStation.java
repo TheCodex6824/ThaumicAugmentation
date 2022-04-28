@@ -28,7 +28,7 @@ import thecodex6824.thaumicaugmentation.common.container.ContainerAugmentationSt
 
 public class GUIAugmentationStation extends GuiContainer {
 
-    protected static final ResourceLocation TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/gui/celestial_observer.png");
+    protected static final ResourceLocation TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/gui/augmentation_station.png");
     
     public GUIAugmentationStation(ContainerAugmentationStation c) {
         super(c);
