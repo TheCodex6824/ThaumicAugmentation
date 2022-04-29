@@ -1,6 +1,7 @@
 /**
  *  Thaumic Augmentation
  *  Copyright (c) 2022 KevoHoff.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,29 +21,34 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMap;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
-import thecodex6824.thaumicaugmentation.api.augment.IAugmentConfiguration;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.INBTSerializable;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
 /**
 * Default implementation of the Augmentable Item capability.
 * @author KevoHoff
 * 
 */
-public class AugmentConfiguration implements IAugmentConfiguration {
+public class AugmentConfiguration implements IAugmentConfiguration, INBTSerializable<NBTTagCompound> {
 
-    private Map<Integer, ItemStack> configuration;
+    private Int2ObjectOpenHashMap<ItemStack> configuration;
     
     public AugmentConfiguration() {
-        configuration = new HashMap<Integer, ItemStack>();
+        this(new ItemStack[0]);
     }
     
     public AugmentConfiguration(ItemStack[] augs) {
-        configuration = new HashMap<>();
+        configuration = new Int2ObjectOpenHashMap<>();
         int slot = 0;
         for (ItemStack aug : augs) {
             configuration.put(slot, aug);
@@ -51,33 +57,65 @@ public class AugmentConfiguration implements IAugmentConfiguration {
     }
     
     @Override
-    public ItemStack[] getAugmentConfig() {
-        return configuration.values().toArray(new ItemStack[0]);
+    public ImmutableMap<Integer, ItemStack> getAugmentConfig() {
+        return ImmutableMap.copyOf(configuration);
     }
 
     @Override
-    public void setAugment(ItemStack augment, int slot) {
-        configuration.put(slot, augment);
+    @Nullable
+    public ItemStack setAugment(ItemStack augment, int slot) {
+        ItemStack ret = configuration.put(slot, augment);
+        if (ret == null)
+            ret = ItemStack.EMPTY;
+        
+        return ret;
     }
 
     @Override
-    public boolean removeAugment(int slot) {
-        boolean res = false;
-        if (configuration.containsKey(slot)) {
-            res = true;
-            configuration.remove(slot);
+    @Nullable
+    public ItemStack removeAugment(int slot) {
+        ItemStack ret = configuration.remove(slot);
+        if (ret == null)
+            ret = ItemStack.EMPTY;
+        
+        return ret;
+    }
+    
+    @Override
+    public boolean isAugmentAcceptable(ItemStack augment, int slot) {
+        for (ItemStack aug : configuration.values()) {
+            if (!aug.isEmpty() && !aug.getCapability(CapabilityAugment.AUGMENT, null).isCompatible(augment))
+                return false;
         }
         
-        return res;
+        return true;
     }
-
+    
     @Override
-    public boolean isAugmentAcceptable(ItemStack augment) {
-        boolean res = true;
-        if (configuration.containsValue(augment)) {
-            res = false;
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound data = new NBTTagCompound();
+        for (Map.Entry<Integer, ItemStack> entry : configuration.entrySet()) {
+            if (!entry.getValue().isEmpty())
+                data.setTag("slot" + entry.getKey(), entry.getValue().serializeNBT());
         }
-        return res;    // TODO: Add augment acceptable method; is it specific to an augmentable item?
+        
+        return data;
+    }
+    
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        for (String key : nbt.getKeySet()) {
+            if (nbt.hasKey(key, NBT.TAG_COMPOUND) && key.startsWith("slot")) {
+                String slotNum = key.substring("slot".length());
+                try {
+                    int slot = Integer.parseInt(slotNum);
+                    configuration.put(slot, new ItemStack(nbt.getCompoundTag(key)));
+                }
+                catch (NumberFormatException ex) {
+                    ThaumicAugmentation.getLogger().warn("Invalid slot number for augment configuration, discarding");
+                }
+            }
+        }
     }
     
 }

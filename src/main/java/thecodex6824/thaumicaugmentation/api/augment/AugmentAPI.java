@@ -26,6 +26,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /*
@@ -62,6 +63,33 @@ public final class AugmentAPI {
      */
     public static Collection<Function<Entity, Iterable<ItemStack>>> getAugmentableItemSources() {
         return additionalItemSources.values();
+    }
+    
+    public static AugmentConfigurationApplyResult tryApplyConfiguration(IAugmentConfiguration config, IAugmentableItem target, boolean simulate) {
+        for (Map.Entry<Integer, ItemStack> entry : config.getAugmentConfig().entrySet()) {
+            if (entry.getKey() < 0 || entry.getKey() >= target.getTotalAugmentSlots())
+                return AugmentConfigurationApplyResult.INVALID_SLOT;
+            else if (!target.isAugmentAcceptable(entry.getValue(), entry.getKey()))
+                return AugmentConfigurationApplyResult.INVALID_AUGMENT;
+        }
+        
+        if (!simulate) {
+            for (Map.Entry<Integer, ItemStack> entry : config.getAugmentConfig().entrySet())
+                target.setAugment(entry.getValue(), entry.getKey());
+        }
+        
+        return AugmentConfigurationApplyResult.OK;
+    }
+    
+    public static IAugmentConfiguration makeConfiguration(IAugmentableItem item) {
+        AugmentConfiguration config = new AugmentConfiguration();
+        for (int i = 0; i < item.getTotalAugmentSlots(); ++i) {
+            ItemStack augment = item.getAugment(i);
+            if (!augment.isEmpty())
+                config.setAugment(augment, i);
+        }
+        
+        return config;
     }
     
 }

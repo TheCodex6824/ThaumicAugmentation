@@ -1,6 +1,7 @@
 /**
  *  Thaumic Augmentation
  *  Copyright (c) 2022 KevoHoff.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +21,9 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Interface for the AugmentConfiguration capability.
@@ -29,33 +31,34 @@ import net.minecraft.nbt.NBTTagCompound;
 public interface IAugmentConfiguration {
 
     /**
-     * Returns the stack of augments in the configuration
+     * Returns a read-only view of the augments in this configuration.
      * @return The specific augments contained in the configuration
      */
-    public ItemStack[] getAugmentConfig();
+    public ImmutableMap<Integer, ItemStack> getAugmentConfig();
     
     /**
      * Sets an augment in the augment configuration if the
      * augment is acceptable.
      * @param augment The augment to set in some slot
      * @param slot The slot the augment is being added to
+     * @return The augment previously in this slot, or the empty ItemStack if it was empty
      */
-    public void setAugment(ItemStack augment, int slot);
+    public ItemStack setAugment(ItemStack augment, int slot);
 
     /**
      * Removes an augment from the configuration. Pops augment
      * from configuration stack.
      * @param slot The slot the augment is being removed from
-     * @return True if the augment was found and removed. False
-     * otherwise.
+     * @return The removed augment if it was present, the empty ItemStack otherwise.
      */
-    public boolean removeAugment(int slot);
+    public ItemStack removeAugment(int slot);
 
     /**
      * Returns if the provided augment can be inserted into the configuration.
      * @param augment The augment to check
+     * @param slot The slot the augment would go into
      * @return If the given augment can be inserted into the configuration
      */
-    public boolean isAugmentAcceptable(ItemStack augment);
+    public boolean isAugmentAcceptable(ItemStack augment, int slot);
     
 }

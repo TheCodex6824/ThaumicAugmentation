@@ -166,13 +166,12 @@ public class AugmentableItem implements IAugmentableItem, INBTSerializable<NBTTa
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        NBTTagCompound data = nbt;
-        int slots = data.getInteger("slots");
+        int slots = nbt.getInteger("slots");
         if (slots < 256) {
             augments = new ItemStack[slots];
             for (int i = 0; i < augments.length; ++i) {
-                if (data.hasKey("slot" + i, NBT.TAG_COMPOUND))
-                    augments[i] = new ItemStack(data.getCompoundTag("slot" + i));
+                if (nbt.hasKey("slot" + i, NBT.TAG_COMPOUND))
+                    augments[i] = new ItemStack(nbt.getCompoundTag("slot" + i));
                 else
                     augments[i] = ItemStack.EMPTY;
             }
