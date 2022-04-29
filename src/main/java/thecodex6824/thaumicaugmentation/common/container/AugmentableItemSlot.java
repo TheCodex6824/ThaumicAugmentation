@@ -22,7 +22,6 @@ package thecodex6824.thaumicaugmentation.common.container;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -30,9 +29,9 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 
 public class AugmentableItemSlot extends SlotItemHandler {
     
-    protected Container parent;
+    protected ContainerAugmentationStation parent;
     
-    public AugmentableItemSlot(Container parentContainer, int index, int xPosition, int yPosition) {
+    public AugmentableItemSlot(ContainerAugmentationStation parentContainer, int index, int xPosition, int yPosition) {
         super(new ItemStackHandler(1) {
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {

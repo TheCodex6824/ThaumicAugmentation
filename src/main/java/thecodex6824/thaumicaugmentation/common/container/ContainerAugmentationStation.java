@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.container;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -29,13 +30,16 @@ import net.minecraft.item.ItemStack;
 public class ContainerAugmentationStation extends Container {
     
     protected EntityPlayer player;
+    protected AugmentableItemSlot centralSlot;
+    protected IntArrayList trackedAugmentSlots;
     
     public ContainerAugmentationStation(InventoryPlayer inv) {
         // store player so we can do some lookups later
         player = inv.player;
         // add the central augmentable item slot
         // this is *not* saved in any way
-        addSlotToContainer(new AugmentableItemSlot(this, 0, 36, 29));
+        centralSlot = new AugmentableItemSlot(this, 0, 36, 29);
+        addSlotToContainer(centralSlot);
         
         // the loops below set up slots for the player's inventory
         for (int y = 0; y < 3; ++y) {
@@ -45,12 +49,35 @@ public class ContainerAugmentationStation extends Container {
         
         for (int x = 0; x < 9; ++x)
             addSlotToContainer(new Slot(inv, x, 8 + x * 18, 161));
+        
+        trackedAugmentSlots = new IntArrayList();
+    }
+    
+    public void addAugmentSlot(Slot slot) {
+        addSlotToContainer(slot);
+        trackedAugmentSlots.add(slot.slotNumber);
+        // TODO network sync???
+    }
+    
+    public void removeAllAugmentSlots() {
+        for (int slot : trackedAugmentSlots) {
+            inventoryItemStacks.remove(slot);
+            inventorySlots.remove(slot);
+        }
+        
+        // TODO sync?
+        trackedAugmentSlots.clear();
     }
     
     @Override
-    public void onContainerClosed(EntityPlayer playerIn) {
-        super.onContainerClosed(playerIn);
-        // TODO return augmentable item to player (if it is still there)
+    public void onContainerClosed(EntityPlayer player) {
+        super.onContainerClosed(player);
+        if (centralSlot.getHasStack()) {
+            ItemStack central = centralSlot.getStack();
+            centralSlot.onTake(player, central);
+            if (!central.isEmpty())
+                player.dropItem(central, false);
+        }
     }
     
     @Override
