@@ -1,13 +1,17 @@
 {
     "forge_marker": 1,
+    "defaults": {
+		"model": "thaumicaugmentation:augmentation_station.obj",
+    	"custom": { "flip-v": true }
+	},
     "variants": {
-        "normal": {
-            "model": "thaumicaugmentation:augmentation_station.obj",
-            "custom": { "flip-v": true }
+    	"ta_direction_h": {
+            "south": {"y": 180},
+            "west": {"y": 270},
+            "north": {"y": 0},
+            "east": {"y": 90}
         },
         "inventory": {
-            "model": "thaumicaugmentation:augmentation_station.obj",
-            "custom": { "flip-v": true },
             "transform": {
                 "firstperson_righthand": {
                     "rotation": [0, 315.0, 0],
