@@ -6,12 +6,14 @@
 	},
     "variants": {
     	"ta_direction_h": {
-            "south": {"y": 180},
-            "west": {"y": 270},
-            "north": {"y": 0},
-            "east": {"y": 90}
+            "south": {},
+            "west": {"y": 90},
+            "north": {"y": 180},
+            "east": {"y": 270}
         },
         "inventory": {
+            "model": "thaumicaugmentation:augmentation_station.obj",
+            "custom": { "flip-v": true },
             "transform": {
                 "firstperson_righthand": {
                     "rotation": [0, 315.0, 0],
