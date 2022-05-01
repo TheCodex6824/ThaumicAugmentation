@@ -65,7 +65,7 @@ public final class AugmentAPI {
         return additionalItemSources.values();
     }
     
-    public static AugmentConfigurationApplyResult tryApplyConfiguration(IAugmentConfiguration config, IAugmentableItem target, boolean simulate) {
+    public static AugmentConfigurationApplyResult tryApplyConfiguration(AugmentConfiguration config, IAugmentableItem target, boolean simulate) {
         for (Map.Entry<Integer, ItemStack> entry : config.getAugmentConfig().entrySet()) {
             if (entry.getKey() < 0 || entry.getKey() >= target.getTotalAugmentSlots())
                 return AugmentConfigurationApplyResult.INVALID_SLOT;
@@ -81,8 +81,12 @@ public final class AugmentAPI {
         return AugmentConfigurationApplyResult.OK;
     }
     
-    public static IAugmentConfiguration makeConfiguration(IAugmentableItem item) {
-        AugmentConfiguration config = new AugmentConfiguration();
+    public static AugmentConfiguration makeConfiguration(ItemStack stack) {
+        IAugmentableItem item = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+        if (item == null)
+            throw new IllegalArgumentException();
+        
+        AugmentConfiguration config = new AugmentConfiguration(item.createConfigurationStack(stack));
         for (int i = 0; i < item.getTotalAugmentSlots(); ++i) {
             ItemStack augment = item.getAugment(i);
             if (!augment.isEmpty())

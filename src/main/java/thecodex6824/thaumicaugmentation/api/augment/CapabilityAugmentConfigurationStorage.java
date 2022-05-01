@@ -20,16 +20,18 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
-import java.util.Collection;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
-import net.minecraft.item.ItemStack;
+/**
+ * Holds an instance of the capability for {@link IAugmentConfigurationStorage}.
+ * @author TheCodex6824
+ */
+public final class CapabilityAugmentConfigurationStorage {
 
-public interface IAugmentConfigurationStorage {
-
-    public Collection<AugmentConfiguration> getAllConfigurationsForItem(ItemStack input);
+    private CapabilityAugmentConfigurationStorage() {}
     
-    public boolean addConfiguration(AugmentConfiguration config);
-    
-    public boolean removeConfiguration(AugmentConfiguration config);
+    @CapabilityInject(IAugmentConfigurationStorage.class)
+    public static final Capability<IAugmentConfigurationStorage> AUGMENT_CONFIGURATION_STORAGE = null;
     
 }

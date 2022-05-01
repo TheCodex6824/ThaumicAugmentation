@@ -39,17 +39,17 @@ public class ContainerAugmentationStation extends Container {
         
         // add the central augmentable item slot
         // this is *not* saved in any way
-        centralSlot = new AugmentableItemSlot(this, 80, 43);
+        centralSlot = new AugmentableItemSlot(this, 80, 90);
         addSlotToContainer(centralSlot);
         
         // the loops below set up slots for the player's inventory
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 9; ++x)
-                addSlotToContainer(new Slot(inv, x + y * 9 + 9, 8 + x * 18, 103 + y * 18));
+                addSlotToContainer(new Slot(inv, x + y * 9 + 9, 8 + x * 18, 131 + y * 18));
         }
         
         for (int x = 0; x < 9; ++x)
-            addSlotToContainer(new Slot(inv, x, 8 + x * 18, 161));
+            addSlotToContainer(new Slot(inv, x, 8 + x * 18, 189));
         
         trackedAugmentSlots = new IntArrayList();
     }
@@ -73,6 +73,10 @@ public class ContainerAugmentationStation extends Container {
     
     public int[] getAugmentSlotIndices() {
         return trackedAugmentSlots.toIntArray();
+    }
+    
+    public boolean hasAugmentableItem() {
+        return centralSlot.getHasStack();
     }
     
     @Override

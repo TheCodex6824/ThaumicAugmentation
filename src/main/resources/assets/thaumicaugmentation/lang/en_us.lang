@@ -262,6 +262,9 @@ thaumicaugmentation.gui.redstone=Redstone Control
 thaumicaugmentation.gui.scan_sun=Sun
 thaumicaugmentation.gui.scan_moon=Moon
 thaumicaugmentation.gui.scan_stars=Stars
+thaumicaugmentation.gui.apply_config=Apply Configuration Now
+thaumicaugmentation.gui.config_prev=Previous Configuration
+thaumicaugmentation.gui.config_next=Next Configuration
 
 thaumicaugmentation.command.subcommands=[thaumicaugmentation] Available subcommands:
 thaumicaugmentation.command.not_entity=You must provide a location as you are not an entity in the world

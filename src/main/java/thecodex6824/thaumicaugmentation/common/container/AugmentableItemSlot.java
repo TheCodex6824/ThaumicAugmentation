@@ -30,8 +30,6 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 public class AugmentableItemSlot extends SlotItemHandler {
     
     protected ContainerAugmentationStation parent;
-    int augmentSlots;
-    int xPosition, yPosition;
     
     public AugmentableItemSlot(ContainerAugmentationStation parentContainer, int xPosition, int yPosition) {
         super(new ItemStackHandler(1) {
@@ -47,8 +45,6 @@ public class AugmentableItemSlot extends SlotItemHandler {
             }
         }, 0, xPosition, yPosition);
         
-        this.xPosition = xPosition;
-        this.yPosition = yPosition;
         parent = parentContainer;
     }
     
@@ -86,16 +82,13 @@ public class AugmentableItemSlot extends SlotItemHandler {
         if (doAdd) {
             AugmentItemHandler handler = new AugmentItemHandler(newStack.getCapability(
                     CapabilityAugmentableItem.AUGMENTABLE_ITEM, null));
-            // EXAMPLE - remove later
-            // the "0" is the augment slot # - make sure to change that for each slot!
-            
-            this.augmentSlots = handler.getSlots();
-            double xIncrement = Math.PI/(this.augmentSlots-1);
+            int augmentSlots = handler.getSlots();
+            double xIncrement = Math.PI / (augmentSlots - 1);
             int xSlotPosition, ySlotPosition;
-            for (int i = 0; i < this.augmentSlots; i++) {
-                xSlotPosition = (int) Math.round(Math.cos(Math.PI + xIncrement*i))*this.augmentSlots*16;
-                ySlotPosition = (int) Math.round(Math.sin(Math.PI + xIncrement*i))*this.augmentSlots*16;
-                parent.addAugmentSlot(new SlotItemHandler(handler, i, this.xPosition + xSlotPosition, this.yPosition + ySlotPosition));
+            for (int i = 0; i < augmentSlots; ++i) {
+                xSlotPosition = (int) Math.round(Math.cos(Math.PI + xIncrement*i))*augmentSlots*16;
+                ySlotPosition = (int) Math.round(Math.sin(Math.PI + xIncrement*i))*augmentSlots*16;
+                parent.addAugmentSlot(new SlotItemHandler(handler, i, xPos + xSlotPosition, yPos + ySlotPosition));
             }
         }
     }
