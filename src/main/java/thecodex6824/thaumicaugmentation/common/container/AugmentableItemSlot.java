@@ -31,6 +31,7 @@ public class AugmentableItemSlot extends SlotItemHandler {
     
     protected ContainerAugmentationStation parent;
     int augmentSlots;
+    int xPosition, yPosition;
     
     public AugmentableItemSlot(ContainerAugmentationStation parentContainer, int xPosition, int yPosition) {
         super(new ItemStackHandler(1) {
@@ -46,7 +47,8 @@ public class AugmentableItemSlot extends SlotItemHandler {
             }
         }, 0, xPosition, yPosition);
         
-        this.augmentSlots = 3;
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
         parent = parentContainer;
     }
     
@@ -86,9 +88,14 @@ public class AugmentableItemSlot extends SlotItemHandler {
                     CapabilityAugmentableItem.AUGMENTABLE_ITEM, null));
             // EXAMPLE - remove later
             // the "0" is the augment slot # - make sure to change that for each slot!
-            parent.addAugmentSlot(new SlotItemHandler(handler, 0, 1, 1));
+            
+            this.augmentSlots = handler.getSlots();
+            double xIncrement = Math.PI/(this.augmentSlots-1);
+            int xSlotPosition, ySlotPosition;
             for (int i = 0; i < this.augmentSlots; i++) {
-                // TODO add slots in semi circle
+                xSlotPosition = (int) Math.round(Math.cos(Math.PI + xIncrement*i))*this.augmentSlots*16;
+                ySlotPosition = (int) Math.round(Math.sin(Math.PI + xIncrement*i))*this.augmentSlots*16;
+                parent.addAugmentSlot(new SlotItemHandler(handler, i, this.xPosition + xSlotPosition, this.yPosition + ySlotPosition));
             }
         }
     }
