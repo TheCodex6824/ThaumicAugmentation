@@ -25,11 +25,13 @@ import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import net.minecraft.inventory.Slot;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 
 public class AugmentableItemSlot extends SlotItemHandler {
     
     protected ContainerAugmentationStation parent;
+    int augmentSlots;
     
     public AugmentableItemSlot(ContainerAugmentationStation parentContainer, int index, int xPosition, int yPosition) {
         super(new ItemStackHandler(1) {
@@ -45,12 +47,20 @@ public class AugmentableItemSlot extends SlotItemHandler {
             }
         }, index, xPosition, yPosition);
         
+        this.augmentSlots = 3;
         parent = parentContainer;
     }
     
     @Override
     public void onSlotChange(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack) {
-        // TODO add/remove augment slots as needed
+        // TODO finish adding augment slots as needed
+        if (oldStack.isEmpty() && !newStack.isEmpty()) {  // Add
+            for (int i = 0; i < this.augmentSlots; i++) {
+                // TODO add slots in semi circle
+            }
+        } else {  // Remove
+            parent.removeAllAugmentSlots();
+        }
     }
     
 }
