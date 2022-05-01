@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.client.gui;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAugmentationStation;
@@ -56,6 +57,11 @@ public class GUIAugmentationStation extends GuiContainer {
         int width = (this.width - this.xSize) / 2;
         int height = (this.height - this.ySize) / 2;
         drawTexturedModalRect(width, height, 0, 0, xSize, ySize);
+        
+        for (int i : ((ContainerAugmentationStation) inventorySlots).getAugmentSlotIndices()) {
+            Slot s = inventorySlots.inventorySlots.get(i);
+            drawTexturedModalRect(guiLeft + s.xPos - 7, guiTop + s.yPos - 7, 93, 222, 32, 32);
+        }
     }
     
 }

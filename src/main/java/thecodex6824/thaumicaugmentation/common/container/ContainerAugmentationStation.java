@@ -36,10 +36,6 @@ public class ContainerAugmentationStation extends Container {
     public ContainerAugmentationStation(InventoryPlayer inv) {
         // store player so we can do some lookups later
         player = inv.player;
-        // add the central augmentable item slot
-        // this is *not* saved in any way
-        centralSlot = new AugmentableItemSlot(this, 0, 36, 29);
-        addSlotToContainer(centralSlot);
         
         // the loops below set up slots for the player's inventory
         for (int y = 0; y < 3; ++y) {
@@ -49,6 +45,11 @@ public class ContainerAugmentationStation extends Container {
         
         for (int x = 0; x < 9; ++x)
             addSlotToContainer(new Slot(inv, x, 8 + x * 18, 161));
+        
+        // add the central augmentable item slot
+        // this is *not* saved in any way
+        centralSlot = new AugmentableItemSlot(this, 80, 43);
+        addSlotToContainer(centralSlot);
         
         trackedAugmentSlots = new IntArrayList();
     }
@@ -67,6 +68,10 @@ public class ContainerAugmentationStation extends Container {
         
         // TODO sync?
         trackedAugmentSlots.clear();
+    }
+    
+    public int[] getAugmentSlotIndices() {
+        return trackedAugmentSlots.toIntArray();
     }
     
     @Override

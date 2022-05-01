@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import net.minecraft.inventory.Slot;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 
 public class AugmentableItemSlot extends SlotItemHandler {
@@ -33,7 +32,7 @@ public class AugmentableItemSlot extends SlotItemHandler {
     protected ContainerAugmentationStation parent;
     int augmentSlots;
     
-    public AugmentableItemSlot(ContainerAugmentationStation parentContainer, int index, int xPosition, int yPosition) {
+    public AugmentableItemSlot(ContainerAugmentationStation parentContainer, int xPosition, int yPosition) {
         super(new ItemStackHandler(1) {
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
@@ -45,21 +44,52 @@ public class AugmentableItemSlot extends SlotItemHandler {
             public int getSlotLimit(int slot) {
                 return 1;
             }
-        }, index, xPosition, yPosition);
+        }, 0, xPosition, yPosition);
         
         this.augmentSlots = 3;
         parent = parentContainer;
     }
     
     @Override
+    public void putStack(@Nonnull ItemStack stack) {
+        ItemStack old = getStack();
+        super.putStack(stack);
+        if (!old.isItemEqual(stack))
+            onSlotChange(old, stack);
+    }
+    
+    @Override
+    @Nonnull
+    public ItemStack decrStackSize(int amount) {
+        ItemStack old = getStack();
+        ItemStack ret = super.decrStackSize(amount);
+        if (!old.isItemEqual(getStack()))
+            onSlotChange(old, getStack());
+        
+        return ret;
+    }
+    
+    @Override
     public void onSlotChange(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack) {
-        // TODO finish adding augment slots as needed
-        if (oldStack.isEmpty() && !newStack.isEmpty()) {  // Add
+        onSlotChanged();
+        boolean doRemove = false, doAdd = false;
+        if (!newStack.isEmpty())
+            doAdd = true;
+        if (!oldStack.isEmpty() || newStack.isEmpty())
+            doRemove = true;
+        
+        if (doRemove)
+            parent.removeAllAugmentSlots();
+        
+        if (doAdd) {
+            AugmentItemHandler handler = new AugmentItemHandler(newStack.getCapability(
+                    CapabilityAugmentableItem.AUGMENTABLE_ITEM, null));
+            // EXAMPLE - remove later
+            // the "0" is the augment slot # - make sure to change that for each slot!
+            parent.addAugmentSlot(new SlotItemHandler(handler, 0, 1, 1));
             for (int i = 0; i < this.augmentSlots; i++) {
                 // TODO add slots in semi circle
             }
-        } else {  // Remove
-            parent.removeAllAugmentSlots();
         }
     }
     
