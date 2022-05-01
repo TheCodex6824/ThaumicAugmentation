@@ -37,6 +37,11 @@ public class ContainerAugmentationStation extends Container {
         // store player so we can do some lookups later
         player = inv.player;
         
+        // add the central augmentable item slot
+        // this is *not* saved in any way
+        centralSlot = new AugmentableItemSlot(this, 80, 43);
+        addSlotToContainer(centralSlot);
+        
         // the loops below set up slots for the player's inventory
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 9; ++x)
@@ -45,11 +50,6 @@ public class ContainerAugmentationStation extends Container {
         
         for (int x = 0; x < 9; ++x)
             addSlotToContainer(new Slot(inv, x, 8 + x * 18, 161));
-        
-        // add the central augmentable item slot
-        // this is *not* saved in any way
-        centralSlot = new AugmentableItemSlot(this, 80, 43);
-        addSlotToContainer(centralSlot);
         
         trackedAugmentSlots = new IntArrayList();
     }
@@ -102,13 +102,15 @@ public class ContainerAugmentationStation extends Container {
             ItemStack otherStack = slot.getStack();
             stack = otherStack.copy();
 
-            int containerSlots = inventorySlots.size() - player.inventory.mainInventory.size();
-            if (index < containerSlots) {
-                if (!this.mergeItemStack(otherStack, containerSlots, inventorySlots.size(), true))
+            if (index == 0 || index > player.inventory.mainInventory.size()) {
+                if (!this.mergeItemStack(otherStack, 1, player.inventory.mainInventory.size() + 1, true))
                     return ItemStack.EMPTY;
             }
-            else if (!this.mergeItemStack(otherStack, 0, containerSlots, false))
+            else if (!this.mergeItemStack(otherStack, 0, 1, false) &&
+                    !this.mergeItemStack(otherStack, player.inventory.mainInventory.size(), inventorySlots.size(), false)) {
+                
                 return ItemStack.EMPTY;
+            }
 
             if (otherStack.getCount() == 0)
                 slot.putStack(ItemStack.EMPTY);
