@@ -61,7 +61,8 @@ public class ContainerAugmentationStation extends Container {
     }
     
     public void removeAllAugmentSlots() {
-        for (int slot : trackedAugmentSlots) {
+        for (int i = trackedAugmentSlots.size() - 1; i >= 0; --i) {
+            int slot = trackedAugmentSlots.getInt(i);
             inventoryItemStacks.remove(slot);
             inventorySlots.remove(slot);
         }
