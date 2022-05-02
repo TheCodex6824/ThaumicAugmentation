@@ -43,6 +43,7 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
+import thecodex6824.thaumicaugmentation.client.renderer.AugmentRadialRenderer;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
@@ -52,7 +53,7 @@ import javax.annotation.Nullable;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public class HUDEventHandler {
-
+    
     protected static void renderHeldImpetusLevel(ItemStack stack, IImpetusStorage storage) {
         boolean bottom = ModConfig.CONFIG_GRAPHICS.dialBottom;
         boolean caster = stack.getItem() instanceof ICaster;
@@ -130,6 +131,8 @@ public class HUDEventHandler {
             if (storage != null)
                 renderHeldImpetusLevel(held, storage);
         }
+        else if (event.getType() == ElementType.TEXT)
+            AugmentRadialRenderer.renderAugmentRadial(event);
     }
     
     @SubscribeEvent

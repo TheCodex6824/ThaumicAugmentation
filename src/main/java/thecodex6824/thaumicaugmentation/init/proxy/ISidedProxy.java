@@ -78,7 +78,11 @@ public interface ISidedProxy {
     boolean isInGame();
     
     boolean isElytraBoostKeyDown();
+
+    boolean isAugmentRadialKeyDown();
     
+    void setAugmentRadialKeyDown(boolean state);
+
     boolean isPvPEnabled();
     
     boolean isEntityClientPlayer(Entity e);

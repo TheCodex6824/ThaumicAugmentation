@@ -68,6 +68,7 @@ public final class TANetwork {
         
         INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketInteractGUI.class, id++, Side.SERVER);
         INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketElytraBoost.class, id++, Side.SERVER);
+        INSTANCE.registerMessage(new GenericServerMessageHandler<>(), PacketApplyAugmentConfiguration.class, id++, Side.SERVER);
     }
 
 }

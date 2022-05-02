@@ -245,6 +245,16 @@ public class ClientProxy extends ServerProxy {
     }
     
     @Override
+    public boolean isAugmentRadialKeyDown() {
+        return augmentRadial.isKeyDown();
+    }
+    
+    @Override
+    public void setAugmentRadialKeyDown(boolean state) {
+        KeyBinding.setKeyBindState(augmentRadial.getKeyCode(), state);
+    }
+    
+    @Override
     public boolean isPvPEnabled() {
         return Minecraft.getMinecraft().getIntegratedServer() != null && Minecraft.getMinecraft().getIntegratedServer().isPVPEnabled();
     }
