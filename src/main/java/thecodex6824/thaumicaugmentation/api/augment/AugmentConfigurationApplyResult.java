@@ -24,6 +24,8 @@ public enum AugmentConfigurationApplyResult {
 
     OK,
     INVALID_SLOT,
-    INVALID_AUGMENT
+    INVALID_AUGMENT,
+    MISSING_AUGMENT,
+    OTHER_PROBLEM;
     
 }

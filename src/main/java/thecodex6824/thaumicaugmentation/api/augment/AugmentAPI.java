@@ -21,15 +21,17 @@
 package thecodex6824.thaumicaugmentation.api.augment;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-/*
+/**
  * Contains utility methods for working with augments.
  * @author TheCodex6824
  */
@@ -39,7 +41,7 @@ public final class AugmentAPI {
     
     private static final HashMap<String, Function<Entity, Iterable<ItemStack>>> additionalItemSources = new HashMap<>();
     
-    /*
+    /**
      * Registers a callback that returns a source of ItemStacks to check for augmentable items on an entity.
      * @param key A unique identifier for this source
      * @param source The callback that returns the ItemStack instances to check for augmentable items
@@ -48,7 +50,7 @@ public final class AugmentAPI {
         additionalItemSources.put(key.toString(), source);
     }
     
-    /*
+    /**
      * Removes a previously registered augmentable item source.
      * @param key The unique identifier of the callback to remove
      * @return If a callback matching the key existed and was removed
@@ -57,7 +59,7 @@ public final class AugmentAPI {
         return additionalItemSources.remove(key.toString()) != null;
     }
     
-    /*
+    /**
      * Returns a collection of all augmentable item sources.
      * @return All augmentable item sources
      */
@@ -79,6 +81,74 @@ public final class AugmentAPI {
         }
         
         return AugmentConfigurationApplyResult.OK;
+    }
+    
+    private static boolean areStacksEqualNoCaps(ItemStack a, ItemStack b) {
+        if (a.getItem() != b.getItem())
+            return false;
+        else if ((a.getHasSubtypes() || b.getHasSubtypes()) && a.getMetadata() != b.getMetadata())
+            return false;
+        else if (!ItemStack.areItemStackTagsEqual(a, b))
+            return false;
+        
+        return true;
+    }
+    
+    public static AugmentConfigurationApplyResult trySwapConfiguration(EntityPlayer user, AugmentConfiguration config, IAugmentableItem target, boolean simulate) {
+        for (Map.Entry<Integer, ItemStack> entry : config.getAugmentConfig().entrySet()) {
+            if (entry.getKey() < 0 || entry.getKey() >= target.getTotalAugmentSlots())
+                return AugmentConfigurationApplyResult.INVALID_SLOT;
+            else if (!target.isAugmentAcceptable(entry.getValue(), entry.getKey()))
+                return AugmentConfigurationApplyResult.INVALID_AUGMENT;
+        }
+        
+        // TODO replace this with a registration system like for augmentable items
+        // like seriously, this is bad - TODO TODO TODO
+        ArrayList<ItemStack> toFind = new ArrayList<>(config.getAugmentConfig().values());
+        ArrayList<ItemStack> tempToFind = new ArrayList<>(toFind);
+        for (ItemStack stack : user.inventory.mainInventory) {
+            ItemStack found = ItemStack.EMPTY;
+            for (ItemStack s : tempToFind) {
+                if (areStacksEqualNoCaps(stack, s)) {
+                    found = s;
+                    break;
+                }
+            }
+            
+            if (!found.isEmpty()) {
+                tempToFind.remove(found);
+                if (tempToFind.isEmpty())
+                    break;
+            }
+        }
+        
+        if (tempToFind.isEmpty()) {
+            if (!simulate) {
+                for (ItemStack stack : user.inventory.mainInventory) {
+                    ItemStack found = ItemStack.EMPTY;
+                    for (ItemStack s : toFind) {
+                        if (areStacksEqualNoCaps(stack, s)) {
+                            found = s;
+                            break;
+                        }
+                    }
+                    
+                    if (!found.isEmpty()) {
+                        toFind.remove(found);
+                        stack.setCount(0);
+                        if (toFind.isEmpty())
+                            break;
+                    }
+                }
+                
+                for (Map.Entry<Integer, ItemStack> entry : config.getAugmentConfig().entrySet())
+                    target.setAugment(entry.getValue(), entry.getKey());
+            }
+            
+            return AugmentConfigurationApplyResult.OK;
+        }
+        
+        return AugmentConfigurationApplyResult.MISSING_AUGMENT;
     }
     
     public static AugmentConfiguration makeConfiguration(ItemStack stack) {

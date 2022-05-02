@@ -20,28 +20,33 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
 import it.unimi.dsi.fastutil.Hash.Strategy;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class AugmentConfigurationStorage implements IAugmentConfigurationStorage, INBTSerializable<NBTTagCompound> {
 
-    protected Object2ObjectOpenCustomHashMap<ItemStack, HashSet<AugmentConfiguration>> configs;
+    protected Object2ObjectOpenCustomHashMap<ItemStack, ObjectLinkedOpenHashSet<AugmentConfiguration>> configs;
     
     public AugmentConfigurationStorage() {
         configs = new Object2ObjectOpenCustomHashMap<>(new Strategy<ItemStack>() {
             @Override
             public boolean equals(ItemStack a, ItemStack b) {
-                if (a.getItem() != b.getItem())
+                if (a == null && b == null)
+                    return true;
+                else if (a != null && b == null || a == null && b != null)
+                    return false;
+                else if (a.getItem() != b.getItem())
                     return false;
                 else if ((a.getHasSubtypes() || b.getHasSubtypes()) && a.getMetadata() != b.getMetadata())
                     return false;
@@ -62,14 +67,16 @@ public class AugmentConfigurationStorage implements IAugmentConfigurationStorage
     
     @Override
     public boolean addConfiguration(AugmentConfiguration config) {
+        if (config.getConfigurationItemStack().isEmpty())
+            throw new RuntimeException();
         return configs.computeIfAbsent(config.getConfigurationItemStack(),
-                s -> new HashSet<>()).add(config);
+                s -> new ObjectLinkedOpenHashSet<>()).add(config);
     }
     
     @Override
     public boolean removeConfiguration(AugmentConfiguration config) {
         return configs.computeIfAbsent(config.getConfigurationItemStack(),
-                s -> new HashSet<>()).remove(config);
+                s -> new ObjectLinkedOpenHashSet<>()).remove(config);
     }
     
     protected boolean areStacksEqualEnough(ItemStack template, ItemStack input) {
@@ -93,7 +100,7 @@ public class AugmentConfigurationStorage implements IAugmentConfigurationStorage
     }
     
     @Override
-    public Collection<AugmentConfiguration> getAllConfigurationsForItem(ItemStack input) {
+    public List<AugmentConfiguration> getAllConfigurationsForItem(ItemStack input) {
         for (ItemStack stack : configs.keySet()) {
             if (areStacksEqualEnough(stack, input))
                 return ImmutableList.copyOf(configs.get(stack));
@@ -107,25 +114,24 @@ public class AugmentConfigurationStorage implements IAugmentConfigurationStorage
         NBTTagCompound tag = new NBTTagCompound();
         NBTTagCompound configurations = new NBTTagCompound();
         int i = 0;
-        for (HashSet<AugmentConfiguration> set : configs.values()) {
+        for (ObjectLinkedOpenHashSet<AugmentConfiguration> set : configs.values()) {
             for (AugmentConfiguration config : set) {
-                configurations.setTag(Integer.toString(i), config.serializeNBT());
+                configurations.setTag("slot" + Integer.toString(i), config.serializeNBT());
                 ++i;
             }
         }
         
-        tag.setTag("configs", configurations);
+        tag.setTag("configurations", configurations);
         return tag;
     }
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        NBTTagCompound configurations = nbt.getCompoundTag("configurations");
-        if (configurations != null) {
+        if (nbt.hasKey("configurations", NBT.TAG_COMPOUND)) {
+            NBTTagCompound configurations = nbt.getCompoundTag("configurations");
             for (String key : configurations.getKeySet()) {
-                NBTTagCompound c = nbt.getCompoundTag(key);
-                if (c != null)
-                    addConfiguration(new AugmentConfiguration(c));
+                if (configurations.hasKey(key, NBT.TAG_COMPOUND))
+                    addConfiguration(new AugmentConfiguration(configurations.getCompoundTag(key)));
             }
         }
     }

@@ -310,6 +310,8 @@ public class ServerProxy implements ISidedProxy {
     }
     
     protected void handleInteractGUIPacket(PacketInteractGUI message, MessageContext context) {
+        // TODO refactor GUI handling to not just be a mass of code in the proxy
+        
         EntityPlayerMP sender = context.getServerHandler().player;
         if (sender != null && sender.openContainer instanceof ContainerArcaneTerraformer) {
             ContainerArcaneTerraformer terraformer = (ContainerArcaneTerraformer) sender.openContainer;
@@ -377,6 +379,38 @@ public class ServerProxy implements ISidedProxy {
                         context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
                     }
                     break;
+                }
+            }
+        }
+        else if (sender != null && sender.openContainer instanceof ContainerAugmentationStation) {
+            ContainerAugmentationStation station = (ContainerAugmentationStation) sender.openContainer;
+            if (!station.canInteractWith(sender)) {
+                ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: not allowed to use container", sender.getName(), sender.getGameProfile().getId());
+                context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+            }
+            else {
+                switch (message.getComponentID()) {
+                    case 0: {
+                        if (message.getSelectionValue() < 0 || message.getSelectionValue() >= station.getMaxConfigurations()) {
+                            ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: invalid configuration index", sender.getName(), sender.getGameProfile().getId());
+                            context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+                        }
+                        else
+                            station.setSelectedConfiguration(message.getSelectionValue());
+                        
+                        break;
+                    }
+                    case 1: {
+                        station.tryApplyConfiguration();
+                        break;
+                    }
+                    default: {
+                        if (!isSingleplayer()) {
+                            ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: invalid component ID", sender.getName(), sender.getGameProfile().getId());
+                            context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
+                        }
+                        break;
+                    }
                 }
             }
         }

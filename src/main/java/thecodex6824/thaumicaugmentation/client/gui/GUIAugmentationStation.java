@@ -29,6 +29,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAugmentationStation;
+import thecodex6824.thaumicaugmentation.common.network.PacketInteractGUI;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 @SuppressWarnings("deprecation")
 public class GUIAugmentationStation extends GuiContainer {
@@ -62,10 +64,30 @@ public class GUIAugmentationStation extends GuiContainer {
                 GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
                 GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
                 drawTexturedModalRect(x, y, 17, 239 + (!enabled || value == 0 ? height : 0), width / 2, height);
-                drawTexturedModalRect(x + width / 2, y, 17 + width / 2, 239 + (!enabled || value == 8 ? height : 0), width / 2, height);
+                drawTexturedModalRect(x + width / 2, y, 17 + width / 2, 239 + (!enabled || value == 7 ? height : 0), width / 2, height);
                 mouseDragged(mc, mouseX, mouseY);
             }
         }
+        
+        @Override
+        public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+            if (super.mousePressed(mc, mouseX, mouseY)) {
+                if (value > 0 && mouseX >= x && mouseY >= y && mouseX <= x + width / 2 && mouseY < y + height) {
+                    --value;
+                    sync();
+                    return true;
+                }
+                else if (value < 7 && mouseX >= x + width / 2 && mouseY >= y && mouseX < x + width && mouseY < y + height) {
+                    ++value;
+                    sync();
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        protected void sync() {}
         
         @Override
         public String getHoverText(int mouseX, int mouseY) {
@@ -103,6 +125,18 @@ public class GUIAugmentationStation extends GuiContainer {
             }
         }
         
+        @Override
+        public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+            if (super.mousePressed(mc, mouseX, mouseY)) {
+                sync();
+                return true;
+            }
+            
+            return false;
+        }
+        
+        protected void sync() {}
+        
     }
     
     public GUIAugmentationStation(ContainerAugmentationStation c) {
@@ -114,8 +148,18 @@ public class GUIAugmentationStation extends GuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        buttonList.add(new ButtonConfigSelect(0, guiLeft + 14, guiTop + 6));
-        buttonList.add(new ButtonApplyConfig(1, guiLeft + 150, guiTop + 2));
+        buttonList.add(new ButtonConfigSelect(0, guiLeft + 14, guiTop + 6) {
+            @Override
+            protected void sync() {
+                TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, value));
+            }
+        });
+        buttonList.add(new ButtonApplyConfig(1, guiLeft + 150, guiTop + 2) {
+            @Override
+            protected void sync() {
+                TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, 0));
+            }
+        });
     }
     
     @Override

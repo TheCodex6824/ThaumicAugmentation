@@ -21,6 +21,8 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -30,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.oredict.OreDictionary;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
 /**
@@ -44,6 +47,7 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
     protected Int2ObjectOpenHashMap<ItemStack> configuration;
     
     public AugmentConfiguration(NBTTagCompound deserialize) {
+        configuration = new Int2ObjectOpenHashMap<>();
         deserializeNBT(deserialize);
     }
     
@@ -90,6 +94,21 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
         return configOwner;
     }
     
+    public ItemStack getAugment(int slot) {
+        return getAugment(slot, false);
+    }
+    
+    public ItemStack getAugment(int slot, boolean createIfMissing) {
+        ItemStack ret = configuration.get(slot);
+        if (ret == null) {
+            ret = ItemStack.EMPTY;
+            if (createIfMissing)
+                configuration.put(slot, ret);
+        }
+        
+        return ret;
+    }
+    
     /**
      * Returns a read-only view of the augments in this configuration.
      * @return The specific augments contained in the configuration
@@ -132,9 +151,12 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
      * @return If the given augment can be inserted into the configuration
      */
     public boolean isAugmentAcceptable(ItemStack augment, int slot) {
-        for (ItemStack aug : configuration.values()) {
-            if (!aug.isEmpty() && !aug.getCapability(CapabilityAugment.AUGMENT, null).isCompatible(augment))
-                return false;
+        for (Map.Entry<Integer, ItemStack> entry : configuration.entrySet()) {
+            if (entry.getKey() != slot) {
+                ItemStack aug = entry.getValue();
+                if (!aug.isEmpty() && !aug.getCapability(CapabilityAugment.AUGMENT, null).isCompatible(augment))
+                    return false;
+            }
         }
         
         return true;
@@ -169,6 +191,39 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
                 }
             }
         }
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof AugmentConfiguration) {
+            AugmentConfiguration other = (AugmentConfiguration) obj;
+            if (!ItemStack.areItemStacksEqual(configOwner, other.configOwner))
+                return false;
+            else if (!name.equals(other.name))
+                return false;
+            else if (!configuration.equals(other.configuration))
+                return false;
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        ArrayList<Object> toHash = new ArrayList<>();
+        toHash.add(configOwner.getItem().getRegistryName());
+        toHash.add(configOwner.getHasSubtypes() ? configOwner.getMetadata() : OreDictionary.WILDCARD_VALUE);
+        toHash.add(configOwner.getTagCompound());
+        toHash.add(name);
+        for (ItemStack s : configuration.values()) {
+            toHash.add(s.getItem().getRegistryName());
+            toHash.add(s.getHasSubtypes() ? s.getMetadata() : OreDictionary.WILDCARD_VALUE);
+            toHash.add(s.getTagCompound());
+        }
+        
+        return Arrays.deepHashCode(toHash.toArray());
     }
     
 }

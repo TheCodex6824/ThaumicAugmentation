@@ -20,13 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
-import java.util.Collection;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
 public interface IAugmentConfigurationStorage {
 
-    public Collection<AugmentConfiguration> getAllConfigurationsForItem(ItemStack input);
+    public List<AugmentConfiguration> getAllConfigurationsForItem(ItemStack input);
     
     public boolean addConfiguration(AugmentConfiguration config);
     

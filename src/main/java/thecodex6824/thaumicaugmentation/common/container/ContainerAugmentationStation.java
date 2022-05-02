@@ -20,18 +20,30 @@
 
 package thecodex6824.thaumicaugmentation.common.container;
 
+import javax.annotation.Nonnull;
+
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import thaumcraft.common.lib.SoundsTC;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentConfiguration;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentConfigurationApplyResult;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentConfigurationStorage;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentConfigurationStorage;
 
 public class ContainerAugmentationStation extends Container {
     
     protected EntityPlayer player;
     protected AugmentableItemSlot centralSlot;
     protected IntArrayList trackedAugmentSlots;
+    protected int selectedConfiguration;
     
     public ContainerAugmentationStation(InventoryPlayer inv) {
         // store player so we can do some lookups later
@@ -77,6 +89,109 @@ public class ContainerAugmentationStation extends Container {
     
     public boolean hasAugmentableItem() {
         return centralSlot.getHasStack();
+    }
+    
+    public int getMaxConfigurations() {
+        return 8;
+    }
+    
+    protected void ensureConfigIndex(ItemStack augmentable, IAugmentConfigurationStorage storage, int index) {
+        if (storage.getAllConfigurationsForItem(augmentable).size() <= index) {
+            for (int i = 0; i < index - storage.getAllConfigurationsForItem(augmentable).size() + 1; ++i)
+                storage.addConfiguration(new AugmentConfiguration(augmentable));
+        }
+    }
+    
+    public void setSelectedConfiguration(int newConfig) {
+        IAugmentConfigurationStorage storage = player.getCapability(
+                CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
+        if (storage != null) {
+            ensureConfigIndex(centralSlot.getStack(), storage, newConfig);
+            AugmentConfiguration c = storage.getAllConfigurationsForItem(centralSlot.getStack()).get(newConfig);
+            for (int index : trackedAugmentSlots) {
+                Slot s = inventorySlots.get(index);
+                if (s instanceof AugmentSlot)
+                    ((AugmentSlot) s).changeConfiguration(c);
+            }
+            
+            selectedConfiguration = newConfig;
+            detectAndSendChanges();
+        }
+    }
+    
+    public void onCentralSlotChanged(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack) {
+        boolean doRemove = false, doAdd = false;
+        if (!newStack.isEmpty())
+            doAdd = true;
+        if (!oldStack.isEmpty() || newStack.isEmpty())
+            doRemove = true;
+        
+        if (doRemove)
+            removeAllAugmentSlots();
+        
+        if (doAdd) {
+            IAugmentConfigurationStorage storage = player.getCapability(
+                    CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
+            if (storage != null) {
+                ensureConfigIndex(newStack, storage, 0);
+                AugmentConfiguration config = storage.getAllConfigurationsForItem(newStack).get(0);
+                int augmentSlots = newStack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getTotalAugmentSlots();
+                double xIncrement = Math.PI / (augmentSlots - 1);
+                int xSlotPosition, ySlotPosition;
+                for (int i = 0; i < augmentSlots; ++i) {
+                    xSlotPosition = (int) Math.round(Math.cos(Math.PI + xIncrement*i))*augmentSlots*16;
+                    ySlotPosition = (int) Math.round(Math.sin(Math.PI + xIncrement*i))*augmentSlots*16;
+                    addAugmentSlot(new AugmentSlot(config, i, centralSlot.xPos + xSlotPosition, centralSlot.yPos + ySlotPosition));
+                }
+                
+                setSelectedConfiguration(0);
+            }
+        }
+    }
+    
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickType, EntityPlayer player) {
+        if (slotId > player.inventory.mainInventory.size()) {
+            Slot clicked = inventorySlots.get(slotId);
+            if (clickType != ClickType.CLONE && clicked instanceof AugmentSlot) {
+                switch (clickType) {
+                    case SWAP: {
+                        clicked.putStack(player.inventory.getStackInSlot(dragType).copy());
+                        break;
+                    }
+                    case PICKUP:
+                    case PICKUP_ALL: {
+                        clicked.putStack(player.inventory.getItemStack().copy());
+                        break;
+                    }
+                    default: break;
+                }
+                
+                detectAndSendChanges();
+                return player.inventory.getStackInSlot(dragType);
+            }
+        }
+        
+        return super.slotClick(slotId, dragType, clickType, player);
+    }
+    
+    public AugmentConfigurationApplyResult tryApplyConfiguration() {
+        IAugmentConfigurationStorage storage = player.getCapability(
+                CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
+        if (storage != null) {
+            AugmentConfigurationApplyResult result = AugmentAPI.trySwapConfiguration(player,
+                    storage.getAllConfigurationsForItem(centralSlot.getStack()).get(selectedConfiguration),
+                    centralSlot.getStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null),
+                    false
+            );
+            if (result == AugmentConfigurationApplyResult.OK)
+                player.getEntityWorld().playSound(null, player.getPosition(), SoundsTC.ticks, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                
+            detectAndSendChanges();
+            return result;
+        }
+        
+        return AugmentConfigurationApplyResult.OTHER_PROBLEM;
     }
     
     @Override

@@ -70,27 +70,7 @@ public class AugmentableItemSlot extends SlotItemHandler {
     @Override
     public void onSlotChange(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack) {
         onSlotChanged();
-        boolean doRemove = false, doAdd = false;
-        if (!newStack.isEmpty())
-            doAdd = true;
-        if (!oldStack.isEmpty() || newStack.isEmpty())
-            doRemove = true;
-        
-        if (doRemove)
-            parent.removeAllAugmentSlots();
-        
-        if (doAdd) {
-            AugmentItemHandler handler = new AugmentItemHandler(newStack.getCapability(
-                    CapabilityAugmentableItem.AUGMENTABLE_ITEM, null));
-            int augmentSlots = handler.getSlots();
-            double xIncrement = Math.PI / (augmentSlots - 1);
-            int xSlotPosition, ySlotPosition;
-            for (int i = 0; i < augmentSlots; ++i) {
-                xSlotPosition = (int) Math.round(Math.cos(Math.PI + xIncrement*i))*augmentSlots*16;
-                ySlotPosition = (int) Math.round(Math.sin(Math.PI + xIncrement*i))*augmentSlots*16;
-                parent.addAugmentSlot(new SlotItemHandler(handler, i, xPos + xSlotPosition, yPos + ySlotPosition));
-            }
-        }
+        parent.onCentralSlotChanged(oldStack, newStack);
     }
     
 }
