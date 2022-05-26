@@ -27,6 +27,9 @@ import javax.annotation.Nullable;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.ComparableVersion;
+import org.apache.maven.artifact.versioning.VersionRange;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
 public class IntegrationHandler {
@@ -35,6 +38,7 @@ public class IntegrationHandler {
     public static final String BOTANIA_MOD_ID = "botania";
     public static final String AURACONTROL_MOD_ID = "auracontrol";
     public static final String EB_WIZARDRY_MOD_ID = "ebwizardry";
+    public static final ComparableVersion EB_WIZARDRY_MIN_VERSION = new ComparableVersion("4.2.0");
     
     private static HashMap<String, IIntegrationHolder> integrations = new HashMap<>();
     
@@ -45,8 +49,12 @@ public class IntegrationHandler {
             integrations.put(BOTANIA_MOD_ID, new IntegrationBotania());
         if (Loader.isModLoaded(AURACONTROL_MOD_ID))
             integrations.put(AURACONTROL_MOD_ID, new IntegrationAuraControl());
-        if (Loader.isModLoaded(EB_WIZARDRY_MOD_ID))
-            integrations.put(EB_WIZARDRY_MOD_ID, new IntegrationEBWizardry());
+        if (Loader.isModLoaded(EB_WIZARDRY_MOD_ID)) {
+            // Older versions of EB Wizardry do not have some things we want
+            String version = Loader.instance().getIndexedModList().get(EB_WIZARDRY_MOD_ID).getVersion();
+            if (new ComparableVersion(version).compareTo(EB_WIZARDRY_MIN_VERSION) >= 0)
+                integrations.put(EB_WIZARDRY_MOD_ID, new IntegrationEBWizardry());
+        }
         
         for (IIntegrationHolder holder : integrations.values()) {
             if (holder.registerEventBus())
