@@ -1,6 +1,6 @@
 /**
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -23,7 +23,13 @@ package thecodex6824.thaumicaugmentation.common.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.INBTSerializable;
+
+import javax.annotation.Nullable;
 
 public final class ItemHelper {
 
@@ -37,6 +43,18 @@ public final class ItemHelper {
         }
         
         return item;
+    }
+
+    @Nullable
+    public static <T> NBTTagCompound tryMakeCapabilityTag(ItemStack stack, Capability<T> cap) {
+        T obj = stack.getCapability(cap, null);
+        if (obj instanceof INBTSerializable<?>) {
+            NBTBase tag = ((INBTSerializable<?>) obj).serializeNBT();
+            if (tag instanceof NBTTagCompound)
+                return (NBTTagCompound) tag;
+        }
+
+        return null;
     }
     
 }

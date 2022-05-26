@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import javax.annotation.Nullable;
-
 import baubles.api.BaubleType;
 import baubles.api.cap.BaubleItem;
 import net.minecraft.entity.EntityLivingBase;
@@ -49,7 +47,10 @@ import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderHarness;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 import vazkii.botania.api.item.IPhantomInkable;
+
+import javax.annotation.Nullable;
 
 @Optional.Interface(iface = "vazkii.botania.api.item.IPhantomInkable", modid = IntegrationHandler.BOTANIA_MOD_ID)
 public class ItemThaumostaticHarness extends ItemTABase implements IRechargable, IPhantomInkable {
@@ -300,13 +301,16 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
         NBTTagCompound tag = new NBTTagCompound();
         if (stack.hasTagCompound()) {
             NBTTagCompound item = stack.getTagCompound().copy();
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer())
+            if (!ThaumicAugmentation.proxy.isSingleplayer() && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
                 item.removeTag("cap");
-            
+
             tag.setTag("item", item);
         }
-        
-        tag.setTag("cap", ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).serializeNBT());
+
+        NBTTagCompound cap = ItemHelper.tryMakeCapabilityTag(stack, CapabilityAugmentableItem.AUGMENTABLE_ITEM);
+        if (cap != null)
+            tag.setTag("cap", cap);
+
         return tag;
     }
     

@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import javax.annotation.Nullable;
-
 import baubles.api.BaubleType;
 import baubles.api.cap.BaubleItem;
 import net.minecraft.entity.EntityLivingBase;
@@ -50,7 +48,10 @@ import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 import vazkii.botania.api.item.IPhantomInkable;
+
+import javax.annotation.Nullable;
 
 @Optional.Interface(iface = "vazkii.botania.api.item.IPhantomInkable", modid = IntegrationHandler.BOTANIA_MOD_ID)
 public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRechargable, IPhantomInkable {
@@ -198,10 +199,18 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     @Override
     public NBTTagCompound getNBTShareTag(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
-        if (stack.hasTagCompound())
-            tag.setTag("item", stack.getTagCompound().copy());
-        
-        tag.setTag("cap", ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).serializeNBT());
+        if (stack.hasTagCompound()) {
+            NBTTagCompound item = stack.getTagCompound().copy();
+            if (!ThaumicAugmentation.proxy.isSingleplayer() && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+                item.removeTag("cap");
+
+            tag.setTag("item", item);
+        }
+
+        NBTTagCompound cap = ItemHelper.tryMakeCapabilityTag(stack, CapabilityAugmentableItem.AUGMENTABLE_ITEM);
+        if (cap != null)
+            tag.setTag("cap", cap);
+
         return tag;
     }
     

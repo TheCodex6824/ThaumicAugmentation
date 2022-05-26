@@ -20,11 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -51,6 +46,11 @@ import thecodex6824.thaumicaugmentation.common.capability.WardAuthenticatorKey;
 import thecodex6824.thaumicaugmentation.common.capability.WardAuthenticatorThaumiumKey;
 import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderKey;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.UUID;
 
 public class ItemKey extends ItemTABase {
 
@@ -203,10 +203,18 @@ public class ItemKey extends ItemTABase {
     @Override
     public NBTTagCompound getNBTShareTag(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
-        if (stack.hasTagCompound())
-            tag.setTag("item", stack.getTagCompound().copy());
-        
-        tag.setTag("cap", ((WardAuthenticatorKey) stack.getCapability(CapabilityWardAuthenticator.WARD_AUTHENTICATOR, null)).serializeNBT());
+        if (stack.hasTagCompound()) {
+            NBTTagCompound item = stack.getTagCompound().copy();
+            if (!ThaumicAugmentation.proxy.isSingleplayer() && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+                item.removeTag("cap");
+
+            tag.setTag("item", item);
+        }
+
+        NBTTagCompound cap = ItemHelper.tryMakeCapabilityTag(stack, CapabilityWardAuthenticator.WARD_AUTHENTICATOR);
+        if (cap != null)
+            tag.setTag("cap", cap);
+
         return tag;
     }
     

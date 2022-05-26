@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -65,6 +61,10 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemRiftEnergyCasterAugment extends ItemTABase {
 
@@ -189,12 +189,23 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
     @Override
     public NBTTagCompound getNBTShareTag(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
-        if (stack.hasTagCompound())
-            tag.setTag("item", stack.getTagCompound().copy());
+        if (stack.hasTagCompound()) {
+            NBTTagCompound item = stack.getTagCompound().copy();
+            if (!ThaumicAugmentation.proxy.isSingleplayer() && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+                item.removeTag("cap");
+
+            tag.setTag("item", item);
+        }
         
         tag.setTag("cap", new NBTTagCompound());
-        tag.getCompoundTag("cap").setTag("augment", ((Augment) stack.getCapability(CapabilityAugment.AUGMENT, null)).serializeNBT());
-        tag.getCompoundTag("cap").setTag("energy", ((ImpetusStorage) stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null)).serializeNBT());
+        NBTTagCompound augment = ItemHelper.tryMakeCapabilityTag(stack, CapabilityAugment.AUGMENT);
+        if (augment != null)
+            tag.getCompoundTag("cap").setTag("augment", augment);
+
+        NBTTagCompound energy = ItemHelper.tryMakeCapabilityTag(stack, CapabilityImpetusStorage.IMPETUS_STORAGE);
+        if (energy != null)
+            tag.getCompoundTag("cap").setTag("energy", energy);
+
         return tag;
     }
     

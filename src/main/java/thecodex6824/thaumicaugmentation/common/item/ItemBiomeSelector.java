@@ -20,11 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,6 +45,11 @@ import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
+
+import javax.annotation.Nullable;
+import java.util.Iterator;
+import java.util.List;
 
 public class ItemBiomeSelector extends ItemTABase {
 
@@ -96,10 +96,18 @@ public class ItemBiomeSelector extends ItemTABase {
     @Override
     public NBTTagCompound getNBTShareTag(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
-        if (stack.hasTagCompound())
-            tag.setTag("item", stack.getTagCompound().copy());
-        
-        tag.setTag("cap", ((BiomeSelector) stack.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null)).serializeNBT());
+        if (stack.hasTagCompound()) {
+            NBTTagCompound item = stack.getTagCompound().copy();
+            if (!ThaumicAugmentation.proxy.isSingleplayer() && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+                item.removeTag("cap");
+
+            tag.setTag("item", item);
+        }
+
+        NBTTagCompound cap = ItemHelper.tryMakeCapabilityTag(stack, CapabilityBiomeSelector.BIOME_SELECTOR);
+        if (cap != null)
+            tag.setTag("cap", cap);
+
         return tag;
     }
     
