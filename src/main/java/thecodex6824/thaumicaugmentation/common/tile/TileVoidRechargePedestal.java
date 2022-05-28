@@ -20,14 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -58,12 +50,20 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class TileVoidRechargePedestal extends TileEntity implements ITickable {
 
     protected ItemStackHandler inventory;
     protected SimpleImpetusConsumer consumer;
     protected int ticks;
-    
+    protected int lastResult;
+
     public TileVoidRechargePedestal() {
         inventory = new ItemStackHandler(1) {
             
@@ -108,52 +108,70 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable {
         
         consumer = new SimpleImpetusConsumer(1, 0);
         ticks = ThreadLocalRandom.current().nextInt(20);
+        lastResult = -1;
+    }
+
+    public int getComparatorOutput() {
+        ItemStack stack = inventory.getStackInSlot(0);
+        IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+        if (storage != null)
+            return (int) (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() * 15.0);
+
+        return 0;
     }
     
     @Override
     public void update() {
-        if (!world.isRemote && ticks++ % 10 == 0 && !inventory.getStackInSlot(0).isEmpty()) {
-            boolean sync = false;
-            ArrayList<Map<Deque<IImpetusNode>, Long>> transactions = new ArrayList<>();
+        if (!world.isRemote && ticks++ % 10 == 0) {
             ItemStack stack = inventory.getStackInSlot(0);
-            IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-            if (storage != null) {
-                long receivable = storage.receiveEnergy(Long.MAX_VALUE, true);
-                ConsumeResult consume = consumer.consume(receivable, false);
-                if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
-                    sync = true;
-                    transactions.add(consume.paths);
+            if (!stack.isEmpty()) {
+                boolean sync = false;
+                ArrayList<Map<Deque<IImpetusNode>, Long>> transactions = new ArrayList<>();
+                IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                if (storage != null) {
+                    long receivable = storage.receiveEnergy(Long.MAX_VALUE, true);
+                    ConsumeResult consume = consumer.consume(receivable, false);
+                    if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
+                        sync = true;
+                        transactions.add(consume.paths);
+                    }
                 }
-            }
-            
-            IAugmentableItem aug = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-            if (aug != null) {
-                for (ItemStack augment : aug.getAllAugments()) {
-                    storage = augment.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                    if (storage != null) {
-                        long receivable = storage.receiveEnergy(Long.MAX_VALUE, true);
-                        ConsumeResult consume = consumer.consume(receivable, false);
-                        if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
-                            sync = true;
-                            transactions.add(consume.paths);
+
+                IAugmentableItem aug = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                if (aug != null) {
+                    for (ItemStack augment : aug.getAllAugments()) {
+                        storage = augment.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                        if (storage != null) {
+                            long receivable = storage.receiveEnergy(Long.MAX_VALUE, true);
+                            ConsumeResult consume = consumer.consume(receivable, false);
+                            if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
+                                sync = true;
+                                transactions.add(consume.paths);
+                            }
                         }
                     }
                 }
-            }
-            
-            if (sync) {
-                markDirty();
-                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
-                for (Map<Deque<IImpetusNode>, Long> map : transactions) {
-                    NodeHelper.syncAllImpetusTransactions(map.keySet());
-                    for (Map.Entry<Deque<IImpetusNode>, Long> entry : map.entrySet())
-                        NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+
+                if (sync) {
+                    markDirty();
+                    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
+                    for (Map<Deque<IImpetusNode>, Long> map : transactions) {
+                        NodeHelper.syncAllImpetusTransactions(map.keySet());
+                        for (Map.Entry<Deque<IImpetusNode>, Long> entry : map.entrySet())
+                            NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+                    }
+
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK,
+                                    pos.getX() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, pos.getY() + 0.9 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
+                                    pos.getZ() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, 1.5, Aspect.ELDRITCH.getColor()),
+                            new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64.0));
                 }
-                
-                TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK,
-                        pos.getX() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, pos.getY() + 0.9 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
-                        pos.getZ() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, 1.5, Aspect.ELDRITCH.getColor()),
-                        new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64.0));
+            }
+
+            int level = getComparatorOutput();
+            if (level != lastResult) {
+                world.updateComparatorOutputLevel(pos, getBlockType());
+                lastResult = level;
             }
         }
     }
