@@ -20,15 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.server.command;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -40,6 +32,12 @@ import thecodex6824.thaumicaugmentation.server.command.sub.ISubCommand;
 import thecodex6824.thaumicaugmentation.server.command.sub.SubCommandFixAura;
 import thecodex6824.thaumicaugmentation.server.command.sub.SubCommandMakeFracture;
 import thecodex6824.thaumicaugmentation.server.command.sub.SubCommandWard;
+
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class CommandTAGeneral implements ICommand {
 
@@ -117,7 +115,7 @@ public class CommandTAGeneral implements ICommand {
     
     @Override
     public int compareTo(ICommand o) {
-        return 0;
+        return getName().compareTo(o.getName());
     }
     
 }
