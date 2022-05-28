@@ -20,11 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.event;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.function.Consumer;
-
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
@@ -86,6 +81,11 @@ import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class PlayerEventHandler {
@@ -364,6 +364,35 @@ public final class PlayerEventHandler {
                 }
             }
 
+            if (damage > 0.0F && event.getEntityLiving() instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+                IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+                if (baubles != null) {
+                    int visCost = MathHelper.ceil(damage / 5.0);
+                    boolean costPaid = false;
+                    for (int slot : BaubleType.BODY.getValidSlots()) {
+                        ItemStack inSlot = baubles.getStackInSlot(slot);
+                        if (inSlot.getItem() == TAItems.THAUMOSTATIC_HARNESS) {
+                            IAugmentableItem item = inSlot.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                            if (item != null) {
+                                for (ItemStack augment : item.getAllAugments()) {
+                                    if (augment.getItem() == TAItems.THAUMOSTATIC_HARNESS_AUGMENT &&
+                                            augment.getMetadata() == 0 && RechargeHelper.consumeCharge(inSlot, player, visCost)) {
+
+                                        damage = 0.0F;
+                                        costPaid = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (costPaid)
+                            break;
+                    }
+                }
+            }
+
             damage = Math.max(0.0F, damage);
             if (damage < 1.0F) {
                 event.setAmount(0.0F);
@@ -418,21 +447,11 @@ public final class PlayerEventHandler {
             IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
             if (baubles != null) {
                 boolean doDamage = false;
-                int visCost = MathHelper.ceil(event.getDistance() / 5.0);
                 for (int slot : BaubleType.BODY.getValidSlots()) {
                     ItemStack inSlot = baubles.getStackInSlot(slot);
                     if (inSlot.getItem() == TAItems.THAUMOSTATIC_HARNESS) {
                         doDamage = true;
-                        IAugmentableItem item = inSlot.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                        if (item != null) {
-                            for (ItemStack augment : item.getAllAugments()) {
-                                if (augment.getItem() == TAItems.THAUMOSTATIC_HARNESS_AUGMENT &&
-                                        augment.getMetadata() == 0 && RechargeHelper.consumeCharge(inSlot, player, visCost)) {
-                                    
-                                    return;
-                                }
-                            }
-                        }
+                        break;
                     }
                 }
                 
