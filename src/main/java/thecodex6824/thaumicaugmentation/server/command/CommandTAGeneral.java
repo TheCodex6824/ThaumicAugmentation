@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.server.command;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommandTAGeneral implements ICommand {
 
@@ -90,6 +92,16 @@ public class CommandTAGeneral implements ICommand {
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
             @Nullable BlockPos targetPos) {
         
+        if (args.length == 1) {
+            return CommandBase.getListOfStringsMatchingLastWord(args,
+                    subCommands.values().stream().map(v -> v.getName()).collect(Collectors.toList()));
+        }
+        else if (args.length > 1) {
+            ISubCommand command = subCommands.get(args[0].toLowerCase());
+            if (command != null)
+                return command.getTabCompletions(server, sender, Arrays.copyOfRange(args, 1, args.length), targetPos);
+        }
+
         return Collections.emptyList();
     }
     

@@ -20,11 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.server.command.sub;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -38,6 +33,10 @@ import net.minecraftforge.common.DimensionManager;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 public class SubCommandWard implements ISubCommand {
 
@@ -99,7 +98,10 @@ public class SubCommandWard implements ISubCommand {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
             @Nullable BlockPos targetPos) {
-        
+
+        if (args.length == 1)
+            return CommandBase.getListOfStringsMatchingLastWord(args, "clear");
+
         return Collections.emptyList();
     }
     
