@@ -20,11 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.event;
 
-import java.util.ConcurrentModificationException;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.Map;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -70,6 +65,11 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+
+import java.util.ConcurrentModificationException;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.Map;
 
 public class WardEventHandler {
     
@@ -208,11 +208,6 @@ public class WardEventHandler {
             event.setUseBlock(Result.DENY);
     }
     
-    protected static void doAllTheNotifications(World world, BlockPos pos, EnumSet<EnumFacing> notify) {
-        for (EnumFacing facing : notify)
-            world.neighborChanged(pos.offset(facing), world.getBlockState(pos.offset(facing)).getBlock(), pos);
-    }
-    
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
         if (event.getWorld().isBlockLoaded(event.getPos()) &&
@@ -224,15 +219,12 @@ public class WardEventHandler {
                 if (event.getWorld().isChunkGeneratedAt(pos.getX() >> 4, pos.getZ() >> 4) && !event.getWorld().isAirBlock(pos)) {
                     Chunk chunk = event.getWorld().getChunk(pos);
                     IWardStorage storage = chunk.getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                    if (storage != null && storage.hasWard(pos)) {
-                        event.setCanceled(true);
+                    if (storage != null && storage.hasWard(pos))
                         sidesToRemove.add(facing);
-                    }
                 }
             }
-            if (!sidesToRemove.isEmpty())
-                doAllTheNotifications(event.getWorld(), notifier, EnumSet.complementOf(sidesToRemove));
-            
+
+            event.getNotifiedSides().removeAll(sidesToRemove);
             TileEntity check = event.getWorld().getTileEntity(event.getPos());
             if (event.getWorld().isAirBlock(event.getPos()) || !WardHelper.isTileWardAllowed(check)) {
                 Chunk chunk = event.getWorld().getChunk(event.getPos());

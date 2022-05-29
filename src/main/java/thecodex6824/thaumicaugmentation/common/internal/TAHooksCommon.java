@@ -23,12 +23,14 @@ package thecodex6824.thaumicaugmentation.common.internal;
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
+import net.minecraft.block.BlockSlab;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -109,6 +111,27 @@ public final class TAHooksCommon {
     
     public static boolean checkWardGeneric(World world, BlockPos pos) {
         return !hasWard(world, pos);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static boolean isCompatibleSlab(World world, BlockPos pos, EnumFacing dir, ItemStack slab) {
+        IBlockState state = world.getBlockState(pos);
+        if (state.getPropertyKeys().contains(BlockSlab.HALF) && state.getBlock() instanceof BlockSlab) {
+            BlockSlab block = (BlockSlab) state.getBlock();
+            Comparable item = block.getTypeForItem(slab);
+            return (dir == EnumFacing.UP && state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.BOTTOM ||
+                    dir == EnumFacing.DOWN && state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP) &&
+                    item.compareTo(state.getValue(block.getVariantProperty())) == 0;
+        }
+
+        return false;
+    }
+
+    public static boolean checkWardSlab(World world, BlockPos pos, EnumFacing placeDir, ItemStack stack) {
+        if (placeDir.getAxis() == EnumFacing.Axis.Y && isCompatibleSlab(world, pos, placeDir, stack))
+            return !hasWard(world, pos) && !hasWard(world, pos.offset(placeDir));
+        else
+            return !hasWard(world, pos.offset(placeDir));
     }
     
     public static void checkElytra(ItemStack chestArmorStack, EntityPlayerMP player) {

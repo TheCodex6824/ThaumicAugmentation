@@ -55,6 +55,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoS
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoVillagerFarming;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockRandomTick;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockResistance;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockSlabs;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockTaintImmunity;
 
 import java.util.ArrayList;
@@ -77,6 +78,8 @@ public class TATransformer implements IClassTransformer {
         TRANSFORMERS.add(new TransformerWardBlockRandomTick());
         // required to prevent shoveling warded grass
         TRANSFORMERS.add(new TransformerWardBlockGrassPath());
+        // slabs are dumb and bypass all the checks when being placed on another slab
+        TRANSFORMERS.add(new TransformerWardBlockSlabs());
         
         // required as EntityMobGriefingEvent does not provide a blockpos
         // the position is also not determined and put into the AI fields until the event has already passed, so no reflection
