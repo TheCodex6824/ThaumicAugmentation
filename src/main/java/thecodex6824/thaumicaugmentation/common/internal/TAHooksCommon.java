@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.internal;
 
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
@@ -60,6 +56,9 @@ import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
+
+import javax.annotation.Nullable;
+import java.util.Random;
 
 public final class TAHooksCommon {
 
@@ -213,6 +212,11 @@ public final class TAHooksCommon {
         }
         
         return true;
+    }
+
+    public static boolean checkSweepingEdge(EntityPlayer player, ItemStack stack) {
+        // this is inverted to not break
+        return stack.getItem() != TAItems.PRIMAL_CUTTER;
     }
     
 }
