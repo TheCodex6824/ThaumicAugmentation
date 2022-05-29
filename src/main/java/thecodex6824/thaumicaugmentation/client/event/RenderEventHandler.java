@@ -20,24 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.client.event;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-import javax.vecmath.Vector4d;
-
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMaps;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound.AttenuationType;
@@ -68,6 +55,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import org.lwjgl.opengl.GL11;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.client.fx.ParticleEngine;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
@@ -95,6 +83,17 @@ import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
+import javax.annotation.Nullable;
+import javax.vecmath.Vector4d;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public class RenderEventHandler {
 
@@ -105,7 +104,7 @@ public class RenderEventHandler {
                 k.getValue().setExpired();
             }).build();
     
-    private static final Object2LongOpenHashMap<DimensionalBlockPos[]> TRANSACTIONS = new Object2LongOpenHashMap<>();
+    private static final Object2LongMap<DimensionalBlockPos[]> TRANSACTIONS = Object2LongMaps.synchronize(new Object2LongOpenHashMap<>());
     private static final Object2IntOpenHashMap<DimensionalBlockPos> FRAME_COLORS = new Object2IntOpenHashMap<>();
     
     private static boolean renderShaders = false;

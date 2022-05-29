@@ -20,29 +20,30 @@
 
 package thecodex6824.thaumicaugmentation.api.client;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
-
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class ImpetusRenderingManager {
 
     private ImpetusRenderingManager() {}
     
-    private static Int2ObjectOpenHashMap<Map<DimensionalBlockPos, IImpetusNode>> nodes = new Int2ObjectOpenHashMap<>();
+    private static Int2ObjectMap<Map<DimensionalBlockPos, IImpetusNode>> nodes = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
     private static final ImmutableMap<DimensionalBlockPos, IImpetusNode> EMPTY = ImmutableMap.of();
     
     public static void registerRenderableNode(IImpetusNode node) {
         Map<DimensionalBlockPos, IImpetusNode> map = nodes.get(node.getLocation().getDimension());
         if (map == null) {
-            map = new HashMap<>();
+            map = Collections.synchronizedMap(new HashMap<>());
             nodes.put(node.getLocation().getDimension(), map);
         }
         
