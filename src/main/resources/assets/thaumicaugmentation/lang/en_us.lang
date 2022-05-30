@@ -75,8 +75,8 @@ tile.thaumicaugmentation.urn.urn_uncommon.name=Uncommon Urn
 tile.thaumicaugmentation.urn.urn_rare.name=Rare Urn
 tile.thaumicaugmentation.item_grate.name=Item Grate
 tile.thaumicaugmentation.glass_tube.name=Glass Essentia Tube
-tile.thaumicaugmentation.impetus_creative.source.name=Creative Impetus Source
-tile.thaumicaugmentation.impetus_creative.sink.name=Creative Impetus Sink
+tile.thaumicaugmentation.impetus_creative.impetus_creative_source.name=Creative Impetus Source
+tile.thaumicaugmentation.impetus_creative.impetus_creative_sink.name=Creative Impetus Sink
 
 tile.thaumcraft.stairs_ancient_tile.name=Ancient Stone Tile Stairs
 

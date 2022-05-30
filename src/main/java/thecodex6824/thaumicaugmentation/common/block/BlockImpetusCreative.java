@@ -20,25 +20,23 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -57,14 +55,22 @@ import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockNoImpetusNode
 import thecodex6824.thaumicaugmentation.common.tile.TileCreativeImpetusSink;
 import thecodex6824.thaumicaugmentation.common.tile.TileCreativeImpetusSource;
 
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
 public class BlockImpetusCreative extends BlockTABase implements ICreativeImpetusBlock, IItemBlockProvider {
+
+    protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.125, 0.125, 0.125, 0.875, 0.875, 0.875);
 
     public BlockImpetusCreative() {
         super(Material.IRON);
-        setHardness(3.0F);
-        setResistance(35.0F);
+        setBlockUnbreakable();
+        setResistance(6000000.0F);
         setSoundType(SoundType.METAL);
-        setDefaultState(getDefaultState().withProperty(ICreativeImpetusBlock.BLOCK_TYPE, BlockType.SOURCE));
+        setDefaultState(getDefaultState().withProperty(ICreativeImpetusBlock.BLOCK_TYPE, BlockType.IMPETUS_CREATIVE_SOURCE));
+        disableStats();
     }
     
     @Override
@@ -103,10 +109,18 @@ public class BlockImpetusCreative extends BlockTABase implements ICreativeImpetu
     public int damageDropped(IBlockState state) {
         return state.getValue(ICreativeImpetusBlock.BLOCK_TYPE).getMeta();
     }
-    
+
     @Override
-    public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player) {
-        return true;
+    public int quantityDropped(Random random) {
+        return 0;
+    }
+
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {}
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return BOUNDING_BOX;
     }
 
     @Override
@@ -117,9 +131,44 @@ public class BlockImpetusCreative extends BlockTABase implements ICreativeImpetu
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
         switch (state.getValue(ICreativeImpetusBlock.BLOCK_TYPE)) {
-            case SINK: return new TileCreativeImpetusSink();
+            case IMPETUS_CREATIVE_SINK: return new TileCreativeImpetusSink();
             default: return new TileCreativeImpetusSource();
         }
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isFullBlock(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isTopSolid(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return false;
+    }
+
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+        return BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override

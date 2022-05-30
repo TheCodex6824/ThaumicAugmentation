@@ -20,17 +20,17 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
+
+import javax.annotation.Nullable;
 
 public interface ICreativeImpetusBlock {
 
     public enum BlockType implements IStringSerializable {
         
-        SOURCE(0),
-        SINK(1);
+        IMPETUS_CREATIVE_SOURCE(0),
+        IMPETUS_CREATIVE_SINK(1);
         
         private int meta;
         
