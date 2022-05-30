@@ -238,8 +238,7 @@ public final class TAHooksCommon {
     }
 
     public static boolean checkSweepingEdge(EntityPlayer player, ItemStack stack) {
-        // this is inverted to not break
-        return stack.getItem() != TAItems.PRIMAL_CUTTER;
+        return stack.getItem() == TAItems.PRIMAL_CUTTER;
     }
     
 }
