@@ -454,6 +454,8 @@ public class RenderEventHandler {
                             case 1: {
                                 if (TAShaderManager.shouldUseShaders())
                                     TAShaderManager.enableShader(TAShaders.FRACTURE, TAShaders.SHADER_CALLBACK_GENERIC_SPHERE);
+                                else
+                                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                                 
                                 Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.EMPTINESS_SKY);
                                 break;
@@ -461,6 +463,8 @@ public class RenderEventHandler {
                             case 2: {
                                 if (TAShaderManager.shouldUseShaders())
                                     TAShaderManager.enableShader(TAShaders.MIRROR, TAShaders.SHADER_CALLBACK_GENERIC_SPHERE);
+                                else
+                                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                                 
                                 Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.MIRROR);
                                 break;

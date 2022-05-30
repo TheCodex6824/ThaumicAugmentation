@@ -629,26 +629,26 @@ public class TARenderHelperClient implements ITARenderHelper {
                                 buffer.pos(0.0, zCloseNeg, 0.0).tex(0, 0).endVertex();
                                 buffer.pos(1.0, zCloseNeg, 0.0).tex(1, 0).endVertex();
                                 buffer.pos(1.0, zCloseNeg, 1.0).tex(1, 1).endVertex();
-                                buffer.pos(0.0, zCloseNeg, 1.0).tex(1, 0).endVertex();
+                                buffer.pos(0.0, zCloseNeg, 1.0).tex(0, 1).endVertex();
                                 break;
                             }
                             case UP: {
                                 buffer.pos(0.0, zClosePos, 0.0).tex(0, 0).endVertex();
                                 buffer.pos(0.0, zClosePos, 1.0).tex(1, 0).endVertex();
                                 buffer.pos(1.0, zClosePos, 1.0).tex(1, 1).endVertex();
-                                buffer.pos(1.0, zClosePos, 0.0).tex(1, 0).endVertex();
+                                buffer.pos(1.0, zClosePos, 0.0).tex(0, 1).endVertex();
                                 break;
                             }
                             case EAST: {
                                 buffer.pos(zClosePos, 0.0, 0.0).tex(0, 0).endVertex();
                                 buffer.pos(zClosePos, 1.0, 0.0).tex(1, 0).endVertex();
                                 buffer.pos(zClosePos, 1.0, 1.0).tex(1, 1).endVertex();
-                                buffer.pos(zClosePos, 0.0, 1.0).tex(1, 0).endVertex();
+                                buffer.pos(zClosePos, 0.0, 1.0).tex(0, 1).endVertex();
                                 break;
                             }
                             case WEST: {
                                 buffer.pos(zCloseNeg, 0.0, 0.0).tex(0, 0).endVertex();
-                                buffer.pos(zCloseNeg, 0.0, 1.0).tex(1, 0).endVertex();
+                                buffer.pos(zCloseNeg, 0.0, 1.0).tex(0, 1).endVertex();
                                 buffer.pos(zCloseNeg, 1.0, 1.0).tex(1, 1).endVertex();
                                 buffer.pos(zCloseNeg, 1.0, 0.0).tex(1, 0).endVertex();
                                 break;
@@ -657,14 +657,14 @@ public class TARenderHelperClient implements ITARenderHelper {
                                 buffer.pos(0.0, 0.0, zClosePos).tex(0, 0).endVertex();
                                 buffer.pos(1.0, 0.0, zClosePos).tex(1, 0).endVertex();
                                 buffer.pos(1.0, 1.0, zClosePos).tex(1, 1).endVertex();
-                                buffer.pos(0.0, 1.0, zClosePos).tex(1, 0).endVertex();
+                                buffer.pos(0.0, 1.0, zClosePos).tex(0, 1).endVertex();
                                 break;
                             }
                             case NORTH: {
                                 buffer.pos(0.0, 0.0, zCloseNeg).tex(0, 0).endVertex();
-                                buffer.pos(0.0, 1.0, zCloseNeg).tex(1, 0).endVertex();
-                                buffer.pos(1.0, 1.0, zCloseNeg).tex(0, 1).endVertex();
-                                buffer.pos(1.0, 0.0, zCloseNeg).tex(1, 1).endVertex();
+                                buffer.pos(0.0, 1.0, zCloseNeg).tex(0, 1).endVertex();
+                                buffer.pos(1.0, 1.0, zCloseNeg).tex(1, 1).endVertex();
+                                buffer.pos(1.0, 0.0, zCloseNeg).tex(1, 0).endVertex();
                                 break;
                             }
                             
@@ -700,30 +700,30 @@ public class TARenderHelperClient implements ITARenderHelper {
                 switch (face) {
                     case EAST: {
                         buffer.pos(zClosePos, -1.0, 0.0).tex(0, 0).endVertex();
-                        buffer.pos(zClosePos, 2.0, 0.0).tex(1, 0).endVertex();
-                        buffer.pos(zClosePos, 2.0, 1.0).tex(1, 1).endVertex();
+                        buffer.pos(zClosePos, 2.0, 0.0).tex(0, 3).endVertex();
+                        buffer.pos(zClosePos, 2.0, 1.0).tex(1, 3).endVertex();
                         buffer.pos(zClosePos, -1.0, 1.0).tex(1, 0).endVertex();
                         break;
                     }
                     case WEST: {
                         buffer.pos(zCloseNeg, -1.0, 0.0).tex(0, 0).endVertex();
-                        buffer.pos(zCloseNeg, -1.0, 1.0).tex(1, 0).endVertex();
-                        buffer.pos(zCloseNeg, 2.0, 1.0).tex(1, 1).endVertex();
-                        buffer.pos(zCloseNeg, 2.0, 0.0).tex(1, 0).endVertex();
+                        buffer.pos(zCloseNeg, -1.0, 1.0).tex(0, 1).endVertex();
+                        buffer.pos(zCloseNeg, 2.0, 1.0).tex(3, 1).endVertex();
+                        buffer.pos(zCloseNeg, 2.0, 0.0).tex(3, 0).endVertex();
                         break;
                     }
                     case SOUTH: {
                         buffer.pos(0.0, -1.0, zClosePos).tex(0, 0).endVertex();
                         buffer.pos(1.0, -1.0, zClosePos).tex(1, 0).endVertex();
-                        buffer.pos(1.0, 2.0, zClosePos).tex(1, 1).endVertex();
-                        buffer.pos(0.0, 2.0, zClosePos).tex(1, 0).endVertex();
+                        buffer.pos(1.0, 2.0, zClosePos).tex(1, 3).endVertex();
+                        buffer.pos(0.0, 2.0, zClosePos).tex(0, 3).endVertex();
                         break;
                     }
                     case NORTH: {
                         buffer.pos(0.0, -1.0, zCloseNeg).tex(0, 0).endVertex();
-                        buffer.pos(0.0, 2.0, zCloseNeg).tex(1, 0).endVertex();
-                        buffer.pos(1.0, 2.0, zCloseNeg).tex(0, 1).endVertex();
-                        buffer.pos(1.0, -1.0, zCloseNeg).tex(1, 1).endVertex();
+                        buffer.pos(0.0, 2.0, zCloseNeg).tex(0, 3).endVertex();
+                        buffer.pos(1.0, 2.0, zCloseNeg).tex(1, 3).endVertex();
+                        buffer.pos(1.0, -1.0, zCloseNeg).tex(1, 0).endVertex();
                         break;
                     }
                     
@@ -754,12 +754,12 @@ public class TARenderHelperClient implements ITARenderHelper {
                     buffer.pos(0.5, 0.0, 0.0).tex(0, 0).endVertex();
                     buffer.pos(0.5, 1.0, 0.0).tex(1, 0).endVertex();
                     buffer.pos(0.5, 1.0, 1.0).tex(1, 1).endVertex();
-                    buffer.pos(0.5, 0.0, 1.0).tex(1, 0).endVertex();
+                    buffer.pos(0.5, 0.0, 1.0).tex(0, 1).endVertex();
                     break;
                 }
                 case WEST: {
                     buffer.pos(0.5, 0.0, 0.0).tex(0, 0).endVertex();
-                    buffer.pos(0.5, 0.0, 1.0).tex(1, 0).endVertex();
+                    buffer.pos(0.5, 0.0, 1.0).tex(0, 1).endVertex();
                     buffer.pos(0.5, 1.0, 1.0).tex(1, 1).endVertex();
                     buffer.pos(0.5, 1.0, 0.0).tex(1, 0).endVertex();
                     break;
@@ -768,14 +768,14 @@ public class TARenderHelperClient implements ITARenderHelper {
                     buffer.pos(0.0, 0.0, 0.5).tex(0, 0).endVertex();
                     buffer.pos(1.0, 0.0, 0.5).tex(1, 0).endVertex();
                     buffer.pos(1.0, 1.0, 0.5).tex(1, 1).endVertex();
-                    buffer.pos(0.0, 1.0, 0.5).tex(1, 0).endVertex();
+                    buffer.pos(0.0, 1.0, 0.5).tex(0, 1).endVertex();
                     break;
                 }
                 case NORTH: {
                     buffer.pos(0.0, 0.0, 0.5).tex(0, 0).endVertex();
-                    buffer.pos(0.0, 1.0, 0.5).tex(1, 0).endVertex();
-                    buffer.pos(1.0, 1.0, 0.5).tex(0, 1).endVertex();
-                    buffer.pos(1.0, 0.0, 0.5).tex(1, 1).endVertex();
+                    buffer.pos(0.0, 1.0, 0.5).tex(0, 1).endVertex();
+                    buffer.pos(1.0, 1.0, 0.5).tex(1, 1).endVertex();
+                    buffer.pos(1.0, 0.0, 0.5).tex(1, 0).endVertex();
                     break;
                 }
                 
