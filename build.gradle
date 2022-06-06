@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net/' }
-        jcenter()
         mavenCentral()
         maven {
             name 'FancyGradle'
@@ -145,7 +144,7 @@ idea {
     }
 }
 
-task filterTokens(type: Copy) {
+task filterTokens(type: Sync) {
     // this will ensure that this task is redone when the versions change.
     inputs.property 'version', version
     inputs.property 'apiversion', apiversion
@@ -153,10 +152,10 @@ task filterTokens(type: Copy) {
     
     from sourceSets.main.java
     filter(ReplaceTokens, tokens: [APIVERSION: apiversion.toString(), VERSION: version.toString(), FINGERPRINT: certFingerprint.toString()])
-    into "$buildDir/sources/java"
+    into "$buildDir/src/$sourceSets.main.name/$sourceSets.main.java.name"
 }
 
-compileJava.dependsOn filterTokens
+compileJava.source = filterTokens.outputs
 
 processResources {
     // required to allow file expansion later
