@@ -28,9 +28,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.client.event.IClientResourceReloadDispatcher;
+import thecodex6824.thaumicaugmentation.common.util.IResourceReloadDispatcher;
 
 @EventBusSubscriber(value = Side.CLIENT)
 public class ClientSoundHandler {
@@ -49,8 +52,12 @@ public class ClientSoundHandler {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent event) {
         if (!TAConfig.disableEmptiness.getValue() && event.phase == Phase.START) {
-            if (emptinessSound == null)
+            if (emptinessSound == null) {
                 emptinessSound = new EmptinessSoundTicker(Minecraft.getMinecraft());
+                IResourceReloadDispatcher dispatcher = ThaumicAugmentation.proxy.getResourceReloadDispatcher();
+                if (dispatcher instanceof IClientResourceReloadDispatcher)
+                    ((IClientResourceReloadDispatcher) dispatcher).registerListener(emptinessSound);
+            }
             
             emptinessSound.update();
         }
