@@ -20,19 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.math.DoubleMath;
-
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -82,6 +72,14 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.Part
 import thecodex6824.thaumicaugmentation.common.network.PacketTerraformerWork;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable, IEssentiaTransport {
 
@@ -384,8 +382,8 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                             chunks.add(new ChunkPos(currentPos));
                             int y = world.getHeight(currentPos.getX(), currentPos.getZ());
                             TargetPoint track = new TargetPoint(world.provider.getDimension(), currentPos.getX(), y, currentPos.getZ(), 64.0);
-                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, currentPos.getX(),
-                                    y, currentPos.getZ(), 8.0, Aspect.EXCHANGE.getColor()), track);
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, currentPos.getX() + 0.5,
+                                    y, currentPos.getZ() + 0.5, 8.0, Aspect.EXCHANGE.getColor()), track);
                             TANetwork.INSTANCE.sendToAllTracking(new PacketTerraformerWork(pos.getX(), pos.getY(), pos.getZ()), track);
                             world.playSound(null, currentPos, SoundsTC.zap, SoundCategory.BLOCKS, 0.15F, 1.0F);
                             break;
