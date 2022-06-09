@@ -59,49 +59,48 @@ public class ItemAutocasterPlacer extends ItemTABase {
     @Override
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
             float hitY, float hitZ, EnumHand hand) {
+       
+        boolean replace = world.getBlockState(pos).getBlock().isReplaceable(world, pos);
+        BlockPos loc = replace ? pos : pos.offset(side);
+        if (!player.canPlayerEdit(loc, side, player.getHeldItem(hand)))
+            return EnumActionResult.PASS;
+        
+        double x = loc.getX(), y = loc.getY(), z = loc.getZ();
+        List<Entity> occupied = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
+        if (!occupied.isEmpty())
+            return EnumActionResult.PASS;
         
         if (world.isRemote)
-            return EnumActionResult.PASS;
+            return EnumActionResult.SUCCESS;
+        
+        EntityAutocasterBase entity = null;
+        if (player.getHeldItem(hand).getMetadata() == 1)
+            entity = new EntityAutocasterEldritch(world);
         else {
-            boolean replace = world.getBlockState(pos).getBlock().isReplaceable(world, pos);
-            BlockPos loc = replace ? pos : pos.offset(side);
-            if (!player.canPlayerEdit(loc, side, player.getHeldItem(hand)))
-                return EnumActionResult.PASS;
-            
-            double x = loc.getX(), y = loc.getY(), z = loc.getZ();
-            List<Entity> occupied = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
-            if (!occupied.isEmpty())
-                return EnumActionResult.PASS;
-            
-            EntityAutocasterBase entity = null;
-            if (player.getHeldItem(hand).getMetadata() == 1)
-                entity = new EntityAutocasterEldritch(world);
-            else {
-                entity = new EntityAutocaster(world);
-                ((EntityAutocaster) entity).setOwner(player);
-            }
-            
-            entity.setPosition(Math.floor(x) + 0.5, Math.floor(y), Math.floor(z) + 0.5);
-            entity.setFacing(side);
-            if (!MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world,
-                    (float) entity.posX, (float) entity.posY, (float) entity.posZ, null))) {
-                
-                if (entity instanceof EntityAutocasterEldritch)
-                    ((EntityAutocasterEldritch) entity).onInitialSpawn(world.getDifficultyForLocation(entity.getPosition()), null, true);
-                else
-                    entity.onInitialSpawn(world.getDifficultyForLocation(entity.getPosition()), null);
-                
-                if (world.spawnEntity(entity)) {
-                    world.playSound(null, loc, SoundEvents.ENTITY_ARMORSTAND_PLACE, SoundCategory.BLOCKS, 0.75F, 0.8F);
-                    if (!player.isCreative())
-                        player.getHeldItem(hand).shrink(1);
-                    
-                    return EnumActionResult.SUCCESS;
-                }
-            }
-            
-            return EnumActionResult.PASS;
+            entity = new EntityAutocaster(world);
+            ((EntityAutocaster) entity).setOwner(player);
         }
+        
+        entity.setPosition(Math.floor(x) + 0.5, Math.floor(y), Math.floor(z) + 0.5);
+        entity.setFacing(side);
+        if (!MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world,
+                (float) entity.posX, (float) entity.posY, (float) entity.posZ, null))) {
+            
+            if (entity instanceof EntityAutocasterEldritch)
+                ((EntityAutocasterEldritch) entity).onInitialSpawn(world.getDifficultyForLocation(entity.getPosition()), null, true);
+            else
+                entity.onInitialSpawn(world.getDifficultyForLocation(entity.getPosition()), null);
+            
+            if (world.spawnEntity(entity)) {
+                world.playSound(null, loc, SoundEvents.ENTITY_ARMORSTAND_PLACE, SoundCategory.BLOCKS, 0.75F, 0.8F);
+                if (!player.isCreative())
+                    player.getHeldItem(hand).shrink(1);
+                
+                return EnumActionResult.SUCCESS;
+            }
+        }
+        
+        return EnumActionResult.FAIL;
     }
     
     @Override

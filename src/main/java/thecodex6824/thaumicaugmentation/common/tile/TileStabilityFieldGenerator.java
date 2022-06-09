@@ -42,11 +42,13 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.animation.Event;
+import net.minecraftforge.common.animation.TimeValues.ConstValue;
 import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
@@ -62,10 +64,9 @@ import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
 
-public class TileStabilityFieldGenerator extends TileEntity implements ITickable, IBreakCallback, IAnimatedTile {
+public class TileStabilityFieldGenerator extends TileEntity implements ITickable, IAnimatedTile {
 
     protected static class CustomEnergyStorage extends EnergyStorage {
         
@@ -80,6 +81,7 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     }
     
     protected static final float MAX_STABILITY = 4.0F;
+    protected static final float ANIM_TIME = 1.0F;
     
     protected UUID serverLoadedID;
     protected WeakReference<EntityFluxRift> targetedRift;
@@ -91,13 +93,13 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     protected boolean lastEnabledState;
     protected Object beam;
     protected IAnimationStateMachine asm;
-    protected VariableValue cycleLength;
+    protected ConstValue cycleLength;
     protected VariableValue actionTime;
     
     public TileStabilityFieldGenerator() {
         targetedRift = new WeakReference<>(null);
         energy = new CustomEnergyStorage(1000, 1000, 1000, 0);
-        cycleLength = new VariableValue(1.0F);
+        cycleLength = new ConstValue(ANIM_TIME);
         actionTime = new VariableValue(-1.0F);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/stability_field_generator.json"),
                 ImmutableMap.of("cycle_length", cycleLength, "act_time", actionTime));
@@ -300,12 +302,18 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
                     false, 0.05F, beam, 0);
             ((FXBeamBore) beam).setMaxAge(Integer.MAX_VALUE);
             updateBeamColor();
-            actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
+            float time = Animation.getWorldTime(world, Animation.getPartialTickTime());
+            float partialProgress = actionTime.apply(time) < 0.0F ? 0.0F :
+                MathHelper.clamp(ANIM_TIME - (time - actionTime.apply(time)), 0.0F, ANIM_TIME);
+            actionTime.setValue(time - partialProgress);
             AnimationHelper.transitionSafely(asm, "opening");
         }
         else if ((rift == null || rift.isDead || !lastEnabledState) && beam != null) {
             if (((FXBeamBore) beam).isAlive()) {
-                actionTime.setValue(Animation.getWorldTime(world, Animation.getPartialTickTime()));
+                float time = Animation.getWorldTime(world, Animation.getPartialTickTime());
+                float partialProgress = actionTime.apply(time) < 0.0F ? 0.0F :
+                    MathHelper.clamp(ANIM_TIME - (time - actionTime.apply(time)), 0.0F, ANIM_TIME);
+                actionTime.setValue(time - partialProgress);
                 AnimationHelper.transitionSafely(asm, "closing");
             }
             
@@ -321,9 +329,13 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
     }
     
     @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         targetedRift.clear();
         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+        if (world.isRemote)
+            updateBeam();
+        
+        super.invalidate();
     }
     
     @Override
@@ -367,14 +379,6 @@ public class TileStabilityFieldGenerator extends TileEntity implements ITickable
             targetedRift.clear();
             updateBeam();
         }
-    }
-    
-    @Override
-    public void invalidate() {
-        targetedRift.clear();
-        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-        if (world.isRemote)
-            updateBeam();
     }
     
     @Override

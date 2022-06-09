@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -32,6 +31,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 
 public class TileItemGrate extends TileEntity {
 
@@ -69,9 +69,8 @@ public class TileItemGrate extends TileEntity {
                 return stack;
             else {
                 if (!simulate && !stack.isEmpty() && !world.isRemote) {
-                    Entity item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
-                    Entity newItem = stack.getItem().createEntity(world, item, stack);
-                    item = newItem != null ? newItem : item;
+                    Entity item = ItemHelper.makeItemEntity(world, pos.getX() + 0.5F,
+                            pos.getY() + 0.5F, pos.getZ() + 0.5F, stack);
                     item.setPosition(item.posX, item.posY - item.height, item.posZ);
                     item.motionX = 0.0;
                     item.motionY = -Math.abs(item.motionY);

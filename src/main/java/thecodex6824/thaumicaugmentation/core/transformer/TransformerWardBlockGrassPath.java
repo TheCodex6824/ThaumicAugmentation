@@ -22,13 +22,12 @@ package thecodex6824.thaumicaugmentation.core.transformer;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
-
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
 public class TransformerWardBlockGrassPath extends Transformer {
@@ -59,28 +58,44 @@ public class TransformerWardBlockGrassPath extends Transformer {
                             Type.getType("Lnet/minecraft/util/EnumHand;"), Type.getType("Lnet/minecraft/util/EnumFacing;"), Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE),
                     "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumHand;Lnet/minecraft/util/EnumFacing;FFF)Lnet/minecraft/util/EnumActionResult;");
             boolean found = false;
-            int ret = 0;
-            while ((ret = TransformUtil.findFirstInstanceOfOpcode(use, ret, Opcodes.GETSTATIC)) != -1) {
-                FieldInsnNode test = (FieldInsnNode) use.instructions.get(ret);
-                if (test.name.equals(TransformUtil.remapFieldName("net/minecraft/init/Blocks", "field_150349_c")) &&
-                        test.desc.equals("Lnet/minecraft/block/BlockGrass;") && test.getNext() instanceof JumpInsnNode) {
-                    
+            int ret = TransformUtil.findFirstField(use, 0, TransformUtil.remapFieldName("net/minecraft/init/Blocks", "field_150349_c"),
+                    "Lnet/minecraft/block/BlockGrass;", "net/minecraft/init/Blocks");
+            if (ret != -1) {
+                AbstractInsnNode test = use.instructions.get(ret);
+                if (test.getNext() instanceof JumpInsnNode) {
+                    // flow appears to differ between dev and production (frames rewritten?)
                     JumpInsnNode jump = (JumpInsnNode) test.getNext();
-                    use.instructions.insert(jump, new JumpInsnNode(Opcodes.IFEQ, jump.label));
-                    use.instructions.insert(jump, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            TransformUtil.HOOKS_COMMON,
-                            "checkWardGeneric",
-                            "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
-                            false
-                    ));
-                    use.instructions.insert(jump, new VarInsnNode(Opcodes.ALOAD, 3));
-                    use.instructions.insert(jump, new VarInsnNode(Opcodes.ALOAD, 2));
-                    
-                    ret += 5;
-                    found = true;
+                    if (jump.getOpcode() == Opcodes.IF_ACMPNE) {
+                        use.instructions.insert(jump, new JumpInsnNode(Opcodes.IFEQ, jump.label));
+                        use.instructions.insert(jump, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                TransformUtil.HOOKS_COMMON,
+                                "checkWardGeneric",
+                                "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                                false
+                        ));
+                        use.instructions.insert(jump, new VarInsnNode(Opcodes.ALOAD, 3));
+                        use.instructions.insert(jump, new VarInsnNode(Opcodes.ALOAD, 2));
+
+                        found = true;
+                    }
+                    else if (jump.getOpcode() == Opcodes.IF_ACMPEQ && ret >= 3) {
+                        AbstractInsnNode threeBack = jump.getPrevious().getPrevious().getPrevious();
+                        if (threeBack instanceof JumpInsnNode && threeBack.getOpcode() == Opcodes.IF_ACMPNE) {
+                            jump = (JumpInsnNode) threeBack;
+                            use.instructions.insert(jump, new JumpInsnNode(Opcodes.IFEQ, jump.label));
+                            use.instructions.insert(jump, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                    TransformUtil.HOOKS_COMMON,
+                                    "checkWardGeneric",
+                                    "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                                    false
+                            ));
+                            use.instructions.insert(jump, new VarInsnNode(Opcodes.ALOAD, 3));
+                            use.instructions.insert(jump, new VarInsnNode(Opcodes.ALOAD, 2));
+
+                            found = true;
+                        }
+                    }
                 }
-                else
-                    ++ret;
             }
             
             if (!found)

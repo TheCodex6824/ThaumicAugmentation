@@ -22,6 +22,8 @@ package thecodex6824.thaumicaugmentation.client.sound;
 
 import java.util.function.Function;
 
+import com.google.common.math.DoubleMath;
+
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -31,7 +33,9 @@ public class MovingSoundRecord extends MovingSound {
 
     protected Function<Vec3d, Vec3d> tickFunc;
     protected int fadeIn;
+    protected float fadeOut;
     protected int ticks;
+    protected boolean inFadeOut;
     
     public MovingSoundRecord(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick) {
         
@@ -63,6 +67,7 @@ public class MovingSoundRecord extends MovingSound {
         pitch = soundPitch;
         setPos(x, y, z);
         fadeIn = -1;
+        fadeOut = -1F;
     }
     
     public void setPos(float x, float y, float z) {
@@ -79,19 +84,33 @@ public class MovingSoundRecord extends MovingSound {
         fadeIn = fade;
     }
     
+    public void setFadeOut(int fade) {
+        fadeOut = volume / fade;
+    }
+    
     public void stop() {
         donePlaying = true;
     }
     
     @Override
     public void update() {
-        Vec3d pos = tickFunc.apply(new Vec3d(xPosF, yPosF, zPosF));
-        if (pos == null)
-            donePlaying = true;
+        Vec3d orig = new Vec3d(xPosF, yPosF, zPosF);
+        Vec3d pos = inFadeOut ? orig : tickFunc.apply(orig);
+        if (pos == null) {
+            if (fadeOut > 0)
+                inFadeOut = true;
+            else
+                donePlaying = true;
+        }
         else {
             setPos((float) pos.x, (float) pos.y, (float) pos.z);
             if (ticks <= fadeIn)
                 volume = (float) ticks / fadeIn;
+            else if (inFadeOut) {
+                volume -= fadeOut;
+                if (DoubleMath.fuzzyEquals(volume, 0.0F, 0.001))
+                    donePlaying = true;
+            }
         }
         
         ++ticks;

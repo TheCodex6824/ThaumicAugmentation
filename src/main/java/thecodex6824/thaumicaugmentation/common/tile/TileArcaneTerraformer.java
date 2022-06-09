@@ -20,19 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.math.DoubleMath;
-
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,12 +69,19 @@ import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.network.PacketTerraformerWork;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
-public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable, IBreakCallback, IEssentiaTransport {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class TileArcaneTerraformer extends TileEntity implements IInteractWithCaster, ITickable, IEssentiaTransport {
 
     protected static final int MAX_ESSENTIA = 30; // per aspect
     protected static final Cache<Biome, Object2IntOpenHashMap<Aspect>> BIOME_COSTS =
@@ -350,6 +347,9 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                                     AuraHelper.drainVis(world, pos, 0.5F, false);
                                     visPaid = true;
                                     markDirty();
+                                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VIS_OPERATION, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                                            0.0, 0.0, 0.0, 0.7, 0.875, 0.875, 0.85),
+                                            new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
                                 }
                             }
                         }
@@ -382,8 +382,8 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                             chunks.add(new ChunkPos(currentPos));
                             int y = world.getHeight(currentPos.getX(), currentPos.getZ());
                             TargetPoint track = new TargetPoint(world.provider.getDimension(), currentPos.getX(), y, currentPos.getZ(), 64.0);
-                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, currentPos.getX(),
-                                    y, currentPos.getZ(), 8.0, Aspect.EXCHANGE.getColor()), track);
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, currentPos.getX() + 0.5,
+                                    y, currentPos.getZ() + 0.5, 8.0, Aspect.EXCHANGE.getColor()), track);
                             TANetwork.INSTANCE.sendToAllTracking(new PacketTerraformerWork(pos.getX(), pos.getY(), pos.getZ()), track);
                             world.playSound(null, currentPos, SoundsTC.zap, SoundCategory.BLOCKS, 0.15F, 1.0F);
                             break;
@@ -402,8 +402,15 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
                         
                         markDirty();
                     }
-                    else
+                    else {
+                        if (!visPaid) {
+                            TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VIS_OPERATION, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                                    0.0, 0.0, 0.0, 0.1, 0.15, 0.15, 0.85),
+                                    new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
+                        }
+                        
                         break;
+                    }
                 }
             }
         }
@@ -494,12 +501,13 @@ public class TileArcaneTerraformer extends TileEntity implements IInteractWithCa
     }
     
     @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         if (!world.isRemote)
             NodeHelper.syncDestroyedImpetusNode(consumer);
         
         consumer.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+        super.invalidate();
     }
     
     @Override

@@ -162,6 +162,9 @@ public final class TAConfigHolder {
             @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.impulse_cannon")
             public ImpulseCannon cannon = new ImpulseCannon();
             
+            @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.impetus_generator")
+            public ImpetusGenerator impetusGenerator = new ImpetusGenerator();
+            
             @Name("TerraformerCost")
             @Comment({
                 "The amount of Impetus the Arcane Terraformer consumes per block terraformed."
@@ -174,6 +177,33 @@ public final class TAConfigHolder {
                 "Note that a proportion of this amount will be consumed to heal a damaged shield."
             })
             public int shieldFocusCost = 10;
+            
+            public static class ImpetusGenerator {
+                
+                @Name("EnergyPerImpetus")
+                @Comment({
+                    "The amount of FE generated per point of Impetus.",
+                    "Impetus will not be consumed until the internal buffer",
+                    "can contain at least this amount more FE."
+                })
+                public int energyPerImpetus = 1500;
+                
+                @Name("MaxExtract")
+                @Comment({
+                    "The maximum amount of FE that can be extracted per operation.",
+                    "This *can* be removed multiple times per tick if energy is being pulled,",
+                    "but the generator itself will only attempt to push energy once per tick."
+                })
+                public int maxExtract = 50;
+                
+                @Name("BufferSize")
+                @Comment({
+                    "The maximum amount of FE that can be held in the generator.",
+                    "Note that if this is lower than EnergyPerImpetus, the generator will never",
+                    "refill its buffer."
+                })
+                public int bufferSize = 3000;
+            }
             
             public static class ImpulseCannon {
                 
@@ -814,6 +844,10 @@ public final class TAConfigHolder {
         TAConfig.terraformerImpetusCost.setValue((long) gameplay.impetus.terraformerCost, side);
         TAConfig.shieldFocusImpetusCost.setValue((long) gameplay.impetus.shieldFocusCost, side);
         
+        TAConfig.impetusGeneratorEnergyPerImpetus.setValue(gameplay.impetus.impetusGenerator.energyPerImpetus, side);
+        TAConfig.impetusGeneratorMaxExtract.setValue(gameplay.impetus.impetusGenerator.maxExtract, side);
+        TAConfig.impetusGeneratorBufferSize.setValue(gameplay.impetus.impetusGenerator.bufferSize, side);
+        
         TAConfig.allowWussRiftSeed.setValue(gameplay.allowWussRiftSeed, side);
         
         TAConfig.cannonBeamDamage.setValue(gameplay.impetus.cannon.beamDamage, side);
@@ -970,6 +1004,10 @@ public final class TAConfigHolder {
         TAConfig.terraformerImpetusCost = TAConfigManager.addOption(new ConfigOptionLong(false, (long) gameplay.impetus.terraformerCost));
         TAConfig.shieldFocusImpetusCost = TAConfigManager.addOption(new ConfigOptionLong(false, (long) gameplay.impetus.shieldFocusCost));
     
+        TAConfig.impetusGeneratorEnergyPerImpetus = TAConfigManager.addOption(new ConfigOptionInt(false, gameplay.impetus.impetusGenerator.energyPerImpetus));
+        TAConfig.impetusGeneratorMaxExtract = TAConfigManager.addOption(new ConfigOptionInt(false, gameplay.impetus.impetusGenerator.maxExtract));
+        TAConfig.impetusGeneratorBufferSize = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.impetus.impetusGenerator.bufferSize));
+        
         TAConfig.allowWussRiftSeed = TAConfigManager.addOption(new ConfigOptionBoolean(false, gameplay.allowWussRiftSeed));
         
         TAConfig.cannonBeamDamage = TAConfigManager.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannon.beamDamage));

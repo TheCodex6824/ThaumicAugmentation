@@ -48,6 +48,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.IVerticallyDirectiona
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 
 public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellInfo, IItemBlockProvider {
 
@@ -132,8 +133,10 @@ public class BlockImpetusMatrixBase extends BlockTABase implements IImpetusCellI
                     player.setHeldItem(hand, new ItemStack(TAItems.MATERIAL, 1, 3));
                 else if (player.getHeldItem(hand).getCount() < player.getHeldItem(hand).getMaxStackSize())
                     player.getHeldItem(hand).grow(1);
-                else
-                    world.spawnEntity(TAItems.MATERIAL.createEntity(world, player, new ItemStack(TAItems.MATERIAL, 1, 3)));
+                else {
+                    world.spawnEntity(ItemHelper.makeItemEntity(world, pos.getX() + 0.5F, pos.getY() + 0.5F,
+                            pos.getZ() + 0.5F, new ItemStack(TAItems.MATERIAL, 1, 3)));
+                }
                 
                 return true;
             }

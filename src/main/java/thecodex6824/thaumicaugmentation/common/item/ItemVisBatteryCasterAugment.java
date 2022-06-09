@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -46,6 +42,10 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.common.capability.AugmentCasterVisBattery;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemVisBatteryCasterAugment extends ItemTABase {
 
@@ -88,13 +88,16 @@ public class ItemVisBatteryCasterAugment extends ItemTABase {
         NBTTagCompound tag = new NBTTagCompound();
         if (stack.hasTagCompound()) {
             NBTTagCompound item = stack.getTagCompound().copy();
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer())
+            if (!ThaumicAugmentation.proxy.isSingleplayer() && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
                 item.removeTag("cap");
             
             tag.setTag("item", item);
         }
-        
-        tag.setTag("cap", ((Augment) stack.getCapability(CapabilityAugment.AUGMENT, null)).serializeNBT());
+
+        NBTTagCompound cap = ItemHelper.tryMakeCapabilityTag(stack, CapabilityAugment.AUGMENT);
+        if (cap != null)
+            tag.setTag("cap", cap);
+
         return tag;
     }
     

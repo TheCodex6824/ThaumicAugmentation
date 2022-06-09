@@ -75,7 +75,11 @@ public abstract class BlockTASlab extends BlockSlab implements ITASlabType {
             return new ItemSlab(TABlocks.SLAB, (BlockSlab) TABlocks.SLAB, (BlockSlab) TABlocks.SLAB_DOUBLE) {
                 @Override
                 public String getTranslationKey(ItemStack stack) {
-                    return "tile." + ThaumicAugmentationAPI.MODID + "." + SlabType.fromMeta(stack.getMetadata()).getName() + "_slab";
+                    SlabType type = SlabType.fromMeta(stack.getMetadata());
+                    if (type == null)
+                        type = SlabType.ANCIENT_TILE;
+                    
+                    return "tile." + ThaumicAugmentationAPI.MODID + "." + type.getName() + "_slab";
                 }
             };
         }
@@ -166,7 +170,11 @@ public abstract class BlockTASlab extends BlockSlab implements ITASlabType {
     
     @Override
     public String getTranslationKey(int meta) {
-        return SlabType.fromMeta(meta).getDrop().getItem().getTranslationKey();
+        SlabType type = SlabType.fromMeta(meta);
+        if (type == null)
+            type = SlabType.ANCIENT_TILE;
+        
+        return type.getDrop().getItem().getTranslationKey();
     }
     
     @Override

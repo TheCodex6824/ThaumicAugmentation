@@ -34,6 +34,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -42,6 +43,7 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import thaumcraft.api.aspects.Aspect;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IEnabledBlock;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
@@ -50,18 +52,36 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusConsumer;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusGenerator extends TileEntity implements ITickable, IBreakCallback {
+public class TileImpetusGenerator extends TileEntity implements ITickable {
 
-    protected static class CustomEnergyStorage extends EnergyStorage {
+    protected class CustomEnergyStorage extends EnergyStorage {
         
         public CustomEnergyStorage(int capacity, int in, int out, int initial) {
             super(capacity, in, out, initial);
         }
         
         public void setEnergy(int newEnergy) {
-            energy = newEnergy;
+            energy = MathHelper.clamp(newEnergy, 0, capacity);
+            markDirty();
+        }
+        
+        @Override
+        public int extractEnergy(int maxExtract, boolean simulate) {
+            int extracted = super.extractEnergy(maxExtract, simulate);
+            if (!simulate && extracted > 0)
+                markDirty();
+            
+            return extracted;
+        }
+        
+        @Override
+        public int receiveEnergy(int maxReceive, boolean simulate) {
+            int received = super.receiveEnergy(maxReceive, simulate);
+            if (!simulate && received > 0)
+                markDirty();
+            
+            return received;
         }
         
     }
@@ -92,7 +112,8 @@ public class TileImpetusGenerator extends TileEntity implements ITickable, IBrea
                 return position.add(0.5, 0.4375, 0.5);
             }
         };
-        forgeEnergy = new CustomEnergyStorage(3000, 1500, 30, 0);
+        forgeEnergy = new CustomEnergyStorage(TAConfig.impetusGeneratorBufferSize.getValue(), 0,
+                TAConfig.impetusGeneratorMaxExtract.getValue(), 0);
         ticks = ThreadLocalRandom.current().nextInt(20);
     }
     
@@ -101,11 +122,10 @@ public class TileImpetusGenerator extends TileEntity implements ITickable, IBrea
         if (!world.isRemote && ticks++ % 10 == 0) {
             IBlockState state = world.getBlockState(pos);
             if (state.getValue(IEnabledBlock.ENABLED)) {
-                if (forgeEnergy.getEnergyStored() < forgeEnergy.getMaxEnergyStored() - 1500) {
+                if (forgeEnergy.getEnergyStored() + TAConfig.impetusGeneratorEnergyPerImpetus.getValue() <= forgeEnergy.getMaxEnergyStored()) {
                     ConsumeResult result = node.consume(1, false);
                     if (result.energyConsumed == 1) {
-                        forgeEnergy.receiveEnergy(1500, false);
-                        markDirty();
+                        forgeEnergy.setEnergy(forgeEnergy.getEnergyStored() + TAConfig.impetusGeneratorEnergyPerImpetus.getValue());
                         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
                         world.addBlockEvent(pos, getBlockType(), 1, 0);
                         NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
@@ -122,11 +142,10 @@ public class TileImpetusGenerator extends TileEntity implements ITickable, IBrea
             if (neighbor != null) {
                 IEnergyStorage other = neighbor.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
                 if (other != null && other.canReceive()) {
-                    int extract = Math.min(forgeEnergy.getEnergyStored(), 50);
+                    int extract = forgeEnergy.extractEnergy(TAConfig.impetusGeneratorMaxExtract.getValue(), true);
                     extract = other.receiveEnergy(extract, false);
                     if (extract > 0) {
                         forgeEnergy.extractEnergy(extract, false);
-                        markDirty();
                         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
                         world.addBlockEvent(pos, getBlockType(), 1, 0);
                     }
@@ -155,12 +174,13 @@ public class TileImpetusGenerator extends TileEntity implements ITickable, IBrea
     }
     
     @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         if (!world.isRemote)
             NodeHelper.syncDestroyedImpetusNode(node);
         
         node.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
+        super.invalidate();
     }
     
     @Override

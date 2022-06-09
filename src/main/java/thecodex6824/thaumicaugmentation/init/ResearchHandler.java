@@ -88,7 +88,7 @@ public final class ResearchHandler {
                 ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY)));
         ScanningManager.addScannableThing(new ScanBlockState("!VOIDSTONETAINTEDSOIL", TABlocks.STONE.getDefaultState().withProperty(
                 ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY)));
-        ScanningManager.addScannableThing(new ScanItem("!VOIDSTONE", new ItemStack(TABlocks.STONE)));
+        ScanningManager.addScannableThing(new ScanItem("!VOIDSTONE", new ItemStack(TABlocks.STONE, 1, StoneType.STONE_VOID.getMeta())));
         ScanningManager.addScannableThing(new ScanItem("!VOIDSTONETAINTED", new ItemStack(TABlocks.STONE, 1, StoneType.STONE_TAINT_NODECAY.getMeta())));
         ScanningManager.addScannableThing(new ScanItem("!VOIDSTONETAINTEDSOIL", new ItemStack(TABlocks.STONE, 1, StoneType.SOIL_STONE_TAINT_NODECAY.getMeta())));
         
@@ -97,7 +97,7 @@ public final class ResearchHandler {
         ScanningManager.addScannableThing(new ScanEntityWithPeacefulFallback("m_CREEPER", new ScanEntity("m_CREEPER", EntityCreeper.class, true),
                 new ScanItem("m_CREEPER", new ItemStack(Items.GUNPOWDER))));
         
-        ScanningManager.addScannableThing(new ScanItem("!ELYTRA", new ItemStack(Items.ELYTRA)));
+        ScanningManager.addScannableThing(new ScanItem("!ELYTRA", new ItemStack(Items.ELYTRA, 1, OreDictionary.WILDCARD_VALUE)));
         ScanningManager.addScannableThing(new ScanEntity("!AUTOCASTER", EntityAutocasterBase.class, true));
         
         ScanningManager.addScannableThing(new ScanItem("m_ELDRITCHBOSS", new ItemStack(TAItems.RESEARCH_NOTES, 1, 0)));

@@ -34,6 +34,7 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.block.property.ICreativeImpetusBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITABarsType;
@@ -68,6 +69,7 @@ public final class ModelRegistryHandler {
         ModelLoader.setCustomStateMapper(TABlocks.WARDED_BUTTON_SILVERWOOD, new StateMap.Builder().ignore(IWardOpeningWeakPower.WEAK_POWER).build());
         ModelLoader.setCustomStateMapper(TABlocks.WARDED_BUTTON_ARCANE_STONE, new StateMap.Builder().ignore(IWardOpeningWeakPower.WEAK_POWER).build());
         ModelLoader.setCustomStateMapper(TABlocks.URN, new StateMap.Builder().withName(IUrnType.URN_TYPE).build());
+        ModelLoader.setCustomStateMapper(TABlocks.IMPETUS_CREATIVE, new StateMap.Builder().withName(ICreativeImpetusBlock.BLOCK_TYPE).build());
         
         for (Block b : TABlocks.getAllBlocks()) {
             if (b instanceof IModelProvider<?>)

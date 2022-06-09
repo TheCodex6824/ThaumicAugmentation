@@ -20,16 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer;
 
-import java.nio.FloatBuffer;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.lwjgl.opengl.GL11;
-
 import com.sasmaster.glelwjgl.java.CoreGLE;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -59,6 +50,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import org.lwjgl.opengl.GL11;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXFireMote;
@@ -80,6 +72,11 @@ import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
+import javax.annotation.Nullable;
+import java.nio.FloatBuffer;
+import java.util.Arrays;
+import java.util.List;
+
 public class TARenderHelperClient implements ITARenderHelper {
 
     protected static final ResourceLocation RIFT_TEXTURE = new ResourceLocation("minecraft", "textures/entity/end_portal.png");
@@ -94,9 +91,6 @@ public class TARenderHelperClient implements ITARenderHelper {
     protected static final FloatBuffer BUFFER_Y = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(0.0F).put(1.0F).put(0.0F).put(0.0F).flip();
     protected static final FloatBuffer BUFFER_Z = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(0.0F).put(0.0F).put(1.0F).put(0.0F).flip();
     protected static final FloatBuffer BUFFER_W = (FloatBuffer) GLAllocation.createDirectFloatBuffer(16).put(0.0F).put(0.0F).put(0.0F).put(1.0F).flip();
-    
-    protected static final double Z_CLOSE_NEG = Math.pow(2.0, -12.0);
-    protected static final double Z_CLOSE_POS = 1.0 - Z_CLOSE_NEG;
     
     protected static final ResourceLocation FRACTURE_TEXTURE_CLOSED = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
     protected static final ResourceLocation FRACTURE_TEXTURE_OPEN = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/environment/emptiness_sky.png");
@@ -605,7 +599,12 @@ public class TARenderHelperClient implements ITARenderHelper {
         
         return null;
     }
-    
+
+    protected double getCloseZ(Vec3d tile, Vec3d cam) {
+        double dist = tile.squareDistanceTo(cam);
+        return Math.pow(2.0, MathHelper.clamp(MathHelper.floor(Math.log1p(dist) - 14.0), -14.0, -1.0));
+    }
+
     @Override
     public void renderStarfieldGlass(ShaderType type, TileStarfieldGlass tile, double pX, double pY, double pZ) {
         BlockPos pos = tile.getPos();
@@ -617,6 +616,8 @@ public class TARenderHelperClient implements ITARenderHelper {
             if (state.getUnlistedNames().contains(IRenderableSides.SIDES)) {
                 List<EnumFacing> allSides = state.getValue(IRenderableSides.SIDES);
                 if (allSides != null && !allSides.isEmpty()) {
+                    double zCloseNeg = getCloseZ(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), new Vec3d(pX, pY, pZ));
+                    double zClosePos = 1.0 - zCloseNeg;
                     GlStateManager.pushMatrix();
                     GlStateManager.translate(pos.getX() - pX, pos.getY() - pY, pos.getZ() - pZ);
                     Tessellator t = Tessellator.getInstance();
@@ -625,45 +626,45 @@ public class TARenderHelperClient implements ITARenderHelper {
                         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
                         switch (face) {
                             case DOWN: {
-                                buffer.pos(0.0, Z_CLOSE_NEG, 0.0).tex(0, 0).endVertex();
-                                buffer.pos(1.0, Z_CLOSE_NEG, 0.0).tex(1, 0).endVertex();
-                                buffer.pos(1.0, Z_CLOSE_NEG, 1.0).tex(1, 1).endVertex();
-                                buffer.pos(0.0, Z_CLOSE_NEG, 1.0).tex(1, 0).endVertex();
+                                buffer.pos(0.0, zCloseNeg, 0.0).tex(0, 0).endVertex();
+                                buffer.pos(1.0, zCloseNeg, 0.0).tex(1, 0).endVertex();
+                                buffer.pos(1.0, zCloseNeg, 1.0).tex(1, 1).endVertex();
+                                buffer.pos(0.0, zCloseNeg, 1.0).tex(0, 1).endVertex();
                                 break;
                             }
                             case UP: {
-                                buffer.pos(0.0, Z_CLOSE_POS, 0.0).tex(0, 0).endVertex();
-                                buffer.pos(0.0, Z_CLOSE_POS, 1.0).tex(1, 0).endVertex();
-                                buffer.pos(1.0, Z_CLOSE_POS, 1.0).tex(1, 1).endVertex();
-                                buffer.pos(1.0, Z_CLOSE_POS, 0.0).tex(1, 0).endVertex();
+                                buffer.pos(0.0, zClosePos, 0.0).tex(0, 0).endVertex();
+                                buffer.pos(0.0, zClosePos, 1.0).tex(1, 0).endVertex();
+                                buffer.pos(1.0, zClosePos, 1.0).tex(1, 1).endVertex();
+                                buffer.pos(1.0, zClosePos, 0.0).tex(0, 1).endVertex();
                                 break;
                             }
                             case EAST: {
-                                buffer.pos(Z_CLOSE_POS, 0.0, 0.0).tex(0, 0).endVertex();
-                                buffer.pos(Z_CLOSE_POS, 1.0, 0.0).tex(1, 0).endVertex();
-                                buffer.pos(Z_CLOSE_POS, 1.0, 1.0).tex(1, 1).endVertex();
-                                buffer.pos(Z_CLOSE_POS, 0.0, 1.0).tex(1, 0).endVertex();
+                                buffer.pos(zClosePos, 0.0, 0.0).tex(0, 0).endVertex();
+                                buffer.pos(zClosePos, 1.0, 0.0).tex(1, 0).endVertex();
+                                buffer.pos(zClosePos, 1.0, 1.0).tex(1, 1).endVertex();
+                                buffer.pos(zClosePos, 0.0, 1.0).tex(0, 1).endVertex();
                                 break;
                             }
                             case WEST: {
-                                buffer.pos(Z_CLOSE_NEG, 0.0, 0.0).tex(0, 0).endVertex();
-                                buffer.pos(Z_CLOSE_NEG, 0.0, 1.0).tex(1, 0).endVertex();
-                                buffer.pos(Z_CLOSE_NEG, 1.0, 1.0).tex(1, 1).endVertex();
-                                buffer.pos(Z_CLOSE_NEG, 1.0, 0.0).tex(1, 0).endVertex();
+                                buffer.pos(zCloseNeg, 0.0, 0.0).tex(0, 0).endVertex();
+                                buffer.pos(zCloseNeg, 0.0, 1.0).tex(0, 1).endVertex();
+                                buffer.pos(zCloseNeg, 1.0, 1.0).tex(1, 1).endVertex();
+                                buffer.pos(zCloseNeg, 1.0, 0.0).tex(1, 0).endVertex();
                                 break;
                             }
                             case SOUTH: {
-                                buffer.pos(0.0, 0.0, Z_CLOSE_POS).tex(0, 0).endVertex();
-                                buffer.pos(1.0, 0.0, Z_CLOSE_POS).tex(1, 0).endVertex();
-                                buffer.pos(1.0, 1.0, Z_CLOSE_POS).tex(1, 1).endVertex();
-                                buffer.pos(0.0, 1.0, Z_CLOSE_POS).tex(1, 0).endVertex();
+                                buffer.pos(0.0, 0.0, zClosePos).tex(0, 0).endVertex();
+                                buffer.pos(1.0, 0.0, zClosePos).tex(1, 0).endVertex();
+                                buffer.pos(1.0, 1.0, zClosePos).tex(1, 1).endVertex();
+                                buffer.pos(0.0, 1.0, zClosePos).tex(0, 1).endVertex();
                                 break;
                             }
                             case NORTH: {
-                                buffer.pos(0.0, 0.0, Z_CLOSE_NEG).tex(0, 0).endVertex();
-                                buffer.pos(0.0, 1.0, Z_CLOSE_NEG).tex(1, 0).endVertex();
-                                buffer.pos(1.0, 1.0, Z_CLOSE_NEG).tex(0, 1).endVertex();
-                                buffer.pos(1.0, 0.0, Z_CLOSE_NEG).tex(1, 1).endVertex();
+                                buffer.pos(0.0, 0.0, zCloseNeg).tex(0, 0).endVertex();
+                                buffer.pos(0.0, 1.0, zCloseNeg).tex(0, 1).endVertex();
+                                buffer.pos(1.0, 1.0, zCloseNeg).tex(1, 1).endVertex();
+                                buffer.pos(1.0, 0.0, zCloseNeg).tex(1, 0).endVertex();
                                 break;
                             }
                             
@@ -685,9 +686,11 @@ public class TARenderHelperClient implements ITARenderHelper {
         IBlockState state = tile.getWorld().getBlockState(pos);
         double offset = Minecraft.getMinecraft().isGamePaused() && Minecraft.getMinecraft().isSingleplayer() ? 0.0 :
             Minecraft.getMinecraft().getRenderPartialTicks();
+        double bob = Math.sin((Minecraft.getMinecraft().player.ticksExisted + offset) / 20.0) / 4.0;
+        double zCloseNeg = getCloseZ(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), new Vec3d(pX, pY + bob, pZ));
+        double zClosePos = 1.0 - zCloseNeg;
         GlStateManager.pushMatrix();
-        GlStateManager.translate(pos.getX() - pX, pos.getY() - pY +
-                Math.sin((Minecraft.getMinecraft().player.ticksExisted + offset) / 20.0) / 4.0, pos.getZ() - pZ);
+        GlStateManager.translate(pos.getX() - pX, pos.getY() - pY + bob, pos.getZ() - pZ);
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
         for (EnumFacing face : EnumFacing.HORIZONTALS) {
@@ -696,31 +699,31 @@ public class TARenderHelperClient implements ITARenderHelper {
                 buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
                 switch (face) {
                     case EAST: {
-                        buffer.pos(Z_CLOSE_POS, -1.0, 0.0).tex(0, 0).endVertex();
-                        buffer.pos(Z_CLOSE_POS, 2.0, 0.0).tex(1, 0).endVertex();
-                        buffer.pos(Z_CLOSE_POS, 2.0, 1.0).tex(1, 1).endVertex();
-                        buffer.pos(Z_CLOSE_POS, -1.0, 1.0).tex(1, 0).endVertex();
+                        buffer.pos(zClosePos, -1.0, 0.0).tex(0, 0).endVertex();
+                        buffer.pos(zClosePos, 2.0, 0.0).tex(0, 3).endVertex();
+                        buffer.pos(zClosePos, 2.0, 1.0).tex(1, 3).endVertex();
+                        buffer.pos(zClosePos, -1.0, 1.0).tex(1, 0).endVertex();
                         break;
                     }
                     case WEST: {
-                        buffer.pos(Z_CLOSE_NEG, -1.0, 0.0).tex(0, 0).endVertex();
-                        buffer.pos(Z_CLOSE_NEG, -1.0, 1.0).tex(1, 0).endVertex();
-                        buffer.pos(Z_CLOSE_NEG, 2.0, 1.0).tex(1, 1).endVertex();
-                        buffer.pos(Z_CLOSE_NEG, 2.0, 0.0).tex(1, 0).endVertex();
+                        buffer.pos(zCloseNeg, -1.0, 0.0).tex(0, 0).endVertex();
+                        buffer.pos(zCloseNeg, -1.0, 1.0).tex(0, 1).endVertex();
+                        buffer.pos(zCloseNeg, 2.0, 1.0).tex(3, 1).endVertex();
+                        buffer.pos(zCloseNeg, 2.0, 0.0).tex(3, 0).endVertex();
                         break;
                     }
                     case SOUTH: {
-                        buffer.pos(0.0, -1.0, Z_CLOSE_POS).tex(0, 0).endVertex();
-                        buffer.pos(1.0, -1.0, Z_CLOSE_POS).tex(1, 0).endVertex();
-                        buffer.pos(1.0, 2.0, Z_CLOSE_POS).tex(1, 1).endVertex();
-                        buffer.pos(0.0, 2.0, Z_CLOSE_POS).tex(1, 0).endVertex();
+                        buffer.pos(0.0, -1.0, zClosePos).tex(0, 0).endVertex();
+                        buffer.pos(1.0, -1.0, zClosePos).tex(1, 0).endVertex();
+                        buffer.pos(1.0, 2.0, zClosePos).tex(1, 3).endVertex();
+                        buffer.pos(0.0, 2.0, zClosePos).tex(0, 3).endVertex();
                         break;
                     }
                     case NORTH: {
-                        buffer.pos(0.0, -1.0, Z_CLOSE_NEG).tex(0, 0).endVertex();
-                        buffer.pos(0.0, 2.0, Z_CLOSE_NEG).tex(1, 0).endVertex();
-                        buffer.pos(1.0, 2.0, Z_CLOSE_NEG).tex(0, 1).endVertex();
-                        buffer.pos(1.0, -1.0, Z_CLOSE_NEG).tex(1, 1).endVertex();
+                        buffer.pos(0.0, -1.0, zCloseNeg).tex(0, 0).endVertex();
+                        buffer.pos(0.0, 2.0, zCloseNeg).tex(0, 3).endVertex();
+                        buffer.pos(1.0, 2.0, zCloseNeg).tex(1, 3).endVertex();
+                        buffer.pos(1.0, -1.0, zCloseNeg).tex(1, 0).endVertex();
                         break;
                     }
                     
@@ -751,12 +754,12 @@ public class TARenderHelperClient implements ITARenderHelper {
                     buffer.pos(0.5, 0.0, 0.0).tex(0, 0).endVertex();
                     buffer.pos(0.5, 1.0, 0.0).tex(1, 0).endVertex();
                     buffer.pos(0.5, 1.0, 1.0).tex(1, 1).endVertex();
-                    buffer.pos(0.5, 0.0, 1.0).tex(1, 0).endVertex();
+                    buffer.pos(0.5, 0.0, 1.0).tex(0, 1).endVertex();
                     break;
                 }
                 case WEST: {
                     buffer.pos(0.5, 0.0, 0.0).tex(0, 0).endVertex();
-                    buffer.pos(0.5, 0.0, 1.0).tex(1, 0).endVertex();
+                    buffer.pos(0.5, 0.0, 1.0).tex(0, 1).endVertex();
                     buffer.pos(0.5, 1.0, 1.0).tex(1, 1).endVertex();
                     buffer.pos(0.5, 1.0, 0.0).tex(1, 0).endVertex();
                     break;
@@ -765,14 +768,14 @@ public class TARenderHelperClient implements ITARenderHelper {
                     buffer.pos(0.0, 0.0, 0.5).tex(0, 0).endVertex();
                     buffer.pos(1.0, 0.0, 0.5).tex(1, 0).endVertex();
                     buffer.pos(1.0, 1.0, 0.5).tex(1, 1).endVertex();
-                    buffer.pos(0.0, 1.0, 0.5).tex(1, 0).endVertex();
+                    buffer.pos(0.0, 1.0, 0.5).tex(0, 1).endVertex();
                     break;
                 }
                 case NORTH: {
                     buffer.pos(0.0, 0.0, 0.5).tex(0, 0).endVertex();
-                    buffer.pos(0.0, 1.0, 0.5).tex(1, 0).endVertex();
-                    buffer.pos(1.0, 1.0, 0.5).tex(0, 1).endVertex();
-                    buffer.pos(1.0, 0.0, 0.5).tex(1, 1).endVertex();
+                    buffer.pos(0.0, 1.0, 0.5).tex(0, 1).endVertex();
+                    buffer.pos(1.0, 1.0, 0.5).tex(1, 1).endVertex();
+                    buffer.pos(1.0, 0.0, 0.5).tex(1, 0).endVertex();
                     break;
                 }
                 

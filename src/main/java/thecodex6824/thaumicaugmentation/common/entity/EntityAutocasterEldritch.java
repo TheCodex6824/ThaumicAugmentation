@@ -353,11 +353,7 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
         getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(35.0);
-    }
-    
-    @Override
-    public int getTotalArmorValue() {
-        return 8;
+        getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(8.0);
     }
     
     @Override

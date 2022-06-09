@@ -20,16 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.world.biome;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -48,6 +40,14 @@ import thecodex6824.thaumicaugmentation.common.integration.IntegrationJEID;
 import thecodex6824.thaumicaugmentation.common.network.PacketBiomeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.TriConsumer;
+
+import javax.annotation.Nullable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
+import java.util.Random;
 
 public final class BiomeUtil {
 
@@ -72,7 +72,7 @@ public final class BiomeUtil {
             }, 
             world, chunkX, chunkZ);
         };
-    
+
     public static void setBiome(World world, BlockPos pos, Biome newBiome) {
         if (IntegrationHandler.isIntegrationPresent(IntegrationHandler.JEID_MOD_ID))
             JEID_SET_BIOME.accept(world, pos, newBiome);
@@ -103,20 +103,29 @@ public final class BiomeUtil {
         Biome[] biomeArray = world.getBiomeProvider().getBiomesForGeneration(null, (pos.getX() >> 2) - 2, (pos.getZ() >> 2) - 2, 1, 1);
         if (biomeArray != null && biomeArray.length > 0) {
             Biome biome = biomeArray[0];
-            if (biome != null)
-                return biome;
+            if (biome != null) {
+                // "launder" the biome to get rid of any wrappers like Mystcraft
+                // not sure if this specific case needs it, but I'm sure others commit biome crimes
+                ResourceLocation registryLoc = biome.getRegistryName();
+                return Biome.REGISTRY.getObject(registryLoc);
+            }
         }
         
         return fallback;
     }
-    
+
+    public static boolean areBiomesSame(Biome first, Biome second) {
+        // some mods like Mystcraft do weird biome-wrapping things, so reference equality won't work
+        return first.getRegistryName().equals(second.getRegistryName());
+    }
+
     public static boolean areBiomesSame(World world, BlockPos pos, Biome first) {
-        return world.getBiome(pos) == first;
+        return areBiomesSame(world.getBiome(pos), first);
     }
     
     public static boolean isNaturalBiomePresent(World world, BlockPos pos) {
         Biome natural = getNaturalBiome(world, pos, null);
-        return natural != null && natural == world.getBiome(pos);
+        return natural != null && areBiomesSame(world, pos, natural);
     }
     
     private static Random copyRand(Random rand) {

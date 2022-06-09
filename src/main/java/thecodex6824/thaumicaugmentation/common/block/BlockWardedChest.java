@@ -208,6 +208,19 @@ public class BlockWardedChest extends BlockTABase implements IHorizontallyDirect
     }
     
     @Override
+    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param) {
+        if (!world.isRemote)
+            return true;
+        else {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile != null)
+                return tile.receiveClientEvent(id, param);
+            else
+                return false;
+        }
+    }
+    
+    @Override
     public IBlockState withRotation(IBlockState state, Rotation rot) {
         return state.withProperty(IHorizontallyDirectionalBlock.DIRECTION, 
                 rot.rotate(state.getValue(IHorizontallyDirectionalBlock.DIRECTION)));

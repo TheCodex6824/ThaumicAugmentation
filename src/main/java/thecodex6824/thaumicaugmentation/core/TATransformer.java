@@ -20,42 +20,45 @@
 
 package thecodex6824.thaumicaugmentation.core;
 
-import java.util.ArrayList;
-
+import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
-
-import net.minecraft.launchwrapper.IClassTransformer;
 import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerAttemptTeleport;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBaubleSlotChanged;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationCustomTCArmor;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationVanilla;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerTouchTrajectoryEntitySelection;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerEldritchGuardianFog;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerFluxRiftDestroyBlock;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderCape;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderEntities;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerRunicShieldingAllowBaublesCap;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerSweepingEdgeCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCBlueprintCrashFix;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCRobesElytraFlapping;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerTouchTargetEntitySelection;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerTouchTrajectoryEntitySelection;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerUpdateElytra;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerVoidRobesArmorBarFix;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFireEncouragement;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFlammability;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockGrassPath;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockHardness;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoEndermanPickup;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoRabbitSnacking;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoSheepGrazing;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoVillagerFarming;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockGrassPath;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockRandomTick;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockResistance;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockSlabs;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockTaintImmunity;
+
+import java.util.ArrayList;
 
 public class TATransformer implements IClassTransformer {
 
@@ -75,6 +78,8 @@ public class TATransformer implements IClassTransformer {
         TRANSFORMERS.add(new TransformerWardBlockRandomTick());
         // required to prevent shoveling warded grass
         TRANSFORMERS.add(new TransformerWardBlockGrassPath());
+        // slabs are dumb and bypass all the checks when being placed on another slab
+        TRANSFORMERS.add(new TransformerWardBlockSlabs());
         
         // required as EntityMobGriefingEvent does not provide a blockpos
         // the position is also not determined and put into the AI fields until the event has already passed, so no reflection
@@ -143,6 +148,16 @@ public class TATransformer implements IClassTransformer {
         // so 2 transformers are required
         TRANSFORMERS.add(new TransformerTouchTrajectoryEntitySelection());
         TRANSFORMERS.add(new TransformerTouchTargetEntitySelection());
+        
+        // to fire an event when a flux rift tries to eat a block
+        // used for rift jar detection
+        TRANSFORMERS.add(new TransformerFluxRiftDestroyBlock());
+        
+        // to prevent chorus fruit and such from breaking into spires
+        TRANSFORMERS.add(new TransformerAttemptTeleport());
+
+        // to allow non-sword items to have sweeping edge (primal cutter)
+        TRANSFORMERS.add(new TransformerSweepingEdgeCheck());
     }
     
     public TATransformer() {}

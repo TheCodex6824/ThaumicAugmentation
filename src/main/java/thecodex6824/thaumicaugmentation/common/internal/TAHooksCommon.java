@@ -20,19 +20,17 @@
 
 package thecodex6824.thaumicaugmentation.common.internal;
 
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
+import net.minecraft.block.BlockSlab;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -43,18 +41,26 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import thaumcraft.api.casters.Trajectory;
 import thaumcraft.api.items.ItemsTC;
+import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.items.casters.foci.FocusMediumTouch;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
+import thecodex6824.thaumicaugmentation.api.event.FluxRiftDestroyBlockEvent;
 import thecodex6824.thaumicaugmentation.api.event.FocusTouchGetEntityEvent;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
+import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
+import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
+import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
+
+import javax.annotation.Nullable;
+import java.util.Random;
 
 public final class TAHooksCommon {
 
@@ -105,6 +111,27 @@ public final class TAHooksCommon {
     
     public static boolean checkWardGeneric(World world, BlockPos pos) {
         return !hasWard(world, pos);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static boolean isCompatibleSlab(World world, BlockPos pos, EnumFacing dir, ItemStack slab) {
+        IBlockState state = world.getBlockState(pos);
+        if (state.getPropertyKeys().contains(BlockSlab.HALF) && state.getBlock() instanceof BlockSlab) {
+            BlockSlab block = (BlockSlab) state.getBlock();
+            Comparable item = block.getTypeForItem(slab);
+            return (dir == EnumFacing.UP && state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.BOTTOM ||
+                    dir == EnumFacing.DOWN && state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP) &&
+                    item.compareTo(state.getValue(block.getVariantProperty())) == 0;
+        }
+
+        return false;
+    }
+
+    public static boolean checkWardSlab(World world, BlockPos pos, EnumFacing placeDir, ItemStack stack) {
+        if (placeDir.getAxis() == EnumFacing.Axis.Y && isCompatibleSlab(world, pos, placeDir, stack))
+            return !hasWard(world, pos) && !hasWard(world, pos.offset(placeDir));
+        else
+            return !hasWard(world, pos.offset(placeDir));
     }
     
     public static void checkElytra(ItemStack chestArmorStack, EntityPlayerMP player) {
@@ -188,6 +215,30 @@ public final class TAHooksCommon {
         }
         
         return original;
+    }
+    
+    public static boolean fireFluxRiftDestroyBlockEvent(EntityFluxRift rift, BlockPos pos, IBlockState state) {
+        return MinecraftForge.EVENT_BUS.post(new FluxRiftDestroyBlockEvent(rift, pos, state));
+    }
+    
+    public static boolean onAttemptTeleport(EntityLivingBase entity, double origX, double origY, double origZ) {
+        if (!entity.getEntityWorld().isRemote) {
+            WorldServer w = (WorldServer) entity.getEntityWorld();
+            BlockPos check = entity.getPosition();
+            if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", check)) {
+                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(check);
+                if (start != null) {
+                    IWardStorage storage = w.getChunk(check).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+                    return !(storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard()));
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    public static boolean checkSweepingEdge(EntityPlayer player, ItemStack stack) {
+        return stack.getItem() == TAItems.PRIMAL_CUTTER;
     }
     
 }

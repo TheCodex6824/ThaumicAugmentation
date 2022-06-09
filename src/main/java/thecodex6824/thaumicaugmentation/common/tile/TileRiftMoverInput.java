@@ -60,10 +60,9 @@ import thecodex6824.thaumicaugmentation.api.util.RiftHelper;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 
-public class TileRiftMoverInput extends TileEntity implements ITickable, IInteractWithCaster, IBreakCallback {
+public class TileRiftMoverInput extends TileEntity implements ITickable, IInteractWithCaster {
 
     protected boolean operating;
     protected int oldSize;
@@ -179,6 +178,9 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                     world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                 }
                 else if (AuraHelper.drainVis(world, pos, 0.25F, false) >= 0.25F - 0.0001){
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VIS_OPERATION, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                            0.0, 0.0, 0.0, 0.7, 0.875, 0.875, 0.85),
+                            new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
                     rift.setRiftSize(rift.getRiftSize() - 1);
                     rift.setRiftStability(rift.getRiftStability() - 0.5F);
                     if (rift.getRiftSize() == 0) {
@@ -190,11 +192,16 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
                         world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 2);
                     }
                 }
+                else {
+                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VIS_OPERATION, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                            0.0, 0.0, 0.0, 0.1, 0.175, 0.175, 0.85),
+                            new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 64.0));
+                }
             }
             else if (world.isRemote) {
                 if (loadedRiftUUID != null) {
                     rift = findRift();
-                    if (!rift.getUniqueID().equals(loadedRiftUUID))
+                    if (rift != null && !rift.getUniqueID().equals(loadedRiftUUID))
                         rift = null;
                     else if (rift != null) {
                         if (loop != null)
@@ -232,7 +239,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
     }
     
     @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         if (!world.isRemote && operating) {
             if (rift == null || rift.isDead)
                 AuraHelper.polluteAura(world, pos, oldSize, true);
@@ -254,17 +261,10 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
             operating = false;
             world.playSound(null, pos, SoundsTC.craftfail, SoundCategory.BLOCKS, 0.5F, 1.0F);
         }
-        else if (world.isRemote) {
-            if (loop != null)
-                loop.stop();
-        }
-    }
-    
-    @Override
-    public void invalidate() {
-        super.invalidate();
-        if (loop != null)
+        else if (world.isRemote && loop != null)
             loop.stop();
+        
+        super.invalidate();
     }
     
     @Override

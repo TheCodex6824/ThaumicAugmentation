@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.client.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -67,7 +68,9 @@ public class MiscModels {
         
         // prepare for suffering (aka looping over all items in the game)
         ModelLoader loader = event.getModelLoader();
-        for (Item item : Item.REGISTRY) {
+        Iterator<Item> iter = Item.REGISTRY.iterator();
+        while (iter.hasNext()) {
+            Item item = iter.next();
             if (item instanceof ItemArmor) {
                 for (String s : loader.getVariantNames(item)) {
                     ModelResourceLocation model = ModelLoader.getInventoryVariant(s);

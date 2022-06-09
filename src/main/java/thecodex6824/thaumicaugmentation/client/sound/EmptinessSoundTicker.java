@@ -20,19 +20,24 @@
 
 package thecodex6824.thaumicaugmentation.client.sound;
 
-import java.util.Random;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.ISound.AttenuationType;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.client.resource.IResourceType;
+import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
+import net.minecraftforge.client.resource.VanillaResourceType;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 
-public class EmptinessSoundTicker implements ITickable {
+import java.util.Random;
+import java.util.function.Predicate;
+
+public class EmptinessSoundTicker implements ITickable, ISelectiveResourceReloadListener {
 
     private static ISound LOOP = new PositionedSoundRecord(TASounds.EMPTINESS_MUSIC.getSoundName(), SoundCategory.WEATHER, 1.0F, 1.0F,
             true, 0, AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
@@ -86,5 +91,12 @@ public class EmptinessSoundTicker implements ITickable {
             }
         }
     }
-    
+
+    @Override
+    public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
+        if (resourcePredicate.test(VanillaResourceType.SOUNDS)) {
+            mc.getSoundHandler().stopSound(LOOP);
+            playingMusic = false;
+        }
+    }
 }

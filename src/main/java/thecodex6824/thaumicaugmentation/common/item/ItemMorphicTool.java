@@ -20,14 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -66,6 +60,11 @@ import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderMorphicTool;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Set;
 
 public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
 
@@ -118,10 +117,18 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     @Override
     public NBTTagCompound getNBTShareTag(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
-        if (stack.hasTagCompound())
-            tag.setTag("item", stack.getTagCompound().copy());
-        
-        tag.setTag("cap", ((MorphicTool) stack.getCapability(CapabilityMorphicTool.MORPHIC_TOOL, null)).serializeNBT());
+        if (stack.hasTagCompound()) {
+            NBTTagCompound item = stack.getTagCompound().copy();
+            if (!ThaumicAugmentation.proxy.isSingleplayer() && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+                item.removeTag("cap");
+
+            tag.setTag("item", item);
+        }
+
+        NBTTagCompound cap = ItemHelper.tryMakeCapabilityTag(stack, CapabilityMorphicTool.MORPHIC_TOOL);
+        if (cap != null)
+            tag.setTag("cap", cap);
+
         return tag;
     }
     

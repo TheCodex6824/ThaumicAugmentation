@@ -1,0 +1,18 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "thaumicaugmentation:impetus_creative",
+        "textures": {
+            "0": "thaumicaugmentation:blocks/impetus_creative_source",
+            "particle": "thaumicaugmentation:blocks/impetus_creative_source"
+        }
+    },
+    "variants": {
+        "normal": {
+            "__forge_placeholder": 1
+        },
+        "inventory": {
+            "transform": "forge:default-block"
+        }
+    }
+}

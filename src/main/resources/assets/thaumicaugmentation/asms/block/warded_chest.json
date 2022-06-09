@@ -1,12 +1,12 @@
 {
     "parameters": {
-        "end_anim": ["compose", ["+", "#open_speed"], "#open_time"],
-        "trigger_end": ["-", "#end_anim"],
-        "anim_progress": ["-/-", "#open_time", "#open_speed", 0.01]
+        "trigger_end": ["-", ["compose", ["+", "#anim_time"], "#open_time"]],
+        "anim_progress": ["-/Mm", "#open_time", "#anim_time", 0.0, 0.99999]
     },
     "clips": {
         "model": "thaumicaugmentation:block/warded_chest_anim@model",
-        "open": ["apply", "#model", 0.5],
+        "closed": ["apply", "#model", 0.0],
+        "open": ["apply", "#model", 0.99],
         "opening": [
             "trigger_positive",
             ["apply", "thaumicaugmentation:block/warded_chest_anim@opening", "#anim_progress"],
@@ -18,8 +18,7 @@
             ["apply", "thaumicaugmentation:block/warded_chest_anim@closing", "#anim_progress"],
             "#trigger_end",
             "!transition:closed"
-        ],
-        "closed": ["apply", "#model", 0]
+        ]
     },
     "states": [
         "open",

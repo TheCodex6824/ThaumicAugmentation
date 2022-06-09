@@ -79,10 +79,11 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
             if (++ticks % getHealCycleLength() == 0) {
                 boolean hard = world.getDifficulty() == EnumDifficulty.HARD;
                 for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(6.0))) {
-                    if (!entity.isDead && entity instanceof IEldritchMob) {
+                    if (!entity.isDead && entity.getHealth() > 0.0F && entity instanceof IEldritchMob) {
                         if (entity.isPotionApplicable(new PotionEffect(MobEffects.REGENERATION, 1, 0))) {
                             entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, hard ? 1 : 0, true, true));
-                            entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, hard ? 1 : 0, true, true));
+                            if (entity.isPotionApplicable(new PotionEffect(MobEffects.STRENGTH, 1, 0)))
+                                entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, hard ? 1 : 0, true, true));
                         }
                         else
                             entity.setHealth(entity.getHealth() + 1);

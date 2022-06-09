@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import javax.annotation.Nullable;
-
 import baubles.api.BaubleType;
 import baubles.api.cap.BaubleItem;
 import net.minecraft.entity.EntityLivingBase;
@@ -49,7 +47,10 @@ import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderHarness;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 import vazkii.botania.api.item.IPhantomInkable;
+
+import javax.annotation.Nullable;
 
 @Optional.Interface(iface = "vazkii.botania.api.item.IPhantomInkable", modid = IntegrationHandler.BOTANIA_MOD_ID)
 public class ItemThaumostaticHarness extends ItemTABase implements IRechargable, IPhantomInkable {
@@ -126,6 +127,12 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         CapabilityProviderHarness provider = new CapabilityProviderHarness(new AugmentableItem(1) {
             
+            protected void checkVis() {
+                int difference = RechargeHelper.getCharge(stack) - getHarnessVisCapacity(stack);
+                if (difference > 0)
+                    RechargeHelper.consumeCharge(stack, null, difference);
+            }
+            
             @Override
             public boolean isAugmentAcceptable(ItemStack augment, int slot) {
                 return augment.getCapability(CapabilityAugment.AUGMENT, null) instanceof IThaumostaticHarnessAugment;
@@ -134,18 +141,20 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
             @Override
             public void setAugment(ItemStack augment, int slot) {
                 super.setAugment(augment, slot);
-                int difference = RechargeHelper.getCharge(stack) - getHarnessVisCapacity(stack);
-                if (difference > 0)
-                    RechargeHelper.consumeCharge(stack, null, difference);
+                checkVis();
             }
             
             @Override
             public ItemStack[] setAllAugments(ItemStack[] augs) {
                 ItemStack[] ret = super.setAllAugments(augs);
-                int difference = RechargeHelper.getCharge(stack) - getHarnessVisCapacity(stack);
-                if (difference > 0)
-                    RechargeHelper.consumeCharge(stack, null, difference);
-                
+                checkVis();
+                return ret;
+            }
+            
+            @Override
+            public ItemStack removeAugment(int slot) {
+                ItemStack ret = super.removeAugment(slot);
+                checkVis();
                 return ret;
             }
             
@@ -174,33 +183,39 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
                     EntityPlayer player = (EntityPlayer) entity;
                     double cost = getHarnessVisCost(itemstack, player);
                     if (player.capabilities.isFlying) {
-                        if (!stack.hasTagCompound())
-                            stack.setTagCompound(new NBTTagCompound());
-                        
-                        double current = stack.getTagCompound().getDouble("acc") + cost;
-                        if (current >= 1.0) {
-                            int remove = (int) Math.floor(current);
-                            if (RechargeHelper.consumeCharge(stack, entity, remove))
-                                current -= remove;
-                        }
-                        
-                        if (current >= 1.0 && !player.world.isRemote) {
-                            if (!PlayerMovementAbilityManager.popAndApplyFlyState(player)) {
-                                if (!player.isCreative() && !player.isSpectator()) {
-                                    player.capabilities.allowFlying = false;
-                                    player.capabilities.isFlying = false;
-                                }
-                                
-                                player.capabilities.flySpeed = 0.05F;
-                                player.sendPlayerAbilities();
+                        if (!player.world.isRemote) {
+                            if (!stack.hasTagCompound())
+                                stack.setTagCompound(new NBTTagCompound());
+                            
+                            double current = stack.getTagCompound().getDouble("acc") + cost;
+                            if (current >= 1.0) {
+                                int remove = (int) Math.floor(current);
+                                if (RechargeHelper.consumeCharge(stack, entity, remove))
+                                    current -= remove;
                             }
+                            
+                            if (current >= 1.0) {
+                                if (!PlayerMovementAbilityManager.popAndApplyFlyState(player)) {
+                                    if (!player.isCreative() && !player.isSpectator()) {
+                                        player.capabilities.allowFlying = false;
+                                        player.capabilities.isFlying = false;
+                                    }
+                                    
+                                    player.capabilities.flySpeed = 0.05F;
+                                    player.sendPlayerAbilities();
+                                }
+                            }
+                             
+                            stack.getTagCompound().setDouble("acc", current);
                         }
 
-                        stack.getTagCompound().setDouble("acc", current);
-                        if (player.capabilities.isFlying && player.isSprinting() && !allowSprintFlying(stack, player))
-                            player.setSprinting(false);
-                        if (player.capabilities.isFlying)
+                        // might have stopped flying above
+                        if (player.capabilities.isFlying) {
+                            if (player.isSprinting() && !allowSprintFlying(stack, player))
+                                player.setSprinting(false);
+                            
                             applyHarnessDrift(stack, player);
+                        }
                     }
                     else if (!player.world.isRemote && RechargeHelper.getCharge(itemstack) < cost) {
                         if (!PlayerMovementAbilityManager.popAndApplyFlyState(player)) {
@@ -286,13 +301,16 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
         NBTTagCompound tag = new NBTTagCompound();
         if (stack.hasTagCompound()) {
             NBTTagCompound item = stack.getTagCompound().copy();
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && !ThaumicAugmentation.proxy.isSingleplayer())
+            if (!ThaumicAugmentation.proxy.isSingleplayer() && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
                 item.removeTag("cap");
-            
+
             tag.setTag("item", item);
         }
-        
-        tag.setTag("cap", ((AugmentableItem) stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)).serializeNBT());
+
+        NBTTagCompound cap = ItemHelper.tryMakeCapabilityTag(stack, CapabilityAugmentableItem.AUGMENTABLE_ITEM);
+        if (cap != null)
+            tag.setTag("cap", cap);
+
         return tag;
     }
     

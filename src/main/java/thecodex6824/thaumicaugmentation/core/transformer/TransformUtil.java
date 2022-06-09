@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.core.transformer;
 
+import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -28,8 +30,8 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-
-import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 public final class TransformUtil {
 
@@ -206,6 +208,38 @@ public final class TransformUtil {
         
         return -1;
         
+    }
+    
+    public static int findFirstLoad(MethodNode node, int startIndex, int opcode, int objIndex) {
+        if (startIndex < 0 || startIndex >= node.instructions.size())
+            return -1;
+        
+        for (int i = startIndex; i < node.instructions.size(); ++i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn.getOpcode() == opcode && insn instanceof VarInsnNode) {
+                VarInsnNode var = (VarInsnNode) insn;
+                if (var.var == objIndex)
+                    return i;
+            }
+        }
+        
+        return -1;
+    }
+
+    public static int findFirstInstanceOf(MethodNode node, int startIndex, String desc) {
+        if (startIndex < 0 || startIndex >= node.instructions.size())
+            return -1;
+
+        for (int i = startIndex; i < node.instructions.size(); ++i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn.getOpcode() == Opcodes.INSTANCEOF && insn instanceof TypeInsnNode) {
+                TypeInsnNode t = (TypeInsnNode) insn;
+                if (t.desc.equals(desc))
+                    return i;
+            }
+        }
+
+        return -1;
     }
     
 }

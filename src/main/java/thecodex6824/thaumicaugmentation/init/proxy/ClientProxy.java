@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.init.proxy;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.BiConsumer;
@@ -405,7 +406,13 @@ public class ClientProxy extends ServerProxy {
             switch (message.getEffect()) {
                 case VIS_REGENERATOR: {
                     if (d.length == 3) {
-                        for (int i = 0; i < rand.nextInt(3) + 3; ++i) {
+                        int particles = 3;
+                        if (Minecraft.getMinecraft().gameSettings.particleSetting == 1)
+                            particles = 2;
+                        else if (Minecraft.getMinecraft().gameSettings.particleSetting == 2)
+                            particles = 1;
+                        
+                        for (int i = 0; i < rand.nextInt(3) + particles; ++i) {
                             double x = d[0] + rand.nextGaussian() / 4, y = d[1] + rand.nextDouble() / 2, z = d[2] + rand.nextGaussian() / 4;
                             double vX = rand.nextGaussian() / 4, vY = rand.nextDouble() / 2, vZ = rand.nextGaussian() / 4;
                             FXDispatcher.INSTANCE.drawVentParticles(x, y, z, vX, vY, vZ, Aspect.AURA.getColor());
@@ -530,7 +537,13 @@ public class ClientProxy extends ServerProxy {
                         float r = ((color >> 16) & 0xFF) / 255.0F;
                         float g = ((color >> 8) & 0xFF) / 255.0F;
                         float b = (color & 0xFF) / 255.0F;
-                        for (int i = 0; i < 16; ++i) {
+                        int particles = 16;
+                        if (Minecraft.getMinecraft().gameSettings.particleSetting == 1)
+                            particles = 8;
+                        else if (Minecraft.getMinecraft().gameSettings.particleSetting == 2)
+                            particles = 3;
+                        
+                        for (int i = 0; i < particles; ++i) {
                             FXDispatcher.INSTANCE.drawFireMote((float) x, (float) y, (float) z, (rand.nextFloat() - rand.nextFloat()) / 10.0F,
                                     (rand.nextFloat() - rand.nextFloat()) / 10.0F, (rand.nextFloat() - rand.nextFloat()) / 10.0F, r, g, b, 0.75F, size);
                         }
@@ -601,7 +614,13 @@ public class ClientProxy extends ServerProxy {
                 case BLOCK_RUNES: {
                     if (d.length == 3) {
                         double x = d[0], y = d[1], z = d[2];
-                        for (int i = 0; i < 10; i++) {
+                        int particles = 10;
+                        if (Minecraft.getMinecraft().gameSettings.particleSetting == 1)
+                            particles = 5;
+                        else if (Minecraft.getMinecraft().gameSettings.particleSetting == 2)
+                            particles = 1;
+                        
+                        for (int i = 0; i < particles; i++) {
                             FXDispatcher.INSTANCE.blockRunes(x, y + 0.25, z, 0.3F + rand.nextFloat() * 0.7F, 0.0F,
                                     0.3F + rand.nextFloat() * 0.7F, 15, 0.03F);
                        } 
@@ -652,6 +671,28 @@ public class ClientProxy extends ServerProxy {
                                     z + MathHelper.sin(angle) * 5.0F, MathHelper.cos(angle) * -5.0F, 0.0F, MathHelper.sin(angle) * -5.0F);
                             world.spawnParticle(EnumParticleTypes.PORTAL, x + MathHelper.cos(angle) * 5.0F, y - 0.4F,
                                     z + MathHelper.sin(angle) * 5.0F, MathHelper.cos(angle) * -7.0F, 0.0F, MathHelper.sin(angle) * -7.0F);
+                        }
+                    }
+                    
+                    break;
+                }
+                case VIS_OPERATION: {
+                    if (d.length == 10) {
+                        World world = Minecraft.getMinecraft().world;
+                        double x = d[0], y = d[1], z = d[2];
+                        double dx = d[3], dy = d[4], dz = d[5];
+                        float r = (float) d[6], g = (float) d[7], b = (float) d[8], a = (float) d[9];
+                        int particles = 10;
+                        if (Minecraft.getMinecraft().gameSettings.particleSetting == 1)
+                            particles = 5;
+                        else if (Minecraft.getMinecraft().gameSettings.particleSetting == 2)
+                            particles = 1;
+                        
+                        for (int i = 0; i < particles; ++i) {
+                            FXDispatcher.INSTANCE.drawGenericParticles(x + (world.rand.nextFloat() - world.rand.nextFloat()),
+                                    y + (world.rand.nextFloat() - world.rand.nextFloat()), z + (world.rand.nextFloat() - world.rand.nextFloat()),
+                                    dx, dy, dz, r, g, b, a, false, 448, 9, 1, 6 + world.rand.nextInt(5), 0,
+                                    0.3F + world.rand.nextFloat() * 0.3F, 0.0F, 1);
                         }
                     }
                     
@@ -1378,7 +1419,9 @@ public class ClientProxy extends ServerProxy {
         }
         
         HashMap<IRegistryDelegate<Item>, IItemColor> toReplace = new HashMap<>();
-        for (Item item : Item.REGISTRY) {
+        Iterator<Item> iter = Item.REGISTRY.iterator();
+        while (iter.hasNext()) {
+            Item item = iter.next();
             if (item instanceof ItemArmor) {
                 final IItemColor original = registry.get(item.delegate);
                 toReplace.put(item.delegate, new IItemColor() {

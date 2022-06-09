@@ -1,100 +1,177 @@
 buildscript {
     repositories {
-        jcenter()
-        maven { url = "https://files.minecraftforge.net/maven" }
-        maven { url = "https://plugins.gradle.org/m2/" }
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
+        maven {
+            name 'FancyGradle'
+            url 'https://gitlab.com/api/v4/projects/26758973/packages/maven'
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'wtf.gofancy.fancygradle', name: 'wtf.gofancy.fancygradle.gradle.plugin', version: '1.1.+'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'wtf.gofancy.fancygradle'
+
+fancyGradle {
+    patches {
+        resources
+        coremods
+        asm
+        codeChickenLib
+    }
+}
+
+// eclipse thinks test needs resources if this is not here
+sourceSets {
+    test {
+        resources.setSrcDirs([])
+    }
+}
+
+import net.minecraftforge.gradle.common.tasks.SignJar
+import org.apache.tools.ant.filters.ReplaceTokens
 
 repositories {
-    maven { url = "https://www.cursemaven.com" }
+    maven {
+        url = 'https://www.cursemaven.com/'
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 version = "${mcversion}-${version}"
-group = "thecodex6824.thaumicaugmentation" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "ThaumicAugmentation"
+group = 'thecodex6824.thaumicaugmentation' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'ThaumicAugmentation'
 
-sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
-    options.encoding = 'UTF-8'
+//sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
+
+ext {
+    if (!project.hasProperty('certFingerprint')) {
+        certFingerprint = ''    
+    }
 }
 
 minecraft {
-    version = "${mcversion}-${forgeversion}"
-    runDir = "run"
-    useDepAts = true
+    mappings channel: 'stable', version: '39-1.12'
     
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "stable_39"
-    makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    accessTransformer = file('src/main/resources/META-INF/thaumicaugmentation_at.cfg')
     
-    replace '@APIVERSION@', project.apiversion
-    replaceIn 'ThaumicAugmentationAPI.java'
-    
-    replace '@VERSION@', project.version
-    replaceIn 'ThaumicAugmentation.java'
-    
-    if (project.hasProperty('keyStore')) {
-        replace '@FINGERPRINT@', project.certFingerprint
-        replaceIn 'ThaumicAugmentation.java'
+    runs {
+        client {
+            workingDirectory file('run')
+            
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+            
+            property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
+            
+            environment 'MC_VERSION', '1.12.2'
+            
+            mods {
+                thaumicaugmentation {
+                    source sourceSets.main
+                }
+            }
+        }
+        
+        server {
+            workingDirectory file('run')
+            
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+            
+            property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
+            
+            environment 'MC_VERSION', '1.12.2'
+            
+            mods {
+                thaumicaugmentation {
+                    source sourceSets.main
+                }
+            }
+        }
     }
-    else {
-        replace '@FINGERPRINT@', ""
-        replaceIn 'ThaumicAugmentation.java'
-    }
-    
-    clientJvmArgs += ('-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore' + System.getProperty("line.separator"))
-    serverJvmArgs += ('-Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore' + System.getProperty("line.separator"))
 }
 
 dependencies {
-    deobfCompile 'curse.maven:thaumcraft-223628:2629023'
-    deobfCompile 'curse.maven:baubles-227083:2518667'
-    deobfCompile 'curse.maven:jeid-296289:2919737'
-    deobfCompile 'curse.maven:botania-225643:2846950'
-    deobfCompile 'curse.maven:auracontrol-397104:3013979'
-    deobfCompile 'curse.maven:electroblobs-wizardry-265642:2929294'
+    minecraft "net.minecraftforge:forge:${mcversion}-${forgeversion}"
     
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.hamcrest:hamcrest:2.1'
+    implementation fg.deobf('curse.maven:thaumcraft-223628:2629023')
+    implementation fg.deobf('curse.maven:baubles-227083:2518667')
     
-    runtime 'curse.maven:jei-238222:2995897'
-    runtime 'curse.maven:thaumic-jei-285492:2705304'
-    runtime 'curse.maven:the-one-probe-245211:2667280'
-    runtime 'curse.maven:ctm-267602:2915363'
+    compileOnly 'curse.maven:jeid-296289:2919737'
+    compileOnly 'curse.maven:botania-225643:2846950'
+    compileOnly 'curse.maven:auracontrol-397104:3013979'
+    compileOnly 'curse.maven:electroblobs-wizardry-265642:2929294'
+    
+    testImplementation 'junit:junit:4.13'
+    
+    runtimeOnly 'curse.maven:jei-238222:2995897'
+    runtimeOnly 'curse.maven:thaumic-jei-285492:2705304'
+    runtimeOnly 'curse.maven:the-one-probe-245211:2667280'
+    runtimeOnly 'curse.maven:ctm-267602:2915363'
     
     // if the curse maven is down or otherwise not working:
-    // comment the above "deobfCompile" and "runtime" entries
+    // comment the above "implementation", "compileOnly", and "runtimeOnly" entries
     // uncomment the following and put jars into subfolders in the "lib" folder
     
-    //compile fileTree(dir: 'lib/compile', include: '*.jar')
-    //runtime fileTree(dir: 'lib/runtime', include: '*.jar')
+    //implementation fileTree(dir: 'lib/implementation', include: '*.jar')
+    //compileOnly fileTree(dir: 'lib/compileOnly', include: '*.jar')
+    //runtimeOnly fileTree(dir: 'lib/runtimeOnly', include: '*.jar')
     
-    // note that the first line above says compile, not deobfCompile - if you need deobf use BON2 or something
-    // to avoid needing test jars, comment the "testCompile" lines and put "-x test" on the command line
+    // note that the first line has no deobf - if you need it use BON2 or something
+    // to avoid needing test jars, comment the "testImplementation" lines and put "-x test" on the command line
 }
 
-processResources {
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "apiversion", project.apiversion
-    inputs.property "mcversion", project.minecraft.version
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
 
+task filterTokens(type: Sync) {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property 'version', version
+    inputs.property 'apiversion', apiversion
+    inputs.property 'certFingerprint', certFingerprint
+    
+    from sourceSets.main.java
+    filter(ReplaceTokens, tokens: [APIVERSION: apiversion.toString(), VERSION: version.toString(), FINGERPRINT: certFingerprint.toString()])
+    into "$buildDir/src/$sourceSets.main.name/$sourceSets.main.java.name"
+}
+
+compileJava.source = filterTokens.outputs
+
+processResources {
+    // required to allow file expansion later
+    duplicatesStrategy = 'include'
+    
+    // this will ensure that this task is redone when the versions change.
+    inputs.property 'version', version
+    inputs.property 'apiversion', apiversion
+    inputs.property 'mcversion', mcversion
+    
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
                 
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version, 'forgeversion':project.forgeversion, 'forgeminversion':project.forgeminversion
+        expand 'version': version, 'mcversion': mcversion, 'forgeversion': forgeversion, 'forgeminversion': forgeminversion
     }
         
     // copy everything else except the mcmod.info
@@ -105,10 +182,9 @@ processResources {
 
 javadoc {
     include 'thecodex6824/thaumicaugmentation/api/**'
-    options.encoding = 'UTF-8'
 }
 
-task signJar(type: SignJar, dependsOn: reobfJar) {
+task signJar(type: SignJar) {
     onlyIf { project.hasProperty('keyStore') }
     
     if (project.hasProperty('keyStore')) { // needed to skip gradle trying to find vars
@@ -122,15 +198,17 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
     }
 }
 
-build.dependsOn signJar
-
 jar {
     manifest {
         attributes 'FMLAT': 'thaumicaugmentation_at.cfg'
         attributes 'FMLCorePlugin': 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
+    
+    afterEvaluate { project.getTasks().getByName('reobfJar').finalizedBy(signJar) }
 }
+
+jar.finalizedBy('reobfJar')
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     from 'build/docs/javadoc'

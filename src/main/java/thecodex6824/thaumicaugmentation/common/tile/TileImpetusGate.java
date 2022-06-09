@@ -45,9 +45,8 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
-import thecodex6824.thaumicaugmentation.common.tile.trait.IBreakCallback;
 
-public class TileImpetusGate extends TileEntity implements ITickable, IBreakCallback {
+public class TileImpetusGate extends TileEntity implements ITickable {
     
     protected static final Vec3d OFFSET = new Vec3d(0.0, 0.2, 0.0);
     
@@ -118,12 +117,13 @@ public class TileImpetusGate extends TileEntity implements ITickable, IBreakCall
     }
     
     @Override
-    public void onBlockBroken() {
+    public void invalidate() {
         if (!world.isRemote)
             NodeHelper.syncDestroyedImpetusNode(node);
         
         node.destroy();
         ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
+        super.invalidate();
     }
     
     @Override

@@ -43,37 +43,36 @@ public class ItemCelestialObserverPlacer extends ItemTABase {
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
             float hitY, float hitZ, EnumHand hand) {
         
+        boolean replace = world.getBlockState(pos).getBlock().isReplaceable(world, pos);
+        BlockPos loc = replace ? pos : pos.offset(side);
+        if (!player.canPlayerEdit(loc, side, player.getHeldItem(hand)))
+            return EnumActionResult.PASS;
+        
+        double x = loc.getX(), y = loc.getY(), z = loc.getZ();
+        List<Entity> occupied = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
+        if (!occupied.isEmpty())
+            return EnumActionResult.PASS;
+        
         if (world.isRemote)
-            return EnumActionResult.PASS;
-        else {
-            boolean replace = world.getBlockState(pos).getBlock().isReplaceable(world, pos);
-            BlockPos loc = replace ? pos : pos.offset(side);
-            if (!player.canPlayerEdit(loc, side, player.getHeldItem(hand)))
-                return EnumActionResult.PASS;
+            return EnumActionResult.SUCCESS;
             
-            double x = loc.getX(), y = loc.getY(), z = loc.getZ();
-            List<Entity> occupied = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
-            if (!occupied.isEmpty())
-                return EnumActionResult.PASS;
+        EntityCelestialObserver entity = new EntityCelestialObserver(world);
+        entity.setOwner(player);
+        entity.setPosition(Math.floor(x) + 0.5, Math.floor(y), Math.floor(z) + 0.5);
+        if (!MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world,
+                (float) entity.posX, (float) entity.posY, (float) entity.posZ, null))) {
             
-            EntityCelestialObserver entity = new EntityCelestialObserver(world);
-            entity.setOwner(player);
-            entity.setPosition(Math.floor(x) + 0.5, Math.floor(y), Math.floor(z) + 0.5);
-            if (!MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world,
-                    (float) entity.posX, (float) entity.posY, (float) entity.posZ, null))) {
+            entity.onInitialSpawn(world.getDifficultyForLocation(entity.getPosition()), null);
+            if (world.spawnEntity(entity)) {
+                world.playSound(null, loc, SoundEvents.ENTITY_ARMORSTAND_PLACE, SoundCategory.BLOCKS, 0.75F, 0.8F);
+                if (!player.isCreative())
+                    player.getHeldItem(hand).shrink(1);
                 
-                entity.onInitialSpawn(world.getDifficultyForLocation(entity.getPosition()), null);
-                if (world.spawnEntity(entity)) {
-                    world.playSound(null, loc, SoundEvents.ENTITY_ARMORSTAND_PLACE, SoundCategory.BLOCKS, 0.75F, 0.8F);
-                    if (!player.isCreative())
-                        player.getHeldItem(hand).shrink(1);
-                    
-                    return EnumActionResult.SUCCESS;
-                }
+                return EnumActionResult.SUCCESS;
             }
-            
-            return EnumActionResult.PASS;
         }
+        
+        return EnumActionResult.FAIL;
     }
     
 }

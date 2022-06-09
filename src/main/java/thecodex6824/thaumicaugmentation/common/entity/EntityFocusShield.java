@@ -104,10 +104,15 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         ownerRef = new WeakReference<>(null);
         maxHurtResistantTime = 0;
         setSize(1.8F, 1.8F);
-        setMaxHealth(5.0F);
         setHealth(getMaxHealth());
+    }
+    
+    @Override
+    protected void applyEntityAttributes() {
+        super.applyEntityAttributes();
         getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(15.0);
         getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).setBaseValue(5.0);
+        setMaxHealth(5.0F, true);
     }
     
     public void setMaxHealth(float newMax) {
@@ -256,6 +261,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (source == DamageSource.FALL)
             return false;
+        else if (source.getDamageType().equals("player") && ownerRef.get() != null && ownerRef.get().equals(source.getImmediateSource()))
+            return false;
         else if (reflect && !world.isRemote) {
             Entity entity = source.getImmediateSource();
             if ((entity instanceof IProjectile || entity instanceof EntityFireball) && entity.isEntityAlive()) {
@@ -312,12 +319,8 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     
     @Override
     public boolean canBeCollidedWith() {
-        // I hate this
-        if (world.isRemote && ThaumicAugmentation.proxy.isEntityClientPlayer(ownerRef.get())) {
-            StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-            if (trace.length >= 3 && trace[2].getClassName().equals("net.minecraft.client.renderer.EntityRenderer$1"))
-                return false;
-        }
+        if (world.isRemote && ThaumicAugmentation.proxy.isEntityClientPlayer(ownerRef.get()))
+            return false;
         
         return super.canBeCollidedWith();
     }
