@@ -286,7 +286,8 @@
                         "thaumcraft:StairsAncient",
                         "thaumicaugmentation:ancient_tile",
                         "thaumicaugmentation:ancient_tile_slab",
-                        "thaumicaugmentation:chiseled_ancient_bricks"
+                        "thaumicaugmentation:chiseled_ancient_bricks",
+                        "thaumicaugmentation:ancient_cobblestone"
                     ]
                 },
                 {
@@ -301,7 +302,8 @@
                         "thaumcraft:StairsAncient",
                         "thaumicaugmentation:ancient_tile",
                         "thaumicaugmentation:ancient_tile_slab",
-                        "thaumicaugmentation:chiseled_ancient_bricks"
+                        "thaumicaugmentation:chiseled_ancient_bricks",
+                        "thaumicaugmentation:ancient_cobblestone"
                     ],
                     "warp": 3
                 },
@@ -314,7 +316,8 @@
                         "thaumcraft:StairsAncient",
                         "thaumicaugmentation:ancient_tile",
                         "thaumicaugmentation:ancient_tile_slab",
-                        "thaumicaugmentation:chiseled_ancient_bricks"
+                        "thaumicaugmentation:chiseled_ancient_bricks",
+                        "thaumicaugmentation:ancient_cobblestone"
                     ]
                 }
             ]
