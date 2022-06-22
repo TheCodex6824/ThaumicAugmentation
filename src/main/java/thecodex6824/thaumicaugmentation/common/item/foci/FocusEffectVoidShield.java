@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item.foci;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -49,6 +45,9 @@ import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
 import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class FocusEffectVoidShield extends FocusEffect {
 
@@ -107,81 +106,80 @@ public class FocusEffectVoidShield extends FocusEffect {
     public boolean execute(RayTraceResult result, @Nullable Trajectory trajectory, float finalPower, int whatever) {
         World world = getPackage().world;
         EntityLivingBase caster = getPackage().getCaster();
-        IImpetusStorage storage = null;
-        for (EnumHand hand : EnumHand.values()) {
-            ItemStack active = caster.getHeldItem(hand);
-            IImpetusStorage temp = active.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-            if (temp == null) {
-                IAugmentableItem item = active.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                if (item != null) {
-                    for (ItemStack stack : item.getAllAugments()) {
-                        IImpetusStorage test = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                        if (test != null && test.canExtract() && test.getEnergyStored() >= TAConfig.shieldFocusImpetusCost.getValue()) {
-                            temp = test;
-                            break;
+        if (caster != null) {
+            IImpetusStorage storage = null;
+            for (EnumHand hand : EnumHand.values()) {
+                ItemStack active = caster.getHeldItem(hand);
+                IImpetusStorage temp = active.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                if (temp == null) {
+                    IAugmentableItem item = active.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+                    if (item != null) {
+                        for (ItemStack stack : item.getAllAugments()) {
+                            IImpetusStorage test = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+                            if (test != null && test.canExtract() && test.getEnergyStored() >= TAConfig.shieldFocusImpetusCost.getValue()) {
+                                temp = test;
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            
-            if (temp != null) {
-                storage = temp;
-                break;
-            }
-        }
-        
-        if (storage == null)
-            storage = caster.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-        
-        if (storage != null) {
-            if (!world.isRemote && result.typeOfHit == Type.ENTITY) {
-                EntityFocusShield shield = null;
-                if (result.entityHit instanceof EntityFocusShield)
-                    shield = (EntityFocusShield) result.entityHit;
-                else {
-                    List<EntityFocusShield> shields = world.getEntitiesWithinAABB(EntityFocusShield.class, result.entityHit.getEntityBoundingBox().grow(1.5),
-                            e -> e != null && result.entityHit.equals(e.getOwner()));
-                    if (!shields.isEmpty())
-                        shield = shields.get(0);
+
+                if (temp != null) {
+                    storage = temp;
+                    break;
                 }
-                
-                if (shield != null) {
-                    if (!caster.isSneaking() && storage != null) {
-                        double prop = Math.max(shield.getHealth() / shield.getMaxHealth(), (double) shield.getTimeAlive() / shield.getTotalLifespan());
-                        if (ImpetusAPI.tryExtractFully(storage, (long) (prop * TAConfig.shieldFocusImpetusCost.getValue()), caster)) {
-                            shield.setHealth(shield.getMaxHealth());
-                            shield.resetTimeAlive();
-                            caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, 
-                                    SoundCategory.PLAYERS, 0.2F, 1.2F);
+            }
+
+            if (storage == null)
+                storage = caster.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+
+            if (storage != null) {
+                if (!world.isRemote && result.typeOfHit == Type.ENTITY) {
+                    EntityFocusShield shield = null;
+                    if (result.entityHit instanceof EntityFocusShield)
+                        shield = (EntityFocusShield) result.entityHit;
+                    else {
+                        List<EntityFocusShield> shields = world.getEntitiesWithinAABB(EntityFocusShield.class, result.entityHit.getEntityBoundingBox().grow(1.5),
+                                e -> e != null && result.entityHit.equals(e.getOwner()));
+                        if (!shields.isEmpty())
+                            shield = shields.get(0);
+                    }
+
+                    if (shield != null) {
+                        if (!caster.isSneaking() && storage != null) {
+                            double prop = Math.max(shield.getHealth() / shield.getMaxHealth(), (double) shield.getTimeAlive() / shield.getTotalLifespan());
+                            if (ImpetusAPI.tryExtractFully(storage, (long) (prop * TAConfig.shieldFocusImpetusCost.getValue()), caster)) {
+                                shield.setHealth(shield.getMaxHealth());
+                                shield.resetTimeAlive();
+                                caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL,
+                                        SoundCategory.PLAYERS, 0.2F, 1.2F);
+                                return true;
+                            } else {
+                                caster.world.playSound(null, caster.getPosition().up(), SoundsTC.jacobs,
+                                        SoundCategory.PLAYERS, 0.2F, 0.6F);
+
+                                return false;
+                            }
+                        } else if (caster.isSneaking() &&
+                                caster.getUniqueID().equals(shield.getCasterID()) || caster.getUniqueID().equals(shield.getOwnerId())) {
+
+                            shield.setDead();
+                            caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL,
+                                    SoundCategory.PLAYERS, 0.2F, 0.75F);
                             return true;
                         }
-                        else {
-                            caster.world.playSound(null, caster.getPosition().up(), SoundsTC.jacobs, 
-                                    SoundCategory.PLAYERS, 0.2F, 0.6F);
-                            
-                            return false;
+                    } else if (storage != null) {
+                        if (ImpetusAPI.tryExtractFully(storage, TAConfig.shieldFocusImpetusCost.getValue(), caster)) {
+                            shield = new EntityFocusShield(world);
+                            shield.setOwner(result.entityHit);
+                            shield.setCasterID(caster.getUniqueID());
+                            shield.setMaxHealth(getSettingValue("health"));
+                            shield.setHealth(shield.getMaxHealth());
+                            shield.setReflect(getSettingValue("reflect") != 0);
+                            caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL,
+                                    SoundCategory.PLAYERS, 0.2F, 1.2F);
+                            return world.spawnEntity(shield);
                         }
-                    }
-                    else if (caster.isSneaking() &&
-                            caster.getUniqueID().equals(shield.getCasterID()) || caster.getUniqueID().equals(shield.getOwnerId())) {
-                        
-                        shield.setDead();
-                        caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, 
-                                SoundCategory.PLAYERS, 0.2F, 0.75F);
-                        return true;
-                    }
-                }
-                else if (storage != null) {
-                    if (ImpetusAPI.tryExtractFully(storage, TAConfig.shieldFocusImpetusCost.getValue(), caster)) {
-                        shield = new EntityFocusShield(world);
-                        shield.setOwner(result.entityHit);
-                        shield.setCasterID(caster.getUniqueID());
-                        shield.setMaxHealth(getSettingValue("health"));
-                        shield.setHealth(shield.getMaxHealth());
-                        shield.setReflect(getSettingValue("reflect") != 0);
-                        caster.world.playSound(null, caster.getPosition().up(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, 
-                                SoundCategory.PLAYERS, 0.2F, 1.2F);
-                        return world.spawnEntity(shield);
                     }
                 }
             }

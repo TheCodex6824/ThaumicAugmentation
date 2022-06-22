@@ -20,10 +20,22 @@
 
 package thecodex6824.thaumicaugmentation.api.util;
 
-import java.lang.reflect.Field;
-
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import thaumcraft.api.casters.FocusModSplit;
 import thaumcraft.api.casters.FocusPackage;
+import thaumcraft.api.casters.IFocusElement;
+import thaumcraft.common.items.casters.foci.FocusEffectExchange;
+import thaumcraft.common.items.casters.foci.FocusMediumBolt;
+import thaumcraft.common.items.casters.foci.FocusMediumTouch;
+import thaumcraft.common.items.casters.foci.FocusModSplitTarget;
+import thaumcraft.common.items.casters.foci.FocusModSplitTrajectory;
+import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectExchangeCompat;
+import thecodex6824.thaumicaugmentation.common.item.foci.FocusMediumBoltCompat;
+import thecodex6824.thaumicaugmentation.common.item.foci.FocusMediumTouchCompat;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * Utility methods for working with Thaumcraft foci.
@@ -59,6 +71,26 @@ public final class FocusUtils {
     
     public static float getPackagePower(FocusPackage fPackage) {
         return fPackage.getPower();
+    }
+
+    public static void replaceAndFixFoci(FocusPackage fPackage, EntityLivingBase caster) {
+        List<IFocusElement> nodes = fPackage.nodes;
+        for (int i = 0; i < nodes.size(); ++i) {
+            IFocusElement element = nodes.get(i);
+            if (element.getClass() == FocusMediumTouch.class)
+                nodes.set(i, new FocusMediumTouchCompat((FocusMediumTouch) element));
+            else if (element.getClass() == FocusMediumBolt.class)
+                nodes.set(i, new FocusMediumBoltCompat((FocusMediumBolt) element));
+            else if (element.getClass() == FocusEffectExchange.class)
+                nodes.set(i, new FocusEffectExchangeCompat((FocusEffectExchange) element));
+            else if (element.getClass() == FocusModSplitTarget.class || element.getClass() == FocusModSplitTrajectory.class) {
+                FocusModSplit mod = (FocusModSplit) element;
+                for (FocusPackage p : mod.getSplitPackages()) {
+                    p.setCasterUUID(fPackage.getCasterUUID());
+                    p.world = caster.getEntityWorld();
+                }
+            }
+        }
     }
     
 }

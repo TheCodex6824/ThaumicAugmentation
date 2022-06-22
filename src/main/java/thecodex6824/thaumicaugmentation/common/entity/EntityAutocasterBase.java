@@ -20,16 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.Predicates;
 import com.google.common.math.DoubleMath;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -57,19 +49,21 @@ import net.minecraftforge.common.MinecraftForge;
 import thaumcraft.api.aura.AuraHelper;
 import thaumcraft.api.casters.FocusEngine;
 import thaumcraft.api.casters.FocusPackage;
-import thaumcraft.api.casters.IFocusElement;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.items.casters.ItemCaster;
 import thaumcraft.common.items.casters.ItemFocus;
-import thaumcraft.common.items.casters.foci.FocusMediumBolt;
-import thaumcraft.common.items.casters.foci.FocusMediumTouch;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.entity.AutocasterFocusRegistry;
 import thecodex6824.thaumicaugmentation.api.event.CastEvent;
+import thecodex6824.thaumicaugmentation.api.util.FocusUtils;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.entity.ai.EntityLookHelperUnlimitedPitch;
-import thecodex6824.thaumicaugmentation.common.item.foci.FocusMediumBoltCompat;
-import thecodex6824.thaumicaugmentation.common.item.foci.FocusMediumTouchCompat;
+
+import javax.annotation.Nullable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public abstract class EntityAutocasterBase extends EntityCreature {
 
@@ -179,17 +173,6 @@ public abstract class EntityAutocasterBase extends EntityCreature {
         return cachedMaxDistanceSquared;
     }
     
-    protected void fixFoci(FocusPackage f) {
-        List<IFocusElement> nodes = f.nodes;
-        for (int i = 0; i < nodes.size(); ++i) {
-            IFocusElement element = nodes.get(i);
-            if (element.getClass() == FocusMediumTouch.class)
-                nodes.set(i, new FocusMediumTouchCompat((FocusMediumTouch) element));
-            else if (element.getClass() == FocusMediumBolt.class)
-                nodes.set(i, new FocusMediumBoltCompat((FocusMediumBolt) element));
-        }
-    }
-    
     protected void attackEntityWithFocus() {
         ItemStack held = getHeldItemMainhand();
         if (held != null && held.getItem() instanceof ItemFocus) {
@@ -197,8 +180,8 @@ public abstract class EntityAutocasterBase extends EntityCreature {
             if (d <= getMaxFocusDistanceSquared(held)) {
                 FocusPackage f = ItemFocus.getPackage(held);
                 if (f != null) {
-                    fixFoci(f);
                     f.setCasterUUID(this.getUniqueID());
+                    FocusUtils.replaceAndFixFoci(f, this);
                     float visCost = ((ItemFocus) held.getItem()).getVisCost(held);
                     ItemStack tempHold = new ItemStack(ItemsTC.casterBasic);
                     ((ItemCaster) tempHold.getItem()).setFocus(tempHold, held);

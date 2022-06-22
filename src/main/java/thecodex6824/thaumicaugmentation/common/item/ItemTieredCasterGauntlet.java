@@ -67,7 +67,6 @@ import thaumcraft.api.items.IArchitect;
 import thaumcraft.api.items.IWarpingGear;
 import thaumcraft.common.items.casters.CasterManager;
 import thaumcraft.common.items.casters.ItemFocus;
-import thaumcraft.common.items.casters.foci.FocusEffectExchange;
 import thaumcraft.common.lib.network.misc.PacketAuraToClient;
 import thaumcraft.common.lib.utils.BlockUtils;
 import thaumcraft.common.world.aura.AuraChunk;
@@ -83,9 +82,9 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.event.CastEvent;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.item.ITieredCaster;
+import thecodex6824.thaumicaugmentation.api.util.FocusUtils;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
-import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectExchangeCompat;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
@@ -479,13 +478,6 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         }
     }
 
-    protected void fixFoci(FocusPackage p) {
-        for (int i = 0; i < p.nodes.size(); ++i) {
-            if (p.nodes.get(i).getClass().equals(FocusEffectExchange.class))
-                p.nodes.set(i, new FocusEffectExchangeCompat((FocusEffectExchange) p.nodes.get(i)));
-        }
-    }
-
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack caster = player.getHeldItem(hand);
@@ -511,7 +503,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
             }
             
             if (!preEvent.isCanceled() && consumeVis(caster, player, preEvent.getFocus().getVisCost(), false, false)) {
-                fixFoci(core);
+                FocusUtils.replaceAndFixFoci(core, player);
                 FocusEngine.castFocusPackage(player, core, true);
                 CasterManager.setCooldown(player, preEvent.getFocus().getCooldown());
                 MinecraftForge.EVENT_BUS.post(new CastEvent.Post(player, caster, preEvent.getFocus()));

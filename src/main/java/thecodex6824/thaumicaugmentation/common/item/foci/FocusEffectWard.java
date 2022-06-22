@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item.foci;
 
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -58,6 +54,9 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
+import javax.annotation.Nullable;
+import java.util.UUID;
+
 public class FocusEffectWard extends FocusEffect {
     
     @Override
@@ -82,7 +81,7 @@ public class FocusEffectWard extends FocusEffect {
     
     @Override
     public boolean execute(RayTraceResult result, @Nullable Trajectory trajectory, float finalPower, int whatever) {
-        if (!TAConfig.disableWardFocus.getValue()) {
+        if (!TAConfig.disableWardFocus.getValue() && getPackage().getCaster() != null) {
             World world = getPackage().getCaster().getEntityWorld();
             if (!world.isRemote && result.typeOfHit == Type.BLOCK && getPackage().getCaster() instanceof EntityPlayer && 
                     world.isBlockModifiable((EntityPlayer) getPackage().getCaster(), result.getBlockPos()) &&
