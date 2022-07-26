@@ -154,7 +154,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
         else {
             int voidseerArea = TAConfig.voidseerArea.getValue();
             float totalVis = 0.0F;
-            TreeMap<Float, BlockPos> visAmounts = new TreeMap<>((f1, f2) -> Float.compare(f1, f2));
+            TreeMap<Float, BlockPos> visAmounts = new TreeMap<>();
             for (int x = -voidseerArea / 2; x < (int) Math.ceil(voidseerArea / 2.0); ++x) {
                 for (int z = -voidseerArea / 2; z < (int) Math.ceil(voidseerArea / 2.0); ++z) {
                     BlockPos loc = user.getPosition().add(x * 16, 0, z * 16);
@@ -496,18 +496,19 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
             CastEvent.Pre preEvent = new CastEvent.Pre(player, caster, new FocusWrapper(core, 
                     (int) (((ItemFocus) focus.getItem()).getActivationTime(focus) * getCasterCooldownModifier(caster)), visCost));
             MinecraftForge.EVENT_BUS.post(preEvent);
-            
-            if (world.isRemote) {
-                CasterManager.setCooldown(player, preEvent.getFocus().getCooldown());
-                return new ActionResult<>(EnumActionResult.SUCCESS, caster);
-            }
-            
-            if (!preEvent.isCanceled() && consumeVis(caster, player, preEvent.getFocus().getVisCost(), false, false)) {
-                FocusUtils.replaceAndFixFoci(core, player);
-                FocusEngine.castFocusPackage(player, core, true);
-                CasterManager.setCooldown(player, preEvent.getFocus().getCooldown());
-                MinecraftForge.EVENT_BUS.post(new CastEvent.Post(player, caster, preEvent.getFocus()));
-                player.swingArm(hand);
+            if (!preEvent.isCanceled()) {
+                // can't lift out cooldown as we want cooldowns to be accurate during casting
+                if (world.isRemote) {
+                    CasterManager.setCooldown(player, preEvent.getFocus().getCooldown());
+                }
+                else if (consumeVis(caster, player, preEvent.getFocus().getVisCost(), false, false)) {
+                    FocusUtils.replaceAndFixFoci(core, player);
+                    FocusEngine.castFocusPackage(player, core, true);
+                    CasterManager.setCooldown(player, preEvent.getFocus().getCooldown());
+                    MinecraftForge.EVENT_BUS.post(new CastEvent.Post(player, caster, preEvent.getFocus()));
+                    player.swingArm(hand);
+                }
+
                 return new ActionResult<>(EnumActionResult.SUCCESS, caster);
             }
 
