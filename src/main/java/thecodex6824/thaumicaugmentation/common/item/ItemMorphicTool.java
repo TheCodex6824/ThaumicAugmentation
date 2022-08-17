@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -583,8 +584,16 @@ public class ItemMorphicTool extends ItemTABase implements IWarpingGear {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerModels() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(
-                "ta_special:morphic_tool", "inventory"));
+        final ModelResourceLocation model = new ModelResourceLocation(
+                "ta_special:morphic_tool", "inventory");
+        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
+            @Override
+            public ModelResourceLocation getModelLocation(ItemStack stack) {
+                return model;
+            }
+        });
+
+        ModelLoader.registerItemVariants(this, model);
     }
     
 }
