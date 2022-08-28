@@ -20,9 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
-import java.util.HashMap;
-import java.util.function.Supplier;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.SoundType;
@@ -53,9 +50,7 @@ import thaumcraft.api.aspects.AspectEventProxy;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.AspectRegistryEvent;
 import thaumcraft.api.blocks.BlocksTC;
-import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.golems.seals.SealHandler;
-import thaumcraft.common.items.ItemTCBase;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
@@ -201,6 +196,9 @@ import thecodex6824.thaumicaugmentation.common.tile.TileWardedPressurePlate;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessHighlands;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeTaintedLands;
+
+import java.util.HashMap;
+import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class RegistryHandler {
@@ -387,9 +385,6 @@ public final class RegistryHandler {
         OreDictionary.registerOre("trapdoorWood", Blocks.TRAPDOOR);
         OreDictionary.registerOre("blockAmber", BlocksTC.amberBlock);
         OreDictionary.registerOre("blockAmber", BlocksTC.amberBrick);
-        // need to register this way so TC cycles through them in research page
-        for (int i = 0; i < ((ItemTCBase) ItemsTC.celestialNotes).getVariantMeta().length; ++i)
-            OreDictionary.registerOre("notesCelestial", new ItemStack(ItemsTC.celestialNotes, 1, i));
         
         RecipeHandler.initInfusionRecipes();
         RecipeHandler.initCrucibleRecipes();

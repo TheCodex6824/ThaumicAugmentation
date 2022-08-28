@@ -29,6 +29,7 @@ import thecodex6824.thaumicaugmentation.core.transformer.TransformerAttemptTelep
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBaubleSlotChanged;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationCustomTCArmor;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationVanilla;
+import thecodex6824.thaumicaugmentation.core.transformer.TransformerCycleItemStackMetadata;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerEldritchGuardianFog;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
@@ -158,6 +159,9 @@ public class TATransformer implements IClassTransformer {
 
         // to allow non-sword items to have sweeping edge (primal cutter)
         TRANSFORMERS.add(new TransformerSweepingEdgeCheck());
+
+        // to allow wildcard metadata in required research items when they are non-damageable
+        TRANSFORMERS.add(new TransformerCycleItemStackMetadata());
     }
     
     public TATransformer() {}

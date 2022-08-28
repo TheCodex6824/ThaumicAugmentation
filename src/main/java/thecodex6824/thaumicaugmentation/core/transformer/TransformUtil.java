@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.core.transformer;
 
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -235,6 +236,19 @@ public final class TransformUtil {
             if (insn.getOpcode() == Opcodes.INSTANCEOF && insn instanceof TypeInsnNode) {
                 TypeInsnNode t = (TypeInsnNode) insn;
                 if (t.desc.equals(desc))
+                    return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static int findExactLabel(MethodNode node, Label label) {
+        for (int i = 0; i < node.instructions.size(); ++i) {
+            AbstractInsnNode insn = node.instructions.get(i);
+            if (insn instanceof LabelNode) {
+                LabelNode l = (LabelNode) insn;
+                if (l.getLabel().equals(label))
                     return i;
             }
         }

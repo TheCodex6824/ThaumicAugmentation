@@ -23,14 +23,18 @@ package thecodex6824.thaumicaugmentation.common.internal;
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
+import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -39,6 +43,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.oredict.OreDictionary;
 import thaumcraft.api.casters.Trajectory;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.entities.EntityFluxRift;
@@ -239,6 +244,38 @@ public final class TAHooksCommon {
 
     public static boolean checkSweepingEdge(EntityPlayer player, ItemStack stack) {
         return stack.getItem() == TAItems.PRIMAL_CUTTER;
+    }
+
+    private static int[] getValidMetadata(Item item) {
+        IntRBTreeSet visitedMeta = new IntRBTreeSet();
+        for (CreativeTabs tab : item.getCreativeTabs()) {
+            NonNullList<ItemStack> stacks = NonNullList.create();
+            item.getSubItems(tab, stacks);
+            for (ItemStack stack : stacks) {
+                if (stack.getItem() == item)
+                    visitedMeta.add(stack.getMetadata());
+            }
+        }
+
+        return visitedMeta.toIntArray();
+    }
+
+    public static ItemStack cycleItemStack(ItemStack fallback, Object thing, int counter) {
+        if (thing instanceof ItemStack) {
+            ItemStack stack = (ItemStack) thing;
+            if (!stack.isEmpty() && stack.getHasSubtypes() && stack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
+                int[] validMeta = getValidMetadata(stack.getItem());
+                if (validMeta.length > 0) {
+                    int timer = 5000 / validMeta.length;
+                    int metaIndex = (int) ((counter + System.currentTimeMillis() / timer) % validMeta.length);
+                    ItemStack copy = stack.copy();
+                    copy.setItemDamage(validMeta[metaIndex]);
+                    return copy;
+                }
+            }
+        }
+
+        return fallback;
     }
     
 }

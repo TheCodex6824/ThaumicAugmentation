@@ -176,7 +176,7 @@
                         "THEORY;GOLEMANCY;1"
                     ],
                     "required_item": [
-                        "oredict:notesCelestial"
+                        "thaumcraft:celestial_notes;1;32767"
                     ]
                 },
                 {
