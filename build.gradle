@@ -47,6 +47,19 @@ ext {
     }
 }
 
+final arch = System.getProperty("os.arch")
+final needCustomNatives = arch != "x86" && arch != "i386" && arch != "x86_64" && arch != "amd64"
+if (needCustomNatives) {
+    configurations.all {
+        exclude group: 'net.java.jinput', module: 'jinput'
+        exclude group: 'net.java.jinput', module: 'jinput-platform'
+        exclude group: 'org.lwjgl.lwjgl', module: 'lwjgl'
+        exclude group: 'org.lwjgl.lwjgl', module: 'lwjgl-platform'
+    }
+
+    println 'Detected a non-x86 architecture. To run the client successfully, you will need to place lwjgl and jinput native libraries (with their associated jars) in the natives folder.'
+}
+
 minecraft {
     mappings channel: 'stable', version: '39-1.12'
     
@@ -64,7 +77,12 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             
             property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
-            
+
+            if (needCustomNatives) {
+                property 'java.library.path', ''
+                environment 'nativesDirectory', "${project.getProjectDir()}/natives"
+            }
+
             environment 'MC_VERSION', '1.12.2'
             
             mods {
@@ -84,7 +102,12 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             
             property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
-            
+
+            if (needCustomNatives) {
+                property 'java.library.path', ''
+                environment 'nativesDirectory', "${project.getProjectDir()}/natives"
+            }
+
             environment 'MC_VERSION', '1.12.2'
             
             mods {
@@ -124,6 +147,11 @@ dependencies {
     
     // note that the first line has no deobf - if you need it use BON2 or something
     // to avoid needing test jars, comment the "testImplementation" lines and put "-x test" on the command line
+
+    // For the native library binding jars (which need to be the exact same version as the natives)
+    if (needCustomNatives) {
+        implementation fileTree(dir: 'natives', include: '*.jar')
+    }
 }
 
 idea {
