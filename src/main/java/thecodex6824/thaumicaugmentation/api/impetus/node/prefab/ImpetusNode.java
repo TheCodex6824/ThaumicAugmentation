@@ -272,7 +272,7 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     protected void initServer() {
         for (DimensionalBlockPos pos : inputs) {
             World world = DimensionManager.getWorld(pos.getDimension());
-            if (world != null && world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
+            if (world != null && world.provider.getDimension() == pos.getDimension()) {
                 TileEntity te = world.getTileEntity(pos.getPos());
                 if (te != null) {
                     IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
@@ -284,7 +284,7 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
         
         for (DimensionalBlockPos pos : outputs) {
             World world = DimensionManager.getWorld(pos.getDimension());
-            if (world != null && world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
+            if (world != null && world.provider.getDimension() == pos.getDimension()) {
                 TileEntity te = world.getTileEntity(pos.getPos());
                 if (te != null) {
                     IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
@@ -297,7 +297,7 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     
     protected void initClient(World world) {
         for (DimensionalBlockPos pos : inputs) {
-            if (world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
+            if (world.provider.getDimension() == pos.getDimension()) {
                 TileEntity te = world.getTileEntity(pos.getPos());
                 if (te != null) {
                     IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
@@ -308,7 +308,7 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
         }
         
         for (DimensionalBlockPos pos : outputs) {
-            if (world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
+            if (world.provider.getDimension() == pos.getDimension()) {
                 TileEntity te = world.getTileEntity(pos.getPos());
                 if (te != null) {
                     IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
