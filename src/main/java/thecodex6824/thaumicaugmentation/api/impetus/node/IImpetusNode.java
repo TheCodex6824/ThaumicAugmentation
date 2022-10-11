@@ -66,7 +66,9 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
     public boolean removeInputLocation(DimensionalBlockPos toRemove);
     
     public boolean removeOutputLocation(DimensionalBlockPos toRemove);
-    
+
+    public void shouldTryToReConnect(World world);
+
     public void init(World world);
     
     public void unload();
