@@ -157,6 +157,8 @@ dependencies {
 idea {
     module {
         inheritOutputDirs = true
+        downloadJavadoc = true
+        downloadSources = true
     }
 }
 
