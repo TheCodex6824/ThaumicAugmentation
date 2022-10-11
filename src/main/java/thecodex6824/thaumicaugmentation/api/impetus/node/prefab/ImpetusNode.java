@@ -275,13 +275,18 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
             return false;
         }
 
+        List<DimensionalBlockPos> invalid = new ArrayList<>();
+
         List<Boolean> checks = new ArrayList<>();
         for (DimensionalBlockPos pos : inputs) {
-            checks.add(validateNodeInput(world, pos));
+            checks.add(validateNodeInput(world, pos, invalid));
         }
+        removeInvalidPos(invalid, inputs);
+
         for (DimensionalBlockPos pos : outputs) {
-            checks.add(validateNodeOutput(world, pos));
+            checks.add(validateNodeOutput(world, pos, invalid));
         }
+        removeInvalidPos(invalid, outputs);
 
         if (!checks.contains(false)) {
             hasUnloadedNodes = false;
@@ -290,7 +295,7 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
         return true;
     }
 
-    private boolean validateNodeInput(World world, DimensionalBlockPos pos) {
+    private boolean validateNodeInput(World world, DimensionalBlockPos pos, List<DimensionalBlockPos> invalid) {
         if (world.provider.getDimension() == pos.getDimension()) {
             TileEntity te = world.getTileEntity(pos.getPos());
             if (te != null) {
@@ -306,11 +311,11 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
             }
         }
         //remove pos if tile is null or tile dos not have IMPETUS_NODE capability
-        outputs.remove(pos);
+        invalid.add(pos);
         return false;
     }
 
-    private boolean validateNodeOutput(World world, DimensionalBlockPos pos) {
+    private boolean validateNodeOutput(World world, DimensionalBlockPos pos, List<DimensionalBlockPos> invalid) {
         if (world.provider.getDimension() == pos.getDimension()) {
             TileEntity te = world.getTileEntity(pos.getPos());
             if (te != null) {
@@ -326,30 +331,45 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
             }
         }
         //remove pos if tile is null or tile dos not have IMPETUS_NODE capability
-        outputs.remove(pos);
+        invalid.add(pos);
         return false;
     }
 
-    protected void initServer() {
-        for (DimensionalBlockPos pos : inputs) {
-            World world = DimensionManager.getWorld(pos.getDimension());
-            validateNodeInput(world, pos);
-        }
-
-        for (DimensionalBlockPos pos : outputs) {
-            World world = DimensionManager.getWorld(pos.getDimension());
-            validateNodeOutput(world, pos);
+    private void removeInvalidPos(List<DimensionalBlockPos> invalid, Set<DimensionalBlockPos> inout) {
+        if (!invalid.isEmpty()) {
+            invalid.forEach(inout::remove);
+            invalid.clear();
         }
     }
 
-    protected void initClient(World world) {
+    protected void initServer() {
+        List<DimensionalBlockPos> invalid = new ArrayList<>();
+
         for (DimensionalBlockPos pos : inputs) {
-            validateNodeInput(world, pos);
+            World world = DimensionManager.getWorld(pos.getDimension());
+            validateNodeInput(world, pos, invalid);
         }
+        removeInvalidPos(invalid, inputs);
 
         for (DimensionalBlockPos pos : outputs) {
-            validateNodeOutput(world, pos);
+            World world = DimensionManager.getWorld(pos.getDimension());
+            validateNodeOutput(world, pos, invalid);
         }
+        removeInvalidPos(invalid, outputs);
+    }
+
+    protected void initClient(World world) {
+        List<DimensionalBlockPos> invalid = new ArrayList<>();
+
+        for (DimensionalBlockPos pos : inputs) {
+            validateNodeInput(world, pos, invalid);
+        }
+        removeInvalidPos(invalid, inputs);
+
+        for (DimensionalBlockPos pos : outputs) {
+            validateNodeOutput(world, pos, invalid);
+        }
+        removeInvalidPos(invalid, outputs);
     }
 
     @Override
