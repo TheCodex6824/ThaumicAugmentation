@@ -270,10 +270,11 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     }
 
     @Override
-    public void shouldTryToReConnect(World world) {
+    public boolean hasUnloadedNodes(World world) {
         if (!hasUnloadedNodes) {
-            return;
+            return false;
         }
+
         List<Boolean> checks = new ArrayList<>();
         for (DimensionalBlockPos pos : inputs) {
             checks.add(validateNodeInput(world, pos));
@@ -284,7 +285,9 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
 
         if (!checks.contains(false)) {
             hasUnloadedNodes = false;
+            return false;
         }
+        return true;
     }
 
     private boolean validateNodeInput(World world, DimensionalBlockPos pos) {
