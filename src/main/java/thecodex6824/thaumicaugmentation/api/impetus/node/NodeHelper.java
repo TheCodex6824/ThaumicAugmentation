@@ -243,7 +243,10 @@ public final class NodeHelper {
     public static void validateOutputs(World sharedWorld, IImpetusNode node) {
         HashSet<IImpetusNode> changed = new HashSet<>();
         for (IImpetusNode output : node.getOutputs()) {
-            node.hasUnloadedNodes(sharedWorld);
+            if (node.hasUnloadedNodes()) {
+                node.tryConnectUnloadedNodes(sharedWorld);
+            }
+
             if (sharedWorld.provider.getDimension() == node.getLocation().getDimension() &&
                     sharedWorld.provider.getDimension() == output.getLocation().getDimension()) {
                 

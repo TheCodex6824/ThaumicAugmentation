@@ -270,106 +270,107 @@ public class ImpetusNode implements IImpetusNode, INBTSerializable<NBTTagCompoun
     }
 
     @Override
-    public boolean hasUnloadedNodes(World world) {
-        if (!hasUnloadedNodes) {
-            return false;
-        }
+    public boolean hasUnloadedNodes() {
+        return hasUnloadedNodes;
+    }
 
-        List<DimensionalBlockPos> invalid = new ArrayList<>();
+    @Override
+    public boolean tryConnectUnloadedNodes(World world) {
+        List<DimensionalBlockPos> invalidDimPos = new ArrayList<>();
 
-        List<Boolean> checks = new ArrayList<>();
+        boolean someNodeInvalid = false;
+
         for (DimensionalBlockPos pos : inputs) {
-            checks.add(validateNodeInput(world, pos, invalid));
+            someNodeInvalid |= !validateNodeInput(world, pos, invalidDimPos);
         }
-        removeInvalidPos(invalid, inputs);
+        removeInvalidPos(invalidDimPos, inputs);
 
         for (DimensionalBlockPos pos : outputs) {
-            checks.add(validateNodeOutput(world, pos, invalid));
+            someNodeInvalid |= !validateNodeOutput(world, pos, invalidDimPos);
         }
-        removeInvalidPos(invalid, outputs);
+        removeInvalidPos(invalidDimPos, outputs);
 
-        if (!checks.contains(false)) {
+        if (!someNodeInvalid) {
             hasUnloadedNodes = false;
-            return false;
+            return true;//successfully connected all nodes
         }
-        return true;
+        return false;
     }
 
     private boolean validateNodeInput(World world, DimensionalBlockPos pos, List<DimensionalBlockPos> invalid) {
-        if (world.provider.getDimension() == pos.getDimension()) {
+        if (world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
             TileEntity te = world.getTileEntity(pos.getPos());
             if (te != null) {
                 IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                 if (possible != null) {
-                    if (world.isBlockLoaded(pos.getPos())) {
-                        addInput(possible);
-                        return true;
-                    }
-                    hasUnloadedNodes = true;
-                    return false;
+                    addInput(possible);
+                    return true;
                 }
             }
+            //remove pos if tile is null or tile dos not have IMPETUS_NODE capability
+            invalid.add(pos);
+            return true;
         }
-        //remove pos if tile is null or tile dos not have IMPETUS_NODE capability
-        invalid.add(pos);
+        //only return false if nodes are unloaded
+        hasUnloadedNodes = true;
         return false;
     }
 
     private boolean validateNodeOutput(World world, DimensionalBlockPos pos, List<DimensionalBlockPos> invalid) {
-        if (world.provider.getDimension() == pos.getDimension()) {
+        if (world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
             TileEntity te = world.getTileEntity(pos.getPos());
             if (te != null) {
                 IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                 if (possible != null) {
-                    if (world.isBlockLoaded(pos.getPos())) {
-                        addOutput(possible);
-                        return true;
-                    }
-                    hasUnloadedNodes = true;
-                    return false;
+                    addOutput(possible);
+                    return true;
                 }
             }
+            //remove pos if tile is null or tile dos not have IMPETUS_NODE capability
+            invalid.add(pos);
+            return true;
         }
-        //remove pos if tile is null or tile dos not have IMPETUS_NODE capability
-        invalid.add(pos);
+        //only return false if nodes are unloaded
+        hasUnloadedNodes = true;
         return false;
     }
 
-    private void removeInvalidPos(List<DimensionalBlockPos> invalid, Set<DimensionalBlockPos> inout) {
-        if (!invalid.isEmpty()) {
-            invalid.forEach(inout::remove);
-            invalid.clear();
+    private void removeInvalidPos(List<DimensionalBlockPos> invalidDimPos, Set<DimensionalBlockPos> inOut) {
+        //used to prevent possible ConcurrentModificationException
+        if (!invalidDimPos.isEmpty()) {
+            invalidDimPos.forEach(inOut::remove);
+            invalidDimPos.clear();
         }
     }
 
     protected void initServer() {
-        List<DimensionalBlockPos> invalid = new ArrayList<>();
+        List<DimensionalBlockPos> invalidDimPos = new ArrayList<>();
 
         for (DimensionalBlockPos pos : inputs) {
             World world = DimensionManager.getWorld(pos.getDimension());
-            validateNodeInput(world, pos, invalid);
+            validateNodeInput(world, pos, invalidDimPos);
         }
-        removeInvalidPos(invalid, inputs);
+        removeInvalidPos(invalidDimPos, inputs);
 
         for (DimensionalBlockPos pos : outputs) {
             World world = DimensionManager.getWorld(pos.getDimension());
-            validateNodeOutput(world, pos, invalid);
+            validateNodeOutput(world, pos, invalidDimPos);
         }
-        removeInvalidPos(invalid, outputs);
+        removeInvalidPos(invalidDimPos, outputs);
     }
 
     protected void initClient(World world) {
-        List<DimensionalBlockPos> invalid = new ArrayList<>();
+        List<DimensionalBlockPos> invalidDimPos = new ArrayList<>();
 
         for (DimensionalBlockPos pos : inputs) {
-            validateNodeInput(world, pos, invalid);
+            validateNodeInput(world, pos, invalidDimPos);
         }
-        removeInvalidPos(invalid, inputs);
+        removeInvalidPos(invalidDimPos, inputs);
 
         for (DimensionalBlockPos pos : outputs) {
-            validateNodeOutput(world, pos, invalid);
+            validateNodeOutput(world, pos, invalidDimPos);
         }
-        removeInvalidPos(invalid, outputs);
+        removeInvalidPos(invalidDimPos, outputs);
     }
 
     @Override
