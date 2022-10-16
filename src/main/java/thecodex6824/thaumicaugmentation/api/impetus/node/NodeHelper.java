@@ -20,13 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus.node;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 import net.minecraft.block.state.IBlockState;
@@ -239,18 +233,38 @@ public final class NodeHelper {
             toRemove.clear();
         }
     }
-    
+
     public static void validateOutputs(World sharedWorld, IImpetusNode node) {
         HashSet<IImpetusNode> changed = new HashSet<>();
 
-        if (node.hasUnloadedNodes()) {
-            node.tryConnectUnloadedNodes(sharedWorld);
+        //Check if unloaded nodes exist
+        if (node.getOutputLocations().size() != node.getOutputs().size()) {
+            List<DimensionalBlockPos> invalidDimPos = new ArrayList<>();
+
+            //Tries to reconnect unloaded nodes
+            for (DimensionalBlockPos pos : node.getOutputLocations()) {
+                World world = DimensionManager.getWorld(pos.getDimension());
+                if (world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
+                    TileEntity te = world.getTileEntity(pos.getPos());
+                    if (te != null) {
+                        IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+                        if (possible != null) {
+                            node.addInput(possible);
+                            continue;
+                        }
+                    }
+                    //remove pos if tile is null or tile dos not have IMPETUS_NODE capability
+                    invalidDimPos.add(pos);
+                }
+            }
+
+            invalidDimPos.forEach(node.getOutputLocations()::remove);
         }
 
         for (IImpetusNode output : node.getOutputs()) {
             if (sharedWorld.provider.getDimension() == node.getLocation().getDimension() &&
                     sharedWorld.provider.getDimension() == output.getLocation().getDimension()) {
-                
+
                 boolean enforce1 = node.shouldEnforceBeamLimitsWith(output);
                 boolean enforce2 = output.shouldEnforceBeamLimitsWith(node);
                 if (enforce1 || enforce2) {
@@ -258,7 +272,7 @@ public final class NodeHelper {
                     if ((enforce1 && dist > node.getMaxConnectDistance(output) * node.getMaxConnectDistance(output)) ||
                             (enforce2 && dist > output.getMaxConnectDistance(node) * output.getMaxConnectDistance(node)) ||
                             !nodesPassDefaultCollisionCheck(sharedWorld, node, output)) {
-                    
+
                         node.removeOutput(output);
                         changed.add(node);
                         changed.add(output);
@@ -269,13 +283,15 @@ public final class NodeHelper {
             }
         }
 
-        for (IImpetusNode n : changed) {
+        for (
+                IImpetusNode n : changed) {
             if (n.getLocation().getDimension() == sharedWorld.provider.getDimension()) {
                 TileEntity tile = sharedWorld.getTileEntity(n.getLocation().getPos());
                 if (tile != null)
                     tile.markDirty();
             }
         }
+
     }
 
     public static void damageEntitiesFromTransaction(Deque<IImpetusNode> path, long energy) {
@@ -283,7 +299,8 @@ public final class NodeHelper {
                 new Vec3d(node.getLocation().getPos()) : null, entity, Math.max(energy / 10.0F, 1.0F)));
     }
 
-    public static void damageEntitiesFromTransaction(Deque<IImpetusNode> path, BiConsumer<IImpetusNode, Entity> damageFunc) {
+    public static void damageEntitiesFromTransaction
+            (Deque<IImpetusNode> path, BiConsumer<IImpetusNode, Entity> damageFunc) {
         if (path.size() >= 2) {
             Iterator<IImpetusNode> iterator = path.iterator();
             IImpetusNode first = iterator.next();
