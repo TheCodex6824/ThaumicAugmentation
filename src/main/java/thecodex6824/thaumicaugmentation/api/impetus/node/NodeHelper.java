@@ -249,7 +249,7 @@ public final class NodeHelper {
                     if (te != null) {
                         IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                         if (possible != null) {
-                            node.addInput(possible);
+                            node.addOutput(possible);
                             continue;
                         }
                     }
