@@ -25,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart;
 import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart.ObeliskPart;
 
@@ -34,10 +35,11 @@ public class TileObeliskVisual extends TileEntity {
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return oldState.getBlock() != newState.getBlock();
     }
-    
+
     @Override
     public double getMaxRenderDistanceSquared() {
-        return 16384.0;
+        int dist = TAConfig.bulkRenderDistance.getValue();
+        return dist * dist;
     }
     
     @Override

@@ -74,6 +74,7 @@ public final class TAConfig {
     public static ConfigOptionBoolean disableCreativeOnlyText;
     public static ConfigOptionBoolean disableStabilizerText;
     public static ConfigOptionBoolean disableFramebuffers;
+    public static ConfigOptionInt bulkRenderDistance;
 
     public static ConfigOptionIntList defaultGauntletColors;
     public static ConfigOptionInt defaultVoidBootsColor;

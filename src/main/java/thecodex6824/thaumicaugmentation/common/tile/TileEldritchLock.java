@@ -48,6 +48,7 @@ import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType.LockType;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
@@ -184,10 +185,11 @@ public class TileEldritchLock extends TileEntity implements ITickable, IInteract
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return oldState.getBlock() != newState.getBlock();
     }
-    
+
     @Override
     public double getMaxRenderDistanceSquared() {
-        return 16384.0;
+        int dist = TAConfig.bulkRenderDistance.getValue();
+        return dist * dist;
     }
     
     @Override

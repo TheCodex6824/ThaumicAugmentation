@@ -39,6 +39,7 @@ import net.minecraft.world.World;
 import thaumcraft.api.entities.IEldritchMob;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
@@ -125,7 +126,8 @@ public class TileObelisk extends TileEntity implements ITickable, IShaderRenderi
     
     @Override
     public double getMaxRenderDistanceSquared() {
-        return 16384.0;
+        int dist = TAConfig.bulkRenderDistance.getValue();
+        return dist * dist;
     }
     
     @Override

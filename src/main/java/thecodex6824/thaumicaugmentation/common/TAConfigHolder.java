@@ -793,6 +793,13 @@ public final class TAConfigHolder {
         })
         @RequiresMcRestart
         public boolean disableFramebuffers = false;
+
+        @Name("BulkRenderDistance")
+        @Comment({
+                "Sets the maximum distance that bulk-rendered objects like Starfield Glass will render at.",
+                "Increasing this will make these objects not disappear at long range, but may reduce performance."
+        })
+        public int bulkRenderDistance = 192;
     }
     
     private static ArrayList<Runnable> listeners = new ArrayList<>();
@@ -830,6 +837,7 @@ public final class TAConfigHolder {
         TAConfig.reducedEffects.setValue(client.reducedEffects, side);
         TAConfig.disableCreativeOnlyText.setValue(client.disableCreativeOnlyText, side);
         TAConfig.disableStabilizerText.setValue(client.disableStabilizerText, side);
+        TAConfig.bulkRenderDistance.setValue(client.bulkRenderDistance, side);
         
         TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
         TAConfig.defaultVoidBootsColor.setValue(gameplay.defaultVoidBootsColor, side);
@@ -983,6 +991,7 @@ public final class TAConfigHolder {
         TAConfig.disableCreativeOnlyText = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableCreativeOnlyText));
         TAConfig.disableStabilizerText = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableStabilizerText));
         TAConfig.disableFramebuffers = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableFramebuffers));
+        TAConfig.bulkRenderDistance = TAConfigManager.addOption(new ConfigOptionInt(false, client.bulkRenderDistance));
         
         TAConfig.defaultGauntletColors = TAConfigManager.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
         TAConfig.defaultVoidBootsColor = TAConfigManager.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));

@@ -26,6 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
@@ -59,10 +60,11 @@ public class TileRiftBarrier extends TileEntity implements IShaderRenderingCallb
     public boolean hasFastRenderer() {
         return true;
     }
-    
+
     @Override
     public double getMaxRenderDistanceSquared() {
-        return 16384.0;
+        int dist = TAConfig.bulkRenderDistance.getValue();
+        return dist * dist;
     }
     
     @Override
