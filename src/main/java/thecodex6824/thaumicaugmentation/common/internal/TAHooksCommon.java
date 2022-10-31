@@ -46,13 +46,16 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.oredict.OreDictionary;
 import thaumcraft.api.casters.Trajectory;
+import thaumcraft.api.golems.IGolemProperties;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.entities.EntityFluxRift;
+import thaumcraft.common.golems.EntityThaumcraftGolem;
 import thaumcraft.common.items.casters.foci.FocusMediumTouch;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
 import thecodex6824.thaumicaugmentation.api.event.FluxRiftDestroyBlockEvent;
 import thecodex6824.thaumicaugmentation.api.event.FocusTouchGetEntityEvent;
+import thecodex6824.thaumicaugmentation.api.golem.IGolemAttributeUpdateReceiver;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
@@ -283,6 +286,18 @@ public final class TAHooksCommon {
     public static boolean onAddTile(Chunk chunk, BlockPos pos, TileEntity tile) {
         return !tile.hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null) ||
                 chunk.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) != tile;
+    }
+
+    public static void onUpdateGolemAttributes(EntityThaumcraftGolem golem) {
+        IGolemProperties props = golem.getProperties();
+        if (props.getHead().function instanceof IGolemAttributeUpdateReceiver)
+            ((IGolemAttributeUpdateReceiver) props.getHead().function).onAttributeUpdate(golem);
+        if (props.getArms().function instanceof IGolemAttributeUpdateReceiver)
+            ((IGolemAttributeUpdateReceiver) props.getArms().function).onAttributeUpdate(golem);
+        if (props.getLegs().function instanceof IGolemAttributeUpdateReceiver)
+            ((IGolemAttributeUpdateReceiver) props.getLegs().function).onAttributeUpdate(golem);
+        if (props.getAddon().function instanceof IGolemAttributeUpdateReceiver)
+            ((IGolemAttributeUpdateReceiver) props.getAddon().function).onAttributeUpdate(golem);
     }
     
 }

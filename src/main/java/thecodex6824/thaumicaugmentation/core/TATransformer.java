@@ -132,6 +132,9 @@ public class TATransformer implements IClassTransformer {
 
         // to fix the forge bug that calls invalidate on tiles if they are loaded while tiles are being processed
         TRANSFORMERS.add(new TransformerWorldAddTile());
+
+        // to allow modifying attributes of golems, even after they are reset
+        TRANSFORMERS.add(new TransformerGolemUpdateAttributes());
     }
     
     public TATransformer() {}

@@ -20,9 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.golem;
 
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-
+import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,12 +29,19 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.EnumPacketDirection;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.golems.EnumGolemTrait;
@@ -47,13 +52,19 @@ import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.api.golems.seals.ISealGui;
 import thaumcraft.api.golems.tasks.Task;
 import thaumcraft.common.golems.tasks.TaskHandler;
+import thaumcraft.common.lib.network.FakeNetHandlerPlayServer;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class SealAttack implements ISeal, ISealGui {
 
     private static final ResourceLocation ICON = new ResourceLocation(ThaumicAugmentationAPI.MODID, "items/seal/seal_attack");
-    
+    private static final Method GET_XP = ObfuscationReflectionHelper.findMethod(EntityLivingBase.class, "func_70693_a", int.class, EntityPlayer.class);
+
     protected int ticks = ThreadLocalRandom.current().nextInt(20);
     protected ISealConfigToggles.SealToggle[] props = {
             new ISealConfigToggles.SealToggle(true, "pmob", "golem.prop.mob"),
@@ -72,11 +83,8 @@ public class SealAttack implements ISeal, ISealGui {
     public boolean canGolemPerformTask(IGolemAPI golem, Task task) {
         if (golem == task.getEntity())
             return false;
-        else if (task.getEntity().getDistanceSqToCenter(golem.getGolemEntity().getPosition()) > 
-            Math.pow(((EntityCreature) golem.getGolemEntity()).getMaximumHomeDistance(), 2)) {
-            
+        else if (!((EntityCreature) golem.getGolemEntity()).isWithinHomeDistanceFromPosition(task.getEntity().getPosition()))
             return false;
-        }
         else if (task.getEntity() instanceof IEntityOwnable) {
             if (((IEntityOwnable) task.getEntity()).getOwnerId() != null && ((IEntityOwnable) task.getEntity()).getOwnerId().equals(((IEntityOwnable) golem.getGolemEntity()).getOwnerId()))
                 return false;
@@ -107,13 +115,38 @@ public class SealAttack implements ISeal, ISealGui {
     
     @Override
     public void onTaskStarted(World world, IGolemAPI golem, Task task) {
-        if (task.getEntity() instanceof EntityLivingBase && isValidTarget((EntityLivingBase) task.getEntity())) {
+        if (golem.getGolemEntity() instanceof EntityLivingBase && isValidTarget((EntityLivingBase) task.getEntity())) {
             ((EntityLiving) golem.getGolemEntity()).setAttackTarget((EntityLivingBase) task.getEntity());
         }
     }
-    
+
+    protected EntityPlayer makeFakePlayer(IGolemAPI owner) {
+        FakePlayer player = FakePlayerFactory.get((WorldServer) owner.getGolemWorld(), new GameProfile(null, "FakeThaumcraftGolem"));
+        player.connection = new FakeNetHandlerPlayServer(player.server, new NetworkManager(EnumPacketDirection.CLIENTBOUND), player);
+        EntityLivingBase golem = owner.getGolemEntity();
+        player.setPositionAndRotation(golem.posX, golem.posY, golem.posZ, golem.rotationYaw, golem.rotationPitch);
+        player.setHeldItem(EnumHand.MAIN_HAND, owner.getCarrying().get(0));
+        player.setSneaking(golem.isSneaking());
+        return player;
+    }
+
     @Override
     public boolean onTaskCompletion(World world, IGolemAPI golem, Task task) {
+        if (golem.getGolemEntity() instanceof EntityLiving) {
+            EntityLiving living = (EntityLiving) golem.getGolemEntity();
+            if (living.getAttackTarget() != null && living.getAttackTarget().isEntityAlive())
+                return false;
+        }
+
+        int xp = 1;
+        if (task.getEntity() instanceof EntityLivingBase) {
+            try {
+                xp = (int) GET_XP.invoke((EntityLivingBase) task.getEntity(), makeFakePlayer(golem));
+            }
+            catch (Exception ex) {}
+        }
+
+        golem.addRankXp(xp);
         task.setSuspended(true);
         return true;
     }
@@ -125,7 +158,7 @@ public class SealAttack implements ISeal, ISealGui {
             AxisAlignedBB box = new AxisAlignedBB(sealPos).grow(48 / 2);
             List<EntityLivingBase> targets = world.getEntitiesWithinAABB(EntityLivingBase.class, box);
             targets.sort((entity1, entity2) -> {
-                return (int) Math.signum(entity1.getDistanceSqToCenter(sealPos) - entity2.getDistanceSqToCenter(sealPos));
+                return (int) (entity1.getDistanceSqToCenter(sealPos) - entity2.getDistanceSqToCenter(sealPos));
             });
             for (EntityLivingBase entity : targets) {
                 if (isValidTarget(entity)) {
