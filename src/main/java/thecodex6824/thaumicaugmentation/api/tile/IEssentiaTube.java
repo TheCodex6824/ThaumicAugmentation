@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,18 +20,18 @@
 
 package thecodex6824.thaumicaugmentation.api.tile;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.util.EnumFacing;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.IEssentiaTransport;
 
+import javax.annotation.Nullable;
+
 public interface IEssentiaTube extends IEssentiaTransport {
 
-    public boolean isSideOpen(EnumFacing side);
+    boolean isSideOpen(EnumFacing side);
     
-    public void setSideOpen(EnumFacing side, boolean open);
+    void setSideOpen(EnumFacing side, boolean open);
     
-    public void setEssentiaDirect(@Nullable Aspect aspect, int amount);
+    void setEssentiaDirect(@Nullable Aspect aspect, int amount);
     
 }

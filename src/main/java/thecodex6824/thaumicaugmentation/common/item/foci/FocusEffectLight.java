@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,8 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.item.foci;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -45,6 +43,8 @@ import thaumcraft.client.fx.particles.FXGeneric;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
+
+import javax.annotation.Nullable;
 
 public class FocusEffectLight extends FocusEffect {
 

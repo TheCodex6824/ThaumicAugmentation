@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,13 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.world.structure;
-
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -63,18 +56,11 @@ import thaumcraft.common.tiles.crafting.TilePedestal;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.block.property.IAltarBlock;
-import thecodex6824.thaumicaugmentation.api.block.property.IDirectionalBlock;
-import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType;
+import thecodex6824.thaumicaugmentation.api.block.property.*;
 import thecodex6824.thaumicaugmentation.api.block.property.IEldritchLockType.LockType;
-import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
-import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart;
 import thecodex6824.thaumicaugmentation.api.block.property.IObeliskPart.ObeliskPart;
-import thecodex6824.thaumicaugmentation.api.block.property.IObeliskType;
 import thecodex6824.thaumicaugmentation.api.block.property.IObeliskType.ObeliskType;
-import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
-import thecodex6824.thaumicaugmentation.api.block.property.IUrnType;
 import thecodex6824.thaumicaugmentation.api.block.property.IUrnType.UrnType;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
@@ -84,6 +70,12 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
+
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.UUID;
 
 public class EldritchSpireComponent extends StructureComponentTemplate {
     
@@ -502,8 +494,7 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
         protected boolean isStateWardable(IBlockState state) {
             if (state.getBlock() == TABlocks.STONE) {
                 StoneType stone = state.getValue(ITAStoneType.STONE_TYPE);
-                if (stone == StoneType.STONE_CRUSTED || stone == StoneType.STONE_CRUSTED_GLOWING)
-                    return false;
+                return stone != StoneType.STONE_CRUSTED && stone != StoneType.STONE_CRUSTED_GLOWING;
             }
             else if (state.getBlock() == BlocksTC.stonePorous)
                 return false;
@@ -511,10 +502,7 @@ public class EldritchSpireComponent extends StructureComponentTemplate {
                 return false;
             else if (state.getBlock() == Blocks.WEB)
                 return false;
-            else if (state.getMaterial().isLiquid())
-                return false;
-            
-            return true;
+            else return !state.getMaterial().isLiquid();
         }
         
         @Override

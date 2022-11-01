@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -21,8 +21,8 @@
 package thecodex6824.thaumicaugmentation.api.item;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
 public class ImpetusLinker implements IImpetusLinker, INBTSerializable<NBTTagCompound> {

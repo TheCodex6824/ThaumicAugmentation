@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,22 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus.node.prefab;
 
-import java.util.ArrayDeque;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableSet;
-
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusGraph;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusProvider;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+
+import javax.annotation.Nullable;
+import java.util.*;
 
 public class ImpetusGraph implements IImpetusGraph {
 

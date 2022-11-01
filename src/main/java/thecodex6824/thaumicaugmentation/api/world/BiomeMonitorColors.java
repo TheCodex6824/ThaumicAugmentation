@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,9 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.api.world;
 
-import java.util.HashMap;
-
 import net.minecraft.world.biome.Biome;
+
+import java.util.HashMap;
 
 public final class BiomeMonitorColors {
 
@@ -30,9 +30,9 @@ public final class BiomeMonitorColors {
     
     public static class MonitorColors {
         
-        private int grass;
-        private int plants;
-        private int water;
+        private final int grass;
+        private final int plants;
+        private final int water;
         
         public MonitorColors(int g, int p, int w) {
             grass = g;
@@ -55,7 +55,7 @@ public final class BiomeMonitorColors {
     }
     
     private static final MonitorColors NULL_ENTRY = new MonitorColors(-1, -1, -1);
-    private static HashMap<String, MonitorColors> overrides = new HashMap<>();
+    private static final HashMap<String, MonitorColors> overrides = new HashMap<>();
     
     public static void registerMonitorColorOverride(Biome biome, int grassColor, int plantColor, int waterColor) {
         overrides.put(biome.getRegistryName().toString(), new MonitorColors(grassColor, plantColor, waterColor));

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -22,11 +22,7 @@ package thecodex6824.thaumicaugmentation.common.entity;
 
 import com.google.common.base.Predicates;
 import com.google.common.math.DoubleMath;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITarget;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -37,11 +33,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -186,8 +178,8 @@ public abstract class EntityAutocasterBase extends EntityCreature {
                     ItemStack tempHold = new ItemStack(ItemsTC.casterBasic);
                     ((ItemCaster) tempHold.getItem()).setFocus(tempHold, held);
                     setHeldItem(EnumHand.MAIN_HAND, tempHold, false);
-                    CastEvent.Pre preEvent = new CastEvent.Pre(this, tempHold, new FocusWrapper(f, 
-                            (int) (((ItemFocus) held.getItem()).getActivationTime(held)), visCost));
+                    CastEvent.Pre preEvent = new CastEvent.Pre(this, tempHold, new FocusWrapper(f,
+                            ((ItemFocus) held.getItem()).getActivationTime(held), visCost));
                     MinecraftForge.EVENT_BUS.post(preEvent);
                     visCost = preEvent.getFocus().getVisCost();
                     if (!preEvent.isCanceled() && DoubleMath.fuzzyEquals(AuraHelper.drainVis(world, getPosition(), visCost, false), visCost, 0.00001)) {

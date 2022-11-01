@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,6 +24,6 @@ import net.minecraft.block.properties.PropertyBool;
 
 public interface IWardOpeningWeakPower {
 
-    public static final PropertyBool WEAK_POWER = PropertyBool.create("ta_ward_opening_weak_power");
+    PropertyBool WEAK_POWER = PropertyBool.create("ta_ward_opening_weak_power");
     
 }

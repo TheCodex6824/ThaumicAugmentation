@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.recipe;
 
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -33,13 +31,15 @@ import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 
+import java.util.List;
+
 public class FluxSeedGrowthRecipe extends InfusionRecipe {
 
     private static final ItemStack ALLOWED_STACK = new ItemStack(TAItems.RIFT_SEED, 1, 1);
 
     public FluxSeedGrowthRecipe() {
         super("RIFT_STUDIES", new ItemStack(TAItems.RIFT_SEED, 1, 1), 6, new AspectList().add(Aspect.FLUX, 50),
-                new ItemStack(TAItems.RIFT_SEED, 1, 1), new Object[] {});
+                new ItemStack(TAItems.RIFT_SEED, 1, 1));
     }
 
     @Override

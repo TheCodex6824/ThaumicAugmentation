@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,28 +20,27 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 
+import javax.annotation.Nullable;
+import java.util.function.Supplier;
+
 public interface IEldritchLockType {
 
-    public enum LockType implements IStringSerializable {
+    enum LockType implements IStringSerializable {
         
         LABYRINTH(0, () -> new ItemStack(TAItems.ELDRITCH_LOCK_KEY, 1, 0)),
         PRISON(1, () -> new ItemStack(TAItems.ELDRITCH_LOCK_KEY, 1, 1)),
         LIBRARY(2, () -> new ItemStack(TAItems.ELDRITCH_LOCK_KEY, 1, 2)),
         BOSS(3, () -> new ItemStack(TAItems.ELDRITCH_LOCK_KEY, 1, 3));
         
-        private int meta;
-        private Supplier<ItemStack> keyGen;
+        private final int meta;
+        private final Supplier<ItemStack> keyGen;
         
-        private LockType(int m, Supplier<ItemStack> k) {
+        LockType(int m, Supplier<ItemStack> k) {
             meta = m;
             keyGen = k;
         }
@@ -76,6 +75,6 @@ public interface IEldritchLockType {
         
     }
     
-    public static final PropertyEnum<LockType> LOCK_TYPE = PropertyEnum.create("ta_lock_type", LockType.class);
+    PropertyEnum<LockType> LOCK_TYPE = PropertyEnum.create("ta_lock_type", LockType.class);
     
 }

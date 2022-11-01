@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -35,9 +35,9 @@ public class GUIHandler implements IGuiHandler {
         AUTOCASTER(2),
         CELESTIAL_OBSERVER(3);
 
-        private int id;
+        private final int id;
 
-        private TAInventory(int id) {
+        TAInventory(int id) {
             this.id = id;
         }
 

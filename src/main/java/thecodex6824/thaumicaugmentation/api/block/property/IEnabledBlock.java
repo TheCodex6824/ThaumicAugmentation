@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -22,13 +22,13 @@ package thecodex6824.thaumicaugmentation.api.block.property;
 
 import net.minecraft.block.properties.PropertyBool;
 
-/**
+/*
  * Property interface for block that can enabled and disabled,
  * such as the Vis Regenerator.
  * @author TheCodex6824
  */
 public interface IEnabledBlock {
 
-    public static final PropertyBool ENABLED = PropertyBool.create("ta_enabled");
+    PropertyBool ENABLED = PropertyBool.create("ta_enabled");
 
 }

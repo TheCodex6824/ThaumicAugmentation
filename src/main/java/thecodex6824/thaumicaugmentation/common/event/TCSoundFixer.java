@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.event;
 
-import org.objectweb.asm.Type;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ActionResult;
@@ -31,11 +29,12 @@ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.objectweb.asm.Type;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.core.transformer.TransformUtil;
 
-/**
+/*
  * TC seems to have quite a few instances where the sound is played using {@link EntityPlayer#playSound(net.minecraft.util.SoundEvent, float, float)}.
  * This would be fine except for the fact it is only called server side, and internally it calls {@link World#playSound(EntityPlayer, double, double, double, net.minecraft.util.SoundEvent, net.minecraft.util.SoundCategory, float, float)}.
  * This function on the server side plays the sound to everyone *except* the passed in player, expecting the same call to happen client side.

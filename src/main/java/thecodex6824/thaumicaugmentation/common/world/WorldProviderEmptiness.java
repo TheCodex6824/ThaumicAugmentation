@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.world;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.client.audio.MusicTicker.MusicType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -40,6 +38,8 @@ import thecodex6824.thaumicaugmentation.client.renderer.RenderHandlerEmptinessSk
 import thecodex6824.thaumicaugmentation.client.renderer.RenderHandlerNoop;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeProviderEmptiness;
+
+import javax.annotation.Nullable;
 
 public class WorldProviderEmptiness extends WorldProvider {
     

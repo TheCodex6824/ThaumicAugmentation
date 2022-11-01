@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.UUID;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -40,6 +36,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.UUID;
 
 public class EntityTAGolemOrb extends EntityThrowable {
 

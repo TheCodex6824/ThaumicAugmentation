@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,12 +25,12 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
 public interface ICustomCasterAugment extends IAugment {
 
-    public void setStrengthProvider(ItemStack s);
+    void setStrengthProvider(ItemStack s);
     
-    public ItemStack getStrengthProvider();
+    ItemStack getStrengthProvider();
     
-    public void setEffectProvider(ItemStack e);
+    void setEffectProvider(ItemStack e);
     
-    public ItemStack getEffectProvider();
+    ItemStack getEffectProvider();
     
 }

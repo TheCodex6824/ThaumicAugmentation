@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,11 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.block;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -58,6 +53,10 @@ import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 
 public class BlockCapstone extends BlockTABase implements IItemBlockProvider, IObeliskType, IAltarBlock {
 

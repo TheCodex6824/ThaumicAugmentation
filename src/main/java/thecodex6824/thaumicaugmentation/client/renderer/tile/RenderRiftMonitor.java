@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,15 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer.tile;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.sasmaster.glelwjgl.java.CoreGLE;
-
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
@@ -41,6 +35,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.biome.Biome;
+import org.lwjgl.opengl.GL11;
 import thaumcraft.client.lib.obj.AdvancedModelLoader;
 import thaumcraft.client.lib.obj.IModelCustom;
 import thaumcraft.common.entities.EntityFluxRift;
@@ -51,6 +46,9 @@ import thecodex6824.thaumicaugmentation.api.world.BiomeMonitorColors;
 import thecodex6824.thaumicaugmentation.api.world.BiomeMonitorColors.MonitorColors;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class RenderRiftMonitor extends TileEntitySpecialRenderer<TileRiftMonitor> {
 

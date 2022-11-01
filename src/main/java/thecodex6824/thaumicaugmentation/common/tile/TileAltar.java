@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import javax.annotation.Nullable;
-
 import com.google.common.base.Predicates;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,16 +30,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.*;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -66,6 +55,8 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
+
+import javax.annotation.Nullable;
 
 public class TileAltar extends TileEntity implements ITickable, IInteractWithCaster {
 
@@ -179,7 +170,7 @@ public class TileAltar extends TileEntity implements ITickable, IInteractWithCas
             else if (openTicks <= 140 && openTicks > 60 && openTicks % 10 == 0) {
                 BlockPos check = pos.add(CAP_OFFSETS[openTicks / 10 - 7]);
                 IBlockState state = world.getBlockState(check);
-                if (state.getBlock() == TABlocks.CAPSTONE && state.getValue(IAltarBlock.ALTAR) == false)
+                if (state.getBlock() == TABlocks.CAPSTONE && !state.getValue(IAltarBlock.ALTAR))
                     world.destroyBlock(check, false);
             }
             else if (openTicks == 175)

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,11 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.world;
-
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
@@ -50,6 +45,10 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Random;
 
 public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,10 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.block;
-
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -55,6 +51,9 @@ import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.block.property.IUrnType;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
+
+import javax.annotation.Nullable;
+import java.util.stream.Collectors;
 
 public class BlockTAUrn extends BlockTABase implements IUrnType, IItemBlockProvider {
 

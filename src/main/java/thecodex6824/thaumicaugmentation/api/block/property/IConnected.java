@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,6 +24,6 @@ import net.minecraft.block.properties.PropertyBool;
 
 public interface IConnected {
 
-    public static final PropertyBool CONNECTED = PropertyBool.create("ta_connected");
+    PropertyBool CONNECTED = PropertyBool.create("ta_connected");
     
 }

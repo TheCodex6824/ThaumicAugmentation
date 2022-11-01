@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.recipe;
 
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -30,6 +28,8 @@ import net.minecraftforge.common.util.RecipeMatcher;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.crafting.InfusionRecipe;
+
+import java.util.List;
 
 public class InfusionRecipeComplexResearch extends InfusionRecipe {
 

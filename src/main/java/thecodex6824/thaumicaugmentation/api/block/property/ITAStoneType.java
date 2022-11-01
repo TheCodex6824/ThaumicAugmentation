@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,11 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import java.util.Random;
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -37,7 +32,11 @@ import thaumcraft.api.ThaumcraftMaterials;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.util.QuadConsumer;
 
-/**
+import javax.annotation.Nullable;
+import java.util.Random;
+import java.util.function.Supplier;
+
+/*
  * Property interface for the type of stone in Thaumic Augmentation's stone.
  * @author TheCodex6824
  * 
@@ -45,7 +44,7 @@ import thecodex6824.thaumicaugmentation.api.util.QuadConsumer;
  */
 public interface ITAStoneType {
     
-    public enum StoneType implements IStringSerializable {
+    enum StoneType implements IStringSerializable {
         
         STONE_VOID(0, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.OBSIDIAN, 0),
         STONE_TAINT_NODECAY(1, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE, (w, b, s, r) -> {}, MapColor.OBSIDIAN, 0),
@@ -63,14 +62,14 @@ public interface ITAStoneType {
         ANCIENT_COBBLESTONE(10, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BLUE, 0),
         ANCIENT_LIGHT(11, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BROWN, 15);
         
-        private int meta;
-        private Supplier<Material> mat;
-        private Supplier<SoundType> sound;
-        private QuadConsumer<World, BlockPos, IBlockState, Random> randomTickFunc;
-        private MapColor color;
-        private int light;
+        private final int meta;
+        private final Supplier<Material> mat;
+        private final Supplier<SoundType> sound;
+        private final QuadConsumer<World, BlockPos, IBlockState, Random> randomTickFunc;
+        private final MapColor color;
+        private final int light;
         
-        private StoneType(int m, Supplier<Material> mt, Supplier<SoundType> s, QuadConsumer<World, BlockPos, IBlockState, Random> func, MapColor c, int l) {
+        StoneType(int m, Supplier<Material> mt, Supplier<SoundType> s, QuadConsumer<World, BlockPos, IBlockState, Random> func, MapColor c, int l) {
             meta = m;
             mat = mt;
             sound = s;
@@ -119,6 +118,6 @@ public interface ITAStoneType {
         }
     }
     
-    public static final PropertyEnum<StoneType> STONE_TYPE = PropertyEnum.create("ta_stone_type", StoneType.class);
+    PropertyEnum<StoneType> STONE_TYPE = PropertyEnum.create("ta_stone_type", StoneType.class);
     
 }

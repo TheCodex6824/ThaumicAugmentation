@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -39,17 +39,17 @@ import java.util.function.Predicate;
 
 public class EmptinessSoundTicker implements ITickable, ISelectiveResourceReloadListener {
 
-    private static ISound LOOP = new PositionedSoundRecord(TASounds.EMPTINESS_MUSIC.getSoundName(), SoundCategory.WEATHER, 1.0F, 1.0F,
+    private static final ISound LOOP = new PositionedSoundRecord(TASounds.EMPTINESS_MUSIC.getSoundName(), SoundCategory.WEATHER, 1.0F, 1.0F,
             true, 0, AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
-    private static ISound AMBIENCE = new PositionedSoundRecord(TASounds.EMPTINESS_AMBIENCE.getSoundName(), SoundCategory.AMBIENT, 1.0F, 1.0F,
+    private static final ISound AMBIENCE = new PositionedSoundRecord(TASounds.EMPTINESS_AMBIENCE.getSoundName(), SoundCategory.AMBIENT, 1.0F, 1.0F,
             false, 0, AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
     
-    private static int MIN_TICKS = 1200;
-    private static int MAX_TICKS = 3600;
+    private static final int MIN_TICKS = 1200;
+    private static final int MAX_TICKS = 3600;
     
-    private Minecraft mc;
+    private final Minecraft mc;
     private boolean playingMusic;
-    private Random rand;
+    private final Random rand;
     private int ticksLeftToPlaySound;
 
     public EmptinessSoundTicker(Minecraft mcIn) {

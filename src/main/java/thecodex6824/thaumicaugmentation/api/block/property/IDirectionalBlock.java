@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,14 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import java.util.Arrays;
-
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.util.EnumFacing;
 
+import java.util.Arrays;
+
 public interface IDirectionalBlock {
 
-    public static final PropertyDirection DIRECTION = PropertyDirection.create("ta_direction", 
+    PropertyDirection DIRECTION = PropertyDirection.create("ta_direction",
             Arrays.asList(EnumFacing.VALUES));
     
 }

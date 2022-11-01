@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -22,12 +22,12 @@ package thecodex6824.thaumicaugmentation.api.item;
 
 import net.minecraft.item.ItemStack;
 
-/**
+/*
  * Interface for items that should reduce fall damage when worn as equipment.
  * @author TheCodex6824
  */
 public interface IArmorReduceFallDamage {
 
-    public float getNewFallDamage(ItemStack stack, float origDamage, float distance);
+    float getNewFallDamage(ItemStack stack, float origDamage, float distance);
 
 }

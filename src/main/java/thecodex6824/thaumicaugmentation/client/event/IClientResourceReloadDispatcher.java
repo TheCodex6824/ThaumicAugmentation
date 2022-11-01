@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,8 +25,8 @@ import thecodex6824.thaumicaugmentation.common.util.IResourceReloadDispatcher;
 
 public interface IClientResourceReloadDispatcher extends IResourceReloadDispatcher {
 
-    public boolean registerListener(ISelectiveResourceReloadListener listener);
+    boolean registerListener(ISelectiveResourceReloadListener listener);
     
-    public boolean deregisterListener(ISelectiveResourceReloadListener listener);
+    boolean deregisterListener(ISelectiveResourceReloadListener listener);
     
 }

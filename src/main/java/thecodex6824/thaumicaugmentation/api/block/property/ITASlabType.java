@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -33,18 +29,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 
+import javax.annotation.Nullable;
+import java.util.function.Supplier;
+
 public interface ITASlabType {
 
-    public enum SlabType implements IStringSerializable {
+    enum SlabType implements IStringSerializable {
         ANCIENT_TILE(0, () -> Material.ROCK, () -> SoundType.STONE, () -> new ItemStack(TABlocks.SLAB, 1, 0), MapColor.ADOBE);
         
-        private int meta;
-        private Supplier<Material> mat;
-        private Supplier<SoundType> sound;
-        private Supplier<ItemStack> drop;
-        private MapColor color;
+        private final int meta;
+        private final Supplier<Material> mat;
+        private final Supplier<SoundType> sound;
+        private final Supplier<ItemStack> drop;
+        private final MapColor color;
         
-        private SlabType(int m, Supplier<Material> mt, Supplier<SoundType> s, Supplier<ItemStack> b, MapColor c) {
+        SlabType(int m, Supplier<Material> mt, Supplier<SoundType> s, Supplier<ItemStack> b, MapColor c) {
             meta = m;
             mat = mt;
             sound = s;
@@ -88,7 +87,7 @@ public interface ITASlabType {
         }
     }
     
-    public static final PropertyEnum<SlabType> SLAB_TYPE = PropertyEnum.create("ta_slab_type", SlabType.class);
-    public static final PropertyBool DOUBLE = PropertyBool.create("ta_slab_double");
+    PropertyEnum<SlabType> SLAB_TYPE = PropertyEnum.create("ta_slab_type", SlabType.class);
+    PropertyBool DOUBLE = PropertyBool.create("ta_slab_double");
     
 }

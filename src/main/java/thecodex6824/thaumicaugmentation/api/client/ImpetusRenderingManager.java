@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -37,7 +37,7 @@ public final class ImpetusRenderingManager {
 
     private ImpetusRenderingManager() {}
     
-    private static Int2ObjectMap<Map<DimensionalBlockPos, IImpetusNode>> nodes = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
+    private static final Int2ObjectMap<Map<DimensionalBlockPos, IImpetusNode>> nodes = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
     private static final ImmutableMap<DimensionalBlockPos, IImpetusNode> EMPTY = ImmutableMap.of();
     
     public static void registerRenderableNode(IImpetusNode node) {

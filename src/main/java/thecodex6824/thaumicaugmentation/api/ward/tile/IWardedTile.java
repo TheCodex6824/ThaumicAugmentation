@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,46 +20,46 @@
 
 package thecodex6824.thaumicaugmentation.api.ward.tile;
 
-import java.util.UUID;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 
-/**
+import java.util.UUID;
+
+/*
  * Interface for warded tile entities.
  * @author TheCodex6824
  */
 public interface IWardedTile {
 
-    /**
+    /*
      * Returns the block position of this warded tile. If for some reason it would
      * not have a block position, then return a position referring to (0, 0, 0)
      * instead - do not return null.
      * @return The BlockPos of this tile, or (0, 0, 0) if it does not have one
      */
-    public BlockPos getPosition();
+    BlockPos getPosition();
 
-    /**
+    /*
      * Returns a unique type ID for this warded tile. All instances of this tile should
      * share this ID. It does not matter what it is, as long as it is unique. This is used
      * by objects like the Thaumium key to restrict usable tiles. It should not change.
      * @return A unique type ID for this warded tile
      */
-    public String getUniqueTypeID();
+    String getUniqueTypeID();
 
-    /**
+    /*
      * Sets the owner of this warded tile.
      * @param uuid The UUID of the owner
      */
-    public void setOwner(UUID uuid);
+    void setOwner(UUID uuid);
 
-    /**
+    /*
      * Returns the owner of this warded tile.
      * @return The owner
      */
-    public UUID getOwner();
+    UUID getOwner();
 
-    /**
+    /*
      * Method called when an entity tries to interact with a warded tile. This should fire
      * a {@link thecodex6824.thaumicaugmentation.api.event.WardedTilePermissionEvent WardedBlockPermissionEvent}, 
      * and should react to its result and/or cancellation. The default check can be defined by 
@@ -68,6 +68,6 @@ public interface IWardedTile {
      * @param living The entity trying to access this warded tile.
      * @return If the entity has permission, and the interaction should continue
      */
-    public boolean hasPermission(EntityLivingBase living);
+    boolean hasPermission(EntityLivingBase living);
 
 }

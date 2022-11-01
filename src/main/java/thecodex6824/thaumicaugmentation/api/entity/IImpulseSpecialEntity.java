@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,8 +24,8 @@ import net.minecraft.entity.EntityLivingBase;
 
 public interface IImpulseSpecialEntity {
 
-    public boolean shouldStopRailgunBeam(EntityLivingBase beamShooter);
+    boolean shouldStopRailgunBeam(EntityLivingBase beamShooter);
     
-    public boolean shouldImpulseCannonIgnore(EntityLivingBase beamShooter);
+    boolean shouldImpulseCannonIgnore(EntityLivingBase beamShooter);
     
 }

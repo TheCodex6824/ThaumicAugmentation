@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -37,11 +37,7 @@ import thaumcraft.api.items.RechargeHelper;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.*;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderHarness;
@@ -127,7 +123,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         CapabilityProviderHarness provider = new CapabilityProviderHarness(new AugmentableItem(1) {
             
-            protected void checkVis() {
+            private void checkVis() {
                 int difference = RechargeHelper.getCharge(stack) - getHarnessVisCapacity(stack);
                 if (difference > 0)
                     RechargeHelper.consumeCharge(stack, null, difference);

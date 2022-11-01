@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,31 +20,31 @@
 
 package thecodex6824.thaumicaugmentation.api.internal;
 
-import java.util.Collection;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
+import java.util.Collection;
+
 public interface IInternalMethodProvider {
     
-    public void addConfigListener(Runnable listener);
+    void addConfigListener(Runnable listener);
     
-    public boolean removeConfigListener(Runnable listener);
+    boolean removeConfigListener(Runnable listener);
     
-    public ItemStack createCasterStrengthProviderStack(ResourceLocation id);
+    ItemStack createCasterStrengthProviderStack(ResourceLocation id);
     
-    public String getCasterStrengthProviderID(ItemStack stack);
+    String getCasterStrengthProviderID(ItemStack stack);
     
-    public ItemStack createCasterEffectProviderStack(ResourceLocation id);
+    ItemStack createCasterEffectProviderStack(ResourceLocation id);
     
-    public String getCasterEffectProviderID(ItemStack stack);
+    String getCasterEffectProviderID(ItemStack stack);
     
-    public void syncImpetusTransaction(Collection<IImpetusNode> path);
+    void syncImpetusTransaction(Collection<IImpetusNode> path);
     
-    public void fullySyncImpetusNode(IImpetusNode node);
+    void fullySyncImpetusNode(IImpetusNode node);
     
-    public void updateImpetusNode(IImpetusNode node, DimensionalBlockPos connection, boolean output, boolean remove);
+    void updateImpetusNode(IImpetusNode node, DimensionalBlockPos connection, boolean output, boolean remove);
     
 }

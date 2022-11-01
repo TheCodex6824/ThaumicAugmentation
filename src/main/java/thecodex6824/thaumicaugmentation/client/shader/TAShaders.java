@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.client.shader;
 
-import java.util.function.Consumer;
-
-import org.lwjgl.opengl.ARBShaderObjects;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import org.lwjgl.opengl.ARBShaderObjects;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager.Shader;
+
+import java.util.function.Consumer;
 
 public class TAShaders {
 

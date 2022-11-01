@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,22 +20,22 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nullable;
+
 public interface IObeliskPart {
 
-    public enum ObeliskPart implements IStringSerializable {
+    enum ObeliskPart implements IStringSerializable {
         
         MIDDLE(0),
         INNER(1),
         CAP(2);
         
-        private int meta;
+        private final int meta;
         
-        private ObeliskPart(int m) {
+        ObeliskPart(int m) {
             meta = m;
         }
         
@@ -60,6 +60,6 @@ public interface IObeliskPart {
         
     }
     
-    public static final PropertyEnum<ObeliskPart> OBELISK_PART = PropertyEnum.create("ta_obelisk_part", ObeliskPart.class);
+    PropertyEnum<ObeliskPart> OBELISK_PART = PropertyEnum.create("ta_obelisk_part", ObeliskPart.class);
     
 }

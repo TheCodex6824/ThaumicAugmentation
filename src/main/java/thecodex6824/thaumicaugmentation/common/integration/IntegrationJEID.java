@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,12 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.common.integration;
 
-import org.dimdev.jeid.INewChunk;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import org.dimdev.jeid.INewChunk;
 import thecodex6824.thaumicaugmentation.common.network.PacketBiomeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 

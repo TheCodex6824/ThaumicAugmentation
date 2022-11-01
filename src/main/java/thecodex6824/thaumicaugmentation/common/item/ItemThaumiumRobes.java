@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,11 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelBiped;
@@ -42,12 +37,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -68,6 +58,10 @@ import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.client.model.ModelTARobes;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+
 @SuppressWarnings("deprecation")
 public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
     IGoggles, IRevealer, ISpecialArmor, IDyeableItem, IModelProvider<Item> {
@@ -78,17 +72,17 @@ public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
     protected static final String TEXTURE_PATH_OVERLAY = 
             new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/models/armor/thaumium_robes_overlay.png").toString();
     
-    public static enum MaskType {
+    public enum MaskType {
         
         NONE(0, ""),
         WARP_REDUCTION(1, "item.fortress_helm.mask.0"),
         WITHER(2, "item.fortress_helm.mask.1"),
         LIFESTEAL(3, "item.fortress_helm.mask.2");
         
-        private int id;
-        private String name;
+        private final int id;
+        private final String name;
         
-        private MaskType(int i, String n) {
+        MaskType(int i, String n) {
             id = i;
             name = n;
         }

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -23,7 +23,7 @@ package thecodex6824.thaumicaugmentation.api;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-/**
+/*
  * Holds all of Thaumic Augmentation's blocks. The fields will be populated
  * after preInit (during the block registry event).
  * @author TheCodex6824
@@ -92,7 +92,7 @@ public final class TABlocks {
     public static final Block GLASS_TUBE = null;
     public static final Block IMPETUS_CREATIVE = null;
 
-    /**
+    /*
      * Returns all blocks in the mod.
      * @return All the blocks
      */

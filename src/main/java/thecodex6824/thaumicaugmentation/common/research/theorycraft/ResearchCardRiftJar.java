@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,14 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.common.research.theorycraft;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentTranslation;
 import thaumcraft.api.research.theorycraft.ResearchTableData;
 import thaumcraft.api.research.theorycraft.TheorycraftCard;
 import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class ResearchCardRiftJar extends TheorycraftCard {
 

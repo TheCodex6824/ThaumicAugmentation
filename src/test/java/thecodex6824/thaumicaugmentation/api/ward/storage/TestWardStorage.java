@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,32 +20,21 @@
 
 package thecodex6824.thaumicaugmentation.api.ward.storage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-
-import org.junit.Test;
-
 import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
-import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.IWardStorageManagerServer;
-import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManager1Bit;
-import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManager2Bits;
-import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManager4Bits;
-import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManagerByte;
-import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManagerNull;
-import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.StorageManagerShort;
+import org.junit.Test;
+import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer.StorageManagersServer.*;
+
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class TestWardStorage {
     
-    /**
+    /*
      * The default Java UUID factory uses SecureRandom,
      * which is nice and all but we aren't using these
      * for secure purposes
@@ -227,7 +216,7 @@ public class TestWardStorage {
                 storage.clearWard(entry.getKey());
         }
         
-        assertEquals((long) ((StorageManager1Bit) storage.manager).count, count);
+        assertEquals(((StorageManager1Bit) storage.manager).count, count);
         
         MutableBlockPos pos = new MutableBlockPos(0, 0, 0);
         for (int x = 0; x < 16; ++x) {
@@ -260,7 +249,7 @@ public class TestWardStorage {
             }
         }
         
-        assertEquals((long) ((StorageManager1Bit) storage.manager).count, count);
+        assertEquals(((StorageManager1Bit) storage.manager).count, count);
         
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -310,7 +299,7 @@ public class TestWardStorage {
         for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
             if (storage.isWardOwner(entry.getKey())) {
                 int internalID = ((StorageManager2Bits) storage.manager).reverseMap.getByte(entry.getKey());
-                assertEquals((long) ((StorageManager2Bits) storage.manager).counts[internalID], (long) entry.getValue());
+                assertEquals(((StorageManager2Bits) storage.manager).counts[internalID], (long) entry.getValue());
             }
         }
         
@@ -353,7 +342,7 @@ public class TestWardStorage {
         
         for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
             int internalID = ((StorageManager2Bits) storage.manager).reverseMap.getByte(entry.getKey());
-            assertEquals((long) ((StorageManager2Bits) storage.manager).counts[internalID], (long) entry.getValue());
+            assertEquals(((StorageManager2Bits) storage.manager).counts[internalID], (long) entry.getValue());
         }
         
         snapped.clear();
@@ -411,7 +400,7 @@ public class TestWardStorage {
         for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
             if (storage.isWardOwner(entry.getKey())) {
                 int internalID = ((StorageManager4Bits) storage.manager).reverseMap.getByte(entry.getKey());
-                assertEquals((long) ((StorageManager4Bits) storage.manager).counts[internalID], (long) entry.getValue());
+                assertEquals(((StorageManager4Bits) storage.manager).counts[internalID], (long) entry.getValue());
             }
         }
         
@@ -454,7 +443,7 @@ public class TestWardStorage {
         
         for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
             int internalID = ((StorageManager4Bits) storage.manager).reverseMap.getByte(entry.getKey());
-            assertEquals((long) ((StorageManager4Bits) storage.manager).counts[internalID], (long) entry.getValue());
+            assertEquals(((StorageManager4Bits) storage.manager).counts[internalID], (long) entry.getValue());
         }
         
         snapped.clear();
@@ -515,7 +504,7 @@ public class TestWardStorage {
         for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
             if (storage.isWardOwner(entry.getKey())) {
                 int internalID = ((StorageManagerByte) storage.manager).reverseMap.getByte(entry.getKey()) + 128;
-                assertEquals((long) ((StorageManagerByte) storage.manager).counts[internalID], (long) entry.getValue());
+                assertEquals(((StorageManagerByte) storage.manager).counts[internalID], (long) entry.getValue());
             }
         }
         
@@ -558,7 +547,7 @@ public class TestWardStorage {
         
         for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
             int internalID = ((StorageManagerByte) storage.manager).reverseMap.getByte(entry.getKey()) + 128;
-            assertEquals((long) ((StorageManagerByte) storage.manager).counts[internalID], (long) entry.getValue());
+            assertEquals(((StorageManagerByte) storage.manager).counts[internalID], (long) entry.getValue());
         }
         
         snapped.clear();
@@ -616,7 +605,7 @@ public class TestWardStorage {
         for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
             if (storage.isWardOwner(entry.getKey())) {
                 int internalID = ((StorageManagerShort) storage.manager).reverseMap.getShort(entry.getKey()) + 32768;
-                assertEquals((long) ((StorageManagerShort) storage.manager).counts[internalID], (long) entry.getValue());
+                assertEquals(((StorageManagerShort) storage.manager).counts[internalID], (long) entry.getValue());
             }
         }
         
@@ -659,7 +648,7 @@ public class TestWardStorage {
         
         for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
             int internalID = ((StorageManagerShort) storage.manager).reverseMap.getShort(entry.getKey()) + 32768;
-            assertEquals((long) ((StorageManagerShort) storage.manager).counts[internalID], (long) entry.getValue());
+            assertEquals(((StorageManagerShort) storage.manager).counts[internalID], (long) entry.getValue());
         }
         
         snapped.clear();
@@ -717,7 +706,7 @@ public class TestWardStorage {
         for (Map.Entry<UUID, Integer> entry : counts.entrySet()) {
             if (storage.isWardOwner(entry.getKey())) {
                 int internalID = ((StorageManager2Bits) storage.manager).reverseMap.getByte(entry.getKey());
-                assertEquals((long) ((StorageManager2Bits) storage.manager).counts[internalID], (long) entry.getValue());
+                assertEquals(((StorageManager2Bits) storage.manager).counts[internalID], (long) entry.getValue());
             }
         }
         

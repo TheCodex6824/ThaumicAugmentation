@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,10 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.tile;
-
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,6 +50,9 @@ import thecodex6824.thaumicaugmentation.api.aspect.AspectUtil;
 import thecodex6824.thaumicaugmentation.api.tile.IEssentiaTube;
 import thecodex6824.thaumicaugmentation.common.network.PacketEssentiaUpdate;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+
+import javax.annotation.Nullable;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TileGlassTube extends TileEntity implements IEssentiaTube, IInteractWithCaster,
     ITickable {
@@ -291,10 +290,7 @@ public class TileGlassTube extends TileEntity implements IEssentiaTube, IInterac
     
     @Override
     public void setEssentiaDirect(@Nullable Aspect aspect, int amount) {
-        if (aspect == null || amount == 0)
-            fluidStartTicksUp = false;
-        else
-            fluidStartTicksUp = true;
+        fluidStartTicksUp = aspect != null && amount != 0;
         
         lastFluid = containedAspect;
         containedAspect = aspect;

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,12 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.internal;
 
-import java.util.Collection;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -43,6 +40,8 @@ import thecodex6824.thaumicaugmentation.common.network.PacketFullImpetusNodeSync
 import thecodex6824.thaumicaugmentation.common.network.PacketImpetusNodeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketImpetusTransaction;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+
+import java.util.Collection;
 
 public class InternalMethodProvider implements IInternalMethodProvider {
     

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -23,15 +23,15 @@ package thecodex6824.thaumicaugmentation.api.item;
 import net.minecraft.item.ItemStack;
 import thaumcraft.api.casters.ICaster;
 
-/**
+/*
  * Interface for custom casting gauntlets that support a vis discount
  * and cooldown modifier.
  * @author TheCodex6824
  */
 public interface ITieredCaster extends ICaster {
 
-    public float getCasterVisDiscount(ItemStack stack);
+    float getCasterVisDiscount(ItemStack stack);
 
-    public float getCasterCooldownModifier(ItemStack stack);
+    float getCasterCooldownModifier(ItemStack stack);
 
 }

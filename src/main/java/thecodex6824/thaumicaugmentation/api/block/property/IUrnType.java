@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,22 +20,22 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nullable;
+
 public interface IUrnType {
 
-    public enum UrnType implements IStringSerializable {
+    enum UrnType implements IStringSerializable {
         
         URN_COMMON(0),
         URN_UNCOMMON(1),
         URN_RARE(2);
         
-        private int meta;
+        private final int meta;
         
-        private UrnType(int m) {
+        UrnType(int m) {
             meta = m;
         }
         
@@ -60,6 +60,6 @@ public interface IUrnType {
         
     }
     
-    public static final PropertyEnum<UrnType> URN_TYPE = PropertyEnum.create("ta_urn_type", UrnType.class);
+    PropertyEnum<UrnType> URN_TYPE = PropertyEnum.create("ta_urn_type", UrnType.class);
     
 }

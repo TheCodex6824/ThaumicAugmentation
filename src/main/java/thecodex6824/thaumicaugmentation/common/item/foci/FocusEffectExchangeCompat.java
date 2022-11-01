@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -33,7 +33,7 @@ import thaumcraft.api.casters.Trajectory;
 import thaumcraft.common.items.casters.foci.FocusEffectExchange;
 import thaumcraft.common.lib.events.ServerEvents;
 
-/**
+/*
  * Wrapper + copy and paste of FocusEffectExchange to make it work with
  * addon gauntlets that implement ICaster (since the original checks for
  * ItemCaster)

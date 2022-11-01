@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,10 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.block;
-
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPane;
@@ -48,6 +44,9 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.ITABarsType;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
+
+import javax.annotation.Nullable;
+import java.util.stream.Collectors;
 
 public class BlockTABars extends BlockPane implements ITABarsType, IModelProvider<Block>, IItemBlockProvider {
 

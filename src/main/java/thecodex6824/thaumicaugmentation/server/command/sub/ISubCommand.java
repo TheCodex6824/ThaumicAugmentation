@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,24 +20,23 @@
 
 package thecodex6824.thaumicaugmentation.server.command.sub;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 public interface ISubCommand {
 
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException;
+    void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException;
     
-    public String getName();
+    String getName();
     
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+    List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
             @Nullable BlockPos targetPos);
     
-    public boolean isUsernameIndex(String[] args, int index);
+    boolean isUsernameIndex(String[] args, int index);
     
 }

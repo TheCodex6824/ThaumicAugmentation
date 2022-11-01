@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,18 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.core.transformer;
 
-import java.util.ArrayList;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.LocalVariableNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
-/**
+import java.util.ArrayList;
+
+/*
  * Patches the ModelCustomArmor class to call the super method in setRotationAngles to fix
  * a whole lot of issues with other mods that hook into ModelBiped. Azanor apparently wanted to change
  * some rotation points on the model, which caused the copy+pasted code to be there instead of a super call.

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,7 +25,7 @@ import net.minecraft.item.ItemBlock;
 
 public interface IItemBlockProvider {
     
-    public default ItemBlock createItemBlock() {
+    default ItemBlock createItemBlock() {
         return new ItemBlock((Block) this);
     }
     

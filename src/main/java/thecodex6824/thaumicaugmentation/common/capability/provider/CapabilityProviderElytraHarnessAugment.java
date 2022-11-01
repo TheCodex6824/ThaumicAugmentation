@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,9 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.capability.provider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -32,10 +29,13 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class CapabilityProviderElytraHarnessAugment implements ICapabilitySerializable<NBTTagCompound> {
 
-    private IAugment augment;
-    private ImpetusStorage energy;
+    private final IAugment augment;
+    private final ImpetusStorage energy;
     
     public CapabilityProviderElytraHarnessAugment(IAugment aug, ImpetusStorage e) {
         augment = aug;

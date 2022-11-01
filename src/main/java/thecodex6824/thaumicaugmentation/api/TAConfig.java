@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,19 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.api;
 
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionBoolean;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionEnum;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionFloat;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntSet;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringList;
+import thecodex6824.thaumicaugmentation.api.config.*;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
-/**
+/*
  * Holds all of the configuration variables for Thaumic Augmentation. They will be
  * synced across sides when needed.
  * @author TheCodex6824
@@ -170,7 +161,7 @@ public final class TAConfig {
     
     public static ConfigOptionBoolean undeadEldritchGuardians;
     
-    /**
+    /*
      * Registers a callback to be notified when the config is synced or updated.
      * @param listener The callback
      */
@@ -178,7 +169,7 @@ public final class TAConfig {
         TAInternals.addConfigListener(listener);
     }
     
-    /**
+    /*
      * Removes a callback previously registered with {@link TAConfig#addConfigListener(Runnable)}
      * @param listener The callback
      * @return If the provided callback existed and was removed

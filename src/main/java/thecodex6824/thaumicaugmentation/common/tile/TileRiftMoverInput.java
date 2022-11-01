@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,12 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.tile;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -61,6 +55,11 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TileRiftMoverInput extends TileEntity implements ITickable, IInteractWithCaster {
 
@@ -120,10 +119,7 @@ public class TileRiftMoverInput extends TileEntity implements ITickable, IIntera
             
             return true;
         }
-        else if (world.isRemote && !operating)
-            return true;
-        else
-            return false;
+        else return world.isRemote && !operating;
     }
     
     @Override

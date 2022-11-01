@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -72,6 +72,7 @@ import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpi
 import javax.annotation.Nullable;
 import java.util.Random;
 
+@SuppressWarnings("unused")
 public final class TAHooksCommon {
 
     private TAHooksCommon() {}

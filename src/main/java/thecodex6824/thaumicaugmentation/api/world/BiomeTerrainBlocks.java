@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,17 +20,17 @@
 
 package thecodex6824.thaumicaugmentation.api.world;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.function.Function;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
 
-/**
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.function.Function;
+
+/*
  * Stores blocks that are associated with the surfaces of biomes. Used by dimensional
  * fractures to generate an area around them corresponding to the area they lead to.
  * @author TheCodex6824
@@ -60,8 +60,8 @@ public final class BiomeTerrainBlocks {
     }
 
     private static final TerrainBlocks NULL_ENTRY = new TerrainBlocks(Blocks.GRASS.getDefaultState(), Blocks.DIRT.getDefaultState());
-    private static HashMap<String, TerrainBlocks> terrain = new HashMap<>();
-    private static HashMap<Block, Function<IBlockState, IBlockState>> blockReplacements = new HashMap<>();
+    private static final HashMap<String, TerrainBlocks> terrain = new HashMap<>();
+    private static final HashMap<Block, Function<IBlockState, IBlockState>> blockReplacements = new HashMap<>();
 
     public static void init() {
         blockReplacements.put(Blocks.SAND, (state) -> {

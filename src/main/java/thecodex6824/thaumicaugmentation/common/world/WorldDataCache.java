@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,12 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.common.world;
 
-import java.util.HashMap;
-import java.util.Set;
-
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProvider;
+
+import java.util.HashMap;
+import java.util.Set;
 
 public final class WorldDataCache {
 
@@ -36,10 +36,10 @@ public final class WorldDataCache {
     
     public static class WorldData {
         
-        private int id;
-        private long seed;
-        private BiomeProvider biome;
-        private double factor;
+        private final int id;
+        private final long seed;
+        private final BiomeProvider biome;
+        private final double factor;
         
         public WorldData(WorldProvider provider) {
             this(provider.getDimension(), provider.getSeed(), provider.getBiomeProvider(), provider.getMovementFactor());

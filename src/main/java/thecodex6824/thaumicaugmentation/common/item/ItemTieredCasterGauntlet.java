@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -36,13 +36,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -56,13 +50,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.aura.AuraHelper;
-import thaumcraft.api.casters.CasterTriggerRegistry;
-import thaumcraft.api.casters.FocusEngine;
-import thaumcraft.api.casters.FocusPackage;
-import thaumcraft.api.casters.ICaster;
-import thaumcraft.api.casters.IFocusBlockPicker;
-import thaumcraft.api.casters.IFocusElement;
-import thaumcraft.api.casters.IInteractWithCaster;
+import thaumcraft.api.casters.*;
 import thaumcraft.api.items.IArchitect;
 import thaumcraft.api.items.IWarpingGear;
 import thaumcraft.common.items.casters.CasterManager;
@@ -121,7 +109,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     }
 
     public ItemTieredCasterGauntlet() {
-        super(new String[] {"thaumium", "void"});
+        super("thaumium", "void");
         setMaxStackSize(1);
         addPropertyOverride(new ResourceLocation(ThaumicAugmentationAPI.MODID, "focus"), new IItemPropertyGetter() {
             @Override

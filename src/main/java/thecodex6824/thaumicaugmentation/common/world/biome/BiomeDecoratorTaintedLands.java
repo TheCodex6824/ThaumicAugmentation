@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.world.biome;
 
-import java.util.Random;
-
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -30,6 +28,8 @@ import thaumcraft.common.entities.monster.boss.EntityTaintacleGiant;
 import thaumcraft.common.entities.monster.tainted.EntityTaintSeed;
 import thaumcraft.common.entities.monster.tainted.EntityTaintSeedPrime;
 import thaumcraft.common.lib.utils.EntityUtils;
+
+import java.util.Random;
 
 public class BiomeDecoratorTaintedLands extends BiomeDecoratorEmptinessBase {
     

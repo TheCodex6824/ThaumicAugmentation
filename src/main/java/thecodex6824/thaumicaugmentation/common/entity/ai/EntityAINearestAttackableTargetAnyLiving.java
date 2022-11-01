@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,17 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.common.entity.ai;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.Predicate;
-
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 public class EntityAINearestAttackableTargetAnyLiving<T extends EntityLivingBase> extends EntityAITargetAnyLiving {
     
@@ -53,7 +51,7 @@ public class EntityAINearestAttackableTargetAnyLiving<T extends EntityLivingBase
             if (input == null || (targetSelector != null && !targetSelector.apply(input)))
                 return false;
             else
-                return !EntitySelectors.NOT_SPECTATING.apply(input) ? false : isSuitableTarget(input, false);
+                return EntitySelectors.NOT_SPECTATING.apply(input) && isSuitableTarget(input, false);
         };
     }
 

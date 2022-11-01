@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,7 +25,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 
 public interface IStoredBlockstate {
 
-    public static final IUnlistedProperty<IBlockState> BLOCKSTATE = new IUnlistedProperty<IBlockState>() {
+    IUnlistedProperty<IBlockState> BLOCKSTATE = new IUnlistedProperty<IBlockState>() {
         
         @Override
         public String getName() {

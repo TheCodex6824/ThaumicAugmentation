@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,16 +20,16 @@
 
 package thecodex6824.thaumicaugmentation.client.model;
 
-import java.util.ArrayList;
-
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 
+import java.util.ArrayList;
+
 public class TAModelLoader implements ICustomModelLoader {
 
-    private ArrayList<ICustomModelLoader> loaders = new ArrayList<>();
+    private final ArrayList<ICustomModelLoader> loaders = new ArrayList<>();
     
     public void registerLoader(ICustomModelLoader loader) {
         loaders.add(loader);
@@ -47,7 +47,7 @@ public class TAModelLoader implements ICustomModelLoader {
                 return loader.loadModel(modelLocation);
         }
         
-        throw new Exception("Model had the ta_special namespace, but no loaders were able to load it: " + modelLocation.toString());
+        throw new Exception("Model had the ta_special namespace, but no loaders were able to load it: " + modelLocation);
     }
     
     @Override

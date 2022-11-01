@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.recipe;
 
-import java.util.List;
-
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -37,11 +35,13 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 
+import java.util.List;
+
 public class MorphicArmorBindingRecipe extends InfusionRecipe {
 
     public MorphicArmorBindingRecipe() {
         super("MORPHIC_ARMOR", ItemStack.EMPTY, 8, new AspectList().add(Aspect.VOID, 100),
-                ItemStack.EMPTY, new Object[] {});
+                ItemStack.EMPTY);
     }
     
     @Override

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,32 +25,32 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
 public interface IImpulseCannonAugment extends IAugment {
     
-    public enum LensModelType {
+    enum LensModelType {
         
         BEAM,
         RAILGUN,
-        BURST;
-        
+        BURST
+
     }
     
-    public LensModelType getLensModel();
+    LensModelType getLensModel();
     
-    public boolean isTickable(EntityLivingBase user);
+    boolean isTickable(EntityLivingBase user);
     
-    public default void onCannonUsage(EntityLivingBase user) {}
+    default void onCannonUsage(EntityLivingBase user) {}
     
-    public default void onCannonTick(EntityLivingBase user, int tickCount) {}
+    default void onCannonTick(EntityLivingBase user, int tickCount) {}
     
-    public default void onStopCannonTick(EntityLivingBase user, int tickCount) {}
+    default void onStopCannonTick(EntityLivingBase user, int tickCount) {}
     
-    public default long getImpetusCostPerUsage(EntityLivingBase user) {
+    default long getImpetusCostPerUsage(EntityLivingBase user) {
         return 0;
     }
     
-    public default double getImpetusCostPerTick(EntityLivingBase user, int tickCount) {
+    default double getImpetusCostPerTick(EntityLivingBase user, int tickCount) {
         return 0.0;
     }
     
-    public int getMaxUsageDuration();
+    int getMaxUsageDuration();
     
 }

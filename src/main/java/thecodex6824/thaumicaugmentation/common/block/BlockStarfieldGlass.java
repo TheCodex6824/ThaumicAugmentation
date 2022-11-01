@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -46,6 +43,8 @@ import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
 import thecodex6824.thaumicaugmentation.common.block.trait.IRenderableSides;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
+
+import javax.annotation.Nullable;
 
 public class BlockStarfieldGlass extends BlockFortifiedGlass implements IStarfieldGlassType {
 

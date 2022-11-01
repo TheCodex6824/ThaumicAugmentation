@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,11 +25,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import thaumcraft.api.casters.FocusModSplit;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.IFocusElement;
-import thaumcraft.common.items.casters.foci.FocusEffectExchange;
-import thaumcraft.common.items.casters.foci.FocusMediumBolt;
-import thaumcraft.common.items.casters.foci.FocusMediumTouch;
-import thaumcraft.common.items.casters.foci.FocusModSplitTarget;
-import thaumcraft.common.items.casters.foci.FocusModSplitTrajectory;
+import thaumcraft.common.items.casters.foci.*;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectExchangeCompat;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusMediumBoltCompat;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusMediumTouchCompat;
@@ -37,7 +33,7 @@ import thecodex6824.thaumicaugmentation.common.item.foci.FocusMediumTouchCompat;
 import java.lang.reflect.Field;
 import java.util.List;
 
-/**
+/*
  * Utility methods for working with Thaumcraft foci.
  * @author TheCodex6824
  */

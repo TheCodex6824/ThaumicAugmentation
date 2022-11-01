@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -71,7 +71,6 @@ public class SubCommandWard implements ISubCommand {
             if (world != null) {
                 if (!world.isChunkGeneratedAt(x, z)) {
                     sender.sendMessage(new TextComponentTranslation("thaumicaugmentation.command.chunk_not_generated"));
-                    return;
                 }
                 else {
                     IWardStorage storage = world.getChunk(x, z).getCapability(CapabilityWardStorage.WARD_STORAGE, null);

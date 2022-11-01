@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,14 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.api.entity;
 
-import java.util.ArrayList;
-
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import thecodex6824.thaumicaugmentation.api.block.property.IPortalBlock;
+
+import java.util.ArrayList;
 
 public final class PortalStateManager {
 

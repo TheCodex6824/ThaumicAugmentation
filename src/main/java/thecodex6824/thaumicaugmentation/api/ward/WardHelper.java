@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,12 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.api.ward;
 
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,6 +38,11 @@ import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningWeakPower
 import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.api.ward.tile.IWardedTile;
 
+import javax.annotation.Nullable;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+
 public final class WardHelper {
 
     private WardHelper() {}
@@ -54,16 +53,11 @@ public final class WardHelper {
         if (entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
             if (TAConfig.opWardOverride.getValue() && FMLCommonHandler.instance().getSide() == Side.SERVER) {
-                if (FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers().
-                        getEntry(player.getGameProfile()) != null) {
-                    
-                    return true;
-                }
+                return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers().
+                        getEntry(player.getGameProfile()) != null;
             }
-            else if (TAConfig.singlePlayerWardOverride.getValue() && FMLCommonHandler.instance().getSide() == Side.CLIENT &&
-                    FMLClientHandler.instance().getClient().isSingleplayer()) {
-                return true;
-            }
+            else return TAConfig.singlePlayerWardOverride.getValue() && FMLCommonHandler.instance().getSide() == Side.CLIENT &&
+                    FMLClientHandler.instance().getClient().isSingleplayer();
         }
         
         return false;
@@ -73,8 +67,7 @@ public final class WardHelper {
         if (TAConfig.tileWardMode.getValue() != TileWardMode.ALL) {
             if (TAConfig.tileWardMode.getValue() == TileWardMode.NOTICK && tile instanceof ITickable)
                 return false;
-            else if (TAConfig.tileWardMode.getValue() == TileWardMode.NONE && tile != null)
-                return false;
+            else return TAConfig.tileWardMode.getValue() != TileWardMode.NONE || tile == null;
         }
         
         return true;

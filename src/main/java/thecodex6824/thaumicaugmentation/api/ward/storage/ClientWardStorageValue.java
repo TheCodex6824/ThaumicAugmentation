@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -22,7 +22,7 @@ package thecodex6824.thaumicaugmentation.api.ward.storage;
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 
-/**
+/*
  * Holds the possible values for a block's ward state for the client side.
  * An enum instead of UUID is used because the client should not know who exactly
  * owns a ward if it's not them - just that it is warded.
@@ -42,9 +42,9 @@ public enum ClientWardStorageValue {
         LOOKUP.put(OWNED_OTHER.getID(), OWNED_OTHER);
     }
     
-    private byte id;
+    private final byte id;
     
-    private ClientWardStorageValue(byte val) {
+    ClientWardStorageValue(byte val) {
         id = val;
     }
     

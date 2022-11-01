@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,12 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.client.fx;
 
-import java.lang.ref.WeakReference;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import thaumcraft.client.fx.particles.FXGeneric;
+
+import java.lang.ref.WeakReference;
 
 public class FXGenericP2ECustomSpeed extends FXGeneric {
 

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,12 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer.entity;
 
-import java.util.Arrays;
-
-import javax.annotation.Nullable;
-
 import com.sasmaster.glelwjgl.java.CoreGLE;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
@@ -40,6 +35,9 @@ import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
+
+import javax.annotation.Nullable;
+import java.util.Arrays;
 
 public class RenderFluxRiftOptimized extends Render<EntityFluxRift> {
     

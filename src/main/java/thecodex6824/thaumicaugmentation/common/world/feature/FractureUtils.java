@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,12 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.world.feature;
 
-import java.util.HashMap;
-import java.util.Random;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.math.DoubleMath;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -36,6 +32,9 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache.WorldData;
+
+import java.util.HashMap;
+import java.util.Random;
 
 public final class FractureUtils {
 

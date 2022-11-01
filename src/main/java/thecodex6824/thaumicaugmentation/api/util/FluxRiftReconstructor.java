@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,11 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.api.util;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class FluxRiftReconstructor {
 

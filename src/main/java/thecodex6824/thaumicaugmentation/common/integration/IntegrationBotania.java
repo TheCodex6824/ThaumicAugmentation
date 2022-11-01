@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,9 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.integration;
-
-import java.util.List;
-import java.util.Random;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
@@ -46,6 +43,9 @@ import vazkii.botania.api.item.IBaubleRender.RenderType;
 import vazkii.botania.api.item.IPetalApothecary;
 import vazkii.botania.api.item.IPhantomInkable;
 import vazkii.botania.common.item.equipment.bauble.ItemFlightTiara;
+
+import java.util.List;
+import java.util.Random;
 
 public class IntegrationBotania implements IIntegrationHolder {
 

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,9 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.capability.provider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import baubles.api.cap.BaubleItem;
 import baubles.api.cap.BaublesCapabilities;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,10 +29,13 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class CapabilityProviderHarness implements ICapabilitySerializable<NBTTagCompound> {
 
-    private AugmentableItem augmentable;
-    private BaubleItem bauble;
+    private final AugmentableItem augmentable;
+    private final BaubleItem bauble;
     
     public CapabilityProviderHarness(AugmentableItem a, BaubleItem b) {
         augmentable = a;

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,7 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -29,12 +28,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.blocks.BlocksTC;
-import thaumcraft.api.research.ResearchCategories;
-import thaumcraft.api.research.ScanBlock;
-import thaumcraft.api.research.ScanBlockState;
-import thaumcraft.api.research.ScanEntity;
-import thaumcraft.api.research.ScanItem;
-import thaumcraft.api.research.ScanningManager;
+import thaumcraft.api.research.*;
 import thaumcraft.api.research.theorycraft.TheorycraftManager;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
@@ -78,7 +72,7 @@ public final class ResearchHandler {
                 ThaumcraftApi.registerResearchLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "research/ward_foci_no_coremod.json"));
         }
         
-        ScanningManager.addScannableThing(new ScanBlock("f_LEAFSILVERWOOD", new Block[] {BlocksTC.leafSilverwood}));
+        ScanningManager.addScannableThing(new ScanBlock("f_LEAFSILVERWOOD", BlocksTC.leafSilverwood));
         ScanningManager.addScannableThing(new ScanItem("f_LEAFSILVERWOOD", new ItemStack(BlocksTC.leafSilverwood)));
         
         ScanningManager.addScannableThing(new ScanEntity("m_DIMENSIONALFRACTURE", EntityDimensionalFracture.class, false));

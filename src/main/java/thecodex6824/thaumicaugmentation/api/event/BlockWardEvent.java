@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,19 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.api.event;
 
-import java.util.UUID;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.ward.storage.ClientWardStorageValue;
-import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageClient;
-import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
+import thecodex6824.thaumicaugmentation.api.ward.storage.*;
 
-/**
+import java.util.UUID;
+
+/*
  * Event fired for all ward-focus related things. Subscribing to this will notify the callback
  * for all subclasses of this event.
  * @author TheCodex6824
@@ -51,7 +47,7 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
         return storage;
     }
     
-    /**
+    /*
      * Event fired when a block is warded for the client.
      * @author TheCodex6824
      */
@@ -87,7 +83,7 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
         
     }
     
-    /**
+    /*
      * Event fired when a block is warded for the server.
      * @author TheCodex6824
      */
@@ -123,7 +119,7 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
         
     }
     
-    /**
+    /*
      * Event fired when a block is dewarded for the client.
      * @author TheCodex6824
      */
@@ -152,7 +148,7 @@ public abstract class BlockWardEvent<T extends IWardStorage> extends BlockEvent 
         
     }
     
-    /**
+    /*
      * Event fired when a block is dewarded for the server.
      * @author TheCodex6824
      */

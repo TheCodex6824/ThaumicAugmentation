@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,15 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.api.aspect;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
 import thaumcraft.api.aspects.Aspect;
 
-/**
+import java.util.*;
+
+/*
  * Handles a registry of aspect "interactions", to use for mechanics where
  * aspects interact with each other.
  * @author TheCodex6824
@@ -81,7 +77,7 @@ public final class AspectElementInteractionManager {
         addNegativeInteraction(Aspect.WATER, Aspect.FIRE, Aspect.EARTH, Aspect.AIR);
     }
     
-    /**
+    /*
      * Adds a negative interaction, where the presence of one or more aspects has a
      * negative effect on another aspect.
      * @param aspect The aspect that will be affected
@@ -91,13 +87,13 @@ public final class AspectElementInteractionManager {
         negativeInteractions.put(aspect, new HashSet<>(Arrays.asList(negatives)));
     }
     
-    /**
+    /*
      * Returns all aspects that cause a negative effect in the passed aspect.
      * @param target The aspect to get negative interactions for
      * @return A set of all aspects that cause a negative interaction
      */
     public static Set<Aspect> getNegativeAspects(Aspect target) {
-        return negativeInteractions.getOrDefault(target, Collections.<Aspect>emptySet());
+        return negativeInteractions.getOrDefault(target, Collections.emptySet());
     }
     
 }

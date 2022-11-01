@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,12 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.api.ward.tile;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
-/**
+import javax.annotation.Nonnull;
+
+/*
  * Inventory manager for warded inventories. The API is very similar to IItemHandler,
  * but it's a separate interface so that other things that are accessing IItemHandler capabilities
  * don't access warded inventories.
@@ -34,18 +34,18 @@ import net.minecraftforge.items.IItemHandler;
 public interface IWardedInventory {
     
     @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate);
+    ItemStack extractItem(int slot, int amount, boolean simulate);
     
-    public int getSlotLimit(int slot);
+    int getSlotLimit(int slot);
     
-    public int getSlots();
-    
-    @Nonnull
-    public ItemStack getStackInSlot(int slot);
+    int getSlots();
     
     @Nonnull
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate);
+    ItemStack getStackInSlot(int slot);
     
-    public IItemHandler getItemHandler();
+    @Nonnull
+    ItemStack insertItem(int slot, ItemStack stack, boolean simulate);
+    
+    IItemHandler getItemHandler();
     
 }

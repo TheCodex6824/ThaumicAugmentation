@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,9 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus;
 
-import java.lang.ref.WeakReference;
-
 import thaumcraft.common.entities.EntityFluxRift;
+
+import java.lang.ref.WeakReference;
 
 public class FluxRiftImpetusStorage implements IImpetusStorage {
     
@@ -65,7 +65,7 @@ public class FluxRiftImpetusStorage implements IImpetusStorage {
         /*
          * f(x) = (1/2) (e^(-(x-172)^2 / 11250) * x) + 1
          */
-        return (long) Math.round((0.5 * (Math.pow(Math.E, -Math.pow(size - 172, 2) / 11250.0) * size))) + 1;
+        return Math.round((0.5 * (Math.pow(Math.E, -Math.pow(size - 172, 2) / 11250.0) * size))) + 1;
     }
     
     @Override

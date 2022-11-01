@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,6 +32,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import thaumcraft.common.entities.EntityFluxRift;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
+
+import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TileRiftMonitor extends TileEntity implements ITickable {
 

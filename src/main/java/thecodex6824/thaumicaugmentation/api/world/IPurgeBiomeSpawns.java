@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.api.world;
 
-/**
+/*
  * Interface for biomes that should have their spawn lists purged during postInit.
  * This will remove spwans added in by other mods.
  * @author TheCodex6824
  */
 public interface IPurgeBiomeSpawns {
 
-    public void purgeSpawns();
+    void purgeSpawns();
     
 }

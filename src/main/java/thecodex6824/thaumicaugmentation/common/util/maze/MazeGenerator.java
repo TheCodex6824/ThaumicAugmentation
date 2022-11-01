@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,14 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.common.util.maze;
 
+import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import net.minecraft.util.EnumFacing;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Random;
-
-import com.google.common.collect.ImmutableList;
-
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import net.minecraft.util.EnumFacing;
 
 public class MazeGenerator {
 

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -260,7 +260,7 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
             return true;
         else
-            return capability == CapabilityImpetusNode.IMPETUS_NODE ? true : super.hasCapability(capability, facing);
+            return capability == CapabilityImpetusNode.IMPETUS_NODE || super.hasCapability(capability, facing);
     }
     
     @Override

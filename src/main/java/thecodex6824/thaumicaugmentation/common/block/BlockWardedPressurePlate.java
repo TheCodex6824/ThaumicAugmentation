@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,15 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.Predicate;
-
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
@@ -61,6 +53,12 @@ import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedPressurePlate;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
+
+import javax.annotation.Nullable;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 
 public class BlockWardedPressurePlate extends BlockTABase implements IWardOpeningBlock,
     IItemBlockProvider, IUnwardableBlock, IWardParticles {

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,16 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.api.recipe;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.collect.Sets;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-
+import com.google.gson.*;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -44,6 +36,9 @@ import net.minecraftforge.common.crafting.JsonContext;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.ShapedArcaneRecipe;
+
+import java.util.Map;
+import java.util.Set;
 
 public class ShapedArcaneCraftingRecipeFactory implements IRecipeFactory {
 

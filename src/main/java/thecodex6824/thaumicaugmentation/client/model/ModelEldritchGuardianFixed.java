@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.client.model;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
@@ -30,6 +28,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import org.lwjgl.opengl.GL11;
 import thaumcraft.client.renderers.models.entity.ModelEldritchGuardian;
 import thaumcraft.common.entities.monster.boss.EntityEldritchWarden;
 
@@ -40,7 +39,7 @@ public class ModelEldritchGuardianFixed extends ModelEldritchGuardian {
         super.render(entity, f, f1, f2, f3, f4, f5);
         // the eldritch warden eye rendering messes up GL state
         if (entity instanceof EntityEldritchWarden) {
-            Render<EntityLiving> renderer = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject((EntityLiving) entity);
+            Render<EntityLiving> renderer = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entity);
             if (renderer instanceof RenderLiving<?>)
                 ((RenderLiving<EntityLiving>) renderer).setLightmap((EntityLiving) entity);
             

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,20 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Deque;
-import java.util.Set;
-
-import org.junit.Test;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
+import org.junit.Test;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusGraph;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
@@ -43,6 +34,11 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusP
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
+import java.util.Deque;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+
 public class TestImpetusGraph {
 
     @Test
@@ -50,7 +46,7 @@ public class TestImpetusGraph {
         DimensionalBlockPos first = new DimensionalBlockPos(0, 0, 0, 0);
         DimensionalBlockPos second = new DimensionalBlockPos(0, 0, 0, 0);
         assertEquals(first, second);
-        assertTrue(first.hashCode() == second.hashCode());
+        assertEquals(first.hashCode(), second.hashCode());
         
         first = new DimensionalBlockPos(0, 0, 0, 1);
         assertNotEquals(first, second);
@@ -63,7 +59,7 @@ public class TestImpetusGraph {
         
         second = DimensionalBlockPos.INVALID;
         assertEquals(first, second);
-        assertTrue(first.hashCode() == second.hashCode());
+        assertEquals(first.hashCode(), second.hashCode());
     }
     
     @Test
@@ -73,7 +69,7 @@ public class TestImpetusGraph {
         assertTrue(node.getGraph().isEmpty());
         
         node.setLocation(new DimensionalBlockPos(0, 0, 0, 0));
-        assertTrue(!node.getGraph().isEmpty());
+        assertFalse(node.getGraph().isEmpty());
     }
     
     @Test
@@ -94,7 +90,7 @@ public class TestImpetusGraph {
         node2.addInput(node1);
         
         assertTrue(old.isEmpty());
-        assertTrue(node1.getGraph().size() == 3);
+        assertEquals(3, node1.getGraph().size());
     }
     
     @Test
@@ -130,7 +126,7 @@ public class TestImpetusGraph {
         
         Deque<IImpetusNode> nodes = node1.getGraph().findPath(node1, node3);
         assertNotNull(nodes);
-        assertTrue(nodes.size() == 3);
+        assertEquals(3, nodes.size());
         assertEquals(nodes.pop(), node1);
         assertEquals(nodes.pop(), node2);
         assertEquals(nodes.pop(), node3);

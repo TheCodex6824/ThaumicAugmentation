@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -31,62 +31,62 @@ import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 
 public interface ITARenderHelper {
 
-    public void renderGlowingSphere(World world, double x, double y, double z, int color);
+    void renderGlowingSphere(World world, double x, double y, double z, int color);
     
-    public void renderBurst(World world, double x, double y, double z, float size, int color);
+    void renderBurst(World world, double x, double y, double z, float size, int color);
     
-    public void renderSpark(World world, double x, double y, double z, float size, int color, boolean colorAlpha);
+    void renderSpark(World world, double x, double y, double z, float size, int color, boolean colorAlpha);
     
-    public void renderArc(World world, double x, double y, double z, double dx, double dy, double dz, int color, double height);
+    void renderArc(World world, double x, double y, double z, double dx, double dy, double dz, int color, double height);
     
-    public void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean ignoreGoggles);
+    void renderFluxRift(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, boolean ignoreGoggles);
 
-    public void renderFluxRiftOutline(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType);
+    void renderFluxRiftOutline(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType);
     
-    public void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType);
+    void renderFluxRiftSolidLayer(FluxRiftReconstructor rift, int stability, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType);
     
-    public void renderDimensionalFracture(boolean open, long worldTime, long timeOpened, long openingDuration, float partialTicks, int tessLevel, boolean ignoreGoggles, float r, float g, float b, float a);
+    void renderDimensionalFracture(boolean open, long worldTime, long timeOpened, long openingDuration, float partialTicks, int tessLevel, boolean ignoreGoggles, float r, float g, float b, float a);
     
-    public void renderDimensionalFractureSolidLayer(boolean open, long worldTime, long timeOpened, long openingDuration, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType);
+    void renderDimensionalFractureSolidLayer(boolean open, long worldTime, long timeOpened, long openingDuration, float partialTicks, int tessLevel, float r, float g, float b, float a, boolean bindTexture, int joinType);
     
-    public void renderWispyMotes(World world, double x, double y, double z, double dx, double dy, double dz, int age, float r, float g, float b, float gravity);
+    void renderWispyMotes(World world, double x, double y, double z, double dx, double dy, double dz, int age, float r, float g, float b, float gravity);
 
-    public void renderFireMote(World world, float x, float y, float z, float vx, float vy, float vz, float r, float g, float b, float a, float scale);
+    void renderFireMote(World world, float x, float y, float z, float vx, float vy, float vz, float r, float g, float b, float a, float scale);
     
-    public void renderSmokeSpiral(World world, double x, double y, double z, float rad, int start, int minY, int color);
+    void renderSmokeSpiral(World world, double x, double y, double z, float rad, int start, int minY, int color);
 
-    public void renderTerraformerParticle(World world, double x, double y, double z, double vx, double vy, double vz, int color);
+    void renderTerraformerParticle(World world, double x, double y, double z, double vx, double vy, double vz, int color);
     
-    public void renderRiftMoverParticle(World world, double x, double y, double z, double vx, double vy, double vz);
+    void renderRiftMoverParticle(World world, double x, double y, double z, double vx, double vy, double vz);
     
-    public void renderObeliskParticles(World world, double x, double y, double z);
+    void renderObeliskParticles(World world, double x, double y, double z);
     
-    public void renderParticleTrail(World world, double x, double y, double z, double vx, double vy, double vz, float r, float g, float b);
+    void renderParticleTrail(World world, double x, double y, double z, double vx, double vy, double vz, float r, float g, float b);
     
-    public void renderStarfieldGlass(ShaderType type, TileStarfieldGlass tile, double pX, double pY, double pZ);
+    void renderStarfieldGlass(ShaderType type, TileStarfieldGlass tile, double pX, double pY, double pZ);
     
-    public void renderObelisk(ShaderType type, TileObelisk tile, double pX, double pY, double pZ);
+    void renderObelisk(ShaderType type, TileObelisk tile, double pX, double pY, double pZ);
     
-    public void renderRiftBarrier(ShaderType type, TileRiftBarrier tile, double pX, double pY, double pZ);
+    void renderRiftBarrier(ShaderType type, TileRiftBarrier tile, double pX, double pY, double pZ);
     
-    public void renderWisp(double x, double y, double z, Entity target);
+    void renderWisp(double x, double y, double z, Entity target);
     
-    public void renderVent(double x, double y, double z, double vx, double vy, double vz, int color, float scale);
+    void renderVent(double x, double y, double z, double vx, double vy, double vz, int color, float scale);
     
-    public void renderWispParticles(double x, double y, double z, double vx, double vy, double vz, int color, int delay);
+    void renderWispParticles(double x, double y, double z, double vx, double vy, double vz, int color, int delay);
     
-    public void renderFollowingParticles(World world, double x, double y, double z, Entity toFollow, float r, float g, float b);
+    void renderFollowingParticles(World world, double x, double y, double z, Entity toFollow, float r, float g, float b);
     
-    public void drawCube();
+    void drawCube();
     
-    public void drawCube(double min, double max);
+    void drawCube(double min, double max);
     
-    public Vec3d estimateImpulseCannonFiringPoint(EntityLivingBase entity, float partialTicks);
+    Vec3d estimateImpulseCannonFiringPoint(EntityLivingBase entity, float partialTicks);
     
-    public boolean shadersAvailable();
+    boolean shadersAvailable();
     
-    public boolean stencilAvailable();
+    boolean stencilAvailable();
     
-    public boolean framebuffersAvailable();
+    boolean framebuffersAvailable();
     
 }

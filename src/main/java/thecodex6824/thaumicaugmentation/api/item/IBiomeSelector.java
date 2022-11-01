@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,11 +25,11 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
 public interface IBiomeSelector {
 
-    public static final ResourceLocation EMPTY = new ResourceLocation(ThaumicAugmentationAPI.MODID, "biome_empty");
-    public static final ResourceLocation RESET = new ResourceLocation(ThaumicAugmentationAPI.MODID, "biome_reset");
+    ResourceLocation EMPTY = new ResourceLocation(ThaumicAugmentationAPI.MODID, "biome_empty");
+    ResourceLocation RESET = new ResourceLocation(ThaumicAugmentationAPI.MODID, "biome_reset");
     
-    public ResourceLocation getBiomeID();
+    ResourceLocation getBiomeID();
     
-    public void setBiomeID(ResourceLocation loc);
+    void setBiomeID(ResourceLocation loc);
     
 }

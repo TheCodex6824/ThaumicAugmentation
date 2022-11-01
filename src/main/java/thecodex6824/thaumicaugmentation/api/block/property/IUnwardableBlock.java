@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,16 +20,16 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 public interface IUnwardableBlock {
     
-    public default boolean shouldBeUnwardable(World world, BlockPos pos, IBlockState state, @Nullable Entity warder) {
+    default boolean shouldBeUnwardable(World world, BlockPos pos, IBlockState state, @Nullable Entity warder) {
         return true;
     }
     

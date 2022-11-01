@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,12 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -49,6 +44,9 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.Part
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
+
+import javax.annotation.Nullable;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TileVisRegenerator extends TileEntity implements ITickable, IAnimatedTile {
 

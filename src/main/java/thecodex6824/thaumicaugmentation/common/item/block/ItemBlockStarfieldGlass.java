@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item.block;
 
-import java.util.stream.Collectors;
-
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemMultiTexture;
@@ -34,6 +32,8 @@ import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
 import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType.GlassType;
 import thecodex6824.thaumicaugmentation.client.renderer.item.RenderItemBlockStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
+
+import java.util.stream.Collectors;
 
 public class ItemBlockStarfieldGlass extends ItemMultiTexture implements IModelProvider<Item> {
 

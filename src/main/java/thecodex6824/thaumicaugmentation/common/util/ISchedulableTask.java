@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -23,6 +23,6 @@ package thecodex6824.thaumicaugmentation.common.util;
 @FunctionalInterface
 public interface ISchedulableTask {
 
-    public void execute();
+    void execute();
     
 }

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,8 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.client.internal;
-
-import org.lwjgl.opengl.GL11;
 
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
@@ -47,6 +45,7 @@ import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.model.animation.AnimationTESR;
+import org.lwjgl.opengl.GL11;
 import thaumcraft.client.gui.GuiResearchPage.BlueprintBlockAccess;
 import thaumcraft.client.renderers.models.gear.ModelCustomArmor;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
@@ -57,6 +56,7 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.IThaumostaticHarness
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 
+@SuppressWarnings("unused")
 public final class TAHooksClient {
 
     private TAHooksClient() {}
@@ -77,7 +77,7 @@ public final class TAHooksClient {
                             }
                         }
                         
-                        return sprint;
+                        return true;
                     }
                     else
                         return false;
@@ -105,8 +105,7 @@ public final class TAHooksClient {
         IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
         if (baubles != null) {
             ItemStack stack = baubles.getStackInSlot(BaubleType.BODY.getValidSlots()[0]);
-            if (stack.getItem() instanceof IElytraCompat)
-                return false;
+            return !(stack.getItem() instanceof IElytraCompat);
         }
         
         return true;

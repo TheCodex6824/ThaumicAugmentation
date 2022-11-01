@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -30,19 +30,19 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
 public interface IElytraHarnessAugment extends IAugment {
 
-    public boolean isCosmetic();
+    boolean isCosmetic();
     
     @SideOnly(Side.CLIENT)
-    public default int getCosmeticItemTint() {
+    default int getCosmeticItemTint() {
         return -1;
     }
     
     @SideOnly(Side.CLIENT)
-    public default void render(ItemStack stack, RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing, float limbSwingAmount,
+    default void render(ItemStack stack, RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing, float limbSwingAmount,
             float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {}
     
     @SideOnly(Side.CLIENT)
-    public default void renderFlightParticles(ItemStack stack, RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing, float limbSwingAmount,
+    default void renderFlightParticles(ItemStack stack, RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing, float limbSwingAmount,
             float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {}
     
 }

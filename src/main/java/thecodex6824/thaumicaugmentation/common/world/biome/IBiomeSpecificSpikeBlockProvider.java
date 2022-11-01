@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -26,6 +26,6 @@ import net.minecraft.world.World;
 
 public interface IBiomeSpecificSpikeBlockProvider {
 
-    public IBlockState getSpikeState(World world, BlockPos pos);
+    IBlockState getSpikeState(World world, BlockPos pos);
     
 }

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.item.foci;
 
-import java.util.ArrayList;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -32,6 +30,8 @@ import thaumcraft.api.casters.Trajectory;
 import thaumcraft.common.items.casters.foci.FocusMediumBolt;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.common.internal.TAHooksCommon;
+
+import java.util.ArrayList;
 
 public class FocusMediumBoltCompat extends FocusMediumBolt {
 

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,17 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.common.integration;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
-import org.apache.maven.artifact.versioning.VersionRange;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class IntegrationHandler {
 
@@ -40,7 +37,7 @@ public class IntegrationHandler {
     public static final String EB_WIZARDRY_MOD_ID = "ebwizardry";
     public static final ComparableVersion EB_WIZARDRY_MIN_VERSION = new ComparableVersion("4.2.0");
     
-    private static HashMap<String, IIntegrationHolder> integrations = new HashMap<>();
+    private static final HashMap<String, IIntegrationHolder> integrations = new HashMap<>();
     
     public static void preInit() {
         if (Loader.isModLoaded(JEID_MOD_ID))

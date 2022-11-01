@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,17 +20,16 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus.node;
 
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
 import thecodex6824.thaumicaugmentation.api.graph.IGraph;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
+import javax.annotation.Nullable;
+import java.util.Set;
+
 public interface IImpetusGraph extends IGraph<IImpetusNode> {
     
-    public Set<IImpetusProvider> findDirectProviders(IImpetusNode node);
+    Set<IImpetusProvider> findDirectProviders(IImpetusNode node);
     
-    public @Nullable IImpetusNode findNodeByPosition(DimensionalBlockPos pos);
+    @Nullable IImpetusNode findNodeByPosition(DimensionalBlockPos pos);
     
 }

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,15 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.util.Deque;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -45,7 +37,6 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.animation.Event;
-import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
@@ -71,6 +62,12 @@ import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
 
+import javax.annotation.Nullable;
+import java.util.Deque;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
+
 public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnimatedTile {
     
     protected SimpleImpetusConsumer consumer;
@@ -89,7 +86,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
         
         ticks = ThreadLocalRandom.current().nextInt(20);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_diffuser.json"), 
-                ImmutableMap.<String, ITimeValue>of());
+                ImmutableMap.of());
     }
     
     @Override

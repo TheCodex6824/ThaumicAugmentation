@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,12 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.event;
-
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -55,6 +49,12 @@ import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
+
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WardEventHandlerNoCoremodFallback extends WardEventHandler {
 

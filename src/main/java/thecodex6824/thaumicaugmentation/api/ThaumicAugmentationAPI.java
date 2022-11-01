@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,7 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api;
 
-/**
+/*
  * Holds the mod ID and API version. API utility methods may be
  * added here in the future.
  * @author TheCodex6824

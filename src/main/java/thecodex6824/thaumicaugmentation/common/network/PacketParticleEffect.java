@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,17 +20,17 @@
 
 package thecodex6824.thaumicaugmentation.common.network;
 
-import javax.annotation.Nullable;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import javax.annotation.Nullable;
 
 public class PacketParticleEffect implements IMessage {
 
     // if something ever needs > 256 doubles (!), this can be increased
     public static int maxPacketData = 256;
     
-    public static enum ParticleEffect {
+    public enum ParticleEffect {
         VIS_REGENERATOR(0),
         VOID_STREAKS(1),
         WARD(2),
@@ -53,9 +53,9 @@ public class PacketParticleEffect implements IMessage {
         ENDER_EYE_BREAK(19),
         VIS_OPERATION(20);
         
-        private int id;
+        private final int id;
         
-        private ParticleEffect(int i) {
+        ParticleEffect(int i) {
             id = i;
         }
         

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,9 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.tile;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -47,6 +44,9 @@ import thecodex6824.thaumicaugmentation.api.tile.RiftJar;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileRiftJar extends TileEntity implements ITickable {
 
@@ -164,7 +164,7 @@ public class TileRiftJar extends TileEntity implements ITickable {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
             return rift.hasRift();
         else
-            return capability == CapabilityRiftJar.RIFT_JAR ? true : super.hasCapability(capability, facing);
+            return capability == CapabilityRiftJar.RIFT_JAR || super.hasCapability(capability, facing);
     }
     
     @Override

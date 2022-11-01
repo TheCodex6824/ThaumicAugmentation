@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.world.structure;
 
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.server.MinecraftServer;
@@ -49,6 +44,10 @@ import thecodex6824.thaumicaugmentation.common.util.maze.MazeCell;
 import thecodex6824.thaumicaugmentation.common.util.maze.MazeGenerator;
 import thecodex6824.thaumicaugmentation.common.world.ITAChunkGenerator;
 import thecodex6824.thaumicaugmentation.common.world.structure.EldritchSpirePillarComponent.PillarType;
+
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 public class EldritchSpireComponentPlacer {
 

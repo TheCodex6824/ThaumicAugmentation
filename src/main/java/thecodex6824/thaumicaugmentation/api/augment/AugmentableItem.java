@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,15 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.INBTSerializable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.Constants.NBT;
-
-/**
+/*
 * Default implementation of the Augmentable Item capability.
 * @author TheCodex6824
 * 
@@ -166,7 +166,7 @@ public class AugmentableItem implements IAugmentableItem, INBTSerializable<NBTTa
     
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        NBTTagCompound data = (NBTTagCompound) nbt;
+        NBTTagCompound data = nbt;
         int slots = data.getInteger("slots");
         if (slots < 256) {
             augments = new ItemStack[slots];

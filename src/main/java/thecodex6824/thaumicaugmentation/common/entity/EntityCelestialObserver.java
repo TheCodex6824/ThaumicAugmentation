@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,25 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
-
 import net.minecraft.block.BlockRailPowered;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.IEntityOwnable;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -50,11 +36,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -81,6 +63,14 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.common.entity.ai.EntityLookHelperUnlimitedPitch;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public class EntityCelestialObserver extends EntityCreature implements IEntityOwnable {
 
@@ -162,8 +152,7 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
         TileEntity test = world.getTileEntity(getPosition().offset(side));
         if (test != null) {
             IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
-            if (other != null && ItemHandlerHelper.insertItem(other, toInsert, false).isEmpty())
-                return true;
+            return other != null && ItemHandlerHelper.insertItem(other, toInsert, false).isEmpty();
         }
         
         return false;
@@ -222,11 +211,8 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
             return true;
         else {
             IBlockState rail = world.getBlockState(getPosition().down());
-            if (rail.getBlock() == BlocksTC.activatorRail && rail.getValue(BlockRailPowered.POWERED).booleanValue())
-                return true;
+            return rail.getBlock() == BlocksTC.activatorRail && rail.getValue(BlockRailPowered.POWERED).booleanValue();
         }
-        
-        return false;
     }
     
     @Override

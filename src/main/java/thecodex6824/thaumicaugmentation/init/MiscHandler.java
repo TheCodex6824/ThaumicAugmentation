@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,9 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.init;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 import baubles.api.BaublesApi;
 import net.minecraft.entity.EntityLivingBase;
@@ -56,6 +53,9 @@ import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectVoidShield;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWard;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWater;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public final class MiscHandler {
 
     private MiscHandler() {}
@@ -75,9 +75,9 @@ public final class MiscHandler {
         
         AugmentAPI.addAugmentableItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
             if (entity instanceof EntityLivingBase)
-                return ((EntityLivingBase) entity).getEquipmentAndArmor();
+                return entity.getEquipmentAndArmor();
             
-            return Collections.<ItemStack>emptyList();
+            return Collections.emptyList();
         });
         AugmentAPI.addAugmentableItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "baubles"), (entity) -> {
             if (entity instanceof EntityPlayer) {
@@ -89,7 +89,7 @@ public final class MiscHandler {
                 return stacks;
             }
             
-            return Collections.<ItemStack>emptyList();
+            return Collections.emptyList();
         });
         
         AutocasterFocusRegistry.registerMaxDistance("thaumcraft.BOLT", 16.0);
@@ -120,7 +120,7 @@ public final class MiscHandler {
         AspectElementInteractionManager.init();
     }
     
-    protected static void registerWispAttacks() {
+    private static void registerWispAttacks() {
         PrimalWispAttackRegistry.registerAttack(Aspect.AIR, (wisp, target, aspect, total) -> {
             float damage = (float) wisp.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
             target.attackEntityFrom(DamageSource.causeMobDamage(wisp).setMagicDamage(), damage);

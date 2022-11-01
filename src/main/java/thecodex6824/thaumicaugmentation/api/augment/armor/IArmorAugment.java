@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -29,7 +29,7 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
 public interface IArmorAugment extends IAugment {
 
-    /**
+    /*
      * Called when the augmentable armor item has ISpecialArmor#getProperties called.
      * Note that this requires the armor item to fire this hook.
      * @param wearer The entity wearing the armor
@@ -38,11 +38,11 @@ public interface IArmorAugment extends IAugment {
      * @param input The default ArmorProperties the armor is using
      * @return The ArmorProperties to use
      */
-    public default ArmorProperties onArmorCalc(Entity wearer, ItemStack worn, DamageSource source, ArmorProperties input) {
+    default ArmorProperties onArmorCalc(Entity wearer, ItemStack worn, DamageSource source, ArmorProperties input) {
         return input;
     }
     
-    /**
+    /*
      * Called when the augmentable armor item has ISpecialArmor#getArmorDisplay called.
      * Note that this requires the armor item to fire this hook, and this value is added
      * to whatever vanilla would normally show for the armor.
@@ -51,12 +51,12 @@ public interface IArmorAugment extends IAugment {
      * @param input The default display value the armor is using
      * @return The armor value to use
      */
-    public default int onArmorDisplay(Entity wearer, ItemStack worn, int input) {
+    default int onArmorDisplay(Entity wearer, ItemStack worn, int input) {
         return input;
     }
     
     @Override
-    public default boolean canBeAppliedToItem(ItemStack augmentable) {
+    default boolean canBeAppliedToItem(ItemStack augmentable) {
         return augmentable.getItem() instanceof ItemArmor;
     }
     

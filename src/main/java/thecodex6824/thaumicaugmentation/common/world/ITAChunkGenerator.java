@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,6 +25,6 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 public interface ITAChunkGenerator extends IChunkGenerator {
 
-    public void populatePrimerWithHeightmap(int chunkX, int chunkZ, ChunkPrimer primer);
+    void populatePrimerWithHeightmap(int chunkX, int chunkZ, ChunkPrimer primer);
     
 }

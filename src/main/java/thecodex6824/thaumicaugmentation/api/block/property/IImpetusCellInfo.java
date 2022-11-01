@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,24 +20,24 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.util.EnumFacing;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 public interface IImpetusCellInfo {
 
-    public static final PropertyInteger CELL_INFO = PropertyInteger.create("ta_cell_info", 0, 15);
+    PropertyInteger CELL_INFO = PropertyInteger.create("ta_cell_info", 0, 15);
     
-    public static boolean isCellPresent(int prop, EnumFacing side) {
+    static boolean isCellPresent(int prop, EnumFacing side) {
         if (side.getHorizontalIndex() > -1)
             return ((prop >> side.getHorizontalIndex()) & 1) == 1;
         else
             return false;
     }
     
-    public static Set<EnumFacing> getCellDirections(int prop) {
+    static Set<EnumFacing> getCellDirections(int prop) {
         EnumSet<EnumFacing> ret = EnumSet.noneOf(EnumFacing.class);
         for (int i = 0; i < EnumFacing.HORIZONTALS.length; ++i) {
             if (((prop >> i) & 1) == 1)
@@ -47,11 +47,11 @@ public interface IImpetusCellInfo {
         return ret;
     }
     
-    public static int getNumberOfCells(int prop) {
+    static int getNumberOfCells(int prop) {
         return Integer.bitCount(prop & 15);
     }
     
-    public static int setCellPresent(int prop, EnumFacing side, boolean present) {
+    static int setCellPresent(int prop, EnumFacing side, boolean present) {
         if (side.getHorizontalIndex() > -1)
             return present ? prop | (1 << side.getHorizontalIndex()) : prop & ~(1 << side.getHorizontalIndex());
         else

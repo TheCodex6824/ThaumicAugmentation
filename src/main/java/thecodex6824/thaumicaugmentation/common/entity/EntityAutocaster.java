@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,15 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
-
 import net.minecraft.block.BlockRailPowered;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -72,6 +65,11 @@ import thecodex6824.thaumicaugmentation.api.ward.entity.CapabilityWardOwnerProvi
 import thecodex6824.thaumicaugmentation.api.ward.entity.WardOwnerProviderOwnable;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
+
+import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.UUID;
 
 public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwnable {
 
@@ -158,7 +156,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
         tasks.addTask(1, new EntityAIWatchTarget());
         tasks.addTask(2, new EntityAIWatchClosest(this, EntityPlayer.class, 12.0F));
         tasks.addTask(3, new EntityAILookIdle(this));
-        targetTasks.addTask(1, new EntityAIHurtByTarget(this, false, new Class[0]));
+        targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
         targeting = new EntityAINearestValidTarget(true, 2);
         targeting.addTargetSelector(this::mobTargetSelector);
         targetTasks.addTask(2, targeting);
@@ -327,8 +325,7 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
                 return true;
             else {
                 IBlockState rail = world.getBlockState(getPosition().down());
-                if (rail.getBlock() == BlocksTC.activatorRail && rail.getValue(BlockRailPowered.POWERED).booleanValue())
-                    return true;
+                return rail.getBlock() == BlocksTC.activatorRail && rail.getValue(BlockRailPowered.POWERED).booleanValue();
             }
         }
         
@@ -406,17 +403,13 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
             return true;
         else if (getTargetMobs() && IMob.class.isAssignableFrom(cls))
             return true;
-        else if (getTargetPlayers() && EntityPlayer.class.isAssignableFrom(cls))
-            return true;
-        else
-            return false;
+        else return getTargetPlayers() && EntityPlayer.class.isAssignableFrom(cls);
     }
     
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == CapabilityWardOwnerProvider.WARD_OWNER ||
-                capability == CapabilityImpetusStorage.IMPETUS_STORAGE ? true :
-                super.hasCapability(capability, facing);
+                capability == CapabilityImpetusStorage.IMPETUS_STORAGE || super.hasCapability(capability, facing);
     }
     
     @Override

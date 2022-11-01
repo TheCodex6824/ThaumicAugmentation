@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,14 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.api.config;
 
+import com.google.common.collect.ImmutableMap;
+import io.netty.buffer.ByteBuf;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
-
-import io.netty.buffer.ByteBuf;
-
-/**
+/*
  * Config option class for Map{@literal <}String, Integer{@literal >} values.
  * @author TheCodex6824
  * @deprecated Forge config maps seem to be a hack using categories, and they have issues with removing

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,6 +24,6 @@ import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
 public interface IEldritchSpireWardHolder {
 
-    public void setStructurePos(DimensionalBlockPos pos);
+    void setStructurePos(DimensionalBlockPos pos);
     
 }

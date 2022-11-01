@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,14 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.client.sound;
 
-import java.util.function.Function;
-
 import com.google.common.math.DoubleMath;
-
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.function.Function;
 
 public class MovingSoundRecord extends MovingSound {
 

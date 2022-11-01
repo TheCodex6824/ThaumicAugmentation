@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -26,7 +26,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.IRarity;
 import net.minecraftforge.common.util.EnumHelper;
 
-/**
+/*
  * Holds materials for Thaumic Augmentation. Materials are used for things like blocks and armor.
  * @author TheCodex6824
  */

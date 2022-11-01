@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,15 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.api.entity;
 
-import java.util.UUID;
-
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 public interface ICastedEntity {
 
     @Nullable
-    public UUID getCasterID();
+    UUID getCasterID();
     
-    public void setCasterID(@Nullable UUID newCaster);
+    void setCasterID(@Nullable UUID newCaster);
     
 }

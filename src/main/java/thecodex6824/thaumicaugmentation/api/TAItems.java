@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,7 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-/**
+/*
  * Holds all of Thaumic Augmentation's items and the creative tab. The fields will be populated
  * after preInit.
  * @author TheCodex6824
@@ -94,7 +94,7 @@ public final class TAItems {
         BIOME_SELECTOR_CREATIVE_TAB.setBackgroundImageName("item_search.png");
     }
 
-    /**
+    /*
      * Returns all the items in the mod.
      * @return All the items
      */

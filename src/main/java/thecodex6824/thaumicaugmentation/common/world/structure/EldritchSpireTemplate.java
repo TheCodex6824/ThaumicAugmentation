@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,11 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.world.structure;
 
-import java.util.Map;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -43,7 +38,11 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 
-/**
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.UUID;
+
+/*
  * It's time for another Thaumic Augmentation wrapper class, yay!
  * We need to have much more control over the block placement process than what
  * is offered by the default Template class. Namely:

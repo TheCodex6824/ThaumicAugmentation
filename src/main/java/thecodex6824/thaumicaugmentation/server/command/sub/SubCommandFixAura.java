@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.server.command.sub;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BiFunction;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -42,6 +35,12 @@ import thaumcraft.common.world.aura.AuraHandler;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationAuraControl;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiFunction;
 
 public class SubCommandFixAura implements ISubCommand {
     
@@ -93,7 +92,6 @@ public class SubCommandFixAura implements ISubCommand {
             if (world != null) {
                 if (!world.isChunkGeneratedAt(x, z)) {
                     sender.sendMessage(new TextComponentTranslation("thaumicaugmentation.command.chunk_not_generated"));
-                    return;
                 }
                 else {
                     if (AuraHandler.getAuraChunk(dim, x, z) == null || force) {

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.api.entity;
 
-import java.util.IdentityHashMap;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,11 +32,14 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
 import thecodex6824.thaumicaugmentation.common.network.PacketWispZap;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
+import javax.annotation.Nullable;
+import java.util.IdentityHashMap;
+
 public final class PrimalWispAttackRegistry {
 
     private PrimalWispAttackRegistry() {}
     
-    protected static final IdentityHashMap<Aspect, QuadConsumer<EntityPrimalWisp, EntityLivingBase, Aspect, Integer>> ATTACKS = new IdentityHashMap<>();
+    private static final IdentityHashMap<Aspect, QuadConsumer<EntityPrimalWisp, EntityLivingBase, Aspect, Integer>> ATTACKS = new IdentityHashMap<>();
     
     public static void registerAttack(Aspect aspect, QuadConsumer<EntityPrimalWisp, EntityLivingBase, Aspect, Integer> attack) {
         ATTACKS.put(aspect, attack);

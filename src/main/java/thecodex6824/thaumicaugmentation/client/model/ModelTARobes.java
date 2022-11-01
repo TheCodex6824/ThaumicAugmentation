@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -530,10 +530,7 @@ public class ModelTARobes extends ModelBiped {
                     int maskType = head.hasTagCompound() ? head.getTagCompound().getInteger("maskType") : 0;
                     if (maskType >= 0 && maskType < MaskType.values().length) {
                         for (int i = 0; i < MaskType.values().length; ++i) {
-                            if (i != maskType)
-                                masks[i].isHidden = true;
-                            else
-                                masks[i].isHidden = false;
+                            masks[i].isHidden = i != maskType;
                         }
                         
                         if (maskType != 0) {
@@ -551,7 +548,7 @@ public class ModelTARobes extends ModelBiped {
             if (bipedHead.showModel) {
                 ItemStack head = living.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
                 if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD) {
-                    boolean alt = head.hasTagCompound() ? head.getTagCompound().getInteger("style") > 0 : false;
+                    boolean alt = head.hasTagCompound() && head.getTagCompound().getInteger("style") > 0;
                     hood1Normal.isHidden = alt;
                     hood1Alt.isHidden = !alt;
                 }

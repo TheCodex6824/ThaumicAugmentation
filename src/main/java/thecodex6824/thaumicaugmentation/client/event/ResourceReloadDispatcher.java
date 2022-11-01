@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,14 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.client.event;
 
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraftforge.client.resource.IResourceType;
+import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.function.Predicate;
-
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraftforge.client.resource.IResourceType;
-import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
 
 public class ResourceReloadDispatcher implements IClientResourceReloadDispatcher, ISelectiveResourceReloadListener {
 

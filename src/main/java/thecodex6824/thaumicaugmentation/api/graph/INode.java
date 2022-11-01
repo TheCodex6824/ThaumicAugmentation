@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,36 +24,36 @@ import java.util.Set;
 
 public interface INode<Graph extends IGraph<Self>, Self> {
 
-    public Graph getGraph();
+    Graph getGraph();
     
-    public void setGraph(Graph newGraph);
+    void setGraph(Graph newGraph);
     
-    public int getNumInputs();
+    int getNumInputs();
     
-    public int getNumOutputs();
+    int getNumOutputs();
     
-    public int getMaxInputs();
+    int getMaxInputs();
     
-    public int getMaxOutputs();
+    int getMaxOutputs();
     
-    public default void onConnected(Self other) {}
+    default void onConnected(Self other) {}
     
-    public default void onDisconnected(Self other) {}
+    default void onDisconnected(Self other) {}
     
-    public Set<Self> getInputs();
+    Set<Self> getInputs();
     
-    public Set<Self> getOutputs();
+    Set<Self> getOutputs();
     
-    public boolean hasInput(Self in);
+    boolean hasInput(Self in);
     
-    public boolean hasOutput(Self out);
+    boolean hasOutput(Self out);
     
-    public boolean addInput(Self input);
+    boolean addInput(Self input);
     
-    public boolean addOutput(Self output);
+    boolean addOutput(Self output);
     
-    public boolean removeInput(Self input);
+    boolean removeInput(Self input);
     
-    public boolean removeOutput(Self output);
+    boolean removeOutput(Self output);
     
 }

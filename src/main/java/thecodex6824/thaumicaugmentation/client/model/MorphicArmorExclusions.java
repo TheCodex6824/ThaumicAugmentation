@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,17 +20,16 @@
 
 package thecodex6824.thaumicaugmentation.client.model;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.annotation.Nullable;
-
 public final class MorphicArmorExclusions {
 
-    protected static final List<ModelPattern> EXCLUDED = new ArrayList<>();
+    private static final List<ModelPattern> EXCLUDED = new ArrayList<>();
     
     private MorphicArmorExclusions() {}
     

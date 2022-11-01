@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -107,10 +107,7 @@ public class SealAttack implements ISeal, ISealGui {
         else if (props[2].getValue() && FMLCommonHandler.instance().getMinecraftServerInstance().isPVPEnabled() && 
                 entity instanceof EntityPlayer)
             return true;
-        else if (props[3].getValue() && !(entity instanceof IMob) && !(entity instanceof IAnimals) && !(entity instanceof EntityPlayer))
-            return true;
-        else
-            return false;
+        else return props[3].getValue() && !(entity instanceof IMob) && !(entity instanceof IAnimals) && !(entity instanceof EntityPlayer);
     }
     
     @Override
@@ -141,7 +138,7 @@ public class SealAttack implements ISeal, ISealGui {
         int xp = 1;
         if (task.getEntity() instanceof EntityLivingBase) {
             try {
-                xp = (int) GET_XP.invoke((EntityLivingBase) task.getEntity(), makeFakePlayer(golem));
+                xp = (int) GET_XP.invoke(task.getEntity(), makeFakePlayer(golem));
             }
             catch (Exception ex) {}
         }

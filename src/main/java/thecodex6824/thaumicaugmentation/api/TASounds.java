@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -23,7 +23,7 @@ package thecodex6824.thaumicaugmentation.api;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 
-/**
+/*
  * Holds all of the sounds for Thaumic Augmentation.
  * @author TheCodex6824
  */
@@ -54,7 +54,7 @@ public final class TASounds {
     public static final SoundEvent IMPULSE_CANNON_RAILGUN = create("impulse_cannon_railgun");
     public static final SoundEvent PRIMAL_CUTTER_VORTEX = create("cutter_loop");
     
-    /**
+    /*
      * Returns all of the sounds in the mod.
      * @return All the sounds
      */

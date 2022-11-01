@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import javax.annotation.Nullable;
-
 import com.google.common.math.DoubleMath;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,6 +33,8 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
+
+import javax.annotation.Nullable;
 
 public class ItemThaumostaticHarnessAugment extends ItemTABase {
 

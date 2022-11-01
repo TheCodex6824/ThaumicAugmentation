@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -23,12 +23,12 @@ package thecodex6824.thaumicaugmentation.api.block.property.door;
 import net.minecraft.block.BlockDoor.EnumHingePosition;
 import net.minecraft.block.properties.PropertyEnum;
 
-/**
+/*
  * Property interface marking the side the Arcane Door's hinge is on.
  * @author TheCodex6824
  */
 public interface IArcaneDoorHinge {
 
-    public static final PropertyEnum<EnumHingePosition> HINGE_SIDE = PropertyEnum.<EnumHingePosition>create("ta_hinge_side", EnumHingePosition.class);
+    PropertyEnum<EnumHingePosition> HINGE_SIDE = PropertyEnum.create("ta_hinge_side", EnumHingePosition.class);
 
 }

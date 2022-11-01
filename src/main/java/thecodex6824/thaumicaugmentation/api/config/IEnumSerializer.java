@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,8 +24,8 @@ import io.netty.buffer.ByteBuf;
 
 public interface IEnumSerializer<T extends Enum<T>> {
 
-    public void serialize(T value, ByteBuf buf);
+    void serialize(T value, ByteBuf buf);
     
-    public T deserialize(ByteBuf buf);
+    T deserialize(ByteBuf buf);
     
 }

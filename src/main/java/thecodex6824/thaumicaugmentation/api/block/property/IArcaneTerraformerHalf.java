@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,7 +25,7 @@ import net.minecraft.util.IStringSerializable;
 
 public interface IArcaneTerraformerHalf {
 
-    public enum ArcaneTerraformerHalf implements IStringSerializable {
+    enum ArcaneTerraformerHalf implements IStringSerializable {
         
         UPPER,
         LOWER;
@@ -36,7 +36,7 @@ public interface IArcaneTerraformerHalf {
         }
     }
     
-    public static final PropertyEnum<ArcaneTerraformerHalf> TERRAFORMER_HALF = PropertyEnum.<ArcaneTerraformerHalf>create(
+    PropertyEnum<ArcaneTerraformerHalf> TERRAFORMER_HALF = PropertyEnum.create(
             "ta_terraformer_half", ArcaneTerraformerHalf.class);
     
 }

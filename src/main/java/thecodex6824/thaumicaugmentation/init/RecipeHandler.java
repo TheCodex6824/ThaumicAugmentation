@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,8 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.init;
-
-import java.lang.reflect.Field;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -53,18 +51,12 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
-import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
-import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicItem;
-import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
+import thecodex6824.thaumicaugmentation.api.item.*;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumiumRobes.MaskType;
-import thecodex6824.thaumicaugmentation.common.recipe.ElementalAugmentCraftingRecipe;
-import thecodex6824.thaumicaugmentation.common.recipe.FluxSeedGrowthRecipe;
-import thecodex6824.thaumicaugmentation.common.recipe.InfusionRecipeComplexResearch;
-import thecodex6824.thaumicaugmentation.common.recipe.MorphicArmorBindingRecipe;
-import thecodex6824.thaumicaugmentation.common.recipe.MorphicToolBindingRecipe;
+import thecodex6824.thaumicaugmentation.common.recipe.*;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
+
+import java.lang.reflect.Field;
 
 public final class RecipeHandler {
 
@@ -89,47 +81,35 @@ public final class RecipeHandler {
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_hood"),
             new InfusionRecipeComplexResearch("THAUMIUM_ROBES", new ItemStack(TAItems.THAUMIUM_ROBES_HOOD), 3,
                     new AspectList().add(Aspect.METAL, 15).add(Aspect.ENERGY, 30).add(Aspect.PROTECT, 20).add(Aspect.SENSES, 35).add(Aspect.AURA, 20),
-                    ItemsTC.goggles, new Object[] {
-                            ItemsTC.fabric, ItemsTC.fabric, ItemsTC.salisMundus, "plateThaumium", "leather"
-                    }
-        ));
+                    ItemsTC.goggles,
+                    ItemsTC.fabric, ItemsTC.fabric, ItemsTC.salisMundus, "plateThaumium", "leather"));
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_chestplate"),
             new InfusionRecipeComplexResearch("THAUMIUM_ROBES", new ItemStack(TAItems.THAUMIUM_ROBES_CHESTPLATE), 3,
                     new AspectList().add(Aspect.METAL, 30).add(Aspect.ENERGY, 40).add(Aspect.PROTECT, 35).add(Aspect.AURA, 10),
-                    ItemsTC.clothChest, new Object[] {
-                            ItemsTC.fabric, ItemsTC.fabric, ItemsTC.fabric, ItemsTC.salisMundus, "plateThaumium", "plateThaumium"
-                    }
-        ));
+                    ItemsTC.clothChest,
+                    ItemsTC.fabric, ItemsTC.fabric, ItemsTC.fabric, ItemsTC.salisMundus, "plateThaumium", "plateThaumium"));
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_leggings"),
             new InfusionRecipeComplexResearch("THAUMIUM_ROBES", new ItemStack(TAItems.THAUMIUM_ROBES_LEGGINGS), 3,
                     new AspectList().add(Aspect.METAL, 25).add(Aspect.ENERGY, 20).add(Aspect.PROTECT, 25).add(Aspect.AURA, 5),
-                    ItemsTC.clothLegs, new Object[] {
-                            ItemsTC.fabric, new ItemStack(ItemsTC.baubles, 1, 2), ItemsTC.salisMundus, "plateThaumium", "plateThaumium"
-                    }
-        ));
+                    ItemsTC.clothLegs,
+                    ItemsTC.fabric, new ItemStack(ItemsTC.baubles, 1, 2), ItemsTC.salisMundus, "plateThaumium", "plateThaumium"));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "gauntlet_void"), 
             new InfusionRecipeComplexResearch("GAUNTLET_VOID", new ItemStack(TAItems.GAUNTLET, 1, 1), 6, 
                     new AspectList().add(Aspect.ENERGY, 50).add(Aspect.ELDRITCH, 75).add(Aspect.VOID, 75), 
-                    ItemsTC.charmVoidseer, new Object[] {
-                            ItemsTC.fabric, "plateVoid", "plateVoid", "plateVoid", "plateVoid", ItemsTC.salisMundus
-                    }
-        ));
+                    ItemsTC.charmVoidseer,
+                    ItemsTC.fabric, "plateVoid", "plateVoid", "plateVoid", "plateVoid", ItemsTC.salisMundus));
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "seal_copier"), 
             new InfusionRecipeComplexResearch("SEAL_COPIER", new ItemStack(TAItems.SEAL_COPIER), 1, 
                     new AspectList().add(Aspect.MIND, 25).add(Aspect.MECHANISM, 10), 
-                    ItemsTC.golemBell, new Object[] { 
-                            ItemsTC.brain, ItemsTC.brain, new ItemStack(ItemsTC.seals, 1, 0)
-                    }
-        ));
+                    ItemsTC.golemBell,
+                    ItemsTC.brain, ItemsTC.brain, new ItemStack(ItemsTC.seals, 1, 0)));
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "boots_void"),
             new InfusionRecipeComplexResearch("BOOTS_VOID", new ItemStack(TAItems.VOID_BOOTS), 6,
                     new AspectList().add(Aspect.VOID, 50).add(Aspect.ELDRITCH, 50).add(Aspect.MOTION, 150).add(Aspect.FLIGHT, 150), 
-                    ItemsTC.travellerBoots, new Object[] {
-                            ItemsTC.fabric, ItemsTC.fabric, "plateVoid", "plateVoid", "feather",
-                            Items.FISH, ItemsTC.primordialPearl, "quicksilver"
-                    }
-        ));
+                    ItemsTC.travellerBoots,
+                    ItemsTC.fabric, ItemsTC.fabric, "plateVoid", "plateVoid", "feather",
+                    Items.FISH, ItemsTC.primordialPearl, "quicksilver"));
 
         for (int i = 1; i < 4; ++i) {
             ItemStack in = new ItemStack(TAItems.RIFT_SEED, 1, 1);
@@ -153,11 +133,9 @@ public final class RecipeHandler {
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_energy_cell"),
                 new InfusionRecipeComplexResearch("RIFT_POWER@2", new ItemStack(TAItems.MATERIAL, 1, 3), 8, new AspectList().add(Aspect.ELDRITCH, 25).add(Aspect.VOID, 50).add(Aspect.ENERGY, 100),
-                ItemsTC.voidSeed, new Object[] {
+                ItemsTC.voidSeed,
                         "plateVoid", ItemsTC.primordialPearl, "plateVoid", ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH),
-                        "plateVoid", "dustRedstone", "plateVoid", "gemAmber"
-                }
-        ));
+                        "plateVoid", "dustRedstone", "plateVoid", "gemAmber"));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_tool_binding"),
                 new MorphicToolBindingRecipe());
@@ -168,10 +146,8 @@ public final class RecipeHandler {
         ((IMorphicTool) tool).setFunctionalStack(new ItemStack(Items.DIAMOND_SWORD));
         ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_tool_binding_fake"),
                 new InfusionRecipeComplexResearch("MORPHIC_TOOL", morphicSample, 5, new AspectList().add(Aspect.VOID, 15),
-                Items.DIAMOND_SWORD, new Object[] {
-                        ItemsTC.primordialPearl, Items.GOLDEN_HOE, ItemsTC.quicksilver
-                }
-        ));
+                Items.DIAMOND_SWORD,
+                        ItemsTC.primordialPearl, Items.GOLDEN_HOE, ItemsTC.quicksilver));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_armor_binding"),
                 new MorphicArmorBindingRecipe());
@@ -180,10 +156,8 @@ public final class RecipeHandler {
         MorphicArmorHelper.setMorphicArmor(morphicSample, new ItemStack(Items.GOLDEN_CHESTPLATE));
         ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "morphic_armor_binding_fake"),
                 new InfusionRecipeComplexResearch("MORPHIC_ARMOR", morphicSample, 8, new AspectList().add(Aspect.VOID, 100),
-                Items.DIAMOND_CHESTPLATE, new Object[] {
-                        ItemsTC.primordialPearl, Items.GOLDEN_CHESTPLATE, ItemsTC.quicksilver
-                }
-        ));
+                Items.DIAMOND_CHESTPLATE,
+                        ItemsTC.primordialPearl, Items.GOLDEN_CHESTPLATE, ItemsTC.quicksilver));
         
         ItemStack cutter = new ItemStack(TAItems.PRIMAL_CUTTER);
         EnumInfusionEnchantment.addInfusionEnchantment(cutter, EnumInfusionEnchantment.ARCING, 2);
@@ -191,112 +165,82 @@ public final class RecipeHandler {
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "primal_cutter"),
                 new InfusionRecipeComplexResearch("PRIMAL_CUTTER", cutter, 7, new AspectList().add(Aspect.EARTH, 75).add(
                 Aspect.TOOL, 50).add(Aspect.MAGIC, 50).add(Aspect.VOID, 50).add(Aspect.AVERSION, 75).add(
-                Aspect.ELDRITCH, 50).add(Aspect.DESIRE, 50), ItemsTC.primordialPearl, new Object[] {
-                        ItemsTC.voidAxe, ItemsTC.voidSword, ItemsTC.elementalAxe, ItemsTC.elementalSword
-                }
-        ));
+                Aspect.ELDRITCH, 50).add(Aspect.DESIRE, 50), ItemsTC.primordialPearl,
+                        ItemsTC.voidAxe, ItemsTC.voidSword, ItemsTC.elementalAxe, ItemsTC.elementalSword));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "autocaster"), new InfusionRecipeComplexResearch(
                 "AUTOCASTER", new ItemStack(TAItems.AUTOCASTER_PLACER, 1, 0), 4, new AspectList().add(Aspect.AURA, 25).add(Aspect.AVERSION, 25).add(Aspect.MIND, 30).add(
-                Aspect.MECHANISM, 50).add(Aspect.SENSES, 25), new ItemStack(ItemsTC.mind, 1, 1), new Object[] {
-                        ItemsTC.visResonator, ItemsTC.morphicResonator, ItemsTC.mechanismSimple, BlocksTC.plankGreatwood, BlocksTC.plankGreatwood,
-                        "plateBrass", ItemsTC.casterBasic
-                }
-        ));
+                Aspect.MECHANISM, 50).add(Aspect.SENSES, 25), new ItemStack(ItemsTC.mind, 1, 1),
+                ItemsTC.visResonator, ItemsTC.morphicResonator, ItemsTC.mechanismSimple, BlocksTC.plankGreatwood, BlocksTC.plankGreatwood,
+                "plateBrass", ItemsTC.casterBasic));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_mirror"), new InfusionRecipeComplexResearch(
-                "IMPETUS_MIRROR", new ItemStack(TAItems.IMPETUS_MIRROR), 4, new AspectList().add(Aspect.MOTION, 25).add(Aspect.EXCHANGE, 25).add(Aspect.ENERGY, 25), ItemsTC.mirroredGlass, new Object[] {
-                        Items.ENDER_PEARL, BlocksTC.stoneEldritchTile, new ItemStack(TAItems.MATERIAL, 1, 5), "plateVoid"
-                }
-        ));
+                "IMPETUS_MIRROR", new ItemStack(TAItems.IMPETUS_MIRROR), 4, new AspectList().add(Aspect.MOTION, 25).add(Aspect.EXCHANGE, 25).add(Aspect.ENERGY, 25), ItemsTC.mirroredGlass,
+                Items.ENDER_PEARL, BlocksTC.stoneEldritchTile, new ItemStack(TAItems.MATERIAL, 1, 5), "plateVoid"));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_mover_input"), new InfusionRecipeComplexResearch(
                 "RIFT_MOVING", new ItemStack(TABlocks.RIFT_MOVER_INPUT), 6, new AspectList().add(Aspect.FLUX, 25).add(Aspect.ELDRITCH, 20).add(Aspect.TRAP, 50).add(
-                        Aspect.EXCHANGE, 10).add(Aspect.MECHANISM, 30).add(Aspect.VOID, 30), "blockAmber", new Object[] {
-                        "plateIron", BlocksTC.stoneArcane, "plateVoid", ItemsTC.mechanismComplex, "plateBrass", BlocksTC.stoneArcane, "plateVoid", ItemsTC.voidSeed
-                }
-        ));
+                        Aspect.EXCHANGE, 10).add(Aspect.MECHANISM, 30).add(Aspect.VOID, 30), "blockAmber",
+                "plateIron", BlocksTC.stoneArcane, "plateVoid", ItemsTC.mechanismComplex, "plateBrass", BlocksTC.stoneArcane, "plateVoid", ItemsTC.voidSeed));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_mover_output"), new InfusionRecipeComplexResearch(
                 "RIFT_MOVING", new ItemStack(TABlocks.RIFT_MOVER_OUTPUT), 6, new AspectList().add(Aspect.FLUX, 25).add(Aspect.ELDRITCH, 20).add(Aspect.ENTROPY, 50).add(
-                        Aspect.EXCHANGE, 10).add(Aspect.MECHANISM, 30).add(Aspect.VOID, 30), ItemsTC.alumentum, new Object[] {
-                        ItemsTC.mechanismSimple, "plateVoid", BlocksTC.stoneEldritchTile, "plateBrass", "plateVoid", ItemsTC.voidSeed
-                }
-        ));
+                        Aspect.EXCHANGE, 10).add(Aspect.MECHANISM, 30).add(Aspect.VOID, 30), ItemsTC.alumentum,
+                ItemsTC.mechanismSimple, "plateVoid", BlocksTC.stoneEldritchTile, "plateBrass", "plateVoid", ItemsTC.voidSeed));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_feeder"), new InfusionRecipeComplexResearch(
                 "RIFT_FEEDER", new ItemStack(TABlocks.RIFT_FEEDER), 5, new AspectList().add(Aspect.FLUX, 30).add(Aspect.ELDRITCH, 10).add(Aspect.MECHANISM, 50).add(Aspect.VOID, 5),
-                BlocksTC.essentiaTransportInput, new Object[] {
-                        ItemsTC.mechanismSimple, "plateBrass", BlocksTC.tube, ItemsTC.morphicResonator, BlocksTC.plankGreatwood, BlocksTC.tube
-                }
-        ));
+                BlocksTC.essentiaTransportInput,
+                ItemsTC.mechanismSimple, "plateBrass", BlocksTC.tube, ItemsTC.morphicResonator, BlocksTC.plankGreatwood, BlocksTC.tube));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumostatic_harness"), new InfusionRecipeComplexResearch(
                 "THAUMOSTATIC_HARNESS", new ItemStack(TAItems.THAUMOSTATIC_HARNESS), 6, new AspectList().add(Aspect.MECHANISM, 50).add(Aspect.MOTION, 25).add(Aspect.ENERGY, 50).add(Aspect.FLIGHT, 50),
-                new ItemStack(TAItems.MATERIAL, 1, 4), new Object[] {
-                        ThaumcraftApiHelper.makeCrystal(Aspect.AIR), ThaumcraftApiHelper.makeCrystal(Aspect.AIR), BlocksTC.levitator, BlocksTC.plankGreatwood, BlocksTC.plankGreatwood,
-                        ItemsTC.morphicResonator
-                }
-        ));
+                new ItemStack(TAItems.MATERIAL, 1, 4),
+                ThaumcraftApiHelper.makeCrystal(Aspect.AIR), ThaumcraftApiHelper.makeCrystal(Aspect.AIR), BlocksTC.levitator, BlocksTC.plankGreatwood, BlocksTC.plankGreatwood,
+                ItemsTC.morphicResonator));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumostatic_gyroscope"), new InfusionRecipeComplexResearch(
                 "THAUMOSTATIC_GYROSCOPE", new ItemStack(TAItems.THAUMOSTATIC_HARNESS_AUGMENT, 1, 0), 5, new AspectList().add(Aspect.TRAP, 35).add(Aspect.AIR, 25).add(Aspect.FLIGHT, 25),
-                new ItemStack(ItemsTC.baubles, 1, 2), new Object[] {
-                        "dustRedstone", "plateThaumium", ThaumcraftApiHelper.makeCrystal(Aspect.TRAP), "plateThaumium"
-                }
-        ));
+                new ItemStack(ItemsTC.baubles, 1, 2),
+                "dustRedstone", "plateThaumium", ThaumcraftApiHelper.makeCrystal(Aspect.TRAP), "plateThaumium"));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumostatic_girdle"), new InfusionRecipeComplexResearch(
                 "THAUMOSTATIC_GIRDLE", new ItemStack(TAItems.THAUMOSTATIC_HARNESS_AUGMENT, 1, 1), 8, new AspectList().add(Aspect.AIR, 50).add(Aspect.MOTION, 25).add(Aspect.FLIGHT, 25),
-                new ItemStack(ItemsTC.baubles, 1, 2), new Object[] {
-                        "feather", ThaumcraftApiHelper.makeCrystal(Aspect.FLIGHT), "ingotGold", "feather", ThaumcraftApiHelper.makeCrystal(Aspect.AIR), "ingotGold"
-                }
-        ));
+                new ItemStack(ItemsTC.baubles, 1, 2),
+                "feather", ThaumcraftApiHelper.makeCrystal(Aspect.FLIGHT), "ingotGold", "feather", ThaumcraftApiHelper.makeCrystal(Aspect.AIR), "ingotGold"));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "elytra_harness"), new InfusionRecipeComplexResearch(
                 "ELYTRA_HARNESS", new ItemStack(TAItems.ELYTRA_HARNESS), 9, new AspectList().add(Aspect.MOTION, 75).add(Aspect.ENERGY, 50).add(Aspect.FLIGHT, 50),
-                new ItemStack(TAItems.MATERIAL, 1, 4), new Object[] {
-                        "plateVoid", ItemsTC.visResonator, "feather", Items.ELYTRA
-                }
-        ));
+                new ItemStack(TAItems.MATERIAL, 1, 4),
+                "plateVoid", ItemsTC.visResonator, "feather", Items.ELYTRA));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "elytra_booster"), new InfusionRecipeComplexResearch(
                 "ELYTRA_BOOSTER", new ItemStack(TAItems.ELYTRA_HARNESS_AUGMENT, 1, 0), 11, new AspectList().add(Aspect.MOTION, 75).add(Aspect.ENERGY, 50).add(Aspect.FLIGHT, 45).add(Aspect.ELDRITCH, 25),
-                new ItemStack(ItemsTC.baubles, 1, 2), new Object[] {
-                        new ItemStack(TAItems.MATERIAL, 1, 3), ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH), "plateVoid", new ItemStack(TAItems.MATERIAL, 1, 5),
-                        ThaumcraftApiHelper.makeCrystal(Aspect.VOID), "plateVoid"
-                }
-        ));
+                new ItemStack(ItemsTC.baubles, 1, 2),
+                new ItemStack(TAItems.MATERIAL, 1, 3), ThaumcraftApiHelper.makeCrystal(Aspect.ELDRITCH), "plateVoid", new ItemStack(TAItems.MATERIAL, 1, 5),
+                ThaumcraftApiHelper.makeCrystal(Aspect.VOID), "plateVoid"));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impulse_cannon"), new InfusionRecipeComplexResearch(
                 "IMPULSE_CANNON", new ItemStack(TAItems.IMPULSE_CANNON, 1, 0), 12, new AspectList().add(Aspect.ELDRITCH, 75).add(Aspect.AVERSION, 75).add(Aspect.ENERGY, 75).add(Aspect.MECHANISM, 50).add(
                         Aspect.DEATH, 50).add(Aspect.VOID, 30).add(Aspect.DARKNESS, 25),
-                new ItemStack(TAItems.MATERIAL, 1, 3), new Object[] {
-                        BlocksTC.stabilizer, ItemsTC.focus3, "plateBrass", ItemsTC.morphicResonator, BlocksTC.inlay, "plateVoid", new ItemStack(TAItems.MATERIAL, 1, 5), ItemsTC.mechanismComplex,
-                        "plateThaumium", "plateVoid"
-                }
-        ));
+                new ItemStack(TAItems.MATERIAL, 1, 3),
+                BlocksTC.stabilizer, ItemsTC.focus3, "plateBrass", ItemsTC.morphicResonator, BlocksTC.inlay, "plateVoid", new ItemStack(TAItems.MATERIAL, 1, 5), ItemsTC.mechanismComplex,
+                "plateThaumium", "plateVoid"));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_hood_warp"), new InfusionRecipeComplexResearch(
                 "THAUMIUM_ROBES&&FORTRESSMASK", new Object[] {"maskType", new NBTTagInt(MaskType.WARP_REDUCTION.getID())}, 8, new AspectList().add(Aspect.MIND, 80).add(Aspect.LIFE, 80).add(Aspect.PROTECT, 20),
-                new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE), new Object[] {
-                        "plateIron", "dyeBlack", "plateIron", "leather", BlocksTC.shimmerleaf, ItemsTC.brain
-                }
-        ));
+                new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE),
+                "plateIron", "dyeBlack", "plateIron", "leather", BlocksTC.shimmerleaf, ItemsTC.brain));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_hood_wither"), new InfusionRecipeComplexResearch(
                 "THAUMIUM_ROBES&&FORTRESSMASK", new Object[] {"maskType", new NBTTagInt(MaskType.WITHER.getID())}, 8, new AspectList().add(Aspect.ENTROPY, 80).add(Aspect.DEATH, 80).add(Aspect.PROTECT, 20),
-                new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE), new Object[] {
-                        "plateIron", "dyeWhite", "plateIron", "leather", Items.POISONOUS_POTATO, new ItemStack(Items.SKULL, 1, 1)
-                }
-        ));
+                new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE),
+                "plateIron", "dyeWhite", "plateIron", "leather", Items.POISONOUS_POTATO, new ItemStack(Items.SKULL, 1, 1)));
         
         ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "thaumium_robes_hood_lifesteal"), new InfusionRecipeComplexResearch(
                 "THAUMIUM_ROBES&&FORTRESSMASK", new Object[] {"maskType", new NBTTagInt(MaskType.LIFESTEAL.getID())}, 8, new AspectList().add(Aspect.UNDEAD, 80).add(Aspect.LIFE, 80).add(Aspect.PROTECT, 20),
-                new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE), new Object[] {
-                        "plateIron", "dyeRed", "plateIron", "leather", Items.GHAST_TEAR, Items.MILK_BUCKET
-                }
-        ));
+                new ItemStack(TAItems.THAUMIUM_ROBES_HOOD, 1, OreDictionary.WILDCARD_VALUE),
+                "plateIron", "dyeRed", "plateIron", "leather", Items.GHAST_TEAR, Items.MILK_BUCKET));
     }
     
     public static void initCrucibleRecipes() {
@@ -384,10 +328,8 @@ public final class RecipeHandler {
         };
         
         IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("IMPETUS_MATRIX", blueprint));
-        ThaumcraftApi.addMultiblockRecipeToCatalog(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_matrix"), new BluePrint("IMPETUS_MATRIX", blueprint, new ItemStack[] {
-                new ItemStack(BlocksTC.infusionMatrix),
-                new ItemStack(BlocksTC.pedestalEldritch, 2)
-        }));
+        ThaumcraftApi.addMultiblockRecipeToCatalog(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_matrix"), new BluePrint("IMPETUS_MATRIX", blueprint, new ItemStack(BlocksTC.infusionMatrix),
+                new ItemStack(BlocksTC.pedestalEldritch, 2)));
         
         fixInfusionAltarMultiblocks();
     }
@@ -402,7 +344,7 @@ public final class RecipeHandler {
         }
     }
     
-    /**
+    /*
      * The multiblock recipes registered by TC require a pedestal with a meta value
      * of 1 for ancient and 2 for eldritch. However, the meta value is for the redstone inlay power
      * going through the pedestal (the arcane/ancient/eldritch pillars are their own blocks).
@@ -447,11 +389,9 @@ public final class RecipeHandler {
         
         IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("INFUSIONANCIENT", ancientBlueprint));
         // the catalog is just a map so this is ok
-        ThaumcraftApi.addMultiblockRecipeToCatalog(new ResourceLocation("thaumcraft", "infusionaltarancient"), new BluePrint("INFUSIONANCIENT", ancientBlueprint, new ItemStack[] {
-                new ItemStack(BlocksTC.stoneAncient, 8),
+        ThaumcraftApi.addMultiblockRecipeToCatalog(new ResourceLocation("thaumcraft", "infusionaltarancient"), new BluePrint("INFUSIONANCIENT", ancientBlueprint, new ItemStack(BlocksTC.stoneAncient, 8),
                 new ItemStack(BlocksTC.pedestalAncient),
-                new ItemStack(BlocksTC.infusionMatrix)
-        }));
+                new ItemStack(BlocksTC.infusionMatrix)));
         
         Part eldritchStone = new Part(BlocksTC.stoneEldritchTile, "AIR");
         Part eldritchPillarEast = new Part(BlocksTC.stoneEldritchTile, new ItemStack(BlocksTC.pillarEldritch, 1, BlockPillar.calcMeta(EnumFacing.EAST)));
@@ -486,11 +426,9 @@ public final class RecipeHandler {
         }
         
         IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("INFUSIONELDRITCH", eldritchBlueprint));
-        ThaumcraftApi.addMultiblockRecipeToCatalog(new ResourceLocation("thaumcraft", "infusionaltareldritch"), new BluePrint("INFUSIONELDRITCH", eldritchBlueprint, new ItemStack[] {
-                new ItemStack(BlocksTC.stoneEldritchTile, 8),
+        ThaumcraftApi.addMultiblockRecipeToCatalog(new ResourceLocation("thaumcraft", "infusionaltareldritch"), new BluePrint("INFUSIONELDRITCH", eldritchBlueprint, new ItemStack(BlocksTC.stoneEldritchTile, 8),
                 new ItemStack(BlocksTC.pedestalEldritch),
-                new ItemStack(BlocksTC.infusionMatrix)
-        }));
+                new ItemStack(BlocksTC.infusionMatrix)));
     }
     
 }

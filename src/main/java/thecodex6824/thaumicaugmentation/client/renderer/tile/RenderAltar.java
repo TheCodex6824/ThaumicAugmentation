@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer.tile;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -33,6 +31,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import org.lwjgl.opengl.GL11;
 import thaumcraft.common.items.tools.ItemThaumometer;
 import thaumcraft.common.lib.utils.EntityUtils;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
@@ -47,8 +46,7 @@ public class RenderAltar extends TileEntitySpecialRenderer<TileAltar> {
                 return true;
             
             held = ((EntityLivingBase) e).getHeldItemOffhand();
-            if (held.getItem() instanceof ItemThaumometer)
-                return true;
+            return held.getItem() instanceof ItemThaumometer;
         }
         
         return false;

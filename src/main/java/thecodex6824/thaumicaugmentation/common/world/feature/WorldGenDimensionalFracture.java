@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,8 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.world.feature;
-
-import java.util.Random;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -41,6 +39,8 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.util.FractureLocatorSearchManager;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache.WorldData;
+
+import java.util.Random;
 
 public class WorldGenDimensionalFracture extends WorldGenerator {
 

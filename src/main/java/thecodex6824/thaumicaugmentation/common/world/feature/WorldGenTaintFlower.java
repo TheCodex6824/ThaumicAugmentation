@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.common.world.feature;
 
-import java.util.Random;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
+
+import java.util.Random;
 
 public class WorldGenTaintFlower extends WorldGenerator {
 

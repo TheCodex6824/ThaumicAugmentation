@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -22,9 +22,9 @@ package thecodex6824.thaumicaugmentation.common.util;
 
 public interface ISoundHandle {
 
-    public void stop();
+    void stop();
     
-    public static class Noop implements ISoundHandle {
+    class Noop implements ISoundHandle {
         
         @Override
         public void stop() {}

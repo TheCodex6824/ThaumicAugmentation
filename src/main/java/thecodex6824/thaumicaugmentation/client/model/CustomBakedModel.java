@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,16 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.client.model;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -40,6 +31,12 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.common.model.TRSRTransformation;
+import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nullable;
+import javax.vecmath.Matrix4f;
+import java.util.Collections;
+import java.util.List;
 
 public class CustomBakedModel implements IBakedModel {
 
@@ -72,7 +69,7 @@ public class CustomBakedModel implements IBakedModel {
     
     @Override
     public boolean isAmbientOcclusion() {
-        return !quads.isEmpty() ? quads.get(0).shouldApplyDiffuseLighting() : false;
+        return !quads.isEmpty() && quads.get(0).shouldApplyDiffuseLighting();
     }
     
     @Override

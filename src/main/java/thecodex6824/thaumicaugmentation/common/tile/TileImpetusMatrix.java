@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,18 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.math.DoubleMath;
-
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -55,7 +45,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.animation.Event;
-import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
@@ -83,6 +72,14 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
+
+import javax.annotation.Nullable;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SuppressWarnings("deprecation")
 public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimatedTile, IGogglesDisplayExtended {
@@ -119,7 +116,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         @Override
         public long extractEnergy(long maxEnergy, boolean simulate) {
             if (canExtract()) {
-                long amount = Math.min(5 * getTotalCells(), Math.min(energy, Math.min(getTotalCells() * CELL_CAPACITY, maxEnergy)));
+                long amount = Math.min(5L * getTotalCells(), Math.min(energy, Math.min(getTotalCells() * CELL_CAPACITY, maxEnergy)));
                 if (!simulate) {
                     energy -= amount;
                     onEnergyChanged();
@@ -182,7 +179,7 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
         };
         ticks = ThreadLocalRandom.current().nextInt(20);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_matrix.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(20)));
+                ImmutableMap.of("cycle_length", new VariableValue(20)));
         lastResult = -1;
         gain = -1.0F;
     }

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,28 +20,27 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nullable;
+import java.util.function.Supplier;
+
 public interface ITABarsType {
 
-    public enum BarsType implements IStringSerializable {
+    enum BarsType implements IStringSerializable {
         
         BARS_ANCIENT(0, () -> Material.IRON, () -> SoundType.METAL, MapColor.ADOBE);
         
-        private int meta;
-        private Supplier<Material> mat;
-        private Supplier<SoundType> sound;
-        private MapColor color;
+        private final int meta;
+        private final Supplier<Material> mat;
+        private final Supplier<SoundType> sound;
+        private final MapColor color;
         
-        private BarsType(int m, Supplier<Material> mt, Supplier<SoundType> s, MapColor c) {
+        BarsType(int m, Supplier<Material> mt, Supplier<SoundType> s, MapColor c) {
             meta = m;
             mat = mt;
             sound = s;
@@ -80,6 +79,6 @@ public interface ITABarsType {
         }
     }
     
-    public static final PropertyEnum<BarsType> BARS_TYPE = PropertyEnum.create("ta_bars_type", BarsType.class);
+    PropertyEnum<BarsType> BARS_TYPE = PropertyEnum.create("ta_bars_type", BarsType.class);
     
 }

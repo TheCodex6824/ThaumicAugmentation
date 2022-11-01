@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -133,7 +133,7 @@ public final class PlayerEventHandler {
             PlayerMovementAbilityManager.onPlayerRecreation((EntityPlayer) event.getEntity());
     }
 
-    protected static void checkFrequent(EntityPlayer player) {
+    private static void checkFrequent(EntityPlayer player) {
         WorldServer w = (WorldServer) player.getEntityWorld();
         if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", player.getPosition())) {
             if (!ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERSPIRE")) {
@@ -162,7 +162,7 @@ public final class PlayerEventHandler {
         }
     }
     
-    protected static void checkResearch(EntityPlayer player) {
+    private static void checkResearch(EntityPlayer player) {
         if (!TAConfig.disableEmptiness.getValue() && player.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId() &&
                 !ThaumcraftCapabilities.knowsResearchStrict(player, "m_ENTERVOID")) {
             

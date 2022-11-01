@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.world;
 
-import java.util.Random;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -39,11 +37,13 @@ import thecodex6824.thaumicaugmentation.common.world.biome.IFluxBiome;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
 import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenDimensionalFracture;
 
+import java.util.Random;
+
 public final class TAWorldGenerator implements IWorldGenerator {
     
     private static final int WORLD_BORDER_MAX = 29999984;
 
-    private static WorldGenDimensionalFracture FRACTURE_GEN = new WorldGenDimensionalFracture();
+    private static final WorldGenDimensionalFracture FRACTURE_GEN = new WorldGenDimensionalFracture();
 
     private static boolean wouldLink(World world, int chunkX, int chunkZ) {
         double factor = FractureUtils.movementRatio(world);

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,9 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.capability.provider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -30,9 +27,12 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class CapabilityProviderMorphicTool implements ICapabilitySerializable<NBTTagCompound> {
 
-    private MorphicTool morphic;
+    private final MorphicTool morphic;
     
     public CapabilityProviderMorphicTool(MorphicTool tool) {
         morphic = tool;

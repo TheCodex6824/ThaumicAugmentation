@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,7 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus;
 
-/**
+/*
  * Interface for the Rift Energy Storage capability. This represents an object capable of giving and/or receiving energy.
  * Transmission of the energy is left to individual components, this capability only handles storing a quantity. The API was
  * based on the Forge Energy / RF API, only using longs instead of ints to allow crazy energy values.
@@ -28,47 +28,47 @@ package thecodex6824.thaumicaugmentation.api.impetus;
  */
 public interface IImpetusStorage {
 
-    /**
+    /*
      * Attempts to insert energy into this object, optionally just simulating the result.
      * @param maxEnergy The maximum amount of energy to insert
      * @param simulate Whether the energy value of this item should be changed
      * @return The actual amount of energy inserted
      */
-    public long receiveEnergy(long maxEnergy, boolean simulate);
+    long receiveEnergy(long maxEnergy, boolean simulate);
     
-    /**
+    /*
      * Attempts to remove energy from this object, optionally just simulating the result.
      * @param maxEnergy The maximum amount of energy to extract
      * @param simulate Whether the energy value of this item should be changed
      * @return The actual amount of energy removed
      */
-    public long extractEnergy(long maxEnergy, boolean simulate);
+    long extractEnergy(long maxEnergy, boolean simulate);
     
-    /**
+    /*
      * Returns the amount of energy currently stored.
      * @return The amount of energy stored
      */
-    public long getEnergyStored();
+    long getEnergyStored();
     
-    /**
+    /*
      * Returns the maximum amount of energy that can be stored in this object.
      * @return The maximum amount of energy that can be stored
      */
-    public long getMaxEnergyStored();
+    long getMaxEnergyStored();
     
-    /**
+    /*
      * Returns whether this object is capable of receiving at all. If this object is not, then
      * {@link #receiveEnergy} will always return 0.
      * @return If this object can receive energy
      */
-    public boolean canReceive();
+    boolean canReceive();
     
-    /**
+    /*
      * Returns whether this object is capable of having energy be extracted at all. If this object is not, then
      * {@link #extractEnergy} will always return 0.
      * @return If this object can have energy extracted
      */
-    public boolean canExtract();
+    boolean canExtract();
     
-    public default void onEnergyChanged() {}
+    default void onEnergyChanged() {}
 }

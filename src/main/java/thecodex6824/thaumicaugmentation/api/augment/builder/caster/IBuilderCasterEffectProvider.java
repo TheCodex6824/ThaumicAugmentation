@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -26,6 +26,6 @@ import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
 public interface IBuilderCasterEffectProvider extends IBuilderCasterCallback {
 
-    public void apply(ICustomCasterAugment augment, Entity caster, ItemStack casterStack, FocusWrapper focus, double strength);
+    void apply(ICustomCasterAugment augment, Entity caster, ItemStack casterStack, FocusWrapper focus, double strength);
     
 }

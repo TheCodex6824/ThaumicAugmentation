@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,14 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
-
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityLivingData;
@@ -60,18 +53,16 @@ import thaumcraft.common.entities.monster.boss.EntityEldritchWarden;
 import thaumcraft.common.entities.monster.cult.EntityCultist;
 import thaumcraft.common.entities.monster.cult.EntityCultistPortalLesser;
 import thaumcraft.common.items.casters.ItemFocus;
-import thaumcraft.common.items.casters.foci.FocusEffectAir;
-import thaumcraft.common.items.casters.foci.FocusEffectCurse;
-import thaumcraft.common.items.casters.foci.FocusEffectEarth;
-import thaumcraft.common.items.casters.foci.FocusEffectFire;
-import thaumcraft.common.items.casters.foci.FocusEffectFlux;
-import thaumcraft.common.items.casters.foci.FocusEffectFrost;
-import thaumcraft.common.items.casters.foci.FocusMediumBolt;
-import thaumcraft.common.items.casters.foci.FocusMediumProjectile;
+import thaumcraft.common.items.casters.foci.*;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWater;
 import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
+
+import javax.annotation.Nullable;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class EntityAutocasterEldritch extends EntityAutocasterBase implements IMob, IEldritchMob {
     

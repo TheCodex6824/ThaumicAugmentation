@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.api.config;
 
-import java.util.ArrayList;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.relauncher.Side;
 
-/**
+import java.util.ArrayList;
+
+/*
  * Manages syncing config values. Options must be added here to be automatically synced.
  * @author TheCodex6824
  */
@@ -34,7 +34,7 @@ public final class TAConfigManager {
 
     private TAConfigManager() {}
     
-    private static ArrayList<ConfigOption<?>> config = new ArrayList<>();
+    private static final ArrayList<ConfigOption<?>> config = new ArrayList<>();
 
     public static <T extends ConfigOption<?>> T addOption(T option) {
         config.add(option);

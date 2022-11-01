@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
-import java.util.UUID;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -49,62 +43,66 @@ import thecodex6824.thaumicaugmentation.common.util.IResourceReloadDispatcher;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 
+import javax.annotation.Nullable;
+import java.util.UUID;
+import java.util.function.Function;
+
 public interface ISidedProxy {
 
-    public IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params);
+    IAnimationStateMachine loadASM(ResourceLocation loc, ImmutableMap<String, ITimeValue> params);
 
-    public ITARenderHelper getRenderHelper();
+    ITARenderHelper getRenderHelper();
     
-    public IWardStorage createWardStorageInstance(World world);
+    IWardStorage createWardStorageInstance(World world);
     
-    public void handlePacketClient(IMessage message, MessageContext context);
+    void handlePacketClient(IMessage message, MessageContext context);
     
-    public void handlePacketServer(IMessage message, MessageContext context);
+    void handlePacketServer(IMessage message, MessageContext context);
     
-    public Container getServerGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z);
+    Container getServerGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z);
     
-    public Object getClientGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z);
+    Object getClientGUIElement(int ID, EntityPlayer player, World world, int x, int y, int z);
     
-    public Object getSealContainer(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal);
+    Object getSealContainer(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal);
     
-    public Object getSealGUI(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal);
+    Object getSealGUI(World world, EntityPlayer player, BlockPos pos, EnumFacing face, ISealEntity seal);
     
-    public void registerRenderableImpetusNode(IImpetusNode node);
+    void registerRenderableImpetusNode(IImpetusNode node);
     
-    public boolean deregisterRenderableImpetusNode(IImpetusNode node);
+    boolean deregisterRenderableImpetusNode(IImpetusNode node);
     
-    public boolean isOpenToLAN();
+    boolean isOpenToLAN();
     
-    public boolean isSingleplayer();
+    boolean isSingleplayer();
     
-    public boolean isInGame();
+    boolean isInGame();
     
-    public boolean isElytraBoostKeyDown();
+    boolean isElytraBoostKeyDown();
     
-    public boolean isPvPEnabled();
+    boolean isPvPEnabled();
     
-    public boolean isEntityClientPlayer(Entity e);
+    boolean isEntityClientPlayer(Entity e);
     
-    public boolean isEntityRenderView(Entity e);
+    boolean isEntityRenderView(Entity e);
     
     @Nullable
-    public NBTTagCompound getOfflinePlayerNBT(UUID uuid);
+    NBTTagCompound getOfflinePlayerNBT(UUID uuid);
     
-    public void saveOfflinePlayerNBT(UUID uuid, NBTTagCompound tag);
+    void saveOfflinePlayerNBT(UUID uuid, NBTTagCompound tag);
     
-    public float getPartialTicks();
+    float getPartialTicks();
     
-    public ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick,
+    ISoundHandle playSpecialSound(SoundEvent sound, SoundCategory category, Function<Vec3d, Vec3d> tick,
             float x, float y, float z, float vol, float pitch, boolean repeat, int repeatDelay);
     
-    public IResourceReloadDispatcher getResourceReloadDispatcher();
+    IResourceReloadDispatcher getResourceReloadDispatcher();
     
-    public void initResourceReloadDispatcher();
+    void initResourceReloadDispatcher();
     
-    public void preInit();
+    void preInit();
 
-    public void init();
+    void init();
 
-    public void postInit();
+    void postInit();
     
 }

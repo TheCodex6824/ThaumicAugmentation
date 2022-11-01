@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -26,7 +26,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
-/**
+/*
  * Event superclass for all cast-related events. Subscribing to this event will notify the
  * callback for all subclasses of this class.
  * @author TheCodex6824

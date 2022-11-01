@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -27,11 +27,11 @@ import net.minecraft.world.World;
 
 public interface IWardParticles {
 
-    public default boolean shouldAddWardParticles(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+    default boolean shouldAddWardParticles(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
         return true;
     }
     
-    public default boolean shouldCancelEventAndContinueParticles(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+    default boolean shouldCancelEventAndContinueParticles(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
         return true;
     }
     

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -34,15 +34,7 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.block.property.ICreativeImpetusBlock;
-import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
-import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
-import thecodex6824.thaumicaugmentation.api.block.property.ITABarsType;
-import thecodex6824.thaumicaugmentation.api.block.property.ITASlabType;
-import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
-import thecodex6824.thaumicaugmentation.api.block.property.IUrnType;
-import thecodex6824.thaumicaugmentation.api.block.property.IWardOpenedBlock;
-import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningWeakPower;
+import thecodex6824.thaumicaugmentation.api.block.property.*;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 

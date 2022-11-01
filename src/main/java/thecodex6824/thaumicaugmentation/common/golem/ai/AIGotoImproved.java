@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -85,8 +85,7 @@ public abstract class AIGotoImproved extends EntityAIBase {
                     
             if (!golemTraits.containsAll(sealReq))
                 return false;
-            else if (sealForbidden.stream().anyMatch(golemTraits::contains))
-                return false;
+            else return sealForbidden.stream().noneMatch(golemTraits::contains);
         }
         
         return true;

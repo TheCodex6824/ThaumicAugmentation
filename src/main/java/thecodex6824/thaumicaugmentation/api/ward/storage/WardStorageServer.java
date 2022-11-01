@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.ward.storage;
 
-import java.util.Arrays;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import com.google.common.annotations.VisibleForTesting;
-
 import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ShortOpenHashMap;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +33,11 @@ import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 import thecodex6824.thaumicaugmentation.api.ward.WardSyncManager;
 
-/**
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.UUID;
+
+/*
  * Default implementation of {@link IWardStorage} for servers.
  * @author TheCodex6824
  */
@@ -58,33 +56,33 @@ public class WardStorageServer implements IWardStorageServer, INBTSerializable<N
         
         private StorageManagersServer() {}
         
-        public static interface IWardStorageManagerServer {
+        public interface IWardStorageManagerServer {
             
-            public byte getStorageID();
+            byte getStorageID();
             
-            public int getNumCurrentOwners();
+            int getNumCurrentOwners();
             
-            public int getMaxAllowedOwners();
+            int getMaxAllowedOwners();
             
-            public void addOwner(UUID owner);
+            void addOwner(UUID owner);
             
-            public void removeOwner(UUID owner);
+            void removeOwner(UUID owner);
             
-            public void removeOwner(UUID owner, boolean clear);
+            void removeOwner(UUID owner, boolean clear);
             
-            public boolean isOwner(UUID owner);
+            boolean isOwner(UUID owner);
             
-            public UUID getOwner(BlockPos pos);
+            UUID getOwner(BlockPos pos);
             
-            public void setOwner(BlockPos pos, UUID owner);
+            void setOwner(BlockPos pos, UUID owner);
             
-            public void clearAllOwnersAndWards();
+            void clearAllOwnersAndWards();
             
-            public UUID[] getOwners();
+            UUID[] getOwners();
             
-            public NBTTagCompound serialize();
+            NBTTagCompound serialize();
             
-            public void deserialize(NBTTagCompound tag);
+            void deserialize(NBTTagCompound tag);
             
         }
         

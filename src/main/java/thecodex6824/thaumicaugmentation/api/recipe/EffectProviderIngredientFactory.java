@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,16 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.api.recipe;
 
-import javax.annotation.Nonnull;
-
 import com.google.gson.JsonObject;
-
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.IIngredientFactory;
 import net.minecraftforge.common.crafting.JsonContext;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
+
+import javax.annotation.Nonnull;
 
 public class EffectProviderIngredientFactory implements IIngredientFactory {
 

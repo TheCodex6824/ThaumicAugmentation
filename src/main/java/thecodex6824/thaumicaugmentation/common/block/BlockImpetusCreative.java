@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -130,10 +130,10 @@ public class BlockImpetusCreative extends BlockTABase implements ICreativeImpetu
 
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
-        switch (state.getValue(ICreativeImpetusBlock.BLOCK_TYPE)) {
-            case IMPETUS_CREATIVE_SINK: return new TileCreativeImpetusSink();
-            default: return new TileCreativeImpetusSource();
+        if (state.getValue(ICreativeImpetusBlock.BLOCK_TYPE) == BlockType.IMPETUS_CREATIVE_SINK) {
+            return new TileCreativeImpetusSink();
         }
+        return new TileCreativeImpetusSource();
     }
 
     @Override

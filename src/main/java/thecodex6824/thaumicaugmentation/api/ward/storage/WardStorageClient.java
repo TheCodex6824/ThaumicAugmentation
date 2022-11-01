@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.api.ward.storage;
 
-import java.util.Arrays;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +27,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 
-/**
+import java.util.Arrays;
+
+/*
  * Default implementation of {@link IWardStorage} for clients.
  * @author TheCodex6824
  */
@@ -44,15 +44,15 @@ public class WardStorageClient implements IWardStorageClient {
         
         private StorageManagersClient() {}
         
-        public static interface IWardStorageManagerClient {
+        public interface IWardStorageManagerClient {
             
-            public ClientWardStorageValue getOwner(BlockPos pos);
+            ClientWardStorageValue getOwner(BlockPos pos);
             
-            public void setOwner(BlockPos pos, ClientWardStorageValue owner);
+            void setOwner(BlockPos pos, ClientWardStorageValue owner);
             
-            public boolean isNullStorage();
+            boolean isNullStorage();
             
-            public void clearAll();
+            void clearAll();
             
         }
         
@@ -80,7 +80,7 @@ public class WardStorageClient implements IWardStorageClient {
         
         public static class StorageManager2Bits implements IWardStorageManagerClient {
             
-            private byte[] data;
+            private final byte[] data;
             
             public StorageManager2Bits() {
                 data = new byte[CHUNK_DATA_SIZE / 4];

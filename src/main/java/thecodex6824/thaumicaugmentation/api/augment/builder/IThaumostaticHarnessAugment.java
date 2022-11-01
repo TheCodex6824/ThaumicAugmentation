@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,14 +25,14 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
 public interface IThaumostaticHarnessAugment extends IAugment {
 
-    public float getFlySpeed(EntityPlayer wearer);
+    float getFlySpeed(EntityPlayer wearer);
     
-    public double getVisCostPerTick(EntityPlayer wearer);
+    double getVisCostPerTick(EntityPlayer wearer);
     
-    public int getVisCapacity();
+    int getVisCapacity();
     
-    public void applyDrift(EntityPlayer wearer);
+    void applyDrift(EntityPlayer wearer);
     
-    public boolean shouldAllowSprintFly(EntityPlayer wearer);
+    boolean shouldAllowSprintFly(EntityPlayer wearer);
     
 }

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,11 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.tile;
-
-import java.util.Deque;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,6 +40,10 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.NodeHelper;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
+
+import javax.annotation.Nullable;
+import java.util.Deque;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TileImpetusGate extends TileEntity implements ITickable {
     

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,7 +24,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 
-/**
+/*
  * Holds all of the Biomes for Thaumic Augmentation.
  * @author TheCodex6824
  */

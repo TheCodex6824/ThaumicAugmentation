@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,11 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.tile;
-
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -45,6 +40,10 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TileObelisk extends TileEntity implements ITickable, IShaderRenderingCallback {
     

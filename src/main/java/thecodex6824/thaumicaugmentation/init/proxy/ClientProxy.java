@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,20 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
-import org.lwjgl.input.Keyboard;
-
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -57,13 +44,8 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -83,6 +65,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IRegistryDelegate;
+import org.lwjgl.input.Keyboard;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.golems.seals.ISealEntity;
@@ -102,11 +85,7 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.*;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
@@ -123,12 +102,7 @@ import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.tile.IEssentiaTube;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
-import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
-import thecodex6824.thaumicaugmentation.api.ward.storage.ClientWardStorageValue;
-import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
-import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageClient;
-import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageClient;
-import thecodex6824.thaumicaugmentation.api.ward.storage.WardStorageServer;
+import thecodex6824.thaumicaugmentation.api.ward.storage.*;
 import thecodex6824.thaumicaugmentation.client.event.ClientEventHandler;
 import thecodex6824.thaumicaugmentation.client.event.ClientLivingEquipmentChangeEvent;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
@@ -140,40 +114,11 @@ import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
 import thecodex6824.thaumicaugmentation.client.gui.GUICelestialObserver;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
-import thecodex6824.thaumicaugmentation.client.model.BuiltInRendererModel;
-import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
-import thecodex6824.thaumicaugmentation.client.model.DirectionalRetexturingModel;
-import thecodex6824.thaumicaugmentation.client.model.GlassTubeModel;
-import thecodex6824.thaumicaugmentation.client.model.ModelEldritchGuardianFixed;
-import thecodex6824.thaumicaugmentation.client.model.MorphicArmorExclusions;
-import thecodex6824.thaumicaugmentation.client.model.MorphicToolModel;
-import thecodex6824.thaumicaugmentation.client.model.ProviderModel;
-import thecodex6824.thaumicaugmentation.client.model.TAModelLoader;
+import thecodex6824.thaumicaugmentation.client.model.*;
 import thecodex6824.thaumicaugmentation.client.renderer.TARenderHelperClient;
-import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderAutocaster;
-import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderCelestialObserver;
-import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderDimensionalFracture;
-import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFluxRiftOptimized;
-import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderFocusShield;
-import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderItemImportant;
-import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderPrimalWisp;
-import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGolem;
-import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAEldritchGuardian;
-import thecodex6824.thaumicaugmentation.client.renderer.entity.RenderTAGolemOrb;
+import thecodex6824.thaumicaugmentation.client.renderer.entity.*;
 import thecodex6824.thaumicaugmentation.client.renderer.layer.RenderLayerHarness;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.ListeningAnimatedTESR;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderAltar;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderEldritchLock;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderGlassTube;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderImpetusMirror;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObelisk;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderObeliskVisual;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftBarrier;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftJar;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMonitor;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderRiftMoverOutput;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderStarfieldGlass;
-import thecodex6824.thaumicaugmentation.client.renderer.tile.RenderVoidRechargePedestal;
+import thecodex6824.thaumicaugmentation.client.renderer.tile.*;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
@@ -183,65 +128,13 @@ import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerrafor
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
 import thecodex6824.thaumicaugmentation.common.container.ContainerCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
-import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
-import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
-import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
-import thecodex6824.thaumicaugmentation.common.entity.EntityDimensionalFracture;
-import thecodex6824.thaumicaugmentation.common.entity.EntityFocusShield;
-import thecodex6824.thaumicaugmentation.common.entity.EntityItemImportant;
-import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
-import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGolem;
-import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
-import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
-import thecodex6824.thaumicaugmentation.common.entity.EntityTAGolemOrb;
+import thecodex6824.thaumicaugmentation.common.entity.*;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
-import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
-import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
-import thecodex6824.thaumicaugmentation.common.network.PacketBiomeUpdate;
-import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
-import thecodex6824.thaumicaugmentation.common.network.PacketConfigSync;
-import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
-import thecodex6824.thaumicaugmentation.common.network.PacketEssentiaUpdate;
-import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
-import thecodex6824.thaumicaugmentation.common.network.PacketFollowingOrb;
-import thecodex6824.thaumicaugmentation.common.network.PacketFractureLocatorUpdate;
-import thecodex6824.thaumicaugmentation.common.network.PacketFullImpetusNodeSync;
-import thecodex6824.thaumicaugmentation.common.network.PacketFullWardSync;
-import thecodex6824.thaumicaugmentation.common.network.PacketImpetusNodeUpdate;
-import thecodex6824.thaumicaugmentation.common.network.PacketImpetusTransaction;
-import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBeam;
-import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBurst;
-import thecodex6824.thaumicaugmentation.common.network.PacketImpulseRailgunProjectile;
-import thecodex6824.thaumicaugmentation.common.network.PacketLivingEquipmentChange;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.PacketRecoil;
-import thecodex6824.thaumicaugmentation.common.network.PacketRiftJarInstability;
-import thecodex6824.thaumicaugmentation.common.network.PacketTerraformerWork;
-import thecodex6824.thaumicaugmentation.common.network.PacketWardUpdate;
-import thecodex6824.thaumicaugmentation.common.network.PacketWispZap;
-import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
-import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
-import thecodex6824.thaumicaugmentation.common.tile.TileEldritchLock;
-import thecodex6824.thaumicaugmentation.common.tile.TileGlassTube;
-import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDiffuser;
-import thecodex6824.thaumicaugmentation.common.tile.TileImpetusDrainer;
-import thecodex6824.thaumicaugmentation.common.tile.TileImpetusGate;
-import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMatrix;
-import thecodex6824.thaumicaugmentation.common.tile.TileImpetusMirror;
-import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
-import thecodex6824.thaumicaugmentation.common.tile.TileObeliskVisual;
-import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
-import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
-import thecodex6824.thaumicaugmentation.common.tile.TileRiftMonitor;
-import thecodex6824.thaumicaugmentation.common.tile.TileRiftMoverOutput;
-import thecodex6824.thaumicaugmentation.common.tile.TileStabilityFieldGenerator;
-import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
-import thecodex6824.thaumicaugmentation.common.tile.TileVisRegenerator;
-import thecodex6824.thaumicaugmentation.common.tile.TileVoidRechargePedestal;
-import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
+import thecodex6824.thaumicaugmentation.common.network.*;
+import thecodex6824.thaumicaugmentation.common.tile.*;
 import thecodex6824.thaumicaugmentation.common.util.IResourceReloadDispatcher;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
@@ -249,11 +142,20 @@ import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 
+import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
 public class ClientProxy extends ServerProxy {
 
     private KeyBinding elytraBoost;
-    private HashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
-    private ResourceReloadDispatcher reloadDispatcher;
+    private final HashMap<Class<? extends IMessage>, BiConsumer<IMessage, MessageContext>> handlers;
+    private final ResourceReloadDispatcher reloadDispatcher;
     
     public ClientProxy() {
         handlers = new HashMap<>();
@@ -402,7 +304,7 @@ public class ClientProxy extends ServerProxy {
     protected void handleParticlePacket(PacketParticleEffect message, MessageContext context) {
         if (Minecraft.getMinecraft().world != null) {
             Random rand = FMLClientHandler.instance().getClient().world.rand;
-            double d[] = message.getData();
+            double[] d = message.getData();
             switch (message.getEffect()) {
                 case VIS_REGENERATOR: {
                     if (d.length == 3) {

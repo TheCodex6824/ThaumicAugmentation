@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,24 +20,24 @@
 
 package thecodex6824.thaumicaugmentation.api.world.capability;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.INBTSerializable;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.HashSet;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.Constants.NBT;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-
-/**
+/*
  * Default implementation for {@link IFractureLocations}.
  * @author TheCodex6824
  */
 public class FractureLocations implements IFractureLocations, INBTSerializable<NBTTagCompound> {
 
-    private HashSet<BlockPos> positions;
+    private final HashSet<BlockPos> positions;
     private WeakReference<Chunk> chunk;
     
     public FractureLocations() {

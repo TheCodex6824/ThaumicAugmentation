@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,19 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.api.aspect;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.util.text.TextFormatting;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.common.config.ModConfig;
 
-/**
+import java.util.*;
+
+/*
  * Contains random utilities for working with Thaumcraft's aspects.
  * @author TheCodex6824
  */
@@ -64,7 +59,7 @@ public final class AspectUtil {
         CHAT_COLORS.put(TextFormatting.WHITE, 0xFFFFFF);
     }
     
-    /**
+    /*
      * Returns the closest chat color for the given aspect. This will check if the aspect already has
      * an associated chat color, and return that color if it does. Otherwise, it will compute the closest chat color
      * based on the aspect's normal color.
@@ -75,7 +70,7 @@ public final class AspectUtil {
         return getChatColorForAspect(aspect, Collections.emptySet());
     }
     
-    /**
+    /*
      * Returns the closest chat color for the given aspect, not including any colors passed. This will check if the aspect
      * already has an associated chat color, and return that color if it does. Otherwise, it will compute the closest chat color
      * based on the aspect's normal color.

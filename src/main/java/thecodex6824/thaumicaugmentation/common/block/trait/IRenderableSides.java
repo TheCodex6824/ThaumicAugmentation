@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,14 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.common.block.trait;
 
-import java.util.List;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
+import java.util.List;
+
 public interface IRenderableSides {
 
-    public static final IUnlistedProperty<List<EnumFacing>> SIDES = new IUnlistedProperty<List<EnumFacing>>() {
+    IUnlistedProperty<List<EnumFacing>> SIDES = new IUnlistedProperty<List<EnumFacing>>() {
         
         @Override
         public String getName() {

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.entity.ai;
 
-import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityFlying;
@@ -29,6 +27,8 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+
+import java.util.Random;
 
 public class EntityAIFlyWander extends EntityAIBase {
 
@@ -71,10 +71,8 @@ public class EntityAIFlyWander extends EntityAIBase {
     
     @Override
     public void updateTask() {
-        boolean newPos = false;
-        if (!entity.getEntityWorld().isBlockLoaded(dest))
-            newPos = true;
-        
+        boolean newPos = !entity.getEntityWorld().isBlockLoaded(dest);
+
         if (!newPos) {
             IBlockState destState = entity.getEntityWorld().getBlockState(dest);
             AxisAlignedBB box = destState.getCollisionBoundingBox(entity.getEntityWorld(), dest);

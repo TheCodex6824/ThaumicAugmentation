@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -23,13 +23,13 @@ package thecodex6824.thaumicaugmentation.api.block.property.door;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 
-/**
+/*
  * Property interface marking the upper and lower half of the Arcane Door.
  * @author TheCodex6824
  */
 public interface IArcaneDoorHalf {
 
-    public enum ArcaneDoorHalf implements IStringSerializable {
+    enum ArcaneDoorHalf implements IStringSerializable {
         
         UPPER,
         LOWER;
@@ -40,7 +40,7 @@ public interface IArcaneDoorHalf {
         }
     }
     
-    public static final PropertyEnum<ArcaneDoorHalf> DOOR_HALF = PropertyEnum.<ArcaneDoorHalf>create(
+    PropertyEnum<ArcaneDoorHalf> DOOR_HALF = PropertyEnum.create(
             "ta_door_half", ArcaneDoorHalf.class);
     
 }

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,21 +20,16 @@
 
 package thecodex6824.thaumicaugmentation;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
@@ -46,12 +41,7 @@ import thecodex6824.thaumicaugmentation.common.internal.InternalMethodProvider;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
-import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
-import thecodex6824.thaumicaugmentation.init.GUIHandler;
-import thecodex6824.thaumicaugmentation.init.LootHandler;
-import thecodex6824.thaumicaugmentation.init.MiscHandler;
-import thecodex6824.thaumicaugmentation.init.ResearchHandler;
-import thecodex6824.thaumicaugmentation.init.WorldHandler;
+import thecodex6824.thaumicaugmentation.init.*;
 import thecodex6824.thaumicaugmentation.init.proxy.ISidedProxy;
 import thecodex6824.thaumicaugmentation.server.command.TACommands;
 

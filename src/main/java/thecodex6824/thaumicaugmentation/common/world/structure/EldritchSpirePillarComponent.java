@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,18 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.common.world.structure;
 
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.template.Template;
@@ -42,6 +38,9 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class EldritchSpirePillarComponent extends EldritchSpireBaseComponent {
 
@@ -257,7 +256,7 @@ public class EldritchSpirePillarComponent extends EldritchSpireBaseComponent {
         type = PillarType.fromID(tag.getInteger("pt"));
     }
     
-    public static enum PillarType {
+    public enum PillarType {
         
         GENERIC(0),
         MAZE(1),
@@ -265,7 +264,7 @@ public class EldritchSpirePillarComponent extends EldritchSpireBaseComponent {
         
         private final int id;
         
-        private PillarType(int i) {
+        PillarType(int i) {
             id = i;
         }
         

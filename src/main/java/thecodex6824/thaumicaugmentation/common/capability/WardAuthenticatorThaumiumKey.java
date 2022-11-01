@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.common.capability;
 
-import java.util.UUID;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import thecodex6824.thaumicaugmentation.api.ward.tile.IWardedTile;
+
+import java.util.UUID;
 
 public class WardAuthenticatorThaumiumKey extends WardAuthenticatorKey {
 

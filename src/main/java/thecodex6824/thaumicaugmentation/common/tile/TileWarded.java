@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,6 +34,9 @@ import thaumcraft.api.casters.ICaster;
 import thaumcraft.api.casters.IInteractWithCaster;
 import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedTile;
 import thecodex6824.thaumicaugmentation.api.ward.tile.WardedTile;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public abstract class TileWarded extends TileEntity implements IInteractWithCaster {
 
@@ -67,7 +66,7 @@ public abstract class TileWarded extends TileEntity implements IInteractWithCast
     
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        return capability == CapabilityWardedTile.WARDED_TILE ? true : super.hasCapability(capability, facing);
+        return capability == CapabilityWardedTile.WARDED_TILE || super.hasCapability(capability, facing);
     }
     
     @Override

@@ -4,6 +4,6 @@ import thaumcraft.common.golems.EntityThaumcraftGolem;
 
 public interface IGolemAttributeUpdateReceiver {
 
-    public void onAttributeUpdate(EntityThaumcraftGolem golem);
+    void onAttributeUpdate(EntityThaumcraftGolem golem);
 
 }

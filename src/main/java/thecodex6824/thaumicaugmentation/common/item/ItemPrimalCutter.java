@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableSet;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -39,13 +33,7 @@ import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityFallingBlock;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.item.EntityTNTPrimed;
-import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.item.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityFireball;
@@ -80,15 +68,15 @@ import thaumcraft.api.items.IWarpingGear;
 import thaumcraft.api.items.ItemsTC;
 import thaumcraft.common.lib.enchantment.EnumInfusionEnchantment;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.TABlocks;
-import thecodex6824.thaumicaugmentation.api.TAConfig;
-import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.TAMaterials;
-import thecodex6824.thaumicaugmentation.api.TASounds;
+import thecodex6824.thaumicaugmentation.api.*;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
 import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Set;
 
 public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelProvider<Item> {
 
@@ -194,11 +182,8 @@ public class ItemPrimalCutter extends ItemTool implements IWarpingGear, IModelPr
         
         if (allowed) {
             Team userTeam = user.getTeam();
-            if (userTeam == null || userTeam.getAllowFriendlyFire() ||
-                    !userTeam.isSameTeam(entity.getTeam())) {
-                
-                return true;
-            }
+            return userTeam == null || userTeam.getAllowFriendlyFire() ||
+                    !userTeam.isSameTeam(entity.getTeam());
         }
         
         return false;

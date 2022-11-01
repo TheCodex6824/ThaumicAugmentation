@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
-import java.util.stream.Collectors;
-
 import com.google.common.base.Predicates;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.ResourceLocation;
@@ -39,6 +36,8 @@ import thaumcraft.api.entities.ITaintedMob;
 import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
+
+import java.util.stream.Collectors;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class LootHandler {

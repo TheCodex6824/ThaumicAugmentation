@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.client.fx;
 
-import java.util.function.Function;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager;
@@ -39,9 +35,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
 import thaumcraft.client.fx.ParticleEngine;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+
+import java.util.function.Function;
 
 public class FXImpulseBeam extends Particle {
 
@@ -251,7 +250,7 @@ public class FXImpulseBeam extends Particle {
         float cSize = size;
         if (pulse) {
             cSize = Math.min(particleAge / 4.0F, 1.0F);
-            cSize = (float) (prevSize + (cSize - prevSize) * partialTicks);
+            cSize = prevSize + (cSize - prevSize) * partialTicks;
         } 
         
         float op = alphaFunc.apply(this);
@@ -287,8 +286,8 @@ public class FXImpulseBeam extends Particle {
         GlStateManager.translate(prevPosX + (posX - prevPosX) * partialTicks - interpPosX,
                 prevPosY + (posY - prevPosY) * partialTicks - interpPosY,
                 prevPosZ + (posZ - prevPosZ) * partialTicks - interpPosZ);
-        float ry = (float) (prevYaw + (rotYaw - prevYaw) * partialTicks);
-        float rp = (float) (prevPitch + (rotPitch - prevPitch) * partialTicks);
+        float ry = prevYaw + (rotYaw - prevYaw) * partialTicks;
+        float rp = prevPitch + (rotPitch - prevPitch) * partialTicks;
         GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
         GlStateManager.rotate(180.0F + ry, 0.0F, 0.0F, -1.0F);
         GlStateManager.rotate(rp, 1.0F, 0.0F, 0.0F);

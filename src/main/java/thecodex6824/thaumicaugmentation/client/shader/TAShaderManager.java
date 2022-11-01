@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,6 +20,17 @@
 
 package thecodex6824.thaumicaugmentation.client.shader;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.ARBFragmentShader;
+import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.opengl.ARBVertexShader;
+import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,28 +38,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import javax.annotation.Nullable;
-
-import org.lwjgl.opengl.ARBFragmentShader;
-import org.lwjgl.opengl.ARBShaderObjects;
-import org.lwjgl.opengl.ARBVertexShader;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.util.ResourceLocation;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.TAConfig;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-
 public final class TAShaderManager {
 
     private TAShaderManager() {}
     
     public static final class Shader {
         
-        private int id;
+        private final int id;
         
-        protected Shader(int id) {
+        private Shader(int id) {
             this.id = id;
         }
         

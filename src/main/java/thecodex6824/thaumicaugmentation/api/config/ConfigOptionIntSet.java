@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.api.config;
 
-import java.util.Set;
-
 import com.google.common.collect.ImmutableSet;
-
 import io.netty.buffer.ByteBuf;
 
-/**
+import java.util.Set;
+
+/*
  * Config option class for Integer Set values.
  * @author TheCodex6824
  */

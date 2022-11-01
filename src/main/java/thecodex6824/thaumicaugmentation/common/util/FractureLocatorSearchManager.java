@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,28 +20,27 @@
 
 package thecodex6824.thaumicaugmentation.common.util;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.WeakHashMap;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.WeakHashMap;
+
 public final class FractureLocatorSearchManager {
     
     private FractureLocatorSearchManager() {}
     
-    private static WeakHashMap<EntityPlayer, Long> locationRequestTimes = new WeakHashMap<>(); 
+    private static final WeakHashMap<EntityPlayer, Long> locationRequestTimes = new WeakHashMap<>();
     
     // for this application quad or k-d trees would be faster for lookup, but they would need to be tailored
     // to have the middle/median be on the entity to not basically be a big linked list
     // TODO maybe do this?
-    private static HashMap<Integer, HashSet<BlockPos>> locations = new HashMap<>();
+    private static final HashMap<Integer, HashSet<BlockPos>> locations = new HashMap<>();
     
     public static boolean canPlayerRequestLocation(EntityPlayer player) {
         Long lastRequest = locationRequestTimes.get(player);

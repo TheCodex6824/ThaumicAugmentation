@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -27,14 +27,14 @@ import javax.annotation.Nullable;
 
 public interface ICreativeImpetusBlock {
 
-    public enum BlockType implements IStringSerializable {
+    enum BlockType implements IStringSerializable {
         
         IMPETUS_CREATIVE_SOURCE(0),
         IMPETUS_CREATIVE_SINK(1);
         
-        private int meta;
+        private final int meta;
         
-        private BlockType(int m) {
+        BlockType(int m) {
             meta = m;
         }
         
@@ -59,6 +59,6 @@ public interface ICreativeImpetusBlock {
         
     }
     
-    public static final PropertyEnum<BlockType> BLOCK_TYPE = PropertyEnum.create("ta_creative_impetus_type", BlockType.class);
+    PropertyEnum<BlockType> BLOCK_TYPE = PropertyEnum.create("ta_creative_impetus_type", BlockType.class);
     
 }

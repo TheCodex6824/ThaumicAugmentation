@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -31,11 +31,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -51,11 +47,7 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.*;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IImpulseCannonAugment;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
@@ -144,7 +136,7 @@ public class ItemImpulseCannon extends ItemTABase {
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                 }
             }
-            else if (((aug != null && aug.isTickable(player)) || aug == null) && buffer != null) {
+            else if ((aug == null || aug.isTickable(player)) && buffer != null) {
                 long cost = aug != null ? aug.getImpetusCostPerUsage(player) : TAConfig.cannonBeamCostInitial.getValue();
                 if (buffer.canExtract() && buffer.getEnergyStored() >= cost) {
                     player.setActiveHand(hand);

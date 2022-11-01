@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,37 +20,36 @@
 
 package thecodex6824.thaumicaugmentation.api.graph;
 
+import javax.annotation.Nullable;
 import java.util.Deque;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 public interface IGraph<Node> {
 
-    public boolean addNode(Node node);
+    boolean addNode(Node node);
     
-    public boolean removeNode(Node node);
+    boolean removeNode(Node node);
     
-    public int size();
+    int size();
     
-    public default boolean isEmpty() {
+    default boolean isEmpty() {
         return size() == 0;
     }
     
-    public Set<Node> getNodes();
+    Set<Node> getNodes();
     
-    public Set<Node> getInputs(Node node);
+    Set<Node> getInputs(Node node);
     
-    public Set<Node> getOutputs(Node node);
+    Set<Node> getOutputs(Node node);
     
-    public boolean addInput(Node node, Node newInput);
+    boolean addInput(Node node, Node newInput);
     
-    public boolean addOutput(Node node, Node newOutput);
+    boolean addOutput(Node node, Node newOutput);
     
-    public boolean removeInput(Node node, Node input);
+    boolean removeInput(Node node, Node input);
     
-    public boolean removeOutput(Node node, Node output);
+    boolean removeOutput(Node node, Node output);
     
-    public @Nullable Deque<Node> findPath(Node start, Node end);
+    @Nullable Deque<Node> findPath(Node start, Node end);
     
 }

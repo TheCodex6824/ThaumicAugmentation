@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -365,7 +365,7 @@ public final class RegistryHandler {
     
     @SubscribeEvent
     public static void registerAspects(AspectRegistryEvent event) {
-        /**
+        /*
          * =======================================================================================
          * This must be used for registering aspect tags on objects (aka not entities) ONLY!
          * Thaumic Speedup only calls this code at first pack load, not when using cached aspects!

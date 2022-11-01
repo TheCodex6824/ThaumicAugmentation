@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,6 +25,6 @@ import net.minecraft.item.ItemStack;
 
 public interface IElytraCompat {
 
-    public boolean allowElytraFlight(EntityPlayer wearer, ItemStack stack);
+    boolean allowElytraFlight(EntityPlayer wearer, ItemStack stack);
     
 }

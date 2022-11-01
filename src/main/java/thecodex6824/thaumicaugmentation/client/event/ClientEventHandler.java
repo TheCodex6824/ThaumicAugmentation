@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,15 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.client.event;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.function.BiFunction;
 
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
@@ -92,6 +83,10 @@ import thecodex6824.thaumicaugmentation.common.network.PacketElytraBoost;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.BiFunction;
 
 @SuppressWarnings("deprecation")
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)

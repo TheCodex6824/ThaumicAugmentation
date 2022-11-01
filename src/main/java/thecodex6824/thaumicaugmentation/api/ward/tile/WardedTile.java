@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,9 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.api.ward.tile;
 
-import java.lang.ref.WeakReference;
-import java.util.UUID;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -37,7 +34,10 @@ import thecodex6824.thaumicaugmentation.api.item.CapabilityWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
 import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
 
-/**
+import java.lang.ref.WeakReference;
+import java.util.UUID;
+
+/*
  * Default implementation of {@link IWardedTile}.
  * @author TheCodex6824
  */

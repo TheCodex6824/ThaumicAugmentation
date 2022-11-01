@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,6 +24,6 @@ import net.minecraft.block.properties.PropertyBool;
 
 public interface IWardOpeningBlock {
 
-    public static final PropertyBool WARD_OPENING = PropertyBool.create("ta_ward_opening");
+    PropertyBool WARD_OPENING = PropertyBool.create("ta_ward_opening");
 
 }

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,7 +24,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import thecodex6824.thaumicaugmentation.api.ward.tile.IWardedTile;
 
-/**
+/*
  * Interface for items that can allow players to access warded blocks
  * that belong to someone else. This used to not be a capability, but back then I was also
  * kind of bad at this API thing, so...
@@ -32,13 +32,13 @@ import thecodex6824.thaumicaugmentation.api.ward.tile.IWardedTile;
  */
 public interface IWardAuthenticator {
 
-    /**
+    /*
      * Returns if this item allows the user to access the provided warded tile.
      * @param tile The tile the player is trying to access
      * @param stack The ItemStack the player is using
      * @param user The entity trying to interact
      * @return If this item should allow the entity to interact with the warded tile
      */
-    public boolean permitsUsage(IWardedTile tile, ItemStack stack, EntityLivingBase user);
+    boolean permitsUsage(IWardedTile tile, ItemStack stack, EntityLivingBase user);
 
 }

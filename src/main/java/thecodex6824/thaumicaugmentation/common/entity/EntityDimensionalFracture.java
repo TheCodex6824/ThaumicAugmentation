@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,12 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.Optional;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAreaEffectCloud;
@@ -56,16 +51,15 @@ import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
-import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
-import thecodex6824.thaumicaugmentation.api.entity.IPortalEntity;
-import thecodex6824.thaumicaugmentation.api.entity.IPortalState;
-import thecodex6824.thaumicaugmentation.api.entity.PortalStateManager;
+import thecodex6824.thaumicaugmentation.api.entity.*;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.DimensionalFractureTeleporter;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class EntityDimensionalFracture extends Entity implements IDimensionalFracture, IPortalEntity {
 

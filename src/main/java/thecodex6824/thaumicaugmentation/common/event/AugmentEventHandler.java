@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,15 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.event;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.function.Function;
-
 import com.google.common.collect.Iterables;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -57,13 +49,16 @@ import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
+import java.util.*;
+import java.util.function.Function;
+
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class AugmentEventHandler {
 
     private AugmentEventHandler() {}
     
-    private static WeakHashMap<Entity, ArrayList<ItemStack>> oldItems = new WeakHashMap<>();
-    private static Set<Entity> hasAugments = Collections.newSetFromMap(new WeakHashMap<>());
+    private static final WeakHashMap<Entity, ArrayList<ItemStack>> oldItems = new WeakHashMap<>();
+    private static final Set<Entity> hasAugments = Collections.newSetFromMap(new WeakHashMap<>());
     
     public static void onEquipmentChange(EntityLivingBase entity) {
         int totalIndex = 0;

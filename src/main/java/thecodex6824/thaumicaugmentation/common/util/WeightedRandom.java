@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,21 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.common.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.google.common.collect.ImmutableList;
+import java.util.*;
 
 public class WeightedRandom<T extends Comparable<T>> {
 
-    private ImmutableList<T> choice;
-    private int[] weight;
+    private final ImmutableList<T> choice;
+    private final int[] weight;
     
     protected WeightedRandom(List<T> choices, int[] calculatedWeights) {
         choice = new ImmutableList.Builder<T>().addAll(choices).build();

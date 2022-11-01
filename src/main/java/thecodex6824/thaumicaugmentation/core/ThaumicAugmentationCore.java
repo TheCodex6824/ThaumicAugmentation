@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,22 +20,20 @@
 
 package thecodex6824.thaumicaugmentation.core;
 
-import java.io.File;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.collect.ImmutableSet;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+
+import java.io.File;
+import java.util.Map;
+import java.util.Set;
 
 @Name("Thaumic Augmentation Core Plugin")
 @MCVersion("1.12.2")
@@ -43,7 +41,7 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 @TransformerExclusions("thecodex6824.thaumicaugmentation.core")
 public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     
-    private static Logger log = LogManager.getLogger(ThaumicAugmentationAPI.MODID + "core");
+    private static final Logger log = LogManager.getLogger(ThaumicAugmentationAPI.MODID + "core");
     
     private static Configuration config;
     private static boolean enabled;

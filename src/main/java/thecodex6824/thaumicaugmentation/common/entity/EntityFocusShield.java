@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,24 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.Optional;
-
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.IEntityOwnable;
-import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
@@ -72,6 +57,13 @@ import thecodex6824.thaumicaugmentation.api.entity.IImpulseSpecialEntity;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+
+import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 public class EntityFocusShield extends EntityLivingBase implements IEntityOwnable, ICastedEntity, IImpulseSpecialEntity {
 

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,22 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.common;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.google.common.collect.ImmutableSet;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.Comment;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import net.minecraftforge.common.config.Config.RangeDouble;
-import net.minecraftforge.common.config.Config.RangeInt;
-import net.minecraftforge.common.config.Config.RequiresMcRestart;
-import net.minecraftforge.common.config.Config.Type;
+import net.minecraftforge.common.config.Config.*;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -43,22 +33,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAConfig.TileWardMode;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionBoolean;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDouble;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionDoubleList;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionEnum;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionFloat;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionInt;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntList;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionIntSet;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionLong;
-import thecodex6824.thaumicaugmentation.api.config.ConfigOptionStringList;
-import thecodex6824.thaumicaugmentation.api.config.IEnumSerializer;
-import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
+import thecodex6824.thaumicaugmentation.api.config.*;
 import thecodex6824.thaumicaugmentation.common.network.PacketConfigSync;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-/**
+import java.util.ArrayList;
+import java.util.Collection;
+
+/*
  * Holds configuration variables for Thaumic Augmentation.
  * @author TheCodex6824
  */
@@ -802,7 +784,7 @@ public final class TAConfigHolder {
         public int bulkRenderDistance = 192;
     }
     
-    private static ArrayList<Runnable> listeners = new ArrayList<>();
+    private static final ArrayList<Runnable> listeners = new ArrayList<>();
     
     public static void addListener(Runnable r) {
         listeners.add(r);

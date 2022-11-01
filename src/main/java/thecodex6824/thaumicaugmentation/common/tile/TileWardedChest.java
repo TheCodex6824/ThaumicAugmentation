@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,7 +32,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.animation.Event;
-import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
@@ -48,6 +44,8 @@ import thecodex6824.thaumicaugmentation.api.ward.tile.CapabilityWardedInventory;
 import thecodex6824.thaumicaugmentation.api.ward.tile.WardedInventory;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
+
+import javax.annotation.Nullable;
 
 public class TileWardedChest extends TileWarded implements IAnimatedTile, INameableTile {
 
@@ -63,7 +61,7 @@ public class TileWardedChest extends TileWarded implements IAnimatedTile, INamea
         inventory = new WardedInventory(27);
         openTime = new VariableValue(-1);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/warded_chest.json"), 
-                ImmutableMap.<String, ITimeValue>of("anim_time", new VariableValue(ANIM_TIME), "open_time", openTime));
+                ImmutableMap.of("anim_time", new VariableValue(ANIM_TIME), "open_time", openTime));
     }
 
     @Override

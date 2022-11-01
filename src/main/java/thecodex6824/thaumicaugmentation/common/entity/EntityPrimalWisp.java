@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,20 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
-
-import javax.annotation.Nullable;
-
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityFlying;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.entity.IRangedAttackMob;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
@@ -68,13 +58,13 @@ import thecodex6824.thaumicaugmentation.api.TALootTables;
 import thecodex6824.thaumicaugmentation.api.entity.PrimalWispAttackRegistry;
 import thecodex6824.thaumicaugmentation.api.util.QuadConsumer;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
-import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAIAttackRangedCustomMutex;
-import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAIFlyToTarget;
-import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAIFlyWander;
-import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAIHurtByTargetAnyLiving;
-import thecodex6824.thaumicaugmentation.common.entity.ai.EntityAINearestAttackableTargetAnyLiving;
+import thecodex6824.thaumicaugmentation.common.entity.ai.*;
 import thecodex6824.thaumicaugmentation.common.network.PacketFollowingOrb;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 public class EntityPrimalWisp extends EntityFlying implements IMob, IRangedAttackMob {
     

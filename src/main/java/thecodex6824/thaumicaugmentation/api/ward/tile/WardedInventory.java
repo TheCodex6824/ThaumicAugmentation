@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,21 +20,21 @@
 
 package thecodex6824.thaumicaugmentation.api.ward.tile;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-/**
+import javax.annotation.Nonnull;
+
+/*
  * Default implementation of {@link IWardedInventory}.
  * @author TheCodex6824
  */
 public class WardedInventory implements IWardedInventory, INBTSerializable<NBTTagCompound> {
 
-    private ItemStackHandler wrapped;
+    private final ItemStackHandler wrapped;
     
     public WardedInventory(int slots) {
         wrapped = new ItemStackHandler(slots);

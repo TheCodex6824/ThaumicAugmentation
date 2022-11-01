@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.api.impetus;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +37,8 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
+import javax.annotation.Nullable;
+
 public final class ImpetusAPI {
 
     private ImpetusAPI() {}
@@ -51,7 +51,7 @@ public final class ImpetusAPI {
     public static final String ENERGY_STRONG = "thaumicaugmentation.text.energy_strong";
     public static final String ENERGY_MAX = "thaumicaugmentation.text.energy_max";
     
-    /**
+    /*
      * Returns an unlocalized description string for the proportion of energy in the object.
      * @param storage The object to get the descriptor of
      * @return An unlocalized String describing the ratio of stored energy to max energy
@@ -133,7 +133,7 @@ public final class ImpetusAPI {
         return false;
     }
     
-    /**
+    /*
      * Searches for IRiftEnergyStorage instances in the world, and drains energy from them into the passed storage.
      * @param world The world to look in
      * @param dest The IRiftEnergyStorage to put the energy in
@@ -144,7 +144,7 @@ public final class ImpetusAPI {
         return drainNearbyEnergyIntoStorage(world, dest, range, null);
     }
     
-    /**
+    /*
      * Searches for IRiftEnergyStorage instances in the world, and drains energy from them into the passed storage. This will
      * also create energy transfer particles on the client, if effectOrigin is not null.
      * @param world The world to look in

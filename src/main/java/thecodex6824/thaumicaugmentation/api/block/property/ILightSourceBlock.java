@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -25,15 +25,15 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-/**
+/*
  * Property interface for blocks that should give off a variable amount of light,
  * depending on the value of this property.
  * @author TheCodex6824
  */
 public interface ILightSourceBlock {
 
-    public static final PropertyInteger LIGHT_LEVEL = PropertyInteger.create("ta_light_level", 0, 15);
+    PropertyInteger LIGHT_LEVEL = PropertyInteger.create("ta_light_level", 0, 15);
 
-    public int getLightLevel(IBlockState state, IBlockAccess world, BlockPos pos);
+    int getLightLevel(IBlockState state, IBlockAccess world, BlockPos pos);
 
 }

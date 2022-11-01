@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,20 +20,18 @@
 
 package thecodex6824.thaumicaugmentation.api.ward;
 
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 
-/**
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+/*
  * Handles syncing ward changes to clients.
  * @author TheCodex6824
  */
@@ -69,7 +67,7 @@ public final class WardSyncManager {
         
     }
     
-    private static Multimap<DimensionalChunkPos, WardUpdateEntry> entries = MultimapBuilder.hashKeys().arrayListValues(16).build();
+    private static final Multimap<DimensionalChunkPos, WardUpdateEntry> entries = MultimapBuilder.hashKeys().arrayListValues(16).build();
     
     public static void markChunkForFullSync(World world, BlockPos pos) {
         markPosForNewOwner(world, pos, null);

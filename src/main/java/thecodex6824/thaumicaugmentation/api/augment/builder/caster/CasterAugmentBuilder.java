@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,17 +20,17 @@
 
 package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Set;
-import java.util.function.Consumer;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Set;
+import java.util.function.Consumer;
 
 public final class CasterAugmentBuilder {
 

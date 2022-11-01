@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,11 +24,11 @@ import javax.annotation.Nullable;
 
 public interface INameableTile {
 
-    public boolean hasCustomName();
+    boolean hasCustomName();
     
     @Nullable
-    public String getCustomName();
+    String getCustomName();
     
-    public void setCustomName(String name);
+    void setCustomName(String name);
     
 }

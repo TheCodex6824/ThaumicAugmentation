@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,21 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.init.proxy;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -80,6 +68,16 @@ import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
 import thecodex6824.thaumicaugmentation.common.util.TARenderHelperServer;
 import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 public class ServerProxy implements ISidedProxy {
 
@@ -184,7 +182,7 @@ public class ServerProxy implements ISidedProxy {
             }
             catch (IOException ex) {
                 ThaumicAugmentation.getLogger().error("Could not write player data file for UUID " +
-                        uuid.toString(), ex);
+                        uuid, ex);
             }
         }
     }
@@ -272,7 +270,7 @@ public class ServerProxy implements ISidedProxy {
                 PlayerEventHandler.updateBoostState(entity, false);
                 PacketBoostState packet = new PacketBoostState(entity.getEntityId(), false);
                 if (entity instanceof EntityPlayerMP)
-                    TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);
+                    TANetwork.INSTANCE.sendTo(packet, entity);
                 
                 TANetwork.INSTANCE.sendToAllTracking(packet, entity);
             }
@@ -282,7 +280,7 @@ public class ServerProxy implements ISidedProxy {
                 PlayerEventHandler.updateBoostState(entity, true);
                 PacketBoostState packet = new PacketBoostState(entity.getEntityId(), true);
                 if (entity instanceof EntityPlayerMP)
-                    TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);
+                    TANetwork.INSTANCE.sendTo(packet, entity);
                 
                 TANetwork.INSTANCE.sendToAllTracking(packet, entity);
             }

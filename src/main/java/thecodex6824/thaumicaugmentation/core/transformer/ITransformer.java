@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,14 +24,14 @@ import org.objectweb.asm.tree.ClassNode;
 
 public interface ITransformer {
 
-    public boolean isTransformationNeeded(String transformedName);
+    boolean isTransformationNeeded(String transformedName);
     
-    public boolean transform(ClassNode classNode, String name, String transformedName);
+    boolean transform(ClassNode classNode, String name, String transformedName);
     
-    public RuntimeException getRaisedException();
+    RuntimeException getRaisedException();
     
-    public boolean needToComputeFrames();
+    boolean needToComputeFrames();
     
-    public boolean isAllowedToFail();
+    boolean isAllowedToFail();
     
 }

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -85,12 +85,7 @@ import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Vector4d;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -112,7 +107,7 @@ public class RenderEventHandler {
     
     private static final double TRANSACTION_DURATION = 60.0;
     
-    private static NonNullList<ItemStack> tempArmor = NonNullList.withSize(4, ItemStack.EMPTY);
+    private static final NonNullList<ItemStack> tempArmor = NonNullList.withSize(4, ItemStack.EMPTY);
     
     static {
         for (int i = 0; i < ShaderType.values().length; ++i)

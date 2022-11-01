@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,8 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.block;
-
-import java.util.Random;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
@@ -48,6 +46,8 @@ import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
+
+import java.util.Random;
 
 public class BlockCastedLight extends BlockTABase implements ILightSourceBlock, IItemBlockProvider {
 

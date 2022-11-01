@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,23 +20,23 @@
 
 package thecodex6824.thaumicaugmentation.api.block.property;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
+import javax.annotation.Nullable;
+
 public interface IStarfieldGlassType {
 
-    public enum GlassType implements IStringSerializable {
+    enum GlassType implements IStringSerializable {
         
         GLASS_RIFT(0),
         GLASS_FRACTURE(1),
         GLASS_MIRROR(2);
         
-        private int meta;
+        private final int meta;
         
-        private GlassType(int m) {
+        GlassType(int m) {
             meta = m;
         }
         
@@ -71,6 +71,6 @@ public interface IStarfieldGlassType {
         
     }
     
-    public static final PropertyEnum<GlassType> GLASS_TYPE = PropertyEnum.create("ta_glass_type", GlassType.class);
+    PropertyEnum<GlassType> GLASS_TYPE = PropertyEnum.create("ta_glass_type", GlassType.class);
     
 }

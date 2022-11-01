@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,8 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.block;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -54,6 +52,8 @@ import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockNoImpetusNode
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
 import thecodex6824.thaumicaugmentation.init.GUIHandler;
+
+import javax.annotation.Nullable;
 
 public class BlockArcaneTerraformer extends BlockTABase implements IArcaneTerraformerHalf, IItemBlockProvider {
 

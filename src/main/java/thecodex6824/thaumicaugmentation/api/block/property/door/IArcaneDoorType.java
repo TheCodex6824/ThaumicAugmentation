@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -23,7 +23,7 @@ package thecodex6824.thaumicaugmentation.api.block.property.door;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 
-/**
+/*
  * Property interface marking the type/meta of the Arcane Door.
  * @author TheCodex6824
  * @deprecated This was used in the old implementation of Arcane Doors, where they all shared a single block type.
@@ -32,7 +32,7 @@ import net.minecraft.util.IStringSerializable;
 @Deprecated
 public interface IArcaneDoorType {
 
-    public enum ArcaneDoorType implements IStringSerializable {
+    enum ArcaneDoorType implements IStringSerializable {
 
         WOOD,
         METAL;
@@ -44,7 +44,7 @@ public interface IArcaneDoorType {
 
     }
 
-    public static final PropertyEnum<ArcaneDoorType> TYPE = 
-            PropertyEnum.<ArcaneDoorType>create("ta_doortype", ArcaneDoorType.class);
+    PropertyEnum<ArcaneDoorType> TYPE =
+            PropertyEnum.create("ta_doortype", ArcaneDoorType.class);
 
 }

@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,15 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.test;
 
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
+import org.junit.Test;
+import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
 
 import java.util.Random;
 
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableList;
-
-import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
+import static org.junit.Assert.assertEquals;
 
 public class TestWeightedRandom {
     

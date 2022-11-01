@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -21,13 +21,11 @@
 package thecodex6824.thaumicaugmentation.common.block;
 
 import com.google.common.base.Predicate;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -37,14 +35,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -85,14 +76,14 @@ public class BlockArcaneTrapdoor extends BlockTABase implements IHorizontallyDir
     
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {IArcaneDoorHalf.DOOR_HALF, 
-                IHorizontallyDirectionalBlock.DIRECTION, IArcaneDoorOpen.DOOR_OPEN});
+        return new BlockStateContainer(this, IArcaneDoorHalf.DOOR_HALF,
+                IHorizontallyDirectionalBlock.DIRECTION, IArcaneDoorOpen.DOOR_OPEN);
     }
     
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if (state.getValue(IArcaneDoorOpen.DOOR_OPEN)) {
-            switch ((EnumFacing)state.getValue(IHorizontallyDirectionalBlock.DIRECTION)) {
+            switch (state.getValue(IHorizontallyDirectionalBlock.DIRECTION)) {
                 case NORTH:
                 default:
                     return NORTH_OPEN_AABB;

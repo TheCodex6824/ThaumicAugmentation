@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,18 +20,18 @@
 
 package thecodex6824.thaumicaugmentation.api.entity;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
+
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.WeakHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import thecodex6824.thaumicaugmentation.api.TAConfig;
-
-/**
+/*
  * Class that manages non-attribute movement changes.
  * @author TheCodex6824
  */
@@ -39,7 +39,7 @@ public final class PlayerMovementAbilityManager {
 
     private PlayerMovementAbilityManager() {}
     
-    public static enum MovementType {
+    public enum MovementType {
         DRY_GROUND,
         WATER_GROUND,
         WATER_SWIM,
@@ -103,9 +103,9 @@ public final class PlayerMovementAbilityManager {
         
     }
     
-    private static WeakHashMap<EntityPlayer, FlyData> flyData = new WeakHashMap<>();
-    private static WeakHashMap<EntityPlayer, OldMovementData> oldMovementValues = new WeakHashMap<>();
-    private static WeakHashMap<EntityPlayer, LinkedList<PlayerFunctions>> players = 
+    private static final WeakHashMap<EntityPlayer, FlyData> flyData = new WeakHashMap<>();
+    private static final WeakHashMap<EntityPlayer, OldMovementData> oldMovementValues = new WeakHashMap<>();
+    private static final WeakHashMap<EntityPlayer, LinkedList<PlayerFunctions>> players =
             new WeakHashMap<>();
 
     public static boolean isValidSideForMovement(EntityPlayer player) {
@@ -137,8 +137,7 @@ public final class PlayerMovementAbilityManager {
             player.stepHeight -= data.stepHeight;
             player.speedInAir -= data.speedInAir;
             players.remove(player);
-            if (oldMovementValues.containsKey(player))
-                oldMovementValues.remove(player);
+            oldMovementValues.remove(player);
         }
 
         return result;

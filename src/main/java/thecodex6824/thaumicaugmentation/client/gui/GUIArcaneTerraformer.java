@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,11 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.client.gui;
 
-import java.util.concurrent.ExecutionException;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-
 import it.unimi.dsi.fastutil.objects.Object2IntAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.gui.GuiButton;
@@ -50,6 +47,8 @@ import thecodex6824.thaumicaugmentation.common.network.PacketInteractGUI;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
+
+import java.util.concurrent.ExecutionException;
 
 public class GUIArcaneTerraformer extends GuiContainer {
 
@@ -93,7 +92,7 @@ public class GUIArcaneTerraformer extends GuiContainer {
                 COSTS.invalidateAll();
             }
             
-            protected void sync() {
+            private void sync() {
                 TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, c.getTile().getRadius()));
             }
         });
@@ -123,7 +122,7 @@ public class GUIArcaneTerraformer extends GuiContainer {
                 COSTS.invalidateAll();
             }
             
-            protected void sync() {
+            private void sync() {
                 TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, c.getTile().isCircle() ? 1 : 0));
             }
         });

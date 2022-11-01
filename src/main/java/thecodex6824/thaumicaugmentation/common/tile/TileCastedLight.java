@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
@@ -30,6 +28,8 @@ import net.minecraft.world.World;
 import thaumcraft.api.aspects.Aspect;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TileCastedLight extends TileEntity implements ITickable {
 

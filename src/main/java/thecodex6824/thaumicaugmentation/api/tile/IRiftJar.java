@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,10 +24,10 @@ import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
 
 public interface IRiftJar {
 
-    public void setRift(FluxRiftReconstructor newRift);
+    void setRift(FluxRiftReconstructor newRift);
     
-    public FluxRiftReconstructor getRift();
+    FluxRiftReconstructor getRift();
     
-    public boolean hasRift();
+    boolean hasRift();
     
 }

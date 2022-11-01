@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,9 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.client.model;
 
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraftforge.client.resource.IResourceType;
@@ -31,6 +28,9 @@ import net.minecraftforge.client.resource.VanillaResourceType;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.client.event.IClientResourceReloadDispatcher;
 import thecodex6824.thaumicaugmentation.common.util.IResourceReloadDispatcher;
+
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class CachedBakedModel<T extends IBakedModel> implements ISelectiveResourceReloadListener {
 

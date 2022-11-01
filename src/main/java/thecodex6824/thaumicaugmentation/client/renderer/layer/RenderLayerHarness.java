@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,11 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.client.renderer.layer;
 
-import java.util.Random;
-import java.util.function.Predicate;
-
-import org.lwjgl.opengl.GL11;
-
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
@@ -43,6 +38,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
+import org.lwjgl.opengl.GL11;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.client.fx.FXDispatcher;
 import thaumcraft.client.fx.ParticleEngine;
@@ -58,6 +54,9 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugmen
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationBotania;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
+
+import java.util.Random;
+import java.util.function.Predicate;
 
 public class RenderLayerHarness implements LayerRenderer<EntityPlayer> {
 

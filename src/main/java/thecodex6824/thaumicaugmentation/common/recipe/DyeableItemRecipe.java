@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,14 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.common.recipe;
 
-import java.util.ArrayList;
-
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipesArmorDyes;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.DyeUtils;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
+
+import java.util.ArrayList;
 
 public class DyeableItemRecipe extends RecipesArmorDyes {
 

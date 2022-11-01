@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,29 +20,29 @@
 
 package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
 
-import java.util.List;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 
+import java.util.List;
+
 public interface IBuilderCasterCallback {
     
-    public default void onEquip(ICustomCasterAugment augment, Entity user) {}
+    default void onEquip(ICustomCasterAugment augment, Entity user) {}
     
-    public default void onUnequip(ICustomCasterAugment augment, Entity user) {}
+    default void onUnequip(ICustomCasterAugment augment, Entity user) {}
     
-    public default void onTick(ICustomCasterAugment augment, Entity user) {}
+    default void onTick(ICustomCasterAugment augment, Entity user) {}
     
-    public default void onHurtEntity(ICustomCasterAugment augment, DamageSource source, Entity attacked, DamageWrapper damage) {}
+    default void onHurtEntity(ICustomCasterAugment augment, DamageSource source, Entity attacked, DamageWrapper damage) {}
     
-    public default void onDamagedEntity(ICustomCasterAugment augment, DamageSource source, Entity attacked, DamageWrapper damage) {}
+    default void onDamagedEntity(ICustomCasterAugment augment, DamageSource source, Entity attacked, DamageWrapper damage) {}
     
-    public default void onHurt(ICustomCasterAugment augment, Entity attacked, DamageSource source, DamageWrapper damage) {}
+    default void onHurt(ICustomCasterAugment augment, Entity attacked, DamageSource source, DamageWrapper damage) {}
     
-    public default void onDamaged(ICustomCasterAugment augment, Entity attacked, DamageSource source, DamageWrapper damage) {}
+    default void onDamaged(ICustomCasterAugment augment, Entity attacked, DamageSource source, DamageWrapper damage) {}
     
-    public default void appendAdditionalTooltip(ItemStack component, List<String> tooltip) {}
+    default void appendAdditionalTooltip(ItemStack component, List<String> tooltip) {}
     
 }

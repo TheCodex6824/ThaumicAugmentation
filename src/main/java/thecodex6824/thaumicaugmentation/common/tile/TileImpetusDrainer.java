@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,13 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -39,7 +33,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.animation.Event;
-import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
@@ -57,6 +50,10 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.BufferedImpetusP
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.common.tile.trait.IAnimatedTile;
 import thecodex6824.thaumicaugmentation.common.util.AnimationHelper;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimatedTile {
 
@@ -93,7 +90,7 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
         
         ticks = ThreadLocalRandom.current().nextInt(20);
         asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_drainer.json"), 
-                ImmutableMap.<String, ITimeValue>of());
+                ImmutableMap.of());
     }
     
     protected void findRift() {

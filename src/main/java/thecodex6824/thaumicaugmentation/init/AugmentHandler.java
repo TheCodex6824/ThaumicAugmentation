@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,9 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
-import java.util.ArrayDeque;
-import java.util.List;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -32,11 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.casters.FocusEffect;
-import thaumcraft.api.casters.FocusModSplit;
-import thaumcraft.api.casters.FocusNode;
-import thaumcraft.api.casters.FocusPackage;
-import thaumcraft.api.casters.IFocusElement;
+import thaumcraft.api.casters.*;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
@@ -47,6 +40,9 @@ import thecodex6824.thaumicaugmentation.api.augment.builder.caster.IBuilderCaste
 import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
 import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
+
+import java.util.ArrayDeque;
+import java.util.List;
 
 public class AugmentHandler {
 

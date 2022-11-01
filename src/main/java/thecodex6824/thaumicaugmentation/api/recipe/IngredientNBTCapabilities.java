@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,10 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.api.recipe;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.crafting.IngredientNBT;
+
+import javax.annotation.Nullable;
 
 public class IngredientNBTCapabilities extends IngredientNBT {
 

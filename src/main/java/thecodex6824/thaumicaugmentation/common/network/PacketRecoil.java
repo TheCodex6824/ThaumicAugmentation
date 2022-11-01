@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,20 +20,20 @@
 
 package thecodex6824.thaumicaugmentation.common.network;
 
-import javax.annotation.Nullable;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
+import javax.annotation.Nullable;
+
 public class PacketRecoil implements IMessage {
 
-    public static enum RecoilType {
+    public enum RecoilType {
         IMPULSE_BURST(0),
         IMPULSE_RAILGUN(1);
         
-        private int id;
+        private final int id;
         
-        private RecoilType(int i) {
+        RecoilType(int i) {
             id = i;
         }
         

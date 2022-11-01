@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -20,19 +20,18 @@
 
 package thecodex6824.thaumicaugmentation.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import net.minecraft.util.EnumFacing;
+import org.junit.Test;
+import thecodex6824.thaumicaugmentation.common.util.maze.Maze;
+import thecodex6824.thaumicaugmentation.common.util.maze.MazeCell;
+import thecodex6824.thaumicaugmentation.common.util.maze.MazeGenerator;
 
 import java.util.ArrayDeque;
 import java.util.Random;
 
-import org.junit.Test;
-
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import net.minecraft.util.EnumFacing;
-import thecodex6824.thaumicaugmentation.common.util.maze.Maze;
-import thecodex6824.thaumicaugmentation.common.util.maze.MazeCell;
-import thecodex6824.thaumicaugmentation.common.util.maze.MazeGenerator;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class TestMazeGenerator {
 

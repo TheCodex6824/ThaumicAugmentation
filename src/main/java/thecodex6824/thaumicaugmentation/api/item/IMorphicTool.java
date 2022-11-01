@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -24,8 +24,8 @@ import net.minecraft.item.ItemStack;
 
 public interface IMorphicTool extends IMorphicItem {
 
-    public void setFunctionalStack(ItemStack stack);
+    void setFunctionalStack(ItemStack stack);
     
-    public ItemStack getFunctionalStack();
+    ItemStack getFunctionalStack();
     
 }

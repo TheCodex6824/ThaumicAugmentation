@@ -1,6 +1,6 @@
-/**
+/*
  *  Thaumic Augmentation
- *  Copyright (c) 2019 TheCodex6824.
+ *  Copyright (c) 2022 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -19,11 +19,6 @@
  */
 
 package thecodex6824.thaumicaugmentation.common.item;
-
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -53,6 +48,10 @@ import thecodex6824.thaumicaugmentation.common.network.PacketImpulseRailgunProje
 import thecodex6824.thaumicaugmentation.common.network.PacketRecoil;
 import thecodex6824.thaumicaugmentation.common.network.PacketRecoil.RecoilType;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Random;
 
 public class ItemImpulseCannonAugment extends ItemTABase {
 
