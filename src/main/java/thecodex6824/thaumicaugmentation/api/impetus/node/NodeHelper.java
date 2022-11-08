@@ -250,6 +250,7 @@ public final class NodeHelper {
                         IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
                         if (possible != null) {
                             node.addOutput(possible);
+                            syncAddedImpetusNodeOutput(node, pos);
                             continue;
                         }
                     }
@@ -283,8 +284,7 @@ public final class NodeHelper {
             }
         }
 
-        for (
-                IImpetusNode n : changed) {
+        for (IImpetusNode n : changed) {
             if (n.getLocation().getDimension() == sharedWorld.provider.getDimension()) {
                 TileEntity tile = sharedWorld.getTileEntity(n.getLocation().getPos());
                 if (tile != null)
