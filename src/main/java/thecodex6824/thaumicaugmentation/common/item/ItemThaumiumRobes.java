@@ -224,13 +224,13 @@ public class ItemThaumiumRobes extends ItemArmor implements IVisDiscountGear,
     @Override
     public boolean showIngamePopups(ItemStack stack, EntityLivingBase living) {
         return stack.getItem() instanceof ItemArmor &&
-                ((ItemArmor) stack.getItem()).getEquipmentSlot() == EntityEquipmentSlot.HEAD;
+                ((ItemArmor) stack.getItem()).armorType == EntityEquipmentSlot.HEAD;
     }
     
     @Override
     public boolean showNodes(ItemStack stack, EntityLivingBase living) {
         return stack.getItem() instanceof ItemArmor &&
-                ((ItemArmor) stack.getItem()).getEquipmentSlot() == EntityEquipmentSlot.HEAD;
+                ((ItemArmor) stack.getItem()).armorType == EntityEquipmentSlot.HEAD;
     }
     
     @Override
