@@ -69,11 +69,11 @@ public class SubCommandMakeFracture implements ISubCommand {
             x1 = (int) (CommandBase.parseCoordinate(origin.getX(), args[0], true).getResult());
             y1 = (int) (CommandBase.parseCoordinate(origin.getY(), args[1], true).getResult());
             z1 = (int) (CommandBase.parseCoordinate(origin.getZ(), args[2], true).getResult());
-            dim1 = CommandBase.parseInt(args[3]);
+            dim1 = e != null && args[3].equals("~") ? e.dimension : CommandBase.parseInt(args[3]);
             x2 = (int) (CommandBase.parseCoordinate(origin.getX(), args[4], true).getResult());
             y2 = (int) (CommandBase.parseCoordinate(origin.getY(), args[5], true).getResult());
             z2 = (int) (CommandBase.parseCoordinate(origin.getZ(), args[6], true).getResult());
-            dim2 = CommandBase.parseInt(args[7]);
+            dim2 = e != null && args[7].equals("~") ? e.dimension : CommandBase.parseInt(args[7]);
         }
         else
             throw new WrongUsageException("thaumicaugmentation.command.makefracture.usage");

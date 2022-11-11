@@ -83,7 +83,7 @@ public class SubCommandFixAura implements ISubCommand {
                     BlockPos pos = e != null ? e.getPosition() : BlockPos.ORIGIN;
                     x = (int) (CommandBase.parseCoordinate(pos.getX() >> 4, args[0], false).getResult());
                     z = (int) (CommandBase.parseCoordinate(pos.getZ() >> 4, args[1], false).getResult());
-                    dim = CommandBase.parseInt(args[2]);
+                    dim = e != null && args[2].equals("~") ? e.dimension : CommandBase.parseInt(args[2]);
                     if (args.length == 4)
                         force = Boolean.parseBoolean(args[3]);
                 }

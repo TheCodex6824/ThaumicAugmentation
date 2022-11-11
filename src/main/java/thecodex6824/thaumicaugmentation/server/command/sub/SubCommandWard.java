@@ -63,7 +63,7 @@ public class SubCommandWard implements ISubCommand {
                     Entity e = sender.getCommandSenderEntity();
                     x = (int) (CommandBase.parseCoordinate(e != null ? e.posX : 0, args[1], false).getResult());
                     z = (int) (CommandBase.parseCoordinate(e != null ? e.posZ : 0, args[2], false).getResult());
-                    dim = CommandBase.parseInt(args[3]);
+                    dim = e != null && args[3].equals("~") ? e.dimension : CommandBase.parseInt(args[3]);
                 }
             }
             
