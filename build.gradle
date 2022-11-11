@@ -49,16 +49,6 @@ ext {
 
 final arch = System.getProperty("os.arch")
 final needCustomNatives = arch != "x86" && arch != "i386" && arch != "x86_64" && arch != "amd64"
-if (needCustomNatives) {
-    configurations.all {
-        exclude group: 'net.java.jinput', module: 'jinput'
-        exclude group: 'net.java.jinput', module: 'jinput-platform'
-        exclude group: 'org.lwjgl.lwjgl', module: 'lwjgl'
-        exclude group: 'org.lwjgl.lwjgl', module: 'lwjgl-platform'
-    }
-
-    println 'Detected a non-x86 architecture. To run the client successfully, you will need to place lwjgl and jinput native libraries (with their associated jars) in the natives folder.'
-}
 
 minecraft {
     mappings channel: 'stable', version: '39-1.12'
