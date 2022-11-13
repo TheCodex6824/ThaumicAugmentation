@@ -33,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -52,6 +53,7 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent;
 import thecodex6824.thaumicaugmentation.api.event.FluxRiftDestroyBlockEvent;
 import thecodex6824.thaumicaugmentation.api.event.FocusTouchGetEntityEvent;
+import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
@@ -276,6 +278,11 @@ public final class TAHooksCommon {
         }
 
         return fallback;
+    }
+
+    public static boolean onAddTile(Chunk chunk, BlockPos pos, TileEntity tile) {
+        return !tile.hasCapability(CapabilityImpetusNode.IMPETUS_NODE, null) ||
+                chunk.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) != tile;
     }
     
 }

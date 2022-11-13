@@ -24,40 +24,7 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
-import thecodex6824.thaumicaugmentation.core.transformer.ITransformer;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerAttemptTeleport;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerBaubleSlotChanged;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationCustomTCArmor;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerBipedRotationVanilla;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerCycleItemStackMetadata;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerEldritchGuardianFog;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraClientCheck;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerElytraServerCheck;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerFluxRiftDestroyBlock;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerInfusionLeftoverItems;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderCape;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerRenderEntities;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerRunicShieldingAllowBaublesCap;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerSweepingEdgeCheck;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCBlueprintCrashFix;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerTCRobesElytraFlapping;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerThaumostaticHarnessSprintCheck;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerTouchTargetEntitySelection;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerTouchTrajectoryEntitySelection;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerUpdateElytra;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerVoidRobesArmorBarFix;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFireEncouragement;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockFlammability;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockGrassPath;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockHardness;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoEndermanPickup;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoRabbitSnacking;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoSheepGrazing;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockNoVillagerFarming;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockRandomTick;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockResistance;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockSlabs;
-import thecodex6824.thaumicaugmentation.core.transformer.TransformerWardBlockTaintImmunity;
+import thecodex6824.thaumicaugmentation.core.transformer.*;
 
 import java.util.ArrayList;
 
@@ -162,6 +129,9 @@ public class TATransformer implements IClassTransformer {
 
         // to allow wildcard metadata in required research items when they are non-damageable
         TRANSFORMERS.add(new TransformerCycleItemStackMetadata());
+
+        // to fix the forge bug that calls invalidate on tiles if they are loaded while tiles are being processed
+        TRANSFORMERS.add(new TransformerWorldAddTile());
     }
     
     public TATransformer() {}
