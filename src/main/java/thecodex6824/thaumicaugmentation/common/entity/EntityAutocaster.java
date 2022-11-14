@@ -61,6 +61,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import thaumcraft.api.blocks.BlocksTC;
+import thaumcraft.common.entities.monster.EntitySpellBat;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAItems;
@@ -96,7 +97,14 @@ public class EntityAutocaster extends EntityAutocasterBase implements IEntityOwn
             IEntityOwnable ownable = (IEntityOwnable) target;
             if (ownable.getOwner() != null && ownable.getOwner().equals(getOwner()) && !getTargetFriendly())
                 return false;
-            else if (ownable.getOwner() != null && (!onSameTeam && !ownable.getOwner().equals(getOwner())) && getTargetFriendly())
+            else if (ownable.getOwner() != null && !onSameTeam && !ownable.getOwner().equals(getOwner()) && getTargetFriendly())
+                return false;
+        }
+        else if (target instanceof EntitySpellBat) {
+            EntitySpellBat bat = (EntitySpellBat) target;
+            if (bat.getOwner() != null && (bat.getOwner().equals(this) || bat.getOwner().equals(getOwner())))
+                return false;
+            else if (bat.getOwner() != null && myTeam != null && bat.getOwner().getTeam() == myTeam)
                 return false;
         }
         

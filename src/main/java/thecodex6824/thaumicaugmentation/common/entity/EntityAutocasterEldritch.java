@@ -52,6 +52,7 @@ import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.IFocusElement;
 import thaumcraft.api.entities.IEldritchMob;
 import thaumcraft.common.entities.monster.EntityEldritchGuardian;
+import thaumcraft.common.entities.monster.EntitySpellBat;
 import thaumcraft.common.entities.monster.boss.EntityCultistLeader;
 import thaumcraft.common.entities.monster.boss.EntityCultistPortalGreater;
 import thaumcraft.common.entities.monster.boss.EntityEldritchGolem;
@@ -174,7 +175,7 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
         experienceValue = 15;
         setDropChance(EntityEquipmentSlot.MAINHAND, 0.01F);
     }
-    
+
     @Override
     protected void initEntityAI() {
         tasks.addTask(1, new EntityAIWatchTarget());
@@ -186,6 +187,8 @@ public class EntityAutocasterEldritch extends EntityAutocasterBase implements IM
         targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
         targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, 10, true, false,
                 e -> e.getEntityWorld().getDifficulty() != EnumDifficulty.PEACEFUL));
+        targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntitySpellBat.class, 10, true, false,
+                e -> e.getOwner() == null || (!e.getOwner().equals(this) && !isOnSameTeam(e.getOwner()))));
         targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityCultistLeader.class, true));
         targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityCultist.class, true));
         targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityCultistPortalGreater.class, true));
