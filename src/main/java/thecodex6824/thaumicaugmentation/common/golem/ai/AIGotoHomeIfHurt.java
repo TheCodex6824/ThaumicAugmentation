@@ -27,8 +27,8 @@ import thaumcraft.common.golems.EntityThaumcraftGolem;
 
 public class AIGotoHomeIfHurt extends AIGotoHomeImproved {
 
-    public AIGotoHomeIfHurt(EntityThaumcraftGolem golem) {
-        super(golem);
+    public AIGotoHomeIfHurt(EntityThaumcraftGolem golem, double moveSpeed) {
+        super(golem, moveSpeed);
     }
     
     @Override

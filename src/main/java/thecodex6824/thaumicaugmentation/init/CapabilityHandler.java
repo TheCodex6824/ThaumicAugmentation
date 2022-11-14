@@ -43,8 +43,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.blocks.BlocksTC;
+import thaumcraft.api.golems.IGolemAPI;
 import thaumcraft.common.blocks.basic.BlockBannerTCItem;
 import thaumcraft.common.entities.EntityFluxRift;
+import thaumcraft.common.golems.EntityThaumcraftGolem;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.*;
@@ -75,6 +77,7 @@ import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
+import thecodex6824.thaumicaugmentation.common.capability.ResizableImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
@@ -452,6 +455,10 @@ public final class CapabilityHandler {
         if (event.getObject() instanceof EntityFluxRift) {
             event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_energy_storage"), new SimpleCapabilityProvider<>(
                     new FluxRiftImpetusStorage((EntityFluxRift) event.getObject()), CapabilityImpetusStorage.IMPETUS_STORAGE));
+        }
+        else if (event.getObject() instanceof EntityThaumcraftGolem) {
+            event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "rift_energy_storage"), new SimpleCapabilityProvider<>(
+                    new ResizableImpetusStorage(0, 25, 5, 0), CapabilityImpetusStorage.IMPETUS_STORAGE));
         }
         
         event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "portal_state"), new SimpleCapabilityProvider<>(

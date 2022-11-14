@@ -32,8 +32,8 @@ import java.util.ArrayList;
 
 public class AIGotoEntityImproved extends AIGotoImproved {
 
-    public AIGotoEntityImproved(EntityThaumcraftGolem golem, double reachDist) {
-        super(golem, reachDist);
+    public AIGotoEntityImproved(EntityThaumcraftGolem golem, double reachDist, double moveSpeed) {
+        super(golem, reachDist, moveSpeed);
     }
     
     protected boolean canGolemReach(Entity other) {

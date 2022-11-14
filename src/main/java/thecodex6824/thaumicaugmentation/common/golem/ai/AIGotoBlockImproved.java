@@ -33,8 +33,8 @@ import java.util.ArrayList;
 
 public class AIGotoBlockImproved extends AIGotoImproved {
 
-    public AIGotoBlockImproved(EntityThaumcraftGolem golem, double reachDist) {
-        super(golem, reachDist);
+    public AIGotoBlockImproved(EntityThaumcraftGolem golem, double reachDist, double moveSpeed) {
+        super(golem, reachDist, moveSpeed);
     }
     
     protected boolean canGolemReach(BlockPos pos) {

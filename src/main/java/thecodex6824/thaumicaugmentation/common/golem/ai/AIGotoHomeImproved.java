@@ -31,10 +31,12 @@ public class AIGotoHomeImproved extends EntityAIBase {
     protected EntityThaumcraftGolem entity;
     protected int idleTime;
     protected BlockPos target;
+    protected double speed;
     
-    public AIGotoHomeImproved(EntityThaumcraftGolem golem) {
+    public AIGotoHomeImproved(EntityThaumcraftGolem golem, double moveSpeed) {
         entity = golem;
         idleTime = 10;
+        speed = moveSpeed;
     }
     
     @Override
@@ -63,7 +65,7 @@ public class AIGotoHomeImproved extends EntityAIBase {
     
     @Override
     public void startExecuting() {
-        entity.getNavigator().tryMoveToXYZ(target.getX(), target.getY(), target.getZ(), entity.getGolemMoveSpeed());
+        entity.getNavigator().tryMoveToXYZ(target.getX(), target.getY(), target.getZ(), speed);
     }
 
     @Override
