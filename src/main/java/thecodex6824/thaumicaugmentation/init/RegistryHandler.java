@@ -65,6 +65,7 @@ import thecodex6824.thaumicaugmentation.common.entity.*;
 import thecodex6824.thaumicaugmentation.common.golem.GolemHeadAwakened;
 import thecodex6824.thaumicaugmentation.common.golem.SealAttack;
 import thecodex6824.thaumicaugmentation.common.golem.SealAttackAdvanced;
+import thecodex6824.thaumicaugmentation.common.golem.SealRecharge;
 import thecodex6824.thaumicaugmentation.common.item.*;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockImpetusMirror;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockRiftJar;
@@ -266,6 +267,7 @@ public final class RegistryHandler {
                 new EnumGolemTrait[] { EnumGolemTrait.SCOUT, EnumGolemTrait.SMART }));
         SealHandler.registerSeal(new SealAttack());
         SealHandler.registerSeal(new SealAttackAdvanced());
+        SealHandler.registerSeal(new SealRecharge());
     }
 
     @SubscribeEvent
