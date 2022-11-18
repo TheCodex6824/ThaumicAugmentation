@@ -69,7 +69,6 @@ public class ContainerAugmentationStation extends Container {
     public void addAugmentSlot(Slot slot) {
         addSlotToContainer(slot);
         trackedAugmentSlots.add(slot.slotNumber);
-        // TODO network sync???
     }
     
     public void removeAllAugmentSlots() {
@@ -78,8 +77,7 @@ public class ContainerAugmentationStation extends Container {
             inventoryItemStacks.remove(slot);
             inventorySlots.remove(slot);
         }
-        
-        // TODO sync?
+
         trackedAugmentSlots.clear();
     }
     
@@ -95,9 +93,11 @@ public class ContainerAugmentationStation extends Container {
         return 8;
     }
     
-    protected void ensureConfigIndex(ItemStack augmentable, IAugmentConfigurationStorage storage, int index) {
-        if (storage.getAllConfigurationsForItem(augmentable).size() <= index) {
-            for (int i = 0; i < index - storage.getAllConfigurationsForItem(augmentable).size() + 1; ++i)
+    protected void ensureConfigIndex(ItemStack augmentable, IAugmentConfigurationStorage storage, int size) {
+        int numConfigs = storage.getAllConfigurationsForItem(augmentable).size();
+        System.out.printf("Numconfigs: %d, size: %d%n", numConfigs, size);
+        if (numConfigs < size) {
+            for (int i = 0; i < size - numConfigs; ++i)
                 storage.addConfiguration(new AugmentConfiguration(augmentable));
         }
     }
@@ -106,7 +106,7 @@ public class ContainerAugmentationStation extends Container {
         IAugmentConfigurationStorage storage = player.getCapability(
                 CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
         if (storage != null) {
-            ensureConfigIndex(centralSlot.getStack(), storage, newConfig);
+            ensureConfigIndex(centralSlot.getStack(), storage, newConfig + 1);
             AugmentConfiguration c = storage.getAllConfigurationsForItem(centralSlot.getStack()).get(newConfig);
             for (int index : trackedAugmentSlots) {
                 Slot s = inventorySlots.get(index);
@@ -133,7 +133,7 @@ public class ContainerAugmentationStation extends Container {
             IAugmentConfigurationStorage storage = player.getCapability(
                     CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
             if (storage != null) {
-                ensureConfigIndex(newStack, storage, 0);
+                ensureConfigIndex(newStack, storage, 1);
                 AugmentConfiguration config = storage.getAllConfigurationsForItem(newStack).get(0);
                 int augmentSlots = newStack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getTotalAugmentSlots();
                 double xIncrement = Math.PI / (augmentSlots - 1);
@@ -143,10 +143,13 @@ public class ContainerAugmentationStation extends Container {
                     ySlotPosition = (int) Math.round(Math.sin(Math.PI + xIncrement*i))*augmentSlots*16;
                     addAugmentSlot(new AugmentSlot(config, i, centralSlot.xPos + xSlotPosition, centralSlot.yPos + ySlotPosition));
                 }
-                
+
                 setSelectedConfiguration(0);
             }
         }
+
+        if (doRemove || doAdd)
+            detectAndSendChanges();
     }
     
     @Override
@@ -207,13 +210,10 @@ public class ContainerAugmentationStation extends Container {
     
     @Override
     public boolean canInteractWith(EntityPlayer otherPlayer) {
-        return otherPlayer.equals(player); // don't let random people access this GUI
+        return otherPlayer.equals(player);
     }
     
     @Override
-    /**
-     * Boilerplate implementation to allow shift-clicking and other expected behavior.
-     */
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
         ItemStack stack = ItemStack.EMPTY;
         Slot slot = inventorySlots.get(index);

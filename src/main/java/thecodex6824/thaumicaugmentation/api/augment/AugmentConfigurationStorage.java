@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Objects;
@@ -36,7 +37,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class AugmentConfigurationStorage implements IAugmentConfigurationStorage, INBTSerializable<NBTTagCompound> {
 
-    protected Object2ObjectOpenCustomHashMap<ItemStack, ObjectLinkedOpenHashSet<AugmentConfiguration>> configs;
+    protected Object2ObjectOpenCustomHashMap<ItemStack, ArrayList<AugmentConfiguration>> configs;
     
     public AugmentConfigurationStorage() {
         configs = new Object2ObjectOpenCustomHashMap<>(new Strategy<ItemStack>() {
@@ -67,16 +68,15 @@ public class AugmentConfigurationStorage implements IAugmentConfigurationStorage
     
     @Override
     public boolean addConfiguration(AugmentConfiguration config) {
-        if (config.getConfigurationItemStack().isEmpty())
-            throw new RuntimeException();
-        return configs.computeIfAbsent(config.getConfigurationItemStack(),
-                s -> new ObjectLinkedOpenHashSet<>()).add(config);
+        boolean ret = configs.computeIfAbsent(config.getConfigurationItemStack(),
+                s -> new ArrayList<>()).add(config);
+        return ret;
     }
     
     @Override
     public boolean removeConfiguration(AugmentConfiguration config) {
         return configs.computeIfAbsent(config.getConfigurationItemStack(),
-                s -> new ObjectLinkedOpenHashSet<>()).remove(config);
+                s -> new ArrayList<>()).remove(config);
     }
     
     protected boolean areStacksEqualEnough(ItemStack template, ItemStack input) {
@@ -114,8 +114,8 @@ public class AugmentConfigurationStorage implements IAugmentConfigurationStorage
         NBTTagCompound tag = new NBTTagCompound();
         NBTTagCompound configurations = new NBTTagCompound();
         int i = 0;
-        for (ObjectLinkedOpenHashSet<AugmentConfiguration> set : configs.values()) {
-            for (AugmentConfiguration config : set) {
+        for (ArrayList<AugmentConfiguration> list : configs.values()) {
+            for (AugmentConfiguration config : list) {
                 configurations.setTag("slot" + Integer.toString(i), config.serializeNBT());
                 ++i;
             }
