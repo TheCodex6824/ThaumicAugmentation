@@ -40,7 +40,6 @@ import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.capability.ResizableImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.golem.ai.*;
-import thecodex6824.thaumicaugmentation.init.CapabilityHandler;
 
 public class GolemHeadAwakened implements GolemHead.IHeadFunction, IGolemAttributeUpdateReceiver {
 

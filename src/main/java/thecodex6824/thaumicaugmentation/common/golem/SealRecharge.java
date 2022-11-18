@@ -20,46 +20,28 @@
 
 package thecodex6824.thaumicaugmentation.common.golem;
 
-import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.IEntityOwnable;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.EnumPacketDirection;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.golems.EnumGolemTrait;
 import thaumcraft.api.golems.IGolemAPI;
-import thaumcraft.api.golems.seals.*;
+import thaumcraft.api.golems.seals.ISeal;
+import thaumcraft.api.golems.seals.ISealEntity;
+import thaumcraft.api.golems.seals.ISealGui;
+import thaumcraft.api.golems.seals.SealPos;
 import thaumcraft.api.golems.tasks.Task;
 import thaumcraft.common.golems.tasks.TaskHandler;
-import thaumcraft.common.lib.network.FakeNetHandlerPlayServer;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Optional;
-import java.util.WeakHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SealRecharge implements ISeal, ISealGui {

@@ -1,4 +1,4 @@
-/**
+/*
  *  Thaumic Augmentation
  *  Copyright (c) 2022 TheCodex6824.
  *
@@ -28,6 +28,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.client.gui.component.IHoverTextLocationAware;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAugmentationStation;
 import thecodex6824.thaumicaugmentation.common.network.PacketInteractGUI;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -36,14 +37,6 @@ import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 public class GUIAugmentationStation extends GuiContainer {
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/gui/augmentation_station.png");
-    
-    // TODO cleanup all of these inner classes
-    
-    protected static interface IHoverTextLocationAware {
-        
-        public String getHoverText(int mouseX, int mouseY);
-        
-    }
     
     protected static class ButtonConfigSelect extends GuiButton implements IHoverTextLocationAware {
         
@@ -87,7 +80,9 @@ public class GUIAugmentationStation extends GuiContainer {
             return false;
         }
         
-        protected void sync() {}
+        protected void sync() {
+            TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, value));
+        }
         
         @Override
         public String getHoverText(int mouseX, int mouseY) {
@@ -135,7 +130,9 @@ public class GUIAugmentationStation extends GuiContainer {
             return false;
         }
         
-        protected void sync() {}
+        protected void sync() {
+            TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, 0));
+        }
         
     }
     
@@ -148,18 +145,8 @@ public class GUIAugmentationStation extends GuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        buttonList.add(new ButtonConfigSelect(0, guiLeft + 14, guiTop + 6) {
-            @Override
-            protected void sync() {
-                TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, value));
-            }
-        });
-        buttonList.add(new ButtonApplyConfig(1, guiLeft + 150, guiTop + 2) {
-            @Override
-            protected void sync() {
-                TANetwork.INSTANCE.sendToServer(new PacketInteractGUI(id, 0));
-            }
-        });
+        buttonList.add(new ButtonConfigSelect(0, guiLeft + 14, guiTop + 6));
+        buttonList.add(new ButtonApplyConfig(1, guiLeft + 150, guiTop + 2));
     }
     
     @Override
@@ -194,7 +181,6 @@ public class GUIAugmentationStation extends GuiContainer {
         int width = (this.width - this.xSize) / 2;
         int height = (this.height - this.ySize) / 2;
         drawTexturedModalRect(width, height, 0, 0, xSize, ySize);
-        
         for (int i : ((ContainerAugmentationStation) inventorySlots).getAugmentSlotIndices()) {
             Slot s = inventorySlots.inventorySlots.get(i);
             drawTexturedModalRect(guiLeft + s.xPos - 7, guiTop + s.yPos - 7, 81, 214, 32, 32);

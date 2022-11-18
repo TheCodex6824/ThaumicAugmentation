@@ -1,4 +1,4 @@
-/**
+/*
  *  Thaumic Augmentation
  *  Copyright (c) 2022 TheCodex6824.
  *
@@ -20,12 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.common.container;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+
+import javax.annotation.Nonnull;
 
 public class AugmentableItemSlot extends SlotItemHandler {
     

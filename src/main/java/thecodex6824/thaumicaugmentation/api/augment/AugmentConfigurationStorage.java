@@ -1,4 +1,4 @@
-/**
+/*
  *  Thaumic Augmentation
  *  Copyright (c) 2022 TheCodex6824.
  *
@@ -20,20 +20,18 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-
 import it.unimi.dsi.fastutil.Hash.Strategy;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AugmentConfigurationStorage implements IAugmentConfigurationStorage, INBTSerializable<NBTTagCompound> {
 

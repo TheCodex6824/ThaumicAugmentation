@@ -1,11 +1,5 @@
 package thecodex6824.thaumicaugmentation.client.renderer;
 
-import java.util.List;
-
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
@@ -14,16 +8,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 import thaumcraft.client.lib.UtilsFX;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentConfiguration;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentConfigurationStorage;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.IAugmentConfigurationStorage;
-import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.*;
 import thecodex6824.thaumicaugmentation.common.network.PacketApplyAugmentConfiguration;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+
+import java.util.List;
 
 public final class AugmentRadialRenderer {
 

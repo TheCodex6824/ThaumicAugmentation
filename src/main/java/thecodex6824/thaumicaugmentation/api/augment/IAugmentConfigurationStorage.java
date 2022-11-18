@@ -1,4 +1,4 @@
-/**
+/*
  *  Thaumic Augmentation
  *  Copyright (c) 2022 TheCodex6824.
  *
@@ -20,9 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
+
+import java.util.List;
 
 public interface IAugmentConfigurationStorage {
 

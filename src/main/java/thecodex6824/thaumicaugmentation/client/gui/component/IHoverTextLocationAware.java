@@ -18,20 +18,10 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment;
+package thecodex6824.thaumicaugmentation.client.gui.component;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+public interface IHoverTextLocationAware {
 
-/**
- * Holds an instance of the capability for {@link IAugmentConfigurationStorage}.
- * @author TheCodex6824
- */
-public final class CapabilityAugmentConfigurationStorage {
+    String getHoverText(int mouseX, int mouseY);
 
-    private CapabilityAugmentConfigurationStorage() {}
-    
-    @CapabilityInject(IAugmentConfigurationStorage.class)
-    public static final Capability<IAugmentConfigurationStorage> AUGMENT_CONFIGURATION_STORAGE = null;
-    
 }

@@ -22,10 +22,8 @@ package thecodex6824.thaumicaugmentation.common.capability;
 
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.INBTSerializable;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 
 import java.util.Map;

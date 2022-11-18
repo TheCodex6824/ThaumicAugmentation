@@ -1,4 +1,4 @@
-/**
+/*
  *  Thaumic Augmentation
  *  Copyright (c) 2022 TheCodex6824.
  *
@@ -20,8 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.common.container;
 
-import javax.annotation.Nonnull;
-
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -31,12 +29,9 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import thaumcraft.common.lib.SoundsTC;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentConfiguration;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentConfigurationApplyResult;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentConfigurationStorage;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.IAugmentConfigurationStorage;
+import thecodex6824.thaumicaugmentation.api.augment.*;
+
+import javax.annotation.Nonnull;
 
 public class ContainerAugmentationStation extends Container {
     

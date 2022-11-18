@@ -43,7 +43,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thaumcraft.api.blocks.BlocksTC;
-import thaumcraft.api.golems.IGolemAPI;
 import thaumcraft.common.blocks.basic.BlockBannerTCItem;
 import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.golems.EntityThaumcraftGolem;
