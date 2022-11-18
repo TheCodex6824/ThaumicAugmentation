@@ -216,8 +216,6 @@ jar {
     afterEvaluate { project.getTasks().getByName('reobfJar').finalizedBy(signJar) }
 }
 
-jar.finalizedBy('reobfJar')
-
 task javadocJar(type: Jar, dependsOn: javadoc) {
     from 'build/docs/javadoc'
     classifier = 'javadoc'
