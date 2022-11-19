@@ -21,8 +21,7 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
-import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -32,37 +31,27 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
-* Default implementation of the Augmentable Item capability.
+* Represents a configuration of augments for an item, with empty slots included.
 * @author KevoHoff
-* 
 */
 public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
 
     protected ItemStack configOwner;
     protected String name;
-    protected Int2ObjectOpenHashMap<ItemStack> configuration;
+    protected ItemStack[] configuration;
     
     public AugmentConfiguration(NBTTagCompound deserialize) {
-        configuration = new Int2ObjectOpenHashMap<>();
+        configuration = new ItemStack[0];
         deserializeNBT(deserialize);
     }
     
     public AugmentConfiguration(ItemStack augmentable) {
-        this(augmentable, new ItemStack[0], "");
-    }
-    
-    public AugmentConfiguration(ItemStack augmentable, ItemStack[] augs, String name) {
+        int slots = augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getTotalAugmentSlots();
         configOwner = augmentable.copy();
-        this.name = name;
-        configuration = new Int2ObjectOpenHashMap<>();
-        int slot = 0;
-        for (ItemStack aug : augs) {
-            configuration.put(slot, aug);
-            slot++;
-        }
+        configuration = new ItemStack[slots];
+        Arrays.fill(configuration, ItemStack.EMPTY);
     }
     
     /**
@@ -92,28 +81,23 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
     public ItemStack getConfigurationItemStack() {
         return configOwner;
     }
-    
-    public ItemStack getAugment(int slot) {
-        return getAugment(slot, false);
+
+    protected void verifyIndex(int slot) {
+        if (slot < 0 || slot >= configuration.length)
+            throw new IndexOutOfBoundsException("Illegal slot index: " + slot + ", valid range: [0, " + configuration.length + ")");
     }
-    
-    public ItemStack getAugment(int slot, boolean createIfMissing) {
-        ItemStack ret = configuration.get(slot);
-        if (ret == null) {
-            ret = ItemStack.EMPTY;
-            if (createIfMissing)
-                configuration.put(slot, ret);
-        }
-        
-        return ret;
+
+    public ItemStack getAugment(int slot) {
+        verifyIndex(slot);
+        return configuration[slot].copy();
     }
     
     /**
      * Returns a read-only view of the augments in this configuration.
      * @return The specific augments contained in the configuration
      */
-    public ImmutableMap<Integer, ItemStack> getAugmentConfig() {
-        return ImmutableMap.copyOf(configuration);
+    public ImmutableList<ItemStack> getAugmentConfig() {
+        return ImmutableList.copyOf(configuration);
     }
 
     /**
@@ -123,10 +107,9 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
      * @return The augment previously in this slot, or the empty ItemStack if it was empty
      */
     public ItemStack setAugment(ItemStack augment, int slot) {
-        ItemStack ret = configuration.put(slot, augment);
-        if (ret == null)
-            ret = ItemStack.EMPTY;
-        
+        verifyIndex(slot);
+        ItemStack ret = configuration[slot];
+        configuration[slot] = augment.copy();
         return ret;
     }
 
@@ -136,11 +119,7 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
      * @return The removed augment if it was present, the empty ItemStack otherwise.
      */
     public ItemStack removeAugment(int slot) {
-        ItemStack ret = configuration.remove(slot);
-        if (ret == null)
-            ret = ItemStack.EMPTY;
-        
-        return ret;
+        return setAugment(ItemStack.EMPTY, slot);
     }
     
     /**
@@ -150,9 +129,9 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
      * @return If the given augment can be inserted into the configuration
      */
     public boolean isAugmentAcceptable(ItemStack augment, int slot) {
-        for (Map.Entry<Integer, ItemStack> entry : configuration.entrySet()) {
-            if (entry.getKey() != slot) {
-                ItemStack aug = entry.getValue();
+        for (int i = 0; i < configuration.length; ++i) {
+            if (i != slot) {
+                ItemStack aug = configuration[i];
                 if (!aug.isEmpty() && !aug.getCapability(CapabilityAugment.AUGMENT, null).isCompatible(augment))
                     return false;
             }
@@ -166,9 +145,10 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
         NBTTagCompound data = new NBTTagCompound();
         data.setTag("owner", configOwner.serializeNBT());
         data.setString("name", name);
-        for (Map.Entry<Integer, ItemStack> entry : configuration.entrySet()) {
-            if (!entry.getValue().isEmpty())
-                data.setTag("slot" + entry.getKey(), entry.getValue().serializeNBT());
+        for (int i = 0; i < configuration.length; ++i) {
+            ItemStack stack = configuration[i];
+            if (!stack.isEmpty())
+                data.setTag("slot" + i, stack.serializeNBT());
         }
         
         return data;
@@ -177,13 +157,20 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         configOwner = new ItemStack(nbt.getCompoundTag("owner"));
+        configuration = new ItemStack[configOwner.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getTotalAugmentSlots()];
+        Arrays.fill(configuration, ItemStack.EMPTY);
         name = nbt.getString("name");
         for (String key : nbt.getKeySet()) {
             if (nbt.hasKey(key, NBT.TAG_COMPOUND) && key.startsWith("slot")) {
                 String slotNum = key.substring("slot".length());
                 try {
                     int slot = Integer.parseInt(slotNum);
-                    configuration.put(slot, new ItemStack(nbt.getCompoundTag(key)));
+                    if (slot >= 0 && slot < configuration.length) {
+                        configuration[slot] = new ItemStack(nbt.getCompoundTag(key));
+                    }
+                    else {
+                        ThaumicAugmentation.getLogger().warn("Out of bounds slot number for augment configuration, discarding");
+                    }
                 }
                 catch (NumberFormatException ex) {
                     ThaumicAugmentation.getLogger().warn("Invalid slot number for augment configuration, discarding");
@@ -200,7 +187,7 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
                 return false;
             else if (!name.equals(other.name))
                 return false;
-            else if (!configuration.equals(other.configuration))
+            else if (!Arrays.equals(configuration, other.configuration))
                 return false;
             
             return true;
@@ -216,7 +203,7 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
         toHash.add(configOwner.getHasSubtypes() ? configOwner.getMetadata() : OreDictionary.WILDCARD_VALUE);
         toHash.add(configOwner.getTagCompound());
         toHash.add(name);
-        for (ItemStack s : configuration.values()) {
+        for (ItemStack s : configuration) {
             toHash.add(s.getItem().getRegistryName());
             toHash.add(s.getHasSubtypes() ? s.getMetadata() : OreDictionary.WILDCARD_VALUE);
             toHash.add(s.getTagCompound());

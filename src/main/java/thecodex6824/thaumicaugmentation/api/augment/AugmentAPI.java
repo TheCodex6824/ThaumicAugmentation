@@ -20,15 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -68,16 +66,17 @@ public final class AugmentAPI {
     }
     
     public static AugmentConfigurationApplyResult tryApplyConfiguration(AugmentConfiguration config, IAugmentableItem target, boolean simulate) {
-        for (Map.Entry<Integer, ItemStack> entry : config.getAugmentConfig().entrySet()) {
-            if (entry.getKey() < 0 || entry.getKey() >= target.getTotalAugmentSlots())
+        ImmutableList<ItemStack> augments = config.getAugmentConfig();
+        for (int i = 0; i < augments.size(); ++i) {
+            if (i >= target.getTotalAugmentSlots())
                 return AugmentConfigurationApplyResult.INVALID_SLOT;
-            else if (!target.isAugmentAcceptable(entry.getValue(), entry.getKey()))
+            else if (!target.isAugmentAcceptable(augments.get(i), i))
                 return AugmentConfigurationApplyResult.INVALID_AUGMENT;
         }
         
         if (!simulate) {
-            for (Map.Entry<Integer, ItemStack> entry : config.getAugmentConfig().entrySet())
-                target.setAugment(entry.getValue(), entry.getKey());
+            for (int i = 0; i < augments.size(); ++i)
+                target.setAugment(augments.get(i), i);
         }
         
         return AugmentConfigurationApplyResult.OK;
@@ -95,17 +94,18 @@ public final class AugmentAPI {
     }
     
     public static AugmentConfigurationApplyResult trySwapConfiguration(EntityPlayer user, AugmentConfiguration config, IAugmentableItem target, boolean simulate) {
-        for (Map.Entry<Integer, ItemStack> entry : config.getAugmentConfig().entrySet()) {
-            if (entry.getKey() < 0 || entry.getKey() >= target.getTotalAugmentSlots())
+        ImmutableList<ItemStack> augments = config.getAugmentConfig();
+        for (int i = 0; i < augments.size(); ++i) {
+            if (i >= target.getTotalAugmentSlots())
                 return AugmentConfigurationApplyResult.INVALID_SLOT;
-            else if (!target.isAugmentAcceptable(entry.getValue(), entry.getKey()))
+            else if (!target.isAugmentAcceptable(augments.get(i), i))
                 return AugmentConfigurationApplyResult.INVALID_AUGMENT;
         }
         
         // TODO replace this with a registration system like for augmentable items
         // like seriously, this is bad - TODO TODO TODO
-        ArrayList<ItemStack> toFind = new ArrayList<>(config.getAugmentConfig().values());
-        ArrayList<ItemStack> tempToFind = new ArrayList<>(toFind);
+        // TODO use set intersection instead of lots of looping?
+        ArrayList<ItemStack> tempToFind = new ArrayList<>(augments);
         for (ItemStack stack : user.inventory.mainInventory) {
             ItemStack found = ItemStack.EMPTY;
             for (ItemStack s : tempToFind) {
@@ -121,8 +121,9 @@ public final class AugmentAPI {
                     break;
             }
         }
-        
+
         if (tempToFind.isEmpty()) {
+            ArrayList<ItemStack> toFind = new ArrayList<>(augments);
             if (!simulate) {
                 for (ItemStack stack : user.inventory.mainInventory) {
                     ItemStack found = ItemStack.EMPTY;
@@ -140,9 +141,9 @@ public final class AugmentAPI {
                             break;
                     }
                 }
-                
-                for (Map.Entry<Integer, ItemStack> entry : config.getAugmentConfig().entrySet())
-                    target.setAugment(entry.getValue(), entry.getKey());
+
+                for (int i = 0; i < augments.size(); ++i)
+                    target.setAugment(augments.get(i), i);
             }
             
             return AugmentConfigurationApplyResult.OK;
