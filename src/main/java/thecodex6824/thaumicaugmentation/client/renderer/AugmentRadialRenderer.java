@@ -160,6 +160,7 @@ public final class AugmentRadialRenderer {
                         if (radialScale == 0.0F) {
                             mc.inGameHasFocus = false;
                             mc.mouseHelper.ungrabMouseCursor();
+                            lastTime = time - 1;
                         }
                     } else {
                         if (radialScale >= 1.0F && lastConfig != -1) {
