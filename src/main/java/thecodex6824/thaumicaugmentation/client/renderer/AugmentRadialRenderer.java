@@ -34,13 +34,9 @@ public final class AugmentRadialRenderer {
     
     private AugmentRadialRenderer() {}
     
-    private static void renderRadialHud(IAugmentConfigurationStorage storage, double resX, double resY, long time, float partialTicks) {
+    private static void renderRadialHud(IAugmentConfigurationStorage storage, ItemStack held, double resX, double resY, long time, float partialTicks) {
         lastConfig = -1;
         Minecraft mc = Minecraft.getMinecraft();
-        ItemStack held = mc.player.getHeldItemMainhand();
-        if (!held.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
-            held = mc.player.getHeldItemOffhand();
-        
         IAugmentableItem augmentable = held.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
         List<AugmentConfiguration> configs = storage.getAllConfigurationsForItem(held);
         if (augmentable != null && !configs.isEmpty()) {
@@ -141,58 +137,64 @@ public final class AugmentRadialRenderer {
     }
     
     public static void renderAugmentRadial(RenderGameOverlayEvent event) {
-        if (ThaumicAugmentation.proxy.isAugmentRadialKeyDown() || radialScale > 0.0F) {
-            long time = Minecraft.getSystemTime();
-            Minecraft mc = Minecraft.getMinecraft();
-            IAugmentConfigurationStorage storage = mc.player.getCapability(
-                    CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
-            if (storage != null) {
-                if (ThaumicAugmentation.proxy.isAugmentRadialKeyDown()) {
-                    if (mc.currentScreen != null) {
-                        ThaumicAugmentation.proxy.setAugmentRadialKeyDown(false);
-                        mc.setIngameFocus();
-                        mc.setIngameNotInFocus();
-                        return;
-                    }
-                    
-                    if (radialScale == 0.0F) {
-                        mc.inGameHasFocus = false;
-                        mc.mouseHelper.ungrabMouseCursor();
-                    }
-                }
-                else {
-                    if (radialScale >= 1.0F && lastConfig != -1) {
-                        TANetwork.INSTANCE.sendToServer(new PacketApplyAugmentConfiguration(lastConfig));
-                        ThaumicAugmentation.proxy.setAugmentRadialKeyDown(false);
-                        lastConfig = -1;
-                        enabledLastTick = true;
-                    }
-                    
-                    if (mc.currentScreen == null && enabledLastTick) {
-                        if (Display.isActive()) {
-                            if (!mc.inGameHasFocus) {
-                                mc.inGameHasFocus = true;
-                                mc.mouseHelper.grabMouseCursor();
-                            } 
+        Minecraft mc = Minecraft.getMinecraft();
+        IAugmentConfigurationStorage storage = mc.player.getCapability(
+                CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
+        if (storage != null) {
+            ItemStack held = mc.player.getHeldItemMainhand();
+            if (!held.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null))
+                held = mc.player.getHeldItemOffhand();
+
+            IAugmentableItem augmentable = held.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+            if (augmentable != null && !storage.getAllConfigurationsForItem(held).isEmpty()) {
+                if (ThaumicAugmentation.proxy.isAugmentRadialKeyDown() || radialScale > 0.0F) {
+                    long time = Minecraft.getSystemTime();
+                    if (ThaumicAugmentation.proxy.isAugmentRadialKeyDown()) {
+                        if (mc.currentScreen != null) {
+                            ThaumicAugmentation.proxy.setAugmentRadialKeyDown(false);
+                            mc.setIngameFocus();
+                            mc.setIngameNotInFocus();
+                            return;
                         }
-                        
-                        enabledLastTick = false;
-                    } 
+
+                        if (radialScale == 0.0F) {
+                            mc.inGameHasFocus = false;
+                            mc.mouseHelper.ungrabMouseCursor();
+                        }
+                    } else {
+                        if (radialScale >= 1.0F && lastConfig != -1) {
+                            TANetwork.INSTANCE.sendToServer(new PacketApplyAugmentConfiguration(lastConfig));
+                            ThaumicAugmentation.proxy.setAugmentRadialKeyDown(false);
+                            lastConfig = -1;
+                            enabledLastTick = true;
+                        }
+
+                        if (mc.currentScreen == null && enabledLastTick) {
+                            if (Display.isActive()) {
+                                if (!mc.inGameHasFocus) {
+                                    mc.inGameHasFocus = true;
+                                    mc.mouseHelper.grabMouseCursor();
+                                }
+                            }
+
+                            enabledLastTick = false;
+                        }
+                    }
+
+                    renderRadialHud(storage, held, event.getResolution().getScaledWidth_double(),
+                            event.getResolution().getScaledHeight_double(), time, event.getPartialTicks());
+                    if (time > lastTime) {
+                        if (!ThaumicAugmentation.proxy.isAugmentRadialKeyDown())
+                            radialScale = MathHelper.clamp(radialScale - (time - lastTime) / 150.0F, 0.0F, 1.0F);
+                        else if (radialScale < 1.0F)
+                            radialScale = MathHelper.clamp(radialScale + (time - lastTime) / 150.0F, 0.0F, 1.0F);
+
+                        enabledLastTick = ThaumicAugmentation.proxy.isAugmentRadialKeyDown();
+                    }
+
+                    lastTime = time;
                 }
-                
-                renderRadialHud(storage, event.getResolution().getScaledWidth_double(),
-                        event.getResolution().getScaledHeight_double(), time, event.getPartialTicks());
-                if (time > lastTime) {
-                    if (!ThaumicAugmentation.proxy.isAugmentRadialKeyDown())
-                        radialScale = MathHelper.clamp(radialScale - (time - lastTime) / 150.0F, 0.0F, 1.0F);
-                    else if (radialScale < 1.0F)
-                        radialScale = MathHelper.clamp(radialScale + (time - lastTime) / 150.0F, 0.0F, 1.0F);
-                    
-                    enabledLastTick = ThaumicAugmentation.proxy.isAugmentRadialKeyDown();
-                }
-            } 
-            
-            lastTime = time;
+            }
         }
     }
     
