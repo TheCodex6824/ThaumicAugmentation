@@ -61,7 +61,7 @@ public class SealRecharge implements ISeal, ISealGui {
     public boolean canGolemPerformTask(IGolemAPI golem, Task task) {
         if (golem.getGolemEntity() != null) {
             IImpetusStorage storage = golem.getGolemEntity().getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-            return storage != null && storage.getMaxEnergyStored() > 0;
+            return storage != null && storage.getEnergyStored() <= storage.getMaxEnergyStored() * 0.25;
         }
 
         return false;
