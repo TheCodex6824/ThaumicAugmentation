@@ -92,7 +92,9 @@ public class GolemHeadAwakened implements GolemHead.IHeadFunction, IGolemAttribu
         if (golem.isFollowingOwner()) {
             // TC has a bug (?) where golems always have their speed set to 1.0 here
             // This might just be to make them not painfully slow and not a bug
-            golem.tasks.addTask(4, new AIFollowOwner(golem, Math.max(golem.getGolemMoveSpeed(), 1.0F) * speedMod, 2.0F, 10.0F));
+
+            // The MCP names for distance fields seem to be wrong - first number is max distance, second is min
+            golem.tasks.addTask(4, new AIFollowOwner(golem, Math.max(golem.getGolemMoveSpeed(), 1.0F) * speedMod, 8.0F, 2.0F));
         }
         else {
             golem.tasks.addTask(2, new AIGotoHomeIfHurt(golem, speed));
