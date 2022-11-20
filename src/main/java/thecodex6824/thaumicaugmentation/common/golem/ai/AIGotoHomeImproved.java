@@ -28,31 +28,36 @@ import thaumcraft.common.golems.EntityThaumcraftGolem;
 
 public class AIGotoHomeImproved extends EntityAIBase {
 
+    protected static final int IDLE_WAIT = 30;
+
     protected EntityThaumcraftGolem entity;
     protected int idleTime;
     protected BlockPos target;
     protected double speed;
+    protected boolean targetIsNotDest;
     
     public AIGotoHomeImproved(EntityThaumcraftGolem golem, double moveSpeed) {
         entity = golem;
-        idleTime = 10;
+        idleTime = IDLE_WAIT;
         speed = moveSpeed;
+        targetIsNotDest = false;
     }
     
     @Override
     public boolean shouldExecute() {
         if (--idleTime == 0) {
-            idleTime = 50;
+            idleTime = IDLE_WAIT;
             double currentHomeDist = entity.getDistanceSqToCenter(entity.getHomePosition());
             if (currentHomeDist < 1.25)
                 return false;
-            else if (currentHomeDist > 1024.0) {
+            else if (currentHomeDist > 64 * 64) {
                 Vec3d targetPos = RandomPositionGenerator.findRandomTargetBlockTowards(entity, 16, 7,
                         new Vec3d(entity.getHomePosition()));
                 if (targetPos == null)
                     return false;
                 
                 target = new BlockPos(targetPos);
+                targetIsNotDest = true;
             }
             else
                 target = entity.getHomePosition();
@@ -72,11 +77,35 @@ public class AIGotoHomeImproved extends EntityAIBase {
     public boolean shouldContinueExecuting() {
         return entity.getTask() == null && entity.getDistanceSqToCenter(target) > 1.25;
     }
-    
+
+    @Override
+    public void updateTask() {
+        boolean updatePath = entity.getNavigator().noPath();
+        if (targetIsNotDest && entity.getDistanceSqToCenter(target) <= 1.25) {
+            double currentHomeDist = entity.getDistanceSqToCenter(entity.getHomePosition());
+            if (currentHomeDist > 1024.0) {
+                Vec3d targetPos = RandomPositionGenerator.findRandomTargetBlockTowards(entity, 16, 7,
+                        new Vec3d(entity.getHomePosition()));
+                if (targetPos != null)
+                    target = new BlockPos(targetPos);
+            }
+            else {
+                target = entity.getHomePosition();
+                targetIsNotDest = false;
+            }
+
+            updatePath = true;
+        }
+
+        if (updatePath)
+            entity.getNavigator().tryMoveToXYZ(target.getX(), target.getY(), target.getZ(), speed);
+    }
+
     @Override
     public void resetTask() {
         entity.getNavigator().clearPath();
-        idleTime = 50;
+        idleTime = IDLE_WAIT;
+        targetIsNotDest = false;
     }
     
 }
