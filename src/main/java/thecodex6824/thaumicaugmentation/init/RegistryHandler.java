@@ -35,6 +35,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -54,10 +55,7 @@ import thaumcraft.api.golems.EnumGolemTrait;
 import thaumcraft.api.golems.parts.GolemHead;
 import thaumcraft.api.golems.parts.PartModel;
 import thaumcraft.common.golems.seals.SealHandler;
-import thecodex6824.thaumicaugmentation.api.TABlocks;
-import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.TASounds;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.*;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.block.*;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
@@ -260,12 +258,14 @@ public final class RegistryHandler {
         }
         catch (Exception ex) {}
 
+        TAEnums.TRAIT_IMPETUS = EnumHelper.addEnum(EnumGolemTrait.class, "IMPETUS", new Class<?>[]{ ResourceLocation.class },
+                new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/misc/tag_impetus.png"));
         GolemHead.register(new GolemHead("HEAD_AWAKENED", new String[] {"BASEGOLEMANCY"},
                 new ResourceLocation("thaumcraft", "textures/misc/golem/head_smart.png"),
                 new PartModel(new ResourceLocation("thaumcraft", "models/obj/golem_head_smart.obj"), new ResourceLocation("thaumcraft", "textures/entity/golems/golem_head_other.png"), PartModel.EnumAttachPoint.HEAD),
                 new Object[] {},
                 new GolemHeadAwakened(),
-                new EnumGolemTrait[] { EnumGolemTrait.SCOUT, EnumGolemTrait.SMART }));
+                new EnumGolemTrait[] { EnumGolemTrait.SCOUT, EnumGolemTrait.SMART, TAEnums.TRAIT_IMPETUS }));
         SealHandler.registerSeal(new SealAttack());
         SealHandler.registerSeal(new SealAttackAdvanced());
         SealHandler.registerSeal(new SealRecharge());

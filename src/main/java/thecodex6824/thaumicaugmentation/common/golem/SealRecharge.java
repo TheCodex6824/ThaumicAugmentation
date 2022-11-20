@@ -38,6 +38,7 @@ import thaumcraft.api.golems.seals.SealPos;
 import thaumcraft.api.golems.tasks.Task;
 import thaumcraft.common.golems.tasks.TaskHandler;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.api.TAEnums;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
@@ -58,7 +59,12 @@ public class SealRecharge implements ISeal, ISealGui {
     
     @Override
     public boolean canGolemPerformTask(IGolemAPI golem, Task task) {
-        return golem.getGolemEntity() != null && golem.getGolemEntity().hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+        if (golem.getGolemEntity() != null) {
+            IImpetusStorage storage = golem.getGolemEntity().getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+            return storage != null && storage.getMaxEnergyStored() > 0;
+        }
+
+        return false;
     }
     
     @Override
@@ -112,7 +118,7 @@ public class SealRecharge implements ISeal, ISealGui {
     
     @Override
     public EnumGolemTrait[] getRequiredTags() {
-        return null;
+        return new EnumGolemTrait[] { TAEnums.TRAIT_IMPETUS };
     }
     
     @Override
