@@ -38,7 +38,7 @@ public class AIGotoBlockImproved extends AIGotoImproved {
     }
     
     protected boolean canGolemReach(BlockPos pos) {
-        if (entity.getDistanceSq(pos) < reachDistSq)
+        if (entity.getDistanceSq(pos) < reach * reach)
             return true;
         else {
             Path path = entity.getNavigator().getPathToXYZ(pos.getX(), pos.getY(), pos.getZ());
@@ -49,7 +49,7 @@ public class AIGotoBlockImproved extends AIGotoImproved {
             if (dest == null)
                 return false;
             
-            return new Vec3d(dest.x, dest.y, dest.z).squareDistanceTo(new Vec3d(pos)) < reachDistSq;
+            return new Vec3d(dest.x, dest.y, dest.z).squareDistanceTo(new Vec3d(pos)) < reach * reach;
         }
     }
     

@@ -98,8 +98,8 @@ public class GolemHeadAwakened implements GolemHead.IHeadFunction, IGolemAttribu
         }
         else {
             golem.tasks.addTask(2, new AIGotoHomeIfHurt(golem, speed));
-            golem.tasks.addTask(3, new AIGotoEntityImproved(golem, 4.0, speed));
-            golem.tasks.addTask(4, new AIGotoBlockImproved(golem, 4.0, speed));
+            golem.tasks.addTask(3, new AIGotoEntityImproved(golem, 1.5, speed));
+            golem.tasks.addTask(4, new AIGotoBlockImproved(golem, 1.5, speed));
             golem.tasks.addTask(5, new AIGotoHomeImproved(golem, speed));
         }
 

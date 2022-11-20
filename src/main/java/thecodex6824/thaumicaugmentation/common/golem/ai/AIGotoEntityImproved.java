@@ -37,7 +37,7 @@ public class AIGotoEntityImproved extends AIGotoImproved {
     }
     
     protected boolean canGolemReach(Entity other) {
-        double correctedReach = 4.0 + (other.width / 2.0) * (other.width / 2.0);
+        double correctedReach = reach + (other.width / 2.0) * (other.width / 2.0);
         if (entity.getDistanceSq(other) < correctedReach)
             return true;
         else {
@@ -61,14 +61,14 @@ public class AIGotoEntityImproved extends AIGotoImproved {
             if (isGolemValidForTask(task) && task.canGolemPerformTask(entity) &&
                     entity.isWithinHomeDistanceFromPosition(task.getEntity().getPosition())) {
 
-                boolean reach = canGolemReach(task.getEntity());
-                if (!reach)
-                    reach = acceptOrDeferTask(task);
+                boolean canReach = canGolemReach(task.getEntity());
+                if (!canReach)
+                    canReach = acceptOrDeferTask(task);
 
-                if (reach) {
+                if (canReach) {
                     entity.setTask(task);
                     entity.getTask().setReserved(true);
-                    reachDistSq = 4.0 + (task.getEntity().width / 2.0) * (task.getEntity().width / 2.0);
+                    reach += (task.getEntity().width / 2.0) * (task.getEntity().width / 2.0);
                     if (ModConfig.CONFIG_GRAPHICS.showGolemEmotes)
                         entity.getGolemWorld().setEntityState(entity, (byte) 5);
 

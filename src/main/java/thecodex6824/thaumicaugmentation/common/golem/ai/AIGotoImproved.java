@@ -42,21 +42,20 @@ import java.util.UUID;
 public abstract class AIGotoImproved extends EntityAIBase {
 
     protected EntityThaumcraftGolem entity;
-    protected double reachDistSq;
-    protected double defaultReachDistSq;
+    protected double reach;
+    protected double defaultReach;
 
     protected double speed;
     protected int moveCooldown;
     protected int taskTime;
     protected BlockPos lastTargetPosition;
     protected IntOpenHashSet deferredTasks;
-    protected boolean requiresPathUpdates;
     
     public AIGotoImproved(EntityThaumcraftGolem golem, double reachDist, double moveSpeed) {
         entity = golem;
-        reachDistSq = reachDist * reachDist;
+        reach = reachDist;
         speed = moveSpeed;
-        defaultReachDistSq = reachDistSq;
+        defaultReach = reach;
         moveCooldown = golem.getRNG().nextInt(5) + 1;
         taskTime = golem.getRNG().nextInt(5);
         deferredTasks = new IntOpenHashSet();
@@ -70,7 +69,6 @@ public abstract class AIGotoImproved extends EntityAIBase {
             return false;
 
         deferredTasks.rem(task.getId());
-        requiresPathUpdates = true;
         return true;
     }
     
@@ -105,28 +103,26 @@ public abstract class AIGotoImproved extends EntityAIBase {
     public boolean shouldExecute() {
         if (--moveCooldown == 0) {
             moveCooldown = getGolemCooldownDuration();
-            if (entity.getTask() != null && !entity.getTask().isSuspended())
-                return false;
-            
-            boolean validTask = getTask();
-            if (validTask && entity.getTask() != null && entity.getTask().getSealPos() != null) {
-                ISealEntity seal = GolemHelper.getSealEntity(entity.dimension, entity.getTask().getSealPos());
-                if (seal != null)
-                    seal.getSeal().onTaskStarted(entity.getGolemWorld(), entity, entity.getTask());
-                
-                if (entity.getTask().getType() == 1) {
-                    entity.getNavigator().tryMoveToEntityLiving(entity.getTask().getEntity(),
-                            speed);
-                    lastTargetPosition = entity.getTask().getEntity().getPosition().toImmutable();
+            if (entity.getTask() == null || entity.getTask().isSuspended() || entity.getTask().isCompleted()) {
+                boolean validTask = getTask();
+                if (validTask && entity.getTask() != null && entity.getTask().getSealPos() != null) {
+                    ISealEntity seal = GolemHelper.getSealEntity(entity.dimension, entity.getTask().getSealPos());
+                    if (seal != null)
+                        seal.getSeal().onTaskStarted(entity.getGolemWorld(), entity, entity.getTask());
+
+                    if (entity.getTask().getType() == 1) {
+                        entity.getNavigator().tryMoveToEntityLiving(entity.getTask().getEntity(),
+                                speed);
+                        lastTargetPosition = entity.getTask().getEntity().getPosition().toImmutable();
+                    } else {
+                        BlockPos target = entity.getTask().getPos();
+                        entity.getNavigator().tryMoveToXYZ(target.getX(), target.getY(), target.getZ(),
+                                speed);
+                        lastTargetPosition = target.toImmutable();
+                    }
+
+                    return true;
                 }
-                else {
-                    BlockPos target = entity.getTask().getPos();
-                    entity.getNavigator().tryMoveToXYZ(target.getX(), target.getY(), target.getZ(),
-                            speed);
-                    lastTargetPosition = target.toImmutable();
-                }
-                
-                return true;
             }
         }
         
@@ -150,7 +146,7 @@ public abstract class AIGotoImproved extends EntityAIBase {
         if (entity.getTask() != null) {
             double distSq = entity.getTask().getType() == 1 ? entity.getDistanceSq(entity.getTask().getEntity()) :
                     entity.getDistanceSq(entity.getTask().getPos());
-            if (distSq < reachDistSq) {
+            if (distSq < reach * reach) {
                 TaskHandler.completeTask(entity.getTask(), entity);
                 if (entity.getTask().isCompleted()) {
                     taskTime = 0;
@@ -166,12 +162,12 @@ public abstract class AIGotoImproved extends EntityAIBase {
             entity.getTask().setCompletion(false);
             if (++taskTime % getGolemCooldownDuration() == 0) {
                 if (entity.getTask().getType() == 1 &&
-                        (requiresPathUpdates || entity.getTask().getEntity().getDistanceSq(lastTargetPosition) > reachDistSq)) {
+                        (entity.getNavigator().noPath() || entity.getTask().getEntity().getDistanceSq(lastTargetPosition) > reach * reach)) {
                     entity.getNavigator().tryMoveToEntityLiving(entity.getTask().getEntity(),
                             speed);
                     lastTargetPosition = entity.getTask().getEntity().getPosition().toImmutable();
                 }
-                else if (requiresPathUpdates || entity.getTask().getPos().distanceSq(lastTargetPosition) > reachDistSq) {
+                else if (entity.getNavigator().noPath() || entity.getTask().getPos().distanceSq(lastTargetPosition) > reach * reach) {
                     BlockPos target = entity.getTask().getPos();
                     entity.getNavigator().tryMoveToXYZ(target.getX(), target.getY(), target.getZ(),
                             speed);
@@ -200,8 +196,7 @@ public abstract class AIGotoImproved extends EntityAIBase {
 
         entity.setTask(null);
         entity.getNavigator().clearPath();
-        reachDistSq = defaultReachDistSq;
-        requiresPathUpdates = false;
+        reach = defaultReach;
     }
 
 }
