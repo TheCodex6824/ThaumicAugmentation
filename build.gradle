@@ -1,17 +1,14 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '5.1.+'
+	id 'java'
     id 'eclipse'
     id 'idea'
-    id 'wtf.gofancy.fancygradle' version '1.1.+'
+    id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
-fancyGradle {
-    patches {
-        resources
-        coremods
-        asm
-        codeChickenLib
-        mergetool
+repositories {
+	maven {
+        name "Su5ed LegacyDev Fork"
+        url "https://su5ed.jfrog.io/artifactory/maven/"
     }
 }
 
@@ -22,7 +19,9 @@ sourceSets {
     }
 }
 
+import net.minecraftforge.gradle.mcp.MCPRepo
 import net.minecraftforge.gradle.common.tasks.SignJar
+import net.minecraftforge.gradle.common.util.MavenArtifactDownloader
 import org.apache.tools.ant.filters.ReplaceTokens
 
 repositories {
@@ -35,11 +34,10 @@ repositories {
 }
 
 version = "${mcversion}-${version}"
-group = 'thecodex6824.thaumicaugmentation' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'thecodex6824.thaumicaugmentation'
 archivesBaseName = 'ThaumicAugmentation'
 
-//sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
-java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 ext {
     if (!project.hasProperty('certFingerprint')) {
@@ -52,19 +50,14 @@ final needCustomNatives = arch != "x86" && arch != "i386" && arch != "x86_64" &&
 
 minecraft {
     mappings channel: 'stable', version: '39-1.12'
-    
-    //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     accessTransformer = file('src/main/resources/META-INF/thaumicaugmentation_at.cfg')
-    
     runs {
         client {
             workingDirectory file('run')
             
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            property 'net.minecraftforge.gradle.GradleStart.csvDir', "$buildDir/mappings"
             
             property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
 
@@ -85,11 +78,9 @@ minecraft {
         server {
             workingDirectory file('run')
             
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            property 'net.minecraftforge.gradle.GradleStart.csvDir', "$buildDir/mappings"
             
             property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
 
@@ -109,6 +100,15 @@ minecraft {
     }
 }
 
+// legacydev needs mappings files to handle ATs
+task extractMappings(type: Sync) {
+	def mapFile = MCPRepo.getMappingDep(project.minecraft.mappingChannel.get(), project.minecraft.mappingVersion.get())
+	from(zipTree(project.getObjects().fileProperty().fileProvider(provider {
+		MavenArtifactDownloader.generate(project, mapFile, false)
+	}).getAsFile()))
+	into "$buildDir/mappings"
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${mcversion}-${forgeversion}"
     
@@ -126,6 +126,17 @@ dependencies {
     runtimeOnly 'curse.maven:thaumic-jei-285492:2705304'
     runtimeOnly 'curse.maven:the-one-probe-245211:2667280'
     runtimeOnly 'curse.maven:ctm-267602:2915363'
+    
+    configurations.forEach {
+    	// mergetool pollutes the classpath with conflicting classes
+    	it.exclude(group: 'net.minecraftforge', module: 'mergetool')
+    	
+    	// this legacydev version (plus fork repository) makes dependency ATs work
+    	it.resolutionStrategy.force 'net.minecraftforge:legacydev:0.2.4.0'
+    	
+    	// newer ASM versions include module info that causes errors in Java 8
+    	it.resolutionStrategy.force 'org.ow2.asm:asm-debug-all:5.2'
+    }
     
     // if the curse maven is down or otherwise not working:
     // comment the above "implementation", "compileOnly", and "runtimeOnly" entries
@@ -212,8 +223,35 @@ jar {
         attributes 'FMLCorePlugin': 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
-    
-    afterEvaluate { project.getTasks().getByName('reobfJar').finalizedBy(signJar) }
+}
+
+// add output jar to classpath to ensure resources are found
+task fixResources(type: Task) {
+	doLast {
+		def classpath = project.files(configurations.runtimeClasspath, project.tasks.getByName("jar").archiveFile.get().getAsFile())
+		project.minecraft.runs.forEach {
+			def t = project.tasks.getByName(it.taskName)
+			if (t instanceof JavaExec) {
+				t.classpath = classpath
+			}
+		}
+	}
+}
+
+fixResources.dependsOn('jar')
+project.tasks.whenTaskAdded {
+	project.minecraft.runs.forEach { r ->
+		if (r.getTaskName().equals(it.name)) {
+			it.dependsOn('fixResources')
+		}
+	}
+	
+	if (it.name.equals('reobfJar')) {
+		it.dependsOn('signJar')
+	}
+	else if (it.name.equals('prepareRuns')) {
+		it.dependsOn('extractMappings')
+	}
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
