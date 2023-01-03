@@ -87,9 +87,13 @@ public class WorldProviderEmptiness extends WorldProvider {
 	    	
 	    	impl.setDimension(getDimension());
 	    	impl.setWorld(world);
+	    	impl.setSpawnPoint(super.getSpawnPoint());
     	}
     	else {
     		impl = new WorldProviderImplEmptinessV2();
+    		impl.setDimension(getDimension());
+	    	impl.setWorld(world);
+	    	impl.setSpawnPoint(super.getSpawnPoint());
     		stashedVersion = TADimensions.WORLDGEN_V2;
     	}
     }
@@ -440,7 +444,10 @@ public class WorldProviderEmptiness extends WorldProvider {
     
     @Override
     public void setSpawnPoint(BlockPos pos) {
-    	impl.setSpawnPoint(pos);
+    	super.setSpawnPoint(pos);
+    	if (impl != null) {
+    		impl.setSpawnPoint(pos);
+    	}
     }
     
     @Override

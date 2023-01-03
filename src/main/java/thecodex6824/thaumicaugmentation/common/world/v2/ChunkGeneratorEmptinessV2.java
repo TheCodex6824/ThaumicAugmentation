@@ -20,6 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.common.world.v2;
 
+import java.util.List;
+import java.util.Random;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
@@ -46,10 +51,6 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.world.ITAChunkGenerator;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Random;
 
 public class ChunkGeneratorEmptinessV2 implements ITAChunkGenerator {
 

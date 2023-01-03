@@ -44,7 +44,13 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
+import thecodex6824.thaumicaugmentation.api.world.TADimensions;
+import thecodex6824.thaumicaugmentation.common.event.QueuedWorldGenManager;
 import thecodex6824.thaumicaugmentation.common.world.ITAChunkGenerator;
+import thecodex6824.thaumicaugmentation.common.world.WorldDataCache;
+import thecodex6824.thaumicaugmentation.common.world.WorldDataCache.WorldData;
+import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
+import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenDimensionalFracture;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
 import javax.annotation.Nullable;
@@ -281,6 +287,67 @@ public class ChunkGeneratorEmptinessLegacy implements ITAChunkGenerator {
         return chunk;
     }
 
+    protected static final int WORLD_BORDER_MAX = 29999984;
+    protected static final WorldGenDimensionalFracture FRACTURE_GEN = new WorldGenDimensionalFracture();
+
+    protected static boolean wouldLink(World world, int chunkX, int chunkZ) {
+        double factor = FractureUtils.movementRatio(world);
+        int scaledX = FractureUtils.scaleChunkCoord(chunkX, factor);
+        int scaledZ = FractureUtils.scaleChunkCoord(chunkZ, factor);
+        
+        if (Math.abs(scaledX) >= WORLD_BORDER_MAX / 16 || Math.abs(scaledZ) >= WORLD_BORDER_MAX / 16 ||
+                scaledX == FractureUtils.scaleChunkCoord(chunkX - (int) Math.signum(chunkX), factor) || 
+                scaledZ == FractureUtils.scaleChunkCoord(chunkZ - (int) Math.signum(chunkZ), factor))
+            return false;
+
+        WorldData emptiness = WorldDataCache.getData(TADimensions.EMPTINESS.getId());
+        if (emptiness != null) {
+            Random test = new Random(emptiness.getWorldSeed());
+            long xSeed = test.nextLong() >> 2 + 1;
+            long zSeed = test.nextLong() >> 2 + 1;
+            test.setSeed((xSeed * scaledX + zSeed * scaledZ) ^ emptiness.getWorldSeed());
+            if (test.nextInt(TAConfig.fractureGenChance.getValue()) == 0) {
+                MathHelper.getInt(test, -2, 2);
+                MathHelper.getInt(test, -2, 2);
+    
+                return FractureUtils.wouldLinkToDim(test, scaledX, scaledZ, world.provider.getDimension());
+            }
+        }
+
+        return false;
+    }
+
+    protected static BlockPos getTopValidSpot(World world, int x, int z, boolean allowVoid) {
+        BlockPos pos = new BlockPos(x, 0, z);
+        for (int y = Math.min(Math.max(world.getActualHeight() - 1, 0), 255); y >= 0; --y) {
+            BlockPos check = pos.add(0, y, 0);
+            IBlockState state = world.getBlockState(check);
+            if (state.getMaterial().blocksMovement() && !state.getBlock().isLeaves(state, world, check) &&
+                    !state.getBlock().isFoliage(world, check) && state.getBlockHardness(world, check) >= 0.0F &&
+                    world.getBlockState(check.up()).getBlock().isAir(world.getBlockState(check.up()), world, check))
+                return pos.add(0, y + 2, 0);
+        }
+
+        return allowVoid ? new BlockPos(x, Math.min(world.provider.getAverageGroundLevel(), Math.max(world.getActualHeight() - 1, 0)), z) : null;
+    }
+
+    protected static void generateFractures(Random random, int chunkX, int chunkZ, World world) {
+        if (world.provider.getDimension() == TADimensions.EMPTINESS.getId()) {
+            if (random.nextInt(TAConfig.fractureGenChance.getValue()) == 0) {
+                int posX = chunkX * 16 + 8 + MathHelper.getInt(random, -2, 2);
+                int posZ = chunkZ * 16 + 8 + MathHelper.getInt(random, -2, 2);
+                if (Math.abs(posX) < WORLD_BORDER_MAX && Math.abs(posZ) < WORLD_BORDER_MAX)
+                    FRACTURE_GEN.generate(world, random, getTopValidSpot(world, posX, posZ, true));
+            }
+        }
+        else if (FractureUtils.isDimAllowedForLinking(world.provider.getDimension()) && wouldLink(world, chunkX, chunkZ)) {
+            int posX = chunkX * 16 + 8 + MathHelper.getInt(random, -2, 2);
+            int posZ = chunkZ * 16 + 8 + MathHelper.getInt(random, -2, 2);
+            // being in the max border size is checked in wouldLink
+            FRACTURE_GEN.generate(world, random, getTopValidSpot(world, posX, posZ, true));
+        }
+    }
+    
     @Override
     public void populate(int x, int z) {
         BlockFalling.fallInstantly = true;
@@ -300,6 +367,21 @@ public class ChunkGeneratorEmptinessLegacy implements ITAChunkGenerator {
         
         biome.decorate(world, rand, pos);
 
+        if (TAConfig.fractureGenChance.getValue() > 0) {
+        	final Random fractureRand = new Random(world.getSeed());
+            xSeed = fractureRand.nextLong() >> 2 + 1;
+            zSeed = fractureRand.nextLong() >> 2 + 1;
+            fractureRand.setSeed((xSeed * x + zSeed * z) ^ world.getSeed());
+            if (WorldDataCache.isInitialized())
+                generateFractures(fractureRand, x, z, world);
+            else {
+                QueuedWorldGenManager.enqueueGeneration(() -> {
+                    generateFractures(fractureRand, x, z, world);
+                    world.getChunk(x, z).markDirty();
+                });
+            }
+        }
+        
         ForgeEventFactory.onChunkPopulate(false, this, world, rand, x, z, false);
         BlockFalling.fallInstantly = false;
     }
