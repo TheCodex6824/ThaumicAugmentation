@@ -15,17 +15,17 @@ Setting Up a Dev Environment
 -----
 If you want to contribute to the mod or just mess around with it, here's how to do that:  
 1. Clone the repository and change to that directory
-2. Run "./gradlew setupdecompworkspace" (*nix) or "gradlew setupdecompworkspace" (Windows)
-3. For Eclipse users:
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run "gradlew eclipse"  
-   For IntelliJ IDEA:
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run "gradlew idea"  
-   
-   Note that IDE users will probably need to add the following JVM argument to their IDE's launch options to allow the coremod to work (this only has to be done if working on the mod itself, not if just using the API):
-   
-   -Dfml.coreMods.load=thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore
+2. To just build a jar file of the mod, run "./gradlew build" (*nix) or "gradlew build" (Windows)
+3. Or, continue by opening the project in the IDE of your choice (but see below first)
 
-At the end of this, all the dependencies and such should be set up automatically, as they are downloaded from CurseForge using a Gradle plugin. If weird HTTP errors come back when trying to download them, then something is probably going wrong with the CurseMaven service that is used to resolve dependencies. There are instructions to work around this in [build.gradle], but you will need to source the required jar files manually.
+The next section documents a (hopefully) working method of preparing the mod for development in an IDE. Unfortunately, the toolchain and environment changes over the years have made the 1.12 build system, especially its IDE support, quite brittle. The following instructions should provide a starting point, but may break in the future as things continue changing.
+
+IDE Setup
+-----
+Firstly, I suggest ignoring all of the existing Gradle tasks for generating IDE project files. While they may work for simpler projects, Thaumic Augmentation uses enough of the advanced features of Forge and Gradle that the generated project is often wrong, especially when it comes to dependency management and ensuring the game can actually launch.
+Instead, open your IDE of choice and import Thaumic Augmentation as a Gradle project. You will need the Gradle plugin if you are using IDEA, and the Buildship plugin for Eclipse. I believe there is also a Gradle plugin for vscode, but I have never personally used it. After importing the project, everything should be working in the IDE at this point. To run the game, you can use the `runClient` or `runServer` Gradle tasks.
+
+If you decide to not use Gradle plugins and instead generate the project files, you *may* succeed, but I found that Eclipse in particular does not work very well.
 
 [issues]: https://github.com/TheCodex6824/ThaumicAugmentation/issues
 [lang]: https://github.com/TheCodex6824/ThaumicAugmentation/tree/master/src/main/resources/assets/thaumicaugmentation/lang
