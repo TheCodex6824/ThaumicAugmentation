@@ -1,7 +1,7 @@
 /*
  *  Thaumic Augmentation
- *  Copyright (c) 2022 KevoHoff.
- *  Copyright (c) 2022 TheCodex6824.
+ *  Copyright (c) 2023 KevoHoff.
+ *  Copyright (c) 2023 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *

@@ -1,6 +1,6 @@
 /*
  *  Thaumic Augmentation
- *  Copyright (c) 2022 TheCodex6824.
+ *  Copyright (c) 2023 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
  *
@@ -124,7 +124,7 @@ public final class TAHooksCommon {
         return !hasWard(world, pos);
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static boolean isCompatibleSlab(World world, BlockPos pos, EnumFacing dir, ItemStack slab) {
         IBlockState state = world.getBlockState(pos);
         if (state.getPropertyKeys().contains(BlockSlab.HALF) && state.getBlock() instanceof BlockSlab) {
