@@ -20,6 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
@@ -48,7 +52,14 @@ import thaumcraft.common.entities.EntityFluxRift;
 import thaumcraft.common.golems.EntityThaumcraftGolem;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.augment.*;
+import thecodex6824.thaumicaugmentation.api.augment.Augment;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentConfigurationStorage;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentConfigurationStorage;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentConfigurationStorage;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.IPortalState;
@@ -59,7 +70,12 @@ import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
-import thecodex6824.thaumicaugmentation.api.item.*;
+import thecodex6824.thaumicaugmentation.api.item.BiomeSelector;
+import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
+import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
+import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
+import thecodex6824.thaumicaugmentation.api.item.IWardAuthenticator;
+import thecodex6824.thaumicaugmentation.api.item.ImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.tile.IRiftJar;
 import thecodex6824.thaumicaugmentation.api.tile.RiftJar;
 import thecodex6824.thaumicaugmentation.api.ward.entity.IWardOwnerProvider;
@@ -74,15 +90,14 @@ import thecodex6824.thaumicaugmentation.api.ward.tile.WardedTile;
 import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
+import thecodex6824.thaumicaugmentation.api.world.capability.ITAWorldGenerationVersion;
+import thecodex6824.thaumicaugmentation.api.world.capability.TAWorldGenerationVersion;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.ResizableImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
 import thecodex6824.thaumicaugmentation.common.world.feature.FractureUtils;
-
-import javax.annotation.Nullable;
-import java.util.UUID;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class CapabilityHandler {
@@ -422,6 +437,27 @@ public final class CapabilityHandler {
                 return false;
             }
         });
+        
+        CapabilityManager.INSTANCE.register(ITAWorldGenerationVersion.class, new IStorage<ITAWorldGenerationVersion>() {
+            
+            @Override
+            public void readNBT(Capability<ITAWorldGenerationVersion> capability, ITAWorldGenerationVersion instance, EnumFacing side, NBTBase nbt) {
+                if (!(instance instanceof TAWorldGenerationVersion) || !(nbt instanceof NBTTagCompound))
+                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
+                
+                ((TAWorldGenerationVersion) instance).deserializeNBT((NBTTagCompound) nbt);
+            }
+            
+            @Override
+            @Nullable
+            public NBTBase writeNBT(Capability<ITAWorldGenerationVersion> capability, ITAWorldGenerationVersion instance, EnumFacing side) {
+                if (!(instance instanceof TAWorldGenerationVersion))
+                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
+                
+                return ((TAWorldGenerationVersion) instance).serializeNBT();
+            }
+            
+        }, TAWorldGenerationVersion::new);
     }
     
     @SubscribeEvent

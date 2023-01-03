@@ -74,7 +74,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
-import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
+import thecodex6824.thaumicaugmentation.common.world.legacy.ChunkGeneratorEmptinessLegacy;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
@@ -93,7 +93,7 @@ public class EntityEventHandler {
             WorldServer w = (WorldServer) event.getEntity().getEntityWorld();
             BlockPos check = event.getEntity().getPosition();
             if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", check)) {
-                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(check);
+                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptinessLegacy) w.getChunkProvider().chunkGenerator).getSpireStart(check);
                 if (start != null) {
                     IWardStorage storage = w.getChunk(check).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                     if (storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard())) { 

@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.world;
+package thecodex6824.thaumicaugmentation.common.world.legacy;
 
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
@@ -44,13 +44,14 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
+import thecodex6824.thaumicaugmentation.common.world.ITAChunkGenerator;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
+public class ChunkGeneratorEmptinessLegacy implements ITAChunkGenerator {
 
     protected World world;
     protected Random rand;
@@ -66,7 +67,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
     
     protected MapGenEldritchSpire spireGenerator;
 
-    public ChunkGeneratorEmptiness(World w) {
+    public ChunkGeneratorEmptinessLegacy(World w) {
         world = w;
         rand = new Random(world.getSeed());
         min = new NoiseGeneratorOctaves(rand, 16);

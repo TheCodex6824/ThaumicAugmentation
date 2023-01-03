@@ -79,7 +79,7 @@ import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
 import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
-import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
+import thecodex6824.thaumicaugmentation.common.world.legacy.ChunkGeneratorEmptinessLegacy;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
 import java.util.Collections;
@@ -147,7 +147,7 @@ public final class PlayerEventHandler {
             }
             
             if ((player.capabilities.isFlying || player.isElytraFlying()) && !player.isCreative() && !player.isSpectator()) {
-                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(player.getPosition());
+                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptinessLegacy) w.getChunkProvider().chunkGenerator).getSpireStart(player.getPosition());
                 if (start != null) {
                     IWardStorage storage = w.getChunk(player.getPosition()).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                     if (storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard())) {

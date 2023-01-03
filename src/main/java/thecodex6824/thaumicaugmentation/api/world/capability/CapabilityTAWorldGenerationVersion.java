@@ -18,25 +18,16 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.world;
+package thecodex6824.thaumicaugmentation.api.world.capability;
 
-import net.minecraft.world.DimensionType;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
-/*
- * Holds all of the dimensions for Thaumic Augmentation.
- * @author TheCodex6824
- */
-public final class TADimensions {
+public final class CapabilityTAWorldGenerationVersion {
 
-    private TADimensions() {}
+    private CapabilityTAWorldGenerationVersion() {}
     
-    public static final int WORLDGEN_LEGACY = 0;
-    public static final int WORLDGEN_V2 = 1;
+    @CapabilityInject(ITAWorldGenerationVersion.class)
+    public static final Capability<ITAWorldGenerationVersion> WORLDGEN_VERSION = null;
     
-    public static DimensionType EMPTINESS;
-    
-    public static DimensionType[] getAllDimensions() {
-        return new DimensionType[] {EMPTINESS};
-    }
-
 }
