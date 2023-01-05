@@ -53,6 +53,18 @@ import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpi
 
 public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 
+	protected static final double DEPTH_SCALE_X = 200.0;
+	protected static final double DEPTH_SCALE_Z = 200.0;
+	protected static final double DEPTH_SCALE_EXPONENT = 0.5;
+	protected static final double HORIZONTAL_COORD_SCALE = 684.412;
+	protected static final double HEIGHT_COORD_SCALE = 684.412;
+	protected static final double DEPTH_SCALE = 0.5;
+	protected static final double MIN_NOISE_SCALE = 1.0 / 512.0;
+	protected static final double MAX_NOISE_SCALE = 1.0 / 512.0;
+	protected static final int HEIGHT_SCALE_X = 5;
+	protected static final int HEIGHT_SCALE_Y = 33;
+	protected static final int HEIGHT_SCALE_Z = 5;
+	
     protected World world;
     protected Random rand;
 
@@ -61,7 +73,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
     protected NoiseGeneratorOctaves main;
     protected NoiseGeneratorOctaves scale;
     protected NoiseGeneratorOctaves depth;
-    protected NoiseGeneratorPerlin gen4;
+    protected NoiseGeneratorPerlin surfaceNoise;
     
     protected double[] biomeWeights;
     
@@ -75,12 +87,13 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         main = new NoiseGeneratorOctaves(rand, 8);
         scale = new NoiseGeneratorOctaves(rand, 10);
         depth = new NoiseGeneratorOctaves(rand, 16);
-        gen4 = new NoiseGeneratorPerlin(rand, 4);
+        surfaceNoise = new NoiseGeneratorPerlin(rand, 4);
         
         biomeWeights = new double[25];
         for (int x = -2; x <= 2; ++x) {
-            for (int z = -2; z <= 2; ++z)
+            for (int z = -2; z <= 2; ++z) {
                 biomeWeights[x + 2 + (z + 2) * 5] = 10.0F / MathHelper.sqrt(x * x + z * z + 0.2F);
+            }
         }
         
         InitNoiseGensEvent.Context ctx = new InitNoiseGensEvent.Context(min, max, main, scale, depth);
@@ -98,90 +111,81 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         double[] output = new double[sizeX * sizeY * sizeZ];
         InitNoiseField noiseEvent = new InitNoiseField(this, output, posX, posY, posZ, sizeX, sizeY, sizeZ);
         MinecraftForge.EVENT_BUS.post(noiseEvent);
-        if (noiseEvent.getResult() == Result.DENY)
+        if (noiseEvent.getResult() == Result.DENY) {
             return noiseEvent.getNoisefield();
+        }
         
-        double depthScaleX = 200.0;
-        double depthScaleZ = 200.0;
-        double coordScale = 684.412;
-        double heightScale = 684.412;
-        double[] depthNoise = depth.generateNoiseOctaves(null, posX, posZ, sizeX, sizeZ, depthScaleX, depthScaleZ, 0.5);
-        double[] mainNoise = main.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, coordScale / 80.0, heightScale / 160.0, coordScale / 80.0);
-        double[] minNoise = min.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, coordScale, heightScale, coordScale);
-        double[] maxNoise = max.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, coordScale, heightScale, coordScale);
+        double[] depthNoise = depth.generateNoiseOctaves(null, posX, posZ, sizeX, sizeZ, DEPTH_SCALE_X, DEPTH_SCALE_Z, DEPTH_SCALE_EXPONENT);
+        double[] mainNoise = main.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, HORIZONTAL_COORD_SCALE / 80.0, HEIGHT_COORD_SCALE / 160.0, HORIZONTAL_COORD_SCALE / 80.0);
+        double[] minNoise = min.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, HORIZONTAL_COORD_SCALE, HEIGHT_COORD_SCALE, HORIZONTAL_COORD_SCALE);
+        double[] maxNoise = max.generateNoiseOctaves(null, posX, posY, posZ, sizeX, sizeY, sizeZ, HORIZONTAL_COORD_SCALE, HEIGHT_COORD_SCALE, HORIZONTAL_COORD_SCALE);
         
         int noiseIndex = 0;
         int depthIndex = 0;
         for (int x = 0; x < sizeX; ++x) {
             for (int z = 0; z < sizeZ; ++z) {
-                float f2 = 0.0F;
-                float f3 = 0.0F;
-                float f4 = 0.0F;
+                float totalHeightVariation = 0.0F;
+                float totalBaseHeight = 0.0F;
+                float totalHeightBlend = 0.0F;
                 Biome biome = biomes[x + 2 + (z + 2) * 10];
-
                 for (int bX = -2; bX <= 2; ++bX) {
                     for (int bZ = -2; bZ <= 2; ++bZ) {
-                        Biome biome1 = biomes[x + bX + 2 + (z + bZ + 2) * 10];
-                        float f7 = (float) biomeWeights[bX + 2 + (bZ + 2) * 5] / (biome1.getBaseHeight() + 2.0F);
+                        Biome surroundingBiome = biomes[x + bX + 2 + (z + bZ + 2) * 10];
+                        float heightBlend = (float) biomeWeights[bX + 2 + (bZ + 2) * 5] / (surroundingBiome.getBaseHeight() + 2.0F);
 
-                        if (biome1.getBaseHeight() > biome.getBaseHeight())
-                            f7 /= 2.0F;
+                        if (surroundingBiome.getBaseHeight() > biome.getBaseHeight()) {
+                        	heightBlend /= 2.0F;
+                        }
 
-                        f2 += biome1.getHeightVariation() * f7;
-                        f3 += biome1.getBaseHeight() * f7;
-                        f4 += f7;
+                        totalHeightVariation += surroundingBiome.getHeightVariation() * heightBlend;
+                        totalBaseHeight += surroundingBiome.getBaseHeight() * heightBlend;
+                        totalHeightBlend += heightBlend;
                     }
                 }
 
-                f2 /= f4;
-                f3 /= f4;
-                f2 = f2 * 0.9F + 0.1F;
-                f3 = (f3 * 4.0F - 1.0F) / 8.0F;
-                double d7 = depthNoise[depthIndex++] / 8000.0;
+                totalHeightVariation /= totalHeightBlend;
+                totalBaseHeight /= totalHeightBlend;
+                totalHeightVariation = totalHeightVariation * 0.9F + 0.1F;
+                totalBaseHeight = (totalBaseHeight * 4.0F - 1.0F) / 8.0F;
+                double heightValue = depthNoise[depthIndex++] / 8000.0;
+                if (heightValue < 0.0) {
+                	heightValue = -heightValue * 0.3;
+                }
+                heightValue = heightValue * 3.0 - 2.0;
+                if (heightValue < 0.0) {
+                	heightValue /= 2.0;
 
-                if (d7 < 0.0)
-                    d7 = -d7 * 0.3;
+                    if (heightValue < -1.0) {
+                    	heightValue = -1.0;
+                    }
 
-                d7 = d7 * 3.0 - 2.0;
-
-                if (d7 < 0.0D) {
-                    d7 /= 2.0;
-
-                    if (d7 < -1.0)
-                        d7 = -1.0;
-
-                    d7 /= 1.4;
-                    d7 /= 2.0;
+                    heightValue /= 1.4;
+                    heightValue /= 2.0;
                 }
                 else {
-                    if (d7 > 1.0)
-                        d7 = 1.0;
-
-                    d7 /= 8.0;
-                }
-
-                double depthBase = 0.5;
-                double d8 = (f3 + d7 * 0.2) * (depthBase / 8.0);
-                double d9 = f2;
-                double d0 = depthBase + d8 * 4.0;
-
-                for (int l1 = 0; l1 < 33; ++l1) {
-                    double d1 = (l1 - d0) * 12.0 * 128.0 / 256.0 / d9;
-
-                    if (d1 < 0.0D)
-                        d1 *= 4.0D;
-
-                    double d2 = minNoise[noiseIndex] / 512.0;
-                    double d3 = maxNoise[noiseIndex] / 512.0;
-                    double d4 = (mainNoise[noiseIndex] / 10.0 + 1.0) / 2.0;
-                    double d5 = MathHelper.clampedLerp(d2, d3, d4) - d1;
-
-                    if (l1 > 29) {
-                        double d6 = (l1 - 29) / 3.0F;
-                        d5 = d5 * (1.0 - d6) - 10.0 * d6;
+                    if (heightValue > 1.0) {
+                    	heightValue = 1.0;
                     }
 
-                    output[noiseIndex++] = d5;
+                    heightValue /= 8.0;
+                }
+
+                for (int y = 0; y < sizeY; ++y) {
+                    double heightOffset = (y - (DEPTH_SCALE + (totalBaseHeight + heightValue * 0.2) * (DEPTH_SCALE / 8.0) * 4.0)) * 12.0 * 128.0 / 256.0 / totalHeightVariation;
+                    if (heightOffset < 0.0) {
+                    	heightOffset *= 4.0;
+                    }
+
+                    double min = minNoise[noiseIndex] * MIN_NOISE_SCALE;
+                    double max = maxNoise[noiseIndex] * MAX_NOISE_SCALE;
+                    double main = (mainNoise[noiseIndex] / 10.0 + 1.0) / 2.0;
+                    double outputNoise = MathHelper.clampedLerp(min, max, main) - heightOffset;
+                    if (y > 29) {
+                        double tallBonus = (y - 29) / 3.0F;
+                        outputNoise = outputNoise * (1.0 - tallBonus) - 10.0 * tallBonus;
+                    }
+
+                    output[noiseIndex++] = outputNoise;
                 }
             }
         }
@@ -197,51 +201,47 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
     
     protected void setBlocksInChunk(int xPos, int zPos, ChunkPrimer primer, Biome[] biomes) {
         IBlockState filler = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
-        int scaleX = 5, scaleY = 33, scaleZ = 5;
-        double[] heights = generateHeights(xPos * 4, 0, zPos * 4, scaleX, scaleY, scaleZ, biomes);
-        for (int i = 0; i < 4; ++i) {
-            int j = i * 5;
-            int k = (i + 1) * 5;
-
-            for (int l = 0; l < 4; ++l) {
-                int i1 = (j + l) * 33;
-                int j1 = (j + l + 1) * 33;
-                int k1 = (k + l) * 33;
-                int l1 = (k + l + 1) * 33;
-
-                for (int i2 = 0; i2 < 32; ++i2) {
-                    double d1 = heights[i1 + i2];
-                    double d2 = heights[j1 + i2];
-                    double d3 = heights[k1 + i2];
-                    double d4 = heights[l1 + i2];
-                    double d5 = (heights[i1 + i2 + 1] - d1) * 0.125D;
-                    double d6 = (heights[j1 + i2 + 1] - d2) * 0.125D;
-                    double d7 = (heights[k1 + i2 + 1] - d3) * 0.125D;
-                    double d8 = (heights[l1 + i2 + 1] - d4) * 0.125D;
-
-                    for (int j2 = 0; j2 < 8; ++j2) {
-                        double d10 = d1;
-                        double d11 = d2;
-                        double d12 = (d3 - d1) * 0.25D;
-                        double d13 = (d4 - d2) * 0.25D;
-
-                        for (int k2 = 0; k2 < 4; ++k2) {
-                            double d16 = (d11 - d10) * 0.25D;
-                            double lvt_45_1_ = d10 - d16;
-
-                            for (int l2 = 0; l2 < 4; ++l2) {
-                                if ((lvt_45_1_ += d16) > 0.0D && i2 * 8 + j2 >= 0)
-                                    primer.setBlockState(i * 4 + k2, i2 * 8 + j2, l * 4 + l2, filler);
+        double[] heights = generateHeights(xPos * 4, 0, zPos * 4, HEIGHT_SCALE_X, HEIGHT_SCALE_Y, HEIGHT_SCALE_Z, biomes);
+        for (int x = 0; x < HEIGHT_SCALE_X - 1; ++x) {
+            for (int z = 0; z < HEIGHT_SCALE_Z - 1; ++z) {
+                int cornerMinMin = (x * HEIGHT_SCALE_Z + z) * HEIGHT_SCALE_Y;
+                int cornerMinMax = (x * HEIGHT_SCALE_Z + z + 1) * HEIGHT_SCALE_Y;
+                int cornerMaxMin = ((x + 1) * HEIGHT_SCALE_Z + z) * HEIGHT_SCALE_Y;
+                int cornerMaxMax = ((x + 1) * HEIGHT_SCALE_Z + z + 1) * HEIGHT_SCALE_Y;
+                for (int y = 0; y < HEIGHT_SCALE_Y - 1; ++y) {
+                    double base = heights[cornerMinMin + y];
+                    double bias = heights[cornerMinMax + y];
+                    double baseMod = heights[cornerMaxMin + y];
+                    double biasMod = heights[cornerMaxMax + y];
+                    double basePerStep = (heights[cornerMinMin + y + 1] - base) * 0.125;
+                    double biasPerStep = (heights[cornerMinMax + y + 1] - bias) * 0.125;
+                    double baseModPerStep = (heights[cornerMaxMin + y + 1] - baseMod) * 0.125;
+                    double biasModPerStep = (heights[cornerMaxMax + y + 1] - biasMod) * 0.125;
+                    int regionHeight = (HEIGHT_SCALE_Y - 1) / 4;
+                    for (int y2 = 0; y2 < regionHeight; ++y2) {
+                        double densityValue = base;
+                        double densityBiasStart = bias;
+                        double densityValueMod = (baseMod - base) * 0.25;
+                        double densityBiasMod = (biasMod - bias) * 0.25;
+                        for (int x2 = 0; x2 < HEIGHT_SCALE_X - 1; ++x2) {
+                            double densityHeightBias = (densityBiasStart - densityValue) * 0.25;
+                            double density = densityValue;
+                            for (int z2 = 0; z2 < HEIGHT_SCALE_Z - 1; ++z2) {
+                                if (density > 0.0 && y * regionHeight + y2 >= 0) {
+                                    primer.setBlockState(x * (HEIGHT_SCALE_X - 1) + x2, y * regionHeight + y2, z * (HEIGHT_SCALE_Z - 1) + z2, filler);
+                                }
+                                
+                                density += densityHeightBias;
                             }
 
-                            d10 += d12;
-                            d11 += d13;
+                            densityValue += densityValueMod;
+                            densityBiasStart += densityBiasMod;
                         }
 
-                        d1 += d5;
-                        d2 += d6;
-                        d3 += d7;
-                        d4 += d8;
+                        base += basePerStep;
+                        bias += biasPerStep;
+                        baseMod += baseModPerStep;
+                        biasMod += biasModPerStep;
                     }
                 }
             }
@@ -252,7 +252,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         if (!ForgeEventFactory.onReplaceBiomeBlocks(this, x, z, primer, world))
             return;
         
-        double[] noise = gen4.getRegion(null, x * 16, z * 16, 16, 16, 0.0625, 0.0625, 1.0);
+        double[] noise = surfaceNoise.getRegion(null, x * 16, z * 16, 16, 16, 0.0625, 0.0625, 1.0);
         for (int cX = 0; cX < 16; ++cX) {
             for (int cZ = 0; cZ < 16; ++cZ) {
                 Biome biome = biomes[cZ + cX * 16];
