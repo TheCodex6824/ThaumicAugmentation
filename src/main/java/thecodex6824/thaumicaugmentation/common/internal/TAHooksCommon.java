@@ -20,6 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.common.internal;
 
+import java.util.Random;
+
+import javax.annotation.Nullable;
+
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
@@ -66,11 +70,8 @@ import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
-import thecodex6824.thaumicaugmentation.common.world.legacy.ChunkGeneratorEmptinessLegacy;
+import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
-
-import javax.annotation.Nullable;
-import java.util.Random;
 
 @SuppressWarnings("unused")
 public final class TAHooksCommon {
@@ -237,7 +238,7 @@ public final class TAHooksCommon {
             WorldServer w = (WorldServer) entity.getEntityWorld();
             BlockPos check = entity.getPosition();
             if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", check)) {
-                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptinessLegacy) w.getChunkProvider().chunkGenerator).getSpireStart(check);
+                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(check);
                 if (start != null) {
                     IWardStorage storage = w.getChunk(check).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
                     return !(storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard()));

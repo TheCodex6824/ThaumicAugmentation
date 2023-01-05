@@ -90,8 +90,6 @@ import thecodex6824.thaumicaugmentation.api.ward.tile.WardedTile;
 import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
-import thecodex6824.thaumicaugmentation.api.world.capability.ITAWorldGenerationVersion;
-import thecodex6824.thaumicaugmentation.api.world.capability.TAWorldGenerationVersion;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.ResizableImpetusStorage;
@@ -437,27 +435,6 @@ public final class CapabilityHandler {
                 return false;
             }
         });
-        
-        CapabilityManager.INSTANCE.register(ITAWorldGenerationVersion.class, new IStorage<ITAWorldGenerationVersion>() {
-            
-            @Override
-            public void readNBT(Capability<ITAWorldGenerationVersion> capability, ITAWorldGenerationVersion instance, EnumFacing side, NBTBase nbt) {
-                if (!(instance instanceof TAWorldGenerationVersion) || !(nbt instanceof NBTTagCompound))
-                    throw new UnsupportedOperationException("Can't deserialize non-API implementation");
-                
-                ((TAWorldGenerationVersion) instance).deserializeNBT((NBTTagCompound) nbt);
-            }
-            
-            @Override
-            @Nullable
-            public NBTBase writeNBT(Capability<ITAWorldGenerationVersion> capability, ITAWorldGenerationVersion instance, EnumFacing side) {
-                if (!(instance instanceof TAWorldGenerationVersion))
-                    throw new UnsupportedOperationException("Can't serialize non-API implementation");
-                
-                return ((TAWorldGenerationVersion) instance).serializeNBT();
-            }
-            
-        }, TAWorldGenerationVersion::new);
     }
     
     @SubscribeEvent
