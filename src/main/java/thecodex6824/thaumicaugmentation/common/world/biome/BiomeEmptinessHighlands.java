@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.world.biome;
 
+import java.util.Random;
+
 import net.minecraft.block.BlockFlower.EnumFlowerType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -32,18 +34,19 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 
-import java.util.Random;
-
 public class BiomeEmptinessHighlands extends Biome implements IPurgeBiomeSpawns, IFluxBiome, IBiomeSpecificSpikeBlockProvider {
 
+	protected IBlockState blueStone;
+	
     public BiomeEmptinessHighlands() {
-        super(new BiomeProperties("Emptiness Highlands").setBaseHeight(0.75F).setHeightVariation(0.3F).setRainDisabled().setTemperature(
-                0.25F).setWaterColor(0xAA00AA));
+        super(new BiomeProperties("Emptiness Highlands").setBaseHeight(1.0F).setHeightVariation(1.0F).setRainDisabled().setTemperature(
+                0.25F).setWaterColor(0x5500AA));
 
         purgeSpawns();
         flowers.clear();
         topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
         fillerBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
+        blueStone = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_ANCIENT_BLUE);
     }
     
     @Override
@@ -76,7 +79,18 @@ public class BiomeEmptinessHighlands extends Biome implements IPurgeBiomeSpawns,
 
     @Override
     public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noiseVal) {
-        // so nothing to do here
+    	int ground = BiomeUtil.getHeightFromPrimer(world, chunkPrimer, x, z);
+    	if (ground >= world.provider.getAverageGroundLevel() * 1.5 - rand.nextInt(5)) {
+	    	int numBlue = (int) (noiseVal + 5.0);
+			for (int y = 0; y < numBlue; ++y) {
+				if (ground - y >= 0 && ground - y < world.provider.getActualHeight()) {
+					BiomeUtil.setBlockStateInPrimer(chunkPrimer, x, ground - y, z, blueStone);
+				}
+				else if (ground - y < 0) {
+					break;
+				}
+			}
+    	}
     }
 
     @Override

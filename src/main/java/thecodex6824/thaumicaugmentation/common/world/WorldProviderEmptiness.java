@@ -65,7 +65,7 @@ public class WorldProviderEmptiness extends WorldProvider {
     
     @Override
     public int getAverageGroundLevel() {
-        return 16;
+        return 64;
     }
 
     @Override

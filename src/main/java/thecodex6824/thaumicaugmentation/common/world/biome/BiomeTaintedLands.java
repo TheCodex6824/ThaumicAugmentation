@@ -46,7 +46,7 @@ public class BiomeTaintedLands extends Biome implements IPurgeBiomeSpawns, IFlux
     protected static final Random POS_RNG = new Random();
     
     public BiomeTaintedLands() {
-        super(new BiomeProperties("Tainted Lands").setBaseHeight(-1.8F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
+        super(new BiomeProperties("Tainted Lands").setBaseHeight(0.125F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
                 0.25F).setWaterColor(0xFF00FF));
 
         purgeSpawns();

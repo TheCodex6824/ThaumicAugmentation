@@ -1,0 +1,19 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "minecraft:cube_all",
+        "transform": "forge:default-block"
+     },
+    "variants": {
+        "normal": [
+            { "textures": {"all": "thaumcraft:blocks/ancient_rock_stone_1"} },
+            { "textures": {"all": "thaumcraft:blocks/ancient_rock_stone_2"} },
+            { "textures": {"all": "thaumcraft:blocks/ancient_rock_stone_3"} }
+        ], 
+        "inventory": [
+            { "textures": {"all": "thaumcraft:blocks/ancient_rock_stone_1"} },
+            { "textures": {"all": "thaumcraft:blocks/ancient_rock_stone_2"} },
+            { "textures": {"all": "thaumcraft:blocks/ancient_rock_stone_3"} }
+        ]
+    }
+}

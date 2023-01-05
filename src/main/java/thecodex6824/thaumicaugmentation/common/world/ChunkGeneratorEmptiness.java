@@ -58,7 +58,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 	protected static final double DEPTH_SCALE_EXPONENT = 0.5;
 	protected static final double HORIZONTAL_COORD_SCALE = 684.412;
 	protected static final double HEIGHT_COORD_SCALE = 684.412;
-	protected static final double DEPTH_SCALE = 0.5;
+	protected static final double DEPTH_SCALE = 8.0;
 	protected static final double MIN_NOISE_SCALE = 1.0 / 512.0;
 	protected static final double MAX_NOISE_SCALE = 1.0 / 512.0;
 	protected static final int HEIGHT_SCALE_X = 5;
