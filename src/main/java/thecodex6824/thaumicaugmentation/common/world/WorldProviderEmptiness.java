@@ -20,16 +20,20 @@
 
 package thecodex6824.thaumicaugmentation.common.world;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Paths;
 
 import net.minecraft.client.audio.MusicTicker.MusicType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.border.WorldBorder;
@@ -57,21 +61,24 @@ public class WorldProviderEmptiness extends WorldProvider {
 	
     @Override
     protected void init() {
-    	if (!world.isRemote) {
+    	if (!world.isRemote && world instanceof WorldServer) {
 	    	ICapabilityProvider temp = new SimpleCapabilityProvider<>(new TAWorldGenerationVersion(), CapabilityTAWorldGenerationVersion.WORLDGEN_VERSION);
 	        CapabilityDispatcher disp = ForgeEventFactory.gatherCapabilities(world, temp);
-	        WorldCapabilityData data = (WorldCapabilityData) world.getPerWorldStorage().getOrLoadData(WorldCapabilityData.class, WorldCapabilityData.ID);
+	        stashedVersion = TADimensions.WORLDGEN_V2;
+	        WorldCapabilityData data = new WorldCapabilityData(WorldCapabilityData.ID);
+            try (FileInputStream input = new FileInputStream(Paths.get(world.getSaveHandler().getWorldDirectory().toString(), getSaveFolder(), "data", WorldCapabilityData.ID + ".dat").toFile())) {
+            	NBTTagCompound tag = CompressedStreamTools.readCompressed(input);
+            	data.readFromNBT(tag.getCompoundTag("data"));
+            }
+            catch (Exception ex) {
+            	data = null;
+            }
+	        
 	        if (data != null) {
 	            data.setCapabilities(this, disp);
 	            ITAWorldGenerationVersion version = disp.getCapability(CapabilityTAWorldGenerationVersion.WORLDGEN_VERSION, null);
 	            if (version != null) {
 	            	stashedVersion = version.getVersion();
-	            }
-	            else {
-	            	File saveDir = new File(world.getSaveHandler().getWorldDirectory(), "DIM" + getDimension());
-	            	if (!saveDir.exists()) {
-	            		stashedVersion = TADimensions.WORLDGEN_V2;
-	            	}
 	            }
 	        }
 	    	
@@ -297,7 +304,7 @@ public class WorldProviderEmptiness extends WorldProvider {
     
     @Override
     public String getSaveFolder() {
-    	return impl.getSaveFolder();
+    	return super.getSaveFolder();
     }
     
     @Override

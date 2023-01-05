@@ -128,26 +128,15 @@ dependencies {
     runtimeOnly 'curse.maven:ctm-267602:2915363'
     
     configurations.forEach {
-    	// mergetool pollutes the classpath with conflicting classes
-    	it.exclude(group: 'net.minecraftforge', module: 'mergetool')
-    	
-    	// this legacydev version (plus fork repository) makes dependency ATs work
-    	it.resolutionStrategy.force 'net.minecraftforge:legacydev:0.2.4.0'
-    	
-    	// newer ASM versions include module info that causes errors in Java 8
-    	it.resolutionStrategy.force 'org.ow2.asm:asm-debug-all:5.2'
+        // mergetool pollutes the classpath with conflicting classes
+        it.exclude(group: 'net.minecraftforge', module: 'mergetool')
+
+        // this legacydev version (plus fork repository) makes dependency ATs work
+        it.resolutionStrategy.force 'net.minecraftforge:legacydev:0.2.4.0'
+
+        // newer ASM versions include module info that causes errors in Java 8
+        it.resolutionStrategy.force 'org.ow2.asm:asm-debug-all:5.2'
     }
-    
-    // if the curse maven is down or otherwise not working:
-    // comment the above "implementation", "compileOnly", and "runtimeOnly" entries
-    // uncomment the following and put jars into subfolders in the "lib" folder
-    
-    //implementation fileTree(dir: 'lib/implementation', include: '*.jar')
-    //compileOnly fileTree(dir: 'lib/compileOnly', include: '*.jar')
-    //runtimeOnly fileTree(dir: 'lib/runtimeOnly', include: '*.jar')
-    
-    // note that the first line has no deobf - if you need it use BON2 or something
-    // to avoid needing test jars, comment the "testImplementation" lines and put "-x test" on the command line
 
     // For the native library binding jars (which need to be the exact same version as the natives)
     if (needCustomNatives) {
