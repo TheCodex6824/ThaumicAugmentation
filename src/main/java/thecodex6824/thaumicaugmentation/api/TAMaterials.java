@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.api;
 
+import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.util.text.TextFormatting;
@@ -39,6 +42,8 @@ public final class TAMaterials {
     
     public static final ArmorMaterial THAUMIUM_ROBES = EnumHelper.addArmorMaterial(ThaumicAugmentationAPI.MODID + "_THAUMIUM_ROBES",
             ThaumicAugmentationAPI.MODID + ":thaumium_robes", 23, new int[] {2, 5, 6, 2}, 28, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
+    
+    public static final Material TAINTED_SLURRY = new MaterialLiquid(MapColor.PURPLE);
     
     public static final IRarity RARITY_MAGICAL = new IRarity() {
         @Override

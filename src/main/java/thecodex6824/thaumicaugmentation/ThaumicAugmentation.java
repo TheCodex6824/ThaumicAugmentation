@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation;
 
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -59,6 +60,10 @@ public class ThaumicAugmentation {
     @SidedProxy(serverSide = "thecodex6824.thaumicaugmentation.init.proxy.ServerProxy", clientSide = "thecodex6824.thaumicaugmentation.init.proxy.ClientProxy")
     public static ISidedProxy proxy = null;
 
+    static {
+    	FluidRegistry.enableUniversalBucket();
+    }
+    
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();

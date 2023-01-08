@@ -20,6 +20,9 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import baubles.api.BaublesApi;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -31,6 +34,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.IItemHandler;
 import thaumcraft.api.ThaumcraftApi;
@@ -42,25 +46,28 @@ import thaumcraft.api.capabilities.IPlayerWarp.EnumWarpType;
 import thaumcraft.api.capabilities.ThaumcraftCapabilities;
 import thaumcraft.api.casters.FocusEngine;
 import thaumcraft.api.items.ItemsTC;
+import thecodex6824.thaumicaugmentation.api.TAFluids;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.api.entity.AutocasterFocusRegistry;
 import thecodex6824.thaumicaugmentation.api.entity.PrimalWispAttackRegistry;
+import thecodex6824.thaumicaugmentation.common.fluid.FluidTaintedSlurry;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectLight;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectVoidShield;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWard;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWater;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 public final class MiscHandler {
 
     private MiscHandler() {}
     
-    public static void preInit() {}
+    public static void preInit() {
+    	TAFluids.TAINTED_SLURRY = new FluidTaintedSlurry();
+    	FluidRegistry.registerFluid(TAFluids.TAINTED_SLURRY);
+    	FluidRegistry.addBucketForFluid(TAFluids.TAINTED_SLURRY);
+    }
     
     @SuppressWarnings("deprecation")
     public static void init() {

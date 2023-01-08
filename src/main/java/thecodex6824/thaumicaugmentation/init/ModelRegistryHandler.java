@@ -20,10 +20,17 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -34,7 +41,15 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.block.property.*;
+import thecodex6824.thaumicaugmentation.api.block.property.ICreativeImpetusBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
+import thecodex6824.thaumicaugmentation.api.block.property.ITABarsType;
+import thecodex6824.thaumicaugmentation.api.block.property.ITASlabType;
+import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
+import thecodex6824.thaumicaugmentation.api.block.property.IUrnType;
+import thecodex6824.thaumicaugmentation.api.block.property.IWardOpenedBlock;
+import thecodex6824.thaumicaugmentation.api.block.property.IWardOpeningWeakPower;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
 import thecodex6824.thaumicaugmentation.common.util.IModelProvider;
 
@@ -62,6 +77,18 @@ public final class ModelRegistryHandler {
         ModelLoader.setCustomStateMapper(TABlocks.WARDED_BUTTON_ARCANE_STONE, new StateMap.Builder().ignore(IWardOpeningWeakPower.WEAK_POWER).build());
         ModelLoader.setCustomStateMapper(TABlocks.URN, new StateMap.Builder().withName(IUrnType.URN_TYPE).build());
         ModelLoader.setCustomStateMapper(TABlocks.IMPETUS_CREATIVE, new StateMap.Builder().withName(ICreativeImpetusBlock.BLOCK_TYPE).build());
+        ModelLoader.setCustomStateMapper(TABlocks.TAINTED_SLURRY, new IStateMapper() {
+			@Override
+			public Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block) {
+				ModelResourceLocation loc = new ModelResourceLocation(new ResourceLocation(ThaumicAugmentationAPI.MODID, "tainted_slurry"), "fluid");
+				HashMap<IBlockState, ModelResourceLocation> models = new HashMap<>();
+				for (IBlockState state : block.getBlockState().getValidStates()) {
+					models.put(state, loc);
+				}
+				
+				return models;
+			}
+		});
         
         for (Block b : TABlocks.getAllBlocks()) {
             if (b instanceof IModelProvider<?>)
