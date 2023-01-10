@@ -208,6 +208,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileWardedPressurePlate;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessHighlands;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeTaintedLands;
+import thecodex6824.thaumicaugmentation.common.world.biome.BiomeTaintedSwamp;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class RegistryHandler {
@@ -444,6 +445,10 @@ public final class RegistryHandler {
         Biome highlands = new BiomeEmptinessHighlands().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_highlands"));
         event.getRegistry().register(highlands);
         BiomeDictionary.addTypes(highlands, Type.COLD, Type.SPARSE, Type.SPOOKY, Type.VOID, Type.HILLS, Type.MOUNTAIN);
+        
+        Biome swamp = new BiomeTaintedSwamp().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "tainted_swamp"));
+        event.getRegistry().register(swamp);
+        BiomeDictionary.addTypes(swamp, Type.COLD, Type.SPOOKY, Type.VOID, Type.SWAMP);
     }
     
     @SubscribeEvent

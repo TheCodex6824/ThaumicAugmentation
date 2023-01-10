@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 import thaumcraft.api.aura.AuraHelper;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
-import thecodex6824.thaumicaugmentation.common.world.biome.IFluxBiome;
+import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessBase;
 
 public final class TAWorldGenerator implements IWorldGenerator {
 
@@ -42,8 +42,8 @@ public final class TAWorldGenerator implements IWorldGenerator {
         if (!TAConfig.disableEmptiness.getValue() && world.provider.getDimension() == TADimensions.EMPTINESS.getId()) {
         	BlockPos pos = new BlockPos(chunkX * 16, 0, chunkZ * 16);
             Biome biome = world.getBiome(pos);
-            if (biome instanceof IFluxBiome) {
-                float flux = AuraHelper.getAuraBase(world, pos) * ((IFluxBiome) biome).getBaseFluxConcentration();
+            if (biome instanceof BiomeEmptinessBase) {
+                float flux = AuraHelper.getAuraBase(world, pos) * ((BiomeEmptinessBase) biome).getBaseFluxConcentration();
                 AuraHelper.drainVis(world, pos, flux, false);
                 AuraHelper.polluteAura(world, pos, flux, false);
             }

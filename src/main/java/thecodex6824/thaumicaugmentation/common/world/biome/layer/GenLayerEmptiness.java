@@ -30,7 +30,7 @@ import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 public class GenLayerEmptiness extends GenLayer {
 
     protected static final Biome[] ALLOWED_BIOMES = new Biome[] {TABiomes.EMPTINESS, TABiomes.TAINTED_LANDS,
-            TABiomes.EMPTINESS_HIGHLANDS};
+            TABiomes.EMPTINESS_HIGHLANDS, TABiomes.TAINTED_SWAMP};
     
     public GenLayerEmptiness(long seed) {
         super(seed);

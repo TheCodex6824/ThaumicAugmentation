@@ -36,9 +36,10 @@ public final class TABiomes {
     public static final Biome EMPTINESS = null;
     public static final Biome TAINTED_LANDS = null;
     public static final Biome EMPTINESS_HIGHLANDS = null;
+    public static final Biome TAINTED_SWAMP = null;
     
     public static Biome[] getAllBiomes() {
-        return new Biome[] {EMPTINESS, TAINTED_LANDS, EMPTINESS_HIGHLANDS};
+        return new Biome[] {EMPTINESS, TAINTED_LANDS, EMPTINESS_HIGHLANDS, TAINTED_SWAMP};
     }
 
 }

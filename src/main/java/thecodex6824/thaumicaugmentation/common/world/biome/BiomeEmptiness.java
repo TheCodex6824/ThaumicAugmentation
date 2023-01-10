@@ -20,48 +20,13 @@
 
 package thecodex6824.thaumicaugmentation.common.world.biome;
 
-import net.minecraft.block.BlockFlower.EnumFlowerType;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeDecorator;
-import net.minecraft.world.chunk.ChunkPrimer;
-import thecodex6824.thaumicaugmentation.api.TABlocks;
-import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
-import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
-import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 
-import java.util.Random;
-
-public class BiomeEmptiness extends Biome implements IPurgeBiomeSpawns, IFluxBiome, IBiomeSpecificSpikeBlockProvider {
+public class BiomeEmptiness extends BiomeEmptinessBase {
 
     public BiomeEmptiness() {
         super(new BiomeProperties("Emptiness").setBaseHeight(0.125F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
-                0.25F).setWaterColor(0xAA00AA));
-
-        purgeSpawns();
-        flowers.clear();
-        topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
-        fillerBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
-    }
-    
-    @Override
-    public void purgeSpawns() {
-        spawnableCreatureList.clear();
-        spawnableMonsterList.clear();
-        spawnableWaterCreatureList.clear();
-        spawnableCaveCreatureList.clear();
-    }
-    
-    @Override
-    public IBlockState getSpikeState(World world, BlockPos pos) {
-        return fillerBlock;
-    }
-    
-    @Override
-    public float getBaseFluxConcentration() {
-        return 0.15F;
+                0.25F).setWaterColor(0xAA00AA), null, 0.15F, 0x990099);
     }
 
     @Override
@@ -70,23 +35,8 @@ public class BiomeEmptiness extends Biome implements IPurgeBiomeSpawns, IFluxBio
     }
 
     @Override
-    public int getSkyColorByTemp(float currentTemperature) {
-        return 0;
-    }
-
-    @Override
-    public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noiseVal) {
-        // so nothing to do here
-    }
-
-    @Override
     public BiomeDecorator createBiomeDecorator() {
-        return new BiomeDecoratorEmptiness();
-    }
-
-    @Override
-    public EnumFlowerType pickRandomFlower(Random rand, BlockPos pos) {
-        return EnumFlowerType.ALLIUM;
+        return new BiomeDecoratorEmptinessBase();
     }
 
 }

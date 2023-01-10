@@ -70,6 +70,10 @@ public final class BiomeUtil {
         return 0;
     }
     
+    public static IBlockState getBlockStateInPrimer(ChunkPrimer primer, int x, int y, int z) {
+    	return primer.getBlockState(z & 15, y, x & 15);
+    }
+    
     public static void setBlockStateInPrimer(ChunkPrimer primer, int x, int y, int z, IBlockState state) {
     	primer.setBlockState(z & 15, y, x & 15, state);
     }

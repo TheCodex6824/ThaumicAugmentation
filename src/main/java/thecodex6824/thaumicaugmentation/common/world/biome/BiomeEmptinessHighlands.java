@@ -22,59 +22,25 @@ package thecodex6824.thaumicaugmentation.common.world.biome;
 
 import java.util.Random;
 
-import net.minecraft.block.BlockFlower.EnumFlowerType;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.chunk.ChunkPrimer;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
-import thecodex6824.thaumicaugmentation.api.world.IPurgeBiomeSpawns;
 
-public class BiomeEmptinessHighlands extends Biome implements IPurgeBiomeSpawns, IFluxBiome, IBiomeSpecificSpikeBlockProvider {
-
-	protected IBlockState blueStone;
+public class BiomeEmptinessHighlands extends BiomeEmptinessBase {
 	
     public BiomeEmptinessHighlands() {
         super(new BiomeProperties("Emptiness Highlands").setBaseHeight(1.0F).setHeightVariation(1.0F).setRainDisabled().setTemperature(
-                0.25F).setWaterColor(0x5500AA));
+                0.25F).setWaterColor(0x5500AA), null, 0.25F, 0x9900bb);
 
-        purgeSpawns();
-        flowers.clear();
-        topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
-        fillerBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
-        blueStone = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_ANCIENT_BLUE);
-    }
-    
-    @Override
-    public void purgeSpawns() {
-        spawnableCreatureList.clear();
-        spawnableMonsterList.clear();
-        spawnableWaterCreatureList.clear();
-        spawnableCaveCreatureList.clear();
-    }
-    
-    @Override
-    public IBlockState getSpikeState(World world, BlockPos pos) {
-        return fillerBlock;
-    }
-    
-    @Override
-    public float getBaseFluxConcentration() {
-        return 0.25F;
+        topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_ANCIENT_BLUE);
     }
 
     @Override
     public boolean canRain() {
         return false;
-    }
-
-    @Override
-    public int getSkyColorByTemp(float currentTemperature) {
-        return 0;
     }
 
     @Override
@@ -84,7 +50,7 @@ public class BiomeEmptinessHighlands extends Biome implements IPurgeBiomeSpawns,
 	    	int numBlue = (int) (noiseVal + 5.0);
 			for (int y = 0; y < numBlue; ++y) {
 				if (ground - y >= 0 && ground - y < world.provider.getActualHeight()) {
-					BiomeUtil.setBlockStateInPrimer(chunkPrimer, x, ground - y, z, blueStone);
+					BiomeUtil.setBlockStateInPrimer(chunkPrimer, x, ground - y, z, topBlock);
 				}
 				else if (ground - y < 0) {
 					break;
@@ -95,12 +61,7 @@ public class BiomeEmptinessHighlands extends Biome implements IPurgeBiomeSpawns,
 
     @Override
     public BiomeDecorator createBiomeDecorator() {
-        return new BiomeDecoratorEmptiness();
-    }
-
-    @Override
-    public EnumFlowerType pickRandomFlower(Random rand, BlockPos pos) {
-        return EnumFlowerType.ALLIUM;
+        return new BiomeDecoratorEmptinessBase();
     }
 
 }
