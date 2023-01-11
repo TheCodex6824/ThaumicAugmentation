@@ -4,6 +4,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
@@ -28,7 +29,7 @@ public class BlockTaintedSlurry extends BlockFluidClassic implements ITaintBlock
 		
 		double height = getFilledPercentage(world, pos);
 		boolean res = yToTest >= pos.getY() + 1 - height;
-		if (res) {
+		if (res && (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).isSpectator())) {
 			entity.motionX *= 0.75;
 			entity.motionY *= (entity.motionY > 0.0 ? 0.75 : 1.0);
 			entity.motionZ *= 0.75;
