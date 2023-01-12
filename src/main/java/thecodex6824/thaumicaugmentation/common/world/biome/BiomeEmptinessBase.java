@@ -5,12 +5,16 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorSimplex;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
@@ -43,6 +47,11 @@ public abstract class BiomeEmptinessBase extends Biome {
 	
 	public float getBaseFluxConcentration() {
 		return baseFluxConcentration;
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public Vec3d getFogColor(Entity view, float angle, float partialTicks) {
+		return Vec3d.ZERO;
 	}
 	
 	@Override

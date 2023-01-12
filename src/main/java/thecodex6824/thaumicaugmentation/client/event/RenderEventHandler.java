@@ -20,8 +20,23 @@
 
 package thecodex6824.thaumicaugmentation.client.event;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+import javax.vecmath.Vector4d;
+
+import org.lwjgl.opengl.GL11;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMaps;
@@ -32,6 +47,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.FogMode;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -49,18 +65,19 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import org.lwjgl.opengl.GL11;
 import thaumcraft.api.casters.ICaster;
 import thaumcraft.client.fx.ParticleEngine;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
@@ -82,12 +99,6 @@ import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 import thecodex6824.thaumicaugmentation.common.util.ShaderType;
-
-import javax.annotation.Nullable;
-import javax.vecmath.Vector4d;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
 public class RenderEventHandler {
@@ -299,6 +310,18 @@ public class RenderEventHandler {
             
             event.setCanceled(true);
         }
+    }
+    
+    @SubscribeEvent
+    public static void onFogSetup(EntityViewRenderEvent.RenderFogEvent event) {
+    	if (event.getState().getMaterial() == TAMaterials.TAINTED_SLURRY) {
+    		GlStateManager.setFog(FogMode.EXP);
+            GlStateManager.setFogDensity(0.1F);
+    	}
+    	else if (!TAConfig.disableEmptiness.getValue() && event.getEntity().dimension == TAConfig.emptinessDimID.getValue()) {
+    		GlStateManager.setFogStart(event.getFarPlaneDistance() * 0.4F);
+    		GlStateManager.setFogEnd(Math.min(event.getFarPlaneDistance(), 192) * 0.9F);
+    	}
     }
     
     private static Vec3d rotate(Vec3d input, double angle, Vec3d axis) {

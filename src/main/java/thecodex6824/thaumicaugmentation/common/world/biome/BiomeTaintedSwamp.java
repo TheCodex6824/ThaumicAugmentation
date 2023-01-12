@@ -2,7 +2,9 @@ package thecodex6824.thaumicaugmentation.common.world.biome;
 
 import java.util.Random;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import thaumcraft.common.entities.monster.tainted.EntityTaintCrawler;
@@ -17,6 +19,7 @@ import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenTaintSwampT
 public class BiomeTaintedSwamp extends BiomeEmptinessBase {
     
 	protected static final WorldGenTaintSwampTree TREE_GEN = new WorldGenTaintSwampTree(false);
+	protected static final Vec3d FOG_COLOR = new Vec3d(0.7, 0.0, 0.7);
 	
     public BiomeTaintedSwamp() {
         super(new BiomeProperties("Tainted Swamp").setBaseHeight(-0.2F).setHeightVariation(0.175F).setTemperature(0.35F).setWaterColor(0xFF00FF),
@@ -26,6 +29,11 @@ public class BiomeTaintedSwamp extends BiomeEmptinessBase {
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacleSmall.class, 75, 1, 2));
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacle.class, 50, 1, 1));
         spawnableMonsterList.add(new SpawnListEntry(EntityEnderman.class, 1, 2, 2));
+    }
+    
+    @Override
+    public Vec3d getFogColor(Entity view, float angle, float partialTicks) {
+    	return FOG_COLOR;
     }
 
     @Override

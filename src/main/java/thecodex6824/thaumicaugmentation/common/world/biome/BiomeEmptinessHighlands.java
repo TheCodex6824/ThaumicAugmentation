@@ -22,6 +22,9 @@ package thecodex6824.thaumicaugmentation.common.world.biome;
 
 import java.util.Random;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.chunk.ChunkPrimer;
@@ -41,6 +44,12 @@ public class BiomeEmptinessHighlands extends BiomeEmptinessBase {
     @Override
     public boolean canRain() {
         return false;
+    }
+    
+    @Override
+    public Vec3d getFogColor(Entity view, float angle, float partialTicks) {
+    	double heightColor = MathHelper.clampedLerp(0.3, 0.7, (view.posY - 64) / 64.0);
+    	return new Vec3d(0.2, heightColor - 0.3, heightColor);
     }
 
     @Override

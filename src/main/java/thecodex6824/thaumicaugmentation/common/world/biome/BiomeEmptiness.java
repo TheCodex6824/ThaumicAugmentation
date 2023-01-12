@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.world.biome;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.biome.BiomeDecorator;
 
 public class BiomeEmptiness extends BiomeEmptinessBase {
@@ -32,6 +34,11 @@ public class BiomeEmptiness extends BiomeEmptinessBase {
     @Override
     public boolean canRain() {
         return false;
+    }
+    
+    @Override
+    public Vec3d getFogColor(Entity view, float angle, float partialTicks) {
+    	return new Vec3d(0.2, 0.0, 0.3);
     }
 
     @Override

@@ -22,7 +22,9 @@ package thecodex6824.thaumicaugmentation.common.world.biome;
 
 import java.util.Random;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import thaumcraft.common.entities.monster.tainted.EntityTaintCrawler;
@@ -46,6 +48,11 @@ public class BiomeTaintedLands extends BiomeEmptinessBase {
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacleSmall.class, 75, 1, 2));
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacle.class, 50, 1, 1));
         spawnableMonsterList.add(new SpawnListEntry(EntityEnderman.class, 1, 2, 2));
+    }
+    
+    @Override
+    public Vec3d getFogColor(Entity view, float angle, float partialTicks) {
+    	return new Vec3d(0.7, 0.0, 0.7);
     }
     
     @Override

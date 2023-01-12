@@ -22,12 +22,16 @@ package thecodex6824.thaumicaugmentation.common.world;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MusicTicker.MusicType;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.IChunkGenerator;
@@ -36,13 +40,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
-import thecodex6824.thaumicaugmentation.client.renderer.RenderHandlerEmptinessSky;
 import thecodex6824.thaumicaugmentation.client.renderer.RenderHandlerNoop;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
+import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessBase;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeProviderEmptiness;
 
 public class WorldProviderEmptiness extends WorldProvider {
-    
+	
     @Override
     protected void init() {
         hasSkyLight = false;
@@ -50,7 +54,7 @@ public class WorldProviderEmptiness extends WorldProvider {
         if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
             setCloudRenderer(new RenderHandlerNoop());
             setWeatherRenderer(new RenderHandlerNoop());
-            setSkyRenderer(new RenderHandlerEmptinessSky());
+            //setSkyRenderer(new RenderHandlerEmptinessSky());
         }
     }
     
@@ -118,13 +122,32 @@ public class WorldProviderEmptiness extends WorldProvider {
     @Override
     @SideOnly(Side.CLIENT)
     public boolean doesXZShowFog(int x, int z) {
-        return false;
+        return true;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public Vec3d getFogColor(float x, float z) {
-        return new Vec3d(0, 0, 0);
+    public Vec3d getFogColor(float angle, float partialTicks) {
+    	Entity renderViewEntity = Minecraft.getMinecraft().getRenderViewEntity();
+    	double r = 0.0, g = 0.0, b = 0.0;
+    	BlockPos start = renderViewEntity.getPosition();
+    	MutableBlockPos check = new MutableBlockPos(start);
+    	for (int x = -4; x <= 4; ++x) {
+    		for (int z = -4; z <= 4; ++z) {
+    			check.setPos(start.getX() + x, start.getY(), start.getZ() + z);
+    			Vec3d color = new Vec3d(1.0, 1.0, 1.0);
+    			Biome biome = getBiomeForCoords(check);
+    			if (biome instanceof BiomeEmptinessBase) {
+    	    		color = ((BiomeEmptinessBase) biome).getFogColor(renderViewEntity, angle, partialTicks);
+    	    	}
+    			
+    			r += color.x * color.x;
+    			g += color.y * color.y;
+    			b += color.z * color.z;
+    		}
+    	}
+    	
+    	return new Vec3d(Math.sqrt(r / 100.0), Math.sqrt(g / 100.0), Math.sqrt(b / 100.0));
     }
 
     @Override
