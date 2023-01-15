@@ -46,7 +46,7 @@ public interface ITAStoneType {
     
     enum StoneType implements IStringSerializable {
         
-        STONE_VOID(0, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.OBSIDIAN, 0),
+        STONE_VOID(0, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.OBSIDIAN, 0),
         STONE_TAINT_NODECAY(1, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE, (w, b, s, r) -> {}, MapColor.OBSIDIAN, 0),
         SOIL_STONE_TAINT_NODECAY(2, () -> ThaumcraftMaterials.MATERIAL_TAINT, () -> SoundsTC.GORE, (w, b, s, r) -> {
             if (w.getBlockState(b.up()).getLightOpacity(w, b.up()) > 2)

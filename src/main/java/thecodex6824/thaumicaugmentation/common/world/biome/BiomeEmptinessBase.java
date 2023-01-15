@@ -1,8 +1,11 @@
 package thecodex6824.thaumicaugmentation.common.world.biome;
 
+import java.util.List;
 import java.util.Random;
 
 import javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -15,12 +18,23 @@ import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorSimplex;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thaumcraft.common.blocks.world.ore.ShardType;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 
 public abstract class BiomeEmptinessBase extends Biome {
 
+	protected static final ImmutableList<ShardType> CRYSTAL_ALL_PRIMALS = ImmutableList.of(
+			ShardType.AIR,
+			ShardType.EARTH,
+			ShardType.ENTROPY,
+			ShardType.FIRE,
+			ShardType.ORDER,
+			ShardType.WATER
+	);
+	protected static final ImmutableList<ShardType> CRYSTAL_FLUX = ImmutableList.of(ShardType.FLUX);
+	
 	protected IBlockState fluidBlock;
 	protected float baseFluxConcentration;
 	protected int baseGrassColor;
@@ -47,6 +61,10 @@ public abstract class BiomeEmptinessBase extends Biome {
 	
 	public float getBaseFluxConcentration() {
 		return baseFluxConcentration;
+	}
+	
+	public List<ShardType> getCrystalTypesForWorldGen() {
+		return CRYSTAL_ALL_PRIMALS;
 	}
 	
 	@SideOnly(Side.CLIENT)

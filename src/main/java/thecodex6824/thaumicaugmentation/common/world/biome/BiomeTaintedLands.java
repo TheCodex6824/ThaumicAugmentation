@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.world.biome;
 
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
@@ -27,6 +28,7 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import thaumcraft.common.blocks.world.ore.ShardType;
 import thaumcraft.common.entities.monster.tainted.EntityTaintCrawler;
 import thaumcraft.common.entities.monster.tainted.EntityTaintacle;
 import thaumcraft.common.entities.monster.tainted.EntityTaintacleSmall;
@@ -48,6 +50,11 @@ public class BiomeTaintedLands extends BiomeEmptinessBase {
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacleSmall.class, 75, 1, 2));
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacle.class, 50, 1, 1));
         spawnableMonsterList.add(new SpawnListEntry(EntityEnderman.class, 1, 2, 2));
+    }
+    
+    @Override
+    public List<ShardType> getCrystalTypesForWorldGen() {
+    	return CRYSTAL_FLUX;
     }
     
     @Override

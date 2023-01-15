@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
+import net.minecraftforge.common.util.Constants.BlockFlags;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
@@ -23,10 +24,15 @@ public class WorldGenTaintSwampTree extends WorldGenAbstractTree {
 	protected Block log;
 	protected IBlockState leaves;
 	
-	public WorldGenTaintSwampTree(boolean notify) {
-		super(notify);
+	public WorldGenTaintSwampTree() {
+		super(false);
 		log = Blocks.LOG;
 		leaves = Blocks.LEAVES.getDefaultState().withProperty(BlockLeaves.DECAYABLE, false);
+	}
+	
+	@Override
+	protected void setBlockAndNotifyAdequately(World world, BlockPos pos, IBlockState state) {
+		world.setBlockState(pos, state, BlockFlags.SEND_TO_CLIENTS | BlockFlags.NO_OBSERVERS);
 	}
 	
 	@Override

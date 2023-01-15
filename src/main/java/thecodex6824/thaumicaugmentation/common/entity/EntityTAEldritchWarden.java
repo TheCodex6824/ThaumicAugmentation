@@ -76,7 +76,7 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
-import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
+import thecodex6824.thaumicaugmentation.common.world.feature.MapGenEldritchSpire;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;

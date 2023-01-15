@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.common.world.structure;
+package thecodex6824.thaumicaugmentation.common.world.feature;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.EnumCreatureType;
@@ -37,6 +37,8 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchGuardian;
 import thecodex6824.thaumicaugmentation.common.world.ITAChunkGenerator;
+import thecodex6824.thaumicaugmentation.common.world.structure.EldritchSpireComponent;
+import thecodex6824.thaumicaugmentation.common.world.structure.EldritchSpireComponentPlacer;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

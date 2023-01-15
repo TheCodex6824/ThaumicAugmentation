@@ -85,7 +85,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
 import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
-import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
+import thecodex6824.thaumicaugmentation.common.world.feature.MapGenEldritchSpire;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public final class PlayerEventHandler {

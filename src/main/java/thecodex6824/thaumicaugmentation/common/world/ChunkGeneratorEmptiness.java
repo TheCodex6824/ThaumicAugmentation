@@ -52,8 +52,9 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessBase;
-import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
-import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEmptinessCaves;
+import thecodex6824.thaumicaugmentation.common.world.feature.MapGenEldritchSpire;
+import thecodex6824.thaumicaugmentation.common.world.feature.MapGenEmptinessCaves;
+import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenCrystals;
 
 public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 
@@ -82,6 +83,8 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
     
     protected double[] biomeWeights;
     
+    protected WorldGenCrystals crystals;
+    
     protected MapGenCaves caves;
     protected MapGenEldritchSpire spireGenerator;
 
@@ -109,6 +112,8 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         main = ctx.getPerlin();
         scale = ctx.getScale();
         depth = ctx.getDepth();
+        
+        crystals = new WorldGenCrystals();
         
         caves = (MapGenCaves) TerrainGen.getModdedMapGen(new MapGenEmptinessCaves(), EventType.CAVE);
         spireGenerator = (MapGenEldritchSpire) TerrainGen.getModdedMapGen(new MapGenEldritchSpire(this), EventType.CUSTOM);
@@ -331,6 +336,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         }
         
         biome.decorate(world, rand, pos);
+        crystals.generate(world, rand, pos);
 
         ForgeEventFactory.onChunkPopulate(false, this, world, rand, x, z, false);
         BlockFalling.fallInstantly = false;

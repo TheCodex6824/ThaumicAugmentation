@@ -20,6 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.common.block;
 
+import java.util.Random;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -44,10 +49,6 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.common.block.prefab.BlockTABase;
 import thecodex6824.thaumicaugmentation.common.block.trait.IItemBlockProvider;
 import thecodex6824.thaumicaugmentation.common.util.BitUtil;
-
-import javax.annotation.Nullable;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 public class BlockTAStone extends BlockTABase implements ITAStoneType, IItemBlockProvider {
 

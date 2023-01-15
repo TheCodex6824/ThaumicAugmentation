@@ -1,4 +1,4 @@
-package thecodex6824.thaumicaugmentation.common.world.structure;
+package thecodex6824.thaumicaugmentation.common.world.feature;
 
 import java.util.Random;
 

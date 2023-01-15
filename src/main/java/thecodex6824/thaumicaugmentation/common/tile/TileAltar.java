@@ -53,8 +53,8 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityTAEldritchWarden;
 import thecodex6824.thaumicaugmentation.common.entity.IEldritchSpireWardHolder;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
+import thecodex6824.thaumicaugmentation.common.world.feature.MapGenEldritchSpire;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
-import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
 import javax.annotation.Nullable;
 

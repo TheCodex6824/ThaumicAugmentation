@@ -71,7 +71,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
-import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
+import thecodex6824.thaumicaugmentation.common.world.feature.MapGenEldritchSpire;
 
 @SuppressWarnings("unused")
 public final class TAHooksCommon {

@@ -76,7 +76,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.Part
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
-import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
+import thecodex6824.thaumicaugmentation.common.world.feature.MapGenEldritchSpire;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class EntityEventHandler {
