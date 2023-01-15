@@ -37,6 +37,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.gen.MapGenCaves;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import net.minecraftforge.common.MinecraftForge;
@@ -52,6 +53,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessBase;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
+import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEmptinessCaves;
 
 public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 
@@ -80,6 +82,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
     
     protected double[] biomeWeights;
     
+    protected MapGenCaves caves;
     protected MapGenEldritchSpire spireGenerator;
 
     public ChunkGeneratorEmptiness(World w) {
@@ -107,6 +110,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         scale = ctx.getScale();
         depth = ctx.getDepth();
         
+        caves = (MapGenCaves) TerrainGen.getModdedMapGen(new MapGenEmptinessCaves(), EventType.CAVE);
         spireGenerator = (MapGenEldritchSpire) TerrainGen.getModdedMapGen(new MapGenEldritchSpire(this), EventType.CUSTOM);
     }
 
@@ -297,6 +301,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         biomes = world.getBiomeProvider().getBiomes(biomes, x * 16, z * 16, 16, 16);
         replaceBlocksForBiome(x, z, primer, biomes);
         
+        caves.generate(world, x, z, primer);
         if (world.getWorldInfo().isMapFeaturesEnabled() && TAConfig.generateSpires.getValue())
             spireGenerator.generate(world, x, z, primer);
         
