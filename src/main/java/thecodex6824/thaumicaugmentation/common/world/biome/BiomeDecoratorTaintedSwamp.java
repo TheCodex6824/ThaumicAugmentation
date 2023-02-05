@@ -16,9 +16,11 @@ public class BiomeDecoratorTaintedSwamp extends BiomeDecoratorEmptinessBase {
 			int centerX = random.nextInt(16) + 8;
 			int centerZ = random.nextInt(16) + 8;
 			BlockPos start = world.getHeight(pos.add(centerX, 0, centerZ)).add(0, random.nextInt(4) + 2, 0);
-			WorldGenAbstractTree tree = biome.getRandomTreeFeature(random);
-			tree.setDecorationDefaults();
-			tree.generate(world, random, start);
+			if (start.getY() >= world.provider.getAverageGroundLevel()) {
+				WorldGenAbstractTree tree = biome.getRandomTreeFeature(random);
+				tree.setDecorationDefaults();
+				tree.generate(world, random, start);
+			}
 		}
 	}
 	

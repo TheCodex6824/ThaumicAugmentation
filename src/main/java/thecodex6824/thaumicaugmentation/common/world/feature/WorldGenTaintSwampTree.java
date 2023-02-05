@@ -117,7 +117,7 @@ public class WorldGenTaintSwampTree extends WorldGenAbstractTree {
 			int logNum = 0;
 			int horizLogs = rand.nextInt(3) + 1;
 			mutable.setPos(mutable.getX() + dir.getXOffset(), mutable.getY(), mutable.getZ() + dir.getZOffset());
-			while (canGrowInto(world.getBlockState(mutable).getBlock())) {
+			while (mutable.getY() >= 0 && canGrowInto(world.getBlockState(mutable).getBlock())) {
 				setBlockAndNotifyAdequately(world, mutable, logDir);
 				if (logNum < horizLogs) {
 					mutable.setPos(mutable.getX() + dir.getXOffset(), mutable.getY(), mutable.getZ() + dir.getZOffset());
