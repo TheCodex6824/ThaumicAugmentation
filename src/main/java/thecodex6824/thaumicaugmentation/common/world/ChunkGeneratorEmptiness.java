@@ -71,6 +71,8 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 	protected static final int HEIGHT_SCALE_Y = 33;
 	protected static final int HEIGHT_SCALE_Z = 5;
 	
+	protected static final int BOTTOM_REGION_Y_END = 2;
+	
     protected World world;
     protected Random rand;
 
@@ -184,13 +186,26 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 
                 double offset = (DEPTH_SCALE + (totalBaseHeight + heightValue * 0.2) * (DEPTH_SCALE / 8.0) * 4.0);
                 for (int y = 0; y < sizeY; ++y) {
-                    double heightOffset = (y - offset) * DEPTH_STRETCH * 128.0 / 256.0 / totalHeightVariation;
+                	double dY;
+                	if (y < BOTTOM_REGION_Y_END) {
+                		dY = y == BOTTOM_REGION_Y_END - 1 ? 1.0 : 256.0;
+                		totalHeightVariation = 1.0F;
+                	}
+                	else {
+                		dY = y - offset;
+                	}
+                	
+                    double heightOffset = dY * DEPTH_STRETCH * 128.0 / 256.0 / totalHeightVariation;
                     if (heightOffset < 0.0) {
                     	heightOffset *= 4.0;
                     }
 
                     double min = minNoise[noiseIndex] * MIN_NOISE_SCALE;
                     double max = maxNoise[noiseIndex] * MAX_NOISE_SCALE;
+                    if (y < BOTTOM_REGION_Y_END) {
+                    	min *= 16.0;
+                    }
+                    
                     double main = (mainNoise[noiseIndex] / 10.0 + 1.0) / 2.0;
                     double outputNoise = MathHelper.clampedLerp(min, max, main) - heightOffset;
                     if (y > 29) {
@@ -250,8 +265,8 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
                     double biasPerStep = (heights[cornerMinMax + y + 1] - bias) * 0.125;
                     double baseModPerStep = (heights[cornerMaxMin + y + 1] - baseMod) * 0.125;
                     double biasModPerStep = (heights[cornerMaxMax + y + 1] - biasMod) * 0.125;
-                    int regionHeight = (HEIGHT_SCALE_Y - 1) / 4;
-                    for (int y2 = 0; y2 < regionHeight; ++y2) {
+                    int regionHeight = 8;
+                	for (int y2 = 0; y2 < regionHeight; ++y2) {
                         double densityValue = base;
                         double densityBiasStart = bias;
                         double densityValueMod = (baseMod - base) * 0.25;
