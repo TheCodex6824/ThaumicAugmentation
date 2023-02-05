@@ -278,7 +278,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
                                 if (density > 0.0 && y * regionHeight + y2 >= 0) {
                                     primer.setBlockState(x * (HEIGHT_SCALE_X - 1) + x2, y * regionHeight + y2, z * (HEIGHT_SCALE_Z - 1) + z2, filler);
                                 }
-                                else if (y * regionHeight + y2 < world.provider.getAverageGroundLevel()) {
+                                else if (y * regionHeight + y2 < world.provider.getAverageGroundLevel() && y * regionHeight + y2 >= BOTTOM_REGION_Y_END * 8) {
 	                        		primer.setBlockState(x * (HEIGHT_SCALE_X - 1) + x2, y * regionHeight + y2, z * (HEIGHT_SCALE_Z - 1) + z2, fluid);
                                 }
                                 
