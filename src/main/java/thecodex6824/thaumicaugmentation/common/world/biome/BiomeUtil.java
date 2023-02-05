@@ -78,6 +78,21 @@ public final class BiomeUtil {
     	primer.setBlockState(z & 15, y, x & 15, state);
     }
     
+    public static int getHeightOpaqueOnly(World world, BlockPos start) {
+		MutableBlockPos mutable = new MutableBlockPos(start);
+		mutable.setY(mutable.getY() - 1);
+		while (mutable.getY() >= 0) {
+			IBlockState state = world.getBlockState(mutable);
+			if (state.getMaterial().isOpaque()) {
+				return mutable.getY() + 1;
+			}
+			
+			mutable.setY(mutable.getY() - 1);
+		}
+		
+		return 0;
+	}
+    
     private static <A, B, C> void invoke(TriConsumer<A, B, C> consumer, A a, B b, C c) {
         consumer.accept(a, b, c);
     }

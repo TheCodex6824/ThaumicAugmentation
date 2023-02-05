@@ -22,15 +22,80 @@ package thecodex6824.thaumicaugmentation.common.world.biome;
 
 import java.util.Random;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeDecorator;
+import net.minecraftforge.common.util.Constants.BlockFlags;
 
-// TODO maybe make this abstract again once proper decorators are added
 public class BiomeDecoratorEmptinessBase extends BiomeDecorator {
 	
+	protected boolean isNonLiquidReplaceable(IBlockState state) {
+		return !state.getMaterial().isLiquid() && state.getMaterial().isReplaceable();
+	}
+	
+	protected void buildLiquidBlockingWall(World world, Biome biome, BlockPos pos, EnumFacing checkDir) {
+		int topBlock = BiomeUtil.getHeightOpaqueOnly(world, pos.add(0, world.provider.getAverageGroundLevel(), 0));
+		MutableBlockPos mutable = new MutableBlockPos(pos);
+		mutable.setY(topBlock);
+		int liquidStart = -1;
+		boolean liquidSide = false;
+		while (mutable.getY() < topBlock + 32) {
+			mutable.setPos(pos.getX(), mutable.getY(), pos.getZ());
+			IBlockState state = world.getBlockState(mutable);
+			mutable.setPos(pos.getX() + checkDir.getXOffset(), mutable.getY(), pos.getZ() + checkDir.getZOffset());
+			IBlockState offsetState = world.getBlockState(mutable);
+			if (liquidStart == -1) {
+				if (isNonLiquidReplaceable(state) && offsetState.getMaterial().isLiquid()) {
+					liquidStart = mutable.getY();
+					liquidSide = false;
+				}
+				else if (state.getMaterial().isLiquid() && isNonLiquidReplaceable(offsetState)) {
+					liquidStart = mutable.getY();
+					liquidSide = true;
+				}
+			}
+			else if (liquidSide) {
+				if (!state.getMaterial().isLiquid() || !isNonLiquidReplaceable(offsetState)) {
+					break;
+				}
+			}
+			else {
+				if (!isNonLiquidReplaceable(state) || !offsetState.getMaterial().isLiquid()) {
+					break;
+				}
+			}
+			
+			mutable.setY(mutable.getY() + 1);
+		}
+		
+		if (liquidStart != -1) {
+			int liquidEnd = mutable.getY();
+			mutable.setPos(pos.getX(), topBlock - 1, pos.getZ());
+			world.setBlockState(mutable, biome.fillerBlock, BlockFlags.SEND_TO_CLIENTS | BlockFlags.NO_OBSERVERS);
+			mutable.setY(liquidStart - 1);
+			while (mutable.getY() < liquidEnd) {
+				IBlockState toSet = mutable.getY() == liquidEnd - 1 ? biome.topBlock : biome.fillerBlock;
+				world.setBlockState(mutable, toSet, BlockFlags.SEND_TO_CLIENTS | BlockFlags.NO_OBSERVERS);
+				mutable.setY(mutable.getY() + 1);
+			}
+		}
+	}
+	
 	@Override
-	public void decorate(World world, Random random, Biome biome, BlockPos pos) {}
+	public void decorate(World world, Random random, Biome biome, BlockPos pos) {
+		MutableBlockPos mutable = new MutableBlockPos(pos.getX(), 0, pos.getZ());
+		for (int dX = 0; dX <= 15; ++dX) {
+			mutable.setPos(pos.getX() + dX, mutable.getY(), pos.getZ() + 15);
+			buildLiquidBlockingWall(world, biome, mutable, EnumFacing.SOUTH);
+		}
+		for (int dZ = 0; dZ <= 15; ++dZ) {
+			mutable.setPos(pos.getX() + 15, mutable.getY(), pos.getZ() + dZ);
+			buildLiquidBlockingWall(world, biome, mutable, EnumFacing.EAST);
+		}
+	}
 	
 }

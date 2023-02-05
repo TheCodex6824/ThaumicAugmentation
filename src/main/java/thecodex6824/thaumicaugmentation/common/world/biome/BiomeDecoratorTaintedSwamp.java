@@ -11,6 +11,7 @@ public class BiomeDecoratorTaintedSwamp extends BiomeDecoratorEmptinessBase {
 
 	@Override
 	public void decorate(World world, Random random, Biome biome, BlockPos pos) {
+		super.decorate(world, random, biome, pos);
 		int numTrees = random.nextInt(3);
 		for (int i = 0; i < numTrees; ++i) {
 			int centerX = random.nextInt(16) + 8;

@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.Constants.BlockFlags;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
+import thecodex6824.thaumicaugmentation.common.world.biome.BiomeUtil;
 
 public class WorldGenTaintSwampTree extends WorldGenAbstractTree {
 
@@ -49,26 +50,11 @@ public class WorldGenTaintSwampTree extends WorldGenAbstractTree {
         }
 	}
 	
-	protected int getHeightOpaqueOnly(World world, BlockPos start) {
-		MutableBlockPos mutable = new MutableBlockPos(start);
-		mutable.setY(mutable.getY() - 1);
-		while (mutable.getY() >= 0) {
-			IBlockState state = world.getBlockState(mutable);
-			if (state.getMaterial().isOpaque()) {
-				return mutable.getY() + 1;
-			}
-			
-			mutable.setY(mutable.getY() - 1);
-		}
-		
-		return 0;
-	}
-	
 	@Override
 	public boolean generate(World world, Random rand, BlockPos pos) {
 		int treeHeight = rand.nextInt(9) + 10;
 		MutableBlockPos mutable = new MutableBlockPos(pos);
-		int growthHeight = getHeightOpaqueOnly(world, pos);
+		int growthHeight = BiomeUtil.getHeightOpaqueOnly(world, pos);
 		mutable.setY(growthHeight - 1);
 		IBlockState ground = world.getBlockState(mutable);
 		if (ground.getBlock() == log || ground == leaves) {
