@@ -244,7 +244,7 @@ public final class NodeHelper {
             //Tries to reconnect unloaded nodes
             for (DimensionalBlockPos pos : node.getOutputLocations()) {
                 World world = DimensionManager.getWorld(pos.getDimension());
-                if (world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
+                if (world != null && world.provider.getDimension() == pos.getDimension() && world.isBlockLoaded(pos.getPos())) {
                     TileEntity te = world.getTileEntity(pos.getPos());
                     if (te != null) {
                         IImpetusNode possible = te.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
