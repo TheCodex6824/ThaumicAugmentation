@@ -169,6 +169,32 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
         return false;
     }
     
+    protected boolean tryExtractPaper(BlockPos tilePos) {
+    	TileEntity test = world.getTileEntity(tilePos);
+        if (test != null) {
+            IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+            if (other != null) {
+            	for (int i = 0; i < other.getSlots(); ++i) {
+                    ItemStack contained = other.getStackInSlot(i);
+                    if (OreDictionary.itemMatches(PAPER, contained, false)) {
+                        ItemStack result = inventory.insertItem(0, contained, true);
+                        if (result != contained) {
+                            ItemStack extract = other.extractItem(i, inventory.getSlotLimit(0) - inventory.getStackInSlot(0).getCount(), false);
+                            ItemStack remain = inventory.insertItem(0, extract, false);
+                            if (!remain.isEmpty())
+                                other.insertItem(i, remain, false);
+                            
+                            world.playSound(null, getPosition(), SoundsTC.page, SoundCategory.NEUTRAL, 0.5F, 1.0F);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    	
+    	return false;
+    }
+    
     @SuppressWarnings("null")
     protected boolean checkOrBypassResearch(String key, int cacheIndex, int day) {
         if (!dataManager.get(OWNER_ID).isPresent())
@@ -240,58 +266,14 @@ public class EntityCelestialObserver extends EntityCreature implements IEntityOw
                     if (ticksExisted % 120 == 0)
                         heal(1.0F);
                     
-                    boolean filled = false;
-                    TileEntity test = world.getTileEntity(getPosition());
-                    if (test != null) {
-                        IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-                        if (other != null) {
-                            for (int i = 0; i < other.getSlots(); ++i) {
-                                ItemStack contained = other.getStackInSlot(i);
-                                if (OreDictionary.itemMatches(PAPER, contained, false)) {
-                                    ItemStack result = inventory.insertItem(0, contained, true);
-                                    if (result != contained) {
-                                        ItemStack extract = other.extractItem(i, inventory.getSlotLimit(0) - inventory.getStackInSlot(0).getCount(), false);
-                                        ItemStack remain = inventory.insertItem(0, extract, false);
-                                        if (!remain.isEmpty())
-                                            other.insertItem(i, remain, false);
-                                        
-                                        filled = true;
-                                        world.playSound(null, getPosition(), SoundsTC.page, SoundCategory.NEUTRAL, 0.5F, 1.0F);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
+                    boolean filled = tryExtractPaper(new BlockPos(posX, posY, posZ));
                     if (!filled && (posY - Math.floor(posY)) < 0.51) {
-                        test = world.getTileEntity(getPosition().down());
-                        if (test != null) {
-                            IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-                            if (other != null) {
-                                for (int i = 0; i < other.getSlots(); ++i) {
-                                    ItemStack contained = other.getStackInSlot(i);
-                                    if (OreDictionary.itemMatches(PAPER, contained, false)) {
-                                        ItemStack result = inventory.insertItem(0, contained, true);
-                                        if (result != contained) {
-                                            ItemStack extract = other.extractItem(i, inventory.getSlotLimit(0) - inventory.getStackInSlot(0).getCount(), false);
-                                            ItemStack remain = inventory.insertItem(0, extract, false);
-                                            if (!remain.isEmpty())
-                                                other.insertItem(i, remain, false);
-                                            
-                                            filled = true;
-                                            world.playSound(null, getPosition(), SoundsTC.page, SoundCategory.NEUTRAL, 0.5F, 1.0F);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        filled = tryExtractPaper(new BlockPos(posX, posY, posZ).down());
                     }
                     
                     ArrayList<IItemHandler> outputs = new ArrayList<>();
                     for (EnumFacing f : EnumFacing.HORIZONTALS) {
-                        test = world.getTileEntity(getPosition().offset(f));
+                        TileEntity test = world.getTileEntity(getPosition().offset(f));
                         if (test != null) {
                             IItemHandler other = test.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, f.getOpposite());
                             if (other != null)
