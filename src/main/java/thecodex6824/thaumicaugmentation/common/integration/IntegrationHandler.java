@@ -27,9 +27,7 @@ import javax.annotation.Nullable;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
-import org.apache.maven.artifact.versioning.VersionRange;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
 public class IntegrationHandler {

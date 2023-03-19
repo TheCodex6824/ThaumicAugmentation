@@ -20,6 +20,10 @@
 
 package thecodex6824.thaumicaugmentation.common.internal;
 
+import java.util.Random;
+
+import javax.annotation.Nullable;
+
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
@@ -65,9 +69,6 @@ import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
-
-import javax.annotation.Nullable;
-import java.util.Random;
 
 public final class TAHooksCommon {
 
@@ -120,7 +121,7 @@ public final class TAHooksCommon {
         return !hasWard(world, pos);
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static boolean isCompatibleSlab(World world, BlockPos pos, EnumFacing dir, ItemStack slab) {
         IBlockState state = world.getBlockState(pos);
         if (state.getPropertyKeys().contains(BlockSlab.HALF) && state.getBlock() instanceof BlockSlab) {
