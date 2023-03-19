@@ -204,6 +204,7 @@ javadoc {
 }
 
 task signJar(type: SignJar) {
+	dependsOn 'jar'
     onlyIf { project.hasProperty('keyStore') }
     
     if (project.hasProperty('keyStore')) { // needed to skip gradle trying to find vars
