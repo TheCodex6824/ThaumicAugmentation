@@ -45,6 +45,11 @@ ext {
     }
 }
 
+legacy {
+	fixClasspath = true
+	extractMappings = true
+}
+
 final arch = System.getProperty("os.arch")
 final needCustomNatives = arch != "x86" && arch != "i386" && arch != "x86_64" && arch != "amd64"
 
@@ -57,7 +62,6 @@ minecraft {
             
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
-            property 'net.minecraftforge.gradle.GradleStart.csvDir', "$buildDir/mappings"
             
             property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
 
@@ -80,7 +84,6 @@ minecraft {
             
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
-            property 'net.minecraftforge.gradle.GradleStart.csvDir', "$buildDir/mappings"
             
             property 'fml.coreMods.load', 'thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore'
 
@@ -98,15 +101,6 @@ minecraft {
             }
         }
     }
-}
-
-// legacydev needs mappings files to handle ATs
-task extractMappings(type: Sync) {
-	def mapFile = MCPRepo.getMappingDep(project.minecraft.mappingChannel.get(), project.minecraft.mappingVersion.get())
-	from(zipTree(project.getObjects().fileProperty().fileProvider(provider {
-		MavenArtifactDownloader.generate(project, mapFile, false)
-	}).getAsFile()))
-	into "$buildDir/mappings"
 }
 
 dependencies {
@@ -226,32 +220,9 @@ jar {
     }
 }
 
-// add output jar to classpath to ensure resources are found
-task fixResources(type: Task) {
-	doLast {
-		def classpath = project.files(configurations.runtimeClasspath, project.tasks.getByName("jar").archiveFile.get().getAsFile())
-		project.minecraft.runs.forEach {
-			def t = project.tasks.getByName(it.taskName)
-			if (t instanceof JavaExec) {
-				t.classpath = classpath
-			}
-		}
-	}
-}
-
-fixResources.dependsOn('jar')
 project.tasks.whenTaskAdded {
-	project.minecraft.runs.forEach { r ->
-		if (r.getTaskName().equals(it.name)) {
-			it.dependsOn('fixResources')
-		}
-	}
-	
 	if (it.name.equals('reobfJar')) {
 		it.dependsOn('signJar')
-	}
-	else if (it.name.equals('prepareRuns')) {
-		it.dependsOn('extractMappings')
 	}
 }
 
