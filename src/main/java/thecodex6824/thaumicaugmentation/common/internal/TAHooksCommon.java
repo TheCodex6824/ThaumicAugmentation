@@ -127,9 +127,18 @@ public final class TAHooksCommon {
         if (state.getPropertyKeys().contains(BlockSlab.HALF) && state.getBlock() instanceof BlockSlab) {
             BlockSlab block = (BlockSlab) state.getBlock();
             Comparable item = block.getTypeForItem(slab);
-            return (dir == EnumFacing.UP && state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.BOTTOM ||
-                    dir == EnumFacing.DOWN && state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP) &&
-                    item.compareTo(state.getValue(block.getVariantProperty())) == 0;
+			if (dir == EnumFacing.UP && state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.BOTTOM ||
+			        dir == EnumFacing.DOWN && state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP) {
+
+				Object value = state.getValue(block.getVariantProperty());
+				try {
+					return item.compareTo(value) == 0;
+				}
+				catch (ClassCastException ex) {
+					// if getTypeForItem and the variant property value have different types, this may happen
+					// ex: rustic slabs return int for getTypeForItem, but vanilla slabs use EnumBlockHalf
+				}
+			}
         }
 
         return false;
