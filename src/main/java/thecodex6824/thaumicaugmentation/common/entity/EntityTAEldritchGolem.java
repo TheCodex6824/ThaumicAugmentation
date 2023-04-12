@@ -202,8 +202,9 @@ public class EntityTAEldritchGolem extends EntityEldritchGolem implements IEldri
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (isDead)
+        if (dead || isDead || getHealth() <= 0.0F) {
             handleStructureWard();
+        }
     }
     
     @Override

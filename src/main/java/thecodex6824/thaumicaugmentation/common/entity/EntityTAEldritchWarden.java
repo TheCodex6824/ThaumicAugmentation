@@ -245,8 +245,9 @@ public class EntityTAEldritchWarden extends EntityEldritchWarden implements IEld
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (dead)
+        if (dead || isDead || getHealth() <= 0.0F) {
             handleStructureWard();
+        }
         
         if (!world.isRemote && getSpawnTimer() == 1) {
             if (world.getDifficulty() == EnumDifficulty.HARD) {

@@ -45,6 +45,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import thaumcraft.api.casters.FocusEffect;
 import thaumcraft.api.casters.FocusPackage;
 import thaumcraft.api.casters.IFocusElement;
@@ -249,50 +250,82 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         return power;
     }
     
+    protected boolean trySetProjectileOwner(Entity proj) {
+    	Entity owner = ownerRef.get();
+    	if (owner == null) {
+    		return false;
+    	}
+    	
+    	if (proj instanceof IThrowableEntity) {
+    		((IThrowableEntity) proj).setThrower(owner);
+    		return true;
+    	}
+    	else if (proj instanceof EntityThrowable && owner instanceof EntityLivingBase) {
+    		((EntityThrowable) proj).thrower = (EntityLivingBase) owner;
+    		return true;
+    	}
+    	else if (proj instanceof EntityArrow) {
+    		((EntityArrow) proj).shootingEntity = owner;
+    		return true;
+    	}
+    	else if (proj instanceof EntityFireball && owner instanceof EntityLivingBase) {
+    		((EntityFireball) proj).shootingEntity = (EntityLivingBase) owner;
+    		return true;
+    	}
+    	
+    	return false;
+    }
+    
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (source == DamageSource.FALL)
             return false;
         else if (source.getDamageType().equals("player") && ownerRef.get() != null && ownerRef.get().equals(source.getImmediateSource()))
             return false;
-        else if (reflect && !world.isRemote) {
-            Entity entity = source.getImmediateSource();
-            if ((entity instanceof IProjectile || entity instanceof EntityFireball) && entity.isEntityAlive()) {
-                Entity newEntity = EntityList.newEntity(entity.getClass(), entity.world);
-                if (newEntity != null) {
-                    NBTTagCompound toCopy = entity.serializeNBT();
-                    toCopy.setUniqueId("UUID", newEntity.getUniqueID());
-                    newEntity.deserializeNBT(toCopy);
-                    newEntity.setLocationAndAngles(entity.posX - entity.motionX, entity.posY - entity.motionY, entity.posZ - entity.motionZ, -entity.rotationYaw, -entity.rotationPitch);
-                    newEntity.motionX = -entity.motionX;
-                    newEntity.motionY = -entity.motionY;
-                    newEntity.motionZ = -entity.motionZ;
-                    int attempts = 0;
-                    while (newEntity.getEntityBoundingBox().intersects(getEntityBoundingBox()) && attempts++ < 10)
-                        newEntity.setPosition(newEntity.posX + newEntity.motionX, newEntity.posY + newEntity.motionY, newEntity.posZ + newEntity.motionZ);
-                    
-                    if (entity instanceof EntityFireball && newEntity instanceof EntityFireball) {
-                        EntityFireball original = (EntityFireball) entity;
-                        EntityFireball fireball = (EntityFireball) newEntity;
-                        fireball.accelerationX = -original.accelerationX;
-                        fireball.accelerationY = -original.accelerationY;
-                        fireball.accelerationZ = -original.accelerationZ;
-                    }
-                    else if (newEntity instanceof EntityTippedArrow) {
-                        ((EntityTippedArrow) newEntity).setPotionEffect(entity instanceof EntityTippedArrow ?
-                                ((EntityTippedArrow) entity).getArrowStack() : new ItemStack(Items.ARROW));
-                    }
-                    
-                    newEntity.velocityChanged = true;
-                    if (newEntity.world.spawnEntity(newEntity))
-                        entity.setDead();
-                }
-            }
-        }
-        
-        if (super.attackEntityFrom(source, amount)) {
-            if (!world.isRemote) {
-                int targetID = -1;
+        else if (super.attackEntityFrom(source, amount)) {
+	        if (!world.isRemote) {
+	        	if (reflect) {
+		            Entity entity = source.getImmediateSource();
+		            if ((entity instanceof IProjectile || entity instanceof EntityFireball) && entity.isEntityAlive()) {
+		                Entity newEntity = EntityList.newEntity(entity.getClass(), entity.world);
+		                if (newEntity != null) {
+		                    NBTTagCompound toCopy = entity.serializeNBT();
+		                    toCopy.setUniqueId("UUID", newEntity.getUniqueID());
+		                    newEntity.deserializeNBT(toCopy);
+		                    newEntity.setLocationAndAngles(entity.posX - entity.motionX, entity.posY - entity.motionY, entity.posZ - entity.motionZ, -entity.rotationYaw, -entity.rotationPitch);
+		                    newEntity.motionX = -entity.motionX;
+		                    newEntity.motionY = -entity.motionY;
+		                    newEntity.motionZ = -entity.motionZ;
+		                    if (trySetProjectileOwner(newEntity)) {
+			                    int attempts = 0;
+			                    while (newEntity.getEntityBoundingBox().intersects(getEntityBoundingBox()) && attempts++ < 10) {
+			                        newEntity.setPosition(newEntity.posX + newEntity.motionX, newEntity.posY + newEntity.motionY, newEntity.posZ + newEntity.motionZ);
+			                    }
+			                    
+			                    if (attempts < 10) {
+				                    if (entity instanceof EntityFireball && newEntity instanceof EntityFireball) {
+				                        EntityFireball original = (EntityFireball) entity;
+				                        EntityFireball fireball = (EntityFireball) newEntity;
+				                        fireball.accelerationX = -original.accelerationX;
+				                        fireball.accelerationY = -original.accelerationY;
+				                        fireball.accelerationZ = -original.accelerationZ;
+				                    }
+				                    else if (newEntity instanceof EntityTippedArrow) {
+				                        ((EntityTippedArrow) newEntity).setPotionEffect(entity instanceof EntityTippedArrow ?
+				                                ((EntityTippedArrow) entity).getArrowStack() : new ItemStack(Items.ARROW));
+				                    }
+				                    
+				                    newEntity.velocityChanged = true;
+				                    newEntity.world.spawnEntity(newEntity);
+				                    // entity could still spawn regardless of spawnEntity return value (events), so always kill it
+				                    entity.setDead();
+			                    }
+		                    }
+		                }
+		            }
+	        	}
+	        	
+	        	int targetID = -1;
                 if (source.getTrueSource() != null)
                     targetID = source.getTrueSource().getEntityId();
                 else if (source == DamageSource.FALLING_BLOCK)
@@ -301,12 +334,12 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
                     targetID = source.getImmediateSource().getEntityId();
                 
                 TANetwork.INSTANCE.sendToAllTracking(new PacketFXShield(getEntityId(), targetID), this);
-            }
-            
-            return true;
+	        }
+	        
+	        return true;
         }
-        else
-            return false;
+        
+        return false;
     }
     
     @Override
@@ -317,21 +350,31 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
         return super.canBeCollidedWith();
     }
     
-    @Override
-    protected void collideWithEntity(Entity entity) {
-        Entity owner = ownerRef.get();
+    protected boolean entityBypassesShield(Entity entity) {
+    	Entity owner = ownerRef.get();
         if (owner != null) {
             if (entity.equals(owner))
-                return;
+                return true;
+            else if (entity instanceof IThrowableEntity && owner.equals(((IThrowableEntity) entity).getThrower()))
+            	return true;
+            else if (entity instanceof IEntityOwnable && owner.equals(((IEntityOwnable) entity).getOwner()))
+                return true;
             else if (entity instanceof EntityThrowable && owner.equals(((EntityThrowable) entity).getThrower()))
-                return;
+                return true;
             else if (entity instanceof EntityArrow && owner.equals(((EntityArrow) entity).shootingEntity))
-                return;
+                return true;
             else if (entity instanceof EntityFireball && owner.equals(((EntityFireball) entity).shootingEntity))
-                return;
+                return true;
         }
         
-        super.collideWithEntity(entity);
+        return false;
+    }
+    
+    @Override
+    protected void collideWithEntity(Entity entity) {
+        if (!entityBypassesShield(entity)) {
+        	super.collideWithEntity(entity);
+        }
     }
     
     @Override
@@ -347,41 +390,15 @@ public class EntityFocusShield extends EntityLivingBase implements IEntityOwnabl
     
     @Override
     public void applyEntityCollision(Entity entity) {
-        Entity owner = ownerRef.get();
-        if (owner != null) {
-            if (entity.equals(owner))
-                return;
-            else if (entity instanceof IEntityOwnable && owner.equals(((IEntityOwnable) entity).getOwner()))
-                return;
-            else if (entity instanceof EntityThrowable && owner.equals(((EntityThrowable) entity).getThrower()))
-                return;
-            else if (entity instanceof EntityArrow && owner.equals(((EntityArrow) entity).shootingEntity))
-                return;
-            else if (entity instanceof EntityFireball && owner.equals(((EntityFireball) entity).shootingEntity))
-                return;
-        }
-        
-        super.applyEntityCollision(entity);
+    	if (!entityBypassesShield(entity)) {
+    		super.applyEntityCollision(entity);
+    	}
     }
     
     @Override
     @Nullable
     public AxisAlignedBB getCollisionBox(Entity entity) {
-        Entity owner = ownerRef.get();
-        if (owner != null) {
-            if (entity.equals(owner))
-                return null;
-            else if (entity instanceof IEntityOwnable && owner.equals(((IEntityOwnable) entity).getOwner()))
-                return null;
-            else if (entity instanceof EntityThrowable && owner.equals(((EntityThrowable) entity).getThrower()))
-                return null;
-            else if (entity instanceof EntityArrow && owner.equals(((EntityArrow) entity).shootingEntity))
-                return null;
-            else if (entity instanceof EntityFireball && owner.equals(((EntityFireball) entity).shootingEntity))
-                return null;
-        }
-        
-        return getEntityBoundingBox();
+    	return entityBypassesShield(entity) ? null : getEntityBoundingBox();
     }
     
     public void resetBoundingBoxes() {
