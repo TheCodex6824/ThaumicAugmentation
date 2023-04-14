@@ -37,12 +37,13 @@ public class BiomeDecoratorEmptinessBase extends BiomeDecorator {
 		return !state.getMaterial().isLiquid() && state.getMaterial().isReplaceable();
 	}
 	
-	protected void buildLiquidBlockingWall(World world, Biome biome, BlockPos pos, EnumFacing checkDir) {
+	protected void fixLiquidBorders(World world, Biome biome, BlockPos pos, EnumFacing checkDir) {
 		int topBlock = BiomeUtil.getHeightOpaqueOnly(world, pos.add(0, world.provider.getAverageGroundLevel(), 0));
 		MutableBlockPos mutable = new MutableBlockPos(pos);
 		mutable.setY(topBlock);
 		int liquidStart = -1;
 		boolean liquidSide = false;
+		IBlockState liquid = null;
 		while (mutable.getY() < topBlock + 32) {
 			mutable.setPos(pos.getX(), mutable.getY(), pos.getZ());
 			IBlockState state = world.getBlockState(mutable);
@@ -50,10 +51,12 @@ public class BiomeDecoratorEmptinessBase extends BiomeDecorator {
 			IBlockState offsetState = world.getBlockState(mutable);
 			if (liquidStart == -1) {
 				if (isNonLiquidReplaceable(state) && offsetState.getMaterial().isLiquid()) {
+					liquid = offsetState;
 					liquidStart = mutable.getY();
 					liquidSide = false;
 				}
 				else if (state.getMaterial().isLiquid() && isNonLiquidReplaceable(offsetState)) {
+					liquid = offsetState;
 					liquidStart = mutable.getY();
 					liquidSide = true;
 				}
@@ -76,10 +79,9 @@ public class BiomeDecoratorEmptinessBase extends BiomeDecorator {
 			int liquidEnd = mutable.getY();
 			mutable.setPos(pos.getX(), topBlock - 1, pos.getZ());
 			world.setBlockState(mutable, biome.fillerBlock, BlockFlags.SEND_TO_CLIENTS | BlockFlags.NO_OBSERVERS);
-			mutable.setY(liquidStart - 1);
+			mutable.setY(liquidStart);
 			while (mutable.getY() < liquidEnd) {
-				IBlockState toSet = mutable.getY() == liquidEnd - 1 ? biome.topBlock : biome.fillerBlock;
-				world.setBlockState(mutable, toSet, BlockFlags.SEND_TO_CLIENTS | BlockFlags.NO_OBSERVERS);
+				world.setBlockState(mutable, liquid, BlockFlags.SEND_TO_CLIENTS | BlockFlags.NO_OBSERVERS);
 				mutable.setY(mutable.getY() + 1);
 			}
 		}
@@ -88,13 +90,17 @@ public class BiomeDecoratorEmptinessBase extends BiomeDecorator {
 	@Override
 	public void decorate(World world, Random random, Biome biome, BlockPos pos) {
 		MutableBlockPos mutable = new MutableBlockPos(pos.getX(), 0, pos.getZ());
-		for (int dX = 0; dX <= 15; ++dX) {
-			mutable.setPos(pos.getX() + dX, mutable.getY(), pos.getZ() + 15);
-			buildLiquidBlockingWall(world, biome, mutable, EnumFacing.SOUTH);
+		for (int dZ = 15; dZ >= 0; --dZ) {
+			for (int dX = 0; dX <= 15; ++dX) {
+				mutable.setPos(pos.getX() + dX, mutable.getY(), pos.getZ() + dZ);
+				fixLiquidBorders(world, biome, mutable, EnumFacing.SOUTH);
+			}
 		}
-		for (int dZ = 0; dZ <= 15; ++dZ) {
-			mutable.setPos(pos.getX() + 15, mutable.getY(), pos.getZ() + dZ);
-			buildLiquidBlockingWall(world, biome, mutable, EnumFacing.EAST);
+		for (int dX = 15; dX >= 0; --dX) {
+			for (int dZ = 0; dZ <= 15; ++dZ) {
+				mutable.setPos(pos.getX() + dX, mutable.getY(), pos.getZ() + dZ);
+				fixLiquidBorders(world, biome, mutable, EnumFacing.EAST);
+			}
 		}
 	}
 	

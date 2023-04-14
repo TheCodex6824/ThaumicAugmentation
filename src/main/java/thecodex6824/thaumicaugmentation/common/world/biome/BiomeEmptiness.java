@@ -27,7 +27,7 @@ import net.minecraft.world.biome.BiomeDecorator;
 public class BiomeEmptiness extends BiomeEmptinessBase {
 
     public BiomeEmptiness() {
-        super(new BiomeProperties("Emptiness").setBaseHeight(0.125F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
+        super(new BiomeProperties("Emptiness").setBaseHeight(0.15F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
                 0.25F).setWaterColor(0xAA00AA), null, 0.15F, 0x990099);
     }
 

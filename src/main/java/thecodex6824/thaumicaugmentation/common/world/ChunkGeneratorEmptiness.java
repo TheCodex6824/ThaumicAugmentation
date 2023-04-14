@@ -96,9 +96,9 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         min = new NoiseGeneratorOctaves(rand, 16);
         max = new NoiseGeneratorOctaves(rand, 16);
         main = new NoiseGeneratorOctaves(rand, 8);
+        surfaceNoise = new NoiseGeneratorPerlin(rand, 4);
         scale = new NoiseGeneratorOctaves(rand, 10);
         depth = new NoiseGeneratorOctaves(rand, 16);
-        surfaceNoise = new NoiseGeneratorPerlin(rand, 4);
         
         biomeWeights = new double[25];
         for (int x = -2; x <= 2; ++x) {
@@ -106,6 +106,8 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
                 biomeWeights[x + 2 + (z + 2) * 5] = 10.0F / MathHelper.sqrt(x * x + z * z + 0.2F);
             }
         }
+        
+        world.setSeaLevel(63);
         
         InitNoiseGensEvent.Context ctx = new InitNoiseGensEvent.Context(min, max, main, scale, depth);
         ctx = TerrainGen.getModdedNoiseGenerators(world, rand, ctx);
@@ -156,14 +158,14 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
                         totalHeightBlend += heightBlend;
                     }
                 }
-
+                
                 totalHeightVariation /= totalHeightBlend;
-                totalBaseHeight /= totalHeightBlend;
                 totalHeightVariation = totalHeightVariation * 0.9F + 0.1F;
+                totalBaseHeight /= totalHeightBlend;
                 totalBaseHeight = (totalBaseHeight * 4.0F - 1.0F) / 8.0F;
                 double heightValue = depthNoise[depthIndex++] / 8000.0;
                 if (heightValue < 0.0) {
-                	heightValue = -heightValue * 0.3;
+                	heightValue *= -0.3;
                 }
                 heightValue = heightValue * 3.0 - 2.0;
                 if (heightValue < 0.0) {
@@ -184,18 +186,17 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
                     heightValue /= 8.0;
                 }
 
-                double offset = (DEPTH_SCALE + (totalBaseHeight + heightValue * 0.2) * (DEPTH_SCALE / 8.0) * 4.0);
+                double offset = DEPTH_SCALE + (totalBaseHeight + heightValue * 0.2) * (DEPTH_SCALE / 8.0) * 4.0;
                 for (int y = 0; y < sizeY; ++y) {
-                	double dY;
+                	double heightOffset;
                 	if (y < BOTTOM_REGION_Y_END) {
-                		dY = y == BOTTOM_REGION_Y_END - 1 ? 1.0 : 256.0;
-                		totalHeightVariation = 1.0F;
+                		double dY = y == BOTTOM_REGION_Y_END - 1 ? 1.0 : 256.0;
+                		heightOffset = dY * DEPTH_STRETCH * 128.0 / 256.0 / totalHeightVariation;
                 	}
                 	else {
-                		dY = y - offset;
+                		heightOffset = (y - offset) * DEPTH_STRETCH * 128.0 / 256.0 / totalHeightVariation;
                 	}
                 	
-                    double heightOffset = dY * DEPTH_STRETCH * 128.0 / 256.0 / totalHeightVariation;
                     if (heightOffset < 0.0) {
                     	heightOffset *= 4.0;
                     }
@@ -233,7 +234,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         boolean fluidSet = false;
         for (int x = 0; x < HEIGHT_SCALE_X - 1; ++x) {
             for (int z = 0; z < HEIGHT_SCALE_Z - 1; ++z) {
-            	Biome biome = biomes[x + 2 + (z + 2) * 10];
+            	Biome biome = biomes[x + z * 10];
             	if (biome instanceof BiomeEmptinessBase) {
             		IBlockState maybeFluid = ((BiomeEmptinessBase) biome).getFluidState();
             		if (maybeFluid != fluid) {
@@ -278,7 +279,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
                                 if (density > 0.0 && y * regionHeight + y2 >= 0) {
                                     primer.setBlockState(x * (HEIGHT_SCALE_X - 1) + x2, y * regionHeight + y2, z * (HEIGHT_SCALE_Z - 1) + z2, filler);
                                 }
-                                else if (y * regionHeight + y2 < world.provider.getAverageGroundLevel() && y * regionHeight + y2 >= BOTTOM_REGION_Y_END * 8) {
+                                else if (y * regionHeight + y2 < world.getSeaLevel() && y * regionHeight + y2 >= BOTTOM_REGION_Y_END * 8) {
 	                        		primer.setBlockState(x * (HEIGHT_SCALE_X - 1) + x2, y * regionHeight + y2, z * (HEIGHT_SCALE_Z - 1) + z2, fluid);
                                 }
                                 

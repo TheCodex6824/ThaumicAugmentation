@@ -56,13 +56,9 @@ public class GenLayerEmptiness extends GenLayer {
     }
     
     public static GenLayer[] createLayers(long seed) {
-        
         GenLayer biome = new GenLayerEmptiness(14676);
-        biome = new GenLayerZoom(10000, biome);
-        biome = new GenLayerZoom(10001, biome);
-        biome = new GenLayerZoom(10002, biome);
-        biome = new GenLayerZoom(10003, biome);
-        biome = new GenLayerZoom(10004, biome);
+        biome = GenLayerZoom.magnify(10000, biome, 5);
+        biome = new GenLayerNeighboringBiomes(20000, biome);
         
         GenLayer voronoiZoom = new GenLayerVoronoiZoom(10, biome);
         biome.initWorldGenSeed(seed);

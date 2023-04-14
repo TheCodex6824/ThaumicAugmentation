@@ -42,7 +42,7 @@ public class BiomeTaintedLands extends BiomeEmptinessBase {
     protected static final WorldGenTaintFlower FLOWER_GENERATOR = new WorldGenTaintFlower();
     
     public BiomeTaintedLands() {
-        super(new BiomeProperties("Tainted Lands").setBaseHeight(0.125F).setHeightVariation(0.15F).setRainDisabled().setTemperature(
+        super(new BiomeProperties("Tainted Lands").setBaseHeight(0.125F).setHeightVariation(0.05F).setRainDisabled().setTemperature(
                 0.25F).setWaterColor(0xFF00FF), null, 0.5F, 0x660066);
 
         topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY);

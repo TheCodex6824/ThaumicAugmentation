@@ -35,7 +35,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneTyp
 public class BiomeEmptinessHighlands extends BiomeEmptinessBase {
 	
     public BiomeEmptinessHighlands() {
-        super(new BiomeProperties("Emptiness Highlands").setBaseHeight(1.0F).setHeightVariation(1.0F).setRainDisabled().setTemperature(
+        super(new BiomeProperties("Emptiness Highlands").setBaseHeight(1.25F).setHeightVariation(1.25F).setRainDisabled().setTemperature(
                 0.25F).setWaterColor(0x5500AA), null, 0.25F, 0x9900bb);
 
         topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_ANCIENT_BLUE);

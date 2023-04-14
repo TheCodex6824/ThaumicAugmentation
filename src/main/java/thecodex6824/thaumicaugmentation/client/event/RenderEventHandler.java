@@ -319,7 +319,7 @@ public class RenderEventHandler {
             GlStateManager.setFogDensity(0.1F);
     	}
     	else if (!TAConfig.disableEmptiness.getValue() && event.getEntity().dimension == TAConfig.emptinessDimID.getValue()) {
-    		GlStateManager.setFogStart(event.getFarPlaneDistance() * 0.4F);
+    		GlStateManager.setFogStart(Math.min(event.getFarPlaneDistance(), 192) * 0.4F);
     		GlStateManager.setFogEnd(Math.min(event.getFarPlaneDistance(), 192) * 0.9F);
     	}
     }

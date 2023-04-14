@@ -52,7 +52,7 @@ public abstract class BiomeEmptinessBase extends Biome {
         fluidBlock = fluidState != null ? fluidState : Blocks.AIR.getDefaultState();
         baseFluxConcentration = baseFlux;
         baseGrassColor = grassColor;
-        plantColorNoise = new NoiseGeneratorSimplex(new Random(getBiomeName().hashCode()));
+        plantColorNoise = new NoiseGeneratorSimplex(new Random(getClass().getName().hashCode()));
 	}
 	
 	public IBlockState getFluidState() {
