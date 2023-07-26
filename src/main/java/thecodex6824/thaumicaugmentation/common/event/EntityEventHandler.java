@@ -184,18 +184,20 @@ public class EntityEventHandler {
         }
     }
     
-    // we want to do the same thing for both target and trajectory events
+    // we want to do the same thing for both target and trajectory events, so register for the superclass
     @SubscribeEvent
     public static void onTouchTrajectory(FocusTouchGetEntityEvent event) {
         if (event.getRay() != null && event.getRay().entityHit instanceof EntityFocusShield) {
             EntityFocusShield hit = (EntityFocusShield) event.getRay().entityHit;
             EntityLivingBase caster = event.getFocus().getPackage().getCaster();
-            if (hit.getOwnerId() != null && hit.getOwnerId().equals(caster.getUniqueID())) {
+            if (caster != null && hit.getOwnerId() != null && hit.getOwnerId().equals(caster.getUniqueID())) {
                 Pair<Entity, Vec3d> p = RaytraceHelper.raytraceEntityAndPos(caster, event.getRange(), e -> e != hit);
-                if (p != null)
+                if (p != null) {
                     event.setRay(new RayTraceResult(p.getKey(), p.getValue()));
-                else
+                }
+                else {
                     event.setRay(null);
+                }
             }
         }
     }
