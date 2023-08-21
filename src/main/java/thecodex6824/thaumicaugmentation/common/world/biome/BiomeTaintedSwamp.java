@@ -24,9 +24,11 @@ public class BiomeTaintedSwamp extends BiomeEmptinessBase {
 	protected static final Vec3d FOG_COLOR = new Vec3d(0.7, 0.0, 0.7);
 	
     public BiomeTaintedSwamp() {
-        super(new BiomeProperties("Tainted Swamp").setBaseHeight(-0.2F).setHeightVariation(0.1F).setTemperature(0.35F).setWaterColor(0xFF00FF),
-        		TAFluids.TAINTED_SLURRY.getBlock().getDefaultState(), 0.5F, 0x660066);
+        super(new BiomeProperties("Tainted Swamp").setBaseHeight(0.0F).setHeightVariation(0.1F).setTemperature(0.35F).setWaterColor(0xFF00FF),
+        		0.5F, 0x660066);
         topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY);
+        fluidBlock = TAFluids.TAINTED_SLURRY.getBlock().getDefaultState();
+        undergroundTunnelBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY);
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintCrawler.class, 100, 3, 5));
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacleSmall.class, 75, 1, 2));
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacle.class, 50, 1, 1));

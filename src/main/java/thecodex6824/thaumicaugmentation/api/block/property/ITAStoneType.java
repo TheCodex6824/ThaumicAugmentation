@@ -61,7 +61,8 @@ public interface ITAStoneType {
         CHISELED_ANCIENT_BRICKS(9, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BROWN, 0),
         ANCIENT_COBBLESTONE(10, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BLUE, 0),
         ANCIENT_LIGHT(11, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BROWN, 15),
-        STONE_ANCIENT_BLUE(12, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BLUE, 0);
+        STONE_ANCIENT_BLUE(12, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.BLUE, 0),
+        STONE_MERCURIAL(13, () -> Material.ROCK, () -> SoundType.STONE, (w, b, s, r) -> {}, MapColor.RED_STAINED_HARDENED_CLAY, 0);
         
         private final int meta;
         private final Supplier<Material> mat;

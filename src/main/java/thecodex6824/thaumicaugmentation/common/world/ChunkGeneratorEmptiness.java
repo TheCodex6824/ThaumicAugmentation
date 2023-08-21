@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
@@ -37,7 +36,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.gen.MapGenCaves;
+import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import net.minecraftforge.common.MinecraftForge;
@@ -54,6 +53,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneTyp
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessBase;
 import thecodex6824.thaumicaugmentation.common.world.feature.MapGenEldritchSpire;
 import thecodex6824.thaumicaugmentation.common.world.feature.MapGenEmptinessCaves;
+import thecodex6824.thaumicaugmentation.common.world.feature.MapGenTendrils;
 import thecodex6824.thaumicaugmentation.common.world.feature.WorldGenCrystals;
 
 public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
@@ -71,7 +71,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 	protected static final int HEIGHT_SCALE_Y = 33;
 	protected static final int HEIGHT_SCALE_Z = 5;
 	
-	protected static final int BOTTOM_REGION_Y_END = 2;
+	protected static final int BOTTOM_REGION_Y_END = 3;
 	
     protected World world;
     protected Random rand;
@@ -87,8 +87,12 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
     
     protected WorldGenCrystals crystals;
     
-    protected MapGenCaves caves;
+    protected MapGenBase caves;
+    protected MapGenBase tendrils;
     protected MapGenEldritchSpire spireGenerator;
+    
+    protected Biome[] preallocGenerationBiomes;
+    protected Biome[] preallocBiomes;
 
     public ChunkGeneratorEmptiness(World w) {
         world = w;
@@ -107,7 +111,7 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
             }
         }
         
-        world.setSeaLevel(63);
+        world.setSeaLevel(126);
         
         InitNoiseGensEvent.Context ctx = new InitNoiseGensEvent.Context(min, max, main, scale, depth);
         ctx = TerrainGen.getModdedNoiseGenerators(world, rand, ctx);
@@ -119,8 +123,12 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         
         crystals = new WorldGenCrystals();
         
-        caves = (MapGenCaves) TerrainGen.getModdedMapGen(new MapGenEmptinessCaves(), EventType.CAVE);
+        caves = TerrainGen.getModdedMapGen(new MapGenEmptinessCaves(), EventType.CAVE);
+        tendrils = TerrainGen.getModdedMapGen(new MapGenTendrils(), EventType.CUSTOM);
         spireGenerator = (MapGenEldritchSpire) TerrainGen.getModdedMapGen(new MapGenEldritchSpire(this), EventType.CUSTOM);
+        
+        preallocGenerationBiomes = new Biome[10 * 10];
+        preallocBiomes = new Biome[16 * 16];
     }
 
     protected double[] generateHeights(int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ, Biome[] biomes) {
@@ -143,12 +151,22 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
                 float totalHeightVariation = 0.0F;
                 float totalBaseHeight = 0.0F;
                 float totalHeightBlend = 0.0F;
+                boolean hasVoidBiome = false;
                 Biome biome = biomes[x + 2 + (z + 2) * 10];
                 for (int bX = -2; bX <= 2; ++bX) {
                     for (int bZ = -2; bZ <= 2; ++bZ) {
                         Biome surroundingBiome = biomes[x + bX + 2 + (z + bZ + 2) * 10];
-                        float heightBlend = (float) biomeWeights[bX + 2 + (bZ + 2) * 5] / (surroundingBiome.getBaseHeight() + 2.0F);
-
+                        float heightBlend = (float) biomeWeights[bX + 2 + (bZ + 2) * 5];
+                        if (surroundingBiome.getBaseHeight() <= -2.0F) {
+                        	heightBlend /= 4.0F;
+                        	if (bX * bX + bZ * bZ < 2) {
+                        		hasVoidBiome = true;
+                        	}
+                        }
+                        else {
+                        	heightBlend /= surroundingBiome.getBaseHeight() + 2.0F;
+                        }
+                        
                         if (surroundingBiome.getBaseHeight() > biome.getBaseHeight()) {
                         	heightBlend /= 2.0F;
                         }
@@ -187,14 +205,21 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
                 }
 
                 double offset = DEPTH_SCALE + (totalBaseHeight + heightValue * 0.2) * (DEPTH_SCALE / 8.0) * 4.0;
+                double bottomOffset = DEPTH_SCALE + ((hasVoidBiome ? totalBaseHeight : 0.0) + heightValue * 0.2) * (DEPTH_SCALE / 8.0) * 4.0;
                 for (int y = 0; y < sizeY; ++y) {
                 	double heightOffset;
-                	if (y < BOTTOM_REGION_Y_END) {
-                		double dY = y == BOTTOM_REGION_Y_END - 1 ? 1.0 : 256.0;
-                		heightOffset = dY * DEPTH_STRETCH * 128.0 / 256.0 / totalHeightVariation;
+                	if (y < BOTTOM_REGION_Y_END && biome.getBaseHeight() >= -2.0F) {
+                		if (y < BOTTOM_REGION_Y_END - 1) {
+                			heightOffset = (BOTTOM_REGION_Y_END - y) * 50;
+                		}
+                		else {
+                			double dY = HEIGHT_SCALE_Y / (y + BOTTOM_REGION_Y_END - 1);
+                    		heightOffset = (dY - bottomOffset) * DEPTH_STRETCH * 128.0 / 256.0;
+                		}
                 	}
                 	else {
-                		heightOffset = (y - offset) * DEPTH_STRETCH * 128.0 / 256.0 / totalHeightVariation;
+                		// note: dividing the y value here is what scales the world height
+                		heightOffset = ((y / 2.0) - offset) * DEPTH_STRETCH * 128.0 / 256.0 / totalHeightVariation;
                 	}
                 	
                     if (heightOffset < 0.0) {
@@ -203,14 +228,10 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 
                     double min = minNoise[noiseIndex] * MIN_NOISE_SCALE;
                     double max = maxNoise[noiseIndex] * MAX_NOISE_SCALE;
-                    if (y < BOTTOM_REGION_Y_END) {
-                    	min *= 16.0;
-                    }
-                    
                     double main = (mainNoise[noiseIndex] / 10.0 + 1.0) / 2.0;
                     double outputNoise = MathHelper.clampedLerp(min, max, main) - heightOffset;
                     if (y > 29) {
-                        double tallBonus = (y - 29) / 3.0F;
+                        double tallBonus = (y - 29) / 3.0;
                         outputNoise = outputNoise * (1.0 - tallBonus) - 10.0 * tallBonus;
                     }
 
@@ -224,33 +245,14 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
 
     @Override
     public void populatePrimerWithHeightmap(int xPos, int zPos, ChunkPrimer primer) {
-        Biome[] biomes = world.getBiomeProvider().getBiomesForGeneration(null, xPos * 4 - 2, zPos * 4 - 2, 10, 10);
-        setBlocksInChunk(xPos, zPos, primer, biomes);
+        Biome[] genBiomes = world.getBiomeProvider().getBiomesForGeneration(null, xPos * 4 - 2, zPos * 4 - 2, 10, 10);
+        Biome[] biomes = world.getBiomeProvider().getBiomes(null, xPos * 16, zPos * 16, 16, 16);
+        setBlocksInChunk(xPos, zPos, primer, genBiomes, biomes);
     }
     
-    protected void setBlocksInChunk(int xPos, int zPos, ChunkPrimer primer, Biome[] biomes) {
+    protected void setBlocksInChunk(int xPos, int zPos, ChunkPrimer primer, Biome[] generationBiomes, Biome[] actualBiomes) {
         IBlockState filler = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_VOID);
-        IBlockState fluid = Blocks.AIR.getDefaultState();
-        boolean fluidSet = false;
-        for (int x = 0; x < HEIGHT_SCALE_X - 1; ++x) {
-            for (int z = 0; z < HEIGHT_SCALE_Z - 1; ++z) {
-            	Biome biome = biomes[x + z * 10];
-            	if (biome instanceof BiomeEmptinessBase) {
-            		IBlockState maybeFluid = ((BiomeEmptinessBase) biome).getFluidState();
-            		if (maybeFluid != fluid) {
-            			fluid = maybeFluid;
-            			fluidSet = true;
-            			break;
-            		}
-            	}
-            }
-            
-            if (fluidSet) {
-            	break;
-            }
-        }
-        
-        double[] heights = generateHeights(xPos * 4, 0, zPos * 4, HEIGHT_SCALE_X, HEIGHT_SCALE_Y, HEIGHT_SCALE_Z, biomes);
+        double[] heights = generateHeights(xPos * 4, 0, zPos * 4, HEIGHT_SCALE_X, HEIGHT_SCALE_Y, HEIGHT_SCALE_Z, generationBiomes);
         for (int x = 0; x < HEIGHT_SCALE_X - 1; ++x) {
             for (int z = 0; z < HEIGHT_SCALE_Z - 1; ++z) {
                 int cornerMinMin = (x * HEIGHT_SCALE_Z + z) * HEIGHT_SCALE_Y;
@@ -280,7 +282,11 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
                                     primer.setBlockState(x * (HEIGHT_SCALE_X - 1) + x2, y * regionHeight + y2, z * (HEIGHT_SCALE_Z - 1) + z2, filler);
                                 }
                                 else if (y * regionHeight + y2 < world.getSeaLevel() && y * regionHeight + y2 >= BOTTOM_REGION_Y_END * 8) {
-	                        		primer.setBlockState(x * (HEIGHT_SCALE_X - 1) + x2, y * regionHeight + y2, z * (HEIGHT_SCALE_Z - 1) + z2, fluid);
+                                	Biome biome = actualBiomes[x * (HEIGHT_SCALE_X - 1) + x2 + (z * (HEIGHT_SCALE_Z - 1) + z2) * 16];
+                                	if (biome instanceof BiomeEmptinessBase) {
+                                		primer.setBlockState(x * (HEIGHT_SCALE_X - 1) + x2, y * regionHeight + y2, z * (HEIGHT_SCALE_Z - 1) + z2,
+                                				((BiomeEmptinessBase) biome).getFluidState());
+                                	}
                                 }
                                 
                                 density += densityHeightBias;
@@ -300,15 +306,26 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
         }
     }
 
+    protected void doInitialBiomeLiquids(int x, int z, ChunkPrimer primer, Biome[] biomes) {
+    	for (int cZ = 0; cZ < 16; ++cZ) {
+            for (int cX = 0; cX < 16; ++cX) {
+                Biome biome = biomes[cX + cZ * 16];
+                if (biome instanceof BiomeEmptinessBase) {
+                	((BiomeEmptinessBase) biome).genInitialLiquids(world, rand, primer, x * 16 + cX, z * 16 + cZ);
+                }
+            }
+        }
+    }
+    
     protected void replaceBlocksForBiome(int x, int z, ChunkPrimer primer, Biome[] biomes) {
         if (!ForgeEventFactory.onReplaceBiomeBlocks(this, x, z, primer, world))
             return;
         
         double[] noise = surfaceNoise.getRegion(null, x * 16, z * 16, 16, 16, 0.0625, 0.0625, 1.0);
-        for (int cX = 0; cX < 16; ++cX) {
-            for (int cZ = 0; cZ < 16; ++cZ) {
-                Biome biome = biomes[cZ + cX * 16];
-                biome.genTerrainBlocks(world, rand, primer, x * 16 + cX, z * 16 + cZ, noise[cZ + cX * 16]);
+        for (int cZ = 0; cZ < 16; ++cZ) {
+            for (int cX = 0; cX < 16; ++cX) {
+                Biome biome = biomes[cX + cZ * 16];
+                biome.genTerrainBlocks(world, rand, primer, x * 16 + cX, z * 16 + cZ, noise[cX + cZ * 16]);
             }
         }
     }
@@ -317,18 +334,20 @@ public class ChunkGeneratorEmptiness implements ITAChunkGenerator {
     public Chunk generateChunk(int x, int z) {
         rand.setSeed(x * 341873128712L + z * 132897987541L);
         ChunkPrimer primer = new ChunkPrimer();
-        Biome[] biomes = world.getBiomeProvider().getBiomesForGeneration(null, x * (HEIGHT_SCALE_X - 1) - 2, z * (HEIGHT_SCALE_Z - 1) - 2, 10, 10);
-        setBlocksInChunk(x, z, primer, biomes);
-        biomes = world.getBiomeProvider().getBiomes(biomes, x * 16, z * 16, 16, 16);
-        replaceBlocksForBiome(x, z, primer, biomes);
-        
+        Biome[] genBiomes = world.getBiomeProvider().getBiomesForGeneration(preallocGenerationBiomes, x * (HEIGHT_SCALE_X - 1) - 2, z * (HEIGHT_SCALE_Z - 1) - 2, 10, 10);
+        Biome[] actualBiomes = world.getBiomeProvider().getBiomes(preallocBiomes, x * 16, z * 16, 16, 16);
+        setBlocksInChunk(x, z, primer, genBiomes, actualBiomes);
+        doInitialBiomeLiquids(x, z, primer, actualBiomes);
         caves.generate(world, x, z, primer);
+        //tendrils.generate(world, x, z, primer);
+        replaceBlocksForBiome(x, z, primer, actualBiomes);
+        
         if (world.getWorldInfo().isMapFeaturesEnabled() && TAConfig.generateSpires.getValue())
             spireGenerator.generate(world, x, z, primer);
         
         Chunk chunk = new Chunk(world, primer, x, z);
         for (int i = 0; i < chunk.getBiomeArray().length; ++i)
-            chunk.getBiomeArray()[i] = (byte) Biome.getIdForBiome(biomes[i]);
+            chunk.getBiomeArray()[i] = (byte) Biome.getIdForBiome(actualBiomes[i]);
         
         chunk.generateSkylightMap();
         return chunk;

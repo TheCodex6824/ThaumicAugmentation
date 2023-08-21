@@ -1,7 +1,7 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "thaumicaugmentation:crab_vent.obj"
+        "model": "thaumicaugmentation:crab_vent"
     },
     "variants": {
         "ta_direction": {

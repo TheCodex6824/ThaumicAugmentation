@@ -1,7 +1,0 @@
-# Blender MTL File: 'crab_vent_fix.blend'
-# Material Count: 1
-
-newmtl Material.001
-Kd 1.000000 1.000000 1.000000
-d 1.000000
-map_Kd thaumicaugmentation:blocks/crab_vent

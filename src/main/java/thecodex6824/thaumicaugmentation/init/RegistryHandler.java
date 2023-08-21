@@ -99,6 +99,7 @@ import thecodex6824.thaumicaugmentation.common.block.BlockStrangeCrystal;
 import thecodex6824.thaumicaugmentation.common.block.BlockTABars;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAButton;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAPressurePlate;
+import thecodex6824.thaumicaugmentation.common.block.BlockTASand;
 import thecodex6824.thaumicaugmentation.common.block.BlockTASlab;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStairs;
 import thecodex6824.thaumicaugmentation.common.block.BlockTAStone;
@@ -206,7 +207,8 @@ import thecodex6824.thaumicaugmentation.common.tile.TileWardedButton;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedPressurePlate;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptiness;
-import thecodex6824.thaumicaugmentation.common.world.biome.BiomeEmptinessHighlands;
+import thecodex6824.thaumicaugmentation.common.world.biome.BiomeMercurialPeaks;
+import thecodex6824.thaumicaugmentation.common.world.biome.BiomeSerpentineAbyss;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeTaintedLands;
 import thecodex6824.thaumicaugmentation.common.world.biome.BiomeTaintedSwamp;
 
@@ -295,6 +297,7 @@ public final class RegistryHandler {
         registry.register(setupBlock(new BlockImpetusCreative(), "impetus_creative"));
         registry.register(setupBlock(new BlockAugmentationStation(), "augmentation_station"));
         registry.register(setupBlock(new BlockTaintedSlurry(), "tainted_slurry"));
+        registry.register(setupBlock(new BlockTASand(), "sand"));
         
         GameRegistry.registerTileEntity(TileVisRegenerator.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "vis_regenerator"));
         GameRegistry.registerTileEntity(TileWardedChest.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "warded_chest"));
@@ -442,13 +445,17 @@ public final class RegistryHandler {
         event.getRegistry().register(tainted);
         BiomeDictionary.addTypes(tainted, Type.COLD, Type.SPOOKY, Type.VOID);
         
-        Biome highlands = new BiomeEmptinessHighlands().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "emptiness_highlands"));
-        event.getRegistry().register(highlands);
-        BiomeDictionary.addTypes(highlands, Type.COLD, Type.SPARSE, Type.SPOOKY, Type.VOID, Type.HILLS, Type.MOUNTAIN);
+        Biome peaks = new BiomeMercurialPeaks().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "mercurial_peaks"));
+        event.getRegistry().register(peaks);
+        BiomeDictionary.addTypes(peaks, Type.COLD, Type.SPOOKY, Type.VOID, Type.HILLS, Type.MOUNTAIN);
         
         Biome swamp = new BiomeTaintedSwamp().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "tainted_swamp"));
         event.getRegistry().register(swamp);
         BiomeDictionary.addTypes(swamp, Type.COLD, Type.SPOOKY, Type.VOID, Type.SWAMP);
+        
+        Biome abyss = new BiomeSerpentineAbyss().setRegistryName(new ResourceLocation(ThaumicAugmentationAPI.MODID, "serpentine_abyss"));
+        event.getRegistry().register(abyss);
+        BiomeDictionary.addTypes(abyss, Type.COLD, Type.SPOOKY, Type.VOID, Type.SPARSE);
     }
     
     @SubscribeEvent

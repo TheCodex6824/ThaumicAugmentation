@@ -61,21 +61,13 @@ public final class BiomeUtil {
     	MutableBlockPos pos = new MutableBlockPos(x, 0, z);
         for (int y = Math.min(world.getActualHeight(), 255); y >= 0; --y) {
         	pos.setY(y);
-            IBlockState state = primer.getBlockState(z & 15, y, x & 15);
+            IBlockState state = primer.getBlockState(x & 15, y, z & 15);
             if (!state.getBlock().isAir(state, world, pos)) {
                 return y;
             }
         }
 
         return 0;
-    }
-    
-    public static IBlockState getBlockStateInPrimer(ChunkPrimer primer, int x, int y, int z) {
-    	return primer.getBlockState(z & 15, y, x & 15);
-    }
-    
-    public static void setBlockStateInPrimer(ChunkPrimer primer, int x, int y, int z, IBlockState state) {
-    	primer.setBlockState(z & 15, y, x & 15, state);
     }
     
     public static int getHeightOpaqueOnly(World world, BlockPos start) {

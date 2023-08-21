@@ -42,10 +42,11 @@ public class BiomeTaintedLands extends BiomeEmptinessBase {
     protected static final WorldGenTaintFlower FLOWER_GENERATOR = new WorldGenTaintFlower();
     
     public BiomeTaintedLands() {
-        super(new BiomeProperties("Tainted Lands").setBaseHeight(0.125F).setHeightVariation(0.05F).setRainDisabled().setTemperature(
-                0.25F).setWaterColor(0xFF00FF), null, 0.5F, 0x660066);
+        super(new BiomeProperties("Tainted Lands").setBaseHeight(0.15F).setHeightVariation(0.05F).setRainDisabled().setTemperature(
+                0.25F).setWaterColor(0xFF00FF), 0.5F, 0x660066);
 
         topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.SOIL_STONE_TAINT_NODECAY);
+        undergroundTunnelBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_TAINT_NODECAY);
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintCrawler.class, 100, 3, 5));
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacleSmall.class, 75, 1, 2));
         spawnableMonsterList.add(new SpawnListEntry(EntityTaintacle.class, 50, 1, 1));

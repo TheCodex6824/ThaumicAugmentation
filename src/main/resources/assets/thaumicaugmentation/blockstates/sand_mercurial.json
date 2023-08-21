@@ -1,0 +1,46 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "minecraft:cube_all",
+        "transform": "forge:default-block",
+        "textures": {
+            "all": "minecraft:blocks/red_sand"
+        }
+    },
+    "variants": {
+        "normal": [
+            {
+                "model": "cube_all",
+                "textures": {
+                    "all": "minecraft:blocks/red_sand"
+                }
+            },
+            {
+                "model": "cube_all",
+                "textures": {
+                    "all": "minecraft:blocks/red_sand"
+                },
+                "x": 90
+            },
+            {
+                "model": "cube_all",
+                "textures": {
+                    "all": "minecraft:blocks/red_sand"
+                },
+                "y": 90
+            },
+            {
+                "model": "cube_all",
+                "textures": {
+                    "all": "minecraft:blocks/red_sand"
+                },
+                "x": 90,
+                "y": 90
+            }
+        ],
+        "inventory": {
+            "model": "cube_all",
+            "transform": "forge:default-block"
+        }
+    }
+}

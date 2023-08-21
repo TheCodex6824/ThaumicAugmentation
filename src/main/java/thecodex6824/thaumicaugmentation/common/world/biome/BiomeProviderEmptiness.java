@@ -44,8 +44,9 @@ public class BiomeProviderEmptiness extends BiomeProvider {
         allowedBiomes.clear();
         allowedBiomes.add(TABiomes.EMPTINESS);
         allowedBiomes.add(TABiomes.TAINTED_LANDS);
-        allowedBiomes.add(TABiomes.EMPTINESS_HIGHLANDS);
+        allowedBiomes.add(TABiomes.MERCURIAL_PEAKS);
         allowedBiomes.add(TABiomes.TAINTED_SWAMP);
+        allowedBiomes.add(TABiomes.SERPENTINE_ABYSS);
     }
     
     public BiomeProviderEmptiness() {

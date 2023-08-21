@@ -20,23 +20,23 @@
 
 package thecodex6824.thaumicaugmentation.common.world.biome;
 
-import java.util.Random;
+import java.util.Collections;
+import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
-import net.minecraft.world.chunk.ChunkPrimer;
+import thaumcraft.common.blocks.world.ore.ShardType;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType.StoneType;
 
-public class BiomeEmptinessHighlands extends BiomeEmptinessBase {
+public class BiomeSerpentineAbyss extends BiomeEmptinessBase {
 	
-    public BiomeEmptinessHighlands() {
-        super(new BiomeProperties("Emptiness Highlands").setBaseHeight(1.25F).setHeightVariation(1.25F).setRainDisabled().setTemperature(
-                0.25F).setWaterColor(0x5500AA), null, 0.25F, 0x9900bb);
+    public BiomeSerpentineAbyss() {
+        super(new BiomeProperties("Serpentine Abyss").setBaseHeight(-64.0F).setHeightVariation(0.0F).setRainDisabled().setTemperature(
+                0.25F).setWaterColor(0x5500AA), 0.25F, 0x9900bb);
 
         topBlock = TABlocks.STONE.getDefaultState().withProperty(ITAStoneType.STONE_TYPE, StoneType.STONE_ANCIENT_BLUE);
     }
@@ -47,25 +47,14 @@ public class BiomeEmptinessHighlands extends BiomeEmptinessBase {
     }
     
     @Override
+    public List<ShardType> getCrystalTypesForWorldGen() {
+    	return Collections.emptyList();
+    }
+    
+    @Override
     public Vec3d getFogColor(Entity view, float angle, float partialTicks) {
     	double heightColor = MathHelper.clampedLerp(0.3, 0.7, (view.posY - 64) / 64.0);
     	return new Vec3d(0.2, heightColor - 0.3, heightColor);
-    }
-
-    @Override
-    public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noiseVal) {
-    	int ground = BiomeUtil.getHeightFromPrimer(world, chunkPrimer, x, z);
-    	if (ground >= world.provider.getAverageGroundLevel() * 1.5 - rand.nextInt(5)) {
-	    	int numBlue = (int) (noiseVal + 5.0);
-			for (int y = 0; y < numBlue; ++y) {
-				if (ground - y >= 0 && ground - y < world.provider.getActualHeight()) {
-					BiomeUtil.setBlockStateInPrimer(chunkPrimer, x, ground - y, z, topBlock);
-				}
-				else if (ground - y < 0) {
-					break;
-				}
-			}
-    	}
     }
 
     @Override

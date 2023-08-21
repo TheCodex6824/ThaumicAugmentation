@@ -1,15 +1,29 @@
 {
-  "animation": {"frametime": 2,
-    "frames": [
-      0,
-      2,
-      4,
-      3,
-      2,
-      1,
-      3,
-      5,
-      4,
-      3,
-      2, 1]}
+	"animation": {
+	    "frametime": 2,
+		"frames": [
+			0,
+			2,
+			4,
+			3,
+			2,
+			1,
+			3,
+			5,
+			4,
+			3,
+			2, 
+			1
+		]
+	},
+	"ctm": {
+        "ctm_version": 1,
+        "type":"ctm",
+        "textures":[
+            "thaumicaugmentation:blocks/crust_glow_ctm"
+        ],
+        "extra":{
+            "ignore_states": "false"
+        }
+    }
 }

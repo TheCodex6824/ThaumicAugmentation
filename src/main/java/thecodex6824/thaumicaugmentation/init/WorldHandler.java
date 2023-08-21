@@ -108,7 +108,7 @@ public final class WorldHandler {
         BiomeMonitorColors.registerMonitorColorOverride(Biomes.HELL, 0x881100, 0xA0522D, 0xFF4500);
         BiomeMonitorColors.registerMonitorColorOverride(Biomes.SKY, 0xFFF8DC, -1, -1);
         BiomeMonitorColors.registerMonitorColorOverride(TABiomes.EMPTINESS, 0x5B005B, 0x3B003B, -1);
-        BiomeMonitorColors.registerMonitorColorOverride(TABiomes.EMPTINESS_HIGHLANDS, 0x3B003B, -1, -1);
+        BiomeMonitorColors.registerMonitorColorOverride(TABiomes.MERCURIAL_PEAKS, 0x9B3B00, -1, -1);
         BiomeMonitorColors.registerMonitorColorOverride(TABiomes.TAINTED_LANDS, 0x9B009B, 0xFF00FF, -1);
         
         for (Biome biome : TABiomes.getAllBiomes()) {

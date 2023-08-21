@@ -28,6 +28,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
@@ -69,7 +70,7 @@ public class WorldProviderEmptiness extends WorldProvider {
     
     @Override
     public int getAverageGroundLevel() {
-        return 64;
+        return 128;
     }
 
     @Override
@@ -134,7 +135,7 @@ public class WorldProviderEmptiness extends WorldProvider {
     	MutableBlockPos check = new MutableBlockPos(start);
     	for (int x = -4; x <= 4; ++x) {
     		for (int z = -4; z <= 4; ++z) {
-    			check.setPos(start.getX() + x, start.getY(), start.getZ() + z);
+    			check.setPos(start.getX() + x, MathHelper.clamp(start.getY(), 0, 255), start.getZ() + z);
     			Vec3d color = new Vec3d(1.0, 1.0, 1.0);
     			Biome biome = getBiomeForCoords(check);
     			if (biome instanceof BiomeEmptinessBase) {
@@ -147,7 +148,16 @@ public class WorldProviderEmptiness extends WorldProvider {
     		}
     	}
     	
-    	return new Vec3d(Math.sqrt(r / 100.0), Math.sqrt(g / 100.0), Math.sqrt(b / 100.0));
+    	double voidMod = renderViewEntity.posY >= 0.0 ? 1.0 : (64.0 + renderViewEntity.posY) / 64.0;
+    	return new Vec3d(Math.sqrt(r / 100.0) * voidMod, Math.sqrt(g / 100.0) * voidMod, Math.sqrt(b / 100.0) * voidMod);
+    }
+    
+    @Override
+    public double getVoidFogYFactor() {
+    	Minecraft mc = Minecraft.getMinecraft();
+    	Entity renderView = mc.getRenderViewEntity();
+    	double annoyingThing = (renderView.lastTickPosY + (renderView.posY - renderView.lastTickPosY) * mc.getRenderPartialTicks());
+    	return 1.0 / annoyingThing;
     }
 
     @Override

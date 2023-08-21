@@ -36,20 +36,22 @@ public class GenLayerNeighboringBiomes extends GenLayer {
 	
 	@Override
 	public int[] getInts(int areaX, int areaY, int areaWidth, int areaHeight) {
-		int[] biomesIn = parent.getInts(areaX - 1, areaY - 1, areaWidth + 2, areaHeight + 2);
+		int[] biomesIn = parent.getInts(areaX - 8, areaY - 8, areaWidth + 16, areaHeight + 16);
         int[] biomesOut = IntCache.getIntCache(areaWidth * areaHeight);
         for (int y = 0; y < areaHeight; ++y) {
             for (int x = 0; x < areaWidth; ++x) {
                 initChunkSeed(x + areaX, y + areaY);
-                Biome biome = Biome.getBiome(biomesIn[x + 1 + (y + 1) * (areaWidth + 2)]);
-                if (biome != TABiomes.TAINTED_SWAMP) {
-	            	for (int offset : new int[] {-(areaWidth + 2), -1, 1, areaWidth + 2}) {
-	            		Biome offsetBiome = Biome.getBiomeForId(biomesIn[x + 1 + (y + 1) * (areaWidth + 2) + offset]);
-	            		if (offsetBiome == TABiomes.TAINTED_SWAMP) {
-	            			biome = TABiomes.TAINTED_LANDS;
-	            			break;
-	            		}
-	            	}
+                Biome biome = Biome.getBiome(biomesIn[x + 6 + (y + 6) * (areaWidth + 16)]);
+                if (biome == TABiomes.TAINTED_SWAMP) {
+                	for (int offsetY = -6; offsetY <= 6; ++offsetY) {
+                		for (int offsetX = -6; offsetX <= 6; ++offsetX) {
+                			Biome offsetBiome = Biome.getBiomeForId(biomesIn[x + offsetX + 6 + (y + offsetY + 6) * (areaWidth + 16)]);
+    	            		if (offsetBiome != biome) {
+    	            			biome = TABiomes.TAINTED_LANDS;
+    	            			break;
+    	            		}
+                		}
+                	}
                 }
             	
                 biomesOut[x + y * areaWidth] = Biome.getIdForBiome(biome);

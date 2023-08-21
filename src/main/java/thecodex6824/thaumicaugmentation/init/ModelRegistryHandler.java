@@ -45,6 +45,7 @@ import thecodex6824.thaumicaugmentation.api.block.property.ICreativeImpetusBlock
 import thecodex6824.thaumicaugmentation.api.block.property.ILightSourceBlock;
 import thecodex6824.thaumicaugmentation.api.block.property.IStarfieldGlassType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITABarsType;
+import thecodex6824.thaumicaugmentation.api.block.property.ITASandType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITASlabType;
 import thecodex6824.thaumicaugmentation.api.block.property.ITAStoneType;
 import thecodex6824.thaumicaugmentation.api.block.property.IUrnType;
@@ -89,6 +90,7 @@ public final class ModelRegistryHandler {
 				return models;
 			}
 		});
+        ModelLoader.setCustomStateMapper(TABlocks.SAND, new StateMap.Builder().withName(ITASandType.SAND_TYPE).build());
         
         for (Block b : TABlocks.getAllBlocks()) {
             if (b instanceof IModelProvider<?>)

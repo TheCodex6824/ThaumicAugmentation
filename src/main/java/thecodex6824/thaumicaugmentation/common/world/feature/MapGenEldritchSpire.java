@@ -53,7 +53,7 @@ public class MapGenEldritchSpire extends MapGenStructure {
             new SpawnListEntry(EntityTAEldritchGuardian.class, 1, 1, 2));
     
     protected static final ImmutableList<Biome> BIOMES = ImmutableList.of(
-            TABiomes.EMPTINESS, TABiomes.EMPTINESS_HIGHLANDS);
+            TABiomes.EMPTINESS, TABiomes.MERCURIAL_PEAKS);
     
     static {
         MapGenStructureIO.registerStructure(Start.class, "EldritchSpire");

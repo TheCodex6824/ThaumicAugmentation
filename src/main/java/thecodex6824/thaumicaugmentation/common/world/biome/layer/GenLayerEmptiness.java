@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.world.biome.layer;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.GenLayerVoronoiZoom;
@@ -29,8 +31,18 @@ import thecodex6824.thaumicaugmentation.api.world.TABiomes;
 
 public class GenLayerEmptiness extends GenLayer {
 
-    protected static final Biome[] ALLOWED_BIOMES = new Biome[] {TABiomes.EMPTINESS, TABiomes.TAINTED_LANDS,
-            TABiomes.EMPTINESS_HIGHLANDS, TABiomes.TAINTED_SWAMP};
+	protected static final ImmutableList<Integer> CDF_WEIGHTS = ImmutableList.of(
+		15,
+		25,
+		30,
+		35
+	);
+	protected static final ImmutableList<Biome> CDF_BIOMES = ImmutableList.of(
+		TABiomes.EMPTINESS,
+		TABiomes.MERCURIAL_PEAKS,
+		TABiomes.SERPENTINE_ABYSS,
+		TABiomes.TAINTED_SWAMP
+	);
     
     public GenLayerEmptiness(long seed) {
         super(seed);
@@ -41,14 +53,33 @@ public class GenLayerEmptiness extends GenLayer {
         parent = layer;
     }
     
+    private int binarySearchWeights(int n) {
+        int left = 0;
+        int right = CDF_WEIGHTS.size() - 1;
+        while (left < right) {
+            int check = left + (right - left) / 2;
+            if (CDF_WEIGHTS.get(check) <= n && CDF_WEIGHTS.get(check + 1) > n)
+                return check + 1;
+            else if (CDF_WEIGHTS.get(check) <= n)
+                left = check + 1;
+            else if (CDF_WEIGHTS.get(check) > n)
+                right = check;
+        }
+        
+        if (CDF_WEIGHTS.get(0) > n)
+            return 0;
+        
+        return -1;
+    }
+    
     @Override
     public int[] getInts(int areaX, int areaZ, int areaWidth, int areaHeight) {
         int[] ret = IntCache.getIntCache(areaWidth * areaHeight);
-        
         for (int z = 0; z < areaHeight; ++z) {
             for (int x = 0; x < areaWidth; ++x) {
                 initChunkSeed(areaX + x, areaZ + z);
-                ret[x + z * areaWidth] = Biome.getIdForBiome(ALLOWED_BIOMES[nextInt(ALLOWED_BIOMES.length)]);
+                int biomeWeight = nextInt(CDF_WEIGHTS.get(CDF_WEIGHTS.size() - 1));
+                ret[x + z * areaWidth] = Biome.getIdForBiome(CDF_BIOMES.get(binarySearchWeights(biomeWeight)));
             }
         }
         

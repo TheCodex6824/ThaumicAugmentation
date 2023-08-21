@@ -642,7 +642,7 @@ public class ClientProxy extends ServerProxy {
         NBTTagCompound tag = message.getTag();
         World world = Minecraft.getMinecraft().world;
         int chunkX = tag.getInteger("x"), chunkZ = tag.getInteger("z");
-        if (world.isBlockLoaded(new BlockPos(chunkX << 4, 0, chunkZ << 4))) {
+        if (world != null && world.isBlockLoaded(new BlockPos(chunkX << 4, 0, chunkZ << 4))) {
             IWardStorage s = world.getChunk(chunkX, chunkZ).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
             if (s instanceof IWardStorageClient)
                 ((IWardStorageClient) s).deserializeNBT(tag);
@@ -652,7 +652,7 @@ public class ClientProxy extends ServerProxy {
     protected void handleWardUpdatePacket(PacketWardUpdate message, MessageContext context) {
         BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
         World world = Minecraft.getMinecraft().world;
-        if (world.isBlockLoaded(pos)) {
+        if (world != null && world.isBlockLoaded(pos)) {
             IWardStorage s = world.getChunk(pos).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
             if (s instanceof IWardStorageClient)
                 ((IWardStorageClient) s).setWard(pos, ClientWardStorageValue.fromID(message.getStatus()));
