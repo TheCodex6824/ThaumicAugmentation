@@ -93,12 +93,18 @@ public final class AugmentAPI {
         return true;
     }
     
+    private static void addAugmentToInventoryOrDropIt(EntityPlayer user, ItemStack augment) {
+    	if (!user.addItemStackToInventory(augment)) {
+    		user.dropItem(augment, false);
+    	}
+    }
+    
     public static AugmentConfigurationApplyResult trySwapConfiguration(EntityPlayer user, AugmentConfiguration config, IAugmentableItem target, boolean simulate) {
         ImmutableList<ItemStack> augments = config.getAugmentConfig();
         for (int i = 0; i < augments.size(); ++i) {
             if (i >= target.getTotalAugmentSlots())
                 return AugmentConfigurationApplyResult.INVALID_SLOT;
-            else if (!target.isAugmentAcceptable(augments.get(i), i))
+            else if (!augments.get(i).isEmpty() && !target.isAugmentAcceptable(augments.get(i), i))
                 return AugmentConfigurationApplyResult.INVALID_AUGMENT;
         }
         
@@ -106,6 +112,7 @@ public final class AugmentAPI {
         // like seriously, this is bad - TODO TODO TODO
         // TODO use set intersection instead of lots of looping?
         ArrayList<ItemStack> tempToFind = new ArrayList<>(augments);
+        tempToFind.removeIf(s -> s.isEmpty());
         for (ItemStack stack : user.inventory.mainInventory) {
             ItemStack found = ItemStack.EMPTY;
             for (ItemStack s : tempToFind) {
@@ -124,6 +131,7 @@ public final class AugmentAPI {
 
         if (tempToFind.isEmpty()) {
             ArrayList<ItemStack> toFind = new ArrayList<>(augments);
+            toFind.removeIf(s -> s.isEmpty());
             if (!simulate) {
                 for (ItemStack stack : user.inventory.mainInventory) {
                     ItemStack found = ItemStack.EMPTY;
@@ -142,8 +150,18 @@ public final class AugmentAPI {
                     }
                 }
 
-                for (int i = 0; i < augments.size(); ++i)
-                    target.setAugment(augments.get(i), i);
+                ArrayList<ItemStack> oldAugments = new ArrayList<>();
+                for (int i = target.getTotalAugmentSlots() - 1; i >= 0; --i) {
+                	oldAugments.add(target.removeAugment(i));
+                }
+                
+                for (int i = 0; i < augments.size(); ++i) {
+                    target.setAugment(augments.get(i).copy(), i);
+                }
+                
+                for (ItemStack toReturn : oldAugments) {
+                	addAugmentToInventoryOrDropIt(user, toReturn);
+                }
             }
             
             return AugmentConfigurationApplyResult.OK;

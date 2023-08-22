@@ -18,20 +18,16 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment;
+package thecodex6824.thaumicaugmentation.common.network;
 
-import java.util.List;
+import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraft.item.ItemStack;
-
-public interface IAugmentConfigurationStorage {
-
-    public List<AugmentConfiguration> getAllConfigurationsForItem(ItemStack input);
+public class PacketFullAugmentConfigurationStorageSync extends PacketSyncTagCompound {
+	
+	public PacketFullAugmentConfigurationStorageSync() {}
     
-    public List<AugmentConfiguration> removeAllConfigurationsForItem(ItemStack input);
-    
-    public boolean addConfiguration(AugmentConfiguration config);
-    
-    public boolean removeConfiguration(AugmentConfiguration config);
-    
+    public PacketFullAugmentConfigurationStorageSync(NBTTagCompound toSend) {
+        super(toSend);
+    }
+	
 }

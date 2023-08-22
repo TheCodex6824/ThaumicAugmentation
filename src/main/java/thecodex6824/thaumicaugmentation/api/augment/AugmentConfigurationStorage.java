@@ -20,20 +20,21 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-import it.unimi.dsi.fastutil.Hash.Strategy;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.oredict.OreDictionary;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class AugmentConfigurationStorage implements IAugmentConfigurationStorage, INBTSerializable<NBTTagCompound> {
+import com.google.common.base.Objects;
+
+import it.unimi.dsi.fastutil.Hash.Strategy;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.oredict.OreDictionary;
+
+public class AugmentConfigurationStorage implements IAugmentConfigurationStorageSerializable {
 
     protected Object2ObjectOpenCustomHashMap<ItemStack, ArrayList<AugmentConfiguration>> configs;
     
@@ -64,6 +65,15 @@ public class AugmentConfigurationStorage implements IAugmentConfigurationStorage
         });
     }
     
+    protected ItemStack createConfigurationStack(ItemStack input) {
+    	IAugmentableItem augmentable = input.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+    	if (augmentable == null) {
+    		throw new IllegalArgumentException("Stack passed to AugmentConfigurationStorage is not augmentable");
+    	}
+    	
+    	return augmentable.createConfigurationStack(input);
+    }
+    
     @Override
     public boolean addConfiguration(AugmentConfiguration config) {
         boolean ret = configs.computeIfAbsent(config.getConfigurationItemStack(),
@@ -77,46 +87,42 @@ public class AugmentConfigurationStorage implements IAugmentConfigurationStorage
                 s -> new ArrayList<>()).remove(config);
     }
     
-    protected boolean areStacksEqualEnough(ItemStack template, ItemStack input) {
-        if (template.getItem() != input.getItem())
-            return false;
-        else if (template.getHasSubtypes() && template.getMetadata() != input.getMetadata())
-            return false;
-        else if (template.hasTagCompound()) {
-            if (!input.hasTagCompound())
-                return false;
-            
-            for (String key : template.getTagCompound().getKeySet()) {
-                if (!input.getTagCompound().hasKey(key))
-                    return false;
-                else if (!template.getTagCompound().getTag(key).equals(input.getTagCompound().getTag(key)))
-                    return false;
-            }
-        }
-        
-        return true;
+    @Override
+    public List<AugmentConfiguration> getAllConfigurationsForItem(ItemStack input) {
+    	return configs.getOrDefault(createConfigurationStack(input), new ArrayList<>());
     }
     
     @Override
-    public List<AugmentConfiguration> getAllConfigurationsForItem(ItemStack input) {
-        for (ItemStack stack : configs.keySet()) {
-            if (areStacksEqualEnough(stack, input))
-                return ImmutableList.copyOf(configs.get(stack));
-        }
-        
-        return ImmutableList.of();
+    public List<AugmentConfiguration> removeAllConfigurationsForItem(ItemStack input) {
+    	return configs.remove(createConfigurationStack(input));
+    }
+    
+    @Override
+    public NBTTagCompound serializeConfigsForSingleItem(ItemStack input) {
+    	input = createConfigurationStack(input);
+    	NBTTagCompound config = new NBTTagCompound();
+    	if (configs.containsKey(input)) {
+    		config.setTag("owner", input.serializeNBT());
+        	NBTTagList configsList = new NBTTagList();
+        	for (AugmentConfiguration c : configs.get(input)) {
+        		configsList.appendTag(c.serializeNBT());
+            }
+        	
+        	config.setTag("configs", configsList);
+    	}
+    	
+    	return config;
     }
     
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        NBTTagCompound configurations = new NBTTagCompound();
-        int i = 0;
-        for (ArrayList<AugmentConfiguration> list : configs.values()) {
-            for (AugmentConfiguration config : list) {
-                configurations.setTag("slot" + Integer.toString(i), config.serializeNBT());
-                ++i;
-            }
+        NBTTagList configurations = new NBTTagList();
+        for (ItemStack owner : configs.keySet()) {
+        	NBTTagCompound config = serializeConfigsForSingleItem(owner);
+        	if (!config.isEmpty()) {
+        		configurations.appendTag(config);
+        	}
         }
         
         tag.setTag("configurations", configurations);
@@ -124,13 +130,41 @@ public class AugmentConfigurationStorage implements IAugmentConfigurationStorage
     }
     
     @Override
+    public void deserializeConfigsForSingleItem(NBTTagCompound configsTag) {
+    	NBTTagCompound ownerTag = configsTag.getCompoundTag("owner");
+		if (!ownerTag.isEmpty()) {
+			ItemStack owner = new ItemStack(ownerTag);
+			configs.remove(owner);
+			NBTTagList configList = configsTag.getTagList("configs", NBT.TAG_COMPOUND);
+			ArrayList<AugmentConfiguration> loadedConfigs = new ArrayList<>();
+			for (NBTBase configUncasted : configList) {
+				NBTTagCompound config = (NBTTagCompound) configUncasted;
+				loadedConfigs.add(new AugmentConfiguration(owner, config));
+			}
+			
+			configs.put(owner, loadedConfigs);
+		}
+    }
+    
+    @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        if (nbt.hasKey("configurations", NBT.TAG_COMPOUND)) {
-            NBTTagCompound configurations = nbt.getCompoundTag("configurations");
-            for (String key : configurations.getKeySet()) {
-                if (configurations.hasKey(key, NBT.TAG_COMPOUND))
-                    addConfiguration(new AugmentConfiguration(configurations.getCompoundTag(key)));
-            }
+        if (nbt.hasKey("configurations", NBT.TAG_LIST)) {
+            NBTTagList configurations = nbt.getTagList("configurations", NBT.TAG_COMPOUND);
+        	for (NBTBase configsListUncasted : configurations) {
+        		NBTTagCompound configsList = (NBTTagCompound) configsListUncasted;
+        		NBTTagCompound ownerTag = configsList.getCompoundTag("owner");
+        		if (!ownerTag.isEmpty()) {
+        			ItemStack owner = new ItemStack(ownerTag);
+        			NBTTagList configList = configsList.getTagList("configs", NBT.TAG_COMPOUND);
+        			ArrayList<AugmentConfiguration> loadedConfigs = new ArrayList<>();
+        			for (NBTBase configUncasted : configList) {
+        				NBTTagCompound config = (NBTTagCompound) configUncasted;
+        				loadedConfigs.add(new AugmentConfiguration(owner, config));
+        			}
+        			
+        			configs.put(owner, loadedConfigs);
+        		}
+        	}
         }
     }
     

@@ -53,6 +53,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -66,7 +67,10 @@ import thaumcraft.api.items.RechargeHelper;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentConfigurationStorage;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentConfigurationStorage;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentConfigurationStorageSerializable;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.entity.DamageSourceImpetus;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
@@ -83,6 +87,7 @@ import thecodex6824.thaumicaugmentation.common.integration.IntegrationEBWizardry
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
 import thecodex6824.thaumicaugmentation.common.network.PacketFlightState;
+import thecodex6824.thaumicaugmentation.common.network.PacketFullAugmentConfigurationStorageSync;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.feature.MapGenEldritchSpire;
@@ -119,6 +124,27 @@ public final class PlayerEventHandler {
             knowledge.setResearchStage("THAUMIC_AUGMENTATION_BASE", 2);
             knowledge.sync((EntityPlayerMP) event.player);
         }
+        
+        IAugmentConfigurationStorage storage = event.player.getCapability(CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
+        if (storage instanceof IAugmentConfigurationStorageSerializable && event.player instanceof EntityPlayerMP) {
+        	TANetwork.INSTANCE.sendTo(new PacketFullAugmentConfigurationStorageSync(((IAugmentConfigurationStorageSerializable) storage).serializeNBT()),
+        			(EntityPlayerMP) event.player);
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+    	if (event.isWasDeath()) {
+    		IAugmentConfigurationStorage oldStorage = event.getOriginal().getCapability(
+    				CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
+    		IAugmentConfigurationStorage newStorage = event.getEntityPlayer().getCapability(
+    				CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
+    		if (oldStorage instanceof IAugmentConfigurationStorageSerializable && newStorage instanceof IAugmentConfigurationStorage) {
+    			IAugmentConfigurationStorageSerializable oldSerial = (IAugmentConfigurationStorageSerializable) oldStorage;
+    			IAugmentConfigurationStorageSerializable newSerial = (IAugmentConfigurationStorageSerializable) newStorage;
+    			newSerial.deserializeNBT(oldSerial.serializeNBT());
+    		}
+    	}
     }
 
     @SubscribeEvent

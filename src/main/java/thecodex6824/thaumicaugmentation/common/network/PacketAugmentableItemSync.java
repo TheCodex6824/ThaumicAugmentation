@@ -21,62 +21,33 @@
 package thecodex6824.thaumicaugmentation.common.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-public class PacketAugmentableItemSync implements IMessage {
+public class PacketAugmentableItemSync extends PacketSyncTagCompound {
     
     private int id;
     private int index;
-    private NBTTagCompound nbt;
     
     public PacketAugmentableItemSync() {}
     
     public PacketAugmentableItemSync(int entityID, int i, NBTTagCompound sync) {
-        id = entityID;
+        super(sync);
+    	id = entityID;
         index = i;
-        nbt = sync;
     }
     
     @Override
     public void fromBytes(ByteBuf buf) {
         id = buf.readInt();
         index = buf.readInt();
-        try {
-            byte[] buffer = new byte[buf.readInt()];
-            buf.readBytes(buffer);
-            ByteArrayInputStream stream = new ByteArrayInputStream(buffer);
-            nbt = CompressedStreamTools.readCompressed(stream);
-        }
-        catch (IOException ex) {
-            ThaumicAugmentation.getLogger().warn("Unable to deserialize PacketAugmentableItemSync: " + ex.getMessage());
-        }
+        super.fromBytes(buf);
     }
     
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(id);
+    	buf.writeInt(id);
         buf.writeInt(index);
-        try {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            CompressedStreamTools.writeCompressed(nbt, stream);
-            byte[] data = stream.toByteArray();
-            buf.writeInt(data.length);
-            buf.writeBytes(data);
-        }
-        catch (IOException ex) {
-            ThaumicAugmentation.getLogger().warn("Unable to serialize PacketAugmentableItemSync: " + ex.getMessage());
-        }
-    }
-    
-    public NBTTagCompound getTagCompound() {
-        return nbt;
+    	super.toBytes(buf);
     }
     
     public int getItemIndex() {

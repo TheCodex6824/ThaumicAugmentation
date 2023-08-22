@@ -42,16 +42,28 @@ public class AugmentConfiguration implements INBTSerializable<NBTTagCompound> {
     protected String name;
     protected ItemStack[] configuration;
     
-    public AugmentConfiguration(NBTTagCompound deserialize) {
+    public AugmentConfiguration(ItemStack augmentableItem, NBTTagCompound deserialize) {
+    	IAugmentableItem augmentable = augmentableItem.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+    	if (augmentable == null) {
+    		throw new IllegalArgumentException("Stack passed to AugmentConfiguration is not augmentable");
+    	}
+    	
         configuration = new ItemStack[0];
+        configOwner = augmentable.createConfigurationStack(augmentableItem);
         deserializeNBT(deserialize);
     }
     
-    public AugmentConfiguration(ItemStack augmentable) {
-        int slots = augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getTotalAugmentSlots();
-        configOwner = augmentable.copy();
+    public AugmentConfiguration(ItemStack augmentableItem) {
+    	IAugmentableItem augmentable = augmentableItem.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+    	if (augmentable == null) {
+    		throw new IllegalArgumentException("Stack passed to AugmentConfiguration is not augmentable");
+    	}
+    	
+        int slots = augmentable.getTotalAugmentSlots();
+        configOwner = augmentable.createConfigurationStack(augmentableItem);
         configuration = new ItemStack[slots];
         Arrays.fill(configuration, ItemStack.EMPTY);
+        name = "";
     }
     
     /**

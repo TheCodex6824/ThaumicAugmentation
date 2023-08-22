@@ -105,14 +105,11 @@ public interface IAugmentableItem {
      * Returns the ItemStack that should be used to find applicable configurations.
      * This stack should have the least amount of extra data (metadata, NBT, etc)
      * needed to match the stack.
-     * @param input The stack that may have extra data that needs to be removed. This stack itself should not be modified.
+     * @param input The stack that may have extra data that needs to not be compared. This stack itself should not be modified.
      * @return A copy of the stack with extra data removed
      */
     public default ItemStack createConfigurationStack(ItemStack input) {
-        ItemStack ret = input.copy();
-        ret.setTagCompound(null);
-        ret.setItemDamage(OreDictionary.WILDCARD_VALUE);
-        return ret;
+    	return new ItemStack(input.getItem(), 1, OreDictionary.WILDCARD_VALUE);
     }
     
     /**

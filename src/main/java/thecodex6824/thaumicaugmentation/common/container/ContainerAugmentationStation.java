@@ -22,6 +22,7 @@ package thecodex6824.thaumicaugmentation.common.container;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -30,6 +31,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import thaumcraft.common.lib.SoundsTC;
 import thecodex6824.thaumicaugmentation.api.augment.*;
+import thecodex6824.thaumicaugmentation.common.network.PacketPartialAugmentConfigurationStorageSync;
+import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 import javax.annotation.Nonnull;
 
@@ -90,7 +93,6 @@ public class ContainerAugmentationStation extends Container {
     
     protected void ensureConfigIndex(ItemStack augmentable, IAugmentConfigurationStorage storage, int size) {
         int numConfigs = storage.getAllConfigurationsForItem(augmentable).size();
-        System.out.printf("Numconfigs: %d, size: %d%n", numConfigs, size);
         if (numConfigs < size) {
             for (int i = 0; i < size - numConfigs; ++i)
                 storage.addConfiguration(new AugmentConfiguration(augmentable));
@@ -131,12 +133,17 @@ public class ContainerAugmentationStation extends Container {
                 ensureConfigIndex(newStack, storage, 1);
                 AugmentConfiguration config = storage.getAllConfigurationsForItem(newStack).get(0);
                 int augmentSlots = newStack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getTotalAugmentSlots();
-                double xIncrement = Math.PI / (augmentSlots - 1);
-                int xSlotPosition, ySlotPosition;
-                for (int i = 0; i < augmentSlots; ++i) {
-                    xSlotPosition = (int) Math.round(Math.cos(Math.PI + xIncrement*i))*augmentSlots*16;
-                    ySlotPosition = (int) Math.round(Math.sin(Math.PI + xIncrement*i))*augmentSlots*16;
-                    addAugmentSlot(new AugmentSlot(config, i, centralSlot.xPos + xSlotPosition, centralSlot.yPos + ySlotPosition));
+                if (augmentSlots == 1) {
+                	addAugmentSlot(new AugmentSlot(config, 0, centralSlot.xPos, centralSlot.yPos - 36));
+                }
+                else {
+	                double xIncrement = Math.PI / (augmentSlots - 1);
+	                int xSlotPosition, ySlotPosition;
+	                for (int i = 0; i < augmentSlots; ++i) {
+	                    xSlotPosition = (int) Math.round(Math.cos(Math.PI + xIncrement * i)) * augmentSlots * 16;
+	                    ySlotPosition = (int) Math.round(Math.sin(Math.PI + xIncrement * i)) * augmentSlots * 16;
+	                    addAugmentSlot(new AugmentSlot(config, i, centralSlot.xPos + xSlotPosition, centralSlot.yPos + ySlotPosition));
+	                }
                 }
 
                 setSelectedConfiguration(0);
@@ -239,5 +246,18 @@ public class ContainerAugmentationStation extends Container {
         }
 
         return stack;
+    }
+    
+    @Override
+    public void detectAndSendChanges() {
+    	super.detectAndSendChanges();
+    	if (!centralSlot.getStack().isEmpty()) {
+	    	IAugmentConfigurationStorage storage = player.getCapability(CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
+	    	if (!player.world.isRemote && storage instanceof IAugmentConfigurationStorageSerializable) {
+	        	IAugmentConfigurationStorageSerializable save = (IAugmentConfigurationStorageSerializable) storage;
+	        	TANetwork.INSTANCE.sendTo(new PacketPartialAugmentConfigurationStorageSync(save.serializeConfigsForSingleItem(centralSlot.getStack())),
+	        			(EntityPlayerMP) player);
+	        }
+    	}
     }
 }
