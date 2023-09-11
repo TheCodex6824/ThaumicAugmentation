@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
+import javax.annotation.Nullable;
+
 import baubles.api.BaubleType;
 import baubles.api.cap.BaubleItem;
 import net.minecraft.entity.EntityLivingBase;
@@ -44,14 +46,12 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderHarness;
-import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
+import thecodex6824.thaumicaugmentation.common.event.EquipmentSyncEventHandler;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 import vazkii.botania.api.item.IPhantomInkable;
-
-import javax.annotation.Nullable;
 
 @Optional.Interface(iface = "vazkii.botania.api.item.IPhantomInkable", modid = IntegrationHandler.BOTANIA_MOD_ID)
 public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRechargable, IPhantomInkable {
@@ -99,22 +99,20 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
             
         }, new BaubleItem(BaubleType.BODY) {
             
-            private boolean sync;
-            
             @Override
             public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
-                AugmentEventHandler.onEquipmentChange(player);
-                sync = true;
+                EquipmentSyncEventHandler.onEquipmentChange(player);
             }
             
             @Override
             public void onUnequipped(ItemStack itemstack, EntityLivingBase player) {
-                AugmentEventHandler.onEquipmentChange(player);
+            	EquipmentSyncEventHandler.onEquipmentChange(player);
             }
             
             @Override
             public void onWornTick(ItemStack stack, EntityLivingBase entity) {
                 if (!entity.world.isRemote) {
+                	boolean sync = false;
                     if (!(entity instanceof EntityPlayer) || (!((EntityPlayer) entity).isCreative()) &&
                             (entity.ticksElytraFlying + 1) % 20 == 0) {
                         if (RechargeHelper.getCharge(stack) > 0)
@@ -132,14 +130,11 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
                             sync = true;
                         }
                     }
+                    
+                    if (sync) {
+                    	EquipmentSyncEventHandler.onEquipmentChange(entity);
+                    }
                 }
-            }
-            
-            @Override
-            public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
-                boolean res = sync;
-                sync = false;
-                return res;
             }
         });
         

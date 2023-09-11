@@ -20,31 +20,18 @@
 
 package thecodex6824.thaumicaugmentation.common.container;
 
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
-
 import javax.annotation.Nonnull;
+
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class AugmentableItemSlot extends SlotItemHandler {
     
-    protected ContainerAugmentationStation parent;
+    protected IAugmentableItemSlotListener parent;
     
-    public AugmentableItemSlot(ContainerAugmentationStation parentContainer, int xPosition, int yPosition) {
-        super(new ItemStackHandler(1) {
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null) &&
-                        super.isItemValid(slot, stack);
-            }
-            
-            @Override
-            public int getSlotLimit(int slot) {
-                return 1;
-            }
-        }, 0, xPosition, yPosition);
-        
+    public AugmentableItemSlot(IItemHandler itemHandler, int index, IAugmentableItemSlotListener parentContainer, int xPosition, int yPosition) {
+        super(itemHandler, index, xPosition, yPosition);
         parent = parentContainer;
     }
     
@@ -70,7 +57,7 @@ public class AugmentableItemSlot extends SlotItemHandler {
     @Override
     public void onSlotChange(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack) {
         onSlotChanged();
-        parent.onCentralSlotChanged(oldStack, newStack);
+        parent.onAugmentableItemSlotChanged(oldStack, newStack);
     }
     
 }

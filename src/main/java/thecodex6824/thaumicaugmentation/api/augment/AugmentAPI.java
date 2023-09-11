@@ -20,14 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
+import java.util.ArrayList;
+
 import com.google.common.collect.ImmutableList;
-import net.minecraft.entity.Entity;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
-import java.util.*;
-import java.util.function.Function;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
 /**
  * Contains utility methods for working with augments.
@@ -36,34 +36,6 @@ import java.util.function.Function;
 public final class AugmentAPI {
 
     private AugmentAPI() {}
-    
-    private static final HashMap<String, Function<Entity, Iterable<ItemStack>>> additionalItemSources = new HashMap<>();
-    
-    /**
-     * Registers a callback that returns a source of ItemStacks to check for augmentable items on an entity.
-     * @param key A unique identifier for this source
-     * @param source The callback that returns the ItemStack instances to check for augmentable items
-     */
-    public static void addAugmentableItemSource(ResourceLocation key, Function<Entity, Iterable<ItemStack>> source) {
-        additionalItemSources.put(key.toString(), source);
-    }
-    
-    /**
-     * Removes a previously registered augmentable item source.
-     * @param key The unique identifier of the callback to remove
-     * @return If a callback matching the key existed and was removed
-     */
-    public static boolean removeAugmentableItemSource(ResourceLocation key) {
-        return additionalItemSources.remove(key.toString()) != null;
-    }
-    
-    /**
-     * Returns a collection of all augmentable item sources.
-     * @return All augmentable item sources
-     */
-    public static Collection<Function<Entity, Iterable<ItemStack>>> getAugmentableItemSources() {
-        return additionalItemSources.values();
-    }
     
     public static AugmentConfigurationApplyResult tryApplyConfiguration(AugmentConfiguration config, IAugmentableItem target, boolean simulate) {
         ImmutableList<ItemStack> augments = config.getAugmentConfig();
@@ -183,6 +155,10 @@ public final class AugmentAPI {
         }
         
         return config;
+    }
+    
+    public static IItemHandlerModifiable createAugmentItemHandler(ItemStack augmentable) {
+    	return TAInternals.createAugmentItemHandler(augmentable);
     }
     
 }

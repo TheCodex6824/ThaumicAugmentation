@@ -22,30 +22,18 @@ package thecodex6824.thaumicaugmentation.common.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-
-import java.io.*;
 
 public class PacketLivingEquipmentChange implements IMessage {
-
-    // max NBT stack size = 2MB
-    protected static final int MAX_NBT_SIZE = 1024 * 1024 * 2;
     
     protected int entity;
     protected EntityEquipmentSlot slot;
-    protected ItemStack stack;
     
     public PacketLivingEquipmentChange() {}
     
-    public PacketLivingEquipmentChange(int entityID, EntityEquipmentSlot equipSlot, ItemStack newStack) {
+    public PacketLivingEquipmentChange(int entityID, EntityEquipmentSlot equipSlot) {
         entity = entityID;
         slot = equipSlot;
-        stack = newStack.copy();
     }
     
     protected EntityEquipmentSlot slotFromIndex(int slotIndex) {
@@ -61,58 +49,12 @@ public class PacketLivingEquipmentChange implements IMessage {
     public void fromBytes(ByteBuf buf) {
         entity = buf.readInt();
         slot = slotFromIndex(buf.readInt());
-        int itemID = buf.readInt();
-        if (itemID >= 0) {
-            int count = buf.readInt();
-            int meta = buf.readInt();
-            stack = new ItemStack(Item.getItemById(itemID), count, meta);
-            int payloadSize = buf.readInt();
-            if (payloadSize > 0) {
-                byte[] buffer = new byte[Math.min(payloadSize, MAX_NBT_SIZE)];
-                buf.readBytes(buffer, 0, buffer.length);
-                try (DataInputStream stream = new DataInputStream(new ByteArrayInputStream(buffer))) {
-                    stack.getItem().readNBTShareTag(stack, CompressedStreamTools.read(stream));
-                }
-                catch (IOException ex) {
-                    ThaumicAugmentation.getLogger().warn("Unable to deserialize PacketLivingEquipmentChange: " + ex.getMessage());
-                }
-            }
-        }
-        else
-            stack = ItemStack.EMPTY;
     }
     
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(entity);
         buf.writeInt(slot.getSlotIndex());
-        if (stack.isEmpty())
-            buf.writeInt(-1);
-        else {
-            buf.writeInt(Item.getIdFromItem(stack.getItem()));
-            buf.writeInt(stack.getCount());
-            buf.writeInt(stack.getMetadata());
-            if (stack.isItemStackDamageable() || stack.getItem().getShareTag()) {
-                NBTTagCompound tag = stack.getItem().getNBTShareTag(stack);
-                if (tag != null) {
-                    byte[] tagBuffer = null;
-                    try (ByteArrayOutputStream bytes = new ByteArrayOutputStream(); DataOutputStream output = new DataOutputStream(bytes)) {
-                        CompressedStreamTools.write(tag, output);
-                        tagBuffer = bytes.toByteArray();
-                    }
-                    catch (IOException ex) {
-                        ThaumicAugmentation.getLogger().warn("Unable to serialize PacketLivingEquipmentChange: " + ex.getMessage());
-                    }
-                    
-                    buf.writeInt(Math.min(tagBuffer.length, MAX_NBT_SIZE));
-                    buf.writeBytes(tagBuffer, 0, Math.min(tagBuffer.length, MAX_NBT_SIZE));
-                }
-                else
-                    buf.writeInt(-1);
-            }
-            else
-                buf.writeInt(-1);
-        }
     }
     
     public int getEntityID() {
@@ -121,10 +63,6 @@ public class PacketLivingEquipmentChange implements IMessage {
     
     public EntityEquipmentSlot getSlot() {
         return slot;
-    }
-    
-    public ItemStack getStack() {
-        return stack;
     }
     
 }

@@ -130,7 +130,7 @@ public interface IAugmentableItem {
         return true;
     }
     
-    NBTTagCompound getSyncNBT();
+    NBTTagCompound getSyncNBT(boolean forOwner);
     
     void readSyncNBT(NBTTagCompound tag);
     

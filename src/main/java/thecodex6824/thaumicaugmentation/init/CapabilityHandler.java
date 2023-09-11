@@ -46,6 +46,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import thaumcraft.api.blocks.BlocksTC;
 import thaumcraft.common.blocks.basic.BlockBannerTCItem;
 import thaumcraft.common.entities.EntityFluxRift;
@@ -71,6 +73,7 @@ import thecodex6824.thaumicaugmentation.api.impetus.ImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.ImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.BiomeSelector;
+import thecodex6824.thaumicaugmentation.api.item.EquipmentInventoryRegistry;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
@@ -91,6 +94,9 @@ import thecodex6824.thaumicaugmentation.api.world.capability.CapabilityFractureL
 import thecodex6824.thaumicaugmentation.api.world.capability.FractureLocations;
 import thecodex6824.thaumicaugmentation.api.world.capability.IFractureLocations;
 import thecodex6824.thaumicaugmentation.client.renderer.AugmentRenderer;
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityEquipmentTracker;
+import thecodex6824.thaumicaugmentation.common.capability.EquipmentTracker;
+import thecodex6824.thaumicaugmentation.common.capability.IEquipmentTracker;
 import thecodex6824.thaumicaugmentation.common.capability.MorphicTool;
 import thecodex6824.thaumicaugmentation.common.capability.ResizableImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
@@ -435,6 +441,24 @@ public final class CapabilityHandler {
                 return false;
             }
         });
+        
+        CapabilityManager.INSTANCE.register(IEquipmentTracker.class, new IStorage<IEquipmentTracker>() {
+        	
+        	@Override
+            public void readNBT(Capability<IEquipmentTracker> capability, IEquipmentTracker instance, EnumFacing side, NBTBase nbt) {}
+            
+            @Override
+            @Nullable
+            public NBTBase writeNBT(Capability<IEquipmentTracker> capability, IEquipmentTracker instance, EnumFacing side) {
+                return null;
+            }
+        	
+        }, () -> new EquipmentTracker() {
+			@Override
+			public IItemHandler getLiveEquipment() {
+				return new ItemStackHandler(0);
+			}
+		});
     }
     
     @SubscribeEvent
@@ -500,6 +524,16 @@ public final class CapabilityHandler {
         
         event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "portal_state"), new SimpleCapabilityProvider<>(
                 new PortalState(), CapabilityPortalState.PORTAL_STATE));
+        
+        if (event.getObject() instanceof EntityLivingBase) {
+        	event.addCapability(new ResourceLocation(ThaumicAugmentationAPI.MODID, "equipment_tracker"), new SimpleCapabilityProviderNoSave<>(
+        			new EquipmentTracker() {
+						@Override
+						public IItemHandler getLiveEquipment() {
+							return EquipmentInventoryRegistry.getCombinedEquipmentView(event.getObject());
+						}
+					}, CapabilityEquipmentTracker.EQUIPMENT_TRACKER));
+        }
     }
     
     @SubscribeEvent

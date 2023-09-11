@@ -156,6 +156,7 @@ import thecodex6824.thaumicaugmentation.common.item.ItemThaumiumRobes;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumostaticHarness;
 import thecodex6824.thaumicaugmentation.common.item.ItemThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemTieredCasterGauntlet;
+import thecodex6824.thaumicaugmentation.common.item.ItemTinkererPouch;
 import thecodex6824.thaumicaugmentation.common.item.ItemVisBatteryCasterAugment;
 import thecodex6824.thaumicaugmentation.common.item.ItemVoidBoots;
 import thecodex6824.thaumicaugmentation.common.item.block.ItemBlockImpetusMirror;
@@ -177,6 +178,7 @@ import thecodex6824.thaumicaugmentation.common.tile.TileAltar;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneDoor;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTrapdoor;
+import thecodex6824.thaumicaugmentation.common.tile.TileAugmentationStation;
 import thecodex6824.thaumicaugmentation.common.tile.TileCastedLight;
 import thecodex6824.thaumicaugmentation.common.tile.TileCrabVent;
 import thecodex6824.thaumicaugmentation.common.tile.TileCreativeImpetusSink;
@@ -332,6 +334,7 @@ public final class RegistryHandler {
         GameRegistry.registerTileEntity(TileGlassTube.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "glass_tube"));
         GameRegistry.registerTileEntity(TileCreativeImpetusSource.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_source_creative"));
         GameRegistry.registerTileEntity(TileCreativeImpetusSink.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "impetus_sink_creative"));
+        GameRegistry.registerTileEntity(TileAugmentationStation.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "augmentation_station"));
     }
     
     @SubscribeEvent(priority = EventPriority.LOW)
@@ -383,6 +386,7 @@ public final class RegistryHandler {
         registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.CHEST), "thaumium_robes_chestplate"));
         registry.register(setupItem(new ItemThaumiumRobes(EntityEquipmentSlot.LEGS), "thaumium_robes_leggings"));
         registry.register(setupItem(new ItemCelestialObserverPlacer(), "celestial_observer_placer"));
+        registry.register(new ItemTinkererPouch());
         
         AugmentHandler.registerAugmentBuilderComponents();
     }

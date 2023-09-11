@@ -142,7 +142,7 @@ public class AugmentableItem implements IAugmentableItem, INBTSerializable<NBTTa
     }
     
     @Override
-    public NBTTagCompound getSyncNBT() {
+    public NBTTagCompound getSyncNBT(boolean forOwner) {
         return serializeNBT();
     }
     

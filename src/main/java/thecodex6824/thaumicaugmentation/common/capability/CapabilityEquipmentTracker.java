@@ -18,24 +18,16 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.client.event;
+package thecodex6824.thaumicaugmentation.common.capability;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
-public class ClientLivingEquipmentChangeEvent extends LivingEvent {
-   
-    protected EntityEquipmentSlot slot;
+public final class CapabilityEquipmentTracker {
 
-    public ClientLivingEquipmentChangeEvent(EntityLivingBase entity, EntityEquipmentSlot equipmentSlot) {
-        
-        super(entity);
-        slot = equipmentSlot;
-    }
-
-    public EntityEquipmentSlot getSlot() { 
-        return slot;
-    }
-
+    private CapabilityEquipmentTracker() {}
+    
+    @CapabilityInject(IEquipmentTracker.class)
+    public static final Capability<IEquipmentTracker> EQUIPMENT_TRACKER = null;
+    
 }

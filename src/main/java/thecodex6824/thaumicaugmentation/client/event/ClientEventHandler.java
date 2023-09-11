@@ -20,6 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.client.event;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.function.BiFunction;
+
 import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
@@ -78,15 +87,11 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.ClientWardStorageValue;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageClient;
 import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
-import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
+import thecodex6824.thaumicaugmentation.common.event.EquipmentSyncEventHandler;
 import thecodex6824.thaumicaugmentation.common.network.PacketElytraBoost;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
-
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.BiFunction;
 
 @SuppressWarnings("deprecation")
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
@@ -476,7 +481,7 @@ public final class ClientEventHandler {
     public static void onClientEquipmentChange(ClientLivingEquipmentChangeEvent event) {
         // will have already updated augment state in SP due to server check
         if (!ThaumicAugmentation.proxy.isSingleplayer())
-            AugmentEventHandler.onEquipmentChange(event.getEntityLiving());
+            EquipmentSyncEventHandler.onEquipmentChange(event.getEntityLiving());
     }
     
     public static boolean isBoosting(EntityPlayer player) {

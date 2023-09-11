@@ -23,21 +23,49 @@ package thecodex6824.thaumicaugmentation.common.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class PacketAugmentableItemSync extends PacketSyncTagCompound {
+public class PacketCapabilityItemSync extends PacketSyncTagCompound {
     
+	private CapabilityType type;
     private int id;
     private int index;
     
-    public PacketAugmentableItemSync() {}
+    public enum CapabilityType {
+    	AUGMENT(0),
+    	BAUBLE(1);
+    	
+    	private int id;
+    	
+    	private CapabilityType(int id) {
+    		this.id = id;
+    	}
+    	
+    	public int getId() {
+    		return id;
+    	}
+    	
+    	public static CapabilityType fromId(int id) {
+    		for (CapabilityType type : values()) {
+    			if (type.getId() == id) {
+    				return type;
+    			}
+    		}
+    		
+    		throw new IllegalArgumentException("Bad capability type ID");
+    	}
+    }
     
-    public PacketAugmentableItemSync(int entityID, int i, NBTTagCompound sync) {
+    public PacketCapabilityItemSync() {}
+    
+    public PacketCapabilityItemSync(CapabilityType type, int entityID, int i, NBTTagCompound sync) {
         super(sync);
+    	this.type = type;
     	id = entityID;
         index = i;
     }
     
     @Override
     public void fromBytes(ByteBuf buf) {
+    	type = CapabilityType.fromId(buf.readInt());
         id = buf.readInt();
         index = buf.readInt();
         super.fromBytes(buf);
@@ -45,9 +73,14 @@ public class PacketAugmentableItemSync extends PacketSyncTagCompound {
     
     @Override
     public void toBytes(ByteBuf buf) {
+    	buf.writeInt(type.getId());
     	buf.writeInt(id);
         buf.writeInt(index);
     	super.toBytes(buf);
+    }
+    
+    public CapabilityType getType() {
+    	return type;
     }
     
     public int getItemIndex() {

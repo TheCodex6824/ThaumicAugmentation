@@ -39,7 +39,7 @@ public final class TANetwork {
         INSTANCE.registerMessage(PacketAuraToClient.class, PacketAuraToClient.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketParticleEffect.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketConfigSync.class, id++, Side.CLIENT);
-        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketAugmentableItemSync.class, id++, Side.CLIENT);
+        INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketCapabilityItemSync.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFractureLocatorUpdate.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketFullWardSync.class, id++, Side.CLIENT);
         INSTANCE.registerMessage(new GenericClientMessageHandler<>(), PacketWardUpdate.class, id++, Side.CLIENT);

@@ -92,6 +92,8 @@ public final class TABlocks {
     public static final Block GLASS_TUBE = null;
     public static final Block IMPETUS_CREATIVE = null;
     public static final Block AUGMENTATION_STATION = null;
+    public static final Block AUGMENT_PLANNER = null;
+    public static final Block COSMETIC_STATION = null;
     public static final Block TAINTED_SLURRY = null;
     public static final Block SAND = null;
 
@@ -111,7 +113,8 @@ public final class TABlocks {
                BUTTON_GREATWOOD, BUTTON_SILVERWOOD, BUTTON_ARCANE_STONE, WARDED_BUTTON_GREATWOOD, WARDED_BUTTON_SILVERWOOD,
                WARDED_BUTTON_ARCANE_STONE, PRESSURE_PLATE_GREATWOOD, PRESSURE_PLATE_SILVERWOOD, PRESSURE_PLATE_ARCANE_STONE,
                WARDED_PRESSURE_PLATE_GREATWOOD, WARDED_PRESSURE_PLATE_SILVERWOOD, WARDED_PRESSURE_PLATE_ARCANE_STONE,
-               URN, ITEM_GRATE, GLASS_TUBE, IMPETUS_CREATIVE, AUGMENTATION_STATION, TAINTED_SLURRY, SAND};
+               URN, ITEM_GRATE, GLASS_TUBE, IMPETUS_CREATIVE, AUGMENTATION_STATION, AUGMENT_PLANNER,
+               COSMETIC_STATION, TAINTED_SLURRY, SAND};
     }
 
 }

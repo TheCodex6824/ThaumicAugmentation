@@ -20,53 +20,109 @@
 
 package thecodex6824.thaumicaugmentation.common.container;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundCategory;
-import thaumcraft.common.lib.SoundsTC;
-import thecodex6824.thaumicaugmentation.api.augment.*;
-import thecodex6824.thaumicaugmentation.common.network.PacketPartialAugmentConfigurationStorageSync;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import java.lang.ref.WeakReference;
 
 import javax.annotation.Nonnull;
 
-public class ContainerAugmentationStation extends Container {
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
+import thecodex6824.thaumicaugmentation.api.TAItems;
+import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
+import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
+import thecodex6824.thaumicaugmentation.common.capability.CapabilityEquipmentTracker;
+import thecodex6824.thaumicaugmentation.common.capability.IEquipmentTracker;
+import thecodex6824.thaumicaugmentation.common.tile.TileAugmentationStation;
+
+public class ContainerAugmentationStation extends Container implements IAugmentableItemSlotListener {
     
-    protected EntityPlayer player;
+    protected WeakReference<EntityPlayer> thePlayer;
+    protected TileAugmentationStation station;
     protected AugmentableItemSlot centralSlot;
     protected IntArrayList trackedAugmentSlots;
     protected int selectedConfiguration;
+    protected int pouchSlot;
     
-    public ContainerAugmentationStation(InventoryPlayer inv) {
+    public ContainerAugmentationStation(InventoryPlayer inv, TileAugmentationStation station) {
         // store player so we can do some lookups later
-        player = inv.player;
-        
-        // add the central augmentable item slot
-        // this is *not* saved in any way
-        centralSlot = new AugmentableItemSlot(this, 80, 90);
-        addSlotToContainer(centralSlot);
+        thePlayer = new WeakReference<>(inv.player);
+        this.station = station;
         
         // the loops below set up slots for the player's inventory
-        for (int y = 0; y < 3; ++y) {
-            for (int x = 0; x < 9; ++x)
-                addSlotToContainer(new Slot(inv, x + y * 9 + 9, 8 + x * 18, 131 + y * 18));
+        for (int x = 0; x < 9; ++x) {
+            addSlotToContainer(new Slot(inv, x, 8 + x * 18, 179));
         }
         
-        for (int x = 0; x < 9; ++x)
-            addSlotToContainer(new Slot(inv, x, 8 + x * 18, 189));
+        for (int y = 0; y < 3; ++y) {
+            for (int x = 0; x < 9; ++x) {
+                addSlotToContainer(new Slot(inv, x + y * 9 + 9, 8 + x * 18, 121 + y * 18));
+            }
+        }
+        
+        // add the central augmentable item slot
+        IItemHandler inventory = station.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        centralSlot = new AugmentableItemSlot(inventory, 0, this, 80, 80);
+        addSlotToContainer(centralSlot);
+        
+        IEquipmentTracker tracker = inv.player.getCapability(CapabilityEquipmentTracker.EQUIPMENT_TRACKER, null);
+        if (tracker != null) {
+	        IItemHandler playerItems = tracker.getLiveEquipment();
+	        pouchSlot = -1;
+	        for (int i = 0; i < playerItems.getSlots(); ++i) {
+	        	ItemStack stack = playerItems.getStackInSlot(i);
+	        	if (stack.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+	        		pouchSlot = i;
+	        		break;
+	        	}
+	        }
+	        
+	        if (pouchSlot != -1) {
+	        	if (inventory.insertItem(1, playerItems.extractItem(pouchSlot, 64, true), true).isEmpty()) {
+	        		ItemStack extracted = playerItems.extractItem(pouchSlot, 64, false);
+	            	ItemStack remaining = inventory.insertItem(1, extracted, false);
+	            	station.markDirty();
+	            	if (!remaining.isEmpty()) {
+	            		playerItems.insertItem(pouchSlot, remaining, false);
+	            	}
+	        	}
+	        }
+        }
+        
+    	IItemHandler pouchInv = inventory.getStackInSlot(1).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+    	if (pouchInv != null) {
+    		addSlotToContainer(new SlotItemHandler(inventory, 1, 209, 3) {
+            	@Override
+            	public boolean canTakeStack(EntityPlayer player) {
+            		return false;
+            	}
+            });
+    		
+    		int numSlotsAdded = 0;
+	    	for (int pouchSlot = 0; pouchSlot < pouchInv.getSlots(); ++pouchSlot) {
+	    		if (pouchInv.isItemValid(pouchSlot, new ItemStack(TAItems.AUGMENT_VIS_BATTERY))) {
+	                addSlotToContainer(new SlotItemHandler(pouchInv, pouchSlot,
+	                		191 + (numSlotsAdded % 3) * 18, 22 + (numSlotsAdded / 3) * 18));
+	                if (++numSlotsAdded >= 27) {
+	                	break;
+	                }
+	    		}
+	    	}
+    	}
         
         trackedAugmentSlots = new IntArrayList();
     }
     
-    public void addAugmentSlot(Slot slot) {
-        addSlotToContainer(slot);
-        trackedAugmentSlots.add(slot.slotNumber);
+    public void addAugmentSlot(int index, int xPos, int yPos) {
+    	SlotItemHandler newSlot = new SlotItemHandler(AugmentAPI.createAugmentItemHandler(centralSlot.getStack()),
+        		index, xPos, yPos);
+        addSlotToContainer(newSlot);
+        trackedAugmentSlots.add(newSlot.slotNumber);
     }
     
     public void removeAllAugmentSlots() {
@@ -83,40 +139,13 @@ public class ContainerAugmentationStation extends Container {
         return trackedAugmentSlots.toIntArray();
     }
     
-    public boolean hasAugmentableItem() {
-        return centralSlot.getHasStack();
+    @Override
+    public ItemStack getAugmentableItem() {
+    	return centralSlot.getStack();
     }
     
-    public int getMaxConfigurations() {
-        return 8;
-    }
-    
-    protected void ensureConfigIndex(ItemStack augmentable, IAugmentConfigurationStorage storage, int size) {
-        int numConfigs = storage.getAllConfigurationsForItem(augmentable).size();
-        if (numConfigs < size) {
-            for (int i = 0; i < size - numConfigs; ++i)
-                storage.addConfiguration(new AugmentConfiguration(augmentable));
-        }
-    }
-    
-    public void setSelectedConfiguration(int newConfig) {
-        IAugmentConfigurationStorage storage = player.getCapability(
-                CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
-        if (storage != null) {
-            ensureConfigIndex(centralSlot.getStack(), storage, newConfig + 1);
-            AugmentConfiguration c = storage.getAllConfigurationsForItem(centralSlot.getStack()).get(newConfig);
-            for (int index : trackedAugmentSlots) {
-                Slot s = inventorySlots.get(index);
-                if (s instanceof AugmentSlot)
-                    ((AugmentSlot) s).changeConfiguration(c);
-            }
-            
-            selectedConfiguration = newConfig;
-            detectAndSendChanges();
-        }
-    }
-    
-    public void onCentralSlotChanged(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack) {
+    @Override
+    public void onAugmentableItemSlotChanged(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack) {
         boolean doRemove = false, doAdd = false;
         if (!newStack.isEmpty())
             doAdd = true;
@@ -127,26 +156,18 @@ public class ContainerAugmentationStation extends Container {
             removeAllAugmentSlots();
         
         if (doAdd) {
-            IAugmentConfigurationStorage storage = player.getCapability(
-                    CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
-            if (storage != null) {
-                ensureConfigIndex(newStack, storage, 1);
-                AugmentConfiguration config = storage.getAllConfigurationsForItem(newStack).get(0);
-                int augmentSlots = newStack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getTotalAugmentSlots();
-                if (augmentSlots == 1) {
-                	addAugmentSlot(new AugmentSlot(config, 0, centralSlot.xPos, centralSlot.yPos - 36));
+            int augmentSlots = newStack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null).getTotalAugmentSlots();
+            if (augmentSlots == 1) {
+            	addAugmentSlot(0, centralSlot.xPos, centralSlot.yPos - 36);
+            }
+            else {
+                double xIncrement = Math.PI / (augmentSlots - 1);
+                int xSlotPosition, ySlotPosition;
+                for (int i = 0; i < augmentSlots; ++i) {
+                    xSlotPosition = (int) Math.round(Math.cos(Math.PI + xIncrement * i)) * augmentSlots * 16;
+                    ySlotPosition = (int) Math.round(Math.sin(Math.PI + xIncrement * i)) * augmentSlots * 16;
+                    addAugmentSlot(i, centralSlot.xPos + xSlotPosition, centralSlot.yPos + ySlotPosition);
                 }
-                else {
-	                double xIncrement = Math.PI / (augmentSlots - 1);
-	                int xSlotPosition, ySlotPosition;
-	                for (int i = 0; i < augmentSlots; ++i) {
-	                    xSlotPosition = (int) Math.round(Math.cos(Math.PI + xIncrement * i)) * augmentSlots * 16;
-	                    ySlotPosition = (int) Math.round(Math.sin(Math.PI + xIncrement * i)) * augmentSlots * 16;
-	                    addAugmentSlot(new AugmentSlot(config, i, centralSlot.xPos + xSlotPosition, centralSlot.yPos + ySlotPosition));
-	                }
-                }
-
-                setSelectedConfiguration(0);
             }
         }
 
@@ -155,64 +176,27 @@ public class ContainerAugmentationStation extends Container {
     }
     
     @Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickType, EntityPlayer player) {
-        if (slotId > player.inventory.mainInventory.size()) {
-            Slot clicked = inventorySlots.get(slotId);
-            if (clickType != ClickType.CLONE && clicked instanceof AugmentSlot) {
-                switch (clickType) {
-                    case SWAP: {
-                        clicked.putStack(player.inventory.getStackInSlot(dragType).copy());
-                        break;
-                    }
-                    case PICKUP:
-                    case PICKUP_ALL: {
-                        clicked.putStack(player.inventory.getItemStack().copy());
-                        break;
-                    }
-                    default: break;
-                }
-                
-                detectAndSendChanges();
-                return player.inventory.getStackInSlot(dragType);
-            }
-        }
-        
-        return super.slotClick(slotId, dragType, clickType, player);
-    }
-    
-    public AugmentConfigurationApplyResult tryApplyConfiguration() {
-        IAugmentConfigurationStorage storage = player.getCapability(
-                CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
-        if (storage != null) {
-            AugmentConfigurationApplyResult result = AugmentAPI.trySwapConfiguration(player,
-                    storage.getAllConfigurationsForItem(centralSlot.getStack()).get(selectedConfiguration),
-                    centralSlot.getStack().getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null),
-                    false
-            );
-            if (result == AugmentConfigurationApplyResult.OK)
-                player.getEntityWorld().playSound(null, player.getPosition(), SoundsTC.ticks, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                
-            detectAndSendChanges();
-            return result;
-        }
-        
-        return AugmentConfigurationApplyResult.OTHER_PROBLEM;
+    public boolean canInteractWith(EntityPlayer otherPlayer) {
+        return otherPlayer.equals(thePlayer.get());
     }
     
     @Override
     public void onContainerClosed(EntityPlayer player) {
-        super.onContainerClosed(player);
-        if (centralSlot.getHasStack()) {
-            ItemStack central = centralSlot.getStack();
-            centralSlot.onTake(player, central);
-            if (!central.isEmpty())
-                player.dropItem(central, false);
-        }
-    }
-    
-    @Override
-    public boolean canInteractWith(EntityPlayer otherPlayer) {
-        return otherPlayer.equals(player);
+    	super.onContainerClosed(player);
+    	if (player.equals(thePlayer.get())) {
+    		IItemHandler inventory = station.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+    		ItemStack pouch = inventory.extractItem(1, 64, false);
+    		
+    		IEquipmentTracker tracker = player.getCapability(CapabilityEquipmentTracker.EQUIPMENT_TRACKER, null);
+    		if (tracker != null && pouchSlot != -1) {
+    			IItemHandler playerItems = tracker.getLiveEquipment();
+        		pouch = playerItems.insertItem(pouchSlot, pouch, false);
+    		}
+    		
+    		if (!pouch.isEmpty() && !player.addItemStackToInventory(pouch)) {
+				player.dropItem(pouch, false);
+			}
+    	}
     }
     
     @Override
@@ -247,17 +231,5 @@ public class ContainerAugmentationStation extends Container {
 
         return stack;
     }
-    
-    @Override
-    public void detectAndSendChanges() {
-    	super.detectAndSendChanges();
-    	if (!centralSlot.getStack().isEmpty()) {
-	    	IAugmentConfigurationStorage storage = player.getCapability(CapabilityAugmentConfigurationStorage.AUGMENT_CONFIGURATION_STORAGE, null);
-	    	if (!player.world.isRemote && storage instanceof IAugmentConfigurationStorageSerializable) {
-	        	IAugmentConfigurationStorageSerializable save = (IAugmentConfigurationStorageSerializable) storage;
-	        	TANetwork.INSTANCE.sendTo(new PacketPartialAugmentConfigurationStorageSync(save.serializeConfigsForSingleItem(centralSlot.getStack())),
-	        			(EntityPlayerMP) player);
-	        }
-    	}
-    }
+
 }

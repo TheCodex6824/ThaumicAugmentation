@@ -142,7 +142,7 @@ public class EntityEventHandler {
         EntityLivingBase entity = event.getEntityLiving();
         if (!entity.getEntityWorld().isRemote) {
             PacketLivingEquipmentChange packet = new PacketLivingEquipmentChange(entity.getEntityId(),
-                    event.getSlot(), event.getTo());
+                    event.getSlot());
             TANetwork.INSTANCE.sendToAllTracking(packet, entity);
             if (entity instanceof EntityPlayerMP)
                 TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);

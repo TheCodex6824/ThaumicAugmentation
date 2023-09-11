@@ -66,6 +66,7 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
+import thecodex6824.thaumicaugmentation.common.event.EquipmentSyncEventHandler;
 import thecodex6824.thaumicaugmentation.common.item.trait.IElytraCompat;
 import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
@@ -193,7 +194,8 @@ public final class TAHooksCommon {
     
     public static void onBaubleChanged(@Nullable EntityLivingBase entity) {
         if (entity != null && !entity.getEntityWorld().isRemote) {
-            AugmentEventHandler.onEquipmentChange(entity);
+        	// This call is only server-side, we need to send a packet to clients as well
+        	EquipmentSyncEventHandler.onEquipmentChange(entity);
             PacketBaubleChange pkt = new PacketBaubleChange(entity.getEntityId());
             TANetwork.INSTANCE.sendToAllTracking(pkt, entity);
             if (entity instanceof EntityPlayerMP)

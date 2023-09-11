@@ -20,12 +20,15 @@
 
 package thecodex6824.thaumicaugmentation.api.internal;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
-
-import java.util.Collection;
 
 public interface IInternalMethodProvider {
     
@@ -46,5 +49,13 @@ public interface IInternalMethodProvider {
     void fullySyncImpetusNode(IImpetusNode node);
     
     void updateImpetusNode(IImpetusNode node, DimensionalBlockPos connection, boolean output, boolean remove);
+    
+    IItemHandlerModifiable createAugmentItemHandler(ItemStack augmentable);
+    
+    public IItemHandler createMultiHandlerView(IItemHandler... handlers);
+    
+    public IItemHandler createMultiHandlerView(Iterator<IItemHandler> handlers);
+    
+    public IItemHandler createMultiHandlerView(Iterable<IItemHandler> handlers);
     
 }

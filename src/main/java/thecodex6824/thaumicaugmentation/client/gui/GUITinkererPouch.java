@@ -20,60 +20,37 @@
 
 package thecodex6824.thaumicaugmentation.client.gui;
 
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.client.gui.component.IHoverTextLocationAware;
-import thecodex6824.thaumicaugmentation.common.container.ContainerAugmentationStation;
+import thecodex6824.thaumicaugmentation.common.container.ContainerTinkererPouch;
 
-public class GUIAugmentationStation extends GuiContainer {
+public class GUITinkererPouch extends GuiContainer {
 
-    protected static final ResourceLocation TEXTURE = new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/gui/augmentation_station.png");
-    
-    public GUIAugmentationStation(ContainerAugmentationStation c) {
+    protected static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/generic_54.png");
+    protected InventoryPlayer inv;
+
+    public GUITinkererPouch(ContainerTinkererPouch c, InventoryPlayer i) {
         super(c);
-        xSize = 256;
-        ySize = 204;
+        inv = i;
     }
-    
-    @Override
-    public void initGui() {
-        super.initGui();
-        buttonList.add(new ButtonAugmentDrawerPage(0, guiLeft + 193, guiTop + 189));
-    }
-    
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
         renderHoveredToolTip(mouseX, mouseY);
-        for (GuiButton b : buttonList) {
-            if (b.isMouseOver()) {
-                String s = b.displayString;
-                if (b instanceof IHoverTextLocationAware) {
-                    s = ((IHoverTextLocationAware) b).getHoverText(mouseX, mouseY);
-                }
-                
-                drawHoveringText(s, mouseX, mouseY);
-                break;
-            }
-        }
     }
-    
+
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(TEXTURE);
         int width = (this.width - this.xSize) / 2;
         int height = (this.height - this.ySize) / 2;
-        drawTexturedModalRect(width, height, 0, 0, xSize, ySize);
-        for (int i : ((ContainerAugmentationStation) inventorySlots).getAugmentSlotIndices()) {
-            Slot s = inventorySlots.inventorySlots.get(i);
-            drawTexturedModalRect(guiLeft + s.xPos - 7, guiTop + s.yPos - 7, 81, 214, 32, 32);
-        }
+        drawTexturedModalRect(width, height, 0, 0, xSize, 3 * 18 + 17);
+        drawTexturedModalRect(width, height + 3 * 18 + 17, 0, 126, xSize, 96);
     }
-    
+
 }

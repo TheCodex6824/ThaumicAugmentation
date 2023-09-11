@@ -34,7 +34,8 @@ import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.armor.IArmorAugment;
 import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
-import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketCapabilityItemSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketCapabilityItemSync.CapabilityType;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 /*
@@ -211,11 +212,13 @@ public final class AugmentEventHelper {
             }
             
             if (sync) {
-                PacketAugmentableItemSync syncPacket = new PacketAugmentableItemSync(entity.getEntityId(), index, cap.getSyncNBT());
-                if (entity instanceof EntityPlayerMP)
-                    TANetwork.INSTANCE.sendTo(syncPacket, (EntityPlayerMP) entity);
+                if (entity instanceof EntityPlayerMP) {
+                    TANetwork.INSTANCE.sendTo(new PacketCapabilityItemSync(CapabilityType.AUGMENT,
+                    		entity.getEntityId(), index, cap.getSyncNBT(true)), (EntityPlayerMP) entity);
+                }
               
-                TANetwork.INSTANCE.sendToAllTracking(syncPacket, entity);
+                TANetwork.INSTANCE.sendToAllTracking(new PacketCapabilityItemSync(CapabilityType.AUGMENT,
+                		entity.getEntityId(), index, cap.getSyncNBT(false)), entity);
             }
         }
     }

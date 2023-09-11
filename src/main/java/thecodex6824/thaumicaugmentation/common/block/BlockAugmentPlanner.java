@@ -1,5 +1,6 @@
 /*
  *  Thaumic Augmentation
+ *  Copyright (c) 2023 WillPastor.
  *  Copyright (c) 2023 TheCodex6824.
  *
  *  This file is part of Thaumic Augmentation.
@@ -18,24 +19,18 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.client.event;
+package thecodex6824.thaumicaugmentation.common.block;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import thecodex6824.thaumicaugmentation.common.block.prefab.BlockSimpleStation;
+import thecodex6824.thaumicaugmentation.init.GUIHandler.TAInventory;
 
-public class ClientLivingEquipmentChangeEvent extends LivingEvent {
-   
-    protected EntityEquipmentSlot slot;
-
-    public ClientLivingEquipmentChangeEvent(EntityLivingBase entity, EntityEquipmentSlot equipmentSlot) {
-        
-        super(entity);
-        slot = equipmentSlot;
-    }
-
-    public EntityEquipmentSlot getSlot() { 
-        return slot;
-    }
-
+public class BlockAugmentPlanner extends BlockSimpleStation {
+	
+	@Override
+	protected TAInventory getInventoryType() {
+		return TAInventory.AUGMENT_PLANNER;
+	}
+	
 }
+
+

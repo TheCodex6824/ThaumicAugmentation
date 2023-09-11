@@ -22,10 +22,13 @@ package thecodex6824.thaumicaugmentation.api.internal;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 public final class TAInternals {
 
@@ -71,6 +74,22 @@ public final class TAInternals {
     
     public static void updateImpetusNode(IImpetusNode node, DimensionalBlockPos connection, boolean output, boolean remove) {
         provider.updateImpetusNode(node, connection, output, remove);
+    }
+    
+    public static IItemHandlerModifiable createAugmentItemHandler(ItemStack augmentable) {
+    	return provider.createAugmentItemHandler(augmentable);
+    }
+    
+    public static IItemHandler createMultiHandlerView(IItemHandler... handlers) {
+    	return provider.createMultiHandlerView(handlers);
+    }
+    
+    public static IItemHandler createMultiHandlerView(Iterator<IItemHandler> handlers) {
+    	return provider.createMultiHandlerView(handlers);
+    }
+    
+    public static IItemHandler createMultiHandlerView(Iterable<IItemHandler> handlers) {
+    	return provider.createMultiHandlerView(handlers);
     }
     
 }

@@ -61,6 +61,7 @@ import thecodex6824.thaumicaugmentation.common.entity.EntityCelestialObserver;
 import thecodex6824.thaumicaugmentation.common.event.PlayerEventHandler;
 import thecodex6824.thaumicaugmentation.common.network.*;
 import thecodex6824.thaumicaugmentation.common.tile.TileArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.common.tile.TileAugmentationStation;
 import thecodex6824.thaumicaugmentation.common.tile.TileWardedChest;
 import thecodex6824.thaumicaugmentation.common.util.IResourceReloadDispatcher;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
@@ -209,7 +210,11 @@ public class ServerProxy implements ISidedProxy {
                     (TileArcaneTerraformer) world.getTileEntity(new BlockPos(x, y, z)));
             case AUTOCASTER: return new ContainerAutocaster(player.inventory, (EntityAutocaster) world.getEntityByID(x));
             case CELESTIAL_OBSERVER: return new ContainerCelestialObserver(player.inventory, (EntityCelestialObserver) world.getEntityByID(x));
-            case AUGMENTATION_STATION: return new ContainerAugmentationStation(player.inventory);
+            case AUGMENTATION_STATION: return new ContainerAugmentationStation(player.inventory,
+            		(TileAugmentationStation) world.getTileEntity(new BlockPos(x, y, z)));
+            case AUGMENT_PLANNER: return new ContainerAugmentPlanner(player.inventory);
+            case COSMETIC_STATION: return new ContainerCosmeticStation(player.inventory);
+            case TINKERER_POUCH: return new ContainerTinkererPouch(player);
             default: return null;
         }
     }
@@ -391,8 +396,8 @@ public class ServerProxy implements ISidedProxy {
                 }
             }
         }
-        else if (sender != null && sender.openContainer instanceof ContainerAugmentationStation) {
-            ContainerAugmentationStation station = (ContainerAugmentationStation) sender.openContainer;
+        else if (sender != null && sender.openContainer instanceof ContainerAugmentPlanner) {
+        	ContainerAugmentPlanner station = (ContainerAugmentPlanner) sender.openContainer;
             if (!station.canInteractWith(sender)) {
                 ThaumicAugmentation.getLogger().info("Player {} ({}) kicked for protocol violation: not allowed to use container", sender.getName(), sender.getGameProfile().getId());
                 context.getServerHandler().disconnect(new TextComponentTranslation("thaumicaugmentation.text.network_kick"));
@@ -407,10 +412,6 @@ public class ServerProxy implements ISidedProxy {
                         else
                             station.setSelectedConfiguration(message.getSelectionValue());
                         
-                        break;
-                    }
-                    case 1: {
-                        station.tryApplyConfiguration();
                         break;
                     }
                     default: {

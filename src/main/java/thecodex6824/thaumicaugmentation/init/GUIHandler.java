@@ -34,7 +34,10 @@ public class GUIHandler implements IGuiHandler {
         ARCANE_TERRAFORMER(1),
         AUTOCASTER(2),
         CELESTIAL_OBSERVER(3),
-        AUGMENTATION_STATION(4);
+        AUGMENTATION_STATION(4),
+        AUGMENT_PLANNER(5),
+        COSMETIC_STATION(6),
+        TINKERER_POUCH(7);
 
         private final int id;
 

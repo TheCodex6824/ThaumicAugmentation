@@ -20,9 +20,6 @@
 
 package thecodex6824.thaumicaugmentation.init;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import baubles.api.BaublesApi;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -32,11 +29,12 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -50,9 +48,9 @@ import thecodex6824.thaumicaugmentation.api.TAFluids;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.api.entity.AutocasterFocusRegistry;
 import thecodex6824.thaumicaugmentation.api.entity.PrimalWispAttackRegistry;
+import thecodex6824.thaumicaugmentation.api.item.EquipmentInventoryRegistry;
 import thecodex6824.thaumicaugmentation.common.fluid.FluidTaintedSlurry;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectLight;
 import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectVoidShield;
@@ -80,23 +78,21 @@ public final class MiscHandler {
         FocusEngine.registerElement(FocusEffectWater.class, new ResourceLocation(ThaumicAugmentationAPI.MODID, "textures/foci/water.png"),
                 Aspect.WATER.getColor());
         
-        AugmentAPI.addAugmentableItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
-            if (entity instanceof EntityLivingBase)
-                return entity.getEquipmentAndArmor();
-            
-            return Collections.emptyList();
-        });
-        AugmentAPI.addAugmentableItemSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "baubles"), (entity) -> {
-            if (entity instanceof EntityPlayer) {
-                IItemHandler handler = BaublesApi.getBaublesHandler((EntityPlayer) entity);
-                ArrayList<ItemStack> stacks = new ArrayList<>(Collections.nCopies(handler.getSlots(), ItemStack.EMPTY));
-                for (int i = 0; i < stacks.size(); ++i)
-                    stacks.set(i, handler.getStackInSlot(i));
-                
-                return stacks;
+        EquipmentInventoryRegistry.registerEquipmentSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "default"), (entity) -> {
+            if (entity instanceof EntityLivingBase) {
+            	NonNullList<ItemStack> mojangWhy = NonNullList.create();
+            	entity.getEquipmentAndArmor().forEach(mojangWhy::add);
+                return new ItemStackHandler(mojangWhy);
             }
             
-            return Collections.emptyList();
+            return new ItemStackHandler(0);
+        });
+        EquipmentInventoryRegistry.registerEquipmentSource(new ResourceLocation(ThaumicAugmentationAPI.MODID, "baubles"), (entity) -> {
+            if (entity instanceof EntityPlayer) {
+                return BaublesApi.getBaublesHandler((EntityPlayer) entity);
+            }
+            
+            return new ItemStackHandler(0);
         });
         
         AutocasterFocusRegistry.registerMaxDistance("thaumcraft.BOLT", 16.0);

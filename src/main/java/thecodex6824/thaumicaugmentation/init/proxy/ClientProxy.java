@@ -34,6 +34,8 @@ import org.lwjgl.input.Keyboard;
 
 import com.google.common.collect.ImmutableMap;
 
+import baubles.api.IBauble;
+import baubles.api.cap.BaublesCapabilities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -102,7 +104,6 @@ import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.augment.AugmentAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentConfigurationStorage;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
@@ -122,6 +123,7 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
+import thecodex6824.thaumicaugmentation.api.item.EquipmentInventoryRegistry;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.IDyeableItem;
 import thecodex6824.thaumicaugmentation.api.tile.IEssentiaTube;
@@ -140,9 +142,11 @@ import thecodex6824.thaumicaugmentation.client.fx.FXBlockWardFixed;
 import thecodex6824.thaumicaugmentation.client.fx.FXGenericP2ECustomSpeed;
 import thecodex6824.thaumicaugmentation.client.fx.FXImpulseBeam;
 import thecodex6824.thaumicaugmentation.client.gui.GUIArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.client.gui.GUIAugmentPlanner;
 import thecodex6824.thaumicaugmentation.client.gui.GUIAugmentationStation;
 import thecodex6824.thaumicaugmentation.client.gui.GUIAutocaster;
 import thecodex6824.thaumicaugmentation.client.gui.GUICelestialObserver;
+import thecodex6824.thaumicaugmentation.client.gui.GUITinkererPouch;
 import thecodex6824.thaumicaugmentation.client.gui.GUIWardedChest;
 import thecodex6824.thaumicaugmentation.client.model.BuiltInRendererModel;
 import thecodex6824.thaumicaugmentation.client.model.CustomCasterAugmentModel;
@@ -183,10 +187,13 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.ClientSoundHandler;
 import thecodex6824.thaumicaugmentation.client.sound.MovingSoundRecord;
 import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
+import thecodex6824.thaumicaugmentation.common.capability.CustomSyncBaubleItem;
 import thecodex6824.thaumicaugmentation.common.container.ContainerArcaneTerraformer;
+import thecodex6824.thaumicaugmentation.common.container.ContainerAugmentPlanner;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAugmentationStation;
 import thecodex6824.thaumicaugmentation.common.container.ContainerAutocaster;
 import thecodex6824.thaumicaugmentation.common.container.ContainerCelestialObserver;
+import thecodex6824.thaumicaugmentation.common.container.ContainerTinkererPouch;
 import thecodex6824.thaumicaugmentation.common.container.ContainerWardedChest;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocaster;
 import thecodex6824.thaumicaugmentation.common.entity.EntityAutocasterEldritch;
@@ -203,10 +210,11 @@ import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvid
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemFractureLocator;
 import thecodex6824.thaumicaugmentation.common.item.ItemKey;
-import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketBaubleChange;
 import thecodex6824.thaumicaugmentation.common.network.PacketBiomeUpdate;
 import thecodex6824.thaumicaugmentation.common.network.PacketBoostState;
+import thecodex6824.thaumicaugmentation.common.network.PacketCapabilityItemSync;
+import thecodex6824.thaumicaugmentation.common.network.PacketCapabilityItemSync.CapabilityType;
 import thecodex6824.thaumicaugmentation.common.network.PacketConfigSync;
 import thecodex6824.thaumicaugmentation.common.network.PacketEntityCast;
 import thecodex6824.thaumicaugmentation.common.network.PacketEssentiaUpdate;
@@ -269,7 +277,7 @@ public class ClientProxy extends ServerProxy {
         handlers = new HashMap<>();
         handlers.put(PacketParticleEffect.class, (message, ctx) -> handleParticlePacket((PacketParticleEffect) message, ctx));
         handlers.put(PacketConfigSync.class, (message, ctx) -> handleConfigSyncPacket((PacketConfigSync) message, ctx));
-        handlers.put(PacketAugmentableItemSync.class, (message, ctx) -> handleAugmentableItemSyncPacket((PacketAugmentableItemSync) message, ctx));
+        handlers.put(PacketCapabilityItemSync.class, (message, ctx) -> handleCapabilityItemSyncPacket((PacketCapabilityItemSync) message, ctx));
         handlers.put(PacketFullWardSync.class, (message, ctx) -> handleFullWardSyncPacket((PacketFullWardSync) message, ctx));
         handlers.put(PacketWardUpdate.class, (message, ctx) -> handleWardUpdatePacket((PacketWardUpdate) message, ctx));
         handlers.put(PacketFractureLocatorUpdate.class, (message, ctx) -> handleFractureLocatorUpdatePacket((PacketFractureLocatorUpdate) message, ctx));
@@ -387,6 +395,9 @@ public class ClientProxy extends ServerProxy {
             case AUTOCASTER: return new GUIAutocaster((ContainerAutocaster) getServerGUIElement(ID, player, world, x, y, z));
             case CELESTIAL_OBSERVER: return new GUICelestialObserver((ContainerCelestialObserver) getServerGUIElement(ID, player, world, x, y, z));
             case AUGMENTATION_STATION: return new GUIAugmentationStation((ContainerAugmentationStation) getServerGUIElement(ID, player, world, x, y, z));
+            case AUGMENT_PLANNER: return new GUIAugmentPlanner((ContainerAugmentPlanner) getServerGUIElement(ID, player, world, x, y, z));
+            case COSMETIC_STATION: return null;
+            case TINKERER_POUCH: return new GUITinkererPouch((ContainerTinkererPouch) getServerGUIElement(ID, player, world, x, y, z), player.inventory);
             default: return null;
         }
     }
@@ -731,23 +742,25 @@ public class ClientProxy extends ServerProxy {
         TAConfigManager.sync(context.side, message.getBuffer());
     }
     
-    protected void handleAugmentableItemSyncPacket(PacketAugmentableItemSync message, MessageContext context) {
+    protected void handleCapabilityItemSyncPacket(PacketCapabilityItemSync message, MessageContext context) {
         Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
         if (entity != null) {
-            int i = 0;
-            for (Function<Entity, Iterable<ItemStack>> func : AugmentAPI.getAugmentableItemSources()) {
-                for (ItemStack stack : func.apply(entity)) {
-                    if (i == message.getItemIndex()) {
-                        IAugmentableItem augmentable = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                        if (augmentable != null) {
-                            augmentable.readSyncNBT(message.getTag());
-                            return;
-                        }
-                    }
-                    
-                    ++i;
+        	IItemHandler inv = EquipmentInventoryRegistry.getCombinedEquipmentView(entity);
+        	if (message.getItemIndex() < inv.getSlots()) {
+        		ItemStack stack = inv.getStackInSlot(message.getItemIndex());
+                if (message.getType() == CapabilityType.AUGMENT) {
+	        		IAugmentableItem augmentable = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+	                if (augmentable != null) {
+	                    augmentable.readSyncNBT(message.getTag());
+	                }
                 }
-            }
+                else if (message.getType() == CapabilityType.BAUBLE) {
+                	IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+                	if (bauble instanceof CustomSyncBaubleItem) {
+                		((CustomSyncBaubleItem) bauble).readSyncNBT(message.getTag());
+                	}
+                }
+        	}
         }
     }
     
@@ -910,7 +923,7 @@ public class ClientProxy extends ServerProxy {
         Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
         if (entity instanceof EntityLivingBase) {
             ClientEventHandler.onClientEquipmentChange(new ClientLivingEquipmentChangeEvent((EntityLivingBase) entity,
-                    message.getSlot(), message.getStack()));
+                    message.getSlot()));
         }
     }
     
@@ -919,7 +932,7 @@ public class ClientProxy extends ServerProxy {
         if (entity instanceof EntityLivingBase) {
             // this is my internal code so faking args like this is fine (they are unused atm anyway)
             ClientEventHandler.onClientEquipmentChange(new ClientLivingEquipmentChangeEvent((EntityLivingBase) entity,
-                    EntityEquipmentSlot.HEAD, ItemStack.EMPTY));
+                    EntityEquipmentSlot.HEAD));
         }
     }
     

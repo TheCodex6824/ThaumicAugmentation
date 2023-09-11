@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -101,10 +102,21 @@ public final class AugmentRadialRenderer {
                 GlStateManager.translate(Math.floor(xx), Math.floor(yy), 100.0);
                 //GlStateManager.scale(((Float)this.fociScale.get(key)).floatValue(), ((Float)this.fociScale.get(key)).floatValue(), ((Float)this.fociScale.get(key)).floatValue());
                 GlStateManager.enableRescaleNormal();
-                // TODO exclude air
-                for (int i = 0; i < config.getAugmentConfig().size(); ++i) {
-                    ItemStack item = config.getAugment(i);
-                    UtilsFX.renderItemInGUI(-8, -8 - i * 8, 100, item);
+                boolean configEmpty = true;
+                for (ItemStack stack : config.getAugmentConfig()) {
+                	if (!stack.isEmpty()) {
+                		configEmpty = false;
+                		break;
+                	}
+                }
+                if (configEmpty) {
+                	UtilsFX.renderItemInGUI(-8, -8, 100, new ItemStack(Blocks.BARRIER));
+                }
+                else {
+	                for (int i = 0; i < config.getAugmentConfig().size(); ++i) {
+	                    ItemStack item = config.getAugment(i);
+	                    UtilsFX.renderItemInGUI(-8, -8 - i * 8, 100, item);
+	                }
                 }
                 
                 GlStateManager.disableRescaleNormal();
@@ -119,8 +131,9 @@ public final class AugmentRadialRenderer {
                             ThaumicAugmentation.proxy.setAugmentRadialKeyDown(false);
                             lastConfig = -1;
                         }
-                        else
+                        else {
                             lastConfig = c;
+                        }
                     }
                 }
             } 
