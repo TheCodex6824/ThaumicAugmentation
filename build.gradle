@@ -1,14 +1,14 @@
 plugins {
-	id 'java'
+    id 'java'
     id 'eclipse'
     id 'idea'
     id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
 repositories {
-	maven {
+    maven {
         name "Su5ed LegacyDev Fork"
-        url "https://su5ed.jfrog.io/artifactory/maven/"
+        url "https://maven.su5ed.dev/releases"
     }
 }
 
@@ -46,8 +46,8 @@ ext {
 }
 
 legacy {
-	fixClasspath = true
-	extractMappings = true
+    fixClasspath = true
+    extractMappings = true
 }
 
 final arch = System.getProperty("os.arch")
@@ -122,14 +122,14 @@ dependencies {
     runtimeOnly 'curse.maven:ctm-267602:2915363'
     
     configurations.forEach {
-    	// mergetool pollutes the classpath with conflicting classes
-    	it.exclude(group: 'net.minecraftforge', module: 'mergetool')
-    	
-    	// this legacydev version (plus fork repository) makes dependency ATs work
-    	it.resolutionStrategy.force 'net.minecraftforge:legacydev:0.2.4.0'
-    	
-    	// newer ASM versions include module info that causes errors in Java 8
-    	it.resolutionStrategy.force 'org.ow2.asm:asm-debug-all:5.2'
+        // mergetool pollutes the classpath with conflicting classes
+        it.exclude(group: 'net.minecraftforge', module: 'mergetool')
+
+        // this legacydev version (plus fork repository) makes dependency ATs work
+        it.resolutionStrategy.force 'net.minecraftforge:legacydev:0.2.4.1'
+
+        // newer ASM versions include module info that causes errors in Java 8
+        it.resolutionStrategy.force 'org.ow2.asm:asm-debug-all:5.2'
     }
     
     // if the curse maven is down or otherwise not working:
@@ -198,7 +198,7 @@ javadoc {
 }
 
 task signJar(type: SignJar) {
-	dependsOn 'jar'
+    dependsOn 'jar'
     onlyIf { project.hasProperty('keyStore') }
     
     if (project.hasProperty('keyStore')) { // needed to skip gradle trying to find vars
@@ -221,9 +221,9 @@ jar {
 }
 
 project.tasks.whenTaskAdded {
-	if (it.name.equals('reobfJar')) {
-		it.dependsOn('signJar')
-	}
+    if (it.name.equals('reobfJar')) {
+        it.dependsOn('signJar')
+    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
