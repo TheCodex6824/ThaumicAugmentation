@@ -123,6 +123,7 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         }
         
         ItemStack newAugment = augment.copy();
+        //newAugment.setCount(Math.min(newAugment.getCount(), 1));
         if (newAugment.hasCapability(CapabilityAugment.AUGMENT, null)) {
             ICustomCasterAugment aug = (ICustomCasterAugment) newAugment.getCapability(CapabilityAugment.AUGMENT, null);
             // the regular nbt tag is never actually copied by forge in the capability serializer

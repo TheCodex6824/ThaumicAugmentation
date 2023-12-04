@@ -102,6 +102,7 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         
         // already verified if recipe is allowed in matches
         ItemStack copy = augmentable.copy();
+        augmentable.setCount(Math.min(augmentable.getCount(), 1));
         IAugmentableItem cap = copy.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
         cap.setAugment(augment.copy(), cap.getNextAvailableSlot());
         return copy;

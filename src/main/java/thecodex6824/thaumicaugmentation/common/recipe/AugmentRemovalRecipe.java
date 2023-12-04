@@ -113,6 +113,7 @@ public class AugmentRemovalRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
             ItemStack stack = inv.getStackInSlot(i);
             if (i < 9 && !stack.isEmpty() && stack.hasCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null)) {
                 ItemStack copy = stack.copy();
+                copy.setCount(Math.min(copy.getCount(), 1));
                 IAugmentableItem cap = copy.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
                 cap.removeAugment(cap.getNextAvailableSlot() == -1 ? cap.getTotalAugmentSlots() - 1 : cap.getNextAvailableSlot() - 1);
                 ret.set(i, copy);

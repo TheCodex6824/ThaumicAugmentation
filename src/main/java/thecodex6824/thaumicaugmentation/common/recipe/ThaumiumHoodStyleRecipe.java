@@ -73,6 +73,7 @@ public class ThaumiumHoodStyleRecipe extends IForgeRegistryEntry.Impl<IRecipe> i
         }
         
         ItemStack ret = hood.copy();
+        ret.setCount(Math.min(ret.getCount(), 1));
         if (!ret.hasTagCompound())
             ret.setTagCompound(new NBTTagCompound());
         

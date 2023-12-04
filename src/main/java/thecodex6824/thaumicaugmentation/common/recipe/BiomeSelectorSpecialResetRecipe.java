@@ -92,6 +92,7 @@ public class BiomeSelectorSpecialResetRecipe extends IForgeRegistryEntry.Impl<IR
 
         if (pearl && !biome.isEmpty()) {
             ItemStack output = biome.copy();
+            output.setCount(Math.min(output.getCount(), 1));
             output.getCapability(CapabilityBiomeSelector.BIOME_SELECTOR, null).setBiomeID(IBiomeSelector.RESET);
             return output;
         }
