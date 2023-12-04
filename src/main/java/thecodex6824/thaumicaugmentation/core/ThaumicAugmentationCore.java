@@ -65,11 +65,6 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
     }
 
     public static Set<String> getExcludedTransformers() {
-        if (config == null) {
-            config = new Configuration(new File("config", ThaumicAugmentationAPI.MODID + ".cfg"));
-            enabled = !config.getBoolean("DisableCoremod", "general", false, "");
-            excludedTransformers = ImmutableSet.copyOf(config.getStringList("DisabledTransformers", "general", new String[0], ""));
-        }
         return excludedTransformers;
     }
 
@@ -95,6 +90,11 @@ public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
+        if (config == null) {
+            config = new Configuration(new File("config", ThaumicAugmentationAPI.MODID + ".cfg"));
+            enabled = !config.getBoolean("DisableCoremod", "general", false, "");
+            excludedTransformers = ImmutableSet.copyOf(config.getStringList("DisabledTransformers", "general", new String[0], ""));
+        }
         if (enabled)
             ThaumicAugmentationAPI.setCoremodAvailable();
         else
