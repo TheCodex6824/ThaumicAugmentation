@@ -198,10 +198,15 @@ public final class TAHooksCommon {
     }
     
     public static boolean isInOuterLands(Entity entity) {
-        EntityInOuterLandsEvent event = new EntityInOuterLandsEvent(entity);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() == Result.ALLOW || (event.getResult() == Result.DEFAULT &&
-                entity.getEntityWorld().provider.getDimension() == TADimensions.EMPTINESS.getId());
+    	World world = entity.getEntityWorld();
+    	if (world != null && world.provider != null) {
+	        EntityInOuterLandsEvent event = new EntityInOuterLandsEvent(entity);
+	        MinecraftForge.EVENT_BUS.post(event);
+	        return event.getResult() == Result.ALLOW || (event.getResult() == Result.DEFAULT &&
+	                world.provider.getDimension() == TADimensions.EMPTINESS.getId());
+    	}
+    	
+    	return false;
     }
     
     public static boolean shouldAllowRunicShield(ItemStack stack) {
