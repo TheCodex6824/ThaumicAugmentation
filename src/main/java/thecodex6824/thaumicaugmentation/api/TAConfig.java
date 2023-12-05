@@ -65,6 +65,7 @@ public final class TAConfig {
     }
     
     public static ConfigOptionEnum<TileWardMode> tileWardMode;
+    public static ConfigOptionBoolean disableExpensiveWardFeatures;
 
     public static ConfigOptionBoolean reducedEffects;
     public static ConfigOptionBoolean optimizedFluxRiftRenderer;

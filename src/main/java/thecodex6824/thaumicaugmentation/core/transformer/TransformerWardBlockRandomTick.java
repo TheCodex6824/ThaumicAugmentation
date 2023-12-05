@@ -46,7 +46,7 @@ public class TransformerWardBlockRandomTick extends Transformer {
     @Override
     public boolean isTransformationNeeded(String transformedName) {
         return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "") &&
-                transformedName.equals(CLASS);
+        		!ThaumicAugmentationCore.getConfig().getBoolean("DisableExpensiveWardFeatures", "gameplay.ward", false, "") && transformedName.equals(CLASS);
     }
     
     @Override
