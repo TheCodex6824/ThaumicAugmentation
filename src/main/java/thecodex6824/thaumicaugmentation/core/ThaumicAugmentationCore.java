@@ -42,64 +42,63 @@ import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 @SortingIndex(1005)
 @TransformerExclusions("thecodex6824.thaumicaugmentation.core")
 public class ThaumicAugmentationCore implements IFMLLoadingPlugin {
-    
-    private static Logger log = LogManager.getLogger(ThaumicAugmentationAPI.MODID + "core");
-    
+
+    private static final Logger log = LogManager.getLogger(ThaumicAugmentationAPI.MODID + "core");
+
     private static Configuration config;
     private static boolean enabled;
     private static ImmutableSet<String> excludedTransformers;
-    
+
     public ThaumicAugmentationCore() {
-        if (config != null)
-            throw new RuntimeException("Coremod loading twice (?)");
-        
-        config = new Configuration(new File("config", ThaumicAugmentationAPI.MODID + ".cfg"));
-        enabled = !config.getBoolean("DisableCoremod", "general", false, "");
-        excludedTransformers = ImmutableSet.copyOf(config.getStringList("DisabledTransformers", "general", new String[0], ""));
     }
-    
+
     public static Logger getLogger() {
         return log;
     }
-    
+
     public static boolean isEnabled() {
         return enabled;
     }
-    
+
     public static Configuration getConfig() {
         return config;
     }
-    
+
     public static Set<String> getExcludedTransformers() {
         return excludedTransformers;
     }
-    
+
     @Override
     public String getAccessTransformerClass() {
         return null;
     }
-    
+
     @Override
     public String[] getASMTransformerClass() {
         return new String[] {"thecodex6824.thaumicaugmentation.core.TATransformer"};
     }
-    
+
     @Override
     public String getModContainerClass() {
         return null;
     }
-    
+
     @Override
     public String getSetupClass() {
         return null;
     }
-    
+
     @Override
     public void injectData(Map<String, Object> data) {
+        if (config == null) {
+            config = new Configuration(new File("config", ThaumicAugmentationAPI.MODID + ".cfg"));
+            enabled = !config.getBoolean("DisableCoremod", "general", false, "");
+            excludedTransformers = ImmutableSet.copyOf(config.getStringList("DisabledTransformers", "general", new String[0], ""));
+        }
         if (enabled)
             ThaumicAugmentationAPI.setCoremodAvailable();
         else
             log.info("Thaumic Augmentation coremod disabled by config request");
     }
-    
+
 }
