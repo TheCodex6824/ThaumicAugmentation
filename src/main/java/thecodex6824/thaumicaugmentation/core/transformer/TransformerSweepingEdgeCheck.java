@@ -34,47 +34,47 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class TransformerSweepingEdgeCheck extends Transformer {
 
     private static final String CLASS = "net.minecraft.entity.player.EntityPlayer";
-    
+
     @Override
     public boolean needToComputeFrames() {
         return true;
     }
-    
+
     @Override
-    public boolean isTransformationNeeded(String transformedName) {
+    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
         return transformedName.equals(CLASS);
     }
-    
+
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-    
+
     @Override
-    public boolean transform(ClassNode classNode, String name, String transformedName) {
+    public boolean transform(ClassNode classNode, String transformedName) {
         try {
-            MethodNode attack = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/player/EntityPlayer", "func_71059_n",
-                    Type.VOID_TYPE, Type.getType("Lnet/minecraft/entity/Entity;")), "(Lnet/minecraft/entity/Entity;)V");
+            MethodNode attack = TransformUtil.findMethod(classNode,
+                    TransformUtil.remapMethodName("net/minecraft/entity/player/EntityPlayer", "func_71059_n",
+                            Type.VOID_TYPE, Type.getType("Lnet/minecraft/entity/Entity;")),
+                    "(Lnet/minecraft/entity/Entity;)V");
             int ret = TransformUtil.findFirstInstanceOf(attack, 3, "net/minecraft/item/ItemSword");
-            if (ret != -1 && ret < attack.instructions.size() - 1 && attack.instructions.get(ret).getNext() instanceof JumpInsnNode) {
+            if (ret != -1 && ret < attack.instructions.size() - 1
+                    && attack.instructions.get(ret).getNext() instanceof JumpInsnNode) {
                 AbstractInsnNode insertAfter = attack.instructions.get(ret).getNext();
                 LabelNode newLabel = new LabelNode(new Label());
                 attack.instructions.insert(insertAfter, newLabel);
 
                 insertAfter = attack.instructions.get(ret).getPrevious().getPrevious().getPrevious();
                 attack.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFNE, newLabel));
-                attack.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON,
-                        "checkSweepingEdge",
-                        "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;)Z",
-                        false
-                ));
+                attack.instructions.insert(insertAfter,
+                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "checkSweepingEdge",
+                                "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;)Z", false));
                 attack.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 13));
                 attack.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-            
+
             return true;
         }
         catch (Throwable anything) {
@@ -82,5 +82,5 @@ public class TransformerSweepingEdgeCheck extends Transformer {
             return false;
         }
     }
-    
+
 }

@@ -30,42 +30,40 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 public class TransformerEldritchGuardianFog extends Transformer {
 
-private static final String CLASS = "thaumcraft.common.entities.monster.EntityEldritchGuardian";
-    
+    private static final String CLASS = "thaumcraft.common.entities.monster.EntityEldritchGuardian";
+
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-    
+
     @Override
-    public boolean isTransformationNeeded(String transformedName) {
+    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
         return transformedName.equals(CLASS);
     }
-    
+
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-    
+
     @Override
-    public boolean transform(ClassNode classNode, String name, String transformedName) {
+    public boolean transform(ClassNode classNode, String transformedName) {
         try {
-            MethodNode check = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/Entity", "func_70071_h_", Type.VOID_TYPE), "()V");
+            MethodNode check = TransformUtil.findMethod(classNode,
+                    TransformUtil.remapMethodName("net/minecraft/entity/Entity", "func_70071_h_", Type.VOID_TYPE),
+                    "()V");
             int ret = TransformUtil.findFirstInstanceOfOpcode(check, 0, Opcodes.IF_ICMPEQ);
             if (ret != -1) {
                 JumpInsnNode insertAfter = (JumpInsnNode) check.instructions.get(ret);
                 check.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFNE, insertAfter.label));
                 check.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON,
-                        "isInOuterLands",
-                        "(Lnet/minecraft/entity/Entity;)Z",
-                        false
-                ));
+                        TransformUtil.HOOKS_COMMON, "isInOuterLands", "(Lnet/minecraft/entity/Entity;)Z", false));
                 check.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-            
+
             return true;
         }
         catch (Throwable anything) {
@@ -73,5 +71,5 @@ private static final String CLASS = "thaumcraft.common.entities.monster.EntityEl
             return false;
         }
     }
-    
+
 }

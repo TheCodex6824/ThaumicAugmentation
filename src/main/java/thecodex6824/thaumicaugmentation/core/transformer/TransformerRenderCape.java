@@ -31,33 +31,38 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class TransformerRenderCape  extends Transformer {
+public class TransformerRenderCape extends Transformer {
 
     private static final String CLASS = "net.minecraft.client.renderer.entity.layers.LayerCape";
-    
+
     @Override
     public boolean needToComputeFrames() {
         return true;
     }
-    
+
     @Override
     public boolean isAllowedToFail() {
         return true;
     }
-    
+
     @Override
-    public boolean isTransformationNeeded(String transformedName) {
+    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
         return transformedName.equals(CLASS);
     }
-    
+
     @Override
-    public boolean transform(ClassNode classNode, String name, String transformedName) {
+    public boolean transform(ClassNode classNode, String transformedName) {
         try {
-            MethodNode render = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/renderer/entity/layers/LayerCape", "func_177141_a",
-                    Type.VOID_TYPE, Type.getType("Lnet/minecraft/client/entity/AbstractClientPlayer;"), Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE),
+            MethodNode render = TransformUtil.findMethod(classNode,
+                    TransformUtil.remapMethodName("net/minecraft/client/renderer/entity/layers/LayerCape",
+                            "func_177141_a", Type.VOID_TYPE,
+                            Type.getType("Lnet/minecraft/client/entity/AbstractClientPlayer;"), Type.FLOAT_TYPE,
+                            Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE,
+                            Type.FLOAT_TYPE),
                     "(Lnet/minecraft/client/entity/AbstractClientPlayer;FFFFFFF)V");
-            
-            int check = TransformUtil.findFirstField(render, 0, TransformUtil.remapFieldName("net/minecraft/init/Items", "field_185160_cR"),
+
+            int check = TransformUtil.findFirstField(render, 0,
+                    TransformUtil.remapFieldName("net/minecraft/init/Items", "field_185160_cR"),
                     "Lnet/minecraft/item/Item;", "net/minecraft/init/Items");
             if (check != -1) {
                 // apparently the checks/jumps are inverted outside dev (?)
@@ -65,26 +70,21 @@ public class TransformerRenderCape  extends Transformer {
                     AbstractInsnNode insertAfter = render.instructions.get(check).getNext();
                     LabelNode label = ((JumpInsnNode) insertAfter).label;
                     render.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, label));
-                    render.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            TransformUtil.HOOKS_CLIENT,
-                            "shouldRenderCape",
-                            "(Lnet/minecraft/client/entity/AbstractClientPlayer;)Z",
-                            false
-                    ));
+                    render.instructions.insert(insertAfter,
+                            new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_CLIENT, "shouldRenderCape",
+                                    "(Lnet/minecraft/client/entity/AbstractClientPlayer;)Z", false));
                     render.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 }
                 else {
-                    AbstractInsnNode insertAfter = render.instructions.get(check).getPrevious().getPrevious().getPrevious();
+                    AbstractInsnNode insertAfter = render.instructions.get(check).getPrevious().getPrevious()
+                            .getPrevious();
                     LabelNode newLabel = new LabelNode(new Label());
                     render.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, newLabel));
-                    render.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            TransformUtil.HOOKS_CLIENT,
-                            "shouldRenderCape",
-                            "(Lnet/minecraft/client/entity/AbstractClientPlayer;)Z",
-                            false
-                    ));
+                    render.instructions.insert(insertAfter,
+                            new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_CLIENT, "shouldRenderCape",
+                                    "(Lnet/minecraft/client/entity/AbstractClientPlayer;)Z", false));
                     render.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
-                    
+
                     check = TransformUtil.findFirstInstanceOfOpcode(render, check, Opcodes.RETURN);
                     if (check != -1)
                         render.instructions.insert(render.instructions.get(check).getPrevious(), newLabel);
@@ -94,7 +94,7 @@ public class TransformerRenderCape  extends Transformer {
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-            
+
             return true;
         }
         catch (Throwable anything) {
@@ -102,5 +102,5 @@ public class TransformerRenderCape  extends Transformer {
             return false;
         }
     }
-    
+
 }

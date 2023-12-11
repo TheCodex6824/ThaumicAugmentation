@@ -33,47 +33,47 @@ import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 public class TransformerWardBlockHardness extends Transformer {
 
     private static final String CLASS = "net.minecraft.block.state.BlockStateContainer$StateImplementation";
-    
+
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-    
+
     @Override
-    public boolean isTransformationNeeded(String transformedName) {
-        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "") &&
-                transformedName.equals(CLASS);
+    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
+        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "")
+                && transformedName.equals(CLASS);
     }
-    
+
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-    
+
     @Override
-    public boolean transform(ClassNode classNode, String name, String transformedName) {
+    public boolean transform(ClassNode classNode, String transformedName) {
         try {
-            MethodNode hardness = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/block/state/BlockStateContainer$StateImplementation",
-                    "func_185887_b", Type.FLOAT_TYPE, Type.getType("Lnet/minecraft/world/World;"), Type.getType("Lnet/minecraft/util/math/BlockPos;")), "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F");
+            MethodNode hardness = TransformUtil.findMethod(classNode,
+                    TransformUtil.remapMethodName("net/minecraft/block/state/BlockStateContainer$StateImplementation",
+                            "func_185887_b", Type.FLOAT_TYPE, Type.getType("Lnet/minecraft/world/World;"),
+                            Type.getType("Lnet/minecraft/util/math/BlockPos;")),
+                    "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F");
             boolean found = false;
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(hardness, ret, Opcodes.FRETURN)) != -1) {
                 AbstractInsnNode insertAfter = hardness.instructions.get(ret).getPrevious();
-                hardness.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON,
-                        "checkWardHardness",
-                        "(FLnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F",
-                        false
-                ));
+                hardness.instructions.insert(insertAfter,
+                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "checkWardHardness",
+                                "(FLnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)F", false));
                 hardness.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
                 hardness.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 ret += 4;
                 found = true;
             }
-            
+
             if (!found)
                 throw new TransformerException("Could not locate required instructions");
-            
+
             return true;
         }
         catch (Throwable anything) {
@@ -81,5 +81,5 @@ public class TransformerWardBlockHardness extends Transformer {
             return false;
         }
     }
-    
+
 }

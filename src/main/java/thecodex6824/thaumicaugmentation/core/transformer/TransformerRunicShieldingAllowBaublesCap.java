@@ -32,24 +32,24 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class TransformerRunicShieldingAllowBaublesCap extends Transformer {
 
     private static final String CLASS = "thaumcraft.common.lib.crafting.InfusionRunicAugmentRecipe";
-    
+
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-    
+
     @Override
-    public boolean isTransformationNeeded(String transformedName) {
+    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
         return transformedName.equals(CLASS);
     }
-    
+
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-    
+
     @Override
-    public boolean transform(ClassNode classNode, String name, String transformedName) {
+    public boolean transform(ClassNode classNode, String transformedName) {
         try {
             MethodNode match = TransformUtil.findMethod(classNode, "matches",
                     "(Ljava/util/List;Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;)Z");
@@ -58,21 +58,19 @@ public class TransformerRunicShieldingAllowBaublesCap extends Transformer {
                 TypeInsnNode check = (TypeInsnNode) match.instructions.get(offset);
                 if (check.desc.equals("baubles/api/IBauble")) {
                     AbstractInsnNode insertAfter = match.instructions.get(offset).getNext();
-                    match.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFNE, ((JumpInsnNode) insertAfter).label));
-                    match.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            TransformUtil.HOOKS_COMMON,
-                            "shouldAllowRunicShield",
-                            "(Lnet/minecraft/item/ItemStack;)Z",
-                            false
-                    ));
+                    match.instructions.insert(insertAfter,
+                            new JumpInsnNode(Opcodes.IFNE, ((JumpInsnNode) insertAfter).label));
+                    match.instructions.insert(insertAfter,
+                            new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON,
+                                    "shouldAllowRunicShield", "(Lnet/minecraft/item/ItemStack;)Z", false));
                     match.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
-                    
+
                     return true;
                 }
-                
+
                 offset += 2;
             }
-            
+
             throw new RuntimeException("Could not locate required instructions");
         }
         catch (Throwable anything) {
@@ -80,5 +78,5 @@ public class TransformerRunicShieldingAllowBaublesCap extends Transformer {
             return false;
         }
     }
-    
+
 }

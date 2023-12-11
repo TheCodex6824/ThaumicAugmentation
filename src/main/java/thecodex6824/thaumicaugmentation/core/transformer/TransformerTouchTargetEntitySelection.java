@@ -29,45 +29,44 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 public class TransformerTouchTargetEntitySelection extends Transformer {
 
-private static final String CLASS = "thaumcraft.common.items.casters.foci.FocusMediumTouch";
-    
+    private static final String CLASS = "thaumcraft.common.items.casters.foci.FocusMediumTouch";
+
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-    
+
     @Override
-    public boolean isTransformationNeeded(String transformedName) {
+    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
         return transformedName.equals(CLASS);
     }
-    
+
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-    
+
     @Override
-    public boolean transform(ClassNode classNode, String name, String transformedName) {
+    public boolean transform(ClassNode classNode, String transformedName) {
         try {
-            MethodNode exe = TransformUtil.findMethod(classNode, "supplyTargets", "()[Lnet/minecraft/util/math/RayTraceResult;");
+            MethodNode exe = TransformUtil.findMethod(classNode, "supplyTargets",
+                    "()[Lnet/minecraft/util/math/RayTraceResult;");
             int ret = TransformUtil.findFirstInstanceOfMethodCall(exe, 0, "getPointedEntityRay",
                     "(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;DDFZ)Lnet/minecraft/util/math/RayTraceResult;",
                     "thaumcraft/common/lib/utils/EntityUtils");
             if (ret != -1) {
                 AbstractInsnNode insertAfter = exe.instructions.get(ret);
                 exe.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON,
-                        "fireTargetGetEntityEvent",
+                        TransformUtil.HOOKS_COMMON, "fireTargetGetEntityEvent",
                         "(Lnet/minecraft/util/math/RayTraceResult;Lthaumcraft/common/items/casters/foci/FocusMediumTouch;Lthaumcraft/api/casters/Trajectory;D)Lnet/minecraft/util/math/RayTraceResult;",
-                        false
-                ));
+                        false));
                 exe.instructions.insert(insertAfter, new VarInsnNode(Opcodes.DLOAD, 2));
                 exe.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 7));
                 exe.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-            
+
             return true;
         }
         catch (Throwable anything) {
@@ -75,5 +74,5 @@ private static final String CLASS = "thaumcraft.common.items.casters.foci.FocusM
             return false;
         }
     }
-    
+
 }

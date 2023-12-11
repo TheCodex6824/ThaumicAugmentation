@@ -23,57 +23,58 @@ package thecodex6824.thaumicaugmentation.core.transformer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 public class TransformerWorldAddTile extends Transformer {
 
     private static final String CLASS = "net.minecraft.world.World";
-    
+
     @Override
     public boolean needToComputeFrames() {
         return true;
     }
-    
+
     @Override
-    public boolean isTransformationNeeded(String transformedName) {
+    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
         return transformedName.equals(CLASS);
     }
-    
+
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-    
+
     @Override
-    public boolean transform(ClassNode classNode, String name, String transformedName) {
+    public boolean transform(ClassNode classNode, String transformedName) {
         try {
             Type tileType = Type.getType("Lnet/minecraft/tileentity/TileEntity;");
             Type blockPosType = Type.getType("Lnet/minecraft/util/math/BlockPos;");
-            MethodNode update = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/world/World", "func_72939_s",
-                    Type.VOID_TYPE),
-                    "()V");
-            int call = TransformUtil.findLastInstanceOfMethodCall(update, update.instructions.size(), TransformUtil.remapMethodName(
-                    "net/minecraft/world/chunk/Chunk","func_177426_a",
-                        Type.VOID_TYPE, blockPosType, tileType),
-                    "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;)V", "net/minecraft/world/chunk/Chunk");
+            MethodNode update = TransformUtil.findMethod(classNode,
+                    TransformUtil.remapMethodName("net/minecraft/world/World", "func_72939_s", Type.VOID_TYPE), "()V");
+            int call = TransformUtil.findLastInstanceOfMethodCall(update, update.instructions.size(),
+                    TransformUtil.remapMethodName("net/minecraft/world/chunk/Chunk", "func_177426_a", Type.VOID_TYPE,
+                            blockPosType, tileType),
+                    "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;)V",
+                    "net/minecraft/world/chunk/Chunk");
             if (call != -1) {
                 LabelNode target = new LabelNode(new Label());
                 InsnList insns = new InsnList();
-                insns.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON,
-                        "onAddTile",
+                insns.add(new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "onAddTile",
                         "(Lnet/minecraft/world/chunk/Chunk;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;)Z",
-                        false
-                ));
+                        false));
                 insns.add(new JumpInsnNode(Opcodes.IFEQ, target));
                 insns.add(new VarInsnNode(Opcodes.ALOAD, 4));
                 insns.add(new VarInsnNode(Opcodes.ALOAD, 3));
-                insns.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
-                        "net/minecraft/tileentity/TileEntity",
-                        TransformUtil.remapMethodName("net/minecraft/tileentity/TileEntity", "func_174877_v", blockPosType),
-                        "()Lnet/minecraft/util/math/BlockPos;",
-                        false
-                ));
+                insns.add(new MethodInsnNode(
+                        Opcodes.INVOKEVIRTUAL, "net/minecraft/tileentity/TileEntity", TransformUtil
+                                .remapMethodName("net/minecraft/tileentity/TileEntity", "func_174877_v", blockPosType),
+                        "()Lnet/minecraft/util/math/BlockPos;", false));
                 insns.add(new VarInsnNode(Opcodes.ALOAD, 3));
 
                 update.instructions.insert(update.instructions.get(call), target);
@@ -81,7 +82,7 @@ public class TransformerWorldAddTile extends Transformer {
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-            
+
             return true;
         }
         catch (Throwable anything) {
@@ -89,5 +90,5 @@ public class TransformerWorldAddTile extends Transformer {
             return false;
         }
     }
-    
+
 }

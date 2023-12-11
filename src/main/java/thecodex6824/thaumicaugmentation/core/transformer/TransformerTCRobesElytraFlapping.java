@@ -32,44 +32,42 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class TransformerTCRobesElytraFlapping extends Transformer {
 
     private static final String CLASS = "thaumcraft.client.renderers.models.gear.ModelRobe";
-    
+
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-    
+
     @Override
-    public boolean isTransformationNeeded(String transformedName) {
+    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
         return transformedName.equals(CLASS);
     }
-    
+
     @Override
     public boolean isAllowedToFail() {
         return true;
     }
-    
+
     @Override
-    public boolean transform(ClassNode classNode, String name, String transformedName) {
+    public boolean transform(ClassNode classNode, String transformedName) {
         try {
-            MethodNode render = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("thaumcraft/client/renderers/models/gear/ModelRobe", "func_78088_a",
-                    Type.VOID_TYPE, Type.getType("Lnet/minecraft/entity/Entity;"), Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE,
-                    Type.FLOAT_TYPE, Type.FLOAT_TYPE), "(Lnet/minecraft/entity/Entity;FFFFFF)V");
-            int offset = TransformUtil.findFirstInstanceOfMethodCall(render, 0, "min",
-                    "(FF)F", "java/lang/Math");
+            MethodNode render = TransformUtil.findMethod(classNode,
+                    TransformUtil.remapMethodName("thaumcraft/client/renderers/models/gear/ModelRobe", "func_78088_a",
+                            Type.VOID_TYPE, Type.getType("Lnet/minecraft/entity/Entity;"), Type.FLOAT_TYPE,
+                            Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE, Type.FLOAT_TYPE),
+                    "(Lnet/minecraft/entity/Entity;FFFFFF)V");
+            int offset = TransformUtil.findFirstInstanceOfMethodCall(render, 0, "min", "(FF)F", "java/lang/Math");
             if (offset != -1) {
                 AbstractInsnNode insertAfter = render.instructions.get(offset);
                 render.instructions.insert(insertAfter, new InsnNode(Opcodes.FDIV));
-                render.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_CLIENT,
-                        "getRobeRotationDivisor",
-                        "(Lnet/minecraft/entity/Entity;)F",
-                        false
-                ));
+                render.instructions.insert(insertAfter,
+                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_CLIENT, "getRobeRotationDivisor",
+                                "(Lnet/minecraft/entity/Entity;)F", false));
                 render.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-            
+
             return true;
         }
         catch (Throwable anything) {
@@ -77,5 +75,5 @@ public class TransformerTCRobesElytraFlapping extends Transformer {
             return false;
         }
     }
-    
+
 }

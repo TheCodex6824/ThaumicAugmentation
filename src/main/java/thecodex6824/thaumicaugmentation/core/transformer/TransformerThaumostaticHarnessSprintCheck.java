@@ -32,60 +32,58 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class TransformerThaumostaticHarnessSprintCheck extends Transformer {
 
     private static final String CLASS = "net.minecraft.client.entity.EntityPlayerSP";
-    
+
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-    
+
     @Override
-    public boolean isTransformationNeeded(String transformedName) {
+    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
         return transformedName.equals(CLASS);
     }
-    
+
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-    
+
     @Override
-    public boolean transform(ClassNode classNode, String name, String transformedName) {
+    public boolean transform(ClassNode classNode, String transformedName) {
         try {
-            MethodNode sprint = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/entity/EntityPlayerSP", "func_70031_b",
-                    Type.VOID_TYPE, Type.BOOLEAN_TYPE), "(Z)V");
+            MethodNode sprint = TransformUtil.findMethod(classNode,
+                    TransformUtil.remapMethodName("net/minecraft/client/entity/EntityPlayerSP", "func_70031_b",
+                            Type.VOID_TYPE, Type.BOOLEAN_TYPE),
+                    "(Z)V");
             int ret = TransformUtil.findFirstInstanceOfOpcode(sprint, 0, Opcodes.INVOKESPECIAL);
             if (ret != -1) {
                 AbstractInsnNode insertAfter = sprint.instructions.get(ret).getPrevious();
                 sprint.instructions.insert(insertAfter, new InsnNode(Opcodes.SWAP));
                 sprint.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
-                sprint.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_CLIENT,
-                        "checkPlayerSprintState",
-                        "(Lnet/minecraft/client/entity/EntityPlayerSP;Z)Z",
-                        false
-                ));
+                sprint.instructions.insert(insertAfter,
+                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_CLIENT, "checkPlayerSprintState",
+                                "(Lnet/minecraft/client/entity/EntityPlayerSP;Z)Z", false));
             }
             else {
                 // Player API deletes the entire method, and moves it to its own (!)
                 // in this case, just hooking at the start is fine though
-                // I hook the super call above to be compatible with other things that might also hook before
+                // I hook the super call above to be compatible with other things that might
+                // also hook before
                 ret = TransformUtil.findFirstInstanceOfMethodCall(sprint, 0, "setSprinting",
                         "(Lapi/player/client/IClientPlayerAPI;Z)V", "api/player/client/ClientPlayerAPI");
                 if (ret != -1) {
                     AbstractInsnNode insertAfter = sprint.instructions.get(ret).getPrevious();
                     sprint.instructions.insert(insertAfter, new InsnNode(Opcodes.SWAP));
                     sprint.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
-                    sprint.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                            TransformUtil.HOOKS_CLIENT,
-                            "checkPlayerSprintState",
-                            "(Lnet/minecraft/client/entity/EntityPlayerSP;Z)Z",
-                            false
-                    ));
+                    sprint.instructions.insert(insertAfter,
+                            new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_CLIENT,
+                                    "checkPlayerSprintState", "(Lnet/minecraft/client/entity/EntityPlayerSP;Z)Z",
+                                    false));
                 }
                 else
                     throw new TransformerException("Could not locate required instructions");
             }
-            
+
             return true;
         }
         catch (Throwable anything) {
@@ -93,5 +91,5 @@ public class TransformerThaumostaticHarnessSprintCheck extends Transformer {
             return false;
         }
     }
-    
+
 }
