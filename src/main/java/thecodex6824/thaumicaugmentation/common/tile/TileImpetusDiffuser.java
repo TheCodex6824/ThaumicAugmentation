@@ -197,7 +197,7 @@ public class TileImpetusDiffuser extends TileEntity implements ITickable, IAnima
                                             for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
                                                 NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
                                             
-                                            siphon.progress += (int) (result.energyConsumed / 1.5F);
+                                            siphon.progress += (int) Math.ceil(result.energyConsumed / 1.5F);
                                             if ((ticks - 1) % 40 == 0) {
                                                 ImpetusAPI.createImpetusParticles(world, new Vec3d(pos).add(0.5, 0.65, 0.5),
                                                         new Vec3d(check).add(0.5, 0.85, 0.5));
