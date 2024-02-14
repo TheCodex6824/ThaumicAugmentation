@@ -211,9 +211,11 @@ jar {
     }
 }
 
+tasks.build.dependsOn(tasks.signJar)
+
 project.tasks.whenTaskAdded {
     if (it.name.equals('reobfJar')) {
-        it.dependsOn('signJar')
+        tasks.signJar.dependsOn(it)
     }
 }
 
