@@ -31,38 +31,41 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class TransformerBaubleSlotChanged extends Transformer {
 
     private static final String CLASS = "baubles.api.cap.BaublesContainer";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
+    public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
             MethodNode set = TransformUtil.findMethod(classNode, "setChanged", "(IZ)V");
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(set, ret, Opcodes.RETURN)) != -1) {
                 AbstractInsnNode insertAfter = set.instructions.get(ret).getPrevious();
-                set.instructions.insert(insertAfter,
-                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "onBaubleChanged",
-                                "(Lnet/minecraft/entity/EntityLivingBase;)V", false));
-                set.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD,
-                        "baubles/api/cap/BaublesContainer", "player", "Lnet/minecraft/entity/EntityLivingBase;"));
+                set.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        TransformUtil.HOOKS_COMMON,
+                        "onBaubleChanged",
+                        "(Lnet/minecraft/entity/EntityLivingBase;)V",
+                        false
+                ));
+                set.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD, "baubles/api/cap/BaublesContainer",
+                        "player", "Lnet/minecraft/entity/EntityLivingBase;"));
                 set.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
                 ret += 4;
             }
-
+            
             return true;
         }
         catch (Throwable anything) {
@@ -70,5 +73,5 @@ public class TransformerBaubleSlotChanged extends Transformer {
             return false;
         }
     }
-
+    
 }

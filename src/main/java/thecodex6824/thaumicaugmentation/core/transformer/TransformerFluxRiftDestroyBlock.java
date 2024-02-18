@@ -31,47 +31,44 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class TransformerFluxRiftDestroyBlock extends Transformer {
 
     private static final String CLASS = "thaumcraft.common.entities.EntityFluxRift";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
+    public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode check = TransformUtil.findMethod(classNode,
-                    TransformUtil.remapMethodName("net/minecraft/entity/Entity", "func_70071_h_", Type.VOID_TYPE),
-                    "()V");
-            int ret = TransformUtil.findFirstInstanceOfMethodCall(check, 0,
-                    TransformUtil.remapMethodName("net/minecraft/block/Block", "func_176209_a", Type.BOOLEAN_TYPE,
-                            Type.getType("Lnet/minecraft/block/state/IBlockState;"), Type.BOOLEAN_TYPE),
-                    "(Lnet/minecraft/block/state/IBlockState;Z)Z", "net/minecraft/block/Block");
-            if (ret != -1 && ret < check.instructions.size() - 1
-                    && check.instructions.get(ret).getNext() instanceof JumpInsnNode) {
+            MethodNode check = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/Entity", "func_70071_h_", Type.VOID_TYPE), "()V");
+            int ret = TransformUtil.findFirstInstanceOfMethodCall(check, 0, TransformUtil.remapMethodName("net/minecraft/block/Block", "func_176209_a",
+                    Type.BOOLEAN_TYPE, Type.getType("Lnet/minecraft/block/state/IBlockState;"), Type.BOOLEAN_TYPE), "(Lnet/minecraft/block/state/IBlockState;Z)Z", "net/minecraft/block/Block");
+            if (ret != -1 && ret < check.instructions.size() - 1 && check.instructions.get(ret).getNext() instanceof JumpInsnNode) {
                 JumpInsnNode insertAfter = (JumpInsnNode) check.instructions.get(ret).getNext();
                 check.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFNE, insertAfter.label));
                 check.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_COMMON, "fireFluxRiftDestroyBlockEvent",
+                        TransformUtil.HOOKS_COMMON,
+                        "fireFluxRiftDestroyBlockEvent",
                         "(Lthaumcraft/common/entities/EntityFluxRift;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z",
-                        false));
+                        false
+                ));
                 check.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 6));
                 check.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 5));
                 check.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-
+            
             return true;
         }
         catch (Throwable anything) {
@@ -79,5 +76,5 @@ public class TransformerFluxRiftDestroyBlock extends Transformer {
             return false;
         }
     }
-
+    
 }

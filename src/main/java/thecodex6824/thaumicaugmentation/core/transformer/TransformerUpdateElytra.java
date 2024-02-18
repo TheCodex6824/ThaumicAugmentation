@@ -28,44 +28,47 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class TransformerUpdateElytra extends Transformer {
+public class TransformerUpdateElytra  extends Transformer {
 
     private static final String CLASS = "net.minecraft.entity.EntityLivingBase";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
+    public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode update = TransformUtil.findMethod(classNode, TransformUtil
-                    .remapMethodName("net/minecraft/entity/EntityLivingBase", "func_184616_r", Type.VOID_TYPE), "()V");
+            MethodNode update = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/EntityLivingBase", "func_184616_r",
+                    Type.VOID_TYPE), "()V");
             int con = TransformUtil.findFirstInstanceOfOpcode(update, 0, Opcodes.ICONST_0);
             int ret = TransformUtil.findFirstInstanceOfOpcode(update, con, Opcodes.ISTORE);
             if (con != -1 && ret != -1 && ret == con + 1) {
                 AbstractInsnNode insertAfter = update.instructions.get(ret);
                 update.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ISTORE, 1));
-                update.instructions.insert(insertAfter,
-                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "updateElytraFlag",
-                                "(Lnet/minecraft/entity/EntityLivingBase;Z)Z", false));
+                update.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        TransformUtil.HOOKS_COMMON,
+                        "updateElytraFlag",
+                        "(Lnet/minecraft/entity/EntityLivingBase;Z)Z",
+                        false
+                ));
                 update.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ILOAD, 1));
                 update.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-
+            
             return true;
         }
         catch (Throwable anything) {
@@ -73,5 +76,5 @@ public class TransformerUpdateElytra extends Transformer {
             return false;
         }
     }
-
+    
 }

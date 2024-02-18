@@ -28,48 +28,48 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class TransformerRenderEntities extends Transformer {
+public class TransformerRenderEntities  extends Transformer {
 
     private static final String CLASS = "net.minecraft.client.renderer.RenderGlobal";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
+    public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode render = TransformUtil.findMethod(classNode,
-                    TransformUtil.remapMethodName("net/minecraft/client/renderer/RenderGlobal", "func_180446_a",
-                            Type.VOID_TYPE, Type.getType("Lnet/minecraft/entity/Entity;"),
-                            Type.getType("Lnet/minecraft/client/renderer/culling/ICamera;"), Type.FLOAT_TYPE),
+            MethodNode render = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/client/renderer/RenderGlobal", "func_180446_a",
+                    Type.VOID_TYPE, Type.getType("Lnet/minecraft/entity/Entity;"), Type.getType("Lnet/minecraft/client/renderer/culling/ICamera;"), Type.FLOAT_TYPE),
                     "(Lnet/minecraft/entity/Entity;Lnet/minecraft/client/renderer/culling/ICamera;F)V");
-
-            // we want to pick a spot after TE / entity rendering, but before GL state gets
-            // reset
-            int call = TransformUtil.findLastInstanceOfMethodCall(render, render.instructions.size(), TransformUtil
-                    .remapMethodName("net/minecraft/client/renderer/RenderGlobal", "func_180443_s", Type.VOID_TYPE),
+            
+            // we want to pick a spot after TE / entity rendering, but before GL state gets reset
+            int call = TransformUtil.findLastInstanceOfMethodCall(render, render.instructions.size(), TransformUtil.remapMethodName("net/minecraft/client/renderer/RenderGlobal", "func_180443_s", Type.VOID_TYPE),
                     "()V", "net/minecraft/client/renderer/RenderGlobal");
             if (call != -1) {
                 AbstractInsnNode insertAfter = render.instructions.get(call).getPrevious();
                 render.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        TransformUtil.HOOKS_CLIENT, "onRenderEntities", "(I)V", false));
+                        TransformUtil.HOOKS_CLIENT,
+                        "onRenderEntities",
+                        "(I)V",
+                        false
+                ));
                 render.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ILOAD, 4));
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-
+            
             return true;
         }
         catch (Throwable anything) {
@@ -77,5 +77,5 @@ public class TransformerRenderEntities extends Transformer {
             return false;
         }
     }
-
+    
 }

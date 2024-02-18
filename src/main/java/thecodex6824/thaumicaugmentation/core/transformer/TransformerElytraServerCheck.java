@@ -32,52 +32,46 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class TransformerElytraServerCheck extends Transformer {
 
     private static final String CLASS = "net.minecraft.network.NetHandlerPlayServer";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
+    public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode check = TransformUtil.findMethod(classNode,
-                    TransformUtil.remapMethodName("net/minecraft/network/NetHandlerPlayServer", "func_147357_a",
-                            Type.VOID_TYPE, Type.getType("Lnet/minecraft/network/play/client/CPacketEntityAction;")),
-                    "(Lnet/minecraft/network/play/client/CPacketEntityAction;)V");
-            int ret = TransformUtil.findFirstInstanceOfMethodCall(check, 3,
-                    TransformUtil.remapMethodName("net/minecraft/entity/player/EntityPlayerMP", "func_184582_a",
-                            Type.getType("Lnet/minecraft/item/ItemStack;"),
-                            Type.getType("Lnet/minecraft/inventory/EntityEquipmentSlot;")),
-                    "(Lnet/minecraft/inventory/EntityEquipmentSlot;)Lnet/minecraft/item/ItemStack;",
-                    "net/minecraft/entity/player/EntityPlayerMP");
+            MethodNode check = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/network/NetHandlerPlayServer", "func_147357_a",
+                    Type.VOID_TYPE, Type.getType("Lnet/minecraft/network/play/client/CPacketEntityAction;")), "(Lnet/minecraft/network/play/client/CPacketEntityAction;)V");
+            int ret = TransformUtil.findFirstInstanceOfMethodCall(check, 3, TransformUtil.remapMethodName("net/minecraft/entity/player/EntityPlayerMP", "func_184582_a",
+                    Type.getType("Lnet/minecraft/item/ItemStack;"), Type.getType("Lnet/minecraft/inventory/EntityEquipmentSlot;")),
+                    "(Lnet/minecraft/inventory/EntityEquipmentSlot;)Lnet/minecraft/item/ItemStack;", "net/minecraft/entity/player/EntityPlayerMP");
             if (ret != -1) {
                 AbstractInsnNode insertAfter = check.instructions.get(ret).getNext();
-                check.instructions.insert(insertAfter,
-                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "checkElytra",
-                                "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayerMP;)V",
-                                false));
-                check.instructions.insert(insertAfter,
-                        new FieldInsnNode(
-                                Opcodes.GETFIELD, "net/minecraft/network/NetHandlerPlayServer", TransformUtil
-                                        .remapFieldName("net/minecraft/network/NetHandlerPlayServer", "field_147369_b"),
-                                "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+                check.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        TransformUtil.HOOKS_COMMON,
+                        "checkElytra",
+                        "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayerMP;)V",
+                        false
+                ));
+                check.instructions.insert(insertAfter, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/network/NetHandlerPlayServer",
+                        TransformUtil.remapFieldName("net/minecraft/network/NetHandlerPlayServer", "field_147369_b"), "Lnet/minecraft/entity/player/EntityPlayerMP;"));
                 check.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 0));
                 check.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-
+            
             return true;
         }
         catch (Throwable anything) {
@@ -85,5 +79,5 @@ public class TransformerElytraServerCheck extends Transformer {
             return false;
         }
     }
-
+    
 }

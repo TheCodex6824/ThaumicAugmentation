@@ -33,30 +33,27 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class TransformerCycleItemStackMetadata extends Transformer {
 
     private static final String CLASS = "thaumcraft.common.lib.utils.InventoryUtils";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
+    public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode cycle = TransformUtil.findMethod(classNode, "cycleItemStack",
-                    "(Ljava/lang/Object;I)Lnet/minecraft/item/ItemStack;");
-            int ret = TransformUtil.findFirstInstanceOfMethodCall(cycle, 0,
-                    TransformUtil.remapMethodName("net/minecraft/item/ItemStack", "func_77984_f", Type.BOOLEAN_TYPE),
-                    "()Z", "net/minecraft/item/ItemStack");
+            MethodNode cycle = TransformUtil.findMethod(classNode, "cycleItemStack", "(Ljava/lang/Object;I)Lnet/minecraft/item/ItemStack;");
+            int ret = TransformUtil.findFirstInstanceOfMethodCall(cycle, 0, TransformUtil.remapMethodName("net/minecraft/item/ItemStack", "func_77984_f", Type.BOOLEAN_TYPE), "()Z", "net/minecraft/item/ItemStack");
             if (ret != -1) {
                 JumpInsnNode target = (JumpInsnNode) cycle.instructions.get(ret).getNext();
                 Label targetLabel = target.label.getLabel();
@@ -67,9 +64,12 @@ public class TransformerCycleItemStackMetadata extends Transformer {
                         InsnList insns = new InsnList();
                         insns.add(new VarInsnNode(Opcodes.ALOAD, 0));
                         insns.add(new VarInsnNode(Opcodes.ILOAD, 1));
-                        insns.add(new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "cycleItemStack",
+                        insns.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                                TransformUtil.HOOKS_COMMON,
+                                "cycleItemStack",
                                 "(Lnet/minecraft/item/ItemStack;Ljava/lang/Object;I)Lnet/minecraft/item/ItemStack;",
-                                false));
+                                false
+                        ));
 
                         cycle.instructions.insert(cycle.instructions.get(ret).getPrevious(), insns);
                     }
@@ -81,7 +81,7 @@ public class TransformerCycleItemStackMetadata extends Transformer {
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-
+            
             return true;
         }
         catch (Throwable anything) {
@@ -89,5 +89,5 @@ public class TransformerCycleItemStackMetadata extends Transformer {
             return false;
         }
     }
-
+    
 }

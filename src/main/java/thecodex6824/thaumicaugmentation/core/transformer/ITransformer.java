@@ -24,14 +24,14 @@ import org.objectweb.asm.tree.ClassNode;
 
 public interface ITransformer {
 
-    public boolean isTransformationNeeded(ClassNode node, String transformedName);
-
-    public boolean transform(ClassNode classNode, String transformedName);
-
+    public boolean isTransformationNeeded(String transformedName);
+    
+    public boolean transform(ClassNode classNode, String name, String transformedName);
+    
     public RuntimeException getRaisedException();
-
+    
     public boolean needToComputeFrames();
-
+    
     public boolean isAllowedToFail();
-
+    
 }

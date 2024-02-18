@@ -31,37 +31,37 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class TransformerAttemptTeleport extends Transformer {
 
     private static final String CLASS = "net.minecraft.entity.EntityLivingBase";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
+    public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode teleport = TransformUtil.findMethod(classNode,
-                    TransformUtil.remapMethodName("net/minecraft/entity/EntityLivingBase", "func_184595_k",
-                            Type.BOOLEAN_TYPE, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE),
-                    "(DDD)Z");
-            int ret = TransformUtil.findFirstInstanceOfOpcode(teleport,
-                    TransformUtil.findFirstLoad(teleport, 0, Opcodes.ILOAD, 17), Opcodes.IFEQ);
+            MethodNode teleport = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/EntityLivingBase", "func_184595_k",
+                    Type.BOOLEAN_TYPE, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE), "(DDD)Z");
+            int ret = TransformUtil.findFirstInstanceOfOpcode(teleport, TransformUtil.findFirstLoad(teleport, 0, Opcodes.ILOAD, 17), Opcodes.IFEQ);
             if (ret != -1) {
                 JumpInsnNode insertAfter = (JumpInsnNode) teleport.instructions.get(ret);
                 teleport.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, insertAfter.label));
-                teleport.instructions.insert(insertAfter,
-                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "onAttemptTeleport",
-                                "(Lnet/minecraft/entity/EntityLivingBase;DDD)Z", false));
+                teleport.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        TransformUtil.HOOKS_COMMON,
+                        "onAttemptTeleport",
+                        "(Lnet/minecraft/entity/EntityLivingBase;DDD)Z",
+                        false
+                ));
                 teleport.instructions.insert(insertAfter, new VarInsnNode(Opcodes.DLOAD, 11));
                 teleport.instructions.insert(insertAfter, new VarInsnNode(Opcodes.DLOAD, 9));
                 teleport.instructions.insert(insertAfter, new VarInsnNode(Opcodes.DLOAD, 7));
@@ -69,7 +69,7 @@ public class TransformerAttemptTeleport extends Transformer {
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-
+            
             return true;
         }
         catch (Throwable anything) {
@@ -77,5 +77,5 @@ public class TransformerAttemptTeleport extends Transformer {
             return false;
         }
     }
-
+    
 }

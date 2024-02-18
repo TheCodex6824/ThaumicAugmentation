@@ -32,49 +32,47 @@ import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 public class TransformerWardBlockFlammability extends Transformer {
 
     private static final String CLASS = "net.minecraft.block.Block";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
-    private MethodNode getMethod(ClassNode node) {
-        return TransformUtil.findMethod(node, "getFlammability",
-                "(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;)I");
-    }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
-        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "")
-                && TransformUtil.classExtends(node, CLASS)
-                && (getMethod(node) != null || transformedName.equals(CLASS));
+    public boolean isTransformationNeeded(String transformedName) {
+        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "") &&
+                transformedName.equals(CLASS);
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode fire = getMethod(classNode);
+            MethodNode fire = TransformUtil.findMethod(classNode, "getFlammability",
+                    "(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;)I");
             boolean found = false;
             int ret = 0;
             while ((ret = TransformUtil.findFirstInstanceOfOpcode(fire, ret, Opcodes.IRETURN)) != -1) {
                 AbstractInsnNode insertAfter = fire.instructions.get(ret).getPrevious();
-                fire.instructions.insert(insertAfter,
-                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "checkWardFlammability",
-                                "(ILnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)I", false));
+                fire.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        TransformUtil.HOOKS_COMMON,
+                        "checkWardFlammability",
+                        "(ILnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)I",
+                        false
+                ));
                 fire.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
                 fire.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
                 ret += 4;
                 found = true;
             }
-
+            
             if (!found)
                 throw new TransformerException("Could not locate required instructions");
-
+            
             return true;
         }
         catch (Throwable anything) {
@@ -82,5 +80,5 @@ public class TransformerWardBlockFlammability extends Transformer {
             return false;
         }
     }
-
+    
 }

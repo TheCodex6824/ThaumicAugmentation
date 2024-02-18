@@ -29,27 +29,26 @@ import org.objectweb.asm.tree.MethodNode;
 public class TransformerVoidRobesArmorBarFix extends Transformer {
 
     private static final String CLASS = "thaumcraft.common.items.armor.ItemVoidRobeArmor";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
+    public boolean isTransformationNeeded(String transformedName) {
         return transformedName.equals(CLASS);
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return true;
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode disp = TransformUtil.findMethod(classNode, "getArmorDisplay",
-                    "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;I)I");
+            MethodNode disp = TransformUtil.findMethod(classNode, "getArmorDisplay", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;I)I");
             int offset = TransformUtil.findFirstInstanceOfOpcode(disp, 0, Opcodes.IRETURN);
             if (offset != -1) {
                 AbstractInsnNode insertAfter = disp.instructions.get(offset).getPrevious();
@@ -57,7 +56,7 @@ public class TransformerVoidRobesArmorBarFix extends Transformer {
             }
             else
                 throw new TransformerException("Could not locate required instructions");
-
+            
             return true;
         }
         catch (Throwable anything) {
@@ -65,5 +64,5 @@ public class TransformerVoidRobesArmorBarFix extends Transformer {
             return false;
         }
     }
-
+    
 }

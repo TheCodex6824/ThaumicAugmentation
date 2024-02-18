@@ -34,56 +34,56 @@ import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 public class TransformerWardBlockNoVillagerFarming extends Transformer {
 
     private static final String CLASS = "net.minecraft.entity.ai.EntityAIHarvestFarmland";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
-        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "")
-                && transformedName.equals(CLASS);
+    public boolean isTransformationNeeded(String transformedName) {
+        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "") &&
+                transformedName.equals(CLASS);
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode farm = TransformUtil.findMethod(classNode,
-                    TransformUtil.remapMethodName("net/minecraft/entity/ai/EntityAIHarvestFarmland", "func_179488_a",
-                            Type.BOOLEAN_TYPE, Type.getType("Lnet/minecraft/world/World;"),
-                            Type.getType("Lnet/minecraft/util/math/BlockPos;")),
-                    "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z");
+            MethodNode farm = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/ai/EntityAIHarvestFarmland", "func_179488_a",
+                    Type.BOOLEAN_TYPE, Type.getType("Lnet/minecraft/world/World;"), Type.getType("Lnet/minecraft/util/math/BlockPos;")), "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z");
             int plant = TransformUtil.findLastInstanceOfOpcode(farm, farm.instructions.size(), Opcodes.IFGE);
             int harvest = TransformUtil.findLastInstanceOfOpcode(farm, plant, Opcodes.IFGE);
             if (plant != -1 && harvest != -1) {
                 AbstractInsnNode insertAfter = farm.instructions.get(plant);
-                farm.instructions.insert(insertAfter,
-                        new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
-                farm.instructions.insert(insertAfter,
-                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "checkWardGeneric",
-                                "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z", false));
+                farm.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
+                farm.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        TransformUtil.HOOKS_COMMON,
+                        "checkWardGeneric",
+                        "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                        false
+                ));
                 farm.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
                 farm.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
-
+                
                 insertAfter = farm.instructions.get(harvest);
-                farm.instructions.insert(insertAfter,
-                        new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
-                farm.instructions.insert(insertAfter,
-                        new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "checkWardGeneric",
-                                "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z", false));
+                farm.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
+                farm.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        TransformUtil.HOOKS_COMMON,
+                        "checkWardGeneric",
+                        "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                        false
+                ));
                 farm.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
                 farm.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 1));
             }
             else
-                throw new TransformerException(
-                        "Could not locate required instructions, locations: " + plant + ", " + harvest);
-
+                throw new TransformerException("Could not locate required instructions, locations: " + plant + ", " + harvest);
+            
             return true;
         }
         catch (Throwable anything) {
@@ -91,5 +91,5 @@ public class TransformerWardBlockNoVillagerFarming extends Transformer {
             return false;
         }
     }
-
+    
 }

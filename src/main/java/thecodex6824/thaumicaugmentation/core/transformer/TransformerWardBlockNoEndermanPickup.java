@@ -34,39 +34,40 @@ import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 public class TransformerWardBlockNoEndermanPickup extends Transformer {
 
     private static final String CLASS = "net.minecraft.entity.monster.EntityEnderman$AITakeBlock";
-
+    
     @Override
     public boolean needToComputeFrames() {
         return false;
     }
-
+    
     @Override
-    public boolean isTransformationNeeded(ClassNode node, String transformedName) {
-        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "")
-                && transformedName.equals(CLASS);
+    public boolean isTransformationNeeded(String transformedName) {
+        return !ThaumicAugmentationCore.getConfig().getBoolean("DisableWardFocus", "gameplay.ward", false, "") &&
+                transformedName.equals(CLASS);
     }
-
+    
     @Override
     public boolean isAllowedToFail() {
         return false;
     }
-
+    
     @Override
-    public boolean transform(ClassNode classNode, String transformedName) {
+    public boolean transform(ClassNode classNode, String name, String transformedName) {
         try {
-            MethodNode pickup = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName(
-                    "net/minecraft/entity/monster/EntityEnderman$AITakeBlock", "func_75246_d", Type.VOID_TYPE), "()V");
+            MethodNode pickup = TransformUtil.findMethod(classNode, TransformUtil.remapMethodName("net/minecraft/entity/monster/EntityEnderman$AITakeBlock", "func_75246_d", Type.VOID_TYPE),
+                    "()V");
             boolean found = false;
             int ret = pickup.instructions.size();
             while ((ret = TransformUtil.findLastInstanceOfOpcode(pickup, ret, Opcodes.IFEQ)) != -1) {
                 AbstractInsnNode insertAfter = pickup.instructions.get(ret);
-                if (insertAfter.getPrevious() instanceof VarInsnNode
-                        && ((VarInsnNode) insertAfter.getPrevious()).var == 10) {
-                    pickup.instructions.insert(insertAfter,
-                            new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
-                    pickup.instructions.insert(insertAfter,
-                            new MethodInsnNode(Opcodes.INVOKESTATIC, TransformUtil.HOOKS_COMMON, "checkWardGeneric",
-                                    "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z", false));
+                if (insertAfter.getPrevious() instanceof VarInsnNode && ((VarInsnNode) insertAfter.getPrevious()).var == 10) {
+                    pickup.instructions.insert(insertAfter, new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) insertAfter).label));
+                    pickup.instructions.insert(insertAfter, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                            TransformUtil.HOOKS_COMMON,
+                            "checkWardGeneric",
+                            "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+                            false
+                    ));
                     pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 6));
                     pickup.instructions.insert(insertAfter, new VarInsnNode(Opcodes.ALOAD, 2));
                     found = true;
@@ -75,10 +76,10 @@ public class TransformerWardBlockNoEndermanPickup extends Transformer {
                 else
                     --ret;
             }
-
+            
             if (!found)
                 throw new TransformerException("Could not locate required instructions");
-
+            
             return true;
         }
         catch (Throwable anything) {
@@ -86,5 +87,5 @@ public class TransformerWardBlockNoEndermanPickup extends Transformer {
             return false;
         }
     }
-
+    
 }
