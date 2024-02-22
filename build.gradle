@@ -5,6 +5,13 @@ plugins {
     id 'net.minecraftforge.gradle' version '6.0.+'
 }
 
+repositories {
+    maven {
+        name "Su5ed LegacyDev Fork"
+        url "https://maven.su5ed.dev/releases"
+    }
+}
+
 // eclipse thinks test needs resources if this is not here
 sourceSets {
     test {
@@ -115,12 +122,28 @@ dependencies {
     runtimeOnly 'curse.maven:the-one-probe-245211:2667280'
     runtimeOnly 'curse.maven:ctm-267602:2915363'
     
+    constraints {
+        implementation('net.minecraftforge:legacydev:0.3.0.0-legacyExt') {
+            because 'needed to have all ATs work properly'
+        }
+    
+        implementation('org.ow2.asm:asm-debug-all:5.2') {
+            because 'newer ASM versions include module info that causes errors in Java 8'
+        }
+    }
+    
     configurations.forEach {
         // mergetool pollutes the classpath with conflicting classes
         it.exclude(group: 'net.minecraftforge', module: 'mergetool')
-
-        // newer ASM versions include module info that causes errors in Java 8
-        it.resolutionStrategy.force 'org.ow2.asm:asm-debug-all:5.2'
+        
+        // legacydev forge dep wants fatjar as the classifier, but 3.0 lacks it
+        it.resolutionStrategy.eachDependency {
+            if (it.requested.module.toString() == "net.minecraftforge:legacydev") {
+                it.artifactSelection {
+                    it.selectArtifact(DependencyArtifact.DEFAULT_TYPE, null, null)
+                }
+            }
+        }
     }
     
     // if the curse maven is down or otherwise not working:
