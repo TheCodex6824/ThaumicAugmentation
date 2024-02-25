@@ -74,6 +74,7 @@ public class MorphicArmorUnbindingRecipe extends IForgeRegistryEntry.Impl<IRecip
         }
         
         ItemStack ret = item.copy();
+        item.setCount(Math.min(item.getCount(), 1));
         MorphicArmorHelper.setMorphicArmor(ret, ItemStack.EMPTY);
         return ret;
     }

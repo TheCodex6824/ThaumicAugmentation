@@ -74,6 +74,7 @@ public class PrimalCutterAbilityRecipe extends IForgeRegistryEntry.Impl<IRecipe>
 
         if (!cutter.isEmpty()) {
             ItemStack output = cutter.copy();
+            output.setCount(Math.min(output.getCount(), 1));
             if (!output.hasTagCompound())
                 output.setTagCompound(new NBTTagCompound());
 

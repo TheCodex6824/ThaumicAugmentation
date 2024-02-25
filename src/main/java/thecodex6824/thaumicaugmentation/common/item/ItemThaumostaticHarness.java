@@ -162,7 +162,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
                     EntityPlayer player = (EntityPlayer) entity;
                     double cost = getHarnessVisCost(itemstack, player);
                     float speed = getHarnessFlySpeed(itemstack, player);
-                    if (RechargeHelper.getCharge(itemstack) >= cost) {
+                    if (player.isCreative() || RechargeHelper.getCharge(itemstack) >= cost) {
                         PlayerMovementAbilityManager.recordFlyState(player);
                         player.capabilities.allowFlying = true;
                         if (player.world.isRemote)
@@ -185,9 +185,14 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
                             
                             double current = stack.getTagCompound().getDouble("acc") + cost;
                             if (current >= 1.0) {
-                                int remove = (int) Math.floor(current);
-                                if (RechargeHelper.consumeCharge(stack, entity, remove))
-                                    current -= remove;
+                            	if (player.isCreative()) {
+                            		current = 0.0;
+                            	}
+                            	else {
+                            		int remove = (int) Math.floor(current);
+                            		if (RechargeHelper.consumeCharge(stack, entity, remove))
+                            			current -= remove;
+                            	}
                             }
                             
                             if (current >= 1.0) {
@@ -202,7 +207,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
                                 }
                             }
                              
-                            stack.getTagCompound().setDouble("acc", current);
+                            stack.getTagCompound().setDouble("acc", Math.min(current, Math.max(cost, 1.0)));
                         }
 
                         // might have stopped flying above
@@ -213,7 +218,7 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
                             applyHarnessDrift(stack, player);
                         }
                     }
-                    else if (!player.world.isRemote && RechargeHelper.getCharge(itemstack) < cost) {
+                    else if (!player.world.isRemote && !player.isCreative() && RechargeHelper.getCharge(itemstack) < cost) {
                         if (!PlayerMovementAbilityManager.popAndApplyFlyState(player)) {
                             if (!player.isCreative() && !player.isSpectator()) {
                                 player.capabilities.allowFlying = false;

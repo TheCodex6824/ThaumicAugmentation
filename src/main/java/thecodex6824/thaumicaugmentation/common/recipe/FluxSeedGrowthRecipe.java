@@ -74,6 +74,7 @@ public class FluxSeedGrowthRecipe extends InfusionRecipe {
     @Override
     public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
         ItemStack toReturn = input.copy();
+        toReturn.setCount(Math.min(toReturn.getCount(), 1));
         toReturn.getTagCompound().setInteger("flux", comps.size() * 100 + 100);
         toReturn.getTagCompound().setBoolean("grown", true);
         return toReturn;

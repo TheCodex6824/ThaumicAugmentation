@@ -51,6 +51,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.block.property.IWardParticles;
 import thecodex6824.thaumicaugmentation.api.event.BlockWardEvent;
 import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
@@ -138,7 +139,8 @@ public class WardEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (!event.world.isRemote && event.phase == Phase.START && event.world instanceof WorldServer) {
+        if (!event.world.isRemote && event.phase == Phase.START &&
+        		!TAConfig.disableExpensiveWardFeatures.getValue() && event.world instanceof WorldServer) {
             WorldServer world = (WorldServer) event.world;
             try {
                 Iterator<NextTickListEntry> iterator = world.pendingTickListEntriesHashSet.iterator();
@@ -210,7 +212,7 @@ public class WardEventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
-        if (event.getWorld().isBlockLoaded(event.getPos()) &&
+        if (!TAConfig.disableExpensiveWardFeatures.getValue() && event.getWorld().isBlockLoaded(event.getPos()) &&
                 event.getWorld().isChunkGeneratedAt(event.getPos().getX() >> 4, event.getPos().getZ() >> 4)) {
             BlockPos notifier = event.getPos();
             EnumSet<EnumFacing> sidesToRemove = EnumSet.noneOf(EnumFacing.class);

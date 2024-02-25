@@ -22,7 +22,11 @@ package thecodex6824.thaumicaugmentation.common.golem;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.*;
+import net.minecraft.entity.ai.EntityAIAttackMelee;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.PathNavigateClimber;
 import net.minecraft.pathfinding.PathNavigateGround;
@@ -39,7 +43,11 @@ import thecodex6824.thaumicaugmentation.api.golem.IGolemAttributeUpdateReceiver;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.capability.ResizableImpetusStorage;
-import thecodex6824.thaumicaugmentation.common.golem.ai.*;
+import thecodex6824.thaumicaugmentation.common.golem.ai.AIGotoBlockImproved;
+import thecodex6824.thaumicaugmentation.common.golem.ai.AIGotoEntityImproved;
+import thecodex6824.thaumicaugmentation.common.golem.ai.AIGotoHomeIfHurt;
+import thecodex6824.thaumicaugmentation.common.golem.ai.AIGotoHomeImproved;
+import thecodex6824.thaumicaugmentation.common.golem.ai.PathNavigateClimberImproved;
 
 public class GolemHeadAwakened implements GolemHead.IHeadFunction, IGolemAttributeUpdateReceiver {
 

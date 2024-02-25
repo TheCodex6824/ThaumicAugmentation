@@ -76,7 +76,7 @@ public class DyeableItemRecipe extends RecipesArmorDyes {
 
         if (!toDye.isEmpty() && dyes.size() > 0) {
             ItemStack toOutput = toDye.copy();
-            toOutput.setCount(1);
+            toOutput.setCount(Math.min(toOutput.getCount(), 1));
             int oldColor = ((IDyeableItem) toOutput.getItem()).getDyedColor(toOutput);
             float[] totalComponents = new float[] {(oldColor >> 16 & 0xFF) / 255.0F, (oldColor >> 8 & 0xFF) / 255.0F, (oldColor & 0xFF) / 255.0F};
             float totalMaximum = Math.max(totalComponents[0], Math.max(totalComponents[1], totalComponents[2]));

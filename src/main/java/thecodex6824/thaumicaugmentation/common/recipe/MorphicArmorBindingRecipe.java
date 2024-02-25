@@ -97,6 +97,7 @@ public class MorphicArmorBindingRecipe extends InfusionRecipe {
     @Override
     public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
         ItemStack toReturn = input.copy();
+        toReturn.setCount(Math.min(toReturn.getCount(), 1));
         for (ItemStack stack : comps) {
             if (stack.getItem() != ItemsTC.primordialPearl && stack.getItem() != ItemsTC.quicksilver) {
                 MorphicArmorHelper.setMorphicArmor(toReturn, stack);

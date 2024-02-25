@@ -94,6 +94,7 @@ public class AuthorizedKeyCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
 
         if (!ironKey.isEmpty() && !brassKey.isEmpty()) {
             ItemStack output = brassKey.copy();
+            output.setCount(Math.min(output.getCount(), 1));
             output.setItemDamage(0);
 
             return output;

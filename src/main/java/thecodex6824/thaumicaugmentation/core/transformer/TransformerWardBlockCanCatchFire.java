@@ -30,7 +30,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import thecodex6824.thaumicaugmentation.core.ThaumicAugmentationCore;
 
-public class TransformerWardBlockFlammability extends Transformer {
+public class TransformerWardBlockCanCatchFire extends Transformer {
 
     private static final String CLASS = "net.minecraft.block.BlockFire";
 
@@ -53,38 +53,32 @@ public class TransformerWardBlockFlammability extends Transformer {
     @Override
     public boolean transform(ClassNode classNode, String name, String transformedName) {
 	try {
-	    MethodNode fire = TransformUtil.findMethod(
-		    classNode,
-		    "tryCatchFire",
-		    "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ILjava/util/Random;ILnet/minecraft/util/EnumFacing;)V"
-		    );
-
+	    MethodNode fire = TransformUtil.findMethod(classNode, "canCatchFire",
+		    "(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;)Z");
+	    boolean found = false;
 	    int ret = 0;
-	    if ((ret = TransformUtil.findFirstInstanceOfMethodCall(
-		    fire,
-		    ret,
-		    "getFlammability",
-		    "(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;)I",
-		    "net/minecraft/block/Block"
-		    )
-		    ) != -1) {
+	    while ((ret = TransformUtil.findFirstInstanceOfOpcode(fire, ret, Opcodes.IRETURN)) != -1) {
 		InsnList toInsert = new InsnList();
-		toInsert.add(new InsnNode(Opcodes.DUP));
 		toInsert.add(new VarInsnNode(Opcodes.ALOAD, 1));
 		toInsert.add(new VarInsnNode(Opcodes.ALOAD, 2));
 		toInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
 			TransformUtil.HOOKS_COMMON,
 			"checkWardFlammability",
-			"(ILnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)I",
+			"(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)Z",
 			false
 			));
 		toInsert.add(new InsnNode(Opcodes.IAND));
 
-		fire.instructions.insert(fire.instructions.get(ret), toInsert);
-		return true;
+		fire.instructions.insert(fire.instructions.get(ret).getPrevious(), toInsert);
+		ret += 5;
+		found = true;
 	    }
 
-	    throw new TransformerException("Could not locate required instructions");
+	    if (!found) {
+		throw new TransformerException("Could not locate required instructions");
+	    }
+
+	    return true;
 	}
 	catch (Throwable anything) {
 	    error = new RuntimeException(anything);

@@ -112,7 +112,11 @@ public class ThaumiumKeyCopyRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         }
 
         if (!emptyThaumiumKey.isEmpty() && !thaumiumKey.isEmpty() && !brassKey.isEmpty())
-            return thaumiumKey.copy();
+        {
+        	ItemStack ret = thaumiumKey.copy();
+        	ret.setCount(Math.min(ret.getCount(), 1));
+            return ret;
+        }
         else
             return ItemStack.EMPTY;
     }

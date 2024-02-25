@@ -83,6 +83,7 @@ public class MorphicToolBindingRecipe extends InfusionRecipe {
     @Override
     public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
         ItemStack toReturn = new ItemStack(TAItems.MORPHIC_TOOL);
+        toReturn.setCount(Math.min(toReturn.getCount(), 1));
         if (input.hasTagCompound())
             toReturn.setTagCompound(input.getTagCompound().copy());
         
