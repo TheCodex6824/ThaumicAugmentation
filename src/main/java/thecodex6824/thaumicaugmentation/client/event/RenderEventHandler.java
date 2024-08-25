@@ -328,7 +328,7 @@ public class RenderEventHandler {
         GlStateManager.enableBlend();
         GlStateManager.disableCull();
         GlStateManager.pushMatrix();
-        Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.BEAM);
+        Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.IMPETUS_BEAM_INACTIVE);
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
         double angle = 0;
@@ -364,7 +364,7 @@ public class RenderEventHandler {
         GlStateManager.enableBlend();
         GlStateManager.disableCull();
         GlStateManager.pushMatrix();
-        Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.LASER);
+        Minecraft.getMinecraft().renderEngine.bindTexture(TATextures.IMPETUS_BEAM_ACTIVE);
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
         double angle = 0;//offset * Math.PI * 2;
