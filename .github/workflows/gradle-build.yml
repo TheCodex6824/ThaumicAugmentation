@@ -1,0 +1,33 @@
+name: Build with Gradle
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gradle-build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+    - name: Validate Gradle Wrapper
+      uses: gradle/actions/wrapper-validation@v3
+    - name: Setup Java 8 (Temurin)
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 8
+        architecture: x64
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+    - name: Run build using Gradle Wrapper
+      run: ./gradlew build
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifacts-${{ matrix.os }}
+        path: build/libs/ThaumicAugmentation-*.jar
+        if-no-files-found: error
