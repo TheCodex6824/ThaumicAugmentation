@@ -594,7 +594,8 @@ public final class TAConfigHolder {
         })
         public String[] deniedCategories = new String[] {
                 "THAUMIC_AUGMENTATION", "THAUMIC_TINKERER", "THAUMIC_WONDERS", "RUSTIC_THAUMATURGY", "PERIPHERY",
-                "ENGINEERED_GOLEMS", "EXPANDEDARCANUM", "MECHANICS"
+                "ENGINEERED_GOLEMS", "EXPANDEDARCANUM", "MECHANICS", "APOCRYPHA", "ISORROPIA", "REVELATIONS", "WEMT",
+                "FORGOTTEN_RELICS", "WARPTHEORY"
         };
 
         @Name("AllowWussRiftSeed")
