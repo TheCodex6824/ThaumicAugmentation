@@ -39,10 +39,13 @@ public class ScanEntityWithPeacefulFallback implements IScanThing {
     
     @Override
     public boolean checkThing(EntityPlayer player, Object thing) {
-        if (player.getEntityWorld().getDifficulty() != EnumDifficulty.PEACEFUL)
-            return entity.checkThing(player, thing);
-        else
-            return fallback.checkThing(player, thing);
+        if (player != null && thing != null) {
+            if (player.getEntityWorld().getDifficulty() != EnumDifficulty.PEACEFUL)
+                return entity.checkThing(player, thing);
+            else
+                return fallback.checkThing(player, thing);
+        }
+        return false;
     }
     
     @Override
