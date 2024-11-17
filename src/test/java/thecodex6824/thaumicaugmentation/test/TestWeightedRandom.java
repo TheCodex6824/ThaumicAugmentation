@@ -20,38 +20,38 @@
 
 package thecodex6824.thaumicaugmentation.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 
 import thecodex6824.thaumicaugmentation.common.util.WeightedRandom;
 
 public class TestWeightedRandom {
-    
+
     @Test
     public void testRandom() {
-        Random rand = new Random(1337);
-        ImmutableList<Integer> answers = ImmutableList.of(1, 3, 3, 2, 3, 3, 3, 2, 2, 3);
-        WeightedRandom<Integer> picker = new WeightedRandom<>(ImmutableList.of(1, 2, 3), ImmutableList.of(3, 5, 7));
-        for (int i = 0; i < answers.size(); ++i)
-            assertEquals(answers.get(i), picker.get(rand));
+	Random rand = new Random(1337);
+	ImmutableList<Integer> answers = ImmutableList.of(1, 3, 3, 2, 3, 3, 3, 2, 2, 3);
+	WeightedRandom<Integer> picker = new WeightedRandom<>(ImmutableList.of(1, 2, 3), ImmutableList.of(3, 5, 7));
+	for (int i = 0; i < answers.size(); ++i)
+	    assertEquals(answers.get(i), picker.get(rand));
     }
-    
+
     @Test
     public void testRemoveChoice() {
-        Random rand = new Random(1337);
-        ImmutableList<Integer> answers = ImmutableList.of(1, 3, 3, 2, 3, 2, 2, 2, 1, 2);
-        WeightedRandom<Integer> picker = new WeightedRandom<>(ImmutableList.of(1, 2, 3), ImmutableList.of(3, 5, 7));
-        for (int i = 0; i < answers.size() / 2; ++i)
-            assertEquals(answers.get(i), picker.get(rand));
-        
-        picker = picker.removeChoice(3);
-        for (int i = answers.size() / 2; i < answers.size(); ++i)
-            assertEquals(answers.get(i), picker.get(rand));
+	Random rand = new Random(1337);
+	ImmutableList<Integer> answers = ImmutableList.of(1, 3, 3, 2, 3, 2, 2, 2, 1, 2);
+	WeightedRandom<Integer> picker = new WeightedRandom<>(ImmutableList.of(1, 2, 3), ImmutableList.of(3, 5, 7));
+	for (int i = 0; i < answers.size() / 2; ++i)
+	    assertEquals(answers.get(i), picker.get(rand));
+
+	picker = picker.removeChoice(3);
+	for (int i = answers.size() / 2; i < answers.size(); ++i)
+	    assertEquals(answers.get(i), picker.get(rand));
     }
-    
+
 }

@@ -104,6 +104,10 @@ minecraft {
     }
 }
 
+configurations {
+    testCompile.extendsFrom compile
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${mcversion}-${forgeversion}"
     
@@ -115,7 +119,8 @@ dependencies {
     compileOnly 'curse.maven:auracontrol-397104:3013979'
     compileOnly 'curse.maven:electroblobs-wizardry-265642:2929294'
     
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.+'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.+'
     
     runtimeOnly 'curse.maven:jei-238222:2995897'
     runtimeOnly 'curse.maven:thaumic-jei-285492:2705304'

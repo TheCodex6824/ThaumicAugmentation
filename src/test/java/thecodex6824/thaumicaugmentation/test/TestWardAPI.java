@@ -20,11 +20,11 @@
 
 package thecodex6824.thaumicaugmentation.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import thecodex6824.thaumicaugmentation.api.ward.WardHelper;
 
@@ -32,10 +32,10 @@ public class TestWardAPI {
 
     @Test
     public void testSafeUUIDGeneration() {
-        for (int i = 0; i < 100; ++i) {
-            UUID uuid = WardHelper.generateSafeUUID();
-            assertEquals(0, uuid.version());
-        }
+	for (int i = 0; i < 100; ++i) {
+	    UUID uuid = WardHelper.generateSafeUUID();
+	    assertEquals(0, uuid.version());
+	}
     }
-    
+
 }
