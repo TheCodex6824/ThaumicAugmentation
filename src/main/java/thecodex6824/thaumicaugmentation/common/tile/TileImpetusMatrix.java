@@ -91,76 +91,76 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     protected static final float MIN_STABILITY = -100.0F;
     protected static final float MAX_STABILITY = 25.0F;
     protected static final DecimalFormat STAB_FORMATTER = new DecimalFormat("#######.##");
-    
+
     protected class MatrixImpetusStorage implements IImpetusStorage {
-        
-        protected long energy;
-        
-        @Override
-        public boolean canExtract() {
-            return true;
-        }
-        
-        @Override
-        public boolean canReceive() {
-            return true;
-        }
-        
-        @Override
-        public long getEnergyStored() {
-            return energy;
-        }
-        
-        @Override
-        public long getMaxEnergyStored() {
-            return getTotalCells() * CELL_CAPACITY;
-        }
-        
-        @Override
-        public long extractEnergy(long maxEnergy, boolean simulate) {
-            if (canExtract()) {
-                long amount = Math.min(5 * getTotalCells(), Math.min(energy, Math.min(getTotalCells() * CELL_CAPACITY, maxEnergy)));
-                if (!simulate) {
-                    energy -= amount;
-                    onEnergyChanged();
-                }
-                
-                return amount;
-            }
-            
-            return 0;
-        }
-        
-        @Override
-        public long receiveEnergy(long maxEnergy, boolean simulate) {
-            if (canReceive()) {
-                long amount = Math.min(Math.min(getTotalCells() * CELL_CAPACITY, maxEnergy), getMaxEnergyStored() - energy);
-                if (!simulate) {
-                    energy += amount;
-                    onEnergyChanged();
-                }
-                
-                return amount;
-            }
-            
-            return 0;
-        }
-        
-        @Override
-        public void onEnergyChanged() {
-            markDirty();
-            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-        }
-        
-        public void validateEnergy() {
-            long old = energy;
-            energy = Math.max(Math.min(energy, getTotalCells() * CELL_CAPACITY), 0);
-            if (old != energy)
-                onEnergyChanged();
-        }
-        
+
+	protected long energy;
+
+	@Override
+	public boolean canExtract() {
+	    return true;
+	}
+
+	@Override
+	public boolean canReceive() {
+	    return true;
+	}
+
+	@Override
+	public long getEnergyStored() {
+	    return energy;
+	}
+
+	@Override
+	public long getMaxEnergyStored() {
+	    return getTotalCells() * CELL_CAPACITY;
+	}
+
+	@Override
+	public long extractEnergy(long maxEnergy, boolean simulate) {
+	    if (canExtract()) {
+		long amount = Math.min(5 * getTotalCells(), Math.min(energy, Math.min(getTotalCells() * CELL_CAPACITY, maxEnergy)));
+		if (!simulate) {
+		    energy -= amount;
+		    onEnergyChanged();
+		}
+
+		return amount;
+	    }
+
+	    return 0;
+	}
+
+	@Override
+	public long receiveEnergy(long maxEnergy, boolean simulate) {
+	    if (canReceive()) {
+		long amount = Math.min(Math.min(getTotalCells() * CELL_CAPACITY, maxEnergy), getMaxEnergyStored() - energy);
+		if (!simulate) {
+		    energy += amount;
+		    onEnergyChanged();
+		}
+
+		return amount;
+	    }
+
+	    return 0;
+	}
+
+	@Override
+	public void onEnergyChanged() {
+	    markDirty();
+	    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+	}
+
+	public void validateEnergy() {
+	    long old = energy;
+	    energy = Math.max(Math.min(energy, getTotalCells() * CELL_CAPACITY), 0);
+	    if (old != energy)
+		onEnergyChanged();
+	}
+
     }
-    
+
     protected MatrixImpetusStorage buffer;
     protected BufferedImpetusProsumer prosumer;
     protected IAnimationStateMachine asm;
@@ -168,389 +168,389 @@ public class TileImpetusMatrix extends TileEntity implements ITickable, IAnimate
     protected float gain;
     protected int ticks;
     protected int lastResult;
-    
+
     public TileImpetusMatrix() {
-        buffer = new MatrixImpetusStorage();
-        prosumer = new BufferedImpetusProsumer(1, 1, buffer) {
-            @Override
-            public long onTransaction(Deque<IImpetusNode> path, long energy, boolean simulate) {
-                if (!simulate)
-                    markDirty();
-                
-                return energy;
-            }
-        };
-        ticks = ThreadLocalRandom.current().nextInt(20);
-        asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_matrix.json"), 
-                ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(20)));
-        lastResult = -1;
-        gain = -1.0F;
+	buffer = new MatrixImpetusStorage();
+	prosumer = new BufferedImpetusProsumer(1, 1, buffer) {
+	    @Override
+	    public long onTransaction(Deque<IImpetusNode> path, long energy, boolean simulate) {
+		if (!simulate)
+		    markDirty();
+
+		return energy;
+	    }
+	};
+	ticks = ThreadLocalRandom.current().nextInt(20);
+	asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_matrix.json"),
+		ImmutableMap.<String, ITimeValue>of("cycle_length", new VariableValue(20)));
+	lastResult = -1;
+	gain = -1.0F;
     }
-    
+
     protected float calculateStabilityGain() {
-        HashSet<BlockPos> positions = new HashSet<>();
-        MutableBlockPos check = new MutableBlockPos();
-        for (int x = -2; x < 3; ++x) {
-            for (int z = -2; z < 3; ++z) {
-                check.setPos(x + pos.getX(), 0, z + pos.getZ());
-                for (int y = -3; y < 4; ++y) {
-                    check.setY(y + pos.getY());
-                    if (world.isBlockLoaded(check) && world.isBlockLoaded(new BlockPos(-x + pos.getX(), y + pos.getY(), -z + pos.getZ()))) {
-                        Block b1 = world.getBlockState(check).getBlock();
-                        if (b1 == Blocks.SKULL || (b1 instanceof IInfusionStabiliser && ((IInfusionStabiliser) b1).canStabaliseInfusion(world, check)))
-                            positions.add(check.toImmutable());
-                    }
-                }
-            }
-        }
-        
-        float result = 0.0F;
-        ArrayList<BlockPos> issues = new ArrayList<>();
-        Object2IntOpenHashMap<Block> counts = new Object2IntOpenHashMap<>();
-        HashSet<BlockPos> visited = new HashSet<>();
-        MutableBlockPos negative = new MutableBlockPos();
-        for (BlockPos positive : positions) {
-            if (!visited.contains(positive)) {
-                negative.setPos(-(positive.getX() - pos.getX()) + pos.getX(), positive.getY(), -(positive.getZ() - pos.getZ()) + pos.getZ());
-                float stab1 = 0.0F, stab2 = 0.0F;
-                Block b1 = world.getBlockState(positive).getBlock();
-                Block b2 = world.getBlockState(negative).getBlock();
-                if (b1 instanceof IInfusionStabiliserExt)
-                    stab1 = ((IInfusionStabiliserExt) b1).getStabilizationAmount(world, positive);
-                else if (b1 == Blocks.SKULL || b1 instanceof IInfusionStabiliser)
-                    stab1 = 0.1F;
-                
-                if (b2 instanceof IInfusionStabiliserExt)
-                    stab2 = ((IInfusionStabiliserExt) b2).getStabilizationAmount(world, negative);
-                else if (b2 == Blocks.SKULL || b2 instanceof IInfusionStabiliser)
-                    stab2 = 0.1F;
-                
-                if (b1 == b2 && b1 != null && stab1 > 0.0F && DoubleMath.fuzzyEquals(stab1, stab2, 0.00001F)) {
-                    if (b1 instanceof IInfusionStabiliserExt && ((IInfusionStabiliserExt) b1).hasSymmetryPenalty(world, positive, negative)) {
-                        result -= ((IInfusionStabiliserExt) b1).getSymmetryPenalty(world, positive);
-                        issues.add(positive);
-                    }
-                    else {
-                        int current = counts.getInt(b1);
-                        result += current > 0 ? stab1 * Math.pow(0.75, current) : stab1;
-                        counts.addTo(b1, 1);
-                    }
-                }
-                else {
-                    result -= Math.max(stab1, stab2);
-                    issues.add(positive);
-                    issues.add(negative.toImmutable());
-                }
-                
-                visited.add(positive);
-                visited.add(negative.toImmutable());
-            }
-        }
-        
-        for (BlockPos p : issues) {
-            if (world.rand.nextInt(25) == 0) {
-                TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, p.getX(), p.getY(), p.getZ(),
-                        5.0F, Aspect.ELDRITCH.getColor()), new TargetPoint(world.provider.getDimension(), p.getX(), p.getY(), p.getZ(), 64));
-            }
-        }
-        
-        return result;
+	HashSet<BlockPos> positions = new HashSet<>();
+	MutableBlockPos check = new MutableBlockPos();
+	for (int x = -2; x < 3; ++x) {
+	    for (int z = -2; z < 3; ++z) {
+		check.setPos(x + pos.getX(), 0, z + pos.getZ());
+		for (int y = -3; y < 4; ++y) {
+		    check.setY(y + pos.getY());
+		    if (world.isBlockLoaded(check) && world.isBlockLoaded(new BlockPos(-x + pos.getX(), y + pos.getY(), -z + pos.getZ()))) {
+			Block b1 = world.getBlockState(check).getBlock();
+			if (b1 == Blocks.SKULL || (b1 instanceof IInfusionStabiliser && ((IInfusionStabiliser) b1).canStabaliseInfusion(world, check)))
+			    positions.add(check.toImmutable());
+		    }
+		}
+	    }
+	}
+
+	float result = 0.0F;
+	ArrayList<BlockPos> issues = new ArrayList<>();
+	Object2IntOpenHashMap<Block> counts = new Object2IntOpenHashMap<>();
+	HashSet<BlockPos> visited = new HashSet<>();
+	MutableBlockPos negative = new MutableBlockPos();
+	for (BlockPos positive : positions) {
+	    if (!visited.contains(positive)) {
+		negative.setPos(-(positive.getX() - pos.getX()) + pos.getX(), positive.getY(), -(positive.getZ() - pos.getZ()) + pos.getZ());
+		float stab1 = 0.0F, stab2 = 0.0F;
+		Block b1 = world.getBlockState(positive).getBlock();
+		Block b2 = world.getBlockState(negative).getBlock();
+		if (b1 instanceof IInfusionStabiliserExt)
+		    stab1 = ((IInfusionStabiliserExt) b1).getStabilizationAmount(world, positive);
+		else if (b1 == Blocks.SKULL || b1 instanceof IInfusionStabiliser)
+		    stab1 = 0.1F;
+
+		if (b2 instanceof IInfusionStabiliserExt)
+		    stab2 = ((IInfusionStabiliserExt) b2).getStabilizationAmount(world, negative);
+		else if (b2 == Blocks.SKULL || b2 instanceof IInfusionStabiliser)
+		    stab2 = 0.1F;
+
+		if (b1 == b2 && b1 != null && stab1 > 0.0F && DoubleMath.fuzzyEquals(stab1, stab2, 0.00001F)) {
+		    if (b1 instanceof IInfusionStabiliserExt && ((IInfusionStabiliserExt) b1).hasSymmetryPenalty(world, positive, negative)) {
+			result -= ((IInfusionStabiliserExt) b1).getSymmetryPenalty(world, positive);
+			issues.add(positive);
+		    }
+		    else {
+			int current = counts.getInt(b1);
+			result += current > 0 ? stab1 * Math.pow(0.75, current) : stab1;
+			counts.addTo(b1, 1);
+		    }
+		}
+		else {
+		    result -= Math.max(stab1, stab2);
+		    issues.add(positive);
+		    issues.add(negative.toImmutable());
+		}
+
+		visited.add(positive);
+		visited.add(negative.toImmutable());
+	    }
+	}
+
+	for (BlockPos p : issues) {
+	    if (world.rand.nextInt(25) == 0) {
+		TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, p.getX(), p.getY(), p.getZ(),
+			5.0F, Aspect.ELDRITCH.getColor()), new TargetPoint(world.provider.getDimension(), p.getX(), p.getY(), p.getZ(), 64));
+	    }
+	}
+
+	return result;
     }
-    
+
     @Override
     public void update() {
-        if (!world.isRemote && ++ticks % 10 == 0) {
-            if (ticks % 20 == 0) {
-                NodeHelper.validateOutputs(world, prosumer);
-                buffer.validateEnergy();
-                ConsumeResult result = prosumer.consume(getTotalCells() * CELL_CAPACITY, false);
-                if (result.energyConsumed > 0) {
-                    NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
-                    for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
-                        NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
-                }
-            }
-            
-            float oldGain = gain;
-            gain = calculateStabilityGain();
-            
-            float oldStab = stability;
-            stability -= world.rand.nextFloat() * getStabilityLossPerSecond();
-            stability += gain;
-            stability = Math.max(Math.min(stability, MAX_STABILITY), MIN_STABILITY);
-            if (stability < 0.0F && world.rand.nextInt(1500) <= Math.abs(stability)) {
-                if (world.rand.nextInt(5) == 0) {
-                    if (world.rand.nextBoolean()) {
-                        IBlockState state = world.getBlockState(pos.up());
-                        int info = state.getValue(IImpetusCellInfo.CELL_INFO);
-                        if (IImpetusCellInfo.getNumberOfCells(info) > 0) {
-                            ArrayList<EnumFacing> dirs = new ArrayList<>(IImpetusCellInfo.getCellDirections(info));
-                            EnumFacing selected = dirs.get(world.rand.nextInt(dirs.size()));
-                            world.setBlockState(pos.up(), state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(info, selected, false)));
-                            Entity drop = new EntityItem(world, pos.getX() + 0.5 * (1.0 - Math.abs(selected.getXOffset())) + selected.getXOffset(), pos.getY() + 1.0 + 0.5 * (1.0 - Math.abs(selected.getYOffset())) + selected.getYOffset(),
-                                    pos.getZ() + 0.5 * (1.0 - Math.abs(selected.getZOffset())) + selected.getZOffset(), new ItemStack(TAItems.MATERIAL, 1, 3));
-                            drop.motionX = selected.getXOffset() * 0.05;
-                            drop.motionY = selected.getYOffset() * 0.05;
-                            drop.motionZ = selected.getZOffset() * 0.05;
-                            world.spawnEntity(drop);
-                        }
-                        else {
-                            state = world.getBlockState(pos.down());
-                            info = state.getValue(IImpetusCellInfo.CELL_INFO);
-                            if (IImpetusCellInfo.getNumberOfCells(info) > 0) {
-                                ArrayList<EnumFacing> dirs = new ArrayList<>(IImpetusCellInfo.getCellDirections(info));
-                                EnumFacing selected = dirs.get(world.rand.nextInt(dirs.size()));
-                                world.setBlockState(pos.down(), state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(info, selected, false)));
-                                Entity drop = new EntityItem(world, pos.getX() + 0.5 * (1.0 - Math.abs(selected.getXOffset())) + selected.getXOffset(), pos.getY() - 1.0 + 0.5 * (1.0 - Math.abs(selected.getYOffset())) + selected.getYOffset(),
-                                        pos.getZ() + 0.5 * (1.0 - Math.abs(selected.getZOffset())) + selected.getZOffset(), new ItemStack(TAItems.MATERIAL, 1, 3));
-                                drop.motionX = selected.getXOffset() * 0.05;
-                                drop.motionY = selected.getYOffset() * 0.05;
-                                drop.motionZ = selected.getZOffset() * 0.05;
-                                world.spawnEntity(drop);
-                            }
-                        }
-                    }
-                    else {
-                        IBlockState state = world.getBlockState(pos.down());
-                        int info = state.getValue(IImpetusCellInfo.CELL_INFO);
-                        if (IImpetusCellInfo.getNumberOfCells(info) > 0) {
-                            ArrayList<EnumFacing> dirs = new ArrayList<>(IImpetusCellInfo.getCellDirections(info));
-                            EnumFacing selected = dirs.get(world.rand.nextInt(dirs.size()));
-                            world.setBlockState(pos.down(), state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(info, selected, false)));
-                            Entity drop = new EntityItem(world, pos.getX() + 0.5 * (1.0 - Math.abs(selected.getXOffset())) + selected.getXOffset(), pos.getY() - 1.0 + 0.5 * (1.0 - Math.abs(selected.getYOffset())) + selected.getYOffset(),
-                                    pos.getZ() + 0.5 * (1.0 - Math.abs(selected.getZOffset())) + selected.getZOffset(), new ItemStack(TAItems.MATERIAL, 1, 3));
-                            drop.motionX = selected.getXOffset() * 0.05;
-                            drop.motionY = selected.getYOffset() * 0.05;
-                            drop.motionZ = selected.getZOffset() * 0.05;
-                            world.spawnEntity(drop);
-                        }
-                        else {
-                            state = world.getBlockState(pos.up());
-                            info = state.getValue(IImpetusCellInfo.CELL_INFO);
-                            if (IImpetusCellInfo.getNumberOfCells(info) > 0) {
-                                ArrayList<EnumFacing> dirs = new ArrayList<>(IImpetusCellInfo.getCellDirections(info));
-                                EnumFacing selected = dirs.get(world.rand.nextInt(dirs.size()));
-                                world.setBlockState(pos.up(), state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(info, selected, false)));
-                                Entity drop = new EntityItem(world, pos.getX() + 0.5 * (1.0 - Math.abs(selected.getXOffset())) + selected.getXOffset(), pos.getY() + 1.0 + 0.5 * (1.0 - Math.abs(selected.getYOffset())) + selected.getYOffset(),
-                                        pos.getZ() + 0.5 * (1.0 - Math.abs(selected.getZOffset())) + selected.getZOffset(), new ItemStack(TAItems.MATERIAL, 1, 3));
-                                drop.motionX = selected.getXOffset() * 0.05;
-                                drop.motionY = selected.getYOffset() * 0.05;
-                                drop.motionZ = selected.getZOffset() * 0.05;
-                                world.spawnEntity(drop);
-                            }
-                        }
-                    }
-                    
-                    buffer.validateEnergy();
-                    world.playSound(null, pos, SoundsTC.grind, SoundCategory.BLOCKS, 0.6F, 1.0F);
-                    world.playSound(null, pos, SoundsTC.shock, SoundCategory.BLOCKS, 0.6F, 1.0F);
-                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, pos.getX() + 0.5,
-                            pos.getY() + 0.5, pos.getZ() + 0.5, 25.0F, Aspect.ELDRITCH.getColor()),
-                            new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
-                }
-                else {
-                    long discharge = (long) (getTotalCells() * world.rand.nextFloat() * 50.0F);
-                    discharge = buffer.extractEnergy(discharge, false);
-                    for (Entity e : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).grow(2.5))) {
-                        ImpetusAPI.causeImpetusDamage(new Vec3d(pos), e, Math.max(discharge / 10.0F, 1.0F));
-                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.ARC, pos.getX() + 0.5,
-                                pos.getY() + 0.5, pos.getZ() + 0.5, e.posX, e.posY + e.getEyeHeight(), e.posZ, Aspect.ELDRITCH.getColor(), e.height),
-                                new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
-                    }
-                    
-                    world.playSound(null, pos, SoundsTC.shock, SoundCategory.BLOCKS, 0.6F, 1.0F);
-                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, pos.getX() + 0.5,
-                            pos.getY() + 0.5, pos.getZ() + 0.5, 15.0F, Aspect.ELDRITCH.getColor()),
-                            new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
-                }
-            }
-            
-            int level = getComparatorOutput();
-            if (level != lastResult) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
-                world.updateComparatorOutputLevel(pos.down(), world.getBlockState(pos.down()).getBlock());
-                world.updateComparatorOutputLevel(pos.up(), world.getBlockState(pos.up()).getBlock());
-                lastResult = level;
-            }
-            
-            if (!DoubleMath.fuzzyEquals(gain, oldGain, 0.00001) || !DoubleMath.fuzzyEquals(stability, oldStab, 0.00001))
-                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-        }
+	if (!world.isRemote && ++ticks % 10 == 0) {
+	    if (ticks % 20 == 0) {
+		NodeHelper.validate(prosumer, world);
+		buffer.validateEnergy();
+		ConsumeResult result = prosumer.consume(getTotalCells() * CELL_CAPACITY, false);
+		if (result.energyConsumed > 0) {
+		    NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+		    for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+			NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+		}
+	    }
+
+	    float oldGain = gain;
+	    gain = calculateStabilityGain();
+
+	    float oldStab = stability;
+	    stability -= world.rand.nextFloat() * getStabilityLossPerSecond();
+	    stability += gain;
+	    stability = Math.max(Math.min(stability, MAX_STABILITY), MIN_STABILITY);
+	    if (stability < 0.0F && world.rand.nextInt(1500) <= Math.abs(stability)) {
+		if (world.rand.nextInt(5) == 0) {
+		    if (world.rand.nextBoolean()) {
+			IBlockState state = world.getBlockState(pos.up());
+			int info = state.getValue(IImpetusCellInfo.CELL_INFO);
+			if (IImpetusCellInfo.getNumberOfCells(info) > 0) {
+			    ArrayList<EnumFacing> dirs = new ArrayList<>(IImpetusCellInfo.getCellDirections(info));
+			    EnumFacing selected = dirs.get(world.rand.nextInt(dirs.size()));
+			    world.setBlockState(pos.up(), state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(info, selected, false)));
+			    Entity drop = new EntityItem(world, pos.getX() + 0.5 * (1.0 - Math.abs(selected.getXOffset())) + selected.getXOffset(), pos.getY() + 1.0 + 0.5 * (1.0 - Math.abs(selected.getYOffset())) + selected.getYOffset(),
+				    pos.getZ() + 0.5 * (1.0 - Math.abs(selected.getZOffset())) + selected.getZOffset(), new ItemStack(TAItems.MATERIAL, 1, 3));
+			    drop.motionX = selected.getXOffset() * 0.05;
+			    drop.motionY = selected.getYOffset() * 0.05;
+			    drop.motionZ = selected.getZOffset() * 0.05;
+			    world.spawnEntity(drop);
+			}
+			else {
+			    state = world.getBlockState(pos.down());
+			    info = state.getValue(IImpetusCellInfo.CELL_INFO);
+			    if (IImpetusCellInfo.getNumberOfCells(info) > 0) {
+				ArrayList<EnumFacing> dirs = new ArrayList<>(IImpetusCellInfo.getCellDirections(info));
+				EnumFacing selected = dirs.get(world.rand.nextInt(dirs.size()));
+				world.setBlockState(pos.down(), state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(info, selected, false)));
+				Entity drop = new EntityItem(world, pos.getX() + 0.5 * (1.0 - Math.abs(selected.getXOffset())) + selected.getXOffset(), pos.getY() - 1.0 + 0.5 * (1.0 - Math.abs(selected.getYOffset())) + selected.getYOffset(),
+					pos.getZ() + 0.5 * (1.0 - Math.abs(selected.getZOffset())) + selected.getZOffset(), new ItemStack(TAItems.MATERIAL, 1, 3));
+				drop.motionX = selected.getXOffset() * 0.05;
+				drop.motionY = selected.getYOffset() * 0.05;
+				drop.motionZ = selected.getZOffset() * 0.05;
+				world.spawnEntity(drop);
+			    }
+			}
+		    }
+		    else {
+			IBlockState state = world.getBlockState(pos.down());
+			int info = state.getValue(IImpetusCellInfo.CELL_INFO);
+			if (IImpetusCellInfo.getNumberOfCells(info) > 0) {
+			    ArrayList<EnumFacing> dirs = new ArrayList<>(IImpetusCellInfo.getCellDirections(info));
+			    EnumFacing selected = dirs.get(world.rand.nextInt(dirs.size()));
+			    world.setBlockState(pos.down(), state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(info, selected, false)));
+			    Entity drop = new EntityItem(world, pos.getX() + 0.5 * (1.0 - Math.abs(selected.getXOffset())) + selected.getXOffset(), pos.getY() - 1.0 + 0.5 * (1.0 - Math.abs(selected.getYOffset())) + selected.getYOffset(),
+				    pos.getZ() + 0.5 * (1.0 - Math.abs(selected.getZOffset())) + selected.getZOffset(), new ItemStack(TAItems.MATERIAL, 1, 3));
+			    drop.motionX = selected.getXOffset() * 0.05;
+			    drop.motionY = selected.getYOffset() * 0.05;
+			    drop.motionZ = selected.getZOffset() * 0.05;
+			    world.spawnEntity(drop);
+			}
+			else {
+			    state = world.getBlockState(pos.up());
+			    info = state.getValue(IImpetusCellInfo.CELL_INFO);
+			    if (IImpetusCellInfo.getNumberOfCells(info) > 0) {
+				ArrayList<EnumFacing> dirs = new ArrayList<>(IImpetusCellInfo.getCellDirections(info));
+				EnumFacing selected = dirs.get(world.rand.nextInt(dirs.size()));
+				world.setBlockState(pos.up(), state.withProperty(IImpetusCellInfo.CELL_INFO, IImpetusCellInfo.setCellPresent(info, selected, false)));
+				Entity drop = new EntityItem(world, pos.getX() + 0.5 * (1.0 - Math.abs(selected.getXOffset())) + selected.getXOffset(), pos.getY() + 1.0 + 0.5 * (1.0 - Math.abs(selected.getYOffset())) + selected.getYOffset(),
+					pos.getZ() + 0.5 * (1.0 - Math.abs(selected.getZOffset())) + selected.getZOffset(), new ItemStack(TAItems.MATERIAL, 1, 3));
+				drop.motionX = selected.getXOffset() * 0.05;
+				drop.motionY = selected.getYOffset() * 0.05;
+				drop.motionZ = selected.getZOffset() * 0.05;
+				world.spawnEntity(drop);
+			    }
+			}
+		    }
+
+		    buffer.validateEnergy();
+		    world.playSound(null, pos, SoundsTC.grind, SoundCategory.BLOCKS, 0.6F, 1.0F);
+		    world.playSound(null, pos, SoundsTC.shock, SoundCategory.BLOCKS, 0.6F, 1.0F);
+		    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, pos.getX() + 0.5,
+			    pos.getY() + 0.5, pos.getZ() + 0.5, 25.0F, Aspect.ELDRITCH.getColor()),
+			    new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
+		}
+		else {
+		    long discharge = (long) (getTotalCells() * world.rand.nextFloat() * 50.0F);
+		    discharge = buffer.extractEnergy(discharge, false);
+		    for (Entity e : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).grow(2.5))) {
+			ImpetusAPI.causeImpetusDamage(new Vec3d(pos), e, Math.max(discharge / 10.0F, 1.0F));
+			TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.ARC, pos.getX() + 0.5,
+				pos.getY() + 0.5, pos.getZ() + 0.5, e.posX, e.posY + e.getEyeHeight(), e.posZ, Aspect.ELDRITCH.getColor(), e.height),
+				new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
+		    }
+
+		    world.playSound(null, pos, SoundsTC.shock, SoundCategory.BLOCKS, 0.6F, 1.0F);
+		    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK, pos.getX() + 0.5,
+			    pos.getY() + 0.5, pos.getZ() + 0.5, 15.0F, Aspect.ELDRITCH.getColor()),
+			    new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
+		}
+	    }
+
+	    int level = getComparatorOutput();
+	    if (level != lastResult) {
+		world.updateComparatorOutputLevel(pos, getBlockType());
+		world.updateComparatorOutputLevel(pos.down(), world.getBlockState(pos.down()).getBlock());
+		world.updateComparatorOutputLevel(pos.up(), world.getBlockState(pos.up()).getBlock());
+		lastResult = level;
+	    }
+
+	    if (!DoubleMath.fuzzyEquals(gain, oldGain, 0.00001) || !DoubleMath.fuzzyEquals(stability, oldStab, 0.00001))
+		world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+	}
     }
-    
+
     public int getTotalCells() {
-        int total = 0;
-        IBlockState state = world.getBlockState(pos.up());
-        if (state.getPropertyKeys().contains(IImpetusCellInfo.CELL_INFO))
-            total += IImpetusCellInfo.getNumberOfCells(state.getValue(IImpetusCellInfo.CELL_INFO));
-        
-        state = world.getBlockState(pos.down());
-        if (state.getPropertyKeys().contains(IImpetusCellInfo.CELL_INFO))
-            total += IImpetusCellInfo.getNumberOfCells(state.getValue(IImpetusCellInfo.CELL_INFO));
-        
-        return total;
+	int total = 0;
+	IBlockState state = world.getBlockState(pos.up());
+	if (state.getPropertyKeys().contains(IImpetusCellInfo.CELL_INFO))
+	    total += IImpetusCellInfo.getNumberOfCells(state.getValue(IImpetusCellInfo.CELL_INFO));
+
+	state = world.getBlockState(pos.down());
+	if (state.getPropertyKeys().contains(IImpetusCellInfo.CELL_INFO))
+	    total += IImpetusCellInfo.getNumberOfCells(state.getValue(IImpetusCellInfo.CELL_INFO));
+
+	return total;
     }
-    
+
     public int getComparatorOutput() {
-        return (int) (buffer.getEnergyStored() / (double) buffer.getMaxEnergyStored() * 15.0);
+	return (int) (buffer.getEnergyStored() / (double) buffer.getMaxEnergyStored() * 15.0);
     }
-    
+
     protected float getStabilityLossPerSecond() {
-        long max = buffer.getMaxEnergyStored();
-        if (max <= 0)
-            return -0.05F;
-        else
-            return (float) ((double) buffer.getEnergyStored() / (getTotalCells() * CELL_CAPACITY));
+	long max = buffer.getMaxEnergyStored();
+	if (max <= 0)
+	    return -0.05F;
+	else
+	    return (float) ((double) buffer.getEnergyStored() / (getTotalCells() * CELL_CAPACITY));
     }
-    
+
     @Override
     public void setPos(BlockPos posIn) {
-        super.setPos(posIn);
-        if (world != null)
-            prosumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setPos(posIn);
+	if (world != null)
+	    prosumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void setWorld(World worldIn) {
-        super.setWorld(worldIn);
-        prosumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setWorld(worldIn);
+	prosumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void onLoad() {
-        prosumer.init(world);
-        ThaumicAugmentation.proxy.registerRenderableImpetusNode(prosumer);
+	prosumer.init(world);
+	ThaumicAugmentation.proxy.registerRenderableImpetusNode(prosumer);
     }
-    
+
     @Override
     public void invalidate() {
-        if (!world.isRemote)
-            NodeHelper.syncDestroyedImpetusNode(prosumer);
-        
-        prosumer.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
-        super.invalidate();
+	if (!world.isRemote)
+	    NodeHelper.syncDestroyedImpetusNode(prosumer);
+
+	prosumer.destroy();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
+	super.invalidate();
     }
-    
+
     @Override
     public void onChunkUnload() {
-        prosumer.unload();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
+	prosumer.unload();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(prosumer);
     }
-    
+
     @Override
     public String[] getIGogglesText() {
-        String stabName = null;
-        if (stability > MAX_STABILITY / 2.0F)
-            stabName = "stability.VERY_STABLE";
-        else if (stability >= 0.0F)
-            stabName = "stability.STABLE";
-        else if (stability > -25.0F)
-            stabName = "stability.UNSTABLE";
-        else
-            stabName = "stability.VERY_UNSTABLE";
-        
-        float loss = getStabilityLossPerSecond();
-        if (loss > 0.0F) {
-            return new String[] {
-                TextFormatting.BOLD + new TextComponentTranslation(stabName).getFormattedText(),
-                TextFormatting.GOLD + "" + TextFormatting.ITALIC + STAB_FORMATTER.format(gain) + 
-                    " " + new TextComponentTranslation("stability.gain").getFormattedText(),
-                TextFormatting.RED + "" + TextFormatting.ITALIC + new TextComponentTranslation("stability.range").getFormattedText() + TextFormatting.RED +
-                TextFormatting.ITALIC + STAB_FORMATTER.format(loss) + " " + new TextComponentTranslation("stability.loss").getFormattedText()
-            };
-        }
-        else {
-            return new String[] {
-                TextFormatting.BOLD + new TextComponentTranslation(stabName).getFormattedText(),
-                TextFormatting.GOLD + "" + TextFormatting.ITALIC + STAB_FORMATTER.format(gain) + 
-                    " " + new TextComponentTranslation("stability.gain").getFormattedText()
-            };
-        }
+	String stabName = null;
+	if (stability > MAX_STABILITY / 2.0F)
+	    stabName = "stability.VERY_STABLE";
+	else if (stability >= 0.0F)
+	    stabName = "stability.STABLE";
+	else if (stability > -25.0F)
+	    stabName = "stability.UNSTABLE";
+	else
+	    stabName = "stability.VERY_UNSTABLE";
+
+	float loss = getStabilityLossPerSecond();
+	if (loss > 0.0F) {
+	    return new String[] {
+		    TextFormatting.BOLD + new TextComponentTranslation(stabName).getFormattedText(),
+		    TextFormatting.GOLD + "" + TextFormatting.ITALIC + STAB_FORMATTER.format(gain) +
+		    " " + new TextComponentTranslation("stability.gain").getFormattedText(),
+		    TextFormatting.RED + "" + TextFormatting.ITALIC + new TextComponentTranslation("stability.range").getFormattedText() + TextFormatting.RED +
+		    TextFormatting.ITALIC + STAB_FORMATTER.format(loss) + " " + new TextComponentTranslation("stability.loss").getFormattedText()
+	    };
+	}
+	else {
+	    return new String[] {
+		    TextFormatting.BOLD + new TextComponentTranslation(stabName).getFormattedText(),
+		    TextFormatting.GOLD + "" + TextFormatting.ITALIC + STAB_FORMATTER.format(gain) +
+		    " " + new TextComponentTranslation("stability.gain").getFormattedText()
+	    };
+	}
     }
-    
+
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        return oldState.getBlock() != newState.getBlock();
+	return oldState.getBlock() != newState.getBlock();
     }
-    
+
     @Override
     public NBTTagCompound getUpdateTag() {
-        NBTTagCompound tag = super.getUpdateTag();
-        tag.setTag("node", prosumer.serializeNBT());
-        tag.setFloat("gain", gain);
-        tag.setFloat("stab", stability);
-        tag.setLong("energy", buffer.energy);
-        return tag;
+	NBTTagCompound tag = super.getUpdateTag();
+	tag.setTag("node", prosumer.serializeNBT());
+	tag.setFloat("gain", gain);
+	tag.setFloat("stab", stability);
+	tag.setLong("energy", buffer.energy);
+	return tag;
     }
-    
+
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
-        super.handleUpdateTag(tag);
-        gain = tag.getFloat("gain");
-        prosumer.init(world);
+	super.handleUpdateTag(tag);
+	NodeHelper.tryConnectNewlyLoadedPeers(prosumer, world);
+	gain = tag.getFloat("gain");
     }
-    
+
     @Override
     @Nullable
     public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setFloat("gain", gain);
-        tag.setFloat("stab", stability);
-        tag.setLong("energy", buffer.getEnergyStored());
-        return new SPacketUpdateTileEntity(pos, 1, tag);
+	NBTTagCompound tag = new NBTTagCompound();
+	tag.setFloat("gain", gain);
+	tag.setFloat("stab", stability);
+	tag.setLong("energy", buffer.getEnergyStored());
+	return new SPacketUpdateTileEntity(pos, 1, tag);
     }
-    
+
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        gain = pkt.getNbtCompound().getFloat("gain");
-        stability = pkt.getNbtCompound().getFloat("stab");
-        buffer.energy = pkt.getNbtCompound().getLong("energy");
+	gain = pkt.getNbtCompound().getFloat("gain");
+	stability = pkt.getNbtCompound().getFloat("stab");
+	buffer.energy = pkt.getNbtCompound().getLong("energy");
     }
-    
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag.setTag("node", prosumer.serializeNBT());
-        tag.setLong("energy", buffer.energy);
-        tag.setFloat("stab", stability);
-        return super.writeToNBT(tag);
+	tag.setTag("node", prosumer.serializeNBT());
+	tag.setLong("energy", buffer.energy);
+	tag.setFloat("stab", stability);
+	return super.writeToNBT(tag);
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        buffer.energy = nbt.getLong("energy");
-        prosumer.deserializeNBT(nbt.getCompoundTag("node"));
-        stability = nbt.getFloat("stab");
+	super.readFromNBT(nbt);
+	buffer.energy = nbt.getLong("energy");
+	prosumer.deserializeNBT(nbt.getCompoundTag("node"));
+	stability = nbt.getFloat("stab");
     }
-    
+
     @Override
     public void handleEvents(float time, Iterable<Event> pastEvents) {}
-    
+
     @Override
     public boolean hasFastRenderer() {
-        return true;
+	return true;
     }
-    
+
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE || capability == CapabilityImpetusStorage.IMPETUS_STORAGE ||
-                capability == CapabilityAnimation.ANIMATION_CAPABILITY)
-            return true;
-        else
-            return super.hasCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE || capability == CapabilityImpetusStorage.IMPETUS_STORAGE ||
+		capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+	    return true;
+	else
+	    return super.hasCapability(capability, facing);
     }
-    
+
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE)
-            return CapabilityImpetusNode.IMPETUS_NODE.cast(prosumer);
-        else if (capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
-            return CapabilityImpetusStorage.IMPETUS_STORAGE.cast(buffer);
-        else if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
-            return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
-        else
-            return super.getCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE)
+	    return CapabilityImpetusNode.IMPETUS_NODE.cast(prosumer);
+	else if (capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
+	    return CapabilityImpetusStorage.IMPETUS_STORAGE.cast(buffer);
+	else if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+	    return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
+	else
+	    return super.getCapability(capability, facing);
     }
-    
+
 }

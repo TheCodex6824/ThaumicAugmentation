@@ -55,308 +55,307 @@ public class TileImpetusMirror extends TileEntity implements ITickable {
     protected boolean needsSync;
     protected boolean open;
     protected long fluxProgress;
-    
+
     public TileImpetusMirror() {
-        node = new ImpetusNode(2, 2) {
-            
-            @Override
-            public boolean canConnectNodeAsInput(IImpetusNode toConnect) {
-                return (getNumInputs() < getMaxInputs() - 1 && !toConnect.getLocation().equals(linked)) ||
-                        (inputs.contains(linked) && !toConnect.getLocation().equals(linked));
-            }
-            
-            @Override
-            public boolean canConnectNodeAsOutput(IImpetusNode toConnect) {
-                return (getNumOutputs() < getMaxOutputs() - 1 && !toConnect.getLocation().equals(linked)) ||
-                        (outputs.contains(linked) && !toConnect.getLocation().equals(linked));
-            }
-            
-            @Override
-            public boolean canRemoveNodeAsInput(IImpetusNode toRemove) {
-                return !toRemove.getLocation().equals(linked);
-            }
-            
-            @Override
-            public boolean canRemoveNodeAsOutput(IImpetusNode toRemove) {
-                return !toRemove.getLocation().equals(linked);
-            }
-            
-            @Override
-            public boolean shouldPhysicalBeamLinkTo(IImpetusNode other) {
-                return !other.getLocation().equals(linked);
-            }
-            
-            @Override
-            public boolean shouldEnforceBeamLimitsWith(IImpetusNode other) {
-                return !other.getLocation().equals(linked);
-            }
-            
-            @Override
-            public void onConnected(IImpetusNode other) {
-                if (!world.isRemote && !linked.isInvalid() && other.getLocation().equals(linked)) {
-                    open = true;
-                    needsSync = true;
-                }
-            }
-            
-            @Override
-            public void onDisconnected(IImpetusNode other) {
-                if (!world.isRemote && !linked.isInvalid() && other.getLocation().equals(linked)) {
-                    open = false;
-                    needsSync = true;
-                }
-            }
-            
-            @Override
-            public Vec3d getBeamEndpoint() {
-                Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
-                IBlockState state = world.getBlockState(pos);
-                if (state.getPropertyKeys().contains(IDirectionalBlock.DIRECTION)) {
-                    switch (world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION)) {
-                        case DOWN:  return position.add(0.5, 0.98125, 0.5);
-                        case EAST:  return position.add(0.01875, 0.5, 0.5);
-                        case NORTH: return position.add(0.5, 0.5, 0.98125);
-                        case SOUTH: return position.add(0.5, 0.5, 0.01875);
-                        case WEST:  return position.add(0.98125, 0.5, 0.5);
-                        case UP:
-                        default:    return position.add(0.5, 0.01875, 0.5);
-                    }
-                }
-                
-                return position.add(0.5, 0.01875, 0.5);
-            }
-            
-            @Override
-            public long onTransaction(Deque<IImpetusNode> path, long energy,
-                    boolean simulate) {
-                
-                energy = Math.min(energy, 45);
-                fluxProgress += energy;
-                markDirty();
-                return energy;
-            }
-            
-        };
-        
-        linked = DimensionalBlockPos.INVALID;
-        ticks = ThreadLocalRandom.current().nextInt(20);
+	node = new ImpetusNode(2, 2) {
+
+	    @Override
+	    public boolean canConnectNodeAsInput(IImpetusNode toConnect) {
+		return (getNumInputs() < getMaxInputs() - 1 && !toConnect.getLocation().equals(linked)) ||
+			(inputs.contains(linked) && !toConnect.getLocation().equals(linked));
+	    }
+
+	    @Override
+	    public boolean canConnectNodeAsOutput(IImpetusNode toConnect) {
+		return (getNumOutputs() < getMaxOutputs() - 1 && !toConnect.getLocation().equals(linked)) ||
+			(outputs.contains(linked) && !toConnect.getLocation().equals(linked));
+	    }
+
+	    @Override
+	    public boolean canRemoveNodeAsInput(IImpetusNode toRemove) {
+		return !toRemove.getLocation().equals(linked);
+	    }
+
+	    @Override
+	    public boolean canRemoveNodeAsOutput(IImpetusNode toRemove) {
+		return !toRemove.getLocation().equals(linked);
+	    }
+
+	    @Override
+	    public boolean shouldPhysicalBeamLinkTo(IImpetusNode other) {
+		return !other.getLocation().equals(linked);
+	    }
+
+	    @Override
+	    public boolean shouldEnforceBeamLimitsWith(IImpetusNode other) {
+		return !other.getLocation().equals(linked);
+	    }
+
+	    @Override
+	    public void onConnected(IImpetusNode other) {
+		if (!world.isRemote && !linked.isInvalid() && other.getLocation().equals(linked)) {
+		    open = true;
+		    needsSync = true;
+		}
+	    }
+
+	    @Override
+	    public void onDisconnected(IImpetusNode other) {
+		if (!world.isRemote && !linked.isInvalid() && other.getLocation().equals(linked)) {
+		    open = false;
+		    needsSync = true;
+		}
+	    }
+
+	    @Override
+	    public Vec3d getBeamEndpoint() {
+		Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
+		IBlockState state = world.getBlockState(pos);
+		if (state.getPropertyKeys().contains(IDirectionalBlock.DIRECTION)) {
+		    switch (world.getBlockState(pos).getValue(IDirectionalBlock.DIRECTION)) {
+		    case DOWN:  return position.add(0.5, 0.98125, 0.5);
+		    case EAST:  return position.add(0.01875, 0.5, 0.5);
+		    case NORTH: return position.add(0.5, 0.5, 0.98125);
+		    case SOUTH: return position.add(0.5, 0.5, 0.01875);
+		    case WEST:  return position.add(0.98125, 0.5, 0.5);
+		    case UP:
+		    default:    return position.add(0.5, 0.01875, 0.5);
+		    }
+		}
+
+		return position.add(0.5, 0.01875, 0.5);
+	    }
+
+	    @Override
+	    public long onTransaction(Deque<IImpetusNode> path, long energy,
+		    boolean simulate) {
+
+		energy = Math.min(energy, 45);
+		fluxProgress += energy;
+		markDirty();
+		return energy;
+	    }
+
+	};
+
+	linked = DimensionalBlockPos.INVALID;
+	ticks = ThreadLocalRandom.current().nextInt(20);
     }
-    
+
     @Override
     public void update() {
-        if (!world.isRemote) {
-            if (ticks++ % 20 == 0) {
-                if (!linked.isInvalid() && !node.getLocation().isInvalid()) {
-                    World targetWorld = DimensionManager.getWorld(linked.getDimension());
-                    if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
-                        TileEntity tile = targetWorld.getTileEntity(linked.getPos());
-                        if (tile instanceof TileImpetusMirror) {
-                            IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
-                            if (otherNode != null) {
-                                TileImpetusMirror otherMirror = (TileImpetusMirror) tile;
-                                if (otherMirror.getLink().isInvalid() || !otherNode.getInputLocations().contains(otherMirror.getLink())) {
-                                    otherMirror.setLink(node.getLocation());
-                                    markDirty();
-                                    needsSync = true;
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                while (fluxProgress >= 1000) {
-                    AuraHelper.polluteAura(world, pos, world.rand.nextInt(3) + 1, true);
-                    fluxProgress -= 1000;
-                    markDirty();
-                }
-            }
-            
-            if (needsSync) {
-                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-                needsSync = false;
-            }
-            
-            if (ticks % 20 == 0)
-                NodeHelper.validateOutputs(world, node);
-        }
-        
+	if (!world.isRemote) {
+	    if (ticks++ % 20 == 0) {
+		if (!linked.isInvalid() && !node.getLocation().isInvalid()) {
+		    World targetWorld = DimensionManager.getWorld(linked.getDimension());
+		    if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
+			TileEntity tile = targetWorld.getTileEntity(linked.getPos());
+			if (tile instanceof TileImpetusMirror) {
+			    IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+			    if (otherNode != null) {
+				TileImpetusMirror otherMirror = (TileImpetusMirror) tile;
+				if (otherMirror.getLink().isInvalid() || !otherNode.getInputLocations().contains(otherMirror.getLink())) {
+				    otherMirror.setLink(node.getLocation());
+				    markDirty();
+				    needsSync = true;
+				}
+			    }
+			}
+		    }
+		}
+
+		while (fluxProgress >= 1000) {
+		    AuraHelper.polluteAura(world, pos, world.rand.nextInt(3) + 1, true);
+		    fluxProgress -= 1000;
+		    markDirty();
+		}
+	    }
+
+	    if (needsSync) {
+		world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+		needsSync = false;
+	    }
+
+	    if (ticks % 20 == 0)
+		NodeHelper.validate(node, world);
+	}
+
     }
-    
+
     public void setLink(DimensionalBlockPos linkTo) {
-        if (!linkTo.equals(linked)) {
-            if (!linked.isInvalid()) {
-	            IImpetusNode link = node.getGraph().findNodeByPosition(linked);
-	            if (link != null) {
-	                node.removeInput(link);
-	                node.removeOutput(link);
-	            }
-	            else {
-	                node.removeInputLocation(linked);
-	                node.removeOutputLocation(linked);
-	            }
-	            
-	            NodeHelper.syncRemovedImpetusNodeInput(node, linked);
-                NodeHelper.syncRemovedImpetusNodeOutput(node, linked);
-            }
-            
-            linked = linkTo;
-            if (!linked.isInvalid()) {
-            	World targetWorld = DimensionManager.getWorld(linked.getDimension());
-                if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
-                    TileEntity tile = targetWorld.getTileEntity(linked.getPos());
-                    if (tile instanceof TileImpetusMirror) {
-                        IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
-                        if (otherNode != null) {
-                            TileImpetusMirror otherMirror = (TileImpetusMirror) tile;
-                            if (otherMirror.getLink().isInvalid() || !otherNode.getInputLocations().contains(otherMirror.getLink())) {
-                                otherMirror.setLink(node.getLocation());
-                                node.addInput(otherNode);
-                                node.addOutput(otherNode);
-                                NodeHelper.syncAddedImpetusNodeInput(node, linked);
-                                NodeHelper.syncAddedImpetusNodeOutput(node, linked);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            markDirty();
-        }
+	if (!linkTo.equals(linked)) {
+	    if (!linked.isInvalid()) {
+		IImpetusNode link = node.getGraph().findNodeByPosition(linked);
+		if (link != null) {
+		    node.removeInput(link);
+		    node.removeOutput(link);
+		}
+		else {
+		    node.removeInputLocation(linked);
+		    node.removeOutputLocation(linked);
+		}
+
+		NodeHelper.syncRemovedImpetusNodeInput(node, linked);
+		NodeHelper.syncRemovedImpetusNodeOutput(node, linked);
+	    }
+
+	    linked = linkTo;
+	    if (!linked.isInvalid()) {
+		World targetWorld = DimensionManager.getWorld(linked.getDimension());
+		if (targetWorld != null && targetWorld.isBlockLoaded(linked.getPos())) {
+		    TileEntity tile = targetWorld.getTileEntity(linked.getPos());
+		    if (tile instanceof TileImpetusMirror) {
+			IImpetusNode otherNode = tile.getCapability(CapabilityImpetusNode.IMPETUS_NODE, null);
+			if (otherNode != null) {
+			    TileImpetusMirror otherMirror = (TileImpetusMirror) tile;
+			    if (otherMirror.getLink().isInvalid() || !otherNode.getInputLocations().contains(otherMirror.getLink())) {
+				otherMirror.setLink(node.getLocation());
+				node.addInput(otherNode);
+				node.addOutput(otherNode);
+				NodeHelper.syncAddedImpetusNodeInput(node, linked);
+				NodeHelper.syncAddedImpetusNodeOutput(node, linked);
+			    }
+			}
+		    }
+		}
+	    }
+
+	    markDirty();
+	}
     }
-    
+
     public DimensionalBlockPos getLink() {
-        return linked;
+	return linked;
     }
-    
+
     public boolean shouldShowOpenMirror() {
-        return open;
+	return open;
     }
-    
+
     @Override
     public void setPos(BlockPos posIn) {
-        super.setPos(posIn);
-        if (world != null)
-            node.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setPos(posIn);
+	if (world != null)
+	    node.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void setWorld(World worldIn) {
-        super.setWorld(worldIn);
-        node.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setWorld(worldIn);
+	node.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void onLoad() {
-        node.init(world);
-        ThaumicAugmentation.proxy.registerRenderableImpetusNode(node);
+	ThaumicAugmentation.proxy.registerRenderableImpetusNode(node);
     }
-    
+
     @Override
     public void invalidate() {
-        if (!world.isRemote)
-            NodeHelper.syncDestroyedImpetusNode(node);
-        
-        node.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
-        super.invalidate();
+	if (!world.isRemote)
+	    NodeHelper.syncDestroyedImpetusNode(node);
+
+	node.destroy();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
+	super.invalidate();
     }
-    
+
     @Override
     public void onChunkUnload() {
-        node.unload();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
+	node.unload();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }
-    
+
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        return oldState.getBlock() != newState.getBlock();
+	return oldState.getBlock() != newState.getBlock();
     }
-    
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag.setTag("node", node.serializeNBT());
-        if (!linked.isInvalid()) {
-            tag.setIntArray("link", linked.toArray());
-        }
-        
-        tag.setLong("flux", fluxProgress);
-        
-        return super.writeToNBT(tag);
+	tag.setTag("node", node.serializeNBT());
+	if (!linked.isInvalid()) {
+	    tag.setIntArray("link", linked.toArray());
+	}
+
+	tag.setLong("flux", fluxProgress);
+
+	return super.writeToNBT(tag);
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        node.deserializeNBT(nbt.getCompoundTag("node"));
-        if (nbt.hasKey("link", NBT.TAG_INT_ARRAY)) {
-            linked = new DimensionalBlockPos(nbt.getIntArray("link"));
-        }
-        else {
-        	linked = DimensionalBlockPos.INVALID;
-        }
-        
-        fluxProgress = nbt.getLong("flux");
+	super.readFromNBT(nbt);
+	node.deserializeNBT(nbt.getCompoundTag("node"));
+	if (nbt.hasKey("link", NBT.TAG_INT_ARRAY)) {
+	    linked = new DimensionalBlockPos(nbt.getIntArray("link"));
+	}
+	else {
+	    linked = DimensionalBlockPos.INVALID;
+	}
+
+	fluxProgress = nbt.getLong("flux");
     }
-    
+
     @Override
     public NBTTagCompound getUpdateTag() {
-        NBTTagCompound tag = super.getUpdateTag();
-        tag.setTag("node", node.serializeNBT());
-        if (!linked.isInvalid()) {
-            tag.setIntArray("link", linked.toArray());
-        }
-        
-        tag.setBoolean("open", open);
-        return tag;
+	NBTTagCompound tag = super.getUpdateTag();
+	tag.setTag("node", node.serializeNBT());
+	if (!linked.isInvalid()) {
+	    tag.setIntArray("link", linked.toArray());
+	}
+
+	tag.setBoolean("open", open);
+	return tag;
     }
-    
+
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
-        super.handleUpdateTag(tag);
-        open = tag.getBoolean("open");
-        node.init(world);
+	super.handleUpdateTag(tag);
+	NodeHelper.tryConnectNewlyLoadedPeers(node, world);
+	open = tag.getBoolean("open");
     }
-    
+
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound tag = new NBTTagCompound();
-        if (!linked.isInvalid()) {
-            tag.setIntArray("link", linked.toArray());
-        }
-        
-        tag.setBoolean("open", open);
-        return new SPacketUpdateTileEntity(pos, 1, tag);
+	NBTTagCompound tag = new NBTTagCompound();
+	if (!linked.isInvalid()) {
+	    tag.setIntArray("link", linked.toArray());
+	}
+
+	tag.setBoolean("open", open);
+	return new SPacketUpdateTileEntity(pos, 1, tag);
     }
-    
+
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        if (world.isRemote) {
-            if (packet.getNbtCompound().hasKey("link", NBT.TAG_INT_ARRAY)) {
-                linked = new DimensionalBlockPos(packet.getNbtCompound().getIntArray("link"));
-            }
-            else {
-            	linked = DimensionalBlockPos.INVALID;
-            }
-            
-            world.markBlockRangeForRenderUpdate(pos, pos);
-            open = packet.getNbtCompound().getBoolean("open");
-        }
+	if (world.isRemote) {
+	    if (packet.getNbtCompound().hasKey("link", NBT.TAG_INT_ARRAY)) {
+		linked = new DimensionalBlockPos(packet.getNbtCompound().getIntArray("link"));
+	    }
+	    else {
+		linked = DimensionalBlockPos.INVALID;
+	    }
+
+	    world.markBlockRangeForRenderUpdate(pos, pos);
+	    open = packet.getNbtCompound().getBoolean("open");
+	}
     }
-    
+
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE)
-            return true;
-        else
-            return super.hasCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE)
+	    return true;
+	else
+	    return super.hasCapability(capability, facing);
     }
-    
+
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE)
-            return CapabilityImpetusNode.IMPETUS_NODE.cast(node);
-        else
-            return super.getCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE)
+	    return CapabilityImpetusNode.IMPETUS_NODE.cast(node);
+	else
+	    return super.getCapability(capability, facing);
     }
-    
+
 }

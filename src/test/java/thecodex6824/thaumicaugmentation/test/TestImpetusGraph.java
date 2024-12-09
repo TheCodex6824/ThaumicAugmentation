@@ -194,7 +194,7 @@ public class TestImpetusGraph {
     }
 
     @Test
-    public void testSaving() {
+    public void testSaveLoadSets() {
 	ImpetusNode node1 = new ImpetusNode(2, 2, new DimensionalBlockPos(0, 0, 0, 0));
 	ImpetusNode node2 = new ImpetusNode(2, 2, new DimensionalBlockPos(0, 0, 3, 0));
 	node2.addInput(node1);
@@ -211,11 +211,22 @@ public class TestImpetusGraph {
 	assertEquals(tag1.getTagList("outputs", NBT.TAG_INT_ARRAY), correct1);
 	assertEquals(tag2.getTagList("inputs", NBT.TAG_INT_ARRAY), correct2);
 
-	// deserializing in testing is currently problematic because of the coupling with World
-	// the most we can do is just make sure that the saved connections made it into the connection sets
 	node2 = new ImpetusNode(2, 2, new DimensionalBlockPos(0, 0, 3, 0));
 	node2.deserializeNBT(tag2);
 	assertTrue(node2.getInputLocations().contains(node1.getLocation()));
+    }
+
+    @Test
+    public void testSaveLoadGraphConnection() {
+	ImpetusNode node1 = new ImpetusNode(2, 2, new DimensionalBlockPos(0, 0, 0, 0));
+	ImpetusNode node2 = new ImpetusNode(2, 2, new DimensionalBlockPos(0, 0, 3, 0));
+	node2.addInput(node1);
+	NBTTagCompound tag2 = node2.serializeNBT();
+	node2 = new ImpetusNode(2, 2, new DimensionalBlockPos(0, 0, 3, 0));
+	node2.deserializeNBT(tag2);
+	node1.addOutput(node2);
+	assertTrue(node1.getGraph() == node2.getGraph());
+	assertTrue(node2.getInputs().contains(node1));
     }
 
 }

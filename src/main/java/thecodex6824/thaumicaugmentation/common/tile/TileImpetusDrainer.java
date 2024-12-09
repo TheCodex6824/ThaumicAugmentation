@@ -66,174 +66,173 @@ public class TileImpetusDrainer extends TileEntity implements ITickable, IAnimat
     protected IAnimationStateMachine asm;
     protected boolean lastState = false;
     protected int ticks;
-    
+
     public TileImpetusDrainer() {
-        super();
-        storage = new WeakImpetusStorage() {
-            @Override
-            public long extractEnergy(long maxToExtract, boolean simulate) {
-                long result = super.extractEnergy(maxToExtract, simulate);
-                if (result > 0 && !simulate)
-                    ImpetusAPI.createImpetusParticles(world, lastRiftPos, new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5));
-                    
-                return result;
-            }
-            
-            @Override
-            public void onEnergyChanged() {
-                markDirty();
-            }
-        };
-        provider = new BufferedImpetusProvider(0, 2, storage) {
-            @Override
-            public Vec3d getBeamEndpoint() {
-                return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.4375, pos.getZ() + 0.5);
-            }
-        };
-        
-        ticks = ThreadLocalRandom.current().nextInt(20);
-        asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_drainer.json"), 
-                ImmutableMap.<String, ITimeValue>of());
+	super();
+	storage = new WeakImpetusStorage() {
+	    @Override
+	    public long extractEnergy(long maxToExtract, boolean simulate) {
+		long result = super.extractEnergy(maxToExtract, simulate);
+		if (result > 0 && !simulate)
+		    ImpetusAPI.createImpetusParticles(world, lastRiftPos, new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5));
+
+		return result;
+	    }
+
+	    @Override
+	    public void onEnergyChanged() {
+		markDirty();
+	    }
+	};
+	provider = new BufferedImpetusProvider(0, 2, storage) {
+	    @Override
+	    public Vec3d getBeamEndpoint() {
+		return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.4375, pos.getZ() + 0.5);
+	    }
+	};
+
+	ticks = ThreadLocalRandom.current().nextInt(20);
+	asm = ThaumicAugmentation.proxy.loadASM(new ResourceLocation(ThaumicAugmentationAPI.MODID, "asms/block/impetus_drainer.json"),
+		ImmutableMap.<String, ITimeValue>of());
     }
-    
+
     protected void findRift() {
-        List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class, new AxisAlignedBB(pos).grow(8.0));
-        rifts.sort((rift1, rift2) -> Double.compare(rift1.getPosition().distanceSq(pos), rift2.getPosition().distanceSq(pos)));
-        for (EntityFluxRift rift : rifts) {
-            if (!rift.isDead) {
-                IImpetusStorage riftStorage = rift.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                if (riftStorage != null) {
-                    for (Vec3d point : rift.points) {
-                        Vec3d translated = rift.getPositionVector().add(point);
-                        double dX = Math.max(-1.0, Math.min(1.0, translated.x - pos.getX()));
-                        double dY = Math.max(-1.0, Math.min(1.0, translated.y - pos.getY()));
-                        double dZ = Math.max(-1.0, Math.min(1.0, translated.z - pos.getZ()));
-                        RayTraceResult result = world.rayTraceBlocks(new Vec3d(pos.getX() + dX, pos.getY() + dY, pos.getZ() + dZ),
-                                rift.getPositionVector().add(point), false, true, false);
-                        if (result == null || result.getBlockPos() == null) {
-                            storage.bind(riftStorage);
-                            lastRiftPos = translated;
-                            return;
-                        }
-                    }
-                }
-            }
-        }
+	List<EntityFluxRift> rifts = world.getEntitiesWithinAABB(EntityFluxRift.class, new AxisAlignedBB(pos).grow(8.0));
+	rifts.sort((rift1, rift2) -> Double.compare(rift1.getPosition().distanceSq(pos), rift2.getPosition().distanceSq(pos)));
+	for (EntityFluxRift rift : rifts) {
+	    if (!rift.isDead) {
+		IImpetusStorage riftStorage = rift.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+		if (riftStorage != null) {
+		    for (Vec3d point : rift.points) {
+			Vec3d translated = rift.getPositionVector().add(point);
+			double dX = Math.max(-1.0, Math.min(1.0, translated.x - pos.getX()));
+			double dY = Math.max(-1.0, Math.min(1.0, translated.y - pos.getY()));
+			double dZ = Math.max(-1.0, Math.min(1.0, translated.z - pos.getZ()));
+			RayTraceResult result = world.rayTraceBlocks(new Vec3d(pos.getX() + dX, pos.getY() + dY, pos.getZ() + dZ),
+				rift.getPositionVector().add(point), false, true, false);
+			if (result == null || result.getBlockPos() == null) {
+			    storage.bind(riftStorage);
+			    lastRiftPos = translated;
+			    return;
+			}
+		    }
+		}
+	    }
+	}
     }
-    
+
     @Override
     public void update() {
-        if (!world.isRemote && ticks++ % 60 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED))
-            findRift();
-        else if (!world.isRemote && !world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) && storage.isValid())
-            storage.bind(null);
-        else if (world.isRemote && world.getTotalWorldTime() % 20 == 0) {
-            IBlockState state = world.getBlockState(pos);
-            boolean enabled = state.getPropertyKeys().contains(IEnabledBlock.ENABLED) && 
-                    state.getValue(IEnabledBlock.ENABLED);
-            if (enabled != lastState) {
-                lastState = enabled;
-                AnimationHelper.transitionSafely(asm, lastState ? "enabled" : "disabled");
-            }
-        }
-        
-        if (!world.isRemote && ticks % 20 == 0)
-            NodeHelper.validateOutputs(world, provider);
+	if (!world.isRemote && ticks++ % 60 == 0 && world.getBlockState(pos).getValue(IEnabledBlock.ENABLED))
+	    findRift();
+	else if (!world.isRemote && !world.getBlockState(pos).getValue(IEnabledBlock.ENABLED) && storage.isValid())
+	    storage.bind(null);
+	else if (world.isRemote && world.getTotalWorldTime() % 20 == 0) {
+	    IBlockState state = world.getBlockState(pos);
+	    boolean enabled = state.getPropertyKeys().contains(IEnabledBlock.ENABLED) &&
+		    state.getValue(IEnabledBlock.ENABLED);
+	    if (enabled != lastState) {
+		lastState = enabled;
+		AnimationHelper.transitionSafely(asm, lastState ? "enabled" : "disabled");
+	    }
+	}
+
+	if (!world.isRemote && ticks % 20 == 0)
+	    NodeHelper.validate(provider, world);
     }
-    
+
     @Override
     public void setPos(BlockPos posIn) {
-        super.setPos(posIn);
-        if (world != null)
-            provider.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setPos(posIn);
+	if (world != null)
+	    provider.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void setWorld(World worldIn) {
-        super.setWorld(worldIn);
-        provider.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setWorld(worldIn);
+	provider.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void onLoad() {
-        provider.init(world);
-        ThaumicAugmentation.proxy.registerRenderableImpetusNode(provider);
+	ThaumicAugmentation.proxy.registerRenderableImpetusNode(provider);
     }
-    
+
     @Override
     public void invalidate() {
-        if (!world.isRemote)
-            NodeHelper.syncDestroyedImpetusNode(provider);
-        
-        provider.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
-        super.invalidate();
+	if (!world.isRemote)
+	    NodeHelper.syncDestroyedImpetusNode(provider);
+
+	provider.destroy();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
+	super.invalidate();
     }
-    
+
     @Override
     public void onChunkUnload() {
-        provider.unload();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
+	provider.unload();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
     }
-    
+
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        return oldState.getBlock() != newState.getBlock();
+	return oldState.getBlock() != newState.getBlock();
     }
-    
+
     @Override
     public boolean hasFastRenderer() {
-        return true;
+	return true;
     }
-    
+
     @Override
     public void handleEvents(float time, Iterable<Event> pastEvents) {}
-    
+
     @Override
     public NBTTagCompound getUpdateTag() {
-        NBTTagCompound tag = super.getUpdateTag();
-        tag.setTag("node", provider.serializeNBT());
-        return tag;
+	NBTTagCompound tag = super.getUpdateTag();
+	tag.setTag("node", provider.serializeNBT());
+	return tag;
     }
-    
+
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
-        super.handleUpdateTag(tag);
-        provider.init(world);
+	super.handleUpdateTag(tag);
+	NodeHelper.tryConnectNewlyLoadedPeers(provider, world);
     }
-    
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag.setTag("node", provider.serializeNBT());
-        return super.writeToNBT(tag);
+	tag.setTag("node", provider.serializeNBT());
+	return super.writeToNBT(tag);
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        provider.deserializeNBT(nbt.getCompoundTag("node"));
+	super.readFromNBT(nbt);
+	provider.deserializeNBT(nbt.getCompoundTag("node"));
     }
-    
+
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE ||
-                capability == CapabilityImpetusStorage.IMPETUS_STORAGE ||
-                capability == CapabilityAnimation.ANIMATION_CAPABILITY)
-            return true;
-        else
-            return super.hasCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE ||
+		capability == CapabilityImpetusStorage.IMPETUS_STORAGE ||
+		capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+	    return true;
+	else
+	    return super.hasCapability(capability, facing);
     }
-    
+
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE)
-            return CapabilityImpetusNode.IMPETUS_NODE.cast(provider);
-        else if (capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
-            return CapabilityImpetusStorage.IMPETUS_STORAGE.cast(storage);
-        else if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
-            return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
-        else
-            return super.getCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE)
+	    return CapabilityImpetusNode.IMPETUS_NODE.cast(provider);
+	else if (capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
+	    return CapabilityImpetusStorage.IMPETUS_STORAGE.cast(storage);
+	else if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+	    return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
+	else
+	    return super.getCapability(capability, facing);
     }
-    
+
 }

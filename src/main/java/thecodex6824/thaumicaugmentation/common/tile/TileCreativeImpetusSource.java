@@ -44,97 +44,96 @@ public class TileCreativeImpetusSource extends TileEntity implements ITickable {
     protected BufferedImpetusProvider provider;
     protected InfiniteImpetusStorage storage;
     protected int ticks;
-    
+
     public TileCreativeImpetusSource() {
-        super();
-        storage = new InfiniteImpetusStorage(true, false);
-        provider = new BufferedImpetusProvider(0, Integer.MAX_VALUE, storage);
-        ticks = ThreadLocalRandom.current().nextInt(20);
+	super();
+	storage = new InfiniteImpetusStorage(true, false);
+	provider = new BufferedImpetusProvider(0, Integer.MAX_VALUE, storage);
+	ticks = ThreadLocalRandom.current().nextInt(20);
     }
-    
+
     @Override
     public void update() {
-        if (!world.isRemote && ticks % 20 == 0)
-            NodeHelper.validateOutputs(world, provider);
+	if (!world.isRemote && ticks++ % 20 == 0)
+	    NodeHelper.validate(provider, world);
     }
-    
+
     @Override
     public void setPos(BlockPos posIn) {
-        super.setPos(posIn);
-        if (world != null)
-            provider.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setPos(posIn);
+	if (world != null)
+	    provider.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void setWorld(World worldIn) {
-        super.setWorld(worldIn);
-        provider.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setWorld(worldIn);
+	provider.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void onLoad() {
-        provider.init(world);
-        ThaumicAugmentation.proxy.registerRenderableImpetusNode(provider);
+	ThaumicAugmentation.proxy.registerRenderableImpetusNode(provider);
     }
-    
+
     @Override
     public void invalidate() {
-        if (!world.isRemote)
-            NodeHelper.syncDestroyedImpetusNode(provider);
-        
-        provider.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
-        super.invalidate();
+	if (!world.isRemote)
+	    NodeHelper.syncDestroyedImpetusNode(provider);
+
+	provider.destroy();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
+	super.invalidate();
     }
-    
+
     @Override
     public void onChunkUnload() {
-        provider.unload();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
+	provider.unload();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(provider);
     }
-    
+
     @Override
     public NBTTagCompound getUpdateTag() {
-        NBTTagCompound tag = super.getUpdateTag();
-        tag.setTag("node", provider.serializeNBT());
-        return tag;
+	NBTTagCompound tag = super.getUpdateTag();
+	tag.setTag("node", provider.serializeNBT());
+	return tag;
     }
-    
+
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
-        super.handleUpdateTag(tag);
-        provider.init(world);
+	super.handleUpdateTag(tag);
+	NodeHelper.tryConnectNewlyLoadedPeers(provider, world);
     }
-    
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag.setTag("node", provider.serializeNBT());
-        return super.writeToNBT(tag);
+	tag.setTag("node", provider.serializeNBT());
+	return super.writeToNBT(tag);
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        provider.deserializeNBT(nbt.getCompoundTag("node"));
+	super.readFromNBT(nbt);
+	provider.deserializeNBT(nbt.getCompoundTag("node"));
     }
-    
+
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE ||
-                capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
-            return true;
-        else
-            return super.hasCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE ||
+		capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
+	    return true;
+	else
+	    return super.hasCapability(capability, facing);
     }
-    
+
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE)
-            return CapabilityImpetusNode.IMPETUS_NODE.cast(provider);
-        else if (capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
-            return CapabilityImpetusStorage.IMPETUS_STORAGE.cast(storage);
-        else
-            return super.getCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE)
+	    return CapabilityImpetusNode.IMPETUS_NODE.cast(provider);
+	else if (capability == CapabilityImpetusStorage.IMPETUS_STORAGE)
+	    return CapabilityImpetusStorage.IMPETUS_STORAGE.cast(storage);
+	else
+	    return super.getCapability(capability, facing);
     }
-    
+
 }

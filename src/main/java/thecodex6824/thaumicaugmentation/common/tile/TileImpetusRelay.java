@@ -44,117 +44,116 @@ public class TileImpetusRelay extends TileEntity implements ITickable {
 
     protected ImpetusNode node;
     protected int ticks;
-    
+
     public TileImpetusRelay() {
-        node = new ImpetusNode(3, 3) {
-            @Override
-            public Vec3d getBeamEndpoint() {
-                Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
-                IBlockState state = world.getBlockState(pos);
-                if (state.getPropertyKeys().contains(IDirectionalBlock.DIRECTION)) {
-                    switch (state.getValue(IDirectionalBlock.DIRECTION)) {
-                        case DOWN:  return position.add(0.5, 0.5625, 0.5);
-                        case EAST:  return position.add(0.4375, 0.5, 0.5);
-                        case NORTH: return position.add(0.5, 0.5, 0.5625);
-                        case SOUTH: return position.add(0.5, 0.5, 0.4375);
-                        case WEST:  return position.add(0.5625, 0.5, 0.5);
-                        case UP:
-                        default:    return position.add(0.5, 0.4375, 0.5);
-                    }
-                }
-                
-                return position.add(0.5, 0.4375, 0.5);
-            }
-        };
-        
-        ticks = ThreadLocalRandom.current().nextInt(20);
+	node = new ImpetusNode(3, 3) {
+	    @Override
+	    public Vec3d getBeamEndpoint() {
+		Vec3d position = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
+		IBlockState state = world.getBlockState(pos);
+		if (state.getPropertyKeys().contains(IDirectionalBlock.DIRECTION)) {
+		    switch (state.getValue(IDirectionalBlock.DIRECTION)) {
+		    case DOWN:  return position.add(0.5, 0.5625, 0.5);
+		    case EAST:  return position.add(0.4375, 0.5, 0.5);
+		    case NORTH: return position.add(0.5, 0.5, 0.5625);
+		    case SOUTH: return position.add(0.5, 0.5, 0.4375);
+		    case WEST:  return position.add(0.5625, 0.5, 0.5);
+		    case UP:
+		    default:    return position.add(0.5, 0.4375, 0.5);
+		    }
+		}
+
+		return position.add(0.5, 0.4375, 0.5);
+	    }
+	};
+
+	ticks = ThreadLocalRandom.current().nextInt(20);
     }
-    
+
     @Override
     public void update() {
-        if (!world.isRemote && ticks++ % 20 == 0)
-            NodeHelper.validateOutputs(world, node);
+	if (!world.isRemote && ticks++ % 20 == 0)
+	    NodeHelper.validate(node, world);
     }
-    
+
     @Override
     public void setPos(BlockPos posIn) {
-        super.setPos(posIn);
-        if (world != null)
-            node.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setPos(posIn);
+	if (world != null)
+	    node.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void setWorld(World worldIn) {
-        super.setWorld(worldIn);
-        node.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setWorld(worldIn);
+	node.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void onLoad() {
-        node.init(world);
-        ThaumicAugmentation.proxy.registerRenderableImpetusNode(node);
+	ThaumicAugmentation.proxy.registerRenderableImpetusNode(node);
     }
-    
+
     @Override
     public void invalidate() {
-        if (!world.isRemote)
-            NodeHelper.syncDestroyedImpetusNode(node);
-        
-        node.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
-        super.invalidate();
+	if (!world.isRemote)
+	    NodeHelper.syncDestroyedImpetusNode(node);
+
+	node.destroy();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
+	super.invalidate();
     }
-    
+
     @Override
     public void onChunkUnload() {
-        node.unload();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
+	node.unload();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(node);
     }
-    
+
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        return oldState.getBlock() != newState.getBlock();
+	return oldState.getBlock() != newState.getBlock();
     }
-    
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag.setTag("node", node.serializeNBT());
-        return super.writeToNBT(tag);
+	tag.setTag("node", node.serializeNBT());
+	return super.writeToNBT(tag);
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        node.deserializeNBT(nbt.getCompoundTag("node"));
+	super.readFromNBT(nbt);
+	node.deserializeNBT(nbt.getCompoundTag("node"));
     }
-    
+
     @Override
     public NBTTagCompound getUpdateTag() {
-        NBTTagCompound tag = super.getUpdateTag();
-        tag.setTag("node", node.serializeNBT());
-        return tag;
+	NBTTagCompound tag = super.getUpdateTag();
+	tag.setTag("node", node.serializeNBT());
+	return tag;
     }
-    
+
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
-        super.handleUpdateTag(tag);
-        node.init(world);
+	super.handleUpdateTag(tag);
+	NodeHelper.tryConnectNewlyLoadedPeers(node, world);
     }
-    
+
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE)
-            return true;
-        else
-            return super.hasCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE)
+	    return true;
+	else
+	    return super.hasCapability(capability, facing);
     }
-    
+
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE)
-            return CapabilityImpetusNode.IMPETUS_NODE.cast(node);
-        else
-            return super.getCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE)
+	    return CapabilityImpetusNode.IMPETUS_NODE.cast(node);
+	else
+	    return super.getCapability(capability, facing);
     }
-    
+
 }

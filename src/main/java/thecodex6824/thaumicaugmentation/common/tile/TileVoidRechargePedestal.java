@@ -20,6 +20,14 @@
 
 package thecodex6824.thaumicaugmentation.common.tile;
 
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -50,13 +58,6 @@ import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
-
 public class TileVoidRechargePedestal extends TileEntity implements ITickable {
 
     protected ItemStackHandler inventory;
@@ -65,213 +66,216 @@ public class TileVoidRechargePedestal extends TileEntity implements ITickable {
     protected int lastResult;
 
     public TileVoidRechargePedestal() {
-        inventory = new ItemStackHandler(1) {
-            
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                if (stack.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null))
-                    return true;
-                else {
-                    IAugmentableItem item = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                    if (item != null) {
-                        for (ItemStack s : item.getAllAugments()) {
-                            if (s.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null))
-                                return true;
-                        }
-                    }
-                }
-                
-                return false;
-            }
-            
-            @Override
-            public int getSlotLimit(int slot) {
-                return 1;
-            }
-            
-            @Override
-            protected void onContentsChanged(int slot) {
-                markDirty();
-                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
-            }
-            
-            @Nonnull
-            @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                if (isItemValid(slot, stack))
-                    return super.insertItem(slot, stack, simulate);
-                else
-                    return stack;
-            }
-            
-        };
-        
-        consumer = new SimpleImpetusConsumer(1, 0);
-        ticks = ThreadLocalRandom.current().nextInt(20);
-        lastResult = -1;
+	inventory = new ItemStackHandler(1) {
+
+	    @Override
+	    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+		if (stack.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null))
+		    return true;
+		else {
+		    IAugmentableItem item = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+		    if (item != null) {
+			for (ItemStack s : item.getAllAugments()) {
+			    if (s.hasCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null))
+				return true;
+			}
+		    }
+		}
+
+		return false;
+	    }
+
+	    @Override
+	    public int getSlotLimit(int slot) {
+		return 1;
+	    }
+
+	    @Override
+	    protected void onContentsChanged(int slot) {
+		markDirty();
+		world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
+	    }
+
+	    @Nonnull
+	    @Override
+	    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+		if (isItemValid(slot, stack))
+		    return super.insertItem(slot, stack, simulate);
+		else
+		    return stack;
+	    }
+
+	};
+
+	consumer = new SimpleImpetusConsumer(1, 0);
+	ticks = ThreadLocalRandom.current().nextInt(20);
+	lastResult = -1;
     }
 
     public int getComparatorOutput() {
-        ItemStack stack = inventory.getStackInSlot(0);
-        IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-        if (storage != null)
-            return (int) (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() * 15.0);
+	ItemStack stack = inventory.getStackInSlot(0);
+	IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+	if (storage != null)
+	    return (int) (storage.getEnergyStored() / (double) storage.getMaxEnergyStored() * 15.0);
 
-        return 0;
+	return 0;
     }
-    
+
     @Override
     public void update() {
-        if (!world.isRemote && ticks++ % 10 == 0) {
-            ItemStack stack = inventory.getStackInSlot(0);
-            if (!stack.isEmpty()) {
-                boolean sync = false;
-                ArrayList<Map<Deque<IImpetusNode>, Long>> transactions = new ArrayList<>();
-                IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                if (storage != null) {
-                    long receivable = storage.receiveEnergy(Long.MAX_VALUE, true);
-                    ConsumeResult consume = consumer.consume(receivable, false);
-                    if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
-                        sync = true;
-                        transactions.add(consume.paths);
-                    }
-                }
+	if (!world.isRemote && ticks++ % 10 == 0) {
+	    if (ticks % 20 == 0) {
+		NodeHelper.validate(consumer, world);
+	    }
 
-                IAugmentableItem aug = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                if (aug != null) {
-                    for (ItemStack augment : aug.getAllAugments()) {
-                        storage = augment.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-                        if (storage != null) {
-                            long receivable = storage.receiveEnergy(Long.MAX_VALUE, true);
-                            ConsumeResult consume = consumer.consume(receivable, false);
-                            if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
-                                sync = true;
-                                transactions.add(consume.paths);
-                            }
-                        }
-                    }
-                }
+	    ItemStack stack = inventory.getStackInSlot(0);
+	    if (!stack.isEmpty()) {
+		boolean sync = false;
+		ArrayList<Map<Deque<IImpetusNode>, Long>> transactions = new ArrayList<>();
+		IImpetusStorage storage = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+		if (storage != null) {
+		    long receivable = storage.receiveEnergy(Long.MAX_VALUE, true);
+		    ConsumeResult consume = consumer.consume(receivable, false);
+		    if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
+			sync = true;
+			transactions.add(consume.paths);
+		    }
+		}
 
-                if (sync) {
-                    markDirty();
-                    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
-                    for (Map<Deque<IImpetusNode>, Long> map : transactions) {
-                        NodeHelper.syncAllImpetusTransactions(map.keySet());
-                        for (Map.Entry<Deque<IImpetusNode>, Long> entry : map.entrySet())
-                            NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
-                    }
+		IAugmentableItem aug = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+		if (aug != null) {
+		    for (ItemStack augment : aug.getAllAugments()) {
+			storage = augment.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
+			if (storage != null) {
+			    long receivable = storage.receiveEnergy(Long.MAX_VALUE, true);
+			    ConsumeResult consume = consumer.consume(receivable, false);
+			    if (storage.receiveEnergy(consume.energyConsumed, false) > 0) {
+				sync = true;
+				transactions.add(consume.paths);
+			    }
+			}
+		    }
+		}
 
-                    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK,
-                                    pos.getX() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, pos.getY() + 0.9 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
-                                    pos.getZ() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, 1.5, Aspect.ELDRITCH.getColor()),
-                            new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64.0));
-                }
-            }
+		if (sync) {
+		    markDirty();
+		    world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 6);
+		    for (Map<Deque<IImpetusNode>, Long> map : transactions) {
+			NodeHelper.syncAllImpetusTransactions(map.keySet());
+			for (Map.Entry<Deque<IImpetusNode>, Long> entry : map.entrySet())
+			    NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+		    }
 
-            int level = getComparatorOutput();
-            if (level != lastResult) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
-                lastResult = level;
-            }
-        }
+		    TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.SPARK,
+			    pos.getX() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, pos.getY() + 0.9 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25,
+			    pos.getZ() + 0.5 + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.25, 1.5, Aspect.ELDRITCH.getColor()),
+			    new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64.0));
+		}
+	    }
+
+	    int level = getComparatorOutput();
+	    if (level != lastResult) {
+		world.updateComparatorOutputLevel(pos, getBlockType());
+		lastResult = level;
+	    }
+	}
     }
-    
+
     @Override
     @Nullable
     public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(pos, 1, inventory.serializeNBT());
+	return new SPacketUpdateTileEntity(pos, 1, inventory.serializeNBT());
     }
-    
+
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        inventory.deserializeNBT(pkt.getNbtCompound());
+	inventory.deserializeNBT(pkt.getNbtCompound());
     }
-    
+
     @Override
     public void setPos(BlockPos posIn) {
-        super.setPos(posIn);
-        if (world != null)
-            consumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setPos(posIn);
+	if (world != null)
+	    consumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void setWorld(World worldIn) {
-        super.setWorld(worldIn);
-        consumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setWorld(worldIn);
+	consumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void onLoad() {
-        consumer.init(world);
-        ThaumicAugmentation.proxy.registerRenderableImpetusNode(consumer);
+	ThaumicAugmentation.proxy.registerRenderableImpetusNode(consumer);
     }
-    
+
     @Override
     public void invalidate() {
-        if (!world.isRemote)
-            NodeHelper.syncDestroyedImpetusNode(consumer);
-        
-        consumer.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
-        super.invalidate();
+	if (!world.isRemote)
+	    NodeHelper.syncDestroyedImpetusNode(consumer);
+
+	consumer.destroy();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+	super.invalidate();
     }
-    
+
     @Override
     public void onChunkUnload() {
-        consumer.unload();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+	consumer.unload();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
     }
-    
+
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        return oldState.getBlock() != newState.getBlock();
+	return oldState.getBlock() != newState.getBlock();
     }
-    
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag.setTag("node", consumer.serializeNBT());
-        tag.setTag("inv", inventory.serializeNBT());
-        return super.writeToNBT(tag);
+	tag.setTag("node", consumer.serializeNBT());
+	tag.setTag("inv", inventory.serializeNBT());
+	return super.writeToNBT(tag);
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        consumer.deserializeNBT(nbt.getCompoundTag("node"));
-        inventory.deserializeNBT(nbt.getCompoundTag("inv"));
+	super.readFromNBT(nbt);
+	consumer.deserializeNBT(nbt.getCompoundTag("node"));
+	inventory.deserializeNBT(nbt.getCompoundTag("inv"));
     }
-    
+
     @Override
     public NBTTagCompound getUpdateTag() {
-        NBTTagCompound tag = super.getUpdateTag();
-        tag.setTag("node", consumer.serializeNBT());
-        tag.setTag("inv", inventory.serializeNBT());
-        return tag;
+	NBTTagCompound tag = super.getUpdateTag();
+	tag.setTag("node", consumer.serializeNBT());
+	tag.setTag("inv", inventory.serializeNBT());
+	return tag;
     }
-    
+
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
-        super.handleUpdateTag(tag);
-        consumer.init(world);
+	super.handleUpdateTag(tag);
+	NodeHelper.tryConnectNewlyLoadedPeers(consumer, world);
     }
-    
+
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-            return true;
-        else
-            return capability == CapabilityImpetusNode.IMPETUS_NODE ? true : super.hasCapability(capability, facing);
+	if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+	    return true;
+	else
+	    return capability == CapabilityImpetusNode.IMPETUS_NODE ? true : super.hasCapability(capability, facing);
     }
-    
+
     @Override
     @Nullable
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(inventory);
-        else if (capability == CapabilityImpetusNode.IMPETUS_NODE)
-            return CapabilityImpetusNode.IMPETUS_NODE.cast(consumer);
-        else
-            return super.getCapability(capability, facing);
+	if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+	    return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(inventory);
+	else if (capability == CapabilityImpetusNode.IMPETUS_NODE)
+	    return CapabilityImpetusNode.IMPETUS_NODE.cast(consumer);
+	else
+	    return super.getCapability(capability, facing);
     }
-    
+
 }

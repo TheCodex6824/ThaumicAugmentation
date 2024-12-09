@@ -42,100 +42,100 @@ import thecodex6824.thaumicaugmentation.api.impetus.node.prefab.SimpleImpetusCon
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
 public class TileCreativeImpetusSink extends TileEntity implements ITickable {
-    
+
     protected SimpleImpetusConsumer consumer;
     protected int ticks;
-    
+
     public TileCreativeImpetusSink() {
-        super();
-        consumer = new SimpleImpetusConsumer(Integer.MAX_VALUE, 0);
-        ticks = ThreadLocalRandom.current().nextInt(20);
+	super();
+	consumer = new SimpleImpetusConsumer(Integer.MAX_VALUE, 0);
+	ticks = ThreadLocalRandom.current().nextInt(20);
     }
-    
+
     @Override
     public void update() {
-        if (!world.isRemote && ticks++ % 20 == 0) {
-            ConsumeResult result = consumer.consume(Long.MAX_VALUE, false);
-            if (result.energyConsumed > 0) {
-                NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
-                for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
-                    NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
-            }
-        }
+	if (!world.isRemote && ticks++ % 20 == 0) {
+	    NodeHelper.validate(consumer, world);
+	    ConsumeResult result = consumer.consume(Long.MAX_VALUE, false);
+	    if (result.energyConsumed > 0) {
+		NodeHelper.syncAllImpetusTransactions(result.paths.keySet());
+		for (Map.Entry<Deque<IImpetusNode>, Long> entry : result.paths.entrySet())
+		    NodeHelper.damageEntitiesFromTransaction(entry.getKey(), entry.getValue());
+	    }
+	}
     }
-    
+
     @Override
     public void setPos(BlockPos posIn) {
-        super.setPos(posIn);
-        if (world != null)
-            consumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setPos(posIn);
+	if (world != null)
+	    consumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void setWorld(World worldIn) {
-        super.setWorld(worldIn);
-        consumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
+	super.setWorld(worldIn);
+	consumer.setLocation(new DimensionalBlockPos(pos.toImmutable(), world.provider.getDimension()));
     }
-    
+
     @Override
     public void onLoad() {
-        consumer.init(world);
-        ThaumicAugmentation.proxy.registerRenderableImpetusNode(consumer);
+	ThaumicAugmentation.proxy.registerRenderableImpetusNode(consumer);
     }
-    
+
     @Override
     public void invalidate() {
-        if (!world.isRemote)
-            NodeHelper.syncDestroyedImpetusNode(consumer);
-        
-        consumer.destroy();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
-        super.invalidate();
+	if (!world.isRemote)
+	    NodeHelper.syncDestroyedImpetusNode(consumer);
+
+	consumer.destroy();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+	super.invalidate();
     }
-    
+
     @Override
     public void onChunkUnload() {
-        consumer.unload();
-        ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
+	consumer.unload();
+	ThaumicAugmentation.proxy.deregisterRenderableImpetusNode(consumer);
     }
-    
+
     @Override
     public NBTTagCompound getUpdateTag() {
-        NBTTagCompound tag = super.getUpdateTag();
-        tag.setTag("node", consumer.serializeNBT());
-        return tag;
+	NBTTagCompound tag = super.getUpdateTag();
+	tag.setTag("node", consumer.serializeNBT());
+	return tag;
     }
-    
+
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
-        super.handleUpdateTag(tag);
-        consumer.init(world);
+	super.handleUpdateTag(tag);
+	NodeHelper.tryConnectNewlyLoadedPeers(consumer, world);
     }
-    
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        tag.setTag("node", consumer.serializeNBT());
-        return super.writeToNBT(tag);
+	tag.setTag("node", consumer.serializeNBT());
+	return super.writeToNBT(tag);
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        consumer.deserializeNBT(nbt.getCompoundTag("node"));
+	super.readFromNBT(nbt);
+	consumer.deserializeNBT(nbt.getCompoundTag("node"));
     }
-    
+
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        return capability == CapabilityImpetusNode.IMPETUS_NODE ||
-                super.hasCapability(capability, facing);
+	return capability == CapabilityImpetusNode.IMPETUS_NODE ||
+		super.hasCapability(capability, facing);
     }
-    
+
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityImpetusNode.IMPETUS_NODE)
-            return CapabilityImpetusNode.IMPETUS_NODE.cast(consumer);
-        else
-            return super.getCapability(capability, facing);
+	if (capability == CapabilityImpetusNode.IMPETUS_NODE)
+	    return CapabilityImpetusNode.IMPETUS_NODE.cast(consumer);
+	else
+	    return super.getCapability(capability, facing);
     }
-    
+
 }

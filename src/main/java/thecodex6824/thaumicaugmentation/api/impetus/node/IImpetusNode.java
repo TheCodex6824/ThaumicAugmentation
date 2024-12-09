@@ -36,7 +36,7 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
     public Set<DimensionalBlockPos> getOutputLocations();
 
     public default long onTransaction(Deque<IImpetusNode> path, long energy, boolean simulate) {
-        return energy;
+	return energy;
     }
 
     public DimensionalBlockPos getLocation();
@@ -67,6 +67,15 @@ public interface IImpetusNode extends INode<IImpetusGraph, IImpetusNode> {
 
     public boolean removeOutputLocation(DimensionalBlockPos toRemove);
 
+    /**
+     * @deprecated This does not work for its intended purpose, since the world is not
+     * guaranteed to be available in TileEntity#onLoad. {@link NodeHelper#validate(IImpetusNode, World)}
+     * and {@link NodeHelper#tryConnectNewlyLoadedPeers(IImpetusNode, World)} called during tick methods or when
+     * receiving synced data fulfill similar purposes and should be used instead.
+     *
+     * This will be removed in the next major version.
+     */
+    @Deprecated
     public void init(World world);
 
     public void unload();
