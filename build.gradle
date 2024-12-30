@@ -118,6 +118,7 @@ dependencies {
     compileOnly 'curse.maven:botania-225643:2846950'
     compileOnly 'curse.maven:auracontrol-397104:3013979'
     compileOnly 'curse.maven:electroblobs-wizardry-265642:2929294'
+    compileOnly 'curse.maven:thaumcraftfix-1069346:5889900'
     
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.+'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.+'

@@ -25,10 +25,14 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 @HasResult
+@Deprecated
+/**
+ * @deprecated Please use Thaumcraft Fix's version of this event instead
+ */
 public class EntityInOuterLandsEvent extends EntityEvent {
 
     public EntityInOuterLandsEvent(Entity entity) {
-        super(entity);
+	super(entity);
     }
-    
+
 }

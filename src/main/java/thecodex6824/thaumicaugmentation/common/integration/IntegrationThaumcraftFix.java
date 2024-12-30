@@ -20,17 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.common.integration;
 
-import electroblob.wizardry.entity.projectile.EntityMagicFireball;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import thaumcraft.api.capabilities.IPlayerKnowledge;
-import thaumcraft.api.capabilities.ThaumcraftCapabilities;
+import thecodex6824.thaumcraftfix.api.event.EntityInOuterLandsEvent;
+import thecodex6824.thaumcraftfix.api.event.FluxRiftDestroyBlockEvent;
 
-public class IntegrationEBWizardry implements IIntegrationHolder {
+public class IntegrationThaumcraftFix implements IIntegrationHolder {
 
     @Override
     public void preInit() {}
@@ -46,22 +41,19 @@ public class IntegrationEBWizardry implements IIntegrationHolder {
 	return true;
     }
 
-    @SuppressWarnings("null")
     @SubscribeEvent
-    public void onDamage(LivingDamageEvent event) {
-	if (event.getEntity() instanceof EntityPlayerMP) {
-	    EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
-	    if (event.getSource().getImmediateSource() instanceof EntityMagicFireball &&
-		    !ThaumcraftCapabilities.knowsResearch(player, "f_fireball")) {
+    @SuppressWarnings("deprecation")
+    public void onFluxRiftEatBlock(FluxRiftDestroyBlockEvent event) {
+	MinecraftForge.EVENT_BUS.post(
+		new thecodex6824.thaumicaugmentation.api.event.FluxRiftDestroyBlockEvent(
+			event.getRift(), event.getPosition(), event.getDestroyedBlock()));
+    }
 
-		IPlayerKnowledge knowledge = ThaumcraftCapabilities.getKnowledge(player);
-		if (knowledge.addResearch("f_fireball")) {
-		    knowledge.sync(player);
-		    player.sendStatusMessage(new TextComponentTranslation("got.projectile").setStyle(
-			    new Style().setColor(TextFormatting.DARK_PURPLE)), true);
-		}
-	    }
-	}
+    @SubscribeEvent
+    @SuppressWarnings("deprecation")
+    public void isEntityInOuterLands(EntityInOuterLandsEvent event) {
+	MinecraftForge.EVENT_BUS.post(
+		new thecodex6824.thaumicaugmentation.api.event.EntityInOuterLandsEvent(event.getEntity()));
     }
 
 }

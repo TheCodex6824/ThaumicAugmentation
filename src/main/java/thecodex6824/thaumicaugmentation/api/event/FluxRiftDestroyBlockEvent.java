@@ -27,27 +27,31 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import thaumcraft.common.entities.EntityFluxRift;
 
 @Cancelable
+@Deprecated
+/**
+ * @deprecated Please use Thaumcraft Fix's version of this event instead
+ */
 public class FluxRiftDestroyBlockEvent extends EntityEvent {
 
     protected final BlockPos pos;
     protected final IBlockState state;
-    
+
     public FluxRiftDestroyBlockEvent(EntityFluxRift rift, BlockPos position, IBlockState destroyedState) {
-        super(rift);
-        pos = position;
-        state = destroyedState;
+	super(rift);
+	pos = position;
+	state = destroyedState;
     }
-    
+
     public EntityFluxRift getRift() {
-        return (EntityFluxRift) getEntity();
+	return (EntityFluxRift) getEntity();
     }
-    
+
     public BlockPos getPosition() {
-        return pos;
+	return pos;
     }
-    
+
     public IBlockState getDestroyedBlock() {
-        return state;
+	return state;
     }
-    
+
 }

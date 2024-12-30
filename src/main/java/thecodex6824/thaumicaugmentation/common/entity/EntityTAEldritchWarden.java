@@ -95,6 +95,7 @@ import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.api.world.TADimensions;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
+@SuppressWarnings("deprecation")
 public class EntityTAEldritchWarden extends EntityEldritchWarden implements IEldritchSpireWardHolder {
 
     protected static final DataParameter<Boolean> TRANSPARENT = EntityDataManager.createKey(EntityTAEldritchWarden.class,

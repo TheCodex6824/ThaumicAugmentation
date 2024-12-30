@@ -29,6 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import thecodex6824.thaumicaugmentation.common.event.TCSoundFixer;
 
 public class IntegrationHandler {
 
@@ -37,51 +38,58 @@ public class IntegrationHandler {
     public static final String AURACONTROL_MOD_ID = "auracontrol";
     public static final String EB_WIZARDRY_MOD_ID = "ebwizardry";
     public static final ComparableVersion EB_WIZARDRY_MIN_VERSION = new ComparableVersion("4.2.0");
-    
+    public static final String THAUMCRAFT_FIX_MOD_ID = "thaumcraftfix";
+
     private static HashMap<String, IIntegrationHolder> integrations = new HashMap<>();
-    
+
     public static void preInit() {
-        if (Loader.isModLoaded(JEID_MOD_ID))
-            integrations.put(JEID_MOD_ID, new IntegrationJEID());
-        if (Loader.isModLoaded(BOTANIA_MOD_ID))
-            integrations.put(BOTANIA_MOD_ID, new IntegrationBotania());
-        if (Loader.isModLoaded(AURACONTROL_MOD_ID))
-            integrations.put(AURACONTROL_MOD_ID, new IntegrationAuraControl());
-        if (Loader.isModLoaded(EB_WIZARDRY_MOD_ID)) {
-            // Older versions of EB Wizardry do not have some things we want
-            String version = Loader.instance().getIndexedModList().get(EB_WIZARDRY_MOD_ID).getVersion();
-            if (new ComparableVersion(version).compareTo(EB_WIZARDRY_MIN_VERSION) >= 0)
-                integrations.put(EB_WIZARDRY_MOD_ID, new IntegrationEBWizardry());
-        }
-        
-        for (IIntegrationHolder holder : integrations.values()) {
-            if (holder.registerEventBus())
-                MinecraftForge.EVENT_BUS.register(holder);
-            
-            holder.preInit();
-        }
+	if (Loader.isModLoaded(JEID_MOD_ID))
+	    integrations.put(JEID_MOD_ID, new IntegrationJEID());
+	if (Loader.isModLoaded(BOTANIA_MOD_ID))
+	    integrations.put(BOTANIA_MOD_ID, new IntegrationBotania());
+	if (Loader.isModLoaded(AURACONTROL_MOD_ID))
+	    integrations.put(AURACONTROL_MOD_ID, new IntegrationAuraControl());
+	if (Loader.isModLoaded(EB_WIZARDRY_MOD_ID)) {
+	    // Older versions of EB Wizardry do not have some things we want
+	    String version = Loader.instance().getIndexedModList().get(EB_WIZARDRY_MOD_ID).getVersion();
+	    if (new ComparableVersion(version).compareTo(EB_WIZARDRY_MIN_VERSION) >= 0)
+		integrations.put(EB_WIZARDRY_MOD_ID, new IntegrationEBWizardry());
+	}
+	if (Loader.isModLoaded(THAUMCRAFT_FIX_MOD_ID)) {
+	    integrations.put(THAUMCRAFT_FIX_MOD_ID, new IntegrationThaumcraftFix());
+	}
+	else {
+	    MinecraftForge.EVENT_BUS.register(TCSoundFixer.class);
+	}
+
+	for (IIntegrationHolder holder : integrations.values()) {
+	    if (holder.registerEventBus())
+		MinecraftForge.EVENT_BUS.register(holder);
+
+	    holder.preInit();
+	}
     }
-    
+
     public static void init() {
-        for (IIntegrationHolder holder : integrations.values())
-            holder.init();
+	for (IIntegrationHolder holder : integrations.values())
+	    holder.init();
     }
-    
+
     public static void postInit() {
-        ThaumicAugmentation.getLogger().info("The following mods were detected and have integration enabled:");
-        for (Map.Entry<String, IIntegrationHolder> entry : integrations.entrySet()) {
-            entry.getValue().postInit();
-            ThaumicAugmentation.getLogger().info(entry.getKey());
-        }
+	ThaumicAugmentation.getLogger().info("The following mods were detected and have integration enabled:");
+	for (Map.Entry<String, IIntegrationHolder> entry : integrations.entrySet()) {
+	    entry.getValue().postInit();
+	    ThaumicAugmentation.getLogger().info(entry.getKey());
+	}
     }
-    
+
     public static boolean isIntegrationPresent(String modid) {
-        return integrations.containsKey(modid);
+	return integrations.containsKey(modid);
     }
-    
+
     @Nullable
     public static IIntegrationHolder getIntegration(String modid) {
-        return integrations.get(modid);
+	return integrations.get(modid);
     }
-    
+
 }

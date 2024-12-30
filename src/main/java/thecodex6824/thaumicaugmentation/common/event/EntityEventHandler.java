@@ -78,153 +78,154 @@ import thecodex6824.thaumicaugmentation.common.tile.TileRiftJar;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
+@SuppressWarnings("deprecation")
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID)
 public class EntityEventHandler {
 
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
-        IPortalState state = event.getEntity().getCapability(CapabilityPortalState.PORTAL_STATE, null);
-        if (state != null && state.isInPortal())
-            PortalStateManager.markEntityInPortal(event.getEntity());
+	IPortalState state = event.getEntity().getCapability(CapabilityPortalState.PORTAL_STATE, null);
+	if (state != null && state.isInPortal())
+	    PortalStateManager.markEntityInPortal(event.getEntity());
     }
-    
+
     @SubscribeEvent
     public static void onProjectileCollide(ProjectileImpactEvent event) {
-        if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityEnderPearl) {
-            WorldServer w = (WorldServer) event.getEntity().getEntityWorld();
-            BlockPos check = event.getEntity().getPosition();
-            if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", check)) {
-                MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(check);
-                if (start != null) {
-                    IWardStorage storage = w.getChunk(check).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
-                    if (storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard())) { 
-                        event.getEntity().setDead();
-                        Vec3d pos = event.getEntity().getPositionVector();
-                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.ENDER_EYE_BREAK, pos.x,
-                                pos.y, pos.z, Item.getIdFromItem(Items.ENDER_PEARL)), event.getEntity());
-                        event.setCanceled(true);
-                        return;
-                    }
-                }
-            }
-        }
-        
-        if (event.getRayTraceResult() != null && event.getRayTraceResult().entityHit instanceof EntityFocusShield) {
-            EntityFocusShield s = (EntityFocusShield) event.getRayTraceResult().entityHit;
-            if (s.getOwner() != null) {
-                // owner's projectiles should always pass through
-                Entity projectile = event.getEntity();
-                if (projectile instanceof EntityThrowable && s.getOwner().equals(((EntityThrowable) projectile).getThrower())) {
-                    event.setCanceled(true);
-                    return;
-                }
-                else if (projectile instanceof EntityArrow && s.getOwner().equals(((EntityArrow) projectile).shootingEntity)) {
-                    event.setCanceled(true);
-                    return;
-                }
-                else if (projectile instanceof EntityFireball && s.getOwner().equals(((EntityFireball) projectile).shootingEntity)) {
-                    event.setCanceled(true);
-                    return;
-                }
-                
-                // TODO: check velocty + collision to allow outward projectiles?
-            }
-            
-            // we check for projectile reflection later as we want damage to be applied to the shield
-        }
+	if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityEnderPearl) {
+	    WorldServer w = (WorldServer) event.getEntity().getEntityWorld();
+	    BlockPos check = event.getEntity().getPosition();
+	    if (w.getChunkProvider().isInsideStructure(w, "EldritchSpire", check)) {
+		MapGenEldritchSpire.Start start = ((ChunkGeneratorEmptiness) w.getChunkProvider().chunkGenerator).getSpireStart(check);
+		if (start != null) {
+		    IWardStorage storage = w.getChunk(check).getCapability(CapabilityWardStorage.WARD_STORAGE, null);
+		    if (storage instanceof IWardStorageServer && ((IWardStorageServer) storage).isWardOwner(start.getWard())) {
+			event.getEntity().setDead();
+			Vec3d pos = event.getEntity().getPositionVector();
+			TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.ENDER_EYE_BREAK, pos.x,
+				pos.y, pos.z, Item.getIdFromItem(Items.ENDER_PEARL)), event.getEntity());
+			event.setCanceled(true);
+			return;
+		    }
+		}
+	    }
+	}
+
+	if (event.getRayTraceResult() != null && event.getRayTraceResult().entityHit instanceof EntityFocusShield) {
+	    EntityFocusShield s = (EntityFocusShield) event.getRayTraceResult().entityHit;
+	    if (s.getOwner() != null) {
+		// owner's projectiles should always pass through
+		Entity projectile = event.getEntity();
+		if (projectile instanceof EntityThrowable && s.getOwner().equals(((EntityThrowable) projectile).getThrower())) {
+		    event.setCanceled(true);
+		    return;
+		}
+		else if (projectile instanceof EntityArrow && s.getOwner().equals(((EntityArrow) projectile).shootingEntity)) {
+		    event.setCanceled(true);
+		    return;
+		}
+		else if (projectile instanceof EntityFireball && s.getOwner().equals(((EntityFireball) projectile).shootingEntity)) {
+		    event.setCanceled(true);
+		    return;
+		}
+
+		// TODO: check velocty + collision to allow outward projectiles?
+	    }
+
+	    // we check for projectile reflection later as we want damage to be applied to the shield
+	}
     }
-    
+
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == Phase.END)
-            PortalStateManager.tick();
+	if (event.phase == Phase.END)
+	    PortalStateManager.tick();
     }
-    
+
     @SubscribeEvent
     public static void onLivingEquipmentChange(LivingEquipmentChangeEvent event) {
-        EntityLivingBase entity = event.getEntityLiving();
-        if (!entity.getEntityWorld().isRemote) {
-            PacketLivingEquipmentChange packet = new PacketLivingEquipmentChange(entity.getEntityId(),
-                    event.getSlot(), event.getTo());
-            TANetwork.INSTANCE.sendToAllTracking(packet, entity);
-            if (entity instanceof EntityPlayerMP)
-                TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);
-        }
+	EntityLivingBase entity = event.getEntityLiving();
+	if (!entity.getEntityWorld().isRemote) {
+	    PacketLivingEquipmentChange packet = new PacketLivingEquipmentChange(entity.getEntityId(),
+		    event.getSlot(), event.getTo());
+	    TANetwork.INSTANCE.sendToAllTracking(packet, entity);
+	    if (entity instanceof EntityPlayerMP)
+		TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);
+	}
     }
-    
+
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onLivingUpdate(LivingUpdateEvent event) {
-        if (event.getEntityLiving() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-            if (PlayerMovementAbilityManager.isValidSideForMovement(player))
-                PlayerMovementAbilityManager.tick(player);
-        }
+	if (event.getEntityLiving() instanceof EntityPlayer) {
+	    EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+	    if (PlayerMovementAbilityManager.isValidSideForMovement(player))
+		PlayerMovementAbilityManager.tick(player);
+	}
     }
-    
+
     @SubscribeEvent
     public static void onEntityHurt(LivingHurtEvent event) {
-        ItemStack head = event.getEntityLiving().getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD && head.hasTagCompound() && head.getTagCompound().getInteger("maskType") == MaskType.WITHER.getID() &&
-                event.getSource().getTrueSource() instanceof EntityLivingBase &&
-                event.getEntity().getEntityWorld().rand.nextFloat() < event.getAmount() / 10.0F) {
-            
-            PotionEffect wither = new PotionEffect(MobEffects.WITHER, 80);
-            EntityLivingBase base = (EntityLivingBase) event.getSource().getTrueSource();
-            if (base.isPotionApplicable(wither))
-                base.addPotionEffect(wither);
-        }
-        
-        if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
-            head = ((EntityLivingBase) event.getSource().getTrueSource()).getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-            if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD && head.hasTagCompound() && head.getTagCompound().getInteger("maskType") == MaskType.LIFESTEAL.getID() &&
-                    event.getEntity().getEntityWorld().rand.nextFloat() < event.getAmount() / 12.0F) {
-                
-                ((EntityLivingBase) event.getSource().getTrueSource()).heal(1.0F);
-            }
-        }
+	ItemStack head = event.getEntityLiving().getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+	if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD && head.hasTagCompound() && head.getTagCompound().getInteger("maskType") == MaskType.WITHER.getID() &&
+		event.getSource().getTrueSource() instanceof EntityLivingBase &&
+		event.getEntity().getEntityWorld().rand.nextFloat() < event.getAmount() / 10.0F) {
+
+	    PotionEffect wither = new PotionEffect(MobEffects.WITHER, 80);
+	    EntityLivingBase base = (EntityLivingBase) event.getSource().getTrueSource();
+	    if (base.isPotionApplicable(wither))
+		base.addPotionEffect(wither);
+	}
+
+	if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
+	    head = ((EntityLivingBase) event.getSource().getTrueSource()).getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+	    if (head.getItem() == TAItems.THAUMIUM_ROBES_HOOD && head.hasTagCompound() && head.getTagCompound().getInteger("maskType") == MaskType.LIFESTEAL.getID() &&
+		    event.getEntity().getEntityWorld().rand.nextFloat() < event.getAmount() / 12.0F) {
+
+		((EntityLivingBase) event.getSource().getTrueSource()).heal(1.0F);
+	    }
+	}
     }
-    
+
     // we want to do the same thing for both target and trajectory events, so register for the superclass
     @SubscribeEvent
     public static void onTouchTrajectory(FocusTouchGetEntityEvent event) {
-        if (event.getRay() != null && event.getRay().entityHit instanceof EntityFocusShield) {
-            EntityFocusShield hit = (EntityFocusShield) event.getRay().entityHit;
-            EntityLivingBase caster = event.getFocus().getPackage().getCaster();
-            if (caster != null && hit.getOwnerId() != null && hit.getOwnerId().equals(caster.getUniqueID())) {
-                Pair<Entity, Vec3d> p = RaytraceHelper.raytraceEntityAndPos(caster, event.getRange(), e -> e != hit);
-                if (p != null) {
-                    event.setRay(new RayTraceResult(p.getKey(), p.getValue()));
-                }
-                else {
-                    event.setRay(null);
-                }
-            }
-        }
+	if (event.getRay() != null && event.getRay().entityHit instanceof EntityFocusShield) {
+	    EntityFocusShield hit = (EntityFocusShield) event.getRay().entityHit;
+	    EntityLivingBase caster = event.getFocus().getPackage().getCaster();
+	    if (caster != null && hit.getOwnerId() != null && hit.getOwnerId().equals(caster.getUniqueID())) {
+		Pair<Entity, Vec3d> p = RaytraceHelper.raytraceEntityAndPos(caster, event.getRange(), e -> e != hit);
+		if (p != null) {
+		    event.setRay(new RayTraceResult(p.getKey(), p.getValue()));
+		}
+		else {
+		    event.setRay(null);
+		}
+	    }
+	}
     }
-    
+
     @SubscribeEvent
     public static void onFluxRiftDestroyBlock(FluxRiftDestroyBlockEvent event) {
-        if (event.getDestroyedBlock().getBlock() == TABlocks.RIFT_JAR) {
-            World world = event.getEntity().getEntityWorld();
-            TileEntity tile = world.getTileEntity(event.getPosition());
-            if (tile instanceof TileRiftJar) {
-                IRiftJar jar = tile.getCapability(CapabilityRiftJar.RIFT_JAR, null);
-                if (jar != null && jar.hasRift()) {
-                    BlockPos pos = event.getPosition();
-                    world.destroyBlock(pos, false);
-                    world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
-                    EntityPrimalWisp wisp = new EntityPrimalWisp(world);
-                    wisp.setPositionAndRotation(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
-                            world.rand.nextInt(360) - 180, 0.0F);
-                    wisp.rotationYawHead = wisp.rotationYaw;
-                    wisp.renderYawOffset = wisp.rotationYaw;
-                    wisp.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-                    world.spawnEntity(wisp);
-                    event.getRift().setDead();
-                    event.setCanceled(true);
-                }
-            }
-        }
+	if (event.getDestroyedBlock().getBlock() == TABlocks.RIFT_JAR) {
+	    World world = event.getEntity().getEntityWorld();
+	    TileEntity tile = world.getTileEntity(event.getPosition());
+	    if (tile instanceof TileRiftJar) {
+		IRiftJar jar = tile.getCapability(CapabilityRiftJar.RIFT_JAR, null);
+		if (jar != null && jar.hasRift()) {
+		    BlockPos pos = event.getPosition();
+		    world.destroyBlock(pos, false);
+		    world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3.0F, false);
+		    EntityPrimalWisp wisp = new EntityPrimalWisp(world);
+		    wisp.setPositionAndRotation(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
+			    world.rand.nextInt(360) - 180, 0.0F);
+		    wisp.rotationYawHead = wisp.rotationYaw;
+		    wisp.renderYawOffset = wisp.rotationYaw;
+		    wisp.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+		    world.spawnEntity(wisp);
+		    event.getRift().setDead();
+		    event.setCanceled(true);
+		}
+	    }
+	}
     }
-    
+
 }

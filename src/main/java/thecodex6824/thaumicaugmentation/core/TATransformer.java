@@ -68,6 +68,16 @@ public class TATransformer implements IClassTransformer {
 
     private static final ArrayList<ITransformer> TRANSFORMERS = new ArrayList<>();
 
+    private static boolean isThaumcraftFixPresent() {
+	try {
+	    Class.forName("thecodex6824.thaumcraftfix.api.ThaumcraftFixApi");
+	    return true;
+	}
+	catch (Exception ex) {
+	    return false;
+	}
+    }
+
     static {
 	// required as there is no generic hardness hook for calls outside of player breaking
 	TRANSFORMERS.add(new TransformerWardBlockHardness());
@@ -128,22 +138,9 @@ public class TATransformer implements IClassTransformer {
 	// performance with the looping method is terrible, and a change event should really have been added...
 	TRANSFORMERS.add(new TransformerBaubleSlotChanged());
 
-	// required because TC always creates fog near eldritch guardians if not in the outer lands
-	// but since the outer lands don't exist they always do it
-	// even if it did exist its hardcodedness is problematic
-	TRANSFORMERS.add(new TransformerEldritchGuardianFog());
-
 	// required because any attempt by TC to render a tile entity in a blueprint that is
 	// an AnimationTESR will crash the game
 	TRANSFORMERS.add(new TransformerTCBlueprintCrashFix());
-
-	// fixes armor counting twice visually for void robe armor
-	// I get a lot of reports/questions about it, so here it is
-	TRANSFORMERS.add(new TransformerVoidRobesArmorBarFix());
-
-	// makes runic shielding infusion work on items with baubles capability
-	// TC only checks for the interface on the item...
-	TRANSFORMERS.add(new TransformerRunicShieldingAllowBaublesCap());
 
 	// allow disabling cape render when wearing custom elytra
 	// the special render event from forge seems to be unimplemented?
@@ -155,21 +152,36 @@ public class TATransformer implements IClassTransformer {
 	TRANSFORMERS.add(new TransformerTouchTrajectoryEntitySelection());
 	TRANSFORMERS.add(new TransformerTouchTargetEntitySelection());
 
-	// to fire an event when a flux rift tries to eat a block
-	// used for rift jar detection
-	TRANSFORMERS.add(new TransformerFluxRiftDestroyBlock());
-
 	// to prevent chorus fruit and such from breaking into spires
 	TRANSFORMERS.add(new TransformerAttemptTeleport());
 
 	// to allow non-sword items to have sweeping edge (primal cutter)
 	TRANSFORMERS.add(new TransformerSweepingEdgeCheck());
 
-	// to allow wildcard metadata in required research items when they are non-damageable
-	TRANSFORMERS.add(new TransformerCycleItemStackMetadata());
-
 	// to fix the forge bug that calls invalidate on tiles if they are loaded while tiles are being processed
 	TRANSFORMERS.add(new TransformerWorldAddTile());
+
+	if (!isThaumcraftFixPresent()) {
+	    // fixes armor counting twice visually for void robe armor
+	    // I get a lot of reports/questions about it, so here it is
+	    TRANSFORMERS.add(new TransformerVoidRobesArmorBarFix());
+
+	    // makes runic shielding infusion work on items with baubles capability
+	    // TC only checks for the interface on the item...
+	    TRANSFORMERS.add(new TransformerRunicShieldingAllowBaublesCap());
+
+	    // to fire an event when a flux rift tries to eat a block
+	    // used for rift jar detection
+	    TRANSFORMERS.add(new TransformerFluxRiftDestroyBlock());
+
+	    // required because TC always creates fog near eldritch guardians if not in the outer lands
+	    // but since the outer lands don't exist they always do it
+	    // even if it did exist its hardcodedness is problematic
+	    TRANSFORMERS.add(new TransformerEldritchGuardianFog());
+
+	    // to allow wildcard metadata in required research items when they are non-damageable
+	    TRANSFORMERS.add(new TransformerCycleItemStackMetadata());
+	}
     }
 
     public TATransformer() {}

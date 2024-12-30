@@ -70,6 +70,7 @@ import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
 import thecodex6824.thaumicaugmentation.common.world.ChunkGeneratorEmptiness;
 import thecodex6824.thaumicaugmentation.common.world.structure.MapGenEldritchSpire;
 
+@SuppressWarnings("deprecation")
 public final class TAHooksCommon {
 
     private TAHooksCommon() {}
