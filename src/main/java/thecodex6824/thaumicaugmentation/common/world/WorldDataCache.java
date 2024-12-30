@@ -26,68 +26,72 @@ import java.util.Set;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProvider;
+import net.minecraftforge.common.DimensionManager;
 
 public final class WorldDataCache {
 
     private WorldDataCache() {}
-    
+
     private static boolean init = false;
     private static final HashMap<Integer, WorldData> PROVIDERS = new HashMap<>();
-    
+
     public static class WorldData {
-        
-        private int id;
-        private long seed;
-        private BiomeProvider biome;
-        private double factor;
-        
-        public WorldData(WorldProvider provider) {
-            this(provider.getDimension(), provider.getSeed(), provider.getBiomeProvider(), provider.getMovementFactor());
-        }
-        
-        public WorldData(int dimID, long worldSeed, BiomeProvider biomeProvider, double moveFactor) {
-            id = dimID;
-            seed = worldSeed;
-            biome = biomeProvider;
-            factor = moveFactor;
-        }
-        
-        public int getDimensionID() {
-            return id;
-        }
-        
-        public long getWorldSeed() {
-            return seed;
-        }
-        
-        public BiomeProvider getBiomeProvider() {
-            return biome;
-        }
-        
-        public double getMovementFactor() {
-            return factor;
-        }
-        
+
+	private int id;
+	private long seed;
+	private BiomeProvider biome;
+	private double factor;
+
+	public WorldData(WorldProvider provider) {
+	    this(provider.getDimension(), provider.getSeed(), provider.getBiomeProvider(), provider.getMovementFactor());
+	}
+
+	public WorldData(int dimID, long worldSeed, BiomeProvider biomeProvider, double moveFactor) {
+	    id = dimID;
+	    seed = worldSeed;
+	    biome = biomeProvider;
+	    factor = moveFactor;
+	}
+
+	public int getDimensionID() {
+	    return id;
+	}
+
+	public long getWorldSeed() {
+	    return seed;
+	}
+
+	public BiomeProvider getBiomeProvider() {
+	    return biome;
+	}
+
+	public double getMovementFactor() {
+	    return factor;
+	}
+
     }
 
     public static void addOrUpdateData(World world) {
-        PROVIDERS.put(world.provider.getDimension(), new WorldData(world.provider));
+	PROVIDERS.put(world.provider.getDimension(), new WorldData(world.provider));
     }
 
     public static WorldData getData(int dim) {
-        return PROVIDERS.get(dim);
+	return PROVIDERS.computeIfAbsent(dim, d -> {
+	    World world = DimensionManager.getWorld(dim);
+	    return world != null ? new WorldData(world.provider) : null;
+	});
     }
 
     public static Set<Integer> listAllDimensions() {
-        return PROVIDERS.keySet();
+	return PROVIDERS.keySet();
     }
-    
+
     public static void setInitialized() {
-        init = true;
+	init = true;
     }
-    
+
     public static boolean isInitialized() {
-        return init;
+	return init;
     }
 
 }
