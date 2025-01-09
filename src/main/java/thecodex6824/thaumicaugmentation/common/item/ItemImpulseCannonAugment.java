@@ -24,6 +24,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -55,27 +56,38 @@ public class ItemImpulseCannonAugment extends ItemTABase {
         setHasSubtypes(true);
         augments[0] = new IImpulseCannonRaytraceOverridingAugment() {
             @Override
-            public @NotNull Vec3d overrideFiringRayTrace(World world, Vec3d sourcePosition, Vec3d originalRayTrace) {
+            public @NotNull Vec3d overrideFiringRayTrace(EntityLivingBase user, Vec3d sourcePosition,
+                                                         Vec3d originalRayTrace, float partialTicks) {
                 // first, set up an AABB to gather entities within correction range
-                float angle = TAConfig.cannonGyroscopeCorrectionAngle.getValue();
+                float maxAngle = TAConfig.cannonGyroscopeCorrectionAngle.getValue();
                 AxisAlignedBB bb = new AxisAlignedBB(sourcePosition, originalRayTrace);
-                bb = bb.union(new AxisAlignedBB(originalRayTrace.rotatePitch(angle), originalRayTrace.rotatePitch(-angle)).offset(sourcePosition));
-                bb = bb.union(new AxisAlignedBB(originalRayTrace.rotateYaw(angle), originalRayTrace.rotateYaw(-angle)).offset(sourcePosition));
-                List<Entity> gather = world.getEntitiesWithinAABB(Entity.class, bb);
+                bb = bb.union(new AxisAlignedBB(originalRayTrace.rotatePitch(maxAngle), originalRayTrace.rotatePitch(-maxAngle)).offset(sourcePosition));
+                bb = bb.union(new AxisAlignedBB(originalRayTrace.rotateYaw(maxAngle), originalRayTrace.rotateYaw(-maxAngle)).offset(sourcePosition));
+                List<Entity> gather = user.getEntityWorld().getEntitiesWithinAABB(Entity.class, bb);
                 if (gather.isEmpty()) return originalRayTrace;
                 // second, get vectors from source to entity centers,
                 // then evaluate for which one has the smallest angle to the original trace.
                 Vec3d smallest = originalRayTrace;
+                boolean smallestIsAlive = false;
+                double smallestAngle = maxAngle;
                 for (Entity e : gather) {
+                    if (e == user) continue;
+                    boolean alive = e instanceof EntityLivingBase living && !living.isDead && living.getHealth() > 0;
+                    if (smallestIsAlive && !alive) continue; // do not prefer an unalive target over an alive one
                     Vec3d vector = e.getEntityBoundingBox().getCenter().subtract(sourcePosition);
                     // definition of angle between two vectors:
                     // arccos of their dot product divided by the product of their lengths.
                     double ang = Math.toDegrees(Math.acos(originalRayTrace.dotProduct(vector) / Math.sqrt(originalRayTrace.lengthSquared() * vector.lengthSquared())));
-                    if (ang >= angle) continue;
-                    angle = (float) ang;
+                    // give an alive target priority over an unalive one
+                    if (ang >= maxAngle || (ang >= smallestAngle && (smallestIsAlive || !alive))) continue;
+                    // if there's a block in the way, skip the entity.
+                    if (user.getEntityWorld().rayTraceBlocks(sourcePosition, sourcePosition.add(vector), false, true, false) != null) continue;
+                    smallestAngle = (float) ang;
                     smallest = vector;
+                    smallestIsAlive = alive;
                 }
-                return smallest;
+                // finally, rescale smallest to be the same length as the original scan
+                return smallest.scale(Math.sqrt(originalRayTrace.lengthSquared() / smallest.lengthSquared()));
             }
         };
     }

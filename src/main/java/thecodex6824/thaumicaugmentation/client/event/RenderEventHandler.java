@@ -63,6 +63,8 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
+import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonAugment;
+import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
@@ -78,6 +80,7 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.block.trait.INoBlockOutline;
+import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannon;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
@@ -85,12 +88,7 @@ import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Vector4d;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -144,7 +142,7 @@ public class RenderEventHandler {
         else {
             FXImpulseBeam beam = IMPULSE_CACHE.getIfPresent(entity);
             if (beam == null) {
-                Vec3d dest = RaytraceHelper.raytracePosition(entity, TAConfig.cannonBeamRange.getValue());
+                Vec3d dest = determineBeamTarget(entity, 1);
                 beam = new FXImpulseBeam(entity.getEntityWorld(), entity, dest.x, dest.y, dest.z, 0.35F, 0.35F, 0.65F, Integer.MAX_VALUE);
                 beam.setPulse(true);
                 beam.setFollowOwner(true);
@@ -169,6 +167,31 @@ public class RenderEventHandler {
                 }
             }
         }
+    }
+
+    protected static Vec3d determineBeamTarget(EntityLivingBase entity, float partialTicks) {
+        Vec3d origin = entity.getPositionEyes(partialTicks);
+        Vec3d dest = entity.getLook(partialTicks).scale(TAConfig.cannonBeamRange.getValue());
+        ItemStack stack = entity.getHeldItemMainhand();
+        if (stack.getItem() instanceof ItemImpulseCannon cannon) {
+            List<IImpulseCannonAugment> augments = cannon.getAugments(stack);
+            for (IImpulseCannonAugment aug : augments) {
+                if (aug instanceof IImpulseCannonRaytraceOverridingAugment override) {
+                    dest = override.overrideFiringRayTrace(entity, origin, dest, partialTicks);
+                    break;
+                }
+            }
+        } else if ((stack = entity.getHeldItemOffhand()).getItem() instanceof ItemImpulseCannon cannon) {
+            List<IImpulseCannonAugment> augments = cannon.getAugments(stack);
+            for (IImpulseCannonAugment aug : augments) {
+                if (aug instanceof IImpulseCannonRaytraceOverridingAugment override) {
+                    dest = override.overrideFiringRayTrace(entity, origin, dest, partialTicks);
+                    break;
+                }
+            }
+        }
+        dest = RaytraceHelper.shortenRaytraceByBlocks(entity.getEntityWorld(), origin, origin.add(dest));
+        return dest;
     }
     
     @Nullable
@@ -601,7 +624,7 @@ public class RenderEventHandler {
         ArrayList<EntityLivingBase> toRemove = new ArrayList<>();
         for (Map.Entry<EntityLivingBase, FXImpulseBeam> entry : IMPULSE_CACHE.asMap().entrySet()) {
             if (findImpulseCannon(entry.getKey()) != null) {
-                Vec3d dest = RaytraceHelper.raytracePosition(entry.getKey(), TAConfig.cannonBeamRange.getValue(), event.getPartialTicks());
+                Vec3d dest = determineBeamTarget(entry.getKey(), event.getPartialTicks());
                 entry.getValue().updateBeamTarget(dest.x, dest.y, dest.z);
             }
             else

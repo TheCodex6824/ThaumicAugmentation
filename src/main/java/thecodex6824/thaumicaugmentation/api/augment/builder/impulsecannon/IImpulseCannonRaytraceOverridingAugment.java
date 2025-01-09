@@ -1,5 +1,6 @@
 package thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -15,5 +16,10 @@ public interface IImpulseCannonRaytraceOverridingAugment extends IImpulseCannonA
         return !(a instanceof IImpulseCannonRaytraceOverridingAugment);
     }
 
-    @NotNull Vec3d overrideFiringRayTrace(World world, Vec3d sourcePosition, Vec3d originalRayTrace);
+    default @NotNull Vec3d overrideFiringRayTrace(EntityLivingBase user, Vec3d sourcePosition, Vec3d originalRayTrace) {
+        return overrideFiringRayTrace(user, sourcePosition, originalRayTrace, 1);
+    }
+
+
+    @NotNull Vec3d overrideFiringRayTrace(EntityLivingBase user, Vec3d sourcePosition, Vec3d originalRayTrace, float partialTicks);
 }

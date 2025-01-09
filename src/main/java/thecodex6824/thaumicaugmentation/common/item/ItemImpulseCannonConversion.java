@@ -100,11 +100,11 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 Vec3d scan = user.getLookVec().scale(TAConfig.cannonRailgunRange.getValue());
                 for (IImpulseCannonAugment aug : augmentList) {
                     if (aug instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                        scan = override.overrideFiringRayTrace(user.getEntityWorld(), origin, scan);
+                        scan = override.overrideFiringRayTrace(user, origin, scan);
                         break;
                     }
                 }
-                float baseDamage = TAConfig.cannonBurstDamage.getValue();
+                float baseDamage = TAConfig.cannonRailgunDamage.getValue();
                 float magicFactor = 0.5f;
                 float normalFactor = 0.5f;
                 long cost = getImpetusCostPerUsage(user, buffer);
@@ -116,6 +116,7 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 scan = RaytraceHelper.shortenRaytraceByBlocks(user.getEntityWorld(), origin, origin.add(scan));
                 List<Entity> ents = RaytraceHelper.raytraceEntities(user.getEntityWorld(), origin, scan);
                 for (Entity e : ents) {
+                    if (e == user) continue;
                     if (!(e instanceof IImpulseSpecialEntity ent) || !ent.shouldImpulseCannonIgnore(user)) {
                         for (IImpulseCannonAugment aug : augmentList) {
                             aug.applyAdditionalEffectsToEntity(origin, scan, e, baseDamage);
@@ -181,12 +182,18 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 Vec3d scan = user.getLookVec().scale(TAConfig.cannonBurstRange.getValue());
                 for (IImpulseCannonAugment aug : augments) {
                     if (aug instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                        scan = override.overrideFiringRayTrace(user.getEntityWorld(), origin, scan);
+                        scan = override.overrideFiringRayTrace(user, origin, scan);
                         break;
                     }
                 }
                 scan = RaytraceHelper.shortenRaytraceByBlocks(user.getEntityWorld(), origin, origin.add(scan));
-                Entity e = RaytraceHelper.raytraceEntities(user.getEntityWorld(), origin, scan).get(0);
+                Entity e = null;
+                for (Entity entity : RaytraceHelper.raytraceEntities(user.getEntityWorld(), origin, scan)) {
+                    if (entity != user) {
+                        e = entity;
+                        break;
+                    }
+                }
                 if (e != null && (!(e instanceof IImpulseSpecialEntity ent) || !ent.shouldImpulseCannonIgnore(user))) {
                     for (IImpulseCannonAugment aug : augments) {
                         aug.applyAdditionalEffectsToEntity(origin, scan, e, baseDamage);
@@ -204,8 +211,7 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 Random rand = user.getRNG();
                 user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_BURST,
                         SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
-                Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonBurstRange.getValue());
-                PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), target, num);
+                PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), scan, num);
                 TANetwork.INSTANCE.sendToAllTracking(packet, user);
                 if (user instanceof EntityPlayerMP)
                     TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);

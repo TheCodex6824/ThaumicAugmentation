@@ -324,7 +324,7 @@ public final class TAConfigHolder {
 			@Name("GyroscopeCorrectionAngle")
 			@Comment({"The maximum angle difference that the gyroscopic adjuster will correct, in degrees."})
 			@RangeDouble(min = 0, max = 90)
-			public float gyroscopeCorrectionAngle = 20;
+			public float gyroscopeCorrectionAngle = 5;
 		}
 	}
 

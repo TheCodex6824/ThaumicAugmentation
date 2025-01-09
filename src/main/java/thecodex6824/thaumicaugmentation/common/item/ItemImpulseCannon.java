@@ -117,7 +117,7 @@ public class ItemImpulseCannon extends ItemTABase {
     }
     
     @Nullable
-    protected IImpulseCannonConversion getConversion(ItemStack stack) {
+    public IImpulseCannonConversion getConversion(ItemStack stack) {
         IAugmentableItem augments = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
         if (augments != null && augments.isAugmented()) {
             for (ItemStack aug : augments.getAllAugments()) {
@@ -129,7 +129,7 @@ public class ItemImpulseCannon extends ItemTABase {
     }
 
     @NotNull
-    protected List<IImpulseCannonAugment> getAugments(ItemStack stack) {
+    public List<IImpulseCannonAugment> getAugments(ItemStack stack) {
         IAugmentableItem augments = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
         if (augments != null && augments.isAugmented()) {
             List<IImpulseCannonAugment> augs = new ObjectArrayList<>();
@@ -242,12 +242,18 @@ public class ItemImpulseCannon extends ItemTABase {
                     Vec3d scan = player.getLookVec().scale(TAConfig.cannonBeamRange.getValue());
                     for (IImpulseCannonAugment aug : augments) {
                         if (aug instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                            scan = override.overrideFiringRayTrace(player.getEntityWorld(), origin, scan);
+                            scan = override.overrideFiringRayTrace(player, origin, scan);
                             break;
                         }
                     }
                     scan = RaytraceHelper.shortenRaytraceByBlocks(player.getEntityWorld(), origin, origin.add(scan));
-                    Entity e = RaytraceHelper.raytraceEntities(player.getEntityWorld(), origin, scan).get(0);
+                    Entity e = null;
+                    for (Entity entity : RaytraceHelper.raytraceEntities(player.getEntityWorld(), origin, scan)) {
+                        if (entity != player) {
+                            e = entity;
+                            break;
+                        }
+                    }
                     if (e != null && (!(e instanceof IImpulseSpecialEntity ent) || !ent.shouldImpulseCannonIgnore(player))) {
                         float baseDamage = TAConfig.cannonBeamDamage.getValue();
                         float magicFactor = 0.5f;
