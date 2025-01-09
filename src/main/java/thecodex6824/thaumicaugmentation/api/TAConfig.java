@@ -116,7 +116,11 @@ public final class TAConfig {
     public static ConfigOptionLong cannonBurstCost;
     public static ConfigOptionInt cannonBurstCooldown;
     public static ConfigOptionDouble cannonBurstRange;
-    
+    public static ConfigOptionInt cannonBurstCount;
+    public static ConfigOptionInt cannonBurstDelay;
+
+    public static ConfigOptionFloat cannonGyroscopeCorrectionAngle;
+
     public static ConfigOptionFloat primalCutterDamage;
     
     public static ConfigOptionStringList deniedCategories;

@@ -20,183 +20,71 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import org.jetbrains.annotations.NotNull;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
-import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.IImpulseCannonAugment;
-import thecodex6824.thaumicaugmentation.api.entity.IImpulseSpecialEntity;
-import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
-import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
+import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonAugment;
+import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
-import thecodex6824.thaumicaugmentation.common.event.ScheduledTaskHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
-import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBurst;
-import thecodex6824.thaumicaugmentation.common.network.PacketImpulseRailgunProjectile;
-import thecodex6824.thaumicaugmentation.common.network.PacketRecoil;
-import thecodex6824.thaumicaugmentation.common.network.PacketRecoil.RecoilType;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 
 public class ItemImpulseCannonAugment extends ItemTABase {
 
-    protected static abstract class ImpulseCannonAugmentBase implements IImpulseCannonAugment {
-        
-        @Override
-        public boolean canBeAppliedToItem(ItemStack augmentable) {
-            return augmentable.getItem() == TAItems.IMPULSE_CANNON;
-        }
-        
-        @Override
-        public boolean isCompatible(ItemStack otherAugment) {
-            return !(otherAugment.getCapability(CapabilityAugment.AUGMENT, null) instanceof ImpulseCannonAugmentBase);
-        }
-        
-    }
-    
+    protected final IImpulseCannonAugment[] augments;
+
     public ItemImpulseCannonAugment() {
-        super("railgun", "burst");
+        super("gyroscope");
+        augments = new IImpulseCannonAugment[subItemNames.length];
         setMaxStackSize(1);
         setHasSubtypes(true);
-    }
-    
-    protected IImpulseCannonAugment createAugmentForStack(ItemStack stack) {
-        if (stack.getMetadata() == 0) {
-            return new ImpulseCannonAugmentBase() {
-                
-                @Override
-                public LensModelType getLensModel() {
-                    return LensModelType.RAILGUN;
+        augments[0] = new IImpulseCannonRaytraceOverridingAugment() {
+            @Override
+            public @NotNull Vec3d overrideFiringRayTrace(World world, Vec3d sourcePosition, Vec3d originalRayTrace) {
+                // first, set up an AABB to gather entities within correction range
+                float angle = TAConfig.cannonGyroscopeCorrectionAngle.getValue();
+                AxisAlignedBB bb = new AxisAlignedBB(sourcePosition, originalRayTrace);
+                bb = bb.union(new AxisAlignedBB(originalRayTrace.rotatePitch(angle), originalRayTrace.rotatePitch(-angle)).offset(sourcePosition));
+                bb = bb.union(new AxisAlignedBB(originalRayTrace.rotateYaw(angle), originalRayTrace.rotateYaw(-angle)).offset(sourcePosition));
+                List<Entity> gather = world.getEntitiesWithinAABB(Entity.class, bb);
+                if (gather.isEmpty()) return originalRayTrace;
+                // second, get vectors from source to entity centers,
+                // then evaluate for which one has the smallest angle to the original trace.
+                Vec3d smallest = originalRayTrace;
+                for (Entity e : gather) {
+                    Vec3d vector = e.getEntityBoundingBox().getCenter().subtract(sourcePosition);
+                    // definition of angle between two vectors:
+                    // arccos of their dot product divided by the product of their lengths.
+                    double ang = Math.toDegrees(Math.acos(originalRayTrace.dotProduct(vector) / Math.sqrt(originalRayTrace.lengthSquared() * vector.lengthSquared())));
+                    if (ang >= angle) continue;
+                    angle = (float) ang;
+                    smallest = vector;
                 }
-                
-                @Override
-                public int getMaxUsageDuration() {
-                    return 1;
-                }
-                
-                @Override
-                public boolean isTickable(EntityLivingBase user) {
-                    return false;
-                }
-                
-                @Override
-                public long getImpetusCostPerUsage(EntityLivingBase user) {
-                    return TAConfig.cannonRailgunCost.getValue();
-                }
-                
-                @Override
-                public void onCannonUsage(EntityLivingBase user) {
-                    Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonRailgunRange.getValue());
-                    List<Entity> ents = RaytraceHelper.raytraceEntities(user, TAConfig.cannonRailgunRange.getValue());
-                    for (Entity e : ents) {
-                        if (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(user)) {
-                            ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonRailgunDamage.getValue());
-                            if (e instanceof IImpulseSpecialEntity && ((IImpulseSpecialEntity) e).shouldStopRailgunBeam(user))
-                                break;
-                        }
-                    }
-                    
-                    Random rand = user.getRNG();
-                    user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_RAILGUN,
-                            SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
-                    PacketImpulseRailgunProjectile packet = new PacketImpulseRailgunProjectile(user.getEntityId(), target);
-                    PacketRecoil recoil = new PacketRecoil(user.getEntityId(), RecoilType.IMPULSE_RAILGUN);
-                    TANetwork.INSTANCE.sendToAllTracking(packet, user);
-                    TANetwork.INSTANCE.sendToAllTracking(recoil, user);
-                    if (user instanceof EntityPlayer) {
-                        ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonRailgunCooldown.getValue());
-                        if (user instanceof EntityPlayerMP) {
-                            TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);
-                            TANetwork.INSTANCE.sendTo(recoil, (EntityPlayerMP) user);
-                        }
-                    }
-                }
-                
-            };
-        }
-        else {
-            return new ImpulseCannonAugmentBase() {
-                
-                @Override
-                public LensModelType getLensModel() {
-                    return LensModelType.BURST;
-                }
-                
-                @Override
-                public int getMaxUsageDuration() {
-                    return 5;
-                }
-                
-                @Override
-                public boolean isTickable(EntityLivingBase user) {
-                    return false;
-                }
-                
-                @Override
-                public long getImpetusCostPerUsage(EntityLivingBase user) {
-                    return TAConfig.cannonBurstCost.getValue();
-                }
-                
-                private void tick(EntityLivingBase user, int num) {
-                    Entity e = RaytraceHelper.raytraceEntity(user, TAConfig.cannonBurstRange.getValue());
-                    if (e != null && (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(user)) &&
-                            ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonBurstDamage.getValue()) && num < 2 && e instanceof EntityLivingBase) {
-                            
-                        EntityLivingBase base = (EntityLivingBase) e;
-                        base.hurtResistantTime = Math.min(base.hurtResistantTime, 1);
-                        base.lastDamage = 0.0F;
-                    }
-                    
-                    Random rand = user.getRNG();
-                    user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_BURST,
-                            SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
-                    Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonBurstRange.getValue());
-                    PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), target, num);
-                    TANetwork.INSTANCE.sendToAllTracking(packet, user);
-                    if (user instanceof EntityPlayerMP)
-                        TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);
-                    
-                    if (num < 2)
-                        ScheduledTaskHandler.registerTask(() -> tick(user, num + 1), 2);
-                }
-                
-                @Override
-                public void onCannonUsage(EntityLivingBase user) {
-                    ScheduledTaskHandler.registerTask(() -> tick(user, 0), 0);
-                    PacketRecoil recoil = new PacketRecoil(user.getEntityId(), RecoilType.IMPULSE_BURST);
-                    TANetwork.INSTANCE.sendToAllTracking(recoil, user);
-                    if (user instanceof EntityPlayer) {
-                        ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonBurstCooldown.getValue());
-                        if (user instanceof EntityPlayerMP)
-                            TANetwork.INSTANCE.sendTo(recoil, (EntityPlayerMP) user);
-                    }
-                }
-                
-            };
-        }
+                return smallest;
+            }
+        };
     }
     
     @Override
     @Nullable
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         SimpleCapabilityProviderNoSave<IAugment> provider =
-                new SimpleCapabilityProviderNoSave<>(createAugmentForStack(stack), CapabilityAugment.AUGMENT);
+                new SimpleCapabilityProviderNoSave<>(augments[stack.getMetadata()], CapabilityAugment.AUGMENT);
         if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
             provider.deserializeNBT(nbt.getCompoundTag("Parent"));
         
