@@ -20,40 +20,52 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonAugment;
 import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
+import thecodex6824.thaumicaugmentation.api.entity.DamageSourceImpetus;
+import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
+import thecodex6824.thaumicaugmentation.common.event.ScheduledTaskHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 import javax.annotation.Nullable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class ItemImpulseCannonAugment extends ItemTABase {
 
     protected final IImpulseCannonAugment[] augments;
 
+    protected static final Map<BlockPos, BreakInformation> solidifierBreakCache = new Object2ReferenceOpenHashMap<>();
+
     public ItemImpulseCannonAugment() {
-        super("gyroscope");
+        super("gyroscope", "hyperion", "energizer", "destabilizer", "solidifier", "purifier");
         augments = new IImpulseCannonAugment[subItemNames.length];
         setMaxStackSize(1);
         setHasSubtypes(true);
+        // gyroscope
         augments[0] = new IImpulseCannonRaytraceOverridingAugment() {
             @Override
             public @NotNull Vec3d overrideFiringRayTrace(EntityLivingBase user, Vec3d sourcePosition,
@@ -90,6 +102,118 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                 return smallest.scale(Math.sqrt(originalRayTrace.lengthSquared() / smallest.lengthSquared()));
             }
         };
+        // hyperion
+        augments[1] = new IImpulseCannonAugment() {
+
+            private double efficiencyFactor() {
+                return TAConfig.cannonHyperionEfficiencyFactor.getValue();
+            }
+
+            @Override
+            public double getImpulseCostModifier(IImpetusStorage buffer) {
+                return efficiencyFactor();
+            }
+
+            @Override
+            public float getBaseDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                if (!buffer.canExtract()) return 1;
+                double extracted = buffer.extractEnergy(Long.MAX_VALUE, false) + Math.ceil(actualImpetusConsumed);
+                return (float) (extracted / actualImpetusConsumed);
+            }
+
+            @Override
+            public void applyAdditionalEffects(EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, float baseDamage) {
+                int particleCount = (int) Math.sqrt(baseDamage);
+                for (int i = 0; i < particleCount; i++) {
+                    Random random = new Random();
+                    double ratio = (i + 0.5 + random.nextGaussian()) / particleCount;
+                    if (user.getEntityWorld() instanceof WorldServer server) {
+                        server.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+                                MathHelper.clampedLerp(firingOrigin.x, firingEnd.x, ratio),
+                                MathHelper.clampedLerp(firingOrigin.y, firingEnd.y, ratio),
+                                MathHelper.clampedLerp(firingOrigin.z, firingEnd.z, ratio),
+                                1, 2, 2, 2D, 1);
+                    }
+
+                }
+            }
+        };
+        // energizer
+        augments[2] = new IImpulseCannonAugment() {
+            @Override
+            public float getNormalDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                return TAConfig.cannonEnergizerNormalFactor.getValue();
+            }
+
+            @Override
+            public float getMagicDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                return TAConfig.cannonEnergizerMagicFactor.getValue();
+            }
+        };
+        // destabilizer
+        augments[3] = new IImpulseCannonAugment() {
+            @Override
+            public float getNormalDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                return TAConfig.cannonDestabilizerNormalFactor.getValue();
+            }
+
+            @Override
+            public float getMagicDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                return TAConfig.cannonDestabilizerMagicFactor.getValue();
+            }
+        };
+        // solidifier
+        augments[4] = new IImpulseCannonAugment() {
+            @Override
+            public void applyAdditionalEffectsToEntity(EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {
+                if (entityHit instanceof EntityLivingBase) {
+                    Vec3d vec = firingEnd.subtract(firingOrigin).normalize();
+                    double factor = Math.max(0.1, Math.log(baseDamage)) * TAConfig.cannonSolidifierKnockbackStrength.getValue();
+                    entityHit.motionX += vec.x * factor;
+                    entityHit.motionY += vec.y * factor;
+                    entityHit.motionZ += vec.z * factor;
+                    if (entityHit instanceof EntityPlayerMP mp) {
+                        mp.connection.sendPacket(new SPacketEntityVelocity(mp));
+                    }
+                }
+            }
+
+
+            @Override
+            public void applyAdditionalEffects(EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, float baseDamage) {
+                Vec3d offset = firingEnd.subtract(firingOrigin);
+                firingEnd = offset.add(offset.normalize().scale(Math.sqrt(baseDamage))).add(firingOrigin);
+                int tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+                while (baseDamage > 0) {
+                    RayTraceResult result = user.getEntityWorld().rayTraceBlocks(firingOrigin, firingEnd, false, true, false);
+                    if (result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) break;
+                    baseDamage = BreakInformation.damageBlock(user.getEntityWorld(), result.getBlockPos(), baseDamage, tick);
+                }
+            }
+        };
+        // purifier
+        augments[5] = new IImpulseCannonAugment() {
+
+            @Override
+            public double getImpulseCostModifier(IImpetusStorage buffer) {
+                return 2;
+            }
+
+            @Override
+            public float getBaseDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                return 0.2f;
+            }
+
+            @Override
+            public void applyAdditionalEffectsToEntity(EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {
+                DamageSource source = new DamageSourceImpetus(user, user.getPositionVector()).setDamageBypassesArmor().setDamageIsAbsolute();
+                entityHit.attackEntityFrom(source, baseDamage * 2);
+                if (entityHit instanceof EntityLivingBase base) {
+                    base.hurtResistantTime = Math.min(base.hurtResistantTime, 2);
+                    base.lastDamage = 0.0F;
+                }
+            }
+        };
     }
     
     @Override
@@ -101,6 +225,88 @@ public class ItemImpulseCannonAugment extends ItemTABase {
             provider.deserializeNBT(nbt.getCompoundTag("Parent"));
         
         return provider;
+    }
+
+    protected static void updateBreakInformation() {
+        int tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        for (Iterator<Map.Entry<BlockPos, BreakInformation>> iterator = solidifierBreakCache.entrySet().iterator(); iterator.hasNext(); ) {
+            var entry = iterator.next();
+            if (entry.getValue().world.getBlockState(entry.getKey()) != entry.getValue().blockState) {
+                entry.getValue().world.sendBlockBreakProgress(BreakInformation.BREAKER_ID, entry.getKey(), 0);
+                iterator.remove();
+                continue;
+            }
+            if (entry.getValue().update(tick)) {
+                iterator.remove();
+            }
+        }
+        if (!solidifierBreakCache.isEmpty())
+            ScheduledTaskHandler.registerTask(ItemImpulseCannonAugment::updateBreakInformation, 1);
+    }
+
+    protected static class BreakInformation {
+
+        public static final int BREAKER_ID = -1;
+
+        final World world;
+        final BlockPos pos;
+        final IBlockState blockState;
+        int progress; // 10 levels of breakage
+        int lastProgressTick;
+
+        public BreakInformation(World world, BlockPos pos, IBlockState state) {
+            this.world = world;
+            this.pos = pos;
+            this.blockState = state;
+        }
+
+        public static float getBreakStrength() {
+            return TAConfig.cannonSolidifierBreakStrength.getValue();
+        }
+
+        public static float damageBlock(World world, BlockPos pos, float incoming, int tick) {
+            IBlockState state = world.getBlockState(pos);
+            BreakInformation existing = solidifierBreakCache.get(pos);
+            if (existing == null) {
+                float hardness = state.getBlockHardness(world, pos);
+                if (incoming / hardness >= 1) {
+                    state.getBlock().dropBlockAsItem(world, pos, state, 0);
+                    world.setBlockToAir(pos);
+                    return incoming - hardness;
+                } else {
+                    existing = new BreakInformation(world, pos, state);
+                    if (solidifierBreakCache.isEmpty())
+                        ScheduledTaskHandler.registerTask(ItemImpulseCannonAugment::updateBreakInformation, 1);
+                    solidifierBreakCache.put(pos, existing);
+                }
+            }
+            return existing.damage(incoming, tick);
+        }
+
+        public float damage(float incoming, int tick) {
+            this.lastProgressTick = tick;
+            float hardness = blockState.getBlockHardness(world, pos);
+            float damage = getBreakStrength() * incoming / hardness;
+            if (damage < 1) return 0;
+            if (damage + progress >= 10) {
+                world.sendBlockBreakProgress(BREAKER_ID, pos, 0);
+                blockState.getBlock().dropBlockAsItem(world, pos, blockState, 0);
+                world.setBlockToAir(pos);
+                return incoming - (10 - progress) * hardness / getBreakStrength();
+            } else {
+                progress += damage;
+                world.sendBlockBreakProgress(BREAKER_ID, pos, progress);
+                return 0;
+            }
+        }
+
+        public boolean update(int tick) {
+            if (tick >= 10 + lastProgressTick) {
+                progress -= 1;
+                world.sendBlockBreakProgress(BREAKER_ID, pos, progress);
+            }
+            return progress <= 0 || progress >= 10;
+        }
     }
     
 }

@@ -1,0 +1,30 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPULSE_CANNON_AUGMENT2_PURIFIER",
+  "vis": 200,
+  "aspects": {
+    "ignis": 1,
+    "terra": 1,
+    "aqua": 1,
+    "aer": 1,
+    "perditio": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    "PPP",
+    "PJP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "thaumcraft:primordial_pearl"
+    },
+    "J": {
+      "item": "#IMPETUS_RESONATOR"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impulse_cannon_augment2",
+    "data": 5
+  }
+}

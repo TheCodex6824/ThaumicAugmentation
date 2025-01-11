@@ -297,6 +297,12 @@ public final class RecipeHandler {
                         "plateIron", "dyeRed", "plateIron", "leather", Items.GHAST_TEAR, Items.MILK_BUCKET
                 }
         ));
+
+        ItemStack crystalStack = new ItemStack(TAItems.MATERIAL, 1, 5);
+        ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impulse_cannon_augment2_hyperion"), new InfusionRecipeComplexResearch(
+                "IMPULSE_CANNON_AUGMENT2_HYPERION", new ItemStack(TAItems.IMPULSE_CANNON_AUGMENT2, 1, 1), 12, new AspectList().add(Aspect.MOTION, 150).add(Aspect.CRYSTAL, 100).add(Aspect.ENERGY, 75),
+                new ItemStack(Items.NETHER_STAR), crystalStack, "ingotIron", crystalStack, crystalStack, "ingotIron", crystalStack
+        ));
     }
     
     public static void initCrucibleRecipes() {

@@ -1,6 +1,7 @@
 package thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
@@ -34,10 +35,10 @@ public interface IImpulseCannonAugment extends IAugment {
     /**
      * Should always be called before impetus damage is dealt. Reset the hurt time of the entity if this deals damage!
      */
-    default void applyAdditionalEffectsToEntity(Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {}
+    default void applyAdditionalEffectsToEntity(EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {}
 
     /**
      * Should always be called after entity processing is finished.
      */
-    default void applyAdditionalEffects(Vec3d firingOrigin, Vec3d firingEnd) {}
+    default void applyAdditionalEffects(EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, float baseDamage) {}
 }

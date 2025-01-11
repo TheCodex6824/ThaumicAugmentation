@@ -120,6 +120,13 @@ public final class TAConfig {
     public static ConfigOptionInt cannonBurstDelay;
 
     public static ConfigOptionFloat cannonGyroscopeCorrectionAngle;
+    public static ConfigOptionDouble cannonHyperionEfficiencyFactor;
+    public static ConfigOptionFloat cannonEnergizerMagicFactor;
+    public static ConfigOptionFloat cannonEnergizerNormalFactor;
+    public static ConfigOptionFloat cannonDestabilizerMagicFactor;
+    public static ConfigOptionFloat cannonDestabilizerNormalFactor;
+    public static ConfigOptionDouble cannonSolidifierKnockbackStrength;
+    public static ConfigOptionFloat cannonSolidifierBreakStrength;
 
     public static ConfigOptionFloat primalCutterDamage;
     

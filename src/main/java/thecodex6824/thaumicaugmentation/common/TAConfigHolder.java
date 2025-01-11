@@ -325,6 +325,41 @@ public final class TAConfigHolder {
 			@Comment({"The maximum angle difference that the gyroscopic adjuster will correct, in degrees."})
 			@RangeDouble(min = 0, max = 90)
 			public float gyroscopeCorrectionAngle = 5;
+
+			@Name("HyperionEfficiencyFactor")
+			@Comment({"The impetus cost factor for the Hyperion augment."})
+			@RangeDouble(min = 1, max = 100)
+			public double hyperionEfficiencyFactor = 10;
+
+			@Name("EnergizerNormalFactor")
+			@Comment({"The normal damage factor for the energizer augment."})
+			@RangeDouble(min = 0, max = 10)
+			public float energizerNormalFactor = 0.5f;
+
+			@Name("EnergizerMagicFactor")
+			@Comment({"The magic damage factor for the energizer augment."})
+			@RangeDouble(min = 0, max = 10)
+			public float energizerMagicFactor = 1.5f;
+
+			@Name("DestabilizerNormalFactor")
+			@Comment({"The normal damage factor for the destabilizer augment."})
+			@RangeDouble(min = 0, max = 10)
+			public float destabilizerNormalFactor = 2.5f;
+
+			@Name("DestabilizerMagicFactor")
+			@Comment({"The magic damage factor for the destabilizer augment."})
+			@RangeDouble(min = 0, max = 10)
+			public float destabilizerMagicFactor = 0.5f;
+
+			@Name("SolidifierKnockbackFactor")
+			@Comment({"The knockback strength multiplier for the solidifier augment."})
+			@RangeDouble(min = 0, max = 10)
+			public double solidifierKnockbackStrength = 1f;
+
+			@Name("SolidifierBreakStrength")
+			@Comment({"The conversion rate of base damage to block breaking damage."})
+			@RangeDouble(min = 0, max = 100)
+			public float solidifierBreakStrength = 5f;
 		}
 	}
 
@@ -905,7 +940,15 @@ public final class TAConfigHolder {
 		TAConfig.cannonBurstRange.setValue(gameplay.impetus.cannonConvert.burstRange, side);
 		TAConfig.cannonBurstCount.setValue(gameplay.impetus.cannonConvert.burstCount, side);
 		TAConfig.cannonBurstDelay.setValue(gameplay.impetus.cannonConvert.burstDelay, side);
+
 		TAConfig.cannonGyroscopeCorrectionAngle.setValue(gameplay.impetus.cannonAugment.gyroscopeCorrectionAngle, side);
+		TAConfig.cannonHyperionEfficiencyFactor.setValue(gameplay.impetus.cannonAugment.hyperionEfficiencyFactor, side);
+		TAConfig.cannonEnergizerMagicFactor.setValue(gameplay.impetus.cannonAugment.energizerMagicFactor, side);
+		TAConfig.cannonEnergizerNormalFactor.setValue(gameplay.impetus.cannonAugment.energizerNormalFactor, side);
+		TAConfig.cannonDestabilizerMagicFactor.setValue(gameplay.impetus.cannonAugment.destabilizerMagicFactor, side);
+		TAConfig.cannonDestabilizerNormalFactor.setValue(gameplay.impetus.cannonAugment.destabilizerNormalFactor, side);
+		TAConfig.cannonSolidifierKnockbackStrength.setValue(gameplay.impetus.cannonAugment.solidifierKnockbackStrength, side);
+		TAConfig.cannonSolidifierBreakStrength.setValue(gameplay.impetus.cannonAugment.solidifierBreakStrength, side);
 
 		TAConfig.primalCutterDamage.setValue(gameplay.primalCutterDamage, side);
 
@@ -1133,6 +1176,20 @@ public final class TAConfigHolder {
 
 		TAConfig.cannonGyroscopeCorrectionAngle = TAConfigManager
 				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.gyroscopeCorrectionAngle));
+		TAConfig.cannonHyperionEfficiencyFactor = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonAugment.hyperionEfficiencyFactor));
+		TAConfig.cannonEnergizerMagicFactor = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.energizerMagicFactor));
+		TAConfig.cannonEnergizerNormalFactor = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.energizerNormalFactor));
+		TAConfig.cannonDestabilizerMagicFactor = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.destabilizerMagicFactor));
+		TAConfig.cannonDestabilizerNormalFactor = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.destabilizerNormalFactor));
+		TAConfig.cannonSolidifierKnockbackStrength = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonAugment.solidifierKnockbackStrength));
+		TAConfig.cannonSolidifierBreakStrength = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.solidifierBreakStrength));
 
 		TAConfig.primalCutterDamage = TAConfigManager
 			.addOption(new ConfigOptionFloat(false, gameplay.primalCutterDamage));

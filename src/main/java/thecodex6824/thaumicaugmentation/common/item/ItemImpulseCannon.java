@@ -254,17 +254,17 @@ public class ItemImpulseCannon extends ItemTABase {
                             break;
                         }
                     }
+                    float baseDamage = TAConfig.cannonBeamDamage.getValue();
+                    float magicFactor = 0.5f;
+                    float normalFactor = 0.5f;
+                    for (IImpulseCannonAugment aug : augments) {
+                        baseDamage *= aug.getBaseDamageModifier(buffer, TAConfig.cannonBeamCostTick.getValue(), cost);
+                        magicFactor *= aug.getMagicDamageModifier(buffer, TAConfig.cannonBeamCostTick.getValue(), cost);
+                        normalFactor *= aug.getNormalDamageModifier(buffer, TAConfig.cannonBeamCostTick.getValue(), cost);
+                    }
                     if (e != null && (!(e instanceof IImpulseSpecialEntity ent) || !ent.shouldImpulseCannonIgnore(player))) {
-                        float baseDamage = TAConfig.cannonBeamDamage.getValue();
-                        float magicFactor = 0.5f;
-                        float normalFactor = 0.5f;
                         for (IImpulseCannonAugment aug : augments) {
-                            baseDamage *= aug.getBaseDamageModifier(buffer, TAConfig.cannonBeamCostTick.getValue(), cost);
-                            magicFactor *= aug.getMagicDamageModifier(buffer, TAConfig.cannonBeamCostTick.getValue(), cost);
-                            normalFactor *= aug.getNormalDamageModifier(buffer, TAConfig.cannonBeamCostTick.getValue(), cost);
-                        }
-                        for (IImpulseCannonAugment aug : augments) {
-                            aug.applyAdditionalEffectsToEntity(origin, scan, e, baseDamage);
+                            aug.applyAdditionalEffectsToEntity(player, origin, scan, e, baseDamage);
                         }
                         ImpetusAPI.causeImpetusDamage(player, e, baseDamage * magicFactor, baseDamage * normalFactor);
                         if (e instanceof EntityLivingBase base) {
@@ -273,7 +273,7 @@ public class ItemImpulseCannon extends ItemTABase {
                         }
                     }
                     for (IImpulseCannonAugment aug : augments) {
-                        aug.applyAdditionalEffects(origin, scan);
+                        aug.applyAdditionalEffects(player, origin, scan, baseDamage);
                     }
                     
                     if (player.ticksExisted % 20 == 0) {

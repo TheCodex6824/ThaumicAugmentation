@@ -1,0 +1,40 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPULSE_CANNON_AUGMENT2_GYROSCOPE",
+  "vis": 100,
+  "aspects": {
+    "ignis": 1,
+    "aqua": 1,
+    "perditio": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    "BYB",
+    "MVM",
+    "BGB"
+  ],
+  "key": {
+    "V": {
+      "item": "thaumcraft:mind",
+      "data": 1
+    },
+    "M": {
+      "item": "thaumcraft:mechanism_simple"
+    },
+    "G": {
+      "item": "thaumcraft:mechanism_complex"
+    },
+    "Y": {
+      "item": "thaumcraft:module",
+      "data": 0
+    },
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "plateBrass"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impulse_cannon_augment2",
+    "data": 0
+  }
+}

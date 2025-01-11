@@ -1,0 +1,30 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPULSE_CANNON_AUGMENT2_SOLIDIFIER",
+  "vis": 100,
+  "aspects": {
+    "terra": 1,
+    "aqua": 1,
+    "perditio": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    "PVP",
+    "V V",
+    "PVP"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "gemQuartz"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impulse_cannon_augment2",
+    "data": 4
+  }
+}

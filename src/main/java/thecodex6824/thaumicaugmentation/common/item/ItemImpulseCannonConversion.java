@@ -119,7 +119,7 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                     if (e == user) continue;
                     if (!(e instanceof IImpulseSpecialEntity ent) || !ent.shouldImpulseCannonIgnore(user)) {
                         for (IImpulseCannonAugment aug : augmentList) {
-                            aug.applyAdditionalEffectsToEntity(origin, scan, e, baseDamage);
+                            aug.applyAdditionalEffectsToEntity(user, origin, scan, e, baseDamage);
                         }
                         ImpetusAPI.causeImpetusDamage(user, e, baseDamage * magicFactor, baseDamage * normalFactor);
                         if (e instanceof IImpulseSpecialEntity ent && ent.shouldStopRailgunBeam(user)) {
@@ -133,7 +133,7 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                     }
                 }
                 for (IImpulseCannonAugment aug : augmentList) {
-                    aug.applyAdditionalEffects(origin, scan);
+                    aug.applyAdditionalEffects(user, origin, scan, baseDamage);
                 }
 
                 Random rand = user.getRNG();
@@ -196,7 +196,7 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 }
                 if (e != null && (!(e instanceof IImpulseSpecialEntity ent) || !ent.shouldImpulseCannonIgnore(user))) {
                     for (IImpulseCannonAugment aug : augments) {
-                        aug.applyAdditionalEffectsToEntity(origin, scan, e, baseDamage);
+                        aug.applyAdditionalEffectsToEntity(user, origin, scan, e, baseDamage);
                     }
                     if (ImpetusAPI.causeImpetusDamage(user, e, baseDamage * magicFactor, baseDamage * normalFactor)
                             && num < c && e instanceof EntityLivingBase base) {
@@ -205,7 +205,7 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                     }
                 }
                 for (IImpulseCannonAugment aug : augments) {
-                    aug.applyAdditionalEffects(origin, scan);
+                    aug.applyAdditionalEffects(user, origin, scan, baseDamage);
                 }
 
                 Random rand = user.getRNG();
