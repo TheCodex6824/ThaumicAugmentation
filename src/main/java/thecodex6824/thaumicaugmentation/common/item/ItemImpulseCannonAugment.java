@@ -68,7 +68,7 @@ public class ItemImpulseCannonAugment extends ItemTABase {
         // gyroscope
         augments[0] = new IImpulseCannonRaytraceOverridingAugment() {
             @Override
-            public @NotNull Vec3d overrideFiringRayTrace(EntityLivingBase user, Vec3d sourcePosition,
+            public @NotNull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition,
                                                          Vec3d originalRayTrace, float partialTicks) {
                 // first, set up an AABB to gather entities within correction range
                 float maxAngle = TAConfig.cannonGyroscopeCorrectionAngle.getValue();
@@ -110,19 +110,19 @@ public class ItemImpulseCannonAugment extends ItemTABase {
             }
 
             @Override
-            public double getImpulseCostModifier(IImpetusStorage buffer) {
+            public double getImpulseCostModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer) {
                 return efficiencyFactor();
             }
 
             @Override
-            public float getBaseDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getBaseDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 if (!buffer.canExtract()) return 1;
                 double extracted = buffer.extractEnergy(Long.MAX_VALUE, false) + Math.ceil(actualImpetusConsumed);
                 return (float) (extracted / actualImpetusConsumed);
             }
 
             @Override
-            public void applyAdditionalEffects(EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, float baseDamage) {
+            public void applyAdditionalEffects(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, float baseDamage) {
                 int particleCount = (int) Math.sqrt(baseDamage);
                 for (int i = 0; i < particleCount; i++) {
                     Random random = new Random();
@@ -141,31 +141,31 @@ public class ItemImpulseCannonAugment extends ItemTABase {
         // energizer
         augments[2] = new IImpulseCannonAugment() {
             @Override
-            public float getNormalDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getNormalDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 return TAConfig.cannonEnergizerNormalFactor.getValue();
             }
 
             @Override
-            public float getMagicDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getMagicDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 return TAConfig.cannonEnergizerMagicFactor.getValue();
             }
         };
         // destabilizer
         augments[3] = new IImpulseCannonAugment() {
             @Override
-            public float getNormalDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getNormalDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 return TAConfig.cannonDestabilizerNormalFactor.getValue();
             }
 
             @Override
-            public float getMagicDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getMagicDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 return TAConfig.cannonDestabilizerMagicFactor.getValue();
             }
         };
         // solidifier
         augments[4] = new IImpulseCannonAugment() {
             @Override
-            public void applyAdditionalEffectsToEntity(EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {
+            public void applyAdditionalEffectsToEntity(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {
                 if (entityHit instanceof EntityLivingBase) {
                     Vec3d vec = firingEnd.subtract(firingOrigin).normalize();
                     double factor = Math.max(0.1, Math.log(baseDamage)) * TAConfig.cannonSolidifierKnockbackStrength.getValue();
@@ -180,7 +180,7 @@ public class ItemImpulseCannonAugment extends ItemTABase {
 
 
             @Override
-            public void applyAdditionalEffects(EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, float baseDamage) {
+            public void applyAdditionalEffects(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, float baseDamage) {
                 Vec3d offset = firingEnd.subtract(firingOrigin);
                 firingEnd = offset.add(offset.normalize().scale(Math.sqrt(baseDamage))).add(firingOrigin);
                 int tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
@@ -195,17 +195,17 @@ public class ItemImpulseCannonAugment extends ItemTABase {
         augments[5] = new IImpulseCannonAugment() {
 
             @Override
-            public double getImpulseCostModifier(IImpetusStorage buffer) {
+            public double getImpulseCostModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer) {
                 return 2;
             }
 
             @Override
-            public float getBaseDamageModifier(IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getBaseDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 return 0.2f;
             }
 
             @Override
-            public void applyAdditionalEffectsToEntity(EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {
+            public void applyAdditionalEffectsToEntity(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {
                 DamageSource source = new DamageSourceImpetus(user, user.getPositionVector()).setDamageBypassesArmor().setDamageIsAbsolute();
                 entityHit.attackEntityFrom(source, baseDamage * 2);
                 if (entityHit instanceof EntityLivingBase base) {

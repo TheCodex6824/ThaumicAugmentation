@@ -52,6 +52,7 @@ public final class TASounds {
     public static final SoundEvent IMPULSE_CANNON_BEAM_LOOP = create("impulse_cannon_beam_loop");
     public static final SoundEvent IMPULSE_CANNON_BURST = create("impulse_cannon_burst");
     public static final SoundEvent IMPULSE_CANNON_RAILGUN = create("impulse_cannon_railgun");
+    public static final SoundEvent IMPULSE_CANNON_RECURSE = create("impulse_cannon_recurse");
     public static final SoundEvent PRIMAL_CUTTER_VORTEX = create("cutter_loop");
     
     /**

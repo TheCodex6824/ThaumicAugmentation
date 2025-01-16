@@ -47,7 +47,7 @@ public class ItemThaumostaticHarnessAugment extends ItemTABase {
         }
         
         @Override
-        public boolean isCompatible(ItemStack otherAugment) {
+        public boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
             return !(otherAugment.getCapability(CapabilityAugment.AUGMENT, null) instanceof HarnessAugment);
         }
     }

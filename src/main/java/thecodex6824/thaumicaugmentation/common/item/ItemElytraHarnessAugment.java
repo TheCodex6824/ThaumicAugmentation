@@ -60,11 +60,6 @@ public class ItemElytraHarnessAugment extends ItemTABase {
         
         protected boolean sync;
         
-        @Override
-        public boolean canBeAppliedToItem(ItemStack augmentable) {
-            return augmentable.getItem() == TAItems.ELYTRA_HARNESS;
-        }
-        
         public void setSyncNeeded() {
             sync = true;
         }

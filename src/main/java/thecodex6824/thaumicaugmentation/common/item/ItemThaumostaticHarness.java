@@ -134,8 +134,9 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
             }
             
             @Override
-            public boolean isAugmentAcceptable(ItemStack augment, int slot) {
-                return augment.getCapability(CapabilityAugment.AUGMENT, null) instanceof IThaumostaticHarnessAugment;
+            public boolean isAugmentAcceptable(ItemStack augment, int slot, IAugment augmentCapability) {
+                return super.isAugmentAcceptable(augment, slot, augmentCapability) &&
+                        augmentCapability instanceof IThaumostaticHarnessAugment;
             }
             
             @Override

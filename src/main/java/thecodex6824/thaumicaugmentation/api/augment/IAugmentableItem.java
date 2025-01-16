@@ -48,7 +48,7 @@ public interface IAugmentableItem {
      * @param slot The slot to check
      * @return If the given augment can be inserted into the provided slot
      */
-    public boolean isAugmentAcceptable(ItemStack augment, int slot);
+    public boolean isAugmentAcceptable(ItemStack augment, int slot, IAugment augmentCapability);
     
     /**
      * Inserts the given augment into the given slot. {@link #isAugmentAcceptable} returning true

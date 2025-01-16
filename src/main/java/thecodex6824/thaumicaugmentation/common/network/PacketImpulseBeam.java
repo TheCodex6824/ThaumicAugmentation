@@ -22,37 +22,45 @@ package thecodex6824.thaumicaugmentation.common.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import org.jetbrains.annotations.Nullable;
+import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannonConversion;
 
 public class PacketImpulseBeam implements IMessage {
 
     protected int id;
-    protected boolean stop;
-    
+    // null if the beam should be stopped
+    protected @Nullable ItemImpulseCannonConversion.BeamInformation beamInformation;
+
     public PacketImpulseBeam() {}
     
-    public PacketImpulseBeam(int entityID, boolean stopBeam) {
+    public PacketImpulseBeam(int entityID, @Nullable ItemImpulseCannonConversion.BeamInformation beamInformation) {
         id = entityID;
-        stop = stopBeam;
+        this.beamInformation = beamInformation;
     }
     
     @Override
     public void fromBytes(ByteBuf buf) {
         id = buf.readInt();
-        stop = buf.readBoolean();
+        if (buf.readBoolean()) {
+            beamInformation = new ItemImpulseCannonConversion.BeamInformation();
+            beamInformation.fromBytes(buf);
+        }
     }
     
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(id);
-        buf.writeBoolean(stop);
+        buf.writeBoolean(beamInformation != null);
+        if (beamInformation != null) {
+            beamInformation.toBytes(buf);
+        }
     }
     
     public int getEntityID() {
         return id;
     }
-    
-    public boolean shouldStopBeam() {
-        return stop;
+
+    public ItemImpulseCannonConversion.BeamInformation getScatterInformation() {
+        return beamInformation;
     }
-    
 }

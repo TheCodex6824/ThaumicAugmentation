@@ -70,31 +70,11 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     @Nullable
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         CapabilityProviderHarness provider = new CapabilityProviderHarness(new AugmentableItem(2) {
-        
+
             @Override
-            public boolean isAugmentAcceptable(ItemStack augment, int slot) {
-                if (!(augment.getCapability(CapabilityAugment.AUGMENT, null) instanceof IElytraHarnessAugment))
-                    return false;
-                else if (((IElytraHarnessAugment) augment.getCapability(CapabilityAugment.AUGMENT, null)).isCosmetic()) {
-                    for (ItemStack stack : getAllAugments()) {
-                        if (!stack.isEmpty()) {
-                            IAugment aug = stack.getCapability(CapabilityAugment.AUGMENT, null);
-                            if (aug instanceof IElytraHarnessAugment && ((IElytraHarnessAugment) aug).isCosmetic())
-                                return false;
-                        }
-                    }
-                }
-                else {
-                    for (ItemStack stack : getAllAugments()) {
-                        if (!stack.isEmpty()) {
-                            IAugment aug = stack.getCapability(CapabilityAugment.AUGMENT, null);
-                            if (aug instanceof IElytraHarnessAugment && !((IElytraHarnessAugment) aug).isCosmetic())
-                                return false;
-                        }
-                    }
-                }
-                
-                return true;
+            public boolean isAugmentAcceptable(ItemStack augment, int slot, IAugment augmentCapability) {
+                return super.isAugmentAcceptable(augment, slot, augmentCapability)
+                        && augmentCapability instanceof IElytraHarnessAugment;
             }
             
         }, new BaubleItem(BaubleType.BODY) {

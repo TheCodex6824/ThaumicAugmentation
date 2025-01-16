@@ -28,11 +28,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannonConversion;
 
-import java.util.List;
+import java.util.Map;
 
 public interface IImpulseCannonConversion extends IImpulseCannonAugment {
 
@@ -46,62 +46,79 @@ public interface IImpulseCannonConversion extends IImpulseCannonAugment {
     }
 
     /**
-     * @param user the entity using the cannon
+     * @param cannonStack  the itemstack of the cannon
+     * @param augmentStack the itemstack of this augment
+     * @param user         the entity using the cannon
      * @return whether the cannon should be ticked. Must be true for
-     * {@link #onCannonTick(EntityLivingBase, int, double, IImpetusStorage, List)} and
-     * {@link #onStopCannonTick(EntityLivingBase, int, List)}
-     * to be called or {@link #getImpetusCostPerTick(EntityLivingBase, int, IImpetusStorage)} to be considered.
+     * {@link #onCannonTick(ItemStack, ItemStack, EntityLivingBase, int, double, IImpetusStorage, Map)} and
+     * {@link #onStopCannonTick(ItemStack, ItemStack, EntityLivingBase, int, IImpetusStorage, Map)}
+     * to be called or {@link #getImpetusCostPerTick(ItemStack, ItemStack, EntityLivingBase, int, IImpetusStorage)} to be considered.
      */
-    public boolean isTickable(EntityLivingBase user);
+    public boolean isTickable(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user);
 
     /**
      * Called when the cannon this conversion is in starts being used.
-     * @param user the entity using the impulse cannon this conversion is in.
+     *
+     * @param cannonStack     the itemstack of the cannon
+     * @param augmentStack    the itemstack of this augment
+     * @param user            the entity using the impulse cannon this conversion is in.
      * @param impetusConsumed the impetus consumed to start using the cannon.
-     * @param augmentList the list of augments that may modify the cannon's behavior. THE IMPLEMENTOR WILL BE IN THIS LIST
+     * @param augments        the list of augments that may modify the cannon's behavior. THE IMPLEMENTOR WILL BE IN THIS LIST
      */
-    public default void onCannonUsage(EntityLivingBase user, long impetusConsumed, IImpetusStorage buffer, List<IImpulseCannonAugment> augmentList) {}
+    public default void onCannonUsage(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, long impetusConsumed, IImpetusStorage buffer, Map<ItemStack, IImpulseCannonAugment> augments) {}
 
     /**
      * Called every tick the cannon is used in.
-     * @param user the entity using the impulse cannon this conversion is in.
-     * @param useTicksLeft the number of ticks left in {@link #getMaxUsageDuration()}
+     *
+     * @param cannonStack     the itemstack of the cannon
+     * @param augmentStack    the itemstack of this augment
+     * @param user            the entity using the impulse cannon this conversion is in.
+     * @param useTicksLeft    the number of ticks left in {@link #getMaxUsageDuration(ItemStack, ItemStack)}
      * @param impetusConsumed the impetus consumed this firing tick to use the cannon.
-     * @param augmentList the list of augments that may modify the cannon's behavior. THE IMPLEMENTOR WILL BE IN THIS LIST
+     * @param augments        the list of augments that may modify the cannon's behavior. THE IMPLEMENTOR WILL BE IN THIS LIST
      */
-    public default void onCannonTick(EntityLivingBase user, int useTicksLeft, double impetusConsumed, IImpetusStorage buffer, List<IImpulseCannonAugment> augmentList) {}
+    public default void onCannonTick(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, int useTicksLeft, double impetusConsumed, IImpetusStorage buffer, Map<ItemStack, IImpulseCannonAugment> augments) {}
 
     /**
      * Called when the cannon stops being used.
-     * @param user the entity no longer using the impulse cannon this conversion is in.
-     * @param useTicksLeft the number of ticks left in {@link #getMaxUsageDuration()}
-     * @param augmentList the list of augments that may modify the cannon's behavior. THE IMPLEMENTOR WILL BE IN THIS LIST
+     *
+     * @param cannonStack  the itemstack of the cannon
+     * @param augmentStack the itemstack of this augment
+     * @param user         the entity no longer using the impulse cannon this conversion is in.
+     * @param useTicksLeft the number of ticks left in {@link #getMaxUsageDuration(ItemStack, ItemStack)}
+     * @param augments     the list of augments that may modify the cannon's behavior. THE IMPLEMENTOR WILL BE IN THIS LIST
      */
-    public default void onStopCannonTick(EntityLivingBase user, int useTicksLeft, List<IImpulseCannonAugment> augmentList) {}
+    public default void onStopCannonTick(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, int useTicksLeft, IImpetusStorage buffer, Map<ItemStack, IImpulseCannonAugment> augments) {}
 
     /**
-     * @param user the entity attempting to use the impulse cannon this conversion is in.
-     * @param buffer the associated impetus buffer. Should not be modified here.
+     * @param cannonStack  the itemstack of the cannon
+     * @param augmentStack the itemstack of this augment
+     * @param user         the entity attempting to use the impulse cannon this conversion is in.
+     * @param buffer       the associated impetus buffer. Should not be modified here.
      * @return the impetus that must be consumed for the cannon to start being used.
      */
-    public default long getImpetusCostPerUsage(EntityLivingBase user, IImpetusStorage buffer) {
+    public default long getImpetusCostPerUsage(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer) {
         return 0;
     }
 
     /**
-     * @param user the entity currently using the impulse cannon this conversion is in.
-     * @param useTicksLeft the number of ticks left in {@link #getMaxUsageDuration()}
-     * @param buffer the associated impetus buffer. Should not be modified here.
+     * @param cannonStack  the itemstack of the cannon
+     * @param augmentStack the itemstack of this augment
+     * @param user         the entity currently using the impulse cannon this conversion is in.
+     * @param useTicksLeft the number of ticks left in {@link #getMaxUsageDuration(ItemStack, ItemStack)}
+     * @param buffer       the associated impetus buffer. Should not be modified here.
      * @return the impetus to consume this firing tick. Supports floating point.
      */
-    public default double getImpetusCostPerTick(EntityLivingBase user, int useTicksLeft, IImpetusStorage buffer) {
+    public default double getImpetusCostPerTick(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, int useTicksLeft, IImpetusStorage buffer) {
         return 0.0;
     }
 
     /**
+     * @param cannonStack  the itemstack of the cannon
+     * @param augmentStack the itemstack of this augment
      * @return the number of ticks the conversion can be used for.
      */
-    default int getMaxUsageDuration() {
+    default int getMaxUsageDuration(ItemStack cannonStack, ItemStack augmentStack) {
         return 72000;
     }
 
@@ -117,7 +134,7 @@ public interface IImpulseCannonConversion extends IImpulseCannonAugment {
     }
 
     @Override
-    default boolean isCompatible(ItemStack otherAugment) {
-        return !(otherAugment.getCapability(CapabilityAugment.AUGMENT, null) instanceof IImpulseCannonConversion);
+    default boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
+        return !(otherAugmentCap instanceof IImpulseCannonConversion);
     }
 }

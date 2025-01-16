@@ -110,14 +110,15 @@ public class AugmentableItem implements IAugmentableItem, INBTSerializable<NBTTa
     public int getTotalAugmentSlots() {
         return augments.length;
     }
-    
+
     @Override
-    public boolean isAugmentAcceptable(ItemStack augment, int slot) {
+    public boolean isAugmentAcceptable(ItemStack augment, int slot, IAugment augmentCapability) {
         for (ItemStack aug : augments) {
-            if (!aug.isEmpty() && !aug.getCapability(CapabilityAugment.AUGMENT, null).isCompatible(augment))
+            if (!aug.isEmpty() && !aug.getCapability(CapabilityAugment.AUGMENT, null)
+                    .isCompatible(augment, augmentCapability))
                 return false;
         }
-        
+
         return true;
     }
     

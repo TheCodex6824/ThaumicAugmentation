@@ -91,7 +91,7 @@
                 "~MIRRORESSENTIA"
             ],
             "location": [
-                14,
+                8,
                 5
             ],
             "stages": [
@@ -161,7 +161,7 @@
                 "~RECHARGEPEDESTAL"
             ],
             "location": [
-                8,
+                6,
                 5
             ],
             "stages": [
@@ -193,7 +193,7 @@
                 "~VISGENERATOR"
             ],
             "location": [
-                18,
+                14,
                 5
             ],
             "stages": [
@@ -298,6 +298,49 @@
             ]
         },
         {
+            "key": "IMPULSE_CANNON_AUGMENT_RECURSE",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment_recurse.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment;1;3"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON",
+                "IMPETUS_MIRROR"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                8,
+                7
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_recurse.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_recurse.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment_recurse"
+                    ]
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_recurse.hyperion",
+                    "required_research": [
+                        "IMPULSE_CANNON_AUGMENT2_HYPERION"
+                    ]
+                }
+            ]
+        },
+        {
             "key": "IMPULSE_CANNON_AUGMENT_RAILGUN",
             "name": "thaumicaugmentation.research.impulse_cannon_augment_railgun.title",
             "icons": [
@@ -307,9 +350,15 @@
             "parents": [
                 "IMPULSE_CANNON"
             ],
+            "siblings": [
+                "IMPULSE_CANNON_AUGMENT2_HYPERION"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
             "location": [
                 8,
-                8
+                9
             ],
             "stages": [
                 {
@@ -338,9 +387,12 @@
             "parents": [
                 "IMPULSE_CANNON"
             ],
+            "meta": [
+                "REVERSE"
+            ],
             "location": [
-                6,
-                8
+                8,
+                11
             ],
             "stages": [
                 {
@@ -360,6 +412,51 @@
             ]
         },
         {
+            "key": "IMPULSE_CANNON_AUGMENT_CRYSTAL",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment_crystal.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment;1;2"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                8,
+                13
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_crystal.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1"
+                    ],
+                    "required_items": [
+                        "thaumicaugmentation:strange_crystal"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_crystal.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment_crystal"
+                    ]
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_crystal.gyro",
+                    "required_research": [
+                        "IMPULSE_CANNON_AUGMENT2_GYROSCOPE"
+                    ]
+                }
+            ]
+        },
+        {
             "key": "IMPULSE_CANNON_AUGMENT2_HYPERION",
             "name": "thaumicaugmentation.research.impulse_cannon_augment2_hyperion.title",
             "icons": [
@@ -368,12 +465,14 @@
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
                 "IMPULSE_CANNON",
-                "IMPETUS_GATE",
-                "~IMPULSE_CANNON_AUGMENT_RAILGUN"
+                "IMPULSE_CANNON_AUGMENT_RAILGUN"
+            ],
+            "meta": [
+                "REVERSE"
             ],
             "location": [
-                16,
-                7
+                12,
+                9
             ],
             "stages": [
                 {
@@ -430,9 +529,12 @@
                 "IMPULSE_CANNON",
                 "IMPETUS_GENERATOR"
             ],
+            "meta": [
+                "REVERSE"
+            ],
             "location": [
-                18,
-                7
+                12,
+                11
             ],
             "stages": [
                 {
@@ -465,9 +567,12 @@
             "parents": [
                 "IMPULSE_CANNON"
             ],
+            "meta": [
+                "REVERSE"
+            ],
             "location": [
-                20,
-                7
+                12,
+                12
             ],
             "stages": [
                 {
@@ -501,9 +606,12 @@
                 "IMPULSE_CANNON",
                 "~VOIDSIPHON"
             ],
+            "meta": [
+                "REVERSE"
+            ],
             "location": [
-                22,
-                7
+                12,
+                15
             ],
             "stages": [
                 {
@@ -541,9 +649,12 @@
                 "~MINDBIOTHAUMIC",
                 "~GOLEMVISION"
             ],
+            "meta": [
+                "REVERSE"
+            ],
             "location": [
-                24,
-                7
+                12,
+                17
             ],
             "stages": [
                 {
@@ -584,11 +695,12 @@
                 "~PRIMORDIAL_WISP"
             ],
             "meta": [
-                "HIDDEN"
+                "HIDDEN",
+                "REVERSE"
             ],
             "location": [
-                26,
-                7
+                12,
+                13
             ],
             "stages": [
                 {

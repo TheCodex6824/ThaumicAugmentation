@@ -854,7 +854,7 @@ public class ClientProxy extends ServerProxy {
     protected void handleImpulseBeamPacket(PacketImpulseBeam message, MessageContext context) {
         Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
         if (entity instanceof EntityLivingBase)
-            RenderEventHandler.onImpulseBeam((EntityLivingBase) entity, message.shouldStopBeam());
+            RenderEventHandler.onImpulseBeam((EntityLivingBase) entity, message.getScatterInformation());
     }
     
     protected void handleImpulseBurstPacket(PacketImpulseBurst message, MessageContext context) {
@@ -960,14 +960,13 @@ public class ClientProxy extends ServerProxy {
         Entity e = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
         if (e instanceof EntityLivingBase) {
             switch (message.getRecoilType()) {
-                case IMPULSE_BURST: {
+                case IMPULSE_BURST -> {
                     ClientEventHandler.onRecoil((EntityLivingBase) e, (entity, time) -> {
                         float mult = isImpulseCannonStable(entity) ? 1.0F : 1.5F;
                         return -MathHelper.cos(time * (float) Math.PI / 11.0F) * mult;
                     }, 12);
-                    break;
                 }
-                case IMPULSE_RAILGUN: {
+                case IMPULSE_RAILGUN -> {
                     ClientEventHandler.onRecoil((EntityLivingBase) e, (entity, time) -> {
                         float mult = isImpulseCannonStable(entity) ? 1.0F : 1.5F;
                         if (time < 4)
@@ -975,9 +974,18 @@ public class ClientProxy extends ServerProxy {
                         else
                             return 1.01875F * mult;
                     }, 16);
-                    break;
                 }
-                default: break;
+                case IMPULSE_RECURSE -> {
+                    int flag = message.getFlag();
+                    float log = (float) Math.log1p(flag) + 1;
+                    ClientEventHandler.onRecoil((EntityLivingBase) e, (entity, time) -> {
+                        float mult = log * (isImpulseCannonStable(entity) ? 1.0F : 1.5F);
+                        if (time < log)
+                            return (float) (Math.pow(time / 3.0F, 2) - 1.0F) * 5.0F * mult;
+                        else
+                            return 1.01875F * mult;
+                    }, (int) (9 + log));
+                }
             }
         }
     }

@@ -317,6 +317,96 @@ public final class TAConfigHolder {
 			@RangeInt(min = 1)
 			public int burstDelay = 2;
 
+			@Name("CrystalDamage")
+			@Comment({
+					"The amount of damage that the Impulse Cannon's crystal attack does.",
+					"Note that this is per-beam, and effectively multiplied by beam count."
+			})
+			public float crystalDamage = 1.0F;
+
+			@Name("CrystalBeamCount")
+			@Comment({
+					"The number of separate beams in the Impulse Cannon's crystal attack."
+			})
+			@RangeInt(min = 1, max = 50)
+			public int crystalBeamCount = 5;
+
+			@Name("CrystalSpread")
+			@Comment({
+					"The maximum variation from 0, in degrees, of the Impulse Cannon's crystal attack.",
+					"A spread of 90 corresponds to the entire hemisphere in front of the player."
+			})
+			@RangeDouble(min = 0, max = 170)
+			public float crystalSpread = 20.0F;
+
+			@Name("CrystalCostInitial")
+			@Comment({
+					"The amount of Impetus used by the Impulse Cannon's crystal attack on initial activation.",
+					"This cost is paid once at the start, and then CrystalCostTick will be applied."
+			})
+			public int crystalCostInitial = 3;
+
+			@Name("CrystalCostTick")
+			@Comment({
+					"The amount of Impetus used by the Impulse Cannon's crystal attack per tick.",
+					"This cost is paid even if nothing is being hit by the beam.",
+					"Supports taking away less than 1 impetus per tick."
+			})
+			public double crystalCostTick = 0.1;
+
+			@Name("CrystalRange")
+			@Comment({
+					"The range in meters of the Impulse Cannon's crystal attack."
+			})
+			public double crystalRange = 32.0;
+
+			@Name("RecurseDamage")
+			@Comment({
+					"The base damage that the Impulse Cannon's recursion attack does.",
+					"Note that this value will be multiplied by the number of ticks the cannon has been charged for",
+					"raised to the power of the recurse exponent."
+			})
+			public float recurseDamage = 3.0F;
+
+			@Name("RecurseExponent")
+			@Comment({
+					"The exponent that the number of ticks the cannon has been charged for will be raised to for",
+					"damage, cooldown, and range calculation",
+			})
+			@RangeDouble(min = 0.01, max = 1)
+			public double recurseExponent = 0.6F;
+
+			@Name("RecurseCostInitial")
+			@Comment({
+					"The amount of Impetus used by the Impulse Cannon to begin charging the recurse attack.",
+					"This cost is paid once at the start, and then RecurseCostTick will be applied."
+			})
+			public int recurseCostInitial = 1;
+
+			@Name("RecurseCostTick")
+			@Comment({
+					"The amount of Impetus used by the Impulse Cannon to charge the recurse attack per tick.",
+					"Supports taking away less than 1 impetus per tick."
+			})
+			public double recurseCostTick = 0.15;
+
+			@Name("RecurseCooldown")
+			@Comment({
+					"The cooldown in ticks between shots of the Impulse Cannon in recurse mode.",
+					"Note that this will lock the player out of all Impulse Cannons in their inventory for",
+					"this duration, and the duration will be multiplied by the number of ticks the cannon has",
+					"been charged for raised to the power of the recurse exponent."
+			})
+			public int recurseCooldown = 3;
+
+			@Name("RecurseRange")
+			@Comment({
+					"The range in meters of the Impulse Cannon's recurse attack.",
+					"Note that this will be multiplied by the number of ticks the cannon has been charged for",
+					"raised to the power of the recurse exponent."
+			})
+			public double recurseRange = 6;
+
 	    }
 
 		public static class ImpulseCannonAugments {
@@ -925,21 +1015,35 @@ public final class TAConfigHolder {
 		TAConfig.allowWussRiftSeed.setValue(gameplay.allowWussRiftSeed, side);
 
 		TAConfig.cannonBeamDamage.setValue(gameplay.impetus.cannonConvert.beamDamage, side);
-		TAConfig.cannonBeamCostInitial.setValue((long) gameplay.impetus.cannonConvert.beamCostInitial, side);
+		TAConfig.cannonBeamCostInitial.setValue(gameplay.impetus.cannonConvert.beamCostInitial, side);
 		TAConfig.cannonBeamCostTick.setValue(gameplay.impetus.cannonConvert.beamCostTick, side);
 		TAConfig.cannonBeamRange.setValue(gameplay.impetus.cannonConvert.beamRange, side);
 
 		TAConfig.cannonRailgunDamage.setValue(gameplay.impetus.cannonConvert.railgunDamage, side);
-		TAConfig.cannonRailgunCost.setValue((long) gameplay.impetus.cannonConvert.railgunCost, side);
+		TAConfig.cannonRailgunCost.setValue(gameplay.impetus.cannonConvert.railgunCost, side);
 		TAConfig.cannonRailgunCooldown.setValue(gameplay.impetus.cannonConvert.railgunCooldown, side);
 		TAConfig.cannonRailgunRange.setValue(gameplay.impetus.cannonConvert.railgunRange, side);
 
 		TAConfig.cannonBurstDamage.setValue(gameplay.impetus.cannonConvert.burstDamage, side);
-		TAConfig.cannonBurstCost.setValue((long) gameplay.impetus.cannonConvert.burstCost, side);
+		TAConfig.cannonBurstCost.setValue(gameplay.impetus.cannonConvert.burstCost, side);
 		TAConfig.cannonBurstCooldown.setValue(gameplay.impetus.cannonConvert.burstCooldown, side);
 		TAConfig.cannonBurstRange.setValue(gameplay.impetus.cannonConvert.burstRange, side);
 		TAConfig.cannonBurstCount.setValue(gameplay.impetus.cannonConvert.burstCount, side);
 		TAConfig.cannonBurstDelay.setValue(gameplay.impetus.cannonConvert.burstDelay, side);
+
+		TAConfig.cannonCrystalDamage.setValue(gameplay.impetus.cannonConvert.crystalDamage, side);
+		TAConfig.cannonCrystalBeamCount.setValue(gameplay.impetus.cannonConvert.crystalBeamCount, side);
+		TAConfig.cannonCrystalSpread.setValue(gameplay.impetus.cannonConvert.crystalSpread, side);
+		TAConfig.cannonCrystalCostInitial.setValue(gameplay.impetus.cannonConvert.crystalCostInitial, side);
+		TAConfig.cannonCrystalCostTick.setValue(gameplay.impetus.cannonConvert.crystalCostTick, side);
+		TAConfig.cannonCrystalRange.setValue(gameplay.impetus.cannonConvert.crystalRange, side);
+
+		TAConfig.cannonRecurseDamage.setValue(gameplay.impetus.cannonConvert.recurseDamage, side);
+		TAConfig.cannonRecurseExponent.setValue(gameplay.impetus.cannonConvert.recurseExponent, side);
+		TAConfig.cannonRecurseCostInitial.setValue(gameplay.impetus.cannonConvert.recurseCostInitial, side);
+		TAConfig.cannonRecurseCostTick.setValue(gameplay.impetus.cannonConvert.recurseCostTick, side);
+		TAConfig.cannonRecurseCooldown.setValue(gameplay.impetus.cannonConvert.recurseCooldown, side);
+		TAConfig.cannonRecurseRange.setValue(gameplay.impetus.cannonConvert.recurseRange, side);
 
 		TAConfig.cannonGyroscopeCorrectionAngle.setValue(gameplay.impetus.cannonAugment.gyroscopeCorrectionAngle, side);
 		TAConfig.cannonHyperionEfficiencyFactor.setValue(gameplay.impetus.cannonAugment.hyperionEfficiencyFactor, side);
@@ -1146,7 +1250,7 @@ public final class TAConfigHolder {
 		TAConfig.cannonBeamDamage = TAConfigManager
 			.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannonConvert.beamDamage));
 		TAConfig.cannonBeamCostInitial = TAConfigManager
-			.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannonConvert.beamCostInitial));
+			.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.beamCostInitial));
 		TAConfig.cannonBeamCostTick = TAConfigManager
 			.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.beamCostTick));
 		TAConfig.cannonBeamRange = TAConfigManager
@@ -1155,7 +1259,7 @@ public final class TAConfigHolder {
 		TAConfig.cannonRailgunDamage = TAConfigManager
 			.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannonConvert.railgunDamage));
 		TAConfig.cannonRailgunCost = TAConfigManager
-			.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannonConvert.railgunCost));
+			.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.railgunCost));
 		TAConfig.cannonRailgunCooldown = TAConfigManager
 			.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.railgunCooldown));
 		TAConfig.cannonRailgunRange = TAConfigManager
@@ -1164,7 +1268,7 @@ public final class TAConfigHolder {
 		TAConfig.cannonBurstDamage = TAConfigManager
 			.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannonConvert.burstDamage));
 		TAConfig.cannonBurstCost = TAConfigManager
-			.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannonConvert.burstCost));
+			.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.burstCost));
 		TAConfig.cannonBurstCooldown = TAConfigManager
 			.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.burstCooldown));
 		TAConfig.cannonBurstRange = TAConfigManager
@@ -1173,6 +1277,32 @@ public final class TAConfigHolder {
 				.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.burstCount));
 		TAConfig.cannonBurstDelay = TAConfigManager
 				.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.burstDelay));
+
+		TAConfig.cannonCrystalDamage = TAConfigManager
+				.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannonConvert.crystalBeamCount));
+		TAConfig.cannonCrystalBeamCount = TAConfigManager
+				.addOption( new ConfigOptionInt(true, gameplay.impetus.cannonConvert.crystalBeamCount));
+		TAConfig.cannonCrystalSpread = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonConvert.crystalSpread));
+		TAConfig.cannonCrystalCostInitial = TAConfigManager
+				.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.crystalCostInitial));
+		TAConfig.cannonCrystalCostTick = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.crystalCostTick));
+		TAConfig.cannonCrystalRange = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.crystalRange));
+
+		TAConfig.cannonRecurseDamage = TAConfigManager
+				.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannonConvert.recurseDamage));
+		TAConfig.cannonRecurseExponent = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.recurseExponent));
+		TAConfig.cannonRecurseCostInitial = TAConfigManager
+				.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.recurseCostInitial));
+		TAConfig.cannonRecurseCostTick = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.recurseCostTick));
+		TAConfig.cannonRecurseCooldown = TAConfigManager
+				.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.recurseCooldown));
+		TAConfig.cannonRecurseRange = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.recurseRange));
 
 		TAConfig.cannonGyroscopeCorrectionAngle = TAConfigManager
 				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.gyroscopeCorrectionAngle));

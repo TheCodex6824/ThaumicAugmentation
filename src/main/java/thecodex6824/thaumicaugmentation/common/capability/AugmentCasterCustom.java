@@ -129,7 +129,7 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
     }
     
     @Override
-    public boolean isCompatible(ItemStack otherAugment) {
+    public boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
         IAugment a = otherAugment.getCapability(CapabilityAugment.AUGMENT, null);
         if (a != null && a instanceof ICustomCasterAugment) {
             ICustomCasterAugment aug = (ICustomCasterAugment) a;

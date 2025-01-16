@@ -27,13 +27,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class PacketRecoil implements IMessage {
 
-    public static enum RecoilType {
+    public enum RecoilType {
         IMPULSE_BURST(0),
-        IMPULSE_RAILGUN(1);
-        
+        IMPULSE_RAILGUN(1),
+        IMPULSE_RECURSE(2);
+
         private int id;
         
-        private RecoilType(int i) {
+        RecoilType(int i) {
             id = i;
         }
         
@@ -54,24 +55,34 @@ public class PacketRecoil implements IMessage {
     
     protected int id;
     protected RecoilType type;
+    protected int flag;
     
     public PacketRecoil() {}
     
     public PacketRecoil(int entityID, RecoilType recoilType) {
         id = entityID;
         type = recoilType;
+        flag = 0;
+    }
+
+    public PacketRecoil(int entityID, RecoilType recoilType, int flag) {
+        id = entityID;
+        type = recoilType;
+        this.flag = flag;
     }
     
     @Override
     public void fromBytes(ByteBuf buf) {
         id = buf.readInt();
         type = RecoilType.fromID(buf.readInt());
+        flag = buf.readInt();
     }
     
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(id);
         buf.writeInt(type.getID());
+        buf.writeInt(flag);
     }
     
     public int getEntityID() {
@@ -81,5 +92,8 @@ public class PacketRecoil implements IMessage {
     public RecoilType getRecoilType() {
         return type;
     }
-    
+
+    public int getFlag() {
+        return flag;
+    }
 }

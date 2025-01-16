@@ -33,6 +33,7 @@ import thaumcraft.api.aura.AuraHelper;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
 public class AugmentCasterVisBattery extends Augment {
@@ -59,7 +60,7 @@ public class AugmentCasterVisBattery extends Augment {
     }
     
     @Override
-    public boolean isCompatible(ItemStack otherAugment) {
+    public boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
         return otherAugment.getItem() != TAItems.AUGMENT_VIS_BATTERY;
     }
     

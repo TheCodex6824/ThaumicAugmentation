@@ -81,6 +81,7 @@ import thecodex6824.thaumicaugmentation.client.shader.TAShaders;
 import thecodex6824.thaumicaugmentation.client.sound.SoundHandleSpecialSound;
 import thecodex6824.thaumicaugmentation.common.block.trait.INoBlockOutline;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannon;
+import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannonConversion;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
@@ -90,6 +91,7 @@ import javax.annotation.Nullable;
 import javax.vecmath.Vector4d;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @EventBusSubscriber(modid = ThaumicAugmentationAPI.MODID, value = Side.CLIENT)
@@ -97,9 +99,11 @@ public class RenderEventHandler {
 
     private static final Cache<Integer, Boolean> CAST_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterWrite(
             3000, TimeUnit.MILLISECONDS).maximumSize(250).build();
-    private static final Cache<EntityLivingBase, FXImpulseBeam> IMPULSE_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterAccess(
-            3000, TimeUnit.MILLISECONDS).weakKeys().maximumSize(50).<EntityLivingBase, FXImpulseBeam>removalListener(k -> {
-                k.getValue().setExpired();
+    private static final Cache<EntityLivingBase, FXImpulseBeam[]> IMPULSE_CACHE = CacheBuilder.newBuilder().concurrencyLevel(1).expireAfterAccess(
+            3000, TimeUnit.MILLISECONDS).weakKeys().maximumSize(50).<EntityLivingBase, FXImpulseBeam[]>removalListener(k -> {
+                for (FXImpulseBeam beam : k.getValue()) {
+                    beam.setExpired();
+                }
             }).build();
     
     private static final Object2LongMap<DimensionalBlockPos[]> TRANSACTIONS = Object2LongMaps.synchronize(new Object2LongOpenHashMap<>());
@@ -131,67 +135,79 @@ public class RenderEventHandler {
         renderShaders = true;
     }
     
-    public static void onImpulseBeam(EntityLivingBase entity, boolean stop) {
-        if (stop) {
-            FXImpulseBeam beam = IMPULSE_CACHE.getIfPresent(entity);
-            if (beam != null)
-                beam.setExpired();
-            
+    public static void onImpulseBeam(EntityLivingBase entity, @Nullable ItemImpulseCannonConversion.BeamInformation beamInformation) {
+        if (beamInformation == null) {
+            FXImpulseBeam[] beams = IMPULSE_CACHE.getIfPresent(entity);
+            if (beams != null) {
+                for (FXImpulseBeam beam : beams) {
+                    beam.setExpired();
+                }
+            }
             IMPULSE_CACHE.invalidate(entity);
         }
         else {
-            FXImpulseBeam beam = IMPULSE_CACHE.getIfPresent(entity);
-            if (beam == null) {
-                Vec3d dest = determineBeamTarget(entity, 1);
-                beam = new FXImpulseBeam(entity.getEntityWorld(), entity, dest.x, dest.y, dest.z, 0.35F, 0.35F, 0.65F, Integer.MAX_VALUE);
-                beam.setPulse(true);
-                beam.setFollowOwner(true);
-                beam.setImpactTicks(Integer.MAX_VALUE);
-                beam.setEndsLoop(true);
-                IMPULSE_CACHE.put(entity, beam);
-                ParticleEngine.addEffect(entity.getEntityWorld(), beam);
+            FXImpulseBeam[] beams = IMPULSE_CACHE.getIfPresent(entity);
+            if (beams == null || beams.length != beamInformation.numBeams()) {
+                final int count = beamInformation.numBeams();
+                beams = new FXImpulseBeam[count];
+                for (int i = 0; i < count; i++) {
+                    Function<Vec3d, Vec3d> rotFunc = beamInformation.computeRotationFunction(i);
+                    Vec3d dest = determineBeamTarget(entity, 1, rotFunc, beamInformation.getLength());
+                    FXImpulseBeam beam = new FXImpulseBeam(entity.getEntityWorld(), entity, dest.x, dest.y, dest.z, 0.35F, 0.35F, 0.65F, Integer.MAX_VALUE);
+                    beam.setDesiredLength(beamInformation.getLength());
+                    beam.setEntityVecTargetRotation(rotFunc);
+                    beam.setPulse(true);
+                    beam.setFollowOwner(true);
+                    beam.setImpactTicks(Integer.MAX_VALUE);
+                    beam.setEndsLoop(true);
+                    beams[i] = beam;
+                    ParticleEngine.addEffect(entity.getEntityWorld(), beam);
+                }
+                IMPULSE_CACHE.put(entity, beams);
                 final int id = entity.getEntityId();
                 ISoundHandle handle = ThaumicAugmentation.proxy.playSpecialSound(TASounds.IMPULSE_CANNON_BEAM_LOOP, SoundCategory.PLAYERS,
                         old -> {
                             Entity e = Minecraft.getMinecraft().world.getEntityByID(id);
-                            if (e != null && !e.isDead && IMPULSE_CACHE.getIfPresent(e) != null)
+                            FXImpulseBeam[] arr;
+                            if (e != null && !e.isDead && (arr = IMPULSE_CACHE.getIfPresent(e)) != null &&
+                                    arr.length == count)
                                 return e.getPositionVector();
                             else
                                 return null;
                         }, (float) entity.posX, (float) entity.posY, (float) entity.posZ, 0.01F, 1.0F, true, 0);
-                if (handle instanceof SoundHandleSpecialSound) {
-                    SoundHandleSpecialSound s = (SoundHandleSpecialSound) handle;
+                if (handle instanceof SoundHandleSpecialSound s) {
                     s.setFadeIn(40);
                     if (ThaumicAugmentation.proxy.isEntityRenderView(entity))
                         s.setAttenuationType(AttenuationType.NONE);
+                }
+            } else {
+                for (int i = 0; i < beams.length; i++) {
+                    beams[i].setEntityVecTargetRotation(beamInformation.computeRotationFunction(i));
                 }
             }
         }
     }
 
-    protected static Vec3d determineBeamTarget(EntityLivingBase entity, float partialTicks) {
+    protected static Vec3d determineBeamTarget(EntityLivingBase entity, float partialTicks, Function<Vec3d, Vec3d> rotationFunction, double length) {
         Vec3d origin = entity.getPositionEyes(partialTicks);
-        Vec3d dest = entity.getLook(partialTicks).scale(TAConfig.cannonBeamRange.getValue());
+        Vec3d dest = rotationFunction.apply(entity.getLook(partialTicks).scale(length));
         ItemStack stack = entity.getHeldItemMainhand();
         if (stack.getItem() instanceof ItemImpulseCannon cannon) {
-            List<IImpulseCannonAugment> augments = cannon.getAugments(stack);
-            for (IImpulseCannonAugment aug : augments) {
-                if (aug instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                    dest = override.overrideFiringRayTrace(entity, origin, dest, partialTicks);
+            for (var aug : cannon.getAugments(stack).entrySet()) {
+                if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment override) {
+                    dest = override.overrideFiringRayTrace(stack, aug.getKey(), entity, origin, dest, partialTicks);
                     break;
                 }
             }
         } else if ((stack = entity.getHeldItemOffhand()).getItem() instanceof ItemImpulseCannon cannon) {
-            List<IImpulseCannonAugment> augments = cannon.getAugments(stack);
-            for (IImpulseCannonAugment aug : augments) {
-                if (aug instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                    dest = override.overrideFiringRayTrace(entity, origin, dest, partialTicks);
+            for (var aug : cannon.getAugments(stack).entrySet()) {
+                if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment override) {
+                    dest = override.overrideFiringRayTrace(stack, aug.getKey(), entity, origin, dest, partialTicks);
                     break;
                 }
             }
         }
-        dest = RaytraceHelper.shortenRaytraceByBlocks(entity.getEntityWorld(), origin, origin.add(dest));
-        return dest;
+        return RaytraceHelper.shortenRaytraceByBlocks(entity.getEntityWorld(), origin, origin.add(dest));
     }
     
     @Nullable
@@ -622,10 +638,12 @@ public class RenderEventHandler {
         }
         
         ArrayList<EntityLivingBase> toRemove = new ArrayList<>();
-        for (Map.Entry<EntityLivingBase, FXImpulseBeam> entry : IMPULSE_CACHE.asMap().entrySet()) {
+        for (Map.Entry<EntityLivingBase, FXImpulseBeam[]> entry : IMPULSE_CACHE.asMap().entrySet()) {
             if (findImpulseCannon(entry.getKey()) != null) {
-                Vec3d dest = determineBeamTarget(entry.getKey(), event.getPartialTicks());
-                entry.getValue().updateBeamTarget(dest.x, dest.y, dest.z);
+                for (FXImpulseBeam beam : entry.getValue()) {
+                    Vec3d dest = determineBeamTarget(entry.getKey(), event.getPartialTicks(), beam.getEntityVecTargetRotation(), beam.getDesiredLength());
+                    beam.updateBeamTarget(dest.x, dest.y, dest.z);
+                }
             }
             else
                 toRemove.add(entry.getKey());

@@ -176,10 +176,12 @@ public interface IAugment {
     
     /**
      * Returns if this augment can coexist on the same augmentable item as the passed augment.
-     * @param otherAugment The augment to check
+     *
+     * @param otherAugment    The augment to check
+     * @param otherAugmentCap
      * @return If this augment can exist on the same augmentable item as the passed augment
      */
-    public default boolean isCompatible(ItemStack otherAugment) {
+    public default boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
         return true;
     }
     
