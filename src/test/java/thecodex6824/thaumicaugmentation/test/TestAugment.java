@@ -34,8 +34,8 @@ import thaumcraft.common.items.casters.foci.FocusEffectEarth;
 import thaumcraft.common.items.casters.foci.FocusEffectFlux;
 import thaumcraft.common.items.casters.foci.FocusModSplitTarget;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.IBuilderCasterStrengthProvider;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.IBuilderCasterStrengthProvider;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.ICustomAugment;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.TAConfigHolder;
 import thecodex6824.thaumicaugmentation.common.item.builder.StrengthProviderElemental;
@@ -43,8 +43,8 @@ import thecodex6824.thaumicaugmentation.common.item.foci.FocusEffectWater;
 
 public class TestAugment {
 
-    private ICustomCasterAugment makeStrengthProvider(String aspect) {
-	return new ICustomCasterAugment() {
+    private ICustomAugment makeStrengthProvider(String aspect) {
+	return new ICustomAugment() {
 	    @Override
 	    public void setStrengthProvider(ItemStack s) {}
 

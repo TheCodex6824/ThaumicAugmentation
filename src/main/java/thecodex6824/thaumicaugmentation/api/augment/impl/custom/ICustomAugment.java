@@ -18,14 +18,19 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
+package thecodex6824.thaumicaugmentation.api.augment.impl.custom;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
-public interface IBuilderCasterEffectProvider extends IBuilderCasterCallback {
+public interface ICustomAugment extends IAugment {
 
-    public void apply(ICustomCasterAugment augment, Entity caster, ItemStack casterStack, FocusWrapper focus, double strength);
+    public void setStrengthProvider(ItemStack s);
+    
+    public ItemStack getStrengthProvider();
+    
+    public void setEffectProvider(ItemStack e);
+    
+    public ItemStack getEffectProvider();
     
 }

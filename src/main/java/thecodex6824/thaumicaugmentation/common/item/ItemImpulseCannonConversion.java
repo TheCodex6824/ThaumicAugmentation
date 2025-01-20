@@ -48,9 +48,9 @@ import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonConversion;
-import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonConversion;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
 import thecodex6824.thaumicaugmentation.api.entity.IImpulseSpecialEntity;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
@@ -100,9 +100,10 @@ public class ItemImpulseCannonConversion extends ItemTABase {
             public void onCannonUsage(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, long impetusConsumed, IImpetusStorage buffer, Map<ItemStack, IImpulseCannonAugment> augments) {
                 Vec3d origin = user.getPositionEyes(1);
                 Vec3d scan = user.getLookVec().scale(TAConfig.cannonRailgunRange.getValue());
-                for (var aug : augments.entrySet()) {
-                    if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                        scan = override.overrideFiringRayTrace(cannonStack, aug.getKey(), user, origin, scan);
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment) {
+                        scan = ((IImpulseCannonRaytraceOverridingAugment) aug.getValue())
+                                .overrideFiringRayTrace(cannonStack, aug.getKey(), user, origin, scan);
                         break;
                     }
                 }
@@ -110,21 +111,21 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 float magicFactor = 0.5f;
                 float normalFactor = 0.5f;
                 long cost = getImpetusCostPerUsage(cannonStack, augmentStack, user, buffer);
-                for (var aug : augments.entrySet()) {
-                    baseDamage *= aug.getValue().getBaseDamageModifier(cannonStack, aug.getKey(), buffer, cost, impetusConsumed);
-                    magicFactor *= aug.getValue().getMagicDamageModifier(cannonStack, aug.getKey(), buffer, cost, impetusConsumed);
-                    normalFactor *= aug.getValue().getNormalDamageModifier(cannonStack, aug.getKey(), buffer, cost, impetusConsumed);
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    baseDamage *= aug.getValue().getBaseDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, impetusConsumed);
+                    magicFactor *= aug.getValue().getMagicDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, impetusConsumed);
+                    normalFactor *= aug.getValue().getNormalDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, impetusConsumed);
                 }
                 scan = RaytraceHelper.shortenRaytraceByBlocks(user.getEntityWorld(), origin, origin.add(scan));
                 List<Entity> ents = RaytraceHelper.raytraceEntities(user.getEntityWorld(), origin, scan);
                 for (Entity e : ents) {
                     if (e == user) continue;
-                    if (!(e instanceof IImpulseSpecialEntity ent) || !ent.shouldImpulseCannonIgnore(user)) {
-                        for (var aug : augments.entrySet()) {
+                    if (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(user)) {
+                        for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
                             aug.getValue().applyAdditionalEffectsToEntity(cannonStack, aug.getKey(), user, origin, scan, e, baseDamage);
                         }
                         ImpetusAPI.causeImpetusDamage(user, e, baseDamage * magicFactor, baseDamage * normalFactor);
-                        if (e instanceof IImpulseSpecialEntity ent && ent.shouldStopRailgunBeam(user)) {
+                        if (e instanceof IImpulseSpecialEntity && ((IImpulseSpecialEntity) e).shouldStopRailgunBeam(user)) {
                             // make the beam terminate near the beam blocking entity
                             scan = scan.subtract(origin);
                             double scale = Math.sqrt(origin.squareDistanceTo(e.posX, e.posY, e.posZ) / scan.lengthSquared());
@@ -134,7 +135,7 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                         }
                     }
                 }
-                for (var aug : augments.entrySet()) {
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
                     aug.getValue().applyAdditionalEffects(cannonStack, aug.getKey(), user, origin, scan, baseDamage);
                 }
 
@@ -182,9 +183,10 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 int c = TAConfig.cannonBurstCount.getValue() - 1;
                 Vec3d origin = user.getPositionEyes(1);
                 Vec3d scan = user.getLookVec().scale(TAConfig.cannonBurstRange.getValue());
-                for (var aug : augments.entrySet()) {
-                    if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                        scan = override.overrideFiringRayTrace(cannonStack, aug.getKey(), user, origin, scan);
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment) {
+                        scan = ((IImpulseCannonRaytraceOverridingAugment) aug.getValue())
+                                .overrideFiringRayTrace(cannonStack, aug.getKey(), user, origin, scan);
                         break;
                     }
                 }
@@ -196,17 +198,18 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                         break;
                     }
                 }
-                if (e != null && (!(e instanceof IImpulseSpecialEntity ent) || !ent.shouldImpulseCannonIgnore(user))) {
-                    for (var aug : augments.entrySet()) {
+                if (e != null && (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(user))) {
+                    for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
                         aug.getValue().applyAdditionalEffectsToEntity(cannonStack, aug.getKey(), user, origin, scan, e, baseDamage);
                     }
                     if (ImpetusAPI.causeImpetusDamage(user, e, baseDamage * magicFactor, baseDamage * normalFactor)
-                            && num < c && e instanceof EntityLivingBase base) {
+                            && num < c && e instanceof EntityLivingBase) {
+                        EntityLivingBase base = (EntityLivingBase) e;
                         base.hurtResistantTime = Math.min(base.hurtResistantTime, 1);
                         base.lastDamage = 0.0F;
                     }
                 }
-                for (var aug : augments.entrySet()) {
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
                     aug.getValue().applyAdditionalEffects(cannonStack, aug.getKey(), user, origin, scan, baseDamage);
                 }
 
@@ -228,10 +231,10 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 float magicFactor = 0.5f;
                 float normalFactor = 0.5f;
                 long cost = getImpetusCostPerUsage(cannonStack, augmentStack, user, buffer);
-                for (var aug : augments.entrySet()) {
-                    baseDamage *= aug.getValue().getBaseDamageModifier(cannonStack, aug.getKey(), buffer, cost, impetusConsumed);
-                    magicFactor *= aug.getValue().getMagicDamageModifier(cannonStack, aug.getKey(), buffer, cost, impetusConsumed);
-                    normalFactor *= aug.getValue().getNormalDamageModifier(cannonStack, aug.getKey(), buffer, cost, impetusConsumed);
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    baseDamage *= aug.getValue().getBaseDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, impetusConsumed);
+                    magicFactor *= aug.getValue().getMagicDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, impetusConsumed);
+                    normalFactor *= aug.getValue().getNormalDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, impetusConsumed);
                 }
                 float finalBaseDamage = baseDamage;
                 float finalMagicFactor = magicFactor;
@@ -298,17 +301,18 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 float magicFactor = 0.5f;
                 float normalFactor = 0.5f;
                 double cost = getImpetusCostPerTick(cannonStack, augmentStack, user, useTicksLeft, buffer);
-                for (var aug : augments.entrySet()) {
-                    baseDamage *= aug.getValue().getBaseDamageModifier(cannonStack, aug.getKey(), buffer, cost, impetusConsumed);
-                    magicFactor *= aug.getValue().getMagicDamageModifier(cannonStack, aug.getKey(), buffer, cost, impetusConsumed);
-                    normalFactor *= aug.getValue().getNormalDamageModifier(cannonStack, aug.getKey(), buffer, cost, impetusConsumed);
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    baseDamage *= aug.getValue().getBaseDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, impetusConsumed);
+                    magicFactor *= aug.getValue().getMagicDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, impetusConsumed);
+                    normalFactor *= aug.getValue().getNormalDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, impetusConsumed);
                 }
                 for (int i = 0; i < lastInformation.numBeams(); i++) {
                     Vec3d origin = user.getPositionEyes(1);
                     Vec3d scan = lastInformation.transform(i, user.getLookVec().scale(TAConfig.cannonBeamRange.getValue()));
-                    for (var aug : augments.entrySet()) {
-                        if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                            scan = override.overrideFiringRayTrace(cannonStack, aug.getKey(), user, origin, scan);
+                    for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                        if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment) {
+                            scan = ((IImpulseCannonRaytraceOverridingAugment) aug.getValue())
+                                    .overrideFiringRayTrace(cannonStack, aug.getKey(), user, origin, scan);
                             break;
                         }
                     }
@@ -320,17 +324,18 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                             break;
                         }
                     }
-                    if (e != null && (!(e instanceof IImpulseSpecialEntity ent) || !ent.shouldImpulseCannonIgnore(user))) {
-                        for (var aug : augments.entrySet()) {
+                    if (e != null && (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(user))) {
+                        for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
                             aug.getValue().applyAdditionalEffectsToEntity(cannonStack, aug.getKey(), user, origin, scan, e, baseDamage);
                         }
                         ImpetusAPI.causeImpetusDamage(user, e, baseDamage * magicFactor, baseDamage * normalFactor);
-                        if (e instanceof EntityLivingBase base) {
+                        if (e instanceof EntityLivingBase) {
+                            EntityLivingBase base = (EntityLivingBase) e;
                             base.hurtResistantTime = Math.min(base.hurtResistantTime, 2);
                             base.lastDamage = 0.0F;
                         }
                     }
-                    for (var aug : augments.entrySet()) {
+                    for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
                         aug.getValue().applyAdditionalEffects(cannonStack, aug.getKey(), user, origin, scan, baseDamage);
                     }
                 }
@@ -372,9 +377,10 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 double factor = Math.pow(ticksUsed, TAConfig.cannonRecurseExponent.getValue());
                 Vec3d origin = user.getPositionEyes(1);
                 Vec3d scan = user.getLookVec().scale(TAConfig.cannonRecurseRange.getValue() * factor);
-                for (var aug : augments.entrySet()) {
-                    if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                        scan = override.overrideFiringRayTrace(cannonStack, aug.getKey(), user, origin, scan);
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment) {
+                        scan = ((IImpulseCannonRaytraceOverridingAugment) aug.getValue())
+                                .overrideFiringRayTrace(cannonStack, aug.getKey(), user, origin, scan);
                         break;
                     }
                 }
@@ -384,27 +390,27 @@ public class ItemImpulseCannonConversion extends ItemTABase {
                 // calculate what should've been consumed by the cannon up to this point on the fly
                 long cost = getImpetusCostPerUsage(cannonStack, augmentStack, user, buffer) * ticksUsed + getImpetusCostPerUsage(cannonStack, augmentStack, user, buffer);
                 double actual = cost;
-                for (var aug : augments.entrySet()) {
-                    actual *= aug.getValue().getImpulseCostModifier(cannonStack, aug.getKey(), buffer);
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    actual *= aug.getValue().getImpulseCostModifier(cannonStack, aug.getKey(), user, buffer);
                 }
-                for (var aug : augments.entrySet()) {
-                    baseDamage *= aug.getValue().getBaseDamageModifier(cannonStack, aug.getKey(), buffer, cost, actual);
-                    magicFactor *= aug.getValue().getMagicDamageModifier(cannonStack, aug.getKey(), buffer, cost, actual);
-                    normalFactor *= aug.getValue().getNormalDamageModifier(cannonStack, aug.getKey(), buffer, cost, actual);
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    baseDamage *= aug.getValue().getBaseDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, actual);
+                    magicFactor *= aug.getValue().getMagicDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, actual);
+                    normalFactor *= aug.getValue().getNormalDamageModifier(cannonStack, aug.getKey(), user, buffer, cost, actual);
                 }
                 scan = RaytraceHelper.shortenRaytraceByBlocks(user.getEntityWorld(), origin, origin.add(scan));
                 List<Entity> ents = RaytraceHelper.raytraceEntities(user.getEntityWorld(), origin, scan);
                 for (Entity e : ents) {
                     if (e == user) continue;
-                    if (!(e instanceof IImpulseSpecialEntity ent) || !ent.shouldImpulseCannonIgnore(user)) {
-                        for (var aug : augments.entrySet()) {
+                    if (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(user)) {
+                        for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
                             aug.getValue().applyAdditionalEffectsToEntity(cannonStack, aug.getKey(), user, origin, scan, e, baseDamage);
                         }
                         ImpetusAPI.causeImpetusDamage(user, e, baseDamage * magicFactor, baseDamage * normalFactor);
                         break;
                     }
                 }
-                for (var aug : augments.entrySet()) {
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
                     aug.getValue().applyAdditionalEffects(cannonStack, aug.getKey(), user, origin, scan, baseDamage);
                 }
 

@@ -21,6 +21,7 @@
 package thecodex6824.thaumicaugmentation.init;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,10 +30,8 @@ import net.minecraft.util.ResourceLocation;
 import thaumcraft.api.aspects.Aspect;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.IBuilderCasterEffectProvider;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.IBuilderCasterStrengthProvider;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.*;
+import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.item.builder.StrengthProviderElemental;
@@ -40,61 +39,111 @@ import thecodex6824.thaumicaugmentation.common.item.builder.StrengthProviderElem
 public class AugmentHandler {
 
     public static void registerAugmentBuilderComponents() {
-	CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_experience"), new IBuilderCasterStrengthProvider() {
-	    @Override
-	    public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
-		if (entity instanceof EntityPlayer) {
-		    EntityPlayer player = (EntityPlayer) entity;
-		    return Math.max(Math.min(player.experienceLevel * TAConfig.experienceModifierScale.getValue(),
-			    TAConfig.experienceModifierCap.getValue()), TAConfig.experienceModifierBase.getValue());
+	CustomAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_experience"), new CombinedStrengthProvider() {
+		@Override
+		public double calculateStrength(ICustomAugment augment, ItemStack cannonStack, Entity user) {
+			return calculate(user);
 		}
-		else
-		    return 1.0;
+
+		@Override
+	    public double calculateStrength(ICustomAugment augment, FocusWrapper focus, Entity entity) {
+			return calculate(entity);
 	    }
+
+		private double calculate(Entity entity) {
+			if (entity instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer) entity;
+				return Math.max(Math.min(player.experienceLevel * TAConfig.experienceModifierScale.getValue(),
+						TAConfig.experienceModifierCap.getValue()), TAConfig.experienceModifierBase.getValue());
+			}
+			else
+				return 1.0;
+		}
 	});
 
-	CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental"),
+	CustomAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental"),
 		new StrengthProviderElemental(), (stack) -> {
+			if (stack.getTagCompound() == null) stack.setTagCompound(new NBTTagCompound());
 		    stack.getTagCompound().setString("aspect", Aspect.ORDER.getTag());
 		});
 
-	CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_overworld"), new IBuilderCasterStrengthProvider() {
-	    @Override
-	    public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
-		return TAConfig.dimensionalModifierOverworldDims.getValue().contains(entity.dimension) ?
-			TAConfig.dimensionalModifierOverworldPostiveFactor.getValue() :
-			    TAConfig.dimensionalModifierOverworldNegativeFactor.getValue();
+	CustomAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_overworld"), new CombinedStrengthProvider() {
+
+		@Override
+		public double calculateStrength(ICustomAugment augment, ItemStack cannonStack, Entity user) {
+			return calculate(user);
+		}
+
+		@Override
+	    public double calculateStrength(ICustomAugment augment, FocusWrapper focus, Entity entity) {
+			return calculate(entity);
 	    }
+
+		private double calculate(Entity entity) {
+			return TAConfig.dimensionalModifierOverworldDims.getValue().contains(entity.dimension) ?
+					TAConfig.dimensionalModifierOverworldPostiveFactor.getValue() :
+					TAConfig.dimensionalModifierOverworldNegativeFactor.getValue();
+		}
 	});
-	CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_nether"), new IBuilderCasterStrengthProvider() {
-	    @Override
-	    public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
-		return TAConfig.dimensionalModifierNetherDims.getValue().contains(entity.dimension) ?
-			TAConfig.dimensionalModifierNetherPostiveFactor.getValue() :
-			    TAConfig.dimensionalModifierNetherNegativeFactor.getValue();
+	CustomAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_nether"), new CombinedStrengthProvider() {
+
+		@Override
+		public double calculateStrength(ICustomAugment augment, ItemStack cannonStack, Entity user) {
+			return calculate(user);
+		}
+
+		@Override
+	    public double calculateStrength(ICustomAugment augment, FocusWrapper focus, Entity entity) {
+			return calculate(entity);
 	    }
+
+		private double calculate(Entity entity) {
+			return TAConfig.dimensionalModifierNetherDims.getValue().contains(entity.dimension) ?
+					TAConfig.dimensionalModifierNetherPostiveFactor.getValue() :
+					TAConfig.dimensionalModifierNetherNegativeFactor.getValue();
+		}
 	});
-	CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_end"), new IBuilderCasterStrengthProvider() {
-	    @Override
-	    public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
-		return TAConfig.dimensionalModifierEndDims.getValue().contains(entity.dimension) ?
-			TAConfig.dimensionalModifierEndPostiveFactor.getValue() :
-			    TAConfig.dimensionalModifierEndNegativeFactor.getValue();
+	CustomAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_end"), new CombinedStrengthProvider() {
+
+		@Override
+		public double calculateStrength(ICustomAugment augment, ItemStack cannonStack, Entity user) {
+			return calculate(user);
+		}
+
+		@Override
+	    public double calculateStrength(ICustomAugment augment, FocusWrapper focus, Entity entity) {
+			return calculate(entity);
 	    }
+
+		private double calculate(Entity entity) {
+			return TAConfig.dimensionalModifierEndDims.getValue().contains(entity.dimension) ?
+					TAConfig.dimensionalModifierEndPostiveFactor.getValue() :
+					TAConfig.dimensionalModifierEndNegativeFactor.getValue();
+		}
 	});
-	CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_emptiness"), new IBuilderCasterStrengthProvider() {
-	    @Override
-	    public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
-		return TAConfig.dimensionalModifierEmptinessDims.getValue().contains(entity.dimension) ?
-			TAConfig.dimensionalModifierEmptinessPostiveFactor.getValue() :
-			    TAConfig.dimensionalModifierEmptinessNegativeFactor.getValue();
+	CustomAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_emptiness"), new CombinedStrengthProvider() {
+
+		@Override
+		public double calculateStrength(ICustomAugment augment, ItemStack cannonStack, Entity user) {
+			return calculate(user);
+		}
+
+		@Override
+	    public double calculateStrength(ICustomAugment augment, FocusWrapper focus, Entity entity) {
+			return calculate(entity);
 	    }
+
+		private double calculate(Entity entity) {
+			return TAConfig.dimensionalModifierEmptinessDims.getValue().contains(entity.dimension) ?
+					TAConfig.dimensionalModifierEmptinessPostiveFactor.getValue() :
+					TAConfig.dimensionalModifierEmptinessNegativeFactor.getValue();
+		}
 	});
 
-	CasterAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_frenzy"), new IBuilderCasterStrengthProvider() {
+	CustomAugmentBuilder.registerStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_frenzy"), new CombinedStrengthProvider() {
 
-	    @Override
-	    public void onTick(ICustomCasterAugment augment, Entity user) {
+		@Override
+	    public void onTick(ICustomAugment augment, Entity user) {
 		ItemStack stack = augment.getStrengthProvider();
 		if (stack.hasTagCompound() && stack.getTagCompound().getInteger("frenzyCooldown") > 0) {
 		    int newCooldown = stack.getTagCompound().getInteger("frenzyCooldown") - 1;
@@ -108,7 +157,7 @@ public class AugmentHandler {
 	    }
 
 	    @Override
-	    public void onUnequip(ICustomCasterAugment augment, Entity user) {
+	    public void onUnequip(ICustomAugment augment, Entity user) {
 		ItemStack stack = augment.getStrengthProvider();
 		if (!stack.hasTagCompound())
 		    stack.setTagCompound(new NBTTagCompound());
@@ -118,7 +167,7 @@ public class AugmentHandler {
 	    }
 
 	    @Override
-	    public void onHurtEntity(ICustomCasterAugment augment, DamageSource source, Entity attacked, DamageWrapper damage) {
+	    public void onHurtEntity(ICustomAugment augment, DamageSource source, Entity attacked, DamageWrapper damage) {
 		ItemStack stack = augment.getStrengthProvider();
 		if (!stack.hasTagCompound())
 		    stack.setTagCompound(new NBTTagCompound());
@@ -127,34 +176,62 @@ public class AugmentHandler {
 		stack.getTagCompound().setInteger("frenzyCooldown", TAConfig.frenzyModifierCooldown.getValue());
 	    }
 
-	    @Override
-	    public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity user) {
-		ItemStack stack = augment.getStrengthProvider();
-		if (!stack.hasTagCompound())
-		    stack.setTagCompound(new NBTTagCompound());
+		@Override
+		public double calculateStrength(ICustomAugment augment, ItemStack cannonStack, Entity user) {
+			return calculate(augment);
+		}
 
-		return 1.0 + stack.getTagCompound().getInteger("frenzy") * TAConfig.frenzyModifierScaleFactor.getValue();
+		@Override
+	    public double calculateStrength(ICustomAugment augment, FocusWrapper focus, Entity user) {
+			return calculate(augment);
 	    }
+
+		private double calculate(ICustomAugment augment) {
+			ItemStack stack = augment.getStrengthProvider();
+			if (!stack.hasTagCompound())
+				stack.setTagCompound(new NBTTagCompound());
+
+			return 1.0 + stack.getTagCompound().getInteger("frenzy") * TAConfig.frenzyModifierScaleFactor.getValue();
+		}
 	});
 
-	CasterAugmentBuilder.registerEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_power"), new IBuilderCasterEffectProvider() {
+	CustomAugmentBuilder.registerEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_power"), new CombinedEffectProvider() {
 	    @Override
-	    public void apply(ICustomCasterAugment augment, Entity entity, ItemStack caster, FocusWrapper focus, double strength) {
-		focus.setFocusPower(focus.getFocusPower() + (focus.getOriginalFocusPower() * (float) strength - focus.getOriginalFocusPower()));
+	    public void apply(ICustomAugment augment, Entity entity, ItemStack caster, FocusWrapper focus, double strength) {
+			focus.setFocusPower(focus.getFocusPower() + (focus.getOriginalFocusPower() * (float) strength - focus.getOriginalFocusPower()));
 	    }
+
+		@Override
+		public float getBaseDamageModifier(ICustomAugment augment, ItemStack cannonStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed, double strength) {
+			return (float) Math.pow(1.0 + strength, TAConfig.cannonCustomAugmentExponent.getValue());
+		}
 	});
-	CasterAugmentBuilder.registerEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cast_speed"), new IBuilderCasterEffectProvider() {
+	CustomAugmentBuilder.registerEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cast_speed"), new IBuilderCasterEffectProvider() {
 	    @Override
-	    public void apply(ICustomCasterAugment augment, Entity entity, ItemStack caster, FocusWrapper focus, double strength) {
+	    public void apply(ICustomAugment augment, Entity entity, ItemStack caster, FocusWrapper focus, double strength) {
 		focus.setCooldown((int) Math.ceil(focus.getCooldown() * (1.0 / strength)));
 	    }
 	});
-	CasterAugmentBuilder.registerEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cost"), new IBuilderCasterEffectProvider() {
+	CustomAugmentBuilder.registerEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cost"), new CombinedEffectProvider() {
 	    @Override
-	    public void apply(ICustomCasterAugment augment, Entity entity, ItemStack caster, FocusWrapper focus, double strength) {
-		focus.setVisCost(focus.getVisCost() * (float) (1.0 / strength));
+	    public void apply(ICustomAugment augment, Entity entity, ItemStack caster, FocusWrapper focus, double strength) {
+			focus.setVisCost(focus.getVisCost() * (float) (1.0 / strength));
 	    }
+
+		@Override
+		public double getImpulseCostModifier(ICustomAugment augment, ItemStack cannonStack, EntityLivingBase user, IImpetusStorage buffer, double strength) {
+			return (float) Math.pow(1.0 / (1.0 + strength), TAConfig.cannonCustomAugmentExponent.getValue());
+		}
 	});
     }
 
+	private static abstract class CombinedStrengthProvider implements IBuilderCasterStrengthProvider, IBuilderCannonStrengthProvider {}
+	private static abstract class CombinedEffectProvider implements IBuilderCasterEffectProvider, IBuilderCannonEffectProvider {
+
+		@Override
+		public boolean compatibleWith(IBuilderStrengthProvider strengthProvider) {
+			return strengthProvider instanceof IBuilderCasterStrengthProvider ||
+					strengthProvider instanceof IBuilderCannonStrengthProvider;
+		}
+	}
 }

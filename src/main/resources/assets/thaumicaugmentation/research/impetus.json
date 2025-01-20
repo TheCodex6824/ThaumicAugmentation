@@ -687,7 +687,7 @@
             "key": "IMPULSE_CANNON_AUGMENT2_PURIFIER",
             "name": "thaumicaugmentation.research.impulse_cannon_augment2_purifier.title",
             "icons": [
-                "thaumicaugmentation:impulse_cannon_augment2;1;0"
+                "thaumicaugmentation:impulse_cannon_augment2;1;5"
             ],
             "category": "THAUMIC_AUGMENTATION",
             "parents": [
@@ -735,6 +735,41 @@
                     "text": "thaumicaugmentation.research.impulse_cannon_augment2_purifier.2",
                     "recipes": [
                         "thaumicaugmentation:impulse_cannon_augment2_purifier"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT2_MOUNT",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment2_mount.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment2;1;6"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON",
+                "~GAUNTLET_AUGMENTATION"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                12,
+                19
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_mount.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_mount.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment2_mount"
                     ]
                 }
             ]

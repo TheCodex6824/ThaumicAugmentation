@@ -20,10 +20,12 @@
 
 package thecodex6824.thaumicaugmentation.common.recipe;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
@@ -60,16 +62,17 @@ public class AugmentAdditionRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
                     return false;
             }
         }
-        
         if (!augmentable.isEmpty() && !augment.isEmpty()) {
             IAugmentableItem augmentableCap = augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-            IAugment augmentCap = augment.getCapability(CapabilityAugment.AUGMENT, null);
-            if (augmentableCap.shouldAllowDefaultAddition() && augmentCap.shouldAllowDefaultAddition()) {
-                int nextSlot = augmentableCap.getNextAvailableSlot();
-                return !augmentable.isEmpty() && !augment.isEmpty() && nextSlot != -1 &&
-                        augmentCap.canBeAppliedToItem(augmentable) &&
-                        augmentableCap.isAugmentAcceptable(
-                        augment, nextSlot, augmentCap);
+            if (augmentableCap.shouldAllowDefaultAddition()) {
+                IAugment augmentCap = augment.getCapability(CapabilityAugment.AUGMENT, null);
+                if (augmentCap.shouldAllowDefaultAddition()) {
+                    int nextSlot = augmentableCap.getNextAvailableSlot();
+                    return !augmentable.isEmpty() && !augment.isEmpty() && nextSlot != -1 &&
+                            augmentCap.canBeAppliedToItem(augmentable) &&
+                            augmentableCap.isAugmentAcceptable(
+                                    augment, nextSlot, augmentCap);
+                }
             }
         }
         

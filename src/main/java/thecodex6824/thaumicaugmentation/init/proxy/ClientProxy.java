@@ -107,9 +107,9 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.IElytraHarnessAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.CustomAugmentBuilder;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.ICustomAugment;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.config.TAConfigManager;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
@@ -960,13 +960,13 @@ public class ClientProxy extends ServerProxy {
         Entity e = Minecraft.getMinecraft().world.getEntityByID(message.getEntityID());
         if (e instanceof EntityLivingBase) {
             switch (message.getRecoilType()) {
-                case IMPULSE_BURST -> {
+                case IMPULSE_BURST:
                     ClientEventHandler.onRecoil((EntityLivingBase) e, (entity, time) -> {
                         float mult = isImpulseCannonStable(entity) ? 1.0F : 1.5F;
                         return -MathHelper.cos(time * (float) Math.PI / 11.0F) * mult;
                     }, 12);
-                }
-                case IMPULSE_RAILGUN -> {
+                    break;
+                case IMPULSE_RAILGUN:
                     ClientEventHandler.onRecoil((EntityLivingBase) e, (entity, time) -> {
                         float mult = isImpulseCannonStable(entity) ? 1.0F : 1.5F;
                         if (time < 4)
@@ -974,8 +974,8 @@ public class ClientProxy extends ServerProxy {
                         else
                             return 1.01875F * mult;
                     }, 16);
-                }
-                case IMPULSE_RECURSE -> {
+                    break;
+                case IMPULSE_RECURSE:
                     int flag = message.getFlag();
                     float log = (float) Math.log1p(flag) + 1;
                     ClientEventHandler.onRecoil((EntityLivingBase) e, (entity, time) -> {
@@ -985,7 +985,7 @@ public class ClientProxy extends ServerProxy {
                         else
                             return 1.01875F * mult;
                     }, (int) (9 + log));
-                }
+                    break;
             }
         }
     }
@@ -1128,9 +1128,9 @@ public class ClientProxy extends ServerProxy {
         
         TAModelLoader loader = new TAModelLoader();
         loader.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/strength_provider"),
-                () -> CasterAugmentBuilder.getAllStrengthProviders(), stack -> ItemCustomCasterStrengthProvider.getProviderID(stack)));
+                () -> CustomAugmentBuilder.getAllStrengthProviders(), stack -> ItemCustomCasterStrengthProvider.getProviderID(stack)));
         loader.registerLoader(new ProviderModel.Loader(new ResourceLocation("ta_special", "models/item/effect_provider"),
-                () -> CasterAugmentBuilder.getAllEffectProviders(), stack -> ItemCustomCasterEffectProvider.getProviderID(stack)));
+                () -> CustomAugmentBuilder.getAllEffectProviders(), stack -> ItemCustomCasterEffectProvider.getProviderID(stack)));
         loader.registerLoader(new CustomCasterAugmentModel.Loader());
         loader.registerLoader(new MorphicToolModel.Loader());
         loader.registerLoader(new BuiltInRendererModel.Loader());
@@ -1237,9 +1237,9 @@ public class ClientProxy extends ServerProxy {
         registerTo.registerItemColorHandler(new IItemColor() {
             @Override
             public int colorMultiplier(ItemStack stack, int tintIndex) {
-                if (tintIndex == 1 && stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomCasterAugment) {
-                    ICustomCasterAugment augment = (ICustomCasterAugment) stack.getCapability(CapabilityAugment.AUGMENT, null);
-                    return CasterAugmentBuilder.getStrengthProvider(CasterAugmentBuilder.getStrengthProviderID(augment.getStrengthProvider())).calculateTintColor(augment);
+                if (tintIndex == 1 && stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomAugment) {
+                    ICustomAugment augment = (ICustomAugment) stack.getCapability(CapabilityAugment.AUGMENT, null);
+                    return CustomAugmentBuilder.getStrengthProvider(CustomAugmentBuilder.getStrengthProviderID(augment.getStrengthProvider())).calculateTintColor(augment);
                 }
                 return -1;
             }

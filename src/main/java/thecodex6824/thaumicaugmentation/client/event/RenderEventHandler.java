@@ -63,8 +63,8 @@ import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
 import thecodex6824.thaumicaugmentation.api.client.ImpetusRenderingManager;
 import thecodex6824.thaumicaugmentation.api.impetus.node.CapabilityImpetusNode;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
@@ -175,7 +175,8 @@ public class RenderEventHandler {
                             else
                                 return null;
                         }, (float) entity.posX, (float) entity.posY, (float) entity.posZ, 0.01F, 1.0F, true, 0);
-                if (handle instanceof SoundHandleSpecialSound s) {
+                if (handle instanceof SoundHandleSpecialSound) {
+                    SoundHandleSpecialSound s = (SoundHandleSpecialSound) handle;
                     s.setFadeIn(40);
                     if (ThaumicAugmentation.proxy.isEntityRenderView(entity))
                         s.setAttenuationType(AttenuationType.NONE);
@@ -192,17 +193,19 @@ public class RenderEventHandler {
         Vec3d origin = entity.getPositionEyes(partialTicks);
         Vec3d dest = rotationFunction.apply(entity.getLook(partialTicks).scale(length));
         ItemStack stack = entity.getHeldItemMainhand();
-        if (stack.getItem() instanceof ItemImpulseCannon cannon) {
-            for (var aug : cannon.getAugments(stack).entrySet()) {
-                if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                    dest = override.overrideFiringRayTrace(stack, aug.getKey(), entity, origin, dest, partialTicks);
+        if (stack.getItem() instanceof ItemImpulseCannon) {
+            for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : ((ItemImpulseCannon) stack.getItem()).getAugments(stack).entrySet()) {
+                if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment) {
+                    dest = ((IImpulseCannonRaytraceOverridingAugment) aug.getValue())
+                            .overrideFiringRayTrace(stack, aug.getKey(), entity, origin, dest, partialTicks);
                     break;
                 }
             }
-        } else if ((stack = entity.getHeldItemOffhand()).getItem() instanceof ItemImpulseCannon cannon) {
-            for (var aug : cannon.getAugments(stack).entrySet()) {
-                if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment override) {
-                    dest = override.overrideFiringRayTrace(stack, aug.getKey(), entity, origin, dest, partialTicks);
+        } else if ((stack = entity.getHeldItemOffhand()).getItem() instanceof ItemImpulseCannon) {
+            for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : ((ItemImpulseCannon) stack.getItem()).getAugments(stack).entrySet()) {
+                if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment) {
+                    dest = ((IImpulseCannonRaytraceOverridingAugment) aug.getValue())
+                            .overrideFiringRayTrace(stack, aug.getKey(), entity, origin, dest, partialTicks);
                     break;
                 }
             }

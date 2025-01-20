@@ -28,8 +28,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.CustomAugmentBuilder;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.IBuilderEffectProvider;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.IBuilderStrengthProvider;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.ICustomAugment;
 
 public class CustomAugmentCreationRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
@@ -41,60 +43,68 @@ public class CustomAugmentCreationRecipe extends IForgeRegistryEntry.Impl<IRecip
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
         ItemStack strength = ItemStack.EMPTY;
+        IBuilderStrengthProvider strengthProvider = null;
         ItemStack effect = ItemStack.EMPTY;
+        IBuilderEffectProvider effectProvider = null;
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (stack != null && !stack.isEmpty()) {
-                if (!stack.hasTagCompound())
-                    return false;
-                else if (CasterAugmentBuilder.doesStrengthProviderExist(new ResourceLocation(stack.getTagCompound().getString("id")))) {
-                    if (strength.isEmpty())
-                        strength = stack;
-                    else
-                        return false;
+            if (!stack.isEmpty()) {
+                if (stack.hasTagCompound()) {
+                    assert stack.getTagCompound() != null;
+                    ResourceLocation loc = new ResourceLocation(stack.getTagCompound().getString("id"));
+                    if (CustomAugmentBuilder.doesStrengthProviderExist(loc)) {
+                        if (strength.isEmpty()) {
+                            strength = stack;
+                            strengthProvider = CustomAugmentBuilder.getStrengthProvider(loc);
+                            continue;
+                        }
+                    } else if (CustomAugmentBuilder.doesEffectProviderExist(loc)) {
+                        if (effect.isEmpty()) {
+                            effect = stack;
+                            effectProvider = CustomAugmentBuilder.getEffectProvider(loc);
+                            continue;
+                        }
+                    }
                 }
-                else if (CasterAugmentBuilder.doesEffectProviderExist(new ResourceLocation(stack.getTagCompound().getString("id")))) {
-                    if (effect.isEmpty())
-                        effect = stack;
-                    else
-                        return false;
-                }
-                else
-                    return false;
+                return false;
             }
         }
-
-        return !strength.isEmpty() && !effect.isEmpty();
+        return !strength.isEmpty() && !effect.isEmpty() && effectProvider.compatibleWith(strengthProvider);
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         ItemStack strength = ItemStack.EMPTY;
+        IBuilderStrengthProvider strengthProvider = null;
         ItemStack effect = ItemStack.EMPTY;
+        IBuilderEffectProvider effectProvider = null;
         for (int i = 0; i < Math.min(inv.getSizeInventory(), 9); ++i) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (stack != null && !stack.isEmpty()) {
-                if (!stack.hasTagCompound())
-                    return ItemStack.EMPTY;
-                else if (CasterAugmentBuilder.doesStrengthProviderExist(new ResourceLocation(stack.getTagCompound().getString("id")))) {
-                    if (strength.isEmpty())
-                        strength = stack;
-                    else
-                        return ItemStack.EMPTY;
+            if (!stack.isEmpty()) {
+                if (stack.hasTagCompound()) {
+                    assert stack.getTagCompound() != null;
+                    ResourceLocation loc = new ResourceLocation(stack.getTagCompound().getString("id"));
+                    if (CustomAugmentBuilder.doesStrengthProviderExist(loc)) {
+                        if (strength.isEmpty()) {
+                            strength = stack;
+                            strengthProvider = CustomAugmentBuilder.getStrengthProvider(loc);
+                            continue;
+                        }
+                    } else if (CustomAugmentBuilder.doesEffectProviderExist(loc)) {
+                        if (effect.isEmpty()) {
+                            effect = stack;
+                            effectProvider = CustomAugmentBuilder.getEffectProvider(loc);
+                            continue;
+                        }
+                    }
                 }
-                else if (CasterAugmentBuilder.doesEffectProviderExist(new ResourceLocation(stack.getTagCompound().getString("id")))) {
-                    if (effect.isEmpty())
-                        effect = stack;
-                    else
-                        return ItemStack.EMPTY;
-                }
-                else
-                    return ItemStack.EMPTY;
+                return ItemStack.EMPTY;
             }
         }
-        
+        if (strengthProvider == null || effectProvider == null ||
+                !effectProvider.compatibleWith(strengthProvider)) return ItemStack.EMPTY;
         ItemStack output = new ItemStack(TAItems.AUGMENT_CUSTOM);
-        ICustomCasterAugment augment = (ICustomCasterAugment) output.getCapability(CapabilityAugment.AUGMENT, null);
+        ICustomAugment augment = (ICustomAugment) output.getCapability(CapabilityAugment.AUGMENT, null);
         augment.setStrengthProvider(strength);
         augment.setEffectProvider(effect);
         return output;

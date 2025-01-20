@@ -450,6 +450,12 @@ public final class TAConfigHolder {
 			@Comment({"The conversion rate of base damage to block breaking damage."})
 			@RangeDouble(min = 0, max = 100)
 			public float solidifierBreakStrength = 5f;
+
+			@Name("CustomAugmentExponent")
+			@Comment({ "The exponent that the effects from custom augments (e.g. frenzy modifier)",
+						"will be raised to when mounted on the cannon."})
+			@RangeDouble(min = 0.1, max = 1)
+			public double customAugmentExponent = 0.8f;
 		}
 	}
 
@@ -1053,6 +1059,7 @@ public final class TAConfigHolder {
 		TAConfig.cannonDestabilizerNormalFactor.setValue(gameplay.impetus.cannonAugment.destabilizerNormalFactor, side);
 		TAConfig.cannonSolidifierKnockbackStrength.setValue(gameplay.impetus.cannonAugment.solidifierKnockbackStrength, side);
 		TAConfig.cannonSolidifierBreakStrength.setValue(gameplay.impetus.cannonAugment.solidifierBreakStrength, side);
+		TAConfig.cannonCustomAugmentExponent.setValue(gameplay.impetus.cannonAugment.customAugmentExponent, side);
 
 		TAConfig.primalCutterDamage.setValue(gameplay.primalCutterDamage, side);
 
@@ -1320,6 +1327,8 @@ public final class TAConfigHolder {
 				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonAugment.solidifierKnockbackStrength));
 		TAConfig.cannonSolidifierBreakStrength = TAConfigManager
 				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.solidifierBreakStrength));
+		TAConfig.cannonCustomAugmentExponent = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonAugment.customAugmentExponent));
 
 		TAConfig.primalCutterDamage = TAConfigManager
 			.addOption(new ConfigOptionFloat(false, gameplay.primalCutterDamage));

@@ -18,21 +18,19 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment.builder;
+package thecodex6824.thaumicaugmentation.api.augment.impl.custom;
 
-import net.minecraft.entity.player.EntityPlayer;
-import thecodex6824.thaumicaugmentation.api.augment.IAugment;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
-public interface IThaumostaticHarnessAugment extends IAugment {
+public interface IBuilderCasterEffectProvider extends IBuilderEffectProvider {
 
-    public float getFlySpeed(EntityPlayer wearer);
-    
-    public double getVisCostPerTick(EntityPlayer wearer);
-    
-    public int getVisCapacity();
-    
-    public void applyDrift(EntityPlayer wearer);
-    
-    public boolean shouldAllowSprintFly(EntityPlayer wearer);
+    @Override
+    default boolean compatibleWith(IBuilderStrengthProvider strengthProvider) {
+        return strengthProvider instanceof IBuilderCasterStrengthProvider;
+    }
+
+    public void apply(ICustomAugment augment, Entity caster, ItemStack casterStack, FocusWrapper focus, double strength);
     
 }

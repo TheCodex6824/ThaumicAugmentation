@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon;
+package thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
@@ -128,8 +128,8 @@ public interface IImpulseCannonConversion extends IImpulseCannonAugment {
      * @param cooldownTicks the number of ticks the cannon should cool down for.
      */
     default void handleCooldown(EntityLivingBase user, int cooldownTicks) {
-        if (user instanceof EntityPlayer player) {
-            player.getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, cooldownTicks);
+        if (user instanceof EntityPlayer) {
+            ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, cooldownTicks);
         }
     }
 

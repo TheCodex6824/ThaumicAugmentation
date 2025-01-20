@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment.builder;
+package thecodex6824.thaumicaugmentation.api.augment.impl;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -53,7 +53,7 @@ public interface IElytraHarnessAugment extends IAugment {
 
     @Override
     default boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
-        if (!(otherAugmentCap instanceof IElytraHarnessAugment e)) return true;
-        return e.isCosmetic() != this.isCosmetic();
+        if (!(otherAugmentCap instanceof IElytraHarnessAugment)) return true;
+        return ((IElytraHarnessAugment) otherAugmentCap).isCosmetic() != this.isCosmetic();
     }
 }

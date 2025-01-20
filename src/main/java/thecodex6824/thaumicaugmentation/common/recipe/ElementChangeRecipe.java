@@ -34,7 +34,7 @@ import thaumcraft.api.items.ItemsTC;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.ICustomAugment;
 
 public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
@@ -65,8 +65,8 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
                 }
                 else {
                     IAugment aug = stack.getCapability(CapabilityAugment.AUGMENT, null);
-                    if (aug instanceof ICustomCasterAugment) {
-                        ItemStack strength = ((ICustomCasterAugment) aug).getStrengthProvider();
+                    if (aug instanceof ICustomAugment) {
+                        ItemStack strength = ((ICustomAugment) aug).getStrengthProvider();
                         if (strength.getTagCompound().getString("id").equals(new ResourceLocation(
                                 ThaumicAugmentationAPI.MODID, "strength_elemental").toString())) {
                             if (augment.isEmpty())
@@ -106,8 +106,8 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
                 }
                 else {
                     IAugment aug = stack.getCapability(CapabilityAugment.AUGMENT, null);
-                    if (aug instanceof ICustomCasterAugment) {
-                        ItemStack strength = ((ICustomCasterAugment) aug).getStrengthProvider();
+                    if (aug instanceof ICustomAugment) {
+                        ItemStack strength = ((ICustomAugment) aug).getStrengthProvider();
                         if (strength.getTagCompound().getString("id").equals(new ResourceLocation(
                                 ThaumicAugmentationAPI.MODID, "strength_elemental").toString())) {
                             if (augment.isEmpty())
@@ -125,7 +125,7 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
         ItemStack newAugment = augment.copy();
         //newAugment.setCount(Math.min(newAugment.getCount(), 1));
         if (newAugment.hasCapability(CapabilityAugment.AUGMENT, null)) {
-            ICustomCasterAugment aug = (ICustomCasterAugment) newAugment.getCapability(CapabilityAugment.AUGMENT, null);
+            ICustomAugment aug = (ICustomAugment) newAugment.getCapability(CapabilityAugment.AUGMENT, null);
             // the regular nbt tag is never actually copied by forge in the capability serializer
             // nor the ItemStack constructor (which is used in the capability)
             aug.getStrengthProvider().setTagCompound(aug.getStrengthProvider().getTagCompound().copy());
@@ -150,8 +150,8 @@ public class ElementChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imple
                         ThaumicAugmentationAPI.MODID, "strength_elemental").toString()))
                     augment = stack;
                 else if (stack.hasCapability(CapabilityAugment.AUGMENT, null) && 
-                        stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomCasterAugment) {
-                    ItemStack strength = ((ICustomCasterAugment) stack.getCapability(CapabilityAugment.AUGMENT, null)).getStrengthProvider();
+                        stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomAugment) {
+                    ItemStack strength = ((ICustomAugment) stack.getCapability(CapabilityAugment.AUGMENT, null)).getStrengthProvider();
                     if (strength.getTagCompound().getString("id").equals(new ResourceLocation(
                             ThaumicAugmentationAPI.MODID, "strength_elemental").toString())) {
                         augment = strength;

@@ -40,7 +40,7 @@ import thaumcraft.client.fx.ParticleEngine;
 import thaumcraft.client.fx.particles.FXGeneric;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
 import vazkii.botania.api.item.IBaubleRender.RenderType;
 import vazkii.botania.api.item.IPetalApothecary;

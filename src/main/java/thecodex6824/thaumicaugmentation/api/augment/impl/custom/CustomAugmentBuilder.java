@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
+package thecodex6824.thaumicaugmentation.api.augment.impl.custom;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -32,9 +32,9 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
-public final class CasterAugmentBuilder {
+public final class CustomAugmentBuilder {
 
-    private CasterAugmentBuilder() {}
+    private CustomAugmentBuilder() {}
     
     private static class ProviderEntry<T> {
         
@@ -48,42 +48,42 @@ public final class CasterAugmentBuilder {
         
     }
     
-    private static final LinkedHashMap<ResourceLocation, ProviderEntry<IBuilderCasterStrengthProvider>> STRENGTH = new LinkedHashMap<>();
-    private static final LinkedHashMap<ResourceLocation, ProviderEntry<IBuilderCasterEffectProvider>> EFFECT = new LinkedHashMap<>();
-    
+    private static final LinkedHashMap<ResourceLocation, ProviderEntry<IBuilderStrengthProvider>> STRENGTH = new LinkedHashMap<>();
+    private static final LinkedHashMap<ResourceLocation, ProviderEntry<IBuilderEffectProvider>> EFFECT = new LinkedHashMap<>();
+
     public static final IBuilderCasterStrengthProvider NULL_STRENGTH = new IBuilderCasterStrengthProvider() {
         @Override
-        public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity user) {
+        public double calculateStrength(ICustomAugment augment, FocusWrapper focus, Entity user) {
             ThaumicAugmentation.getLogger().warn("A null strength provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
             return 1.0;
         }
         
         @Override
-        public int calculateTintColor(ICustomCasterAugment augment) {
+        public int calculateTintColor(ICustomAugment augment) {
             ThaumicAugmentation.getLogger().warn("A null strength provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
             return 0xFFFFFFFF;
         }
     };
     public static final IBuilderCasterEffectProvider NULL_EFFECT = new IBuilderCasterEffectProvider() {
         @Override
-        public void apply(ICustomCasterAugment augment, Entity caster, ItemStack casterStack, FocusWrapper focus, double strength) {
+        public void apply(ICustomAugment augment, Entity caster, ItemStack casterStack, FocusWrapper focus, double strength) {
             ThaumicAugmentation.getLogger().warn("A null effect provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
         }
     };
-    
-    public static void registerStrengthProvider(ResourceLocation id, IBuilderCasterStrengthProvider impl) {
+
+    public static void registerStrengthProvider(ResourceLocation id, IBuilderStrengthProvider impl) {
         registerStrengthProvider(id, impl, (stack) -> {});
     }
     
-    public static void registerStrengthProvider(ResourceLocation id, IBuilderCasterStrengthProvider impl, Consumer<ItemStack> create) {
+    public static void registerStrengthProvider(ResourceLocation id, IBuilderStrengthProvider impl, Consumer<ItemStack> create) {
         STRENGTH.put(id, new ProviderEntry<>(impl, create));
     }
     
-    public static void registerEffectProvider(ResourceLocation id, IBuilderCasterEffectProvider impl) {
+    public static void registerEffectProvider(ResourceLocation id, IBuilderEffectProvider impl) {
         registerEffectProvider(id, impl, (stack) -> {});
     }
     
-    public static void registerEffectProvider(ResourceLocation id, IBuilderCasterEffectProvider impl, Consumer<ItemStack> create) {
+    public static void registerEffectProvider(ResourceLocation id, IBuilderEffectProvider impl, Consumer<ItemStack> create) {
         EFFECT.put(id, new ProviderEntry<>(impl, create));
     }
     
@@ -94,10 +94,10 @@ public final class CasterAugmentBuilder {
     public static boolean doesEffectProviderExist(ResourceLocation id) {
         return EFFECT.containsKey(id);
     }
-    
+
     public static ItemStack createStackForStrengthProvider(ResourceLocation id) {
         ItemStack stack = TAInternals.createCasterStrengthProviderStack(id);
-        ProviderEntry<IBuilderCasterStrengthProvider> s = STRENGTH.get(id);
+        ProviderEntry<IBuilderStrengthProvider> s = STRENGTH.get(id);
         if (s != null)
             s.stack.accept(stack);
         
@@ -114,7 +114,7 @@ public final class CasterAugmentBuilder {
     
     public static ItemStack createStackForEffectProvider(ResourceLocation id) {
         ItemStack stack = TAInternals.createCasterEffectProviderStack(id);
-        ProviderEntry<IBuilderCasterEffectProvider> e = EFFECT.get(id);
+        ProviderEntry<IBuilderEffectProvider> e = EFFECT.get(id);
         if (e != null)
             e.stack.accept(stack);
         
@@ -129,16 +129,16 @@ public final class CasterAugmentBuilder {
         return TAInternals.getCasterEffectProviderID(stack);
     }
     
-    public static IBuilderCasterStrengthProvider getStrengthProvider(ResourceLocation id) {
-        ProviderEntry<IBuilderCasterStrengthProvider> s = STRENGTH.get(id);
+    public static IBuilderStrengthProvider getStrengthProvider(ResourceLocation id) {
+        ProviderEntry<IBuilderStrengthProvider> s = STRENGTH.get(id);
         if (s != null)
             return s.provider;
         else
             return NULL_STRENGTH;
     }
     
-    public static IBuilderCasterEffectProvider getEffectProvider(ResourceLocation id) {
-        ProviderEntry<IBuilderCasterEffectProvider> e = EFFECT.get(id);
+    public static IBuilderEffectProvider getEffectProvider(ResourceLocation id) {
+        ProviderEntry<IBuilderEffectProvider> e = EFFECT.get(id);
         if (e != null)
             return e.provider;
         else

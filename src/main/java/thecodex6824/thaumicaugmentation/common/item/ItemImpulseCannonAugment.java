@@ -40,8 +40,9 @@ import org.jetbrains.annotations.NotNull;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonCustomMount;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
 import thecodex6824.thaumicaugmentation.api.entity.DamageSourceImpetus;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
@@ -61,7 +62,7 @@ public class ItemImpulseCannonAugment extends ItemTABase {
     protected static final Map<BlockPos, BreakInformation> solidifierBreakCache = new Object2ReferenceOpenHashMap<>();
 
     public ItemImpulseCannonAugment() {
-        super("gyroscope", "hyperion", "energizer", "destabilizer", "solidifier", "purifier");
+        super("gyroscope", "hyperion", "energizer", "destabilizer", "solidifier", "purifier", "mount");
         augments = new IImpulseCannonAugment[subItemNames.length];
         setMaxStackSize(1);
         setHasSubtypes(true);
@@ -84,7 +85,7 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                 double smallestAngle = maxAngle;
                 for (Entity e : gather) {
                     if (e == user) continue;
-                    boolean alive = e instanceof EntityLivingBase living && !living.isDead && living.getHealth() > 0;
+                    boolean alive = e instanceof EntityLivingBase && !e.isDead && ((EntityLivingBase) e).getHealth() > 0;
                     if (smallestIsAlive && !alive) continue; // do not prefer an unalive target over an alive one
                     Vec3d vector = e.getEntityBoundingBox().getCenter().subtract(sourcePosition);
                     // definition of angle between two vectors:
@@ -110,12 +111,12 @@ public class ItemImpulseCannonAugment extends ItemTABase {
             }
 
             @Override
-            public double getImpulseCostModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer) {
+            public double getImpulseCostModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer) {
                 return efficiencyFactor();
             }
 
             @Override
-            public float getBaseDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getBaseDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 if (!buffer.canExtract()) return 1;
                 double extracted = buffer.extractEnergy(Long.MAX_VALUE, false) + Math.ceil(actualImpetusConsumed);
                 return (float) (extracted / actualImpetusConsumed);
@@ -127,8 +128,8 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                 for (int i = 0; i < particleCount; i++) {
                     Random random = new Random();
                     double ratio = (i + 0.5 + random.nextGaussian()) / particleCount;
-                    if (user.getEntityWorld() instanceof WorldServer server) {
-                        server.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+                    if (user.getEntityWorld() instanceof WorldServer) {
+                        ((WorldServer) user.getEntityWorld()).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
                                 MathHelper.clampedLerp(firingOrigin.x, firingEnd.x, ratio),
                                 MathHelper.clampedLerp(firingOrigin.y, firingEnd.y, ratio),
                                 MathHelper.clampedLerp(firingOrigin.z, firingEnd.z, ratio),
@@ -141,24 +142,24 @@ public class ItemImpulseCannonAugment extends ItemTABase {
         // energizer
         augments[2] = new IImpulseCannonAugment() {
             @Override
-            public float getNormalDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getNormalDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 return TAConfig.cannonEnergizerNormalFactor.getValue();
             }
 
             @Override
-            public float getMagicDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getMagicDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 return TAConfig.cannonEnergizerMagicFactor.getValue();
             }
         };
         // destabilizer
         augments[3] = new IImpulseCannonAugment() {
             @Override
-            public float getNormalDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getNormalDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 return TAConfig.cannonDestabilizerNormalFactor.getValue();
             }
 
             @Override
-            public float getMagicDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getMagicDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 return TAConfig.cannonDestabilizerMagicFactor.getValue();
             }
         };
@@ -172,7 +173,8 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                     entityHit.motionX += vec.x * factor;
                     entityHit.motionY += vec.y * factor;
                     entityHit.motionZ += vec.z * factor;
-                    if (entityHit instanceof EntityPlayerMP mp) {
+                    if (entityHit instanceof EntityPlayerMP) {
+                        EntityPlayerMP mp = (EntityPlayerMP) entityHit;
                         mp.connection.sendPacket(new SPacketEntityVelocity(mp));
                     }
                 }
@@ -195,12 +197,12 @@ public class ItemImpulseCannonAugment extends ItemTABase {
         augments[5] = new IImpulseCannonAugment() {
 
             @Override
-            public double getImpulseCostModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer) {
+            public double getImpulseCostModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer) {
                 return 2;
             }
 
             @Override
-            public float getBaseDamageModifier(ItemStack cannonStack, ItemStack augmentStack, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+            public float getBaseDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
                 return 0.2f;
             }
 
@@ -208,10 +210,18 @@ public class ItemImpulseCannonAugment extends ItemTABase {
             public void applyAdditionalEffectsToEntity(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {
                 DamageSource source = new DamageSourceImpetus(user, user.getPositionVector()).setDamageBypassesArmor().setDamageIsAbsolute();
                 entityHit.attackEntityFrom(source, baseDamage * 2);
-                if (entityHit instanceof EntityLivingBase base) {
+                if (entityHit instanceof EntityLivingBase) {
+                    EntityLivingBase base = (EntityLivingBase) entityHit;
                     base.hurtResistantTime = Math.min(base.hurtResistantTime, 2);
                     base.lastDamage = 0.0F;
                 }
+            }
+        };
+        // mount
+        augments[6] = new IImpulseCannonCustomMount() {
+            @Override
+            public boolean givesExtraSlot() {
+                return true;
             }
         };
     }
@@ -230,7 +240,7 @@ public class ItemImpulseCannonAugment extends ItemTABase {
     protected static void updateBreakInformation() {
         int tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
         for (Iterator<Map.Entry<BlockPos, BreakInformation>> iterator = solidifierBreakCache.entrySet().iterator(); iterator.hasNext(); ) {
-            var entry = iterator.next();
+            Map.Entry<BlockPos, BreakInformation> entry = iterator.next();
             if (entry.getValue().world.getBlockState(entry.getKey()) != entry.getValue().blockState) {
                 entry.getValue().world.sendBlockBreakProgress(BreakInformation.BREAKER_ID, entry.getKey(), 0);
                 iterator.remove();

@@ -37,7 +37,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.CustomAugmentBuilder;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
 public class ItemCustomCasterStrengthProvider extends ItemTABase {
@@ -65,7 +65,7 @@ public class ItemCustomCasterStrengthProvider extends ItemTABase {
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab == TAItems.CREATIVE_TAB || tab == CreativeTabs.SEARCH) {
-            for (ResourceLocation loc : CasterAugmentBuilder.getAllStrengthProviders()) {
+            for (ResourceLocation loc : CustomAugmentBuilder.getAllStrengthProviders()) {
                 if (loc.getNamespace().equals(ThaumicAugmentationAPI.MODID))
                     items.add(create(loc));
             }
@@ -75,7 +75,7 @@ public class ItemCustomCasterStrengthProvider extends ItemTABase {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flagIn) {
-        CasterAugmentBuilder.getStrengthProvider(getProviderID(stack)).appendAdditionalTooltip(stack, tooltip);
+        CustomAugmentBuilder.getStrengthProvider(getProviderID(stack)).appendAdditionalTooltip(stack, tooltip);
     }
     
     @Override

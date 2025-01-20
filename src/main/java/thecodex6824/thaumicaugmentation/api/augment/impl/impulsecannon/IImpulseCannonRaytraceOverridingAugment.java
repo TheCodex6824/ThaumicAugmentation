@@ -1,10 +1,9 @@
-package thecodex6824.thaumicaugmentation.api.augment.builder.impulsecannon;
+package thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
 public interface IImpulseCannonRaytraceOverridingAugment extends IImpulseCannonAugment {

@@ -56,7 +56,7 @@ import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.entity.CapabilityPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.IPortalState;
 import thecodex6824.thaumicaugmentation.api.entity.PortalState;

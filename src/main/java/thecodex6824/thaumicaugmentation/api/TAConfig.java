@@ -141,6 +141,7 @@ public final class TAConfig {
     public static ConfigOptionFloat cannonDestabilizerNormalFactor;
     public static ConfigOptionDouble cannonSolidifierKnockbackStrength;
     public static ConfigOptionFloat cannonSolidifierBreakStrength;
+    public static ConfigOptionDouble cannonCustomAugmentExponent;
 
     public static ConfigOptionFloat primalCutterDamage;
     

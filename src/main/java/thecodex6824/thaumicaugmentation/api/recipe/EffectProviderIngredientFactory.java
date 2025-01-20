@@ -29,7 +29,7 @@ import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.IIngredientFactory;
 import net.minecraftforge.common.crafting.JsonContext;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.CustomAugmentBuilder;
 
 public class EffectProviderIngredientFactory implements IIngredientFactory {
 
@@ -37,7 +37,7 @@ public class EffectProviderIngredientFactory implements IIngredientFactory {
     @Override
     @SuppressWarnings("null")
     public Ingredient parse(JsonContext context, JsonObject json) {
-        IngredientNBTCapabilities i = new IngredientNBTCapabilities(CasterAugmentBuilder.createStackForEffectProvider(
+        IngredientNBTCapabilities i = new IngredientNBTCapabilities(CustomAugmentBuilder.createStackForEffectProvider(
                 new ResourceLocation(JsonUtils.getString(json, "id"))));
         i = i != null ? i : IngredientNBTCapabilities.EMPTY;
         return i;

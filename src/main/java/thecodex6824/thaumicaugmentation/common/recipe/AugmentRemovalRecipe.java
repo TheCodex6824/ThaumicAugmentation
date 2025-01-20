@@ -57,16 +57,18 @@ public class AugmentRemovalRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
 
         if (!augmentable.isEmpty()) {
             IAugmentableItem augmentableCap = augmentable.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-            int toRemove = -1;
-            for (int i = augmentableCap.getUsedAugmentSlots() - 1; i >= 0; --i) {
-                IAugment aug = augmentableCap.getAugment(i).getCapability(CapabilityAugment.AUGMENT, null);
-                if (aug.shouldAllowDefaultRemoval()) {
-                    toRemove = i;
-                    break;
+            if (augmentableCap.shouldAllowDefaultRemoval()) {
+                int toRemove = -1;
+                for (int i = augmentableCap.getUsedAugmentSlots() - 1; i >= 0; --i) {
+                    IAugment aug = augmentableCap.getAugment(i).getCapability(CapabilityAugment.AUGMENT, null);
+                    if (aug.shouldAllowDefaultRemoval()) {
+                        toRemove = i;
+                        break;
+                    }
                 }
+
+                return toRemove != -1;
             }
-            
-            return toRemove != -1;
         }
         
         return false;

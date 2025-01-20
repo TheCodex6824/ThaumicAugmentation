@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.augment;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
