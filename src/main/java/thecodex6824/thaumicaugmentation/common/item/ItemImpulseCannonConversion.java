@@ -34,6 +34,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
@@ -372,6 +373,16 @@ public class ItemImpulseCannonConversion extends ItemTABase {
             }
 
             @Override
+            public void onCannonTick(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, int useTicksLeft, double impetusConsumed, IImpetusStorage buffer, Map<ItemStack, IImpulseCannonAugment> augments) {
+                if (useTicksLeft % 2 == 0) return; // only play the sound every 2 ticks
+                int ticksUsed = getMaxUsageDuration(cannonStack, augmentStack) - useTicksLeft;
+                double factor = Math.pow(ticksUsed, TAConfig.cannonRecurseExponent.getValue());
+                // TODO this sound is a placeholder
+                user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), SoundEvents.BLOCK_NOTE_SNARE,
+                        SoundCategory.PLAYERS, 1.0F, (float) (2 - 75/(50 + factor)));
+            }
+
+            @Override
             public void onStopCannonTick(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, int useTicksLeft, IImpetusStorage buffer, Map<ItemStack, IImpulseCannonAugment> augments) {
                 int ticksUsed = getMaxUsageDuration(cannonStack, augmentStack) - useTicksLeft;
                 double factor = Math.pow(ticksUsed, TAConfig.cannonRecurseExponent.getValue());
@@ -416,8 +427,9 @@ public class ItemImpulseCannonConversion extends ItemTABase {
 
                 Random rand = user.getRNG();
                 float log = (float) Math.log1p(factor) / 4;
-                user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_RECURSE,
-                        SoundCategory.PLAYERS, 0.5f + log, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F - log);
+                // TODO this sound is a placeholder
+                user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_RAILGUN,
+                        SoundCategory.PLAYERS, 0.5f + log, (rand.nextFloat() - rand.nextFloat()) / 3.0F + 1.0F - log);
                 PacketImpulseRailgunProjectile packet = new PacketImpulseRailgunProjectile(user.getEntityId(), scan);
                 PacketRecoil recoil = new PacketRecoil(user.getEntityId(), RecoilType.IMPULSE_RAILGUN);
                 TANetwork.INSTANCE.sendToAllTracking(packet, user);
