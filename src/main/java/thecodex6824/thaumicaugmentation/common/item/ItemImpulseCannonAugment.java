@@ -68,14 +68,36 @@ public class ItemImpulseCannonAugment extends ItemTABase {
         setHasSubtypes(true);
         // gyroscope
         augments[0] = new IImpulseCannonRaytraceOverridingAugment() {
+            private static final Vec3d up = new Vec3d(0, 1, 0);
+            private static final Vec3d left = new Vec3d(0, 0, 1);
+            private static final Vec3d front = new Vec3d(1, 0, 0);
+
+            private static Vec3d rotate(Vec3d vec, Vec3d axis, float radians) {
+                // rotates the vector around the given axis by the given angle using Rodrigues' formula
+                float cos = MathHelper.cos(radians);
+                return vec.scale(cos)
+                        .add(axis.crossProduct(vec).scale(MathHelper.sin(radians)))
+                        .add(axis.scale(axis.dotProduct(vec) * (1 - cos)));
+            }
+
             @Override
             public @NotNull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition,
                                                          Vec3d originalRayTrace, float partialTicks) {
                 // first, set up an AABB to gather entities within correction range
-                float maxAngle = TAConfig.cannonGyroscopeCorrectionAngle.getValue();
-                AxisAlignedBB bb = new AxisAlignedBB(sourcePosition, originalRayTrace);
-                bb = bb.union(new AxisAlignedBB(originalRayTrace.rotatePitch(maxAngle), originalRayTrace.rotatePitch(-maxAngle)).offset(sourcePosition));
-                bb = bb.union(new AxisAlignedBB(originalRayTrace.rotateYaw(maxAngle), originalRayTrace.rotateYaw(-maxAngle)).offset(sourcePosition));
+                float maxAngle = (float) Math.toRadians(TAConfig.cannonGyroscopeCorrectionAngle.getValue());
+                AxisAlignedBB bb = new AxisAlignedBB(Vec3d.ZERO, originalRayTrace);
+                Vec3d horizontal = originalRayTrace.crossProduct(up).normalize();
+                Vec3d vertical;
+                if (horizontal == Vec3d.ZERO) {
+                    // the original ray trace is straight up/down
+                    horizontal = left;
+                    vertical = front;
+                } else {
+                    vertical = originalRayTrace.crossProduct(horizontal).normalize();
+                }
+                bb = bb.union(new AxisAlignedBB(rotate(originalRayTrace, horizontal, maxAngle), rotate(originalRayTrace, horizontal, -maxAngle)));
+                bb = bb.union(new AxisAlignedBB(rotate(originalRayTrace, vertical, maxAngle), rotate(originalRayTrace, vertical, -maxAngle)));
+                bb = bb.offset(sourcePosition);
                 List<Entity> gather = user.getEntityWorld().getEntitiesWithinAABB(Entity.class, bb);
                 if (gather.isEmpty()) return originalRayTrace;
                 // second, get vectors from source to entity centers,
@@ -90,7 +112,7 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                     Vec3d vector = e.getEntityBoundingBox().getCenter().subtract(sourcePosition);
                     // definition of angle between two vectors:
                     // arccos of their dot product divided by the product of their lengths.
-                    double ang = Math.toDegrees(Math.acos(originalRayTrace.dotProduct(vector) / Math.sqrt(originalRayTrace.lengthSquared() * vector.lengthSquared())));
+                    double ang = Math.acos(originalRayTrace.dotProduct(vector) / Math.sqrt(originalRayTrace.lengthSquared() * vector.lengthSquared()));
                     // give an alive target priority over an unalive one
                     if (ang >= maxAngle || (ang >= smallestAngle && (smallestIsAlive || !alive))) continue;
                     // if there's a block in the way, skip the entity.
