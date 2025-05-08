@@ -22,14 +22,15 @@ package thecodex6824.thaumicaugmentation.common.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import org.jetbrains.annotations.Nullable;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannonConversion;
+
+import javax.annotation.Nullable;
 
 public class PacketImpulseBeam implements IMessage {
 
     protected int id;
     // null if the beam should be stopped
-    protected @Nullable ItemImpulseCannonConversion.BeamInformation beamInformation;
+    protected ItemImpulseCannonConversion.BeamInformation beamInformation;
 
     public PacketImpulseBeam() {}
     

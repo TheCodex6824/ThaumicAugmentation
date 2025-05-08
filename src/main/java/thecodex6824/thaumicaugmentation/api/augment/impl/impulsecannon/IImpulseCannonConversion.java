@@ -26,12 +26,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannonConversion;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 public interface IImpulseCannonConversion extends IImpulseCannonAugment {
@@ -41,7 +41,7 @@ public interface IImpulseCannonConversion extends IImpulseCannonAugment {
      * Must be registered as a variant of the cannon item using
      * {@link net.minecraftforge.client.model.ModelLoader#registerItemVariants(Item, ResourceLocation...)}
      */
-    default @NotNull ModelResourceLocation getLensModel() {
+    default @Nonnull ModelResourceLocation getLensModel() {
         return ItemImpulseCannonConversion.LENS_BEAM;
     }
 

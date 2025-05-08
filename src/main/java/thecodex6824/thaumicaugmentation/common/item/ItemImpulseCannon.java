@@ -44,7 +44,6 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
@@ -72,6 +71,7 @@ import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBeam;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -162,7 +162,7 @@ public class ItemImpulseCannon extends ItemTABase {
         return null;
     }
 
-    @NotNull
+    @Nonnull
     public Map<ItemStack, IImpulseCannonAugment> getAugments(ItemStack stack) {
         IAugmentableItem augments = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
         if (augments != null && augments.isAugmented()) {

@@ -39,9 +39,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
@@ -54,6 +51,7 @@ import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabil
 import thecodex6824.thaumicaugmentation.common.event.ScheduledTaskHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
@@ -66,6 +64,10 @@ public class ItemImpulseCannonAugment extends ItemTABase {
 
     protected static final Map<BlockPos, BreakInformation> solidifierBreakCache = new Object2ReferenceOpenHashMap<>();
 
+    private static final Vec3d up = new Vec3d(0, 1, 0);
+    private static final Vec3d left = new Vec3d(0, 0, 1);
+    private static final Vec3d front = new Vec3d(1, 0, 0);
+
     public ItemImpulseCannonAugment() {
         super("gyroscope", "hyperion", "energizer", "destabilizer", "solidifier", "purifier", "mount");
         augments = new IImpulseCannonAugment[subItemNames.length];
@@ -73,29 +75,9 @@ public class ItemImpulseCannonAugment extends ItemTABase {
         setHasSubtypes(true);
         // gyroscope
         augments[0] = new IImpulseCannonRaytraceOverridingAugment() {
-            private static final Vec3d up = new Vec3d(0, 1, 0);
-            private static final Vec3d left = new Vec3d(0, 0, 1);
-            private static final Vec3d front = new Vec3d(1, 0, 0);
-
-            private static Vec3d rotate(Vec3d vec, Vec3d axis, float radians) {
-                // rotates the vector around the given axis by the given angle using Rodrigues' formula
-                float cos = MathHelper.cos(radians);
-                return vec.scale(cos)
-                        .add(axis.crossProduct(vec).scale(MathHelper.sin(radians)))
-                        .add(axis.scale(axis.dotProduct(vec) * (1 - cos)));
-            }
-
-            // for debugging
-            private static void drawLine(WorldServer world, Vec3d start, Vec3d line) {
-                int count = (int) (line.length() * 2);
-                for (int i = 0; i < count; i++) {
-                    double factor = (double) i / count;
-                    world.spawnParticle(EnumParticleTypes.FOOTSTEP, true, start.x + line.x * factor, start.y + line.y * factor, start.z + line.z * factor, 0, 0d, 0d, 0d, 0);
-                }
-            }
 
             @Override
-            public @NotNull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition,
+            public @Nonnull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition,
                                                          Vec3d originalRayTrace, float partialTicks) {
                 // first, set up an AABB to gather entities within correction range
                 float maxAngle = (float) Math.toRadians(TAConfig.cannonGyroscopeCorrectionAngle.getValue());
@@ -129,9 +111,9 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                     double ang = Math.acos(originalRayTrace.dotProduct(vector) / Math.sqrt(originalRayTrace.lengthSquared() * vector.lengthSquared()));
                     if (ang >= maxAngle) continue;
                     if (TAConfig.debugMode.getValue() && user.isServerWorld()) {
-                        if (e instanceof EntityLivingBase living) {
+                        if (e instanceof EntityLivingBase) {
                             assert MobEffects.GLOWING != null;
-                            living.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 100, 0));
+                            ((EntityLivingBase) e).addPotionEffect(new PotionEffect(MobEffects.GLOWING, 100, 0));
                         }
                     }
                     // give an alive target priority over an unalive one
@@ -142,7 +124,8 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                     smallest = vector;
                     smallestIsAlive = alive;
                 }
-                if (TAConfig.debugMode.getValue() && user.world instanceof WorldServer server) {
+                if (TAConfig.debugMode.getValue() && user.world instanceof WorldServer) {
+                    WorldServer server = (WorldServer) user.world;
                     drawLine(server, sourcePosition, rotate(originalRayTrace, horizontal, maxAngle));
                     drawLine(server, sourcePosition, rotate(originalRayTrace, horizontal, -maxAngle));
                     drawLine(server, sourcePosition, rotate(originalRayTrace, vertical, maxAngle));
@@ -305,6 +288,23 @@ public class ItemImpulseCannonAugment extends ItemTABase {
             provider.deserializeNBT(nbt.getCompoundTag("Parent"));
         
         return provider;
+    }
+
+    private static Vec3d rotate(Vec3d vec, Vec3d axis, float radians) {
+        // rotates the vector around the given axis by the given angle using Rodrigues' formula
+        float cos = MathHelper.cos(radians);
+        return vec.scale(cos)
+                .add(axis.crossProduct(vec).scale(MathHelper.sin(radians)))
+                .add(axis.scale(axis.dotProduct(vec) * (1 - cos)));
+    }
+
+    // for debugging
+    private static void drawLine(WorldServer world, Vec3d start, Vec3d line) {
+        int count = (int) (line.length() * 2);
+        for (int i = 0; i < count; i++) {
+            double factor = (double) i / count;
+            world.spawnParticle(EnumParticleTypes.FOOTSTEP, true, start.x + line.x * factor, start.y + line.y * factor, start.z + line.z * factor, 0, 0d, 0d, 0d, 0);
+        }
     }
 
     protected static void updateBreakInformation() {

@@ -31,7 +31,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.util.Constants.NBT;
-import org.jetbrains.annotations.Nullable;
 import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
@@ -43,6 +42,8 @@ import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannon;
+
+import javax.annotation.Nullable;
 
 public class AugmentCasterCustom extends Augment implements ICustomAugment, IImpulseCannonAugment {
 

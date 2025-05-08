@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.*;
 
@@ -43,7 +44,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import org.jetbrains.annotations.NotNull;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
@@ -78,7 +78,7 @@ public class ItemImpulseCannonConversion extends ItemTABase {
         conversions[0] = new IImpulseCannonConversion() {
 
             @Override
-            public @NotNull ModelResourceLocation getLensModel() {
+            public @Nonnull ModelResourceLocation getLensModel() {
                 return LENS_RAILGUN;
             }
 
@@ -160,7 +160,7 @@ public class ItemImpulseCannonConversion extends ItemTABase {
         conversions[1] = new IImpulseCannonConversion() {
 
             @Override
-            public @NotNull ModelResourceLocation getLensModel() {
+            public @Nonnull ModelResourceLocation getLensModel() {
                 return LENS_BURST;
             }
 

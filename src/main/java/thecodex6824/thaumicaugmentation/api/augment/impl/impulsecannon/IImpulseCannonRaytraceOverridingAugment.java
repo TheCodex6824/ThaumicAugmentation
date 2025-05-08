@@ -23,8 +23,9 @@ package thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
+
+import javax.annotation.Nonnull;
 
 public interface IImpulseCannonRaytraceOverridingAugment extends IImpulseCannonAugment {
 
@@ -33,10 +34,10 @@ public interface IImpulseCannonRaytraceOverridingAugment extends IImpulseCannonA
         return !(otherAugmentCap instanceof IImpulseCannonRaytraceOverridingAugment);
     }
 
-    default @NotNull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition, Vec3d originalRayTrace) {
+    default @Nonnull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition, Vec3d originalRayTrace) {
         return overrideFiringRayTrace(cannonStack, augmentStack, user, sourcePosition, originalRayTrace, 1);
     }
 
 
-    @NotNull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition, Vec3d originalRayTrace, float partialTicks);
+    @Nonnull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition, Vec3d originalRayTrace, float partialTicks);
 }
