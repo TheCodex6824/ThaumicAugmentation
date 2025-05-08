@@ -90,6 +90,7 @@ public final class TAConfig {
     
     public static ConfigOptionBoolean disableCoremod;
     public static ConfigOptionStringList disabledTransformers;
+    public static ConfigOptionBoolean debugMode;
     
     public static ConfigOptionBoolean gauntletCastAnimation;
     

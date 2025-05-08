@@ -22,12 +22,15 @@ package thecodex6824.thaumicaugmentation.common.item;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.*;
@@ -36,6 +39,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
@@ -80,6 +85,15 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                         .add(axis.scale(axis.dotProduct(vec) * (1 - cos)));
             }
 
+            // for debugging
+            private static void drawLine(WorldServer world, Vec3d start, Vec3d line) {
+                int count = (int) (line.length() * 2);
+                for (int i = 0; i < count; i++) {
+                    double factor = (double) i / count;
+                    world.spawnParticle(EnumParticleTypes.FOOTSTEP, true, start.x + line.x * factor, start.y + line.y * factor, start.z + line.z * factor, 0, 0d, 0d, 0d, 0);
+                }
+            }
+
             @Override
             public @NotNull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition,
                                                          Vec3d originalRayTrace, float partialTicks) {
@@ -113,13 +127,47 @@ public class ItemImpulseCannonAugment extends ItemTABase {
                     // definition of angle between two vectors:
                     // arccos of their dot product divided by the product of their lengths.
                     double ang = Math.acos(originalRayTrace.dotProduct(vector) / Math.sqrt(originalRayTrace.lengthSquared() * vector.lengthSquared()));
+                    if (ang >= maxAngle) continue;
+                    if (TAConfig.debugMode.getValue() && user.isServerWorld()) {
+                        if (e instanceof EntityLivingBase living) {
+                            assert MobEffects.GLOWING != null;
+                            living.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 100, 0));
+                        }
+                    }
                     // give an alive target priority over an unalive one
-                    if (ang >= maxAngle || (ang >= smallestAngle && (smallestIsAlive || !alive))) continue;
+                    if ((ang >= smallestAngle && (smallestIsAlive || !alive))) continue;
                     // if there's a block in the way, skip the entity.
                     if (user.getEntityWorld().rayTraceBlocks(sourcePosition, sourcePosition.add(vector), false, true, false) != null) continue;
                     smallestAngle = (float) ang;
                     smallest = vector;
                     smallestIsAlive = alive;
+                }
+                if (TAConfig.debugMode.getValue() && user.world instanceof WorldServer server) {
+                    drawLine(server, sourcePosition, rotate(originalRayTrace, horizontal, maxAngle));
+                    drawLine(server, sourcePosition, rotate(originalRayTrace, horizontal, -maxAngle));
+                    drawLine(server, sourcePosition, rotate(originalRayTrace, vertical, maxAngle));
+                    drawLine(server, sourcePosition, rotate(originalRayTrace, vertical, -maxAngle));
+                    Vec3d min = new Vec3d(bb.minX, bb.minY, bb.minZ);
+                    Vec3d max = new Vec3d(bb.maxX, bb.maxY, bb.maxZ);
+                    Vec3d zMax = new Vec3d(bb.minX, bb.minY, bb.maxZ);
+                    Vec3d yMax = new Vec3d(bb.minX, bb.maxY, bb.minZ);
+                    Vec3d xMax = new Vec3d(bb.maxX, bb.minY, bb.minZ);
+                    Vec3d xMin = new Vec3d(bb.minX, bb.maxY, bb.maxZ);
+                    Vec3d zMin = new Vec3d(bb.maxX, bb.maxY, bb.minZ);
+                    Vec3d yMin = new Vec3d(bb.maxX, bb.minY, bb.maxZ);
+                    drawLine(server, min, zMax.subtract(min));
+                    drawLine(server, min, yMax.subtract(min));
+                    drawLine(server, min, xMax.subtract(min));
+                    drawLine(server, zMax, xMin.subtract(zMax));
+                    drawLine(server, zMax, yMin.subtract(zMax));
+                    drawLine(server, yMax, xMin.subtract(yMax));
+                    drawLine(server, yMax, zMin.subtract(yMax));
+                    drawLine(server, xMax, zMin.subtract(xMax));
+                    drawLine(server, xMax, yMin.subtract(xMax));
+                    drawLine(server, max, zMin.subtract(max));
+                    drawLine(server, max, yMin.subtract(max));
+                    drawLine(server, max, xMin.subtract(max));
+                    drawLine(server, sourcePosition, smallest);
                 }
                 // finally, rescale smallest to be the same length as the original scan
                 return smallest.scale(Math.sqrt(originalRayTrace.lengthSquared() / smallest.lengthSquared()));

@@ -107,6 +107,13 @@ public final class TAConfigHolder {
 	@RequiresMcRestart
 	public String[] disabledTransformers = new String[0];
 
+	@Name("DebugMode")
+	@Comment({
+			"Enables debug display for features that were finicky during development.",
+			"Not particularly useful if you aren't a developer."
+	})
+	public boolean debugMode = false;
+
     }
 
     public static class GameplayOptions {
@@ -1126,6 +1133,8 @@ public final class TAConfigHolder {
 		TAConfig.allowOfflinePlayerResearch.setValue(gameplay.allowOfflinePlayerResearch, side);
 
 		TAConfig.undeadEldritchGuardians.setValue(gameplay.undeadEldritchGuardians, side);
+
+		TAConfig.debugMode.setValue(general.debugMode, side);
     }
 
     public static void syncLocally() {
@@ -1235,6 +1244,7 @@ public final class TAConfigHolder {
 		TAConfig.disableCoremod = TAConfigManager.addOption(new ConfigOptionBoolean(false, general.disableCoremod));
 		TAConfig.disabledTransformers = TAConfigManager
 			.addOption(new ConfigOptionStringList(false, general.disabledTransformers));
+		TAConfig.debugMode = TAConfigManager.addOption(new ConfigOptionBoolean(false, general.debugMode));
 
 		TAConfig.gauntletCastAnimation = TAConfigManager
 			.addOption(new ConfigOptionBoolean(false, client.gauntletCastAnimation));
