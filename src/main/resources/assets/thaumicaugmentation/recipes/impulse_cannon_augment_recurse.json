@@ -1,0 +1,35 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPULSE_CANNON_AUGMENT_RECURSE",
+  "vis": 150,
+  "aspects": {
+    "ordo": 1,
+    "aer": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "MPJ",
+    "I I",
+    "MPJ"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "M": {
+      "item": "thaumcraft:mechanism_complex"
+    },
+    "I": {
+      "item": "thaumicaugmentation:impetus_mirror",
+      "data": 0
+    },
+    "J": {
+      "item": "#IMPETUS_RESONATOR"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impulse_cannon_augment",
+    "data": 3
+  }
+}

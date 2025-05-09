@@ -20,187 +20,373 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.*;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
-import thecodex6824.thaumicaugmentation.api.TAItems;
-import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.IImpulseCannonAugment;
-import thecodex6824.thaumicaugmentation.api.entity.IImpulseSpecialEntity;
-import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
-import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonCustomMount;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
+import thecodex6824.thaumicaugmentation.api.entity.DamageSourceImpetus;
+import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProviderNoSave;
 import thecodex6824.thaumicaugmentation.common.event.ScheduledTaskHandler;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
-import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBurst;
-import thecodex6824.thaumicaugmentation.common.network.PacketImpulseRailgunProjectile;
-import thecodex6824.thaumicaugmentation.common.network.PacketRecoil;
-import thecodex6824.thaumicaugmentation.common.network.PacketRecoil.RecoilType;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class ItemImpulseCannonAugment extends ItemTABase {
 
-    protected static abstract class ImpulseCannonAugmentBase implements IImpulseCannonAugment {
-        
-        @Override
-        public boolean canBeAppliedToItem(ItemStack augmentable) {
-            return augmentable.getItem() == TAItems.IMPULSE_CANNON;
-        }
-        
-        @Override
-        public boolean isCompatible(ItemStack otherAugment) {
-            return !(otherAugment.getCapability(CapabilityAugment.AUGMENT, null) instanceof ImpulseCannonAugmentBase);
-        }
-        
-    }
-    
+    protected final IImpulseCannonAugment[] augments;
+
+    protected static final Map<BlockPos, BreakInformation> solidifierBreakCache = new Object2ReferenceOpenHashMap<>();
+
+    private static final Vec3d up = new Vec3d(0, 1, 0);
+    private static final Vec3d left = new Vec3d(0, 0, 1);
+    private static final Vec3d front = new Vec3d(1, 0, 0);
+
     public ItemImpulseCannonAugment() {
-        super("railgun", "burst");
+        super("gyroscope", "hyperion", "energizer", "destabilizer", "solidifier", "purifier", "mount");
+        augments = new IImpulseCannonAugment[subItemNames.length];
         setMaxStackSize(1);
         setHasSubtypes(true);
-    }
-    
-    protected IImpulseCannonAugment createAugmentForStack(ItemStack stack) {
-        if (stack.getMetadata() == 0) {
-            return new ImpulseCannonAugmentBase() {
-                
-                @Override
-                public LensModelType getLensModel() {
-                    return LensModelType.RAILGUN;
+        // gyroscope
+        augments[0] = new IImpulseCannonRaytraceOverridingAugment() {
+
+            @Override
+            public @Nonnull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition,
+                                                         Vec3d originalRayTrace, float partialTicks) {
+                // first, set up an AABB to gather entities within correction range
+                float maxAngle = (float) Math.toRadians(TAConfig.cannonGyroscopeCorrectionAngle.getValue());
+                AxisAlignedBB bb = new AxisAlignedBB(Vec3d.ZERO, originalRayTrace);
+                Vec3d horizontal = originalRayTrace.crossProduct(up).normalize();
+                Vec3d vertical;
+                if (horizontal == Vec3d.ZERO) {
+                    // the original ray trace is straight up/down
+                    horizontal = left;
+                    vertical = front;
+                } else {
+                    vertical = originalRayTrace.crossProduct(horizontal).normalize();
                 }
-                
-                @Override
-                public int getMaxUsageDuration() {
-                    return 1;
-                }
-                
-                @Override
-                public boolean isTickable(EntityLivingBase user) {
-                    return false;
-                }
-                
-                @Override
-                public long getImpetusCostPerUsage(EntityLivingBase user) {
-                    return TAConfig.cannonRailgunCost.getValue();
-                }
-                
-                @Override
-                public void onCannonUsage(EntityLivingBase user) {
-                    Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonRailgunRange.getValue());
-                    List<Entity> ents = RaytraceHelper.raytraceEntities(user, TAConfig.cannonRailgunRange.getValue());
-                    for (Entity e : ents) {
-                        if (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(user)) {
-                            ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonRailgunDamage.getValue());
-                            if (e instanceof IImpulseSpecialEntity && ((IImpulseSpecialEntity) e).shouldStopRailgunBeam(user))
-                                break;
+                bb = bb.union(new AxisAlignedBB(rotate(originalRayTrace, horizontal, maxAngle), rotate(originalRayTrace, horizontal, -maxAngle)));
+                bb = bb.union(new AxisAlignedBB(rotate(originalRayTrace, vertical, maxAngle), rotate(originalRayTrace, vertical, -maxAngle)));
+                bb = bb.offset(sourcePosition);
+                List<Entity> gather = user.getEntityWorld().getEntitiesWithinAABB(Entity.class, bb);
+                if (gather.isEmpty()) return originalRayTrace;
+                // second, get vectors from source to entity centers,
+                // then evaluate for which one has the smallest angle to the original trace.
+                Vec3d smallest = originalRayTrace;
+                boolean smallestIsAlive = false;
+                double smallestAngle = maxAngle;
+                for (Entity e : gather) {
+                    if (e == user) continue;
+                    boolean alive = e instanceof EntityLivingBase && !e.isDead && ((EntityLivingBase) e).getHealth() > 0;
+                    if (smallestIsAlive && !alive) continue; // do not prefer an unalive target over an alive one
+                    Vec3d vector = e.getEntityBoundingBox().getCenter().subtract(sourcePosition);
+                    // definition of angle between two vectors:
+                    // arccos of their dot product divided by the product of their lengths.
+                    double ang = Math.acos(originalRayTrace.dotProduct(vector) / Math.sqrt(originalRayTrace.lengthSquared() * vector.lengthSquared()));
+                    if (ang >= maxAngle) continue;
+                    if (TAConfig.debugMode.getValue() && user.isServerWorld()) {
+                        if (e instanceof EntityLivingBase) {
+                            assert MobEffects.GLOWING != null;
+                            ((EntityLivingBase) e).addPotionEffect(new PotionEffect(MobEffects.GLOWING, 100, 0));
                         }
                     }
-                    
-                    Random rand = user.getRNG();
-                    user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_RAILGUN,
-                            SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
-                    PacketImpulseRailgunProjectile packet = new PacketImpulseRailgunProjectile(user.getEntityId(), target);
-                    PacketRecoil recoil = new PacketRecoil(user.getEntityId(), RecoilType.IMPULSE_RAILGUN);
-                    TANetwork.INSTANCE.sendToAllTracking(packet, user);
-                    TANetwork.INSTANCE.sendToAllTracking(recoil, user);
-                    if (user instanceof EntityPlayer) {
-                        ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonRailgunCooldown.getValue());
-                        if (user instanceof EntityPlayerMP) {
-                            TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);
-                            TANetwork.INSTANCE.sendTo(recoil, (EntityPlayerMP) user);
-                        }
+                    // give an alive target priority over an unalive one
+                    if ((ang >= smallestAngle && (smallestIsAlive || !alive))) continue;
+                    // if there's a block in the way, skip the entity.
+                    if (user.getEntityWorld().rayTraceBlocks(sourcePosition, sourcePosition.add(vector), false, true, false) != null) continue;
+                    smallestAngle = (float) ang;
+                    smallest = vector;
+                    smallestIsAlive = alive;
+                }
+                if (TAConfig.debugMode.getValue() && user.world instanceof WorldServer) {
+                    WorldServer server = (WorldServer) user.world;
+                    drawLine(server, sourcePosition, rotate(originalRayTrace, horizontal, maxAngle));
+                    drawLine(server, sourcePosition, rotate(originalRayTrace, horizontal, -maxAngle));
+                    drawLine(server, sourcePosition, rotate(originalRayTrace, vertical, maxAngle));
+                    drawLine(server, sourcePosition, rotate(originalRayTrace, vertical, -maxAngle));
+                    Vec3d min = new Vec3d(bb.minX, bb.minY, bb.minZ);
+                    Vec3d max = new Vec3d(bb.maxX, bb.maxY, bb.maxZ);
+                    Vec3d zMax = new Vec3d(bb.minX, bb.minY, bb.maxZ);
+                    Vec3d yMax = new Vec3d(bb.minX, bb.maxY, bb.minZ);
+                    Vec3d xMax = new Vec3d(bb.maxX, bb.minY, bb.minZ);
+                    Vec3d xMin = new Vec3d(bb.minX, bb.maxY, bb.maxZ);
+                    Vec3d zMin = new Vec3d(bb.maxX, bb.maxY, bb.minZ);
+                    Vec3d yMin = new Vec3d(bb.maxX, bb.minY, bb.maxZ);
+                    drawLine(server, min, zMax.subtract(min));
+                    drawLine(server, min, yMax.subtract(min));
+                    drawLine(server, min, xMax.subtract(min));
+                    drawLine(server, zMax, xMin.subtract(zMax));
+                    drawLine(server, zMax, yMin.subtract(zMax));
+                    drawLine(server, yMax, xMin.subtract(yMax));
+                    drawLine(server, yMax, zMin.subtract(yMax));
+                    drawLine(server, xMax, zMin.subtract(xMax));
+                    drawLine(server, xMax, yMin.subtract(xMax));
+                    drawLine(server, max, zMin.subtract(max));
+                    drawLine(server, max, yMin.subtract(max));
+                    drawLine(server, max, xMin.subtract(max));
+                    drawLine(server, sourcePosition, smallest);
+                }
+                // finally, rescale smallest to be the same length as the original scan
+                return smallest.scale(Math.sqrt(originalRayTrace.lengthSquared() / smallest.lengthSquared()));
+            }
+        };
+        // hyperion
+        augments[1] = new IImpulseCannonAugment() {
+
+            private double efficiencyFactor() {
+                return TAConfig.cannonHyperionEfficiencyFactor.getValue();
+            }
+
+            @Override
+            public double getImpulseCostModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer) {
+                return efficiencyFactor();
+            }
+
+            @Override
+            public float getBaseDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                if (!buffer.canExtract()) return 1;
+                double extracted = buffer.extractEnergy(Long.MAX_VALUE, false) + Math.ceil(actualImpetusConsumed);
+                return (float) (extracted / actualImpetusConsumed);
+            }
+
+            @Override
+            public void applyAdditionalEffects(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, float baseDamage) {
+                int particleCount = (int) Math.sqrt(baseDamage);
+                for (int i = 0; i < particleCount; i++) {
+                    Random random = new Random();
+                    double ratio = (i + 0.5 + random.nextGaussian()) / particleCount;
+                    if (user.getEntityWorld() instanceof WorldServer) {
+                        ((WorldServer) user.getEntityWorld()).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+                                MathHelper.clampedLerp(firingOrigin.x, firingEnd.x, ratio),
+                                MathHelper.clampedLerp(firingOrigin.y, firingEnd.y, ratio),
+                                MathHelper.clampedLerp(firingOrigin.z, firingEnd.z, ratio),
+                                1, 2, 2, 2D, 1);
+                    }
+
+                }
+            }
+        };
+        // energizer
+        augments[2] = new IImpulseCannonAugment() {
+            @Override
+            public float getNormalDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                return TAConfig.cannonEnergizerNormalFactor.getValue();
+            }
+
+            @Override
+            public float getMagicDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                return TAConfig.cannonEnergizerMagicFactor.getValue();
+            }
+        };
+        // destabilizer
+        augments[3] = new IImpulseCannonAugment() {
+            @Override
+            public float getNormalDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                return TAConfig.cannonDestabilizerNormalFactor.getValue();
+            }
+
+            @Override
+            public float getMagicDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                return TAConfig.cannonDestabilizerMagicFactor.getValue();
+            }
+        };
+        // solidifier
+        augments[4] = new IImpulseCannonAugment() {
+            @Override
+            public void applyAdditionalEffectsToEntity(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {
+                if (entityHit instanceof EntityLivingBase) {
+                    Vec3d vec = firingEnd.subtract(firingOrigin).normalize();
+                    double factor = Math.max(0.1, Math.log(baseDamage)) * TAConfig.cannonSolidifierKnockbackStrength.getValue();
+                    entityHit.motionX += vec.x * factor;
+                    entityHit.motionY += vec.y * factor;
+                    entityHit.motionZ += vec.z * factor;
+                    if (entityHit instanceof EntityPlayerMP) {
+                        EntityPlayerMP mp = (EntityPlayerMP) entityHit;
+                        mp.connection.sendPacket(new SPacketEntityVelocity(mp));
                     }
                 }
-                
-            };
-        }
-        else {
-            return new ImpulseCannonAugmentBase() {
-                
-                @Override
-                public LensModelType getLensModel() {
-                    return LensModelType.BURST;
+            }
+
+
+            @Override
+            public void applyAdditionalEffects(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, float baseDamage) {
+                Vec3d offset = firingEnd.subtract(firingOrigin);
+                firingEnd = offset.add(offset.normalize().scale(Math.sqrt(baseDamage))).add(firingOrigin);
+                int tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+                while (baseDamage > 0) {
+                    RayTraceResult result = user.getEntityWorld().rayTraceBlocks(firingOrigin, firingEnd, false, true, false);
+                    if (result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) break;
+                    baseDamage = BreakInformation.damageBlock(user.getEntityWorld(), result.getBlockPos(), baseDamage, tick);
                 }
-                
-                @Override
-                public int getMaxUsageDuration() {
-                    return 5;
+            }
+        };
+        // purifier
+        augments[5] = new IImpulseCannonAugment() {
+
+            @Override
+            public double getImpulseCostModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer) {
+                return 2;
+            }
+
+            @Override
+            public float getBaseDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+                return 0.2f;
+            }
+
+            @Override
+            public void applyAdditionalEffectsToEntity(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {
+                DamageSource source = new DamageSourceImpetus(user, user.getPositionVector()).setDamageBypassesArmor().setDamageIsAbsolute();
+                entityHit.attackEntityFrom(source, baseDamage * 2);
+                if (entityHit instanceof EntityLivingBase) {
+                    EntityLivingBase base = (EntityLivingBase) entityHit;
+                    base.hurtResistantTime = Math.min(base.hurtResistantTime, 2);
+                    base.lastDamage = 0.0F;
                 }
-                
-                @Override
-                public boolean isTickable(EntityLivingBase user) {
-                    return false;
-                }
-                
-                @Override
-                public long getImpetusCostPerUsage(EntityLivingBase user) {
-                    return TAConfig.cannonBurstCost.getValue();
-                }
-                
-                private void tick(EntityLivingBase user, int num) {
-                    Entity e = RaytraceHelper.raytraceEntity(user, TAConfig.cannonBurstRange.getValue());
-                    if (e != null && (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(user)) &&
-                            ImpetusAPI.causeImpetusDamage(user, e, TAConfig.cannonBurstDamage.getValue()) && num < 2 && e instanceof EntityLivingBase) {
-                            
-                        EntityLivingBase base = (EntityLivingBase) e;
-                        base.hurtResistantTime = Math.min(base.hurtResistantTime, 1);
-                        base.lastDamage = 0.0F;
-                    }
-                    
-                    Random rand = user.getRNG();
-                    user.getEntityWorld().playSound(null, new BlockPos(user.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_BURST,
-                            SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 1.0F);
-                    Vec3d target = RaytraceHelper.raytracePosition(user, TAConfig.cannonBurstRange.getValue());
-                    PacketImpulseBurst packet = new PacketImpulseBurst(user.getEntityId(), target, num);
-                    TANetwork.INSTANCE.sendToAllTracking(packet, user);
-                    if (user instanceof EntityPlayerMP)
-                        TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) user);
-                    
-                    if (num < 2)
-                        ScheduledTaskHandler.registerTask(() -> tick(user, num + 1), 2);
-                }
-                
-                @Override
-                public void onCannonUsage(EntityLivingBase user) {
-                    ScheduledTaskHandler.registerTask(() -> tick(user, 0), 0);
-                    PacketRecoil recoil = new PacketRecoil(user.getEntityId(), RecoilType.IMPULSE_BURST);
-                    TANetwork.INSTANCE.sendToAllTracking(recoil, user);
-                    if (user instanceof EntityPlayer) {
-                        ((EntityPlayer) user).getCooldownTracker().setCooldown(TAItems.IMPULSE_CANNON, TAConfig.cannonBurstCooldown.getValue());
-                        if (user instanceof EntityPlayerMP)
-                            TANetwork.INSTANCE.sendTo(recoil, (EntityPlayerMP) user);
-                    }
-                }
-                
-            };
-        }
+            }
+        };
+        // mount
+        augments[6] = new IImpulseCannonCustomMount() {
+            @Override
+            public boolean givesExtraSlot() {
+                return true;
+            }
+        };
     }
     
     @Override
     @Nullable
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         SimpleCapabilityProviderNoSave<IAugment> provider =
-                new SimpleCapabilityProviderNoSave<>(createAugmentForStack(stack), CapabilityAugment.AUGMENT);
+                new SimpleCapabilityProviderNoSave<>(augments[stack.getMetadata()], CapabilityAugment.AUGMENT);
         if (nbt != null && nbt.hasKey("Parent", NBT.TAG_COMPOUND))
             provider.deserializeNBT(nbt.getCompoundTag("Parent"));
         
         return provider;
+    }
+
+    private static Vec3d rotate(Vec3d vec, Vec3d axis, float radians) {
+        // rotates the vector around the given axis by the given angle using Rodrigues' formula
+        float cos = MathHelper.cos(radians);
+        return vec.scale(cos)
+                .add(axis.crossProduct(vec).scale(MathHelper.sin(radians)))
+                .add(axis.scale(axis.dotProduct(vec) * (1 - cos)));
+    }
+
+    // for debugging
+    private static void drawLine(WorldServer world, Vec3d start, Vec3d line) {
+        int count = (int) (line.length() * 2);
+        for (int i = 0; i < count; i++) {
+            double factor = (double) i / count;
+            world.spawnParticle(EnumParticleTypes.FOOTSTEP, true, start.x + line.x * factor, start.y + line.y * factor, start.z + line.z * factor, 0, 0d, 0d, 0d, 0);
+        }
+    }
+
+    protected static void updateBreakInformation() {
+        int tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        for (Iterator<Map.Entry<BlockPos, BreakInformation>> iterator = solidifierBreakCache.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<BlockPos, BreakInformation> entry = iterator.next();
+            if (entry.getValue().world.getBlockState(entry.getKey()) != entry.getValue().blockState) {
+                entry.getValue().world.sendBlockBreakProgress(BreakInformation.BREAKER_ID, entry.getKey(), 0);
+                iterator.remove();
+                continue;
+            }
+            if (entry.getValue().update(tick)) {
+                iterator.remove();
+            }
+        }
+        if (!solidifierBreakCache.isEmpty())
+            ScheduledTaskHandler.registerTask(ItemImpulseCannonAugment::updateBreakInformation, 1);
+    }
+
+    protected static class BreakInformation {
+
+        public static final int BREAKER_ID = -1;
+
+        final World world;
+        final BlockPos pos;
+        final IBlockState blockState;
+        int progress; // 10 levels of breakage
+        int lastProgressTick;
+
+        public BreakInformation(World world, BlockPos pos, IBlockState state) {
+            this.world = world;
+            this.pos = pos;
+            this.blockState = state;
+        }
+
+        public static float getBreakStrength() {
+            return TAConfig.cannonSolidifierBreakStrength.getValue();
+        }
+
+        public static float damageBlock(World world, BlockPos pos, float incoming, int tick) {
+            IBlockState state = world.getBlockState(pos);
+            BreakInformation existing = solidifierBreakCache.get(pos);
+            if (existing == null) {
+                float hardness = state.getBlockHardness(world, pos);
+                if (incoming / hardness >= 1) {
+                    state.getBlock().dropBlockAsItem(world, pos, state, 0);
+                    world.setBlockToAir(pos);
+                    return incoming - hardness;
+                } else {
+                    existing = new BreakInformation(world, pos, state);
+                    if (solidifierBreakCache.isEmpty())
+                        ScheduledTaskHandler.registerTask(ItemImpulseCannonAugment::updateBreakInformation, 1);
+                    solidifierBreakCache.put(pos, existing);
+                }
+            }
+            return existing.damage(incoming, tick);
+        }
+
+        public float damage(float incoming, int tick) {
+            this.lastProgressTick = tick;
+            float hardness = blockState.getBlockHardness(world, pos);
+            float damage = getBreakStrength() * incoming / hardness;
+            if (damage < 1) return 0;
+            if (damage + progress >= 10) {
+                world.sendBlockBreakProgress(BREAKER_ID, pos, 0);
+                blockState.getBlock().dropBlockAsItem(world, pos, blockState, 0);
+                world.setBlockToAir(pos);
+                return incoming - (10 - progress) * hardness / getBreakStrength();
+            } else {
+                progress += damage;
+                world.sendBlockBreakProgress(BREAKER_ID, pos, progress);
+                return 0;
+            }
+        }
+
+        public boolean update(int tick) {
+            if (tick >= 10 + lastProgressTick) {
+                progress -= 1;
+                world.sendBlockBreakProgress(BREAKER_ID, pos, progress);
+            }
+            return progress <= 0 || progress >= 10;
+        }
     }
     
 }

@@ -42,7 +42,7 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.builder.IThaumostaticHarnessAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.IThaumostaticHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.entity.PlayerMovementAbilityManager;
 import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderHarness;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
@@ -134,8 +134,9 @@ public class ItemThaumostaticHarness extends ItemTABase implements IRechargable,
             }
             
             @Override
-            public boolean isAugmentAcceptable(ItemStack augment, int slot) {
-                return augment.getCapability(CapabilityAugment.AUGMENT, null) instanceof IThaumostaticHarnessAugment;
+            public boolean isAugmentAcceptable(ItemStack augment, int slot, IAugment augmentCapability) {
+                return super.isAugmentAcceptable(augment, slot, augmentCapability) &&
+                        augmentCapability instanceof IThaumostaticHarnessAugment;
             }
             
             @Override

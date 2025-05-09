@@ -241,8 +241,8 @@ public final class ImpetusAPI {
             return tryExtractFully(storage, amount);
     }
     
-    private static boolean doDamage(DamageSource source1, DamageSource source2, Entity target, float damage) {
-        boolean result = target.attackEntityFrom(source1, damage / 2.0F);
+    private static boolean doDamage(DamageSource source1, DamageSource source2, Entity target, float damage1, float damage2) {
+        boolean result = target.attackEntityFrom(source1, damage1);
         if (result) {
             if (target instanceof EntityLivingBase) {
                 EntityLivingBase base = (EntityLivingBase) target;
@@ -250,7 +250,7 @@ public final class ImpetusAPI {
                 base.lastDamage = 0;
             }
             
-            target.attackEntityFrom(source2, damage / 2.0F);
+            target.attackEntityFrom(source2, damage2);
         }
         
         return result;
@@ -259,19 +259,24 @@ public final class ImpetusAPI {
     public static boolean causeImpetusDamage(Entity target, float totalDamage) {
         DamageSource magic = new DamageSourceImpetus(null).setDamageBypassesArmor().setMagicDamage();
         DamageSource normal = new DamageSourceImpetus(null);
-        return doDamage(magic, normal, target, totalDamage);
+        return doDamage(magic, normal, target, totalDamage / 2, totalDamage / 2);
     }
     
     public static boolean causeImpetusDamage(Vec3d source, Entity target, float totalDamage) {
         DamageSource magic = new DamageSourceImpetus(source).setDamageBypassesArmor().setMagicDamage();
         DamageSource normal = new DamageSourceImpetus(source);
-        return doDamage(magic, normal, target, totalDamage);
+        return doDamage(magic, normal, target, totalDamage / 2, totalDamage / 2);
     }
     
     public static boolean causeImpetusDamage(Entity source, Entity target, float totalDamage) {
         DamageSource magic = new DamageSourceImpetus(source, source.getPositionVector()).setDamageBypassesArmor().setMagicDamage();
         DamageSource normal = new DamageSourceImpetus(source, source.getPositionVector());
-        return doDamage(magic, normal, target, totalDamage);
+        return doDamage(magic, normal, target, totalDamage / 2, totalDamage / 2);
     }
-    
+
+    public static boolean causeImpetusDamage(Entity source, Entity target, float magicDamage, float normalDamage) {
+        DamageSource magic = new DamageSourceImpetus(source, source.getPositionVector()).setDamageBypassesArmor().setMagicDamage();
+        DamageSource normal = new DamageSourceImpetus(source, source.getPositionVector());
+        return doDamage(magic, normal, target, magicDamage, normalDamage);
+    }
 }

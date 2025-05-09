@@ -1,0 +1,32 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPULSE_CANNON_AUGMENT_CRYSTAL",
+  "vis": 150,
+  "aspects": {
+    "ordo": 1,
+    "aer": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "BBB",
+    "PCP",
+    "BBB"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "nuggetBrass"
+    },
+    "C": {
+      "item": "thaumicaugmentation:strange_crystal"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impulse_cannon_augment",
+    "data": 2
+  }
+}

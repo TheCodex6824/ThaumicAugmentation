@@ -18,39 +18,26 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment.builder;
+package thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
-public interface IImpulseCannonAugment extends IAugment {
-    
-    public enum LensModelType {
-        
-        BEAM,
-        RAILGUN,
-        BURST;
-        
+import javax.annotation.Nonnull;
+
+public interface IImpulseCannonRaytraceOverridingAugment extends IImpulseCannonAugment {
+
+    @Override
+    default boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
+        return !(otherAugmentCap instanceof IImpulseCannonRaytraceOverridingAugment);
     }
-    
-    public LensModelType getLensModel();
-    
-    public boolean isTickable(EntityLivingBase user);
-    
-    public default void onCannonUsage(EntityLivingBase user) {}
-    
-    public default void onCannonTick(EntityLivingBase user, int tickCount) {}
-    
-    public default void onStopCannonTick(EntityLivingBase user, int tickCount) {}
-    
-    public default long getImpetusCostPerUsage(EntityLivingBase user) {
-        return 0;
+
+    default @Nonnull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition, Vec3d originalRayTrace) {
+        return overrideFiringRayTrace(cannonStack, augmentStack, user, sourcePosition, originalRayTrace, 1);
     }
-    
-    public default double getImpetusCostPerTick(EntityLivingBase user, int tickCount) {
-        return 0.0;
-    }
-    
-    public int getMaxUsageDuration();
-    
+
+
+    @Nonnull Vec3d overrideFiringRayTrace(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d sourcePosition, Vec3d originalRayTrace, float partialTicks);
 }

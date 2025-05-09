@@ -39,10 +39,9 @@ import thaumcraft.api.items.RechargeHelper;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAMaterials;
 import thecodex6824.thaumicaugmentation.api.augment.AugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.common.capability.provider.CapabilityProviderHarness;
 import thecodex6824.thaumicaugmentation.common.event.AugmentEventHandler;
 import thecodex6824.thaumicaugmentation.common.integration.IntegrationHandler;
@@ -70,31 +69,11 @@ public class ItemElytraHarness extends ItemTABase implements IElytraCompat, IRec
     @Nullable
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         CapabilityProviderHarness provider = new CapabilityProviderHarness(new AugmentableItem(2) {
-        
+
             @Override
-            public boolean isAugmentAcceptable(ItemStack augment, int slot) {
-                if (!(augment.getCapability(CapabilityAugment.AUGMENT, null) instanceof IElytraHarnessAugment))
-                    return false;
-                else if (((IElytraHarnessAugment) augment.getCapability(CapabilityAugment.AUGMENT, null)).isCosmetic()) {
-                    for (ItemStack stack : getAllAugments()) {
-                        if (!stack.isEmpty()) {
-                            IAugment aug = stack.getCapability(CapabilityAugment.AUGMENT, null);
-                            if (aug instanceof IElytraHarnessAugment && ((IElytraHarnessAugment) aug).isCosmetic())
-                                return false;
-                        }
-                    }
-                }
-                else {
-                    for (ItemStack stack : getAllAugments()) {
-                        if (!stack.isEmpty()) {
-                            IAugment aug = stack.getCapability(CapabilityAugment.AUGMENT, null);
-                            if (aug instanceof IElytraHarnessAugment && !((IElytraHarnessAugment) aug).isCosmetic())
-                                return false;
-                        }
-                    }
-                }
-                
-                return true;
+            public boolean isAugmentAcceptable(ItemStack augment, int slot, IAugment augmentCapability) {
+                return super.isAugmentAcceptable(augment, slot, augmentCapability)
+                        && augmentCapability instanceof IElytraHarnessAugment;
             }
             
         }, new BaubleItem(BaubleType.BODY) {

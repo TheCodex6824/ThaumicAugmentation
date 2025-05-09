@@ -58,7 +58,7 @@
             ],
             "location": [
                 12,
-                6
+                5
             ],
             "stages": [
                 {
@@ -91,8 +91,8 @@
                 "~MIRRORESSENTIA"
             ],
             "location": [
-                14,
-                6
+                8,
+                5
             ],
             "stages": [
                 {
@@ -127,7 +127,7 @@
             ],
             "location": [
                 16,
-                6
+                5
             ],
             "stages": [
                 {
@@ -161,7 +161,7 @@
                 "~RECHARGEPEDESTAL"
             ],
             "location": [
-                8,
+                6,
                 5
             ],
             "stages": [
@@ -193,7 +193,7 @@
                 "~VISGENERATOR"
             ],
             "location": [
-                6,
+                14,
                 5
             ],
             "stages": [
@@ -298,6 +298,49 @@
             ]
         },
         {
+            "key": "IMPULSE_CANNON_AUGMENT_RECURSE",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment_recurse.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment;1;3"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON",
+                "IMPETUS_MIRROR"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                8,
+                7
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_recurse.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_recurse.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment_recurse"
+                    ]
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_recurse.hyperion",
+                    "required_research": [
+                        "IMPULSE_CANNON_AUGMENT2_HYPERION"
+                    ]
+                }
+            ]
+        },
+        {
             "key": "IMPULSE_CANNON_AUGMENT_RAILGUN",
             "name": "thaumicaugmentation.research.impulse_cannon_augment_railgun.title",
             "icons": [
@@ -307,9 +350,15 @@
             "parents": [
                 "IMPULSE_CANNON"
             ],
+            "siblings": [
+                "IMPULSE_CANNON_AUGMENT2_HYPERION"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
             "location": [
                 8,
-                8
+                9
             ],
             "stages": [
                 {
@@ -338,9 +387,12 @@
             "parents": [
                 "IMPULSE_CANNON"
             ],
+            "meta": [
+                "REVERSE"
+            ],
             "location": [
-                6,
-                8
+                8,
+                11
             ],
             "stages": [
                 {
@@ -355,6 +407,369 @@
                     "text": "thaumicaugmentation.research.impulse_cannon_augment_burst.1",
                     "recipes": [
                         "thaumicaugmentation:impulse_cannon_augment_burst"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT_CRYSTAL",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment_crystal.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment;1;2"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                8,
+                13
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_crystal.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1"
+                    ],
+                    "required_items": [
+                        "thaumicaugmentation:strange_crystal"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_crystal.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment_crystal"
+                    ]
+                }
+            ],
+            "addenda": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment_crystal.gyro",
+                    "required_research": [
+                        "IMPULSE_CANNON_AUGMENT2_GYROSCOPE"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT2_HYPERION",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment2_hyperion.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment2;1;1"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON",
+                "IMPULSE_CANNON_AUGMENT_RAILGUN"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                12,
+                9
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_hyperion.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "OBSERVATION;AUROMANCY:1",
+                        "OBSERVATION;INFUSION;1",
+                        "OBSERVATION;GOLEMANCY;1",
+                        "OBSERVATION;ALCHEMY;1",
+                        "OBSERVATION;FUNDAMENTALS;1"
+                    ],
+                    "warp": 1
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_hyperion.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "THEORY;ARTIFICE;2",
+                        "THEORY;ELDRITCH;1",
+                        "THEORY;AUROMANCY;1"
+                    ],
+                    "required_item": [
+                        "minecraft:nether_star",
+                        "thaumicaugmentation:material:5",
+                        "minecraft:quartz",
+                        "minecraft:glass",
+                        "thaumcraft:ingot:0",
+                        "thaumcraft:ingot:2",
+                        "thaumcraft:ingot:1",
+                        "minecraft:iron_ingot",
+                        "minecraft:gold_ingot",
+                        "miencraft:redstone"
+                    ],
+                    "warp": 2
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_hyperion.2",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment2_hyperion"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT2_DESTABILIZER",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment2_destabilizer.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment2;1;3"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON",
+                "IMPETUS_GENERATOR"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                12,
+                11
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_destabilizer.0",
+                    "required_craft":[
+                        "thaumicaugmentation:impetus_generator"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;INFUSION;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_destabilizer.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment2_destabilizer"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT2_ENERGIZER",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment2_energizer.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment2;1;2"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                12,
+                12
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_energizer.0",
+                    "required_craft":[
+                        "thaumicaugmentation:impetus_drainer"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_energizer.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment2_energizer"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT2_SOLIDIFIER",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment2_solidifier.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment2;1;4"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON",
+                "~VOIDSIPHON"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                12,
+                15
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_solidifier.0",
+                    "required_craft": [
+                        "thaumcraft:void_siphon"
+                    ],
+                    "required_item": [
+                        "minecraft:quartz"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;ELDRITCH;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_solidifier.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment2_solidifier"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT2_GYROSCOPE",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment2_gyroscope.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment2;1;0"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON",
+                "~MINDBIOTHAUMIC",
+                "~GOLEMVISION"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                12,
+                17
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_gyroscope.0",
+                    "required_craft": [
+                        "thaumcraft:module"
+                    ],
+                    "required_item": [
+                        "thaumcraft:plate"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;2",
+                        "OBSERVATION;GOLEMANCY;2",
+                        "OBSERVATION;ALCHEMY;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;GOLEMANCY;1"
+                    ],
+                    "warp": 1
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_gyroscope.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment2_gyroscope"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT2_PURIFIER",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment2_purifier.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment2;1;5"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON",
+                "~PRIMORDIAL_WISP"
+            ],
+            "meta": [
+                "HIDDEN",
+                "REVERSE"
+            ],
+            "location": [
+                12,
+                13
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_purifier.0",
+                    "required_item": [
+                        "thaumicaugmentation:material:5"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;ALCHEMY;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;ARTIFICE;1",
+                        "THEORY;ALCHEMY;1"
+                    ],
+                    "warp": 2
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_purifier.1",
+                    "required_item": [
+                        "thaumicaugmentation:material:5"
+                    ],
+                    "required_knowledge": [
+                        "OBSERVATION;AUROMANCY;1",
+                        "OBSERVATION;ALCHEMY;1",
+                        "THEORY;AUROMANCY;2",
+                        "THEORY;ELDRITCH;2"
+                    ],
+                    "warp": 1
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_purifier.2",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment2_purifier"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "IMPULSE_CANNON_AUGMENT2_MOUNT",
+            "name": "thaumicaugmentation.research.impulse_cannon_augment2_mount.title",
+            "icons": [
+                "thaumicaugmentation:impulse_cannon_augment2;1;6"
+            ],
+            "category": "THAUMIC_AUGMENTATION",
+            "parents": [
+                "IMPULSE_CANNON",
+                "~GAUNTLET_AUGMENTATION"
+            ],
+            "meta": [
+                "REVERSE"
+            ],
+            "location": [
+                12,
+                19
+            ],
+            "stages": [
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_mount.0",
+                    "required_knowledge": [
+                        "OBSERVATION;ARTIFICE;1",
+                        "OBSERVATION;ELDRITCH;1",
+                        "THEORY;AUROMANCY;1"
+                    ]
+                },
+                {
+                    "text": "thaumicaugmentation.research.impulse_cannon_augment2_mount.1",
+                    "recipes": [
+                        "thaumicaugmentation:impulse_cannon_augment2_mount"
                     ]
                 }
             ]

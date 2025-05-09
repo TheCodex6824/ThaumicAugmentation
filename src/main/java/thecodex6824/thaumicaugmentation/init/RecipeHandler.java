@@ -51,8 +51,8 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.CustomAugmentBuilder;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.ICustomAugment;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityBiomeSelector;
 import thecodex6824.thaumicaugmentation.api.item.CapabilityMorphicTool;
 import thecodex6824.thaumicaugmentation.api.item.IBiomeSelector;
@@ -297,6 +297,12 @@ public final class RecipeHandler {
                         "plateIron", "dyeRed", "plateIron", "leather", Items.GHAST_TEAR, Items.MILK_BUCKET
                 }
         ));
+
+        ItemStack crystalStack = new ItemStack(TAItems.MATERIAL, 1, 5);
+        ThaumcraftApi.addInfusionCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "impulse_cannon_augment2_hyperion"), new InfusionRecipeComplexResearch(
+                "IMPULSE_CANNON_AUGMENT2_HYPERION", new ItemStack(TAItems.IMPULSE_CANNON_AUGMENT2, 1, 1), 12, new AspectList().add(Aspect.MOTION, 150).add(Aspect.CRYSTAL, 100).add(Aspect.ENERGY, 75),
+                new ItemStack(Items.NETHER_STAR), crystalStack, "ingotIron", crystalStack, crystalStack, "ingotIron", crystalStack
+        ));
     }
     
     public static void initCrucibleRecipes() {
@@ -308,15 +314,15 @@ public final class RecipeHandler {
                         new AspectList().add(Aspect.FLUX, 50)));
         
         ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_provider_power"),
-                new CrucibleRecipe("GAUNTLET_AUGMENTATION@2", CasterAugmentBuilder.createStackForEffectProvider(
+                new CrucibleRecipe("GAUNTLET_AUGMENTATION@2", CustomAugmentBuilder.createStackForEffectProvider(
                         new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_power")),
                         ThaumcraftApiHelper.makeCrystal(Aspect.ORDER), new AspectList().add(Aspect.AVERSION, 15).add(Aspect.CRYSTAL, 10).add(Aspect.MAGIC, 5)));
         ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_provider_cost"),
-                new CrucibleRecipe("GAUNTLET_AUGMENTATION@2", CasterAugmentBuilder.createStackForEffectProvider(
+                new CrucibleRecipe("GAUNTLET_AUGMENTATION@2", CustomAugmentBuilder.createStackForEffectProvider(
                         new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cost")),
                         ThaumcraftApiHelper.makeCrystal(Aspect.ORDER), new AspectList().add(Aspect.AURA, 15).add(Aspect.CRYSTAL, 10).add(Aspect.MAGIC, 5)));
         ThaumcraftApi.addCrucibleRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_provider_cast_speed"),
-                new CrucibleRecipe("GAUNTLET_AUGMENTATION@2", CasterAugmentBuilder.createStackForEffectProvider(
+                new CrucibleRecipe("GAUNTLET_AUGMENTATION@2", CustomAugmentBuilder.createStackForEffectProvider(
                         new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_cast_speed")),
                         ThaumcraftApiHelper.makeCrystal(Aspect.ORDER), new AspectList().add(Aspect.ENERGY, 15).add(Aspect.CRYSTAL, 10).add(Aspect.MAGIC, 5)));
     
@@ -342,7 +348,7 @@ public final class RecipeHandler {
         // so the "group" is just a recipe book thing, which we don't have to care about
         ResourceLocation defaultGroup = new ResourceLocation("");
         
-        ItemStack elemental = CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental"));
+        ItemStack elemental = CustomAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_elemental"));
         ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "strength_provider_elemental_fake"), new ShapelessArcaneRecipe(
                 defaultGroup, "GAUNTLET_AUGMENTATION@2", 25, new AspectList().add(Aspect.AIR, 1).add(Aspect.EARTH, 1).add(Aspect.FIRE, 1).add(
                 Aspect.ENTROPY, 1).add(Aspect.ORDER, 1).add(Aspect.WATER, 1), elemental, new Object[] { new ItemStack(ItemsTC.plate, 1, 2),
@@ -350,10 +356,10 @@ public final class RecipeHandler {
         
         ItemStack customAugment = new ItemStack(TAItems.AUGMENT_CUSTOM);
         IAugment aug = customAugment.getCapability(CapabilityAugment.AUGMENT, null);
-        if (aug instanceof ICustomCasterAugment) {
-            ICustomCasterAugment custom = (ICustomCasterAugment) aug;
+        if (aug instanceof ICustomAugment) {
+            ICustomAugment custom = (ICustomAugment) aug;
             custom.setStrengthProvider(elemental);
-            custom.setEffectProvider(CasterAugmentBuilder.createStackForEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_power")));
+            custom.setEffectProvider(CustomAugmentBuilder.createStackForEffectProvider(new ResourceLocation(ThaumicAugmentationAPI.MODID, "effect_power")));
             ThaumcraftApi.addFakeCraftingRecipe(new ResourceLocation(ThaumicAugmentationAPI.MODID, "custom_augment_example"), new ShapelessOreRecipe(
                     defaultGroup, customAugment, custom.getStrengthProvider(), custom.getEffectProvider()));
         }

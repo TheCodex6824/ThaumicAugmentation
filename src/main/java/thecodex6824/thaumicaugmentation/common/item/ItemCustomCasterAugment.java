@@ -39,8 +39,8 @@ import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.CustomAugmentBuilder;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.ICustomAugment;
 import thecodex6824.thaumicaugmentation.common.capability.AugmentCasterCustom;
 import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabilityProvider;
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
@@ -66,14 +66,14 @@ public class ItemCustomCasterAugment extends ItemTABase {
             // check for remapped augment
             if (data.isEmpty() || !data.hasKey("strength", NBT.TAG_COMPOUND) || !data.hasKey("effect", NBT.TAG_COMPOUND)) {
                 if (data.isEmpty() || !data.hasKey("strength", NBT.TAG_COMPOUND)) {
-                    augment.setStrengthProvider(CasterAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(
+                    augment.setStrengthProvider(CustomAugmentBuilder.createStackForStrengthProvider(new ResourceLocation(
                             ThaumicAugmentationAPI.MODID, "strength_elemental")));
                     if (stack.hasTagCompound())
                         augment.getStrengthProvider().getTagCompound().setString("aspect", stack.getTagCompound().getString("aspect"));
                 }
                 
                 if (data.isEmpty() || !data.hasKey("effect", NBT.TAG_COMPOUND)) {
-                    augment.setEffectProvider(CasterAugmentBuilder.createStackForEffectProvider(new ResourceLocation(
+                    augment.setEffectProvider(CustomAugmentBuilder.createStackForEffectProvider(new ResourceLocation(
                             ThaumicAugmentationAPI.MODID, "effect_power")));
                 }
             }
@@ -130,18 +130,18 @@ public class ItemCustomCasterAugment extends ItemTABase {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flagIn) {
-        if (stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomCasterAugment) {
-            ICustomCasterAugment aug = (ICustomCasterAugment) stack.getCapability(CapabilityAugment.AUGMENT, null);
+        if (stack.getCapability(CapabilityAugment.AUGMENT, null) instanceof ICustomAugment) {
+            ICustomAugment aug = (ICustomAugment) stack.getCapability(CapabilityAugment.AUGMENT, null);
             if (aug.getStrengthProvider().isEmpty() && aug.getEffectProvider().isEmpty()) {
                 tooltip.add( new TextComponentTranslation("thaumicaugmentation.text.strength_provider_any").getFormattedText());
                 tooltip.add( new TextComponentTranslation("thaumicaugmentation.text.effect_provider_any").getFormattedText());
             }
             else {
                 tooltip.add( new TextComponentTranslation(aug.getStrengthProvider().getTranslationKey()).getFormattedText());
-                CasterAugmentBuilder.getStrengthProvider(ItemCustomCasterStrengthProvider.getProviderID(
+                CustomAugmentBuilder.getStrengthProvider(ItemCustomCasterStrengthProvider.getProviderID(
                         aug.getStrengthProvider())).appendAdditionalTooltip(aug.getStrengthProvider(), tooltip);
                 tooltip.add(new TextComponentTranslation(aug.getEffectProvider().getTranslationKey()).getFormattedText());
-                CasterAugmentBuilder.getEffectProvider(ItemCustomCasterEffectProvider.getProviderID(
+                CustomAugmentBuilder.getEffectProvider(ItemCustomCasterEffectProvider.getProviderID(
                         aug.getEffectProvider())).appendAdditionalTooltip(aug.getEffectProvider(), tooltip);
             }
         }

@@ -62,7 +62,7 @@ import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.CustomAugmentBuilder;
 import thecodex6824.thaumicaugmentation.common.capability.AugmentCasterCustom;
 
 public class CustomCasterAugmentModel implements IModel {
@@ -131,8 +131,8 @@ public class CustomCasterAugmentModel implements IModel {
                 TransformType.FIXED, create(0, 0, 0, 0, 180, 0, 1)).build();
         
         private static int hashStack(AugmentCasterCustom aug) {
-            return 31 * CasterAugmentBuilder.getStrengthProviderIDString(aug.getStrengthProvider()).hashCode() +
-                    CasterAugmentBuilder.getEffectProviderIDString(aug.getEffectProvider()).hashCode();
+            return 31 * CustomAugmentBuilder.getStrengthProviderIDString(aug.getStrengthProvider()).hashCode() +
+                    CustomAugmentBuilder.getEffectProviderIDString(aug.getEffectProvider()).hashCode();
         }
         
         protected IBakedModel wrappedFallback;

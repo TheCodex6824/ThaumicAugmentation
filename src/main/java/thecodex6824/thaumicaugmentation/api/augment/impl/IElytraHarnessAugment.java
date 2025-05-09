@@ -18,7 +18,7 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment.builder;
+package thecodex6824.thaumicaugmentation.api.augment.impl;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -26,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 
 public interface IElytraHarnessAugment extends IAugment {
@@ -44,5 +45,15 @@ public interface IElytraHarnessAugment extends IAugment {
     @SideOnly(Side.CLIENT)
     public default void renderFlightParticles(ItemStack stack, RenderPlayer renderer, ModelBiped base, EntityPlayer player, float limbSwing, float limbSwingAmount,
             float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {}
-    
+
+    @Override
+    default boolean canBeAppliedToItem(ItemStack augmentable) {
+        return augmentable.getItem() == TAItems.ELYTRA_HARNESS;
+    }
+
+    @Override
+    default boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
+        if (!(otherAugmentCap instanceof IElytraHarnessAugment)) return true;
+        return ((IElytraHarnessAugment) otherAugmentCap).isCosmetic() != this.isCosmetic();
+    }
 }

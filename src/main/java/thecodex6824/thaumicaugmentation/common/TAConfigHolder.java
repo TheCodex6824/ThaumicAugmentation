@@ -107,6 +107,13 @@ public final class TAConfigHolder {
 	@RequiresMcRestart
 	public String[] disabledTransformers = new String[0];
 
+	@Name("DebugMode")
+	@Comment({
+			"Enables debug display for features that were finicky during development.",
+			"Not particularly useful if you aren't a developer."
+	})
+	public boolean debugMode = false;
+
     }
 
     public static class GameplayOptions {
@@ -168,8 +175,11 @@ public final class TAConfigHolder {
 
 	public static class Impetus {
 
-	    @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.impulse_cannon")
-	    public ImpulseCannon cannon = new ImpulseCannon();
+	    @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.impulse_cannon_convert")
+	    public ImpulseCannonConversions cannonConvert = new ImpulseCannonConversions();
+
+		@LangKey(ThaumicAugmentationAPI.MODID + ".text.config.impulse_cannon_augment")
+		public ImpulseCannonAugments cannonAugment = new ImpulseCannonAugments();
 
 	    @LangKey(ThaumicAugmentationAPI.MODID + ".text.config.impetus_generator")
 	    public ImpetusGenerator impetusGenerator = new ImpetusGenerator();
@@ -214,95 +224,246 @@ public final class TAConfigHolder {
 		public int bufferSize = 3000;
 	    }
 
-	    public static class ImpulseCannon {
+	    public static class ImpulseCannonConversions {
 
-		@Name("BeamDamage")
-		@Comment({
-		    "The amount of damage that the Impulse Cannon's beam attack does.",
-		    "The beam attack is the default attack with no augments."
-		})
-		public float beamDamage = 2.5F;
+			@Name("BeamDamage")
+			@Comment({
+				"The amount of damage that the Impulse Cannon's beam attack does.",
+				"The beam attack is the default attack with no augments."
+			})
+			public float beamDamage = 2.5F;
 
-		@Name("BeamCostInitial")
-		@Comment({
-		    "The amount of Impetus used by the Impulse Cannon's beam attack on initial activation.",
-		    "This cost is paid once at the start, and then BeamCostTick will be applied."
-		})
-		public int beamCostInitial = 3;
+			@Name("BeamCostInitial")
+			@Comment({
+				"The amount of Impetus used by the Impulse Cannon's beam attack on initial activation.",
+				"This cost is paid once at the start, and then BeamCostTick will be applied."
+			})
+			public int beamCostInitial = 3;
 
-		@Name("BeamCostTick")
-		@Comment({
-		    "The amount of Impetus used by the Impulse Cannon's beam attack per tick.",
-		    "This cost is paid even if nothing is being hit by the beam.",
-		    "Supports taking away less than 1 impetus per tick."
-		})
-		public double beamCostTick = 0.1;
+			@Name("BeamCostTick")
+			@Comment({
+				"The amount of Impetus used by the Impulse Cannon's beam attack per tick.",
+				"This cost is paid even if nothing is being hit by the beam.",
+				"Supports taking away less than 1 impetus per tick."
+			})
+			public double beamCostTick = 0.1;
 
-		@Name("BeamRange")
-		@Comment({
-		    "The range in meters of the Impulse Cannon's beam attack."
-		})
-		public double beamRange = 64.0;
+			@Name("BeamRange")
+			@Comment({
+				"The range in meters of the Impulse Cannon's beam attack."
+			})
+			public double beamRange = 64.0;
 
-		@Name("RailgunDamage")
-		@Comment({
-		    "The amount of damage that the Impulse Cannon's railgun attack does.",
-		    "Note that the beam can pierce through multiple entities, but not blocks."
-		})
-		public float railgunDamage = 38.0F;
+			@Name("RailgunDamage")
+			@Comment({
+				"The amount of damage that the Impulse Cannon's railgun attack does.",
+				"Note that the beam can pierce through multiple entities, but not blocks."
+			})
+			public float railgunDamage = 38.0F;
 
-		@Name("RailgunCost")
-		@Comment({
-		    "The amount of Impetus used by the Impulse Cannon's railgun attack per shot.",
-		    "This cost is paid even if nothing is being hit by the shot."
-		})
-		public int railgunCost = 3;
+			@Name("RailgunCost")
+			@Comment({
+				"The amount of Impetus used by the Impulse Cannon's railgun attack per shot.",
+				"This cost is paid even if nothing is being hit by the shot."
+			})
+			public int railgunCost = 3;
 
-		@Name("RailgunCooldown")
-		@Comment({
-		    "The cooldown in ticks between shots of the Impulse Cannon in railgun mode.",
-		    "Note that this will lock the player out of all Impulse Cannons in their inventory for",
-		    "this duration."
-		})
-		public int railgunCooldown = 70;
+			@Name("RailgunCooldown")
+			@Comment({
+				"The cooldown in ticks between shots of the Impulse Cannon in railgun mode.",
+				"Note that this will lock the player out of all Impulse Cannons in their inventory for",
+				"this duration."
+			})
+			public int railgunCooldown = 70;
 
-		@Name("RailgunRange")
-		@Comment({
-		    "The range in meters of the Impulse Cannon's railgun attack."
-		})
-		public double railgunRange = 128.0;
+			@Name("RailgunRange")
+			@Comment({
+				"The range in meters of the Impulse Cannon's railgun attack."
+			})
+			public double railgunRange = 128.0;
 
-		@Name("BurstDamage")
-		@Comment({
-		    "The amount of damage that the Impulse Cannon's burst attack does per shot.",
-		    "Note that the damage cooldown of an entity hit by the first 2 rounds of the burst is reset",
-		    "to allow the other rounds to do damage.",
-		    "Since there are three shots fired by the burst, the effective damage is three times this value."
-		})
-		public float burstDamage = 11.0F;
+			@Name("BurstDamage")
+			@Comment({
+				"The amount of damage that the Impulse Cannon's burst attack does per shot.",
+				"Note that the damage cooldown of an entity hit by the first 2 rounds of the burst is reset",
+				"to allow the other rounds to do damage.",
+				"Since there are three shots fired by the burst, the effective damage is three times this value."
+			})
+			public float burstDamage = 11.0F;
 
-		@Name("BurstCost")
-		@Comment({
-		    "The amount of Impetus used by the Impulse Cannon's burst attack per burst.",
-		    "This cost is paid even if nothing is being hit by the shot."
-		})
-		public int burstCost = 2;
+			@Name("BurstCost")
+			@Comment({
+				"The amount of Impetus used by the Impulse Cannon's burst attack per burst.",
+				"This cost is paid even if nothing is being hit by the shot."
+			})
+			public int burstCost = 2;
 
-		@Name("BurstCooldown")
-		@Comment({
-		    "The cooldown in ticks between shots of the Impulse Cannon in burst mode.",
-		    "Note that this will lock the player out of all Impulse Cannons in their inventory for",
-		    "this duration."
-		})
-		public int burstCooldown = 24;
+			@Name("BurstCooldown")
+			@Comment({
+				"The cooldown in ticks between shots of the Impulse Cannon in burst mode.",
+				"Note that this will lock the player out of all Impulse Cannons in their inventory for",
+				"this duration."
+			})
+			public int burstCooldown = 24;
 
-		@Name("BurstRange")
-		@Comment({
-		    "The range in meters of the Impulse Cannon's burst attack."
-		})
-		public double burstRange = 48.0;
+			@Name("BurstRange")
+			@Comment({
+				"The range in meters of the Impulse Cannon's burst attack."
+			})
+			public double burstRange = 48.0;
+
+			@Name("BurstCount")
+			@Comment({"The number of bursts in the Impulse Cannon's burst attack."
+			})
+			@RangeInt(min = 1)
+			public int burstCount = 3;
+
+			@Name("BurstDelay")
+			@Comment({"The number of ticks between each beam in the Impulse Cannon's burst attack."
+			})
+			@RangeInt(min = 1)
+			public int burstDelay = 2;
+
+			@Name("CrystalDamage")
+			@Comment({
+					"The amount of damage that the Impulse Cannon's crystal attack does.",
+					"Note that this is per-beam, and effectively multiplied by beam count."
+			})
+			public float crystalDamage = 1.0F;
+
+			@Name("CrystalBeamCount")
+			@Comment({
+					"The number of separate beams in the Impulse Cannon's crystal attack."
+			})
+			@RangeInt(min = 1, max = 50)
+			public int crystalBeamCount = 5;
+
+			@Name("CrystalSpread")
+			@Comment({
+					"The maximum variation from 0, in degrees, of the Impulse Cannon's crystal attack.",
+					"A spread of 90 corresponds to the entire hemisphere in front of the player."
+			})
+			@RangeDouble(min = 0, max = 170)
+			public float crystalSpread = 20.0F;
+
+			@Name("CrystalCostInitial")
+			@Comment({
+					"The amount of Impetus used by the Impulse Cannon's crystal attack on initial activation.",
+					"This cost is paid once at the start, and then CrystalCostTick will be applied."
+			})
+			public int crystalCostInitial = 3;
+
+			@Name("CrystalCostTick")
+			@Comment({
+					"The amount of Impetus used by the Impulse Cannon's crystal attack per tick.",
+					"This cost is paid even if nothing is being hit by the beam.",
+					"Supports taking away less than 1 impetus per tick."
+			})
+			public double crystalCostTick = 0.1;
+
+			@Name("CrystalRange")
+			@Comment({
+					"The range in meters of the Impulse Cannon's crystal attack."
+			})
+			public double crystalRange = 32.0;
+
+			@Name("RecurseDamage")
+			@Comment({
+					"The base damage that the Impulse Cannon's recursion attack does.",
+					"Note that this value will be multiplied by the number of ticks the cannon has been charged for",
+					"raised to the power of the recurse exponent."
+			})
+			public float recurseDamage = 3.0F;
+
+			@Name("RecurseExponent")
+			@Comment({
+					"The exponent that the number of ticks the cannon has been charged for will be raised to for",
+					"damage, cooldown, and range calculation",
+			})
+			@RangeDouble(min = 0.01, max = 1)
+			public double recurseExponent = 0.6F;
+
+			@Name("RecurseCostInitial")
+			@Comment({
+					"The amount of Impetus used by the Impulse Cannon to begin charging the recurse attack.",
+					"This cost is paid once at the start, and then RecurseCostTick will be applied."
+			})
+			public int recurseCostInitial = 1;
+
+			@Name("RecurseCostTick")
+			@Comment({
+					"The amount of Impetus used by the Impulse Cannon to charge the recurse attack per tick.",
+					"Supports taking away less than 1 impetus per tick."
+			})
+			public double recurseCostTick = 0.15;
+
+			@Name("RecurseCooldown")
+			@Comment({
+					"The cooldown in ticks between shots of the Impulse Cannon in recurse mode.",
+					"Note that this will lock the player out of all Impulse Cannons in their inventory for",
+					"this duration, and the duration will be multiplied by the number of ticks the cannon has",
+					"been charged for raised to the power of the recurse exponent."
+			})
+			public int recurseCooldown = 3;
+
+			@Name("RecurseRange")
+			@Comment({
+					"The range in meters of the Impulse Cannon's recurse attack.",
+					"Note that this will be multiplied by the number of ticks the cannon has been charged for",
+					"raised to the power of the recurse exponent."
+			})
+			public double recurseRange = 6;
 
 	    }
+
+		public static class ImpulseCannonAugments {
+
+			@Name("GyroscopeCorrectionAngle")
+			@Comment({"The maximum angle difference that the gyroscopic adjuster will correct, in degrees."})
+			@RangeDouble(min = 0, max = 90)
+			public float gyroscopeCorrectionAngle = 5;
+
+			@Name("HyperionEfficiencyFactor")
+			@Comment({"The impetus cost factor for the Hyperion augment."})
+			@RangeDouble(min = 1, max = 100)
+			public double hyperionEfficiencyFactor = 10;
+
+			@Name("EnergizerNormalFactor")
+			@Comment({"The normal damage factor for the energizer augment."})
+			@RangeDouble(min = 0, max = 10)
+			public float energizerNormalFactor = 0.5f;
+
+			@Name("EnergizerMagicFactor")
+			@Comment({"The magic damage factor for the energizer augment."})
+			@RangeDouble(min = 0, max = 10)
+			public float energizerMagicFactor = 1.5f;
+
+			@Name("DestabilizerNormalFactor")
+			@Comment({"The normal damage factor for the destabilizer augment."})
+			@RangeDouble(min = 0, max = 10)
+			public float destabilizerNormalFactor = 2.5f;
+
+			@Name("DestabilizerMagicFactor")
+			@Comment({"The magic damage factor for the destabilizer augment."})
+			@RangeDouble(min = 0, max = 10)
+			public float destabilizerMagicFactor = 0.5f;
+
+			@Name("SolidifierKnockbackFactor")
+			@Comment({"The knockback strength multiplier for the solidifier augment."})
+			@RangeDouble(min = 0, max = 10)
+			public double solidifierKnockbackStrength = 1f;
+
+			@Name("SolidifierBreakStrength")
+			@Comment({"The conversion rate of base damage to block breaking damage."})
+			@RangeDouble(min = 0, max = 100)
+			public float solidifierBreakStrength = 5f;
+
+			@Name("CustomAugmentExponent")
+			@Comment({ "The exponent that the effects from custom augments (e.g. frenzy modifier)",
+						"will be raised to when mounted on the cannon."})
+			@RangeDouble(min = 0.1, max = 1)
+			public double customAugmentExponent = 0.8f;
+		}
 	}
 
 	public static class Augment {
@@ -824,368 +985,446 @@ public final class TAConfigHolder {
     }
 
     public static void loadConfigValues(Side side) {
-	TAConfig.gauntletVisDiscounts.setValue(gameplay.gauntletVisDiscounts, side);
-	TAConfig.gauntletCooldownModifiers.setValue(gameplay.gauntletCooldownModifiers, side);
+		TAConfig.gauntletVisDiscounts.setValue(gameplay.gauntletVisDiscounts, side);
+		TAConfig.gauntletCooldownModifiers.setValue(gameplay.gauntletCooldownModifiers, side);
 
-	TAConfig.voidseerArea.setValue(gameplay.voidseerArea, side);
+		TAConfig.voidseerArea.setValue(gameplay.voidseerArea, side);
 
-	TAConfig.voidBootsLandSpeedBoost.setValue(gameplay.voidBootsLandSpeedBoost, side);
-	TAConfig.voidBootsWaterSpeedBoost.setValue(gameplay.voidBootsWaterSpeedBoost, side);
-	TAConfig.voidBootsJumpBoost.setValue(gameplay.voidBootsJumpBoost, side);
-	TAConfig.voidBootsJumpFactor.setValue(gameplay.voidBootsJumpFactor, side);
-	TAConfig.voidBootsStepHeight.setValue(gameplay.voidBootsStepHeight, side);
-	TAConfig.voidBootsSneakReduction.setValue(gameplay.voidBootsSneakReduction, side);
-	TAConfig.serverMovementCalculation.setValue(gameplay.serverMovementCalculation, side);
+		TAConfig.voidBootsLandSpeedBoost.setValue(gameplay.voidBootsLandSpeedBoost, side);
+		TAConfig.voidBootsWaterSpeedBoost.setValue(gameplay.voidBootsWaterSpeedBoost, side);
+		TAConfig.voidBootsJumpBoost.setValue(gameplay.voidBootsJumpBoost, side);
+		TAConfig.voidBootsJumpFactor.setValue(gameplay.voidBootsJumpFactor, side);
+		TAConfig.voidBootsStepHeight.setValue(gameplay.voidBootsStepHeight, side);
+		TAConfig.voidBootsSneakReduction.setValue(gameplay.voidBootsSneakReduction, side);
+		TAConfig.serverMovementCalculation.setValue(gameplay.serverMovementCalculation, side);
 
-	TAConfig.opWardOverride.setValue(gameplay.ward.opWardOverride, side);
-	TAConfig.singlePlayerWardOverride.setValue(gameplay.ward.singlePlayerWardOverride, side);
-	TAConfig.tileWardMode.setValue(gameplay.ward.tileWardMode, side);
-	TAConfig.disableExpensiveWardFeatures.setValue(gameplay.ward.disableExpensiveWardFeatures, side);
+		TAConfig.opWardOverride.setValue(gameplay.ward.opWardOverride, side);
+		TAConfig.singlePlayerWardOverride.setValue(gameplay.ward.singlePlayerWardOverride, side);
+		TAConfig.tileWardMode.setValue(gameplay.ward.tileWardMode, side);
+		TAConfig.disableExpensiveWardFeatures.setValue(gameplay.ward.disableExpensiveWardFeatures, side);
 
-	TAConfig.reducedEffects.setValue(client.reducedEffects, side);
-	TAConfig.disableCreativeOnlyText.setValue(client.disableCreativeOnlyText, side);
-	TAConfig.disableStabilizerText.setValue(client.disableStabilizerText, side);
-	TAConfig.bulkRenderDistance.setValue(client.bulkRenderDistance, side);
+		TAConfig.reducedEffects.setValue(client.reducedEffects, side);
+		TAConfig.disableCreativeOnlyText.setValue(client.disableCreativeOnlyText, side);
+		TAConfig.disableStabilizerText.setValue(client.disableStabilizerText, side);
+		TAConfig.bulkRenderDistance.setValue(client.bulkRenderDistance, side);
 
-	TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
-	TAConfig.defaultVoidBootsColor.setValue(gameplay.defaultVoidBootsColor, side);
+		TAConfig.defaultGauntletColors.setValue(gameplay.defaultGauntletColors, side);
+		TAConfig.defaultVoidBootsColor.setValue(gameplay.defaultVoidBootsColor, side);
 
-	TAConfig.emptinessMoveFactor.setValue(world.emptinessMoveFactor, side);
-	TAConfig.fractureGenChance.setValue(world.fractureGenChance, side);
-	TAConfig.fractureLocatorUpdateInterval.setValue(world.fractureLocatorUpdateInterval, side);
-	TAConfig.fracturesAlwaysTeleport.setValue(world.fracturesAlwaysTeleport, side);
+		TAConfig.emptinessMoveFactor.setValue(world.emptinessMoveFactor, side);
+		TAConfig.fractureGenChance.setValue(world.fractureGenChance, side);
+		TAConfig.fractureLocatorUpdateInterval.setValue(world.fractureLocatorUpdateInterval, side);
+		TAConfig.fracturesAlwaysTeleport.setValue(world.fracturesAlwaysTeleport, side);
 
-	TAConfig.gauntletCastAnimation.setValue(client.gauntletCastAnimation, side);
+		TAConfig.gauntletCastAnimation.setValue(client.gauntletCastAnimation, side);
 
-	TAConfig.terraformerImpetusCost.setValue((long) gameplay.impetus.terraformerCost, side);
-	TAConfig.shieldFocusImpetusCost.setValue((long) gameplay.impetus.shieldFocusCost, side);
+		TAConfig.terraformerImpetusCost.setValue((long) gameplay.impetus.terraformerCost, side);
+		TAConfig.shieldFocusImpetusCost.setValue((long) gameplay.impetus.shieldFocusCost, side);
 
-	TAConfig.impetusGeneratorEnergyPerImpetus.setValue(gameplay.impetus.impetusGenerator.energyPerImpetus, side);
-	TAConfig.impetusGeneratorMaxExtract.setValue(gameplay.impetus.impetusGenerator.maxExtract, side);
-	TAConfig.impetusGeneratorBufferSize.setValue(gameplay.impetus.impetusGenerator.bufferSize, side);
+		TAConfig.impetusGeneratorEnergyPerImpetus.setValue(gameplay.impetus.impetusGenerator.energyPerImpetus, side);
+		TAConfig.impetusGeneratorMaxExtract.setValue(gameplay.impetus.impetusGenerator.maxExtract, side);
+		TAConfig.impetusGeneratorBufferSize.setValue(gameplay.impetus.impetusGenerator.bufferSize, side);
 
-	TAConfig.allowWussRiftSeed.setValue(gameplay.allowWussRiftSeed, side);
+		TAConfig.allowWussRiftSeed.setValue(gameplay.allowWussRiftSeed, side);
 
-	TAConfig.cannonBeamDamage.setValue(gameplay.impetus.cannon.beamDamage, side);
-	TAConfig.cannonBeamCostInitial.setValue((long) gameplay.impetus.cannon.beamCostInitial, side);
-	TAConfig.cannonBeamCostTick.setValue(gameplay.impetus.cannon.beamCostTick, side);
-	TAConfig.cannonBeamRange.setValue(gameplay.impetus.cannon.beamRange, side);
+		TAConfig.cannonBeamDamage.setValue(gameplay.impetus.cannonConvert.beamDamage, side);
+		TAConfig.cannonBeamCostInitial.setValue(gameplay.impetus.cannonConvert.beamCostInitial, side);
+		TAConfig.cannonBeamCostTick.setValue(gameplay.impetus.cannonConvert.beamCostTick, side);
+		TAConfig.cannonBeamRange.setValue(gameplay.impetus.cannonConvert.beamRange, side);
 
-	TAConfig.cannonRailgunDamage.setValue(gameplay.impetus.cannon.railgunDamage, side);
-	TAConfig.cannonRailgunCost.setValue((long) gameplay.impetus.cannon.railgunCost, side);
-	TAConfig.cannonRailgunCooldown.setValue(gameplay.impetus.cannon.railgunCooldown, side);
-	TAConfig.cannonRailgunRange.setValue(gameplay.impetus.cannon.railgunRange, side);
+		TAConfig.cannonRailgunDamage.setValue(gameplay.impetus.cannonConvert.railgunDamage, side);
+		TAConfig.cannonRailgunCost.setValue(gameplay.impetus.cannonConvert.railgunCost, side);
+		TAConfig.cannonRailgunCooldown.setValue(gameplay.impetus.cannonConvert.railgunCooldown, side);
+		TAConfig.cannonRailgunRange.setValue(gameplay.impetus.cannonConvert.railgunRange, side);
 
-	TAConfig.cannonBurstDamage.setValue(gameplay.impetus.cannon.burstDamage, side);
-	TAConfig.cannonBurstCost.setValue((long) gameplay.impetus.cannon.burstCost, side);
-	TAConfig.cannonBurstCooldown.setValue(gameplay.impetus.cannon.burstCooldown, side);
-	TAConfig.cannonBurstRange.setValue(gameplay.impetus.cannon.burstRange, side);
+		TAConfig.cannonBurstDamage.setValue(gameplay.impetus.cannonConvert.burstDamage, side);
+		TAConfig.cannonBurstCost.setValue(gameplay.impetus.cannonConvert.burstCost, side);
+		TAConfig.cannonBurstCooldown.setValue(gameplay.impetus.cannonConvert.burstCooldown, side);
+		TAConfig.cannonBurstRange.setValue(gameplay.impetus.cannonConvert.burstRange, side);
+		TAConfig.cannonBurstCount.setValue(gameplay.impetus.cannonConvert.burstCount, side);
+		TAConfig.cannonBurstDelay.setValue(gameplay.impetus.cannonConvert.burstDelay, side);
 
-	TAConfig.primalCutterDamage.setValue(gameplay.primalCutterDamage, side);
+		TAConfig.cannonCrystalDamage.setValue(gameplay.impetus.cannonConvert.crystalDamage, side);
+		TAConfig.cannonCrystalBeamCount.setValue(gameplay.impetus.cannonConvert.crystalBeamCount, side);
+		TAConfig.cannonCrystalSpread.setValue(gameplay.impetus.cannonConvert.crystalSpread, side);
+		TAConfig.cannonCrystalCostInitial.setValue(gameplay.impetus.cannonConvert.crystalCostInitial, side);
+		TAConfig.cannonCrystalCostTick.setValue(gameplay.impetus.cannonConvert.crystalCostTick, side);
+		TAConfig.cannonCrystalRange.setValue(gameplay.impetus.cannonConvert.crystalRange, side);
 
-	TAConfig.deniedCategories.setValue(gameplay.deniedCategories, side);
+		TAConfig.cannonRecurseDamage.setValue(gameplay.impetus.cannonConvert.recurseDamage, side);
+		TAConfig.cannonRecurseExponent.setValue(gameplay.impetus.cannonConvert.recurseExponent, side);
+		TAConfig.cannonRecurseCostInitial.setValue(gameplay.impetus.cannonConvert.recurseCostInitial, side);
+		TAConfig.cannonRecurseCostTick.setValue(gameplay.impetus.cannonConvert.recurseCostTick, side);
+		TAConfig.cannonRecurseCooldown.setValue(gameplay.impetus.cannonConvert.recurseCooldown, side);
+		TAConfig.cannonRecurseRange.setValue(gameplay.impetus.cannonConvert.recurseRange, side);
 
-	TAConfig.generateSpires.setValue(world.generateSpires, side);
-	TAConfig.spireMinDist.setValue(world.spireMinDist, side);
-	TAConfig.spireSpacing.setValue(world.spireSpacing, side);
+		TAConfig.cannonGyroscopeCorrectionAngle.setValue(gameplay.impetus.cannonAugment.gyroscopeCorrectionAngle, side);
+		TAConfig.cannonHyperionEfficiencyFactor.setValue(gameplay.impetus.cannonAugment.hyperionEfficiencyFactor, side);
+		TAConfig.cannonEnergizerMagicFactor.setValue(gameplay.impetus.cannonAugment.energizerMagicFactor, side);
+		TAConfig.cannonEnergizerNormalFactor.setValue(gameplay.impetus.cannonAugment.energizerNormalFactor, side);
+		TAConfig.cannonDestabilizerMagicFactor.setValue(gameplay.impetus.cannonAugment.destabilizerMagicFactor, side);
+		TAConfig.cannonDestabilizerNormalFactor.setValue(gameplay.impetus.cannonAugment.destabilizerNormalFactor, side);
+		TAConfig.cannonSolidifierKnockbackStrength.setValue(gameplay.impetus.cannonAugment.solidifierKnockbackStrength, side);
+		TAConfig.cannonSolidifierBreakStrength.setValue(gameplay.impetus.cannonAugment.solidifierBreakStrength, side);
+		TAConfig.cannonCustomAugmentExponent.setValue(gameplay.impetus.cannonAugment.customAugmentExponent, side);
 
-	TAConfig.experienceModifierCap.setValue(gameplay.augment.experienceModifierCap, side);
-	TAConfig.experienceModifierBase.setValue(gameplay.augment.experienceModifierBase, side);
-	TAConfig.experienceModifierScale.setValue(gameplay.augment.experienceModifierScale, side);
+		TAConfig.primalCutterDamage.setValue(gameplay.primalCutterDamage, side);
 
-	TAConfig.elementalModifierPositiveFactor.setValue(gameplay.augment.elementalModifierPositiveFactor, side);
-	TAConfig.elementalModifierNegativeFactor.setValue(gameplay.augment.elementalModifierNegativeFactor, side);
+		TAConfig.deniedCategories.setValue(gameplay.deniedCategories, side);
 
-	TAConfig.dimensionalModifierOverworldPostiveFactor
-	.setValue(gameplay.augment.dimensionalModifierOverworldPositiveFactor, side);
-	TAConfig.dimensionalModifierOverworldNegativeFactor
-	.setValue(gameplay.augment.dimensionalModifierOverworldNegativeFactor, side);
-	TAConfig.dimensionalModifierOverworldDims
-	.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierOverworldDims), side);
+		TAConfig.generateSpires.setValue(world.generateSpires, side);
+		TAConfig.spireMinDist.setValue(world.spireMinDist, side);
+		TAConfig.spireSpacing.setValue(world.spireSpacing, side);
 
-	TAConfig.dimensionalModifierNetherPostiveFactor
-	.setValue(gameplay.augment.dimensionalModifierNetherPositiveFactor, side);
-	TAConfig.dimensionalModifierNetherNegativeFactor
-	.setValue(gameplay.augment.dimensionalModifierNetherNegativeFactor, side);
-	TAConfig.dimensionalModifierNetherDims
-	.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierNetherDims), side);
+		TAConfig.experienceModifierCap.setValue(gameplay.augment.experienceModifierCap, side);
+		TAConfig.experienceModifierBase.setValue(gameplay.augment.experienceModifierBase, side);
+		TAConfig.experienceModifierScale.setValue(gameplay.augment.experienceModifierScale, side);
 
-	TAConfig.dimensionalModifierEndPostiveFactor.setValue(gameplay.augment.dimensionalModifierEndPositiveFactor,
-		side);
-	TAConfig.dimensionalModifierEndNegativeFactor.setValue(gameplay.augment.dimensionalModifierEndNegativeFactor,
-		side);
-	TAConfig.dimensionalModifierEndDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEndDims),
-		side);
+		TAConfig.elementalModifierPositiveFactor.setValue(gameplay.augment.elementalModifierPositiveFactor, side);
+		TAConfig.elementalModifierNegativeFactor.setValue(gameplay.augment.elementalModifierNegativeFactor, side);
 
-	TAConfig.dimensionalModifierEmptinessPostiveFactor
-	.setValue(gameplay.augment.dimensionalModifierEmptinessPositiveFactor, side);
-	TAConfig.dimensionalModifierEmptinessNegativeFactor
-	.setValue(gameplay.augment.dimensionalModifierEmptinessNegativeFactor, side);
-	TAConfig.dimensionalModifierEmptinessDims
-	.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEmptinessDims), side);
+		TAConfig.dimensionalModifierOverworldPostiveFactor
+		.setValue(gameplay.augment.dimensionalModifierOverworldPositiveFactor, side);
+		TAConfig.dimensionalModifierOverworldNegativeFactor
+		.setValue(gameplay.augment.dimensionalModifierOverworldNegativeFactor, side);
+		TAConfig.dimensionalModifierOverworldDims
+		.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierOverworldDims), side);
 
-	TAConfig.frenzyModifierScaleFactor.setValue(gameplay.augment.frenzyModifierScale, side);
-	TAConfig.frenzyModifierCooldown.setValue(gameplay.augment.frenzyModifierCooldown, side);
-	TAConfig.frenzyModifierMaxLevel.setValue(gameplay.augment.frenzyModifierMaxLevel, side);
+		TAConfig.dimensionalModifierNetherPostiveFactor
+		.setValue(gameplay.augment.dimensionalModifierNetherPositiveFactor, side);
+		TAConfig.dimensionalModifierNetherNegativeFactor
+		.setValue(gameplay.augment.dimensionalModifierNetherNegativeFactor, side);
+		TAConfig.dimensionalModifierNetherDims
+		.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierNetherDims), side);
 
-	TAConfig.impetusConductorFactor.setValue(gameplay.augment.impetusConductorFactor, side);
+		TAConfig.dimensionalModifierEndPostiveFactor.setValue(gameplay.augment.dimensionalModifierEndPositiveFactor,
+			side);
+		TAConfig.dimensionalModifierEndNegativeFactor.setValue(gameplay.augment.dimensionalModifierEndNegativeFactor,
+			side);
+		TAConfig.dimensionalModifierEndDims.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEndDims),
+			side);
 
-	TAConfig.movementCompat.setValue(gameplay.movementCompat, side);
+		TAConfig.dimensionalModifierEmptinessPostiveFactor
+		.setValue(gameplay.augment.dimensionalModifierEmptinessPositiveFactor, side);
+		TAConfig.dimensionalModifierEmptinessNegativeFactor
+		.setValue(gameplay.augment.dimensionalModifierEmptinessNegativeFactor, side);
+		TAConfig.dimensionalModifierEmptinessDims
+		.setValue(ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEmptinessDims), side);
 
-	TAConfig.baseHarnessSpeed.setValue(gameplay.harness.baseHarnessSpeed, side);
-	TAConfig.baseHarnessCost.setValue(gameplay.harness.baseHarnessCost, side);
+		TAConfig.frenzyModifierScaleFactor.setValue(gameplay.augment.frenzyModifierScale, side);
+		TAConfig.frenzyModifierCooldown.setValue(gameplay.augment.frenzyModifierCooldown, side);
+		TAConfig.frenzyModifierMaxLevel.setValue(gameplay.augment.frenzyModifierMaxLevel, side);
 
-	TAConfig.gyroscopeHarnessSpeed.setValue(gameplay.harness.gyroscopeHarnessSpeed, side);
-	TAConfig.gyroscopeHarnessCost.setValue(gameplay.harness.gyroscopeHarnessCost, side);
+		TAConfig.impetusConductorFactor.setValue(gameplay.augment.impetusConductorFactor, side);
 
-	TAConfig.girdleHarnessSpeed.setValue(gameplay.harness.girdleHarnessSpeed, side);
-	TAConfig.girdleHarnessCost.setValue(gameplay.harness.girdleHarnessCost, side);
+		TAConfig.movementCompat.setValue(gameplay.movementCompat, side);
 
-	TAConfig.elytraHarnessBoostCost.setValue(gameplay.harness.elytraHarnessBoostCost, side);
+		TAConfig.baseHarnessSpeed.setValue(gameplay.harness.baseHarnessSpeed, side);
+		TAConfig.baseHarnessCost.setValue(gameplay.harness.baseHarnessCost, side);
 
-	TAConfig.allowOfflinePlayerResearch.setValue(gameplay.allowOfflinePlayerResearch, side);
+		TAConfig.gyroscopeHarnessSpeed.setValue(gameplay.harness.gyroscopeHarnessSpeed, side);
+		TAConfig.gyroscopeHarnessCost.setValue(gameplay.harness.gyroscopeHarnessCost, side);
 
-	TAConfig.undeadEldritchGuardians.setValue(gameplay.undeadEldritchGuardians, side);
+		TAConfig.girdleHarnessSpeed.setValue(gameplay.harness.girdleHarnessSpeed, side);
+		TAConfig.girdleHarnessCost.setValue(gameplay.harness.girdleHarnessCost, side);
+
+		TAConfig.elytraHarnessBoostCost.setValue(gameplay.harness.elytraHarnessBoostCost, side);
+
+		TAConfig.allowOfflinePlayerResearch.setValue(gameplay.allowOfflinePlayerResearch, side);
+
+		TAConfig.undeadEldritchGuardians.setValue(gameplay.undeadEldritchGuardians, side);
+
+		TAConfig.debugMode.setValue(general.debugMode, side);
     }
 
     public static void syncLocally() {
-	ConfigManager.sync(ThaumicAugmentationAPI.MODID, Type.INSTANCE);
+		ConfigManager.sync(ThaumicAugmentationAPI.MODID, Type.INSTANCE);
     }
 
     public static void syncConfig() {
-	for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-		.getPlayers())
-	    syncConfig(player);
+		for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+			.getPlayers())
+			syncConfig(player);
     }
 
     public static void syncConfig(EntityPlayerMP target) {
-	TANetwork.INSTANCE.sendTo(new PacketConfigSync(TAConfigManager.createSyncBuffer(Side.CLIENT)), target);
+		TANetwork.INSTANCE.sendTo(new PacketConfigSync(TAConfigManager.createSyncBuffer(Side.CLIENT)), target);
     }
 
     public static void loadOrSyncConfig(EntityPlayer player) {
-	if (!player.world.isRemote && player instanceof EntityPlayerMP) {
-	    loadConfigValues(Side.SERVER);
-	    syncConfig((EntityPlayerMP) player);
-	} else if (!player.world.isRemote)
-	    loadConfigValues(Side.SERVER);
-	else
-	    loadConfigValues(Side.CLIENT);
+		if (!player.world.isRemote && player instanceof EntityPlayerMP) {
+			loadConfigValues(Side.SERVER);
+			syncConfig((EntityPlayerMP) player);
+		} else if (!player.world.isRemote)
+			loadConfigValues(Side.SERVER);
+		else
+			loadConfigValues(Side.CLIENT);
     }
 
     public static void preInit() {
-	TAConfig.gauntletVisDiscounts = TAConfigManager
-		.addOption(new ConfigOptionDoubleList(false, gameplay.gauntletVisDiscounts));
-	TAConfig.gauntletCooldownModifiers = TAConfigManager
-		.addOption(new ConfigOptionDoubleList(false, gameplay.gauntletCooldownModifiers));
+		TAConfig.gauntletVisDiscounts = TAConfigManager
+			.addOption(new ConfigOptionDoubleList(false, gameplay.gauntletVisDiscounts));
+		TAConfig.gauntletCooldownModifiers = TAConfigManager
+			.addOption(new ConfigOptionDoubleList(false, gameplay.gauntletCooldownModifiers));
 
-	TAConfig.voidseerArea = TAConfigManager.addOption(new ConfigOptionInt(false, gameplay.voidseerArea));
+		TAConfig.voidseerArea = TAConfigManager.addOption(new ConfigOptionInt(false, gameplay.voidseerArea));
 
-	TAConfig.voidBootsLandSpeedBoost = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.voidBootsLandSpeedBoost));
-	TAConfig.voidBootsWaterSpeedBoost = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.voidBootsWaterSpeedBoost));
-	TAConfig.voidBootsJumpBoost = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.voidBootsJumpBoost));
-	TAConfig.voidBootsJumpFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.voidBootsJumpFactor));
-	TAConfig.voidBootsStepHeight = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.voidBootsStepHeight));
-	TAConfig.voidBootsSneakReduction = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.voidBootsSneakReduction));
-	TAConfig.serverMovementCalculation = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, gameplay.serverMovementCalculation));
+		TAConfig.voidBootsLandSpeedBoost = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.voidBootsLandSpeedBoost));
+		TAConfig.voidBootsWaterSpeedBoost = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.voidBootsWaterSpeedBoost));
+		TAConfig.voidBootsJumpBoost = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.voidBootsJumpBoost));
+		TAConfig.voidBootsJumpFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.voidBootsJumpFactor));
+		TAConfig.voidBootsStepHeight = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.voidBootsStepHeight));
+		TAConfig.voidBootsSneakReduction = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.voidBootsSneakReduction));
+		TAConfig.serverMovementCalculation = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, gameplay.serverMovementCalculation));
 
-	TAConfig.opWardOverride = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, gameplay.ward.opWardOverride));
-	TAConfig.singlePlayerWardOverride = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, gameplay.ward.singlePlayerWardOverride));
-	TAConfig.disableWardFocus = TAConfigManager
-		.addOption(new ConfigOptionBoolean(true, gameplay.ward.disableWardFocus));
-	TAConfig.tileWardMode = TAConfigManager.addOption(
-		new ConfigOptionEnum<>(false, gameplay.ward.tileWardMode, new IEnumSerializer<TileWardMode>() {
+		TAConfig.opWardOverride = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, gameplay.ward.opWardOverride));
+		TAConfig.singlePlayerWardOverride = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, gameplay.ward.singlePlayerWardOverride));
+		TAConfig.disableWardFocus = TAConfigManager
+			.addOption(new ConfigOptionBoolean(true, gameplay.ward.disableWardFocus));
+		TAConfig.tileWardMode = TAConfigManager.addOption(
+			new ConfigOptionEnum<>(false, gameplay.ward.tileWardMode, new IEnumSerializer<TileWardMode>() {
 
-		    @Override
-		    public void serialize(TileWardMode value, ByteBuf buf) {
-			buf.writeInt(value.ordinal());
-		    }
+				@Override
+				public void serialize(TileWardMode value, ByteBuf buf) {
+				buf.writeInt(value.ordinal());
+				}
 
-		    @Override
-		    public TileWardMode deserialize(ByteBuf buf) {
-			return TileWardMode.values()[Math.min(TileWardMode.values().length - 1,
-				Math.max(buf.readInt(), 0))];
-		    }
+				@Override
+				public TileWardMode deserialize(ByteBuf buf) {
+				return TileWardMode.values()[Math.min(TileWardMode.values().length - 1,
+					Math.max(buf.readInt(), 0))];
+				}
 
-		}));
-	TAConfig.disableExpensiveWardFeatures = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, gameplay.ward.disableExpensiveWardFeatures));
+			}));
+		TAConfig.disableExpensiveWardFeatures = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, gameplay.ward.disableExpensiveWardFeatures));
 
-	TAConfig.reducedEffects = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.reducedEffects));
-	TAConfig.optimizedFluxRiftRenderer = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, client.optimizedFluxRiftRenderer));
-	TAConfig.enableBoosterKeybind = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, client.enableBoosterKeybind));
-	TAConfig.disableShaders = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableShaders));
-	TAConfig.morphicArmorExclusions = TAConfigManager
-		.addOption(new ConfigOptionStringList(false, client.morphicArmorExclusions));
-	TAConfig.disableCreativeOnlyText = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, client.disableCreativeOnlyText));
-	TAConfig.disableStabilizerText = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, client.disableStabilizerText));
-	TAConfig.disableFramebuffers = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, client.disableFramebuffers));
-	TAConfig.bulkRenderDistance = TAConfigManager.addOption(new ConfigOptionInt(false, client.bulkRenderDistance));
+		TAConfig.reducedEffects = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.reducedEffects));
+		TAConfig.optimizedFluxRiftRenderer = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, client.optimizedFluxRiftRenderer));
+		TAConfig.enableBoosterKeybind = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, client.enableBoosterKeybind));
+		TAConfig.disableShaders = TAConfigManager.addOption(new ConfigOptionBoolean(false, client.disableShaders));
+		TAConfig.morphicArmorExclusions = TAConfigManager
+			.addOption(new ConfigOptionStringList(false, client.morphicArmorExclusions));
+		TAConfig.disableCreativeOnlyText = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, client.disableCreativeOnlyText));
+		TAConfig.disableStabilizerText = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, client.disableStabilizerText));
+		TAConfig.disableFramebuffers = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, client.disableFramebuffers));
+		TAConfig.bulkRenderDistance = TAConfigManager.addOption(new ConfigOptionInt(false, client.bulkRenderDistance));
 
-	TAConfig.defaultGauntletColors = TAConfigManager
-		.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
-	TAConfig.defaultVoidBootsColor = TAConfigManager
-		.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));
+		TAConfig.defaultGauntletColors = TAConfigManager
+			.addOption(new ConfigOptionIntList(true, gameplay.defaultGauntletColors));
+		TAConfig.defaultVoidBootsColor = TAConfigManager
+			.addOption(new ConfigOptionInt(true, gameplay.defaultVoidBootsColor));
 
-	TAConfig.emptinessDimID = TAConfigManager.addOption(new ConfigOptionInt(true, world.emptinessDimID));
-	TAConfig.emptinessMoveFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, world.emptinessMoveFactor));
-	TAConfig.fractureGenChance = TAConfigManager.addOption(new ConfigOptionInt(false, world.fractureGenChance));
+		TAConfig.emptinessDimID = TAConfigManager.addOption(new ConfigOptionInt(true, world.emptinessDimID));
+		TAConfig.emptinessMoveFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, world.emptinessMoveFactor));
+		TAConfig.fractureGenChance = TAConfigManager.addOption(new ConfigOptionInt(false, world.fractureGenChance));
 
-	TAConfig.fractureDimList = TAConfigManager.addOption(new ConfigOptionStringList(false, world.fractureDimList));
-	TAConfig.fractureLocatorUpdateInterval = TAConfigManager
-		.addOption(new ConfigOptionInt(false, world.fractureLocatorUpdateInterval));
-	TAConfig.fracturesAlwaysTeleport = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, world.fracturesAlwaysTeleport));
-	TAConfig.disableEmptiness = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.disableEmptiness));
+		TAConfig.fractureDimList = TAConfigManager.addOption(new ConfigOptionStringList(false, world.fractureDimList));
+		TAConfig.fractureLocatorUpdateInterval = TAConfigManager
+			.addOption(new ConfigOptionInt(false, world.fractureLocatorUpdateInterval));
+		TAConfig.fracturesAlwaysTeleport = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, world.fracturesAlwaysTeleport));
+		TAConfig.disableEmptiness = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.disableEmptiness));
 
-	TAConfig.disableCoremod = TAConfigManager.addOption(new ConfigOptionBoolean(false, general.disableCoremod));
-	TAConfig.disabledTransformers = TAConfigManager
-		.addOption(new ConfigOptionStringList(false, general.disabledTransformers));
+		TAConfig.disableCoremod = TAConfigManager.addOption(new ConfigOptionBoolean(false, general.disableCoremod));
+		TAConfig.disabledTransformers = TAConfigManager
+			.addOption(new ConfigOptionStringList(false, general.disabledTransformers));
+		TAConfig.debugMode = TAConfigManager.addOption(new ConfigOptionBoolean(false, general.debugMode));
 
-	TAConfig.gauntletCastAnimation = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, client.gauntletCastAnimation));
+		TAConfig.gauntletCastAnimation = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, client.gauntletCastAnimation));
 
-	TAConfig.terraformerImpetusCost = TAConfigManager
-		.addOption(new ConfigOptionLong(false, (long) gameplay.impetus.terraformerCost));
-	TAConfig.shieldFocusImpetusCost = TAConfigManager
-		.addOption(new ConfigOptionLong(false, (long) gameplay.impetus.shieldFocusCost));
+		TAConfig.terraformerImpetusCost = TAConfigManager
+			.addOption(new ConfigOptionLong(false, (long) gameplay.impetus.terraformerCost));
+		TAConfig.shieldFocusImpetusCost = TAConfigManager
+			.addOption(new ConfigOptionLong(false, (long) gameplay.impetus.shieldFocusCost));
 
-	TAConfig.impetusGeneratorEnergyPerImpetus = TAConfigManager
-		.addOption(new ConfigOptionInt(false, gameplay.impetus.impetusGenerator.energyPerImpetus));
-	TAConfig.impetusGeneratorMaxExtract = TAConfigManager
-		.addOption(new ConfigOptionInt(false, gameplay.impetus.impetusGenerator.maxExtract));
-	TAConfig.impetusGeneratorBufferSize = TAConfigManager
-		.addOption(new ConfigOptionInt(true, gameplay.impetus.impetusGenerator.bufferSize));
+		TAConfig.impetusGeneratorEnergyPerImpetus = TAConfigManager
+			.addOption(new ConfigOptionInt(false, gameplay.impetus.impetusGenerator.energyPerImpetus));
+		TAConfig.impetusGeneratorMaxExtract = TAConfigManager
+			.addOption(new ConfigOptionInt(false, gameplay.impetus.impetusGenerator.maxExtract));
+		TAConfig.impetusGeneratorBufferSize = TAConfigManager
+			.addOption(new ConfigOptionInt(true, gameplay.impetus.impetusGenerator.bufferSize));
 
-	TAConfig.allowWussRiftSeed = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, gameplay.allowWussRiftSeed));
+		TAConfig.allowWussRiftSeed = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, gameplay.allowWussRiftSeed));
 
-	TAConfig.cannonBeamDamage = TAConfigManager
-		.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannon.beamDamage));
-	TAConfig.cannonBeamCostInitial = TAConfigManager
-		.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannon.beamCostInitial));
-	TAConfig.cannonBeamCostTick = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.beamCostTick));
-	TAConfig.cannonBeamRange = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.beamRange));
+		TAConfig.cannonBeamDamage = TAConfigManager
+			.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannonConvert.beamDamage));
+		TAConfig.cannonBeamCostInitial = TAConfigManager
+			.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.beamCostInitial));
+		TAConfig.cannonBeamCostTick = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.beamCostTick));
+		TAConfig.cannonBeamRange = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.beamRange));
 
-	TAConfig.cannonRailgunDamage = TAConfigManager
-		.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannon.railgunDamage));
-	TAConfig.cannonRailgunCost = TAConfigManager
-		.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannon.railgunCost));
-	TAConfig.cannonRailgunCooldown = TAConfigManager
-		.addOption(new ConfigOptionInt(true, gameplay.impetus.cannon.railgunCooldown));
-	TAConfig.cannonRailgunRange = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.railgunRange));
+		TAConfig.cannonRailgunDamage = TAConfigManager
+			.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannonConvert.railgunDamage));
+		TAConfig.cannonRailgunCost = TAConfigManager
+			.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.railgunCost));
+		TAConfig.cannonRailgunCooldown = TAConfigManager
+			.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.railgunCooldown));
+		TAConfig.cannonRailgunRange = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.railgunRange));
 
-	TAConfig.cannonBurstDamage = TAConfigManager
-		.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannon.burstDamage));
-	TAConfig.cannonBurstCost = TAConfigManager
-		.addOption(new ConfigOptionLong(true, (long) gameplay.impetus.cannon.burstCost));
-	TAConfig.cannonBurstCooldown = TAConfigManager
-		.addOption(new ConfigOptionInt(true, gameplay.impetus.cannon.burstCooldown));
-	TAConfig.cannonBurstRange = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannon.burstRange));
+		TAConfig.cannonBurstDamage = TAConfigManager
+			.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannonConvert.burstDamage));
+		TAConfig.cannonBurstCost = TAConfigManager
+			.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.burstCost));
+		TAConfig.cannonBurstCooldown = TAConfigManager
+			.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.burstCooldown));
+		TAConfig.cannonBurstRange = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.burstRange));
+		TAConfig.cannonBurstCount = TAConfigManager
+				.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.burstCount));
+		TAConfig.cannonBurstDelay = TAConfigManager
+				.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.burstDelay));
 
-	TAConfig.primalCutterDamage = TAConfigManager
-		.addOption(new ConfigOptionFloat(false, gameplay.primalCutterDamage));
+		TAConfig.cannonCrystalDamage = TAConfigManager
+				.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannonConvert.crystalBeamCount));
+		TAConfig.cannonCrystalBeamCount = TAConfigManager
+				.addOption( new ConfigOptionInt(true, gameplay.impetus.cannonConvert.crystalBeamCount));
+		TAConfig.cannonCrystalSpread = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonConvert.crystalSpread));
+		TAConfig.cannonCrystalCostInitial = TAConfigManager
+				.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.crystalCostInitial));
+		TAConfig.cannonCrystalCostTick = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.crystalCostTick));
+		TAConfig.cannonCrystalRange = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.crystalRange));
 
-	TAConfig.deniedCategories = TAConfigManager
-		.addOption(new ConfigOptionStringList(true, gameplay.deniedCategories));
+		TAConfig.cannonRecurseDamage = TAConfigManager
+				.addOption(new ConfigOptionFloat(false, gameplay.impetus.cannonConvert.recurseDamage));
+		TAConfig.cannonRecurseExponent = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.recurseExponent));
+		TAConfig.cannonRecurseCostInitial = TAConfigManager
+				.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.recurseCostInitial));
+		TAConfig.cannonRecurseCostTick = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.recurseCostTick));
+		TAConfig.cannonRecurseCooldown = TAConfigManager
+				.addOption(new ConfigOptionInt(true, gameplay.impetus.cannonConvert.recurseCooldown));
+		TAConfig.cannonRecurseRange = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonConvert.recurseRange));
 
-	TAConfig.generateSpires = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.generateSpires));
-	TAConfig.spireMinDist = TAConfigManager.addOption(new ConfigOptionInt(false, world.spireMinDist));
-	TAConfig.spireSpacing = TAConfigManager.addOption(new ConfigOptionInt(false, world.spireSpacing));
+		TAConfig.cannonGyroscopeCorrectionAngle = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.gyroscopeCorrectionAngle));
+		TAConfig.cannonHyperionEfficiencyFactor = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonAugment.hyperionEfficiencyFactor));
+		TAConfig.cannonEnergizerMagicFactor = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.energizerMagicFactor));
+		TAConfig.cannonEnergizerNormalFactor = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.energizerNormalFactor));
+		TAConfig.cannonDestabilizerMagicFactor = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.destabilizerMagicFactor));
+		TAConfig.cannonDestabilizerNormalFactor = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.destabilizerNormalFactor));
+		TAConfig.cannonSolidifierKnockbackStrength = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonAugment.solidifierKnockbackStrength));
+		TAConfig.cannonSolidifierBreakStrength = TAConfigManager
+				.addOption(new ConfigOptionFloat(true, gameplay.impetus.cannonAugment.solidifierBreakStrength));
+		TAConfig.cannonCustomAugmentExponent = TAConfigManager
+				.addOption(new ConfigOptionDouble(true, gameplay.impetus.cannonAugment.customAugmentExponent));
 
-	TAConfig.experienceModifierCap = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.experienceModifierCap));
-	TAConfig.experienceModifierBase = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.experienceModifierBase));
-	TAConfig.experienceModifierScale = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.experienceModifierScale));
+		TAConfig.primalCutterDamage = TAConfigManager
+			.addOption(new ConfigOptionFloat(false, gameplay.primalCutterDamage));
 
-	TAConfig.elementalModifierPositiveFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.elementalModifierPositiveFactor));
-	TAConfig.elementalModifierNegativeFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.elementalModifierNegativeFactor));
+		TAConfig.deniedCategories = TAConfigManager
+			.addOption(new ConfigOptionStringList(true, gameplay.deniedCategories));
 
-	TAConfig.dimensionalModifierOverworldPostiveFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierOverworldPositiveFactor));
-	TAConfig.dimensionalModifierOverworldNegativeFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierOverworldNegativeFactor));
-	TAConfig.dimensionalModifierOverworldDims = TAConfigManager.addOption(
-		new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierOverworldDims)));
+		TAConfig.generateSpires = TAConfigManager.addOption(new ConfigOptionBoolean(false, world.generateSpires));
+		TAConfig.spireMinDist = TAConfigManager.addOption(new ConfigOptionInt(false, world.spireMinDist));
+		TAConfig.spireSpacing = TAConfigManager.addOption(new ConfigOptionInt(false, world.spireSpacing));
 
-	TAConfig.dimensionalModifierNetherPostiveFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierNetherPositiveFactor));
-	TAConfig.dimensionalModifierNetherNegativeFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierNetherNegativeFactor));
-	TAConfig.dimensionalModifierNetherDims = TAConfigManager.addOption(
-		new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierNetherDims)));
+		TAConfig.experienceModifierCap = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.experienceModifierCap));
+		TAConfig.experienceModifierBase = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.experienceModifierBase));
+		TAConfig.experienceModifierScale = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.experienceModifierScale));
 
-	TAConfig.dimensionalModifierEndPostiveFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEndPositiveFactor));
-	TAConfig.dimensionalModifierEndNegativeFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEndNegativeFactor));
-	TAConfig.dimensionalModifierEndDims = TAConfigManager.addOption(
-		new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEndDims)));
+		TAConfig.elementalModifierPositiveFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.elementalModifierPositiveFactor));
+		TAConfig.elementalModifierNegativeFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.elementalModifierNegativeFactor));
 
-	TAConfig.dimensionalModifierEmptinessPostiveFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEmptinessPositiveFactor));
-	TAConfig.dimensionalModifierEmptinessNegativeFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEmptinessNegativeFactor));
-	TAConfig.dimensionalModifierEmptinessDims = TAConfigManager.addOption(
-		new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEmptinessDims)));
+		TAConfig.dimensionalModifierOverworldPostiveFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierOverworldPositiveFactor));
+		TAConfig.dimensionalModifierOverworldNegativeFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierOverworldNegativeFactor));
+		TAConfig.dimensionalModifierOverworldDims = TAConfigManager.addOption(
+			new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierOverworldDims)));
 
-	TAConfig.frenzyModifierScaleFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.frenzyModifierScale));
-	TAConfig.frenzyModifierCooldown = TAConfigManager
-		.addOption(new ConfigOptionInt(false, gameplay.augment.frenzyModifierCooldown));
-	TAConfig.frenzyModifierMaxLevel = TAConfigManager
-		.addOption(new ConfigOptionInt(false, gameplay.augment.frenzyModifierMaxLevel));
+		TAConfig.dimensionalModifierNetherPostiveFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierNetherPositiveFactor));
+		TAConfig.dimensionalModifierNetherNegativeFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierNetherNegativeFactor));
+		TAConfig.dimensionalModifierNetherDims = TAConfigManager.addOption(
+			new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierNetherDims)));
 
-	TAConfig.impetusConductorFactor = TAConfigManager
-		.addOption(new ConfigOptionDouble(false, gameplay.augment.impetusConductorFactor));
+		TAConfig.dimensionalModifierEndPostiveFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEndPositiveFactor));
+		TAConfig.dimensionalModifierEndNegativeFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEndNegativeFactor));
+		TAConfig.dimensionalModifierEndDims = TAConfigManager.addOption(
+			new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEndDims)));
 
-	TAConfig.movementCompat = TAConfigManager.addOption(new ConfigOptionBoolean(true, gameplay.movementCompat));
+		TAConfig.dimensionalModifierEmptinessPostiveFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEmptinessPositiveFactor));
+		TAConfig.dimensionalModifierEmptinessNegativeFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.dimensionalModifierEmptinessNegativeFactor));
+		TAConfig.dimensionalModifierEmptinessDims = TAConfigManager.addOption(
+			new ConfigOptionIntSet(false, ImmutableSet.copyOf(gameplay.augment.dimensionalModifierEmptinessDims)));
 
-	TAConfig.baseHarnessSpeed = TAConfigManager
-		.addOption(new ConfigOptionFloat(true, gameplay.harness.baseHarnessSpeed));
-	TAConfig.baseHarnessCost = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.harness.baseHarnessCost));
+		TAConfig.frenzyModifierScaleFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.frenzyModifierScale));
+		TAConfig.frenzyModifierCooldown = TAConfigManager
+			.addOption(new ConfigOptionInt(false, gameplay.augment.frenzyModifierCooldown));
+		TAConfig.frenzyModifierMaxLevel = TAConfigManager
+			.addOption(new ConfigOptionInt(false, gameplay.augment.frenzyModifierMaxLevel));
 
-	TAConfig.gyroscopeHarnessSpeed = TAConfigManager
-		.addOption(new ConfigOptionFloat(true, gameplay.harness.gyroscopeHarnessSpeed));
-	TAConfig.gyroscopeHarnessCost = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.harness.gyroscopeHarnessCost));
+		TAConfig.impetusConductorFactor = TAConfigManager
+			.addOption(new ConfigOptionDouble(false, gameplay.augment.impetusConductorFactor));
 
-	TAConfig.girdleHarnessSpeed = TAConfigManager
-		.addOption(new ConfigOptionFloat(true, gameplay.harness.girdleHarnessSpeed));
-	TAConfig.girdleHarnessCost = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.harness.girdleHarnessCost));
+		TAConfig.movementCompat = TAConfigManager.addOption(new ConfigOptionBoolean(true, gameplay.movementCompat));
 
-	TAConfig.elytraHarnessBoostCost = TAConfigManager
-		.addOption(new ConfigOptionDouble(true, gameplay.harness.elytraHarnessBoostCost));
+		TAConfig.baseHarnessSpeed = TAConfigManager
+			.addOption(new ConfigOptionFloat(true, gameplay.harness.baseHarnessSpeed));
+		TAConfig.baseHarnessCost = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.harness.baseHarnessCost));
 
-	TAConfig.allowOfflinePlayerResearch = TAConfigManager
-		.addOption(new ConfigOptionBoolean(false, gameplay.allowOfflinePlayerResearch));
+		TAConfig.gyroscopeHarnessSpeed = TAConfigManager
+			.addOption(new ConfigOptionFloat(true, gameplay.harness.gyroscopeHarnessSpeed));
+		TAConfig.gyroscopeHarnessCost = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.harness.gyroscopeHarnessCost));
 
-	TAConfig.undeadEldritchGuardians = TAConfigManager
-		.addOption(new ConfigOptionBoolean(true, gameplay.undeadEldritchGuardians));
+		TAConfig.girdleHarnessSpeed = TAConfigManager
+			.addOption(new ConfigOptionFloat(true, gameplay.harness.girdleHarnessSpeed));
+		TAConfig.girdleHarnessCost = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.harness.girdleHarnessCost));
+
+		TAConfig.elytraHarnessBoostCost = TAConfigManager
+			.addOption(new ConfigOptionDouble(true, gameplay.harness.elytraHarnessBoostCost));
+
+		TAConfig.allowOfflinePlayerResearch = TAConfigManager
+			.addOption(new ConfigOptionBoolean(false, gameplay.allowOfflinePlayerResearch));
+
+		TAConfig.undeadEldritchGuardians = TAConfigManager
+			.addOption(new ConfigOptionBoolean(true, gameplay.undeadEldritchGuardians));
     }
 
 }

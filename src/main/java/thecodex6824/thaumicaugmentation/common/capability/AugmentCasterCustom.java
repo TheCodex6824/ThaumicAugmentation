@@ -23,23 +23,29 @@ package thecodex6824.thaumicaugmentation.common.capability;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.util.Constants.NBT;
+import thaumcraft.api.casters.ICaster;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
-import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.CasterAugmentBuilder;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.*;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonAugment;
+import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterEffectProvider;
 import thecodex6824.thaumicaugmentation.common.item.ItemCustomCasterStrengthProvider;
+import thecodex6824.thaumicaugmentation.common.item.ItemImpulseCannon;
 
-public class AugmentCasterCustom extends Augment implements ICustomCasterAugment {
+import javax.annotation.Nullable;
+
+public class AugmentCasterCustom extends Augment implements ICustomAugment, IImpulseCannonAugment {
 
     protected ItemStack strength;
     protected ItemStack effect;
@@ -51,28 +57,43 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
         strength = ItemStack.EMPTY;
         effect = ItemStack.EMPTY;
     }
-    
+
+    @Override
+    public boolean canBeAppliedToItem(ItemStack augmentable) {
+        if (augmentable.getItem() instanceof ICaster) {
+            return getEffectProviderCaster() != null && getStrengthProviderCaster() != null;
+        }
+        if (augmentable.getItem() instanceof ItemImpulseCannon) {
+            return getEffectProviderCannon() != null && getStrengthProviderCannon() != null;
+
+        }
+        return false;
+    }
+
     @Override
     public void onEquip(Entity user) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onEquip(this, user);
+            CustomAugmentBuilder.getStrengthProvider(strengthLoc).onEquip(this, user);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onEquip(this, user);
+            CustomAugmentBuilder.getEffectProvider(effectLoc).onEquip(this, user);
     }
     
     @Override
     public void onUnequip(Entity user) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onUnequip(this, user);
+            CustomAugmentBuilder.getStrengthProvider(strengthLoc).onUnequip(this, user);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onUnequip(this, user);
+            CustomAugmentBuilder.getEffectProvider(effectLoc).onUnequip(this, user);
     }
     
     @Override
     public boolean onCastPre(ItemStack caster, FocusWrapper focus, Entity user) {
         if (!strength.isEmpty() && !effect.isEmpty() && strengthLoc != null && effectLoc != null) {
-            CasterAugmentBuilder.getEffectProvider(effectLoc).apply(this, user, caster, focus,
-                    CasterAugmentBuilder.getStrengthProvider(strengthLoc).calculateStrength(this, focus, user));
+            IBuilderCasterEffectProvider effectProvider = getEffectProviderCaster();
+            IBuilderCasterStrengthProvider strengthProvider = getStrengthProviderCaster();
+            if (effectProvider != null && strengthProvider != null) {
+                effectProvider.apply(this, user, caster, focus, strengthProvider.calculateStrength(this, focus, user));
+            }
         }
         
         return false;
@@ -81,9 +102,9 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
     @Override
     public boolean onDamaged(Entity attacked, DamageSource source, DamageWrapper damage) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onDamaged(this, attacked, source, damage);
+            CustomAugmentBuilder.getStrengthProvider(strengthLoc).onDamaged(this, attacked, source, damage);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onDamaged(this, attacked, source, damage);
+            CustomAugmentBuilder.getEffectProvider(effectLoc).onDamaged(this, attacked, source, damage);
         
         return false;
     }
@@ -91,9 +112,9 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
     @Override
     public boolean onHurt(Entity attacked, DamageSource source, DamageWrapper damage) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onHurt(this, attacked, source, damage);
+            CustomAugmentBuilder.getStrengthProvider(strengthLoc).onHurt(this, attacked, source, damage);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onHurt(this, attacked, source, damage);
+            CustomAugmentBuilder.getEffectProvider(effectLoc).onHurt(this, attacked, source, damage);
         
         return false;
     }
@@ -101,9 +122,9 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
     @Override
     public boolean onDamagedEntity(DamageSource source, Entity attacked, DamageWrapper damage) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onDamagedEntity(this, source, attacked, damage);
+            CustomAugmentBuilder.getStrengthProvider(strengthLoc).onDamagedEntity(this, source, attacked, damage);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onDamagedEntity(this, source, attacked, damage);
+            CustomAugmentBuilder.getEffectProvider(effectLoc).onDamagedEntity(this, source, attacked, damage);
         
         return false;
     }
@@ -111,9 +132,9 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
     @Override
     public boolean onHurtEntity(DamageSource source, Entity attacked, DamageWrapper damage) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onHurtEntity(this, source, attacked, damage);
+            CustomAugmentBuilder.getStrengthProvider(strengthLoc).onHurtEntity(this, source, attacked, damage);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onHurtEntity(this, source, attacked, damage);
+            CustomAugmentBuilder.getEffectProvider(effectLoc).onHurtEntity(this, source, attacked, damage);
         
         return false;
     }
@@ -121,22 +142,104 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
     @Override
     public boolean onTick(Entity user) {
         if (!strength.isEmpty() && strengthLoc != null)
-            CasterAugmentBuilder.getStrengthProvider(strengthLoc).onTick(this, user);
+            CustomAugmentBuilder.getStrengthProvider(strengthLoc).onTick(this, user);
         if (!effect.isEmpty() && effectLoc != null)
-            CasterAugmentBuilder.getEffectProvider(effectLoc).onTick(this, user);
+            CustomAugmentBuilder.getEffectProvider(effectLoc).onTick(this, user);
         
         return false;
     }
     
     @Override
-    public boolean isCompatible(ItemStack otherAugment) {
-        IAugment a = otherAugment.getCapability(CapabilityAugment.AUGMENT, null);
-        if (a != null && a instanceof ICustomCasterAugment) {
-            ICustomCasterAugment aug = (ICustomCasterAugment) a;
+    public boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
+        if (otherAugmentCap instanceof ICustomAugment) {
+            ICustomAugment aug = (ICustomAugment) otherAugmentCap;
             return !aug.getStrengthProvider().getTranslationKey().equals(strength.getTranslationKey());
         }
         
         return true;
+    }
+
+    @Override
+    public double getImpulseCostModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer) {
+        IBuilderCannonStrengthProvider strengthProvider = getStrengthProviderCannon();
+        IBuilderCannonEffectProvider effectProvider = getEffectProviderCannon();
+        if (strengthProvider != null && effectProvider != null) {
+            return effectProvider.getImpulseCostModifier(this, cannonStack, user, buffer,
+                    strengthProvider.calculateStrength(this, cannonStack, user));
+        }
+        return 1;
+    }
+
+    @Override
+    public float getBaseDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+        IBuilderCannonStrengthProvider strengthProvider = getStrengthProviderCannon();
+        IBuilderCannonEffectProvider effectProvider = getEffectProviderCannon();
+        if (strengthProvider != null && effectProvider != null) {
+            return effectProvider.getBaseDamageModifier(this, cannonStack, user, buffer, normalImpetusConsumed,
+                    actualImpetusConsumed, strengthProvider.calculateStrength(this, cannonStack, user));
+        }
+        return 1;
+    }
+
+    @Override
+    public float getMagicDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+        IBuilderCannonStrengthProvider strengthProvider = getStrengthProviderCannon();
+        IBuilderCannonEffectProvider effectProvider = getEffectProviderCannon();
+        if (strengthProvider != null && effectProvider != null) {
+            return effectProvider.getMagicDamageModifier(this, cannonStack, user, buffer, normalImpetusConsumed,
+                    actualImpetusConsumed, strengthProvider.calculateStrength(this, cannonStack, user));
+        }
+        return 1;
+    }
+
+    @Override
+    public float getNormalDamageModifier(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, IImpetusStorage buffer, double normalImpetusConsumed, double actualImpetusConsumed) {
+        IBuilderCannonStrengthProvider strengthProvider = getStrengthProviderCannon();
+        IBuilderCannonEffectProvider effectProvider = getEffectProviderCannon();
+        if (strengthProvider != null && effectProvider != null) {
+            return effectProvider.getNormalDamageModifier(this, cannonStack, user, buffer, normalImpetusConsumed,
+                    actualImpetusConsumed, strengthProvider.calculateStrength(this, cannonStack, user));
+        }return 1;
+    }
+
+    @Override
+    public void applyAdditionalEffectsToEntity(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, Entity entityHit, float baseDamage) {
+        IBuilderCannonStrengthProvider strengthProvider = getStrengthProviderCannon();
+        IBuilderCannonEffectProvider effectProvider = getEffectProviderCannon();
+        if (strengthProvider != null && effectProvider != null) {
+            effectProvider.applyAdditionalEffectsToEntity(this, cannonStack, user, firingOrigin, firingEnd,
+                    entityHit, baseDamage, strengthProvider.calculateStrength(this, cannonStack, user));
+        }
+    }
+
+    @Override
+    public void applyAdditionalEffects(ItemStack cannonStack, ItemStack augmentStack, EntityLivingBase user, Vec3d firingOrigin, Vec3d firingEnd, float baseDamage) {
+        IBuilderCannonStrengthProvider strengthProvider = getStrengthProviderCannon();
+        IBuilderCannonEffectProvider effectProvider = getEffectProviderCannon();
+        if (strengthProvider != null && effectProvider != null) {
+            effectProvider.applyAdditionalEffects(this, cannonStack, user, firingOrigin, firingEnd,
+                    baseDamage, strengthProvider.calculateStrength(this, cannonStack, user));
+        }
+    }
+
+    protected @Nullable IBuilderCasterEffectProvider getEffectProviderCaster() {
+        IBuilderEffectProvider provider = CustomAugmentBuilder.getEffectProvider(effectLoc);
+        return provider instanceof IBuilderCasterEffectProvider ? (IBuilderCasterEffectProvider) provider : null;
+    }
+
+    protected @Nullable IBuilderCannonEffectProvider getEffectProviderCannon() {
+        IBuilderEffectProvider provider = CustomAugmentBuilder.getEffectProvider(effectLoc);
+        return provider instanceof IBuilderCannonEffectProvider ? (IBuilderCannonEffectProvider) provider : null;
+    }
+
+    protected @Nullable IBuilderCasterStrengthProvider getStrengthProviderCaster() {
+        IBuilderStrengthProvider provider = CustomAugmentBuilder.getStrengthProvider(strengthLoc);
+        return provider instanceof IBuilderCasterStrengthProvider ? (IBuilderCasterStrengthProvider) provider : null;
+    }
+
+    protected @Nullable IBuilderCannonStrengthProvider getStrengthProviderCannon() {
+        IBuilderStrengthProvider provider = CustomAugmentBuilder.getStrengthProvider(strengthLoc);
+        return provider instanceof IBuilderCannonStrengthProvider ? (IBuilderCannonStrengthProvider) provider : null;
     }
     
     @Override
@@ -169,10 +272,10 @@ public class AugmentCasterCustom extends Augment implements ICustomCasterAugment
     @Override
     public void appendAdditionalAugmentTooltip(List<String> tooltip) {
         tooltip.add(new TextComponentTranslation(strength.getTranslationKey()).getFormattedText());
-        CasterAugmentBuilder.getStrengthProvider(ItemCustomCasterStrengthProvider.getProviderID(
+        CustomAugmentBuilder.getStrengthProvider(ItemCustomCasterStrengthProvider.getProviderID(
                 strength)).appendAdditionalTooltip(strength, tooltip);
         tooltip.add(new TextComponentTranslation(effect.getTranslationKey()).getFormattedText());
-        CasterAugmentBuilder.getEffectProvider(ItemCustomCasterEffectProvider.getProviderID(
+        CustomAugmentBuilder.getEffectProvider(ItemCustomCasterEffectProvider.getProviderID(
                 effect)).appendAdditionalTooltip(effect, tooltip);
     }
     

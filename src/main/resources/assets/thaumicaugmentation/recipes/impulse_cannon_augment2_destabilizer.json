@@ -1,0 +1,35 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPULSE_CANNON_AUGMENT2_DESTABILIZER",
+  "vis": 100,
+  "aspects": {
+    "ignis": 1,
+    "aer": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "PJP",
+    " V ",
+    "PGP"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "ingotGold"
+    },
+    "J": {
+      "item": "#IMPETUS_RESONATOR"
+    },
+    "V": {
+      "item": "thaumicaugmentation:impetus_generator"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impulse_cannon_augment2",
+    "data": 3
+  }
+}

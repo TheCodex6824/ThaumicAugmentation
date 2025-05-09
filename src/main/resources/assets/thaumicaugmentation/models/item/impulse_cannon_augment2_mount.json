@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "thaumicaugmentation:items/impulse/impulse_cannon_augment2_mount"
+    }
+}

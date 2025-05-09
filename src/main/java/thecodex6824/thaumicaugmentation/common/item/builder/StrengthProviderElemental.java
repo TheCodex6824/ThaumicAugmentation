@@ -38,8 +38,8 @@ import thaumcraft.api.casters.IFocusElement;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectElementInteractionManager;
 import thecodex6824.thaumicaugmentation.api.aspect.AspectUtil;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.IBuilderCasterStrengthProvider;
-import thecodex6824.thaumicaugmentation.api.augment.builder.caster.ICustomCasterAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.IBuilderCasterStrengthProvider;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.ICustomAugment;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
 public class StrengthProviderElemental implements IBuilderCasterStrengthProvider {
@@ -59,12 +59,12 @@ public class StrengthProviderElemental implements IBuilderCasterStrengthProvider
     }
 
     @Override
-    public int calculateTintColor(ICustomCasterAugment augment) {
+    public int calculateTintColor(ICustomAugment augment) {
 	return getAspect(augment.getStrengthProvider()).getColor();
     }
 
     @Override
-    public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity entity) {
+    public double calculateStrength(ICustomAugment augment, FocusWrapper focus, Entity entity) {
 	double totalMultiplier = 1.0;
 	boolean positive = false;
 	Set<Aspect> negatives = new HashSet<>();

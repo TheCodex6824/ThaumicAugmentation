@@ -90,6 +90,7 @@ public final class TAConfig {
     
     public static ConfigOptionBoolean disableCoremod;
     public static ConfigOptionStringList disabledTransformers;
+    public static ConfigOptionBoolean debugMode;
     
     public static ConfigOptionBoolean gauntletCastAnimation;
     
@@ -103,20 +104,46 @@ public final class TAConfig {
     public static ConfigOptionBoolean allowWussRiftSeed;
     
     public static ConfigOptionFloat cannonBeamDamage;
-    public static ConfigOptionLong cannonBeamCostInitial;
+    public static ConfigOptionInt cannonBeamCostInitial;
     public static ConfigOptionDouble cannonBeamCostTick;
     public static ConfigOptionDouble cannonBeamRange;
     
     public static ConfigOptionFloat cannonRailgunDamage;
-    public static ConfigOptionLong cannonRailgunCost;
+    public static ConfigOptionInt cannonRailgunCost;
     public static ConfigOptionInt cannonRailgunCooldown;
     public static ConfigOptionDouble cannonRailgunRange;
     
     public static ConfigOptionFloat cannonBurstDamage;
-    public static ConfigOptionLong cannonBurstCost;
+    public static ConfigOptionInt cannonBurstCost;
     public static ConfigOptionInt cannonBurstCooldown;
     public static ConfigOptionDouble cannonBurstRange;
-    
+    public static ConfigOptionInt cannonBurstCount;
+    public static ConfigOptionInt cannonBurstDelay;
+
+    public static ConfigOptionFloat cannonCrystalDamage;
+    public static ConfigOptionInt cannonCrystalBeamCount;
+    public static ConfigOptionFloat cannonCrystalSpread;
+    public static ConfigOptionInt cannonCrystalCostInitial;
+    public static ConfigOptionDouble cannonCrystalCostTick;
+    public static ConfigOptionDouble cannonCrystalRange;
+
+    public static ConfigOptionFloat cannonRecurseDamage;
+    public static ConfigOptionDouble cannonRecurseExponent;
+    public static ConfigOptionInt cannonRecurseCostInitial;
+    public static ConfigOptionDouble cannonRecurseCostTick;
+    public static ConfigOptionInt cannonRecurseCooldown;
+    public static ConfigOptionDouble cannonRecurseRange;
+
+    public static ConfigOptionFloat cannonGyroscopeCorrectionAngle;
+    public static ConfigOptionDouble cannonHyperionEfficiencyFactor;
+    public static ConfigOptionFloat cannonEnergizerMagicFactor;
+    public static ConfigOptionFloat cannonEnergizerNormalFactor;
+    public static ConfigOptionFloat cannonDestabilizerMagicFactor;
+    public static ConfigOptionFloat cannonDestabilizerNormalFactor;
+    public static ConfigOptionDouble cannonSolidifierKnockbackStrength;
+    public static ConfigOptionFloat cannonSolidifierBreakStrength;
+    public static ConfigOptionDouble cannonCustomAugmentExponent;
+
     public static ConfigOptionFloat primalCutterDamage;
     
     public static ConfigOptionStringList deniedCategories;

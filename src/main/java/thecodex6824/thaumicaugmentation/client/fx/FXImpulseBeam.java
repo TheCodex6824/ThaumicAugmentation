@@ -68,6 +68,8 @@ public class FXImpulseBeam extends Particle {
     protected boolean posSet;
     protected Function<FXImpulseBeam, Float> alphaFunc;
     protected boolean endsLoop;
+	protected Function<Vec3d, Vec3d> entityVecTargetRotation;
+	protected double desiredLength;
 
     public FXImpulseBeam(World world, EntityLivingBase entity, double tx, double ty, double tz, float r, float g, float b, int maxAge) {
 	super(world, entity.posX, entity.posY, entity.posZ, 0.0, 0.0, 0.0);
@@ -175,7 +177,23 @@ public class FXImpulseBeam extends Particle {
 	endsLoop = loop;
     }
 
-    public void renderStartAndEnd(BufferBuilder buffer, float partialTicks, float f1, float f2, float f3, float f4, float f5) {
+	public void setEntityVecTargetRotation(Function<Vec3d, Vec3d> entityVecTargetRotation) {
+		this.entityVecTargetRotation = entityVecTargetRotation;
+	}
+
+	public Function<Vec3d, Vec3d> getEntityVecTargetRotation() {
+		return entityVecTargetRotation;
+	}
+
+	public void setDesiredLength(double desiredLength) {
+		this.desiredLength = desiredLength;
+	}
+
+	public double getDesiredLength() {
+		return desiredLength;
+	}
+
+	public void renderStartAndEnd(BufferBuilder buffer, float partialTicks, float f1, float f2, float f3, float f4, float f5) {
 	GlStateManager.depthMask(false);
 	GlStateManager.enableBlend();
 	GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);

@@ -1,0 +1,35 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPULSE_CANNON_AUGMENT2_ENERGIZER",
+  "vis": 100,
+  "aspects": {
+    "ignis": 1,
+    "aer": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    "PGP",
+    "JVJ",
+    "PGP"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "ingotThaumium"
+    },
+    "J": {
+      "item": "#IMPETUS_RESONATOR"
+    },
+    "V": {
+      "item": "thaumicaugmentation:impetus_drainer"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impulse_cannon_augment2",
+    "data": 2
+  }
+}

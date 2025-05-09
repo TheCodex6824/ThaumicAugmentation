@@ -18,17 +18,12 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
+package thecodex6824.thaumicaugmentation.api.augment.impl.custom;
 
 import net.minecraft.entity.Entity;
-import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
+import net.minecraft.item.ItemStack;
 
-public interface IBuilderCasterStrengthProvider extends IBuilderCasterCallback {
+public interface IBuilderCannonStrengthProvider extends IBuilderStrengthProvider {
 
-    public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity user);
-    
-    public default int calculateTintColor(ICustomCasterAugment augment) {
-        return 0xFFFFFFFF;
-    }
-    
+    double calculateStrength(ICustomAugment augment, ItemStack cannonStack, Entity user);
 }

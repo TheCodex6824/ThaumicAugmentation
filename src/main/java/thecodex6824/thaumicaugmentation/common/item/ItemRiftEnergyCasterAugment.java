@@ -49,6 +49,7 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.TASounds;
 import thecodex6824.thaumicaugmentation.api.augment.Augment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
+import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.entity.IDimensionalFracture;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
@@ -85,7 +86,7 @@ public class ItemRiftEnergyCasterAugment extends ItemTABase {
             }
             
             @Override
-            public boolean isCompatible(ItemStack otherAugment) {
+            public boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
                 return stack.getItem() != otherAugment.getItem();
             }
             

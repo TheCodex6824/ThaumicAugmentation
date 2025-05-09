@@ -20,16 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.api.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.google.common.base.Predicates;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EntitySelectors;
@@ -37,6 +28,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
 
 public final class RaytraceHelper {
 
@@ -53,7 +51,7 @@ public final class RaytraceHelper {
     
     public static Vec3d raytracePosition(EntityLivingBase user, double maxDistance, float partialTicks) {
         return raytracePosition(user, maxDistance, partialTicks,
-                Predicates.and(EntitySelectors.NOT_SPECTATING, entity -> entity != null && entity.canBeCollidedWith()));
+                EntitySelectors.NOT_SPECTATING.and(entity -> entity != null && entity.canBeCollidedWith()));
     }
     
     public static Vec3d raytracePosition(EntityLivingBase user, double maxDistance, float partialTicks, @Nullable Predicate<? super Entity> entityFilter) {
@@ -185,7 +183,7 @@ public final class RaytraceHelper {
                 ret.add(entity);
         }
 
-        ret.sort((e1, e2) -> Double.compare(e1.getDistanceSq(user), e2.getDistanceSq(user)));
+        ret.sort(Comparator.comparingDouble(e -> e.getDistanceSq(user)));
         return ret;
     }
     
@@ -201,8 +199,13 @@ public final class RaytraceHelper {
                 ret.add(entity);
         }
 
-        ret.sort((e1, e2) -> Double.compare(e1.getDistanceSq(start.x, start.y, start.z), e2.getDistanceSq(start.x, start.y, start.z)));
+        ret.sort(Comparator.comparingDouble(e -> e.getDistanceSq(start.x, start.y, start.z)));
         return ret;
     }
-    
+
+    public static Vec3d shortenRaytraceByBlocks(World world, Vec3d origin, Vec3d end) {
+        RayTraceResult result = world.rayTraceBlocks(origin, end, false, true, false);
+        return result == null ? end : result.hitVec;
+    }
+
 }

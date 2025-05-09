@@ -36,10 +36,9 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
-import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
-import thecodex6824.thaumicaugmentation.api.augment.builder.IElytraHarnessAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.IElytraHarnessAugment;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
@@ -59,11 +58,6 @@ public class ItemElytraHarnessAugment extends ItemTABase {
     protected static abstract class HarnessAugment implements IElytraHarnessAugment {
         
         protected boolean sync;
-        
-        @Override
-        public boolean canBeAppliedToItem(ItemStack augmentable) {
-            return augmentable.getItem() == TAItems.ELYTRA_HARNESS;
-        }
         
         public void setSyncNeeded() {
             sync = true;

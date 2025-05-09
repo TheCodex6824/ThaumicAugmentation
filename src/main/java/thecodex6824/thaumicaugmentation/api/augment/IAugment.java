@@ -23,6 +23,7 @@ package thecodex6824.thaumicaugmentation.api.augment;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
@@ -176,10 +177,12 @@ public interface IAugment {
     
     /**
      * Returns if this augment can coexist on the same augmentable item as the passed augment.
-     * @param otherAugment The augment to check
+     *
+     * @param otherAugment    The augment to check
+     * @param otherAugmentCap
      * @return If this augment can exist on the same augmentable item as the passed augment
      */
-    public default boolean isCompatible(ItemStack otherAugment) {
+    public default boolean isCompatible(ItemStack otherAugment, IAugment otherAugmentCap) {
         return true;
     }
     
@@ -224,7 +227,7 @@ public interface IAugment {
     public default boolean shouldAllowDefaultAddition() {
         return true;
     }
-    
+
     /**
      * Returns if this augment can use the generic TA crafting recipe system.
      * Set to false if you plan on using another way of removing the augment.

@@ -20,6 +20,7 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -31,12 +32,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -56,7 +54,12 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
-import thecodex6824.thaumicaugmentation.api.augment.builder.IImpulseCannonAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.custom.ICustomAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonAugment;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonConversion;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonCustomMount;
+import thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon.IImpulseCannonRaytraceOverridingAugment;
+import thecodex6824.thaumicaugmentation.api.entity.IImpulseSpecialEntity;
 import thecodex6824.thaumicaugmentation.api.impetus.CapabilityImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.IImpetusStorage;
 import thecodex6824.thaumicaugmentation.api.impetus.ImpetusAPI;
@@ -68,8 +71,11 @@ import thecodex6824.thaumicaugmentation.common.network.PacketImpulseBeam;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class ItemImpulseCannon extends ItemTABase {
@@ -96,10 +102,44 @@ public class ItemImpulseCannon extends ItemTABase {
     @Override
     @Nullable
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-        CapabilityProviderImpulseCannon provider = new CapabilityProviderImpulseCannon(new AugmentableItem(1) {
+        CapabilityProviderImpulseCannon provider = new CapabilityProviderImpulseCannon(new AugmentableItem(4) {
             @Override
-            public boolean isAugmentAcceptable(ItemStack augment, int slot) {
-                return augment.getCapability(CapabilityAugment.AUGMENT, null) instanceof IImpulseCannonAugment;
+            public boolean isAugmentAcceptable(ItemStack augment, int slot, IAugment augmentCapability) {
+                if (!(augmentCapability instanceof IImpulseCannonAugment)) return false;
+                // TODO replace with better impl when augmentation station branch is merged
+                // only enable the fourth slot if an enabling augment is installed.
+                // since the fourth slot will always have its augment removed first, this is non-exploitable.
+                if (slot == 3) {
+                    boolean one = false;
+                    for (IImpulseCannonAugment aug : getAugments(stack).values()) {
+                        if (aug.givesExtraSlot()) {
+                            one = true;
+                            break;
+                        }
+                    }
+                    if (!one) return false;
+                }
+                if (augmentCapability instanceof ICustomAugment) {
+                    boolean one = false;
+                    for (IImpulseCannonAugment aug : getAugments(stack).values()) {
+                        if (aug instanceof IImpulseCannonCustomMount) {
+                            one = true;
+                            break;
+                        }
+                    }
+                    if (!one) return false;
+                }
+                return super.isAugmentAcceptable(augment, slot, augmentCapability);
+            }
+
+            @Override
+            public int getTotalAugmentSlots() {
+                for (IImpulseCannonAugment aug : getAugments(stack).values()) {
+                    if (aug.givesExtraSlot()) {
+                        return super.getTotalAugmentSlots();
+                    }
+                }
+                return super.getTotalAugmentSlots() - 1;
             }
         }, new ImpetusStorage(1000, 100, 1000));
         
@@ -110,15 +150,31 @@ public class ItemImpulseCannon extends ItemTABase {
     }
     
     @Nullable
-    protected IImpulseCannonAugment getAugment(ItemStack stack) {
+    public Tuple<ItemStack, IImpulseCannonConversion> getConversion(ItemStack stack) {
         IAugmentableItem augments = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
         if (augments != null && augments.isAugmented()) {
-            IAugment aug = augments.getAugment(0).getCapability(CapabilityAugment.AUGMENT, null);
-            if (aug instanceof IImpulseCannonAugment)
-                return (IImpulseCannonAugment) aug;
+            for (ItemStack aug : augments.getAllAugments()) {
+                IAugment a = aug.getCapability(CapabilityAugment.AUGMENT, null);
+                if (a instanceof IImpulseCannonConversion)
+                    return new Tuple<>(aug, ((IImpulseCannonConversion) a));
+            }
         }
-            
         return null;
+    }
+
+    @Nonnull
+    public Map<ItemStack, IImpulseCannonAugment> getAugments(ItemStack stack) {
+        IAugmentableItem augments = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
+        if (augments != null && augments.isAugmented()) {
+            Map<ItemStack, IImpulseCannonAugment> augs = new Reference2ReferenceOpenHashMap<>();
+            for (ItemStack aug : augments.getAllAugments()) {
+                IAugment a = aug.getCapability(CapabilityAugment.AUGMENT, null);
+                if (a instanceof IImpulseCannonAugment)
+                    augs.put(aug, ((IImpulseCannonAugment) a));
+            }
+            return augs;
+        }
+        return Collections.emptyMap();
     }
     
     @Override
@@ -135,27 +191,35 @@ public class ItemImpulseCannon extends ItemTABase {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         IImpetusStorage buffer = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-        IImpulseCannonAugment aug = getAugment(stack);
+        Tuple<ItemStack, IImpulseCannonConversion> conv = getConversion(stack);
+        Map<ItemStack, IImpulseCannonAugment> augments = getAugments(stack);
         if (!world.isRemote) {
-            if (aug != null && !aug.isTickable(player) && buffer != null) {
-                long cost = aug.getImpetusCostPerUsage(player);
+            if (conv != null && !conv.getSecond().isTickable(stack, conv.getFirst(), player) && buffer != null) {
+                long cost = conv.getSecond().getImpetusCostPerUsage(stack, conv.getFirst(), player, buffer);
+                double mod = 1;
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    mod *= aug.getValue().getImpulseCostModifier(stack, aug.getKey(), player, buffer);
+                }
+                cost *= mod; // allow floating point accuracy between separate augment modifiers
                 if (ImpetusAPI.tryExtractFully(buffer, cost, player)) {
-                    aug.onCannonUsage(player);
+                    conv.getSecond().onCannonUsage(stack, conv.getFirst(), player, cost, buffer, augments);
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
                 }
             }
-            else if (((aug != null && aug.isTickable(player)) || aug == null) && buffer != null) {
-                long cost = aug != null ? aug.getImpetusCostPerUsage(player) : TAConfig.cannonBeamCostInitial.getValue();
+            else if ((conv == null || conv.getSecond().isTickable(stack, conv.getFirst(), player)) && buffer != null) {
+                long cost = conv != null ? conv.getSecond().getImpetusCostPerUsage(stack, conv.getFirst(), player, buffer) : TAConfig.cannonBeamCostInitial.getValue();
                 if (buffer.canExtract() && buffer.getEnergyStored() >= cost) {
                     player.setActiveHand(hand);
-                    if (aug == null) {
+                    if (conv == null) {
                         Random rand = player.getRNG();
                         player.getEntityWorld().playSound(null, new BlockPos(player.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_BEAM_START,
                                 SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 4.0F + 1.0F);
-                        PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), false);
+                        PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), ItemImpulseCannonConversion.BeamInformation.getForUnaugmentedCannon());
                         TANetwork.INSTANCE.sendToAllTracking(packet, player);
                         if (player instanceof EntityPlayerMP)
                             TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
+                    } else {
+                        conv.getSecond().onCannonUsage(stack, conv.getFirst(), player, cost, buffer, augments);
                     }
                         
                     return new ActionResult<>(EnumActionResult.SUCCESS, stack);
@@ -171,13 +235,17 @@ public class ItemImpulseCannon extends ItemTABase {
     @Override
     public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         IImpetusStorage buffer = stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null);
-        IImpulseCannonAugment aug = getAugment(stack);
+        Tuple<ItemStack, IImpulseCannonConversion> conv = getConversion(stack);
+        Map<ItemStack, IImpulseCannonAugment> augments = getAugments(stack);
         if (!stack.hasTagCompound())
             stack.setTagCompound(new NBTTagCompound());
         
         if (!player.getEntityWorld().isRemote) {
-            if (aug != null && buffer != null) {
-                double cost = aug.getImpetusCostPerTick(player, count);
+            if (conv != null && conv.getSecond().isTickable(stack, conv.getFirst(), player) && buffer != null) {
+                double cost = conv.getSecond().getImpetusCostPerTick(stack, conv.getFirst(), player, count, buffer);
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    cost *= aug.getValue().getImpulseCostModifier(stack, aug.getKey(), player, buffer);
+                }
                 double accumulated = stack.getTagCompound().getDouble("acc") + cost;
                 if (accumulated >= 1.0) {
                     long remove = (long) Math.floor(accumulated);
@@ -187,14 +255,18 @@ public class ItemImpulseCannon extends ItemTABase {
                 
                 stack.getTagCompound().setDouble("acc", accumulated);
                 if (accumulated < 1.0)
-                    aug.onCannonTick(player, count);
+                    conv.getSecond().onCannonTick(stack, conv.getFirst(), player, count, cost, buffer, augments);
                 else {
                     player.stopActiveHand();
-                    aug.onStopCannonTick(player, count);
+                    conv.getSecond().onStopCannonTick(stack, conv.getFirst(), player, count, buffer, augments);
                 }
             }
-            else if (buffer != null) {
-                double cost = TAConfig.cannonBeamCostTick.getValue();
+            else if (conv == null && buffer != null) {
+                final double costBase = TAConfig.cannonBeamCostTick.getValue();
+                double cost = costBase;
+                for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                    cost *= aug.getValue().getImpulseCostModifier(stack, aug.getKey(), player, buffer);
+                }
                 double accumulated = stack.getTagCompound().getDouble("acc") + cost;
                 if (accumulated >= 1.0) {
                     long remove = (long) Math.floor(accumulated);
@@ -204,18 +276,47 @@ public class ItemImpulseCannon extends ItemTABase {
                 
                 stack.getTagCompound().setDouble("acc", accumulated);
                 if (accumulated < 1.0) {
-                    Entity e = RaytraceHelper.raytraceEntity(player, TAConfig.cannonBeamRange.getValue());
-                    if (e != null) {
-                        ImpetusAPI.causeImpetusDamage(player, e, TAConfig.cannonBeamDamage.getValue());
+                    Vec3d origin = player.getPositionEyes(1);
+                    Vec3d scan = player.getLookVec().scale(TAConfig.cannonBeamRange.getValue());
+                    for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                        if (aug.getValue() instanceof IImpulseCannonRaytraceOverridingAugment) {
+                            scan = ((IImpulseCannonRaytraceOverridingAugment) aug.getValue()).overrideFiringRayTrace(stack, aug.getKey(), player, origin, scan);
+                            break;
+                        }
+                    }
+                    scan = RaytraceHelper.shortenRaytraceByBlocks(player.getEntityWorld(), origin, origin.add(scan));
+                    Entity e = null;
+                    for (Entity entity : RaytraceHelper.raytraceEntities(player.getEntityWorld(), origin, scan)) {
+                        if (entity != player) {
+                            e = entity;
+                            break;
+                        }
+                    }
+                    float baseDamage = TAConfig.cannonBeamDamage.getValue();
+                    float magicFactor = 0.5f;
+                    float normalFactor = 0.5f;
+                    for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                        baseDamage *= aug.getValue().getBaseDamageModifier(stack, aug.getKey(), player, buffer, costBase, cost);
+                        magicFactor *= aug.getValue().getMagicDamageModifier(stack, aug.getKey(), player, buffer, costBase, cost);
+                        normalFactor *= aug.getValue().getNormalDamageModifier(stack, aug.getKey(), player, buffer, costBase, cost);
+                    }
+                    if (e != null && (!(e instanceof IImpulseSpecialEntity) || !((IImpulseSpecialEntity) e).shouldImpulseCannonIgnore(player))) {
+                        for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                            aug.getValue().applyAdditionalEffectsToEntity(stack, aug.getKey(), player, origin, scan, e, baseDamage);
+                        }
+                        ImpetusAPI.causeImpetusDamage(player, e, baseDamage * magicFactor, baseDamage * normalFactor);
                         if (e instanceof EntityLivingBase) {
                             EntityLivingBase base = (EntityLivingBase) e;
                             base.hurtResistantTime = Math.min(base.hurtResistantTime, 2);
                             base.lastDamage = 0.0F;
                         }
                     }
+                    for (Map.Entry<ItemStack, IImpulseCannonAugment> aug : augments.entrySet()) {
+                        aug.getValue().applyAdditionalEffects(stack, aug.getKey(), player, origin, scan, baseDamage);
+                    }
                     
                     if (player.ticksExisted % 20 == 0) {
-                        PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), false);
+                        PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), ItemImpulseCannonConversion.BeamInformation.getForUnaugmentedCannon());
                         TANetwork.INSTANCE.sendToAllTracking(packet, player);
                         if (player instanceof EntityPlayerMP)
                             TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
@@ -226,7 +327,7 @@ public class ItemImpulseCannon extends ItemTABase {
                     Random rand = player.getRNG();
                     player.getEntityWorld().playSound(null, new BlockPos(player.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_BEAM_END,
                             SoundCategory.PLAYERS, 1.0F, (rand.nextFloat() - rand.nextFloat()) / 4.0F + 1.0F);
-                    PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), true);
+                    PacketImpulseBeam packet = new PacketImpulseBeam(player.getEntityId(), null);
                     TANetwork.INSTANCE.sendToAllTracking(packet, player);
                     if (player instanceof EntityPlayerMP)
                         TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) player);
@@ -238,18 +339,18 @@ public class ItemImpulseCannon extends ItemTABase {
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entity, int timeLeft) {
         if (!world.isRemote) {
-            IImpulseCannonAugment aug = getAugment(stack);
+            Tuple<ItemStack, IImpulseCannonConversion> aug = getConversion(stack);
             if (aug == null) {
                 Random rand = entity.getRNG();
                 entity.getEntityWorld().playSound(null, new BlockPos(entity.getPositionEyes(1.0F)), TASounds.IMPULSE_CANNON_BEAM_END,
                         SoundCategory.PLAYERS, (rand.nextFloat() - rand.nextFloat()) / 2.0F + 0.5F, (rand.nextFloat() - rand.nextFloat()) / 4.0F + 1.0F);
-                PacketImpulseBeam packet = new PacketImpulseBeam(entity.getEntityId(), true);
+                PacketImpulseBeam packet = new PacketImpulseBeam(entity.getEntityId(), null);
                 TANetwork.INSTANCE.sendToAllTracking(packet, entity);
                 if (entity instanceof EntityPlayerMP)
                     TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) entity);
             }
-            else if (aug.isTickable(entity))
-                aug.onStopCannonTick(entity, timeLeft);
+            else if (aug.getSecond().isTickable(stack, aug.getFirst(), entity))
+                aug.getSecond().onStopCannonTick(stack, aug.getFirst(), entity, timeLeft, stack.getCapability(CapabilityImpetusStorage.IMPETUS_STORAGE, null), getAugments(stack));
         }
     }
     
@@ -265,9 +366,9 @@ public class ItemImpulseCannon extends ItemTABase {
     
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
-        IImpulseCannonAugment aug = getAugment(stack);
+        Tuple<ItemStack, IImpulseCannonConversion> aug = getConversion(stack);
         if (aug != null)
-            return aug.getMaxUsageDuration();
+            return aug.getSecond().getMaxUsageDuration(stack, aug.getFirst());
         else
             return 72000;
     }
@@ -343,30 +444,16 @@ public class ItemImpulseCannon extends ItemTABase {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerModels() {
-        ModelResourceLocation LENS_BEAM = new ModelResourceLocation(ThaumicAugmentationAPI.MODID + ":impulse_cannon_beam", "inventory");
-        ModelResourceLocation LENS_RAILGUN = new ModelResourceLocation(ThaumicAugmentationAPI.MODID + ":impulse_cannon_railgun", "inventory");
-        ModelResourceLocation LENS_BURST = new ModelResourceLocation(ThaumicAugmentationAPI.MODID + ":impulse_cannon_burst", "inventory");
         ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
             @Override
             public ModelResourceLocation getModelLocation(ItemStack stack) {
-                IAugmentableItem augments = stack.getCapability(CapabilityAugmentableItem.AUGMENTABLE_ITEM, null);
-                if (augments != null && augments.isAugmented()) {
-                    IAugment aug = augments.getAugment(0).getCapability(CapabilityAugment.AUGMENT, null);
-                    if (aug instanceof IImpulseCannonAugment) {
-                        switch (((IImpulseCannonAugment) aug).getLensModel()) {
-                            case RAILGUN: return LENS_RAILGUN;
-                            case BURST: return LENS_BURST;
-                            case BEAM:
-                            default: return LENS_BEAM;
-                        }
-                    }
-                }
-                
-                return LENS_BEAM;
+                Tuple<ItemStack, IImpulseCannonConversion> conv = getConversion(stack);
+                return conv != null ? conv.getSecond().getLensModel() : ItemImpulseCannonConversion.LENS_BEAM;
             }
         });
         
-        ModelLoader.registerItemVariants(this, LENS_BEAM, LENS_RAILGUN, LENS_BURST);
+        ModelLoader.registerItemVariants(this, ItemImpulseCannonConversion.LENS_BEAM,
+                ItemImpulseCannonConversion.LENS_RAILGUN, ItemImpulseCannonConversion.LENS_BURST);
     }
     
 }

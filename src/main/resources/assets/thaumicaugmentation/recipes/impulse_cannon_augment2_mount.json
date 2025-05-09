@@ -1,0 +1,32 @@
+{
+  "type": "thaumicaugmentation:arcane_shaped",
+  "research": "IMPULSE_CANNON_AUGMENT2_MOUNT",
+  "vis": 60,
+  "aspects": {
+    "aer": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    " F ",
+    "PTP",
+    " F "
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateVoid"
+    },
+    "F": {
+      "item": "thaumcraft:fabric",
+      "data": 0
+    },
+    "T": {
+      "item": "thaumcraft:thaumometer",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:impulse_cannon_augment2",
+    "data": 6
+  }
+}

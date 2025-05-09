@@ -18,14 +18,10 @@
  *  along with Thaumic Augmentation.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thecodex6824.thaumicaugmentation.api.augment.builder.caster;
+package thecodex6824.thaumicaugmentation.api.augment.impl.impulsecannon;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
-
-public interface IBuilderCasterEffectProvider extends IBuilderCasterCallback {
-
-    public void apply(ICustomCasterAugment augment, Entity caster, ItemStack casterStack, FocusWrapper focus, double strength);
-    
+/**
+ * Marker interface for an augment that makes the cannon accept (compatible) custom augments.
+ */
+public interface IImpulseCannonCustomMount extends IImpulseCannonAugment {
 }
