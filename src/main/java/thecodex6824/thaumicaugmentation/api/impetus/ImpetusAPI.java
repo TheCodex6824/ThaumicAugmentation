@@ -236,7 +236,7 @@ public final class ImpetusAPI {
     
     public static boolean tryExtractFully(IImpetusStorage storage, long amount, Entity user) {
         if (user instanceof EntityPlayer && ((EntityPlayer) user).isCreative())
-            return storage.canExtract() && storage.getEnergyStored() > amount;
+            return storage.canExtract() && storage.getEnergyStored() >= amount;
         else
             return tryExtractFully(storage, amount);
     }
