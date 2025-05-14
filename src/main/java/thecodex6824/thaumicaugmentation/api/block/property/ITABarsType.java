@@ -34,7 +34,10 @@ public interface ITABarsType {
 
     public enum BarsType implements IStringSerializable {
         
-        BARS_ANCIENT(0, () -> Material.IRON, () -> SoundType.METAL, MapColor.ADOBE);
+        BARS_ANCIENT(0, () -> Material.IRON, () -> SoundType.METAL, MapColor.ADOBE),
+        BARS_BRASS(1, () -> Material.IRON, () -> SoundType.METAL, MapColor.GOLD),
+        BARS_THAUMIUM(2, () -> Material.IRON, () -> SoundType.METAL, MapColor.PURPLE),
+        BARS_VOID(3, () -> Material.IRON, () -> SoundType.METAL, MapColor.BLACK);
         
         private int meta;
         private Supplier<Material> mat;
