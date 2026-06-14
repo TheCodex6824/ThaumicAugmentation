@@ -823,6 +823,7 @@ public final class TAConfigHolder {
 	return listeners;
     }
 
+    @SuppressWarnings("deprecation")
     public static void loadConfigValues(Side side) {
 	TAConfig.gauntletVisDiscounts.setValue(gameplay.gauntletVisDiscounts, side);
 	TAConfig.gauntletCooldownModifiers.setValue(gameplay.gauntletCooldownModifiers, side);
@@ -972,6 +973,7 @@ public final class TAConfigHolder {
 	    loadConfigValues(Side.CLIENT);
     }
 
+    @SuppressWarnings("deprecation")
     public static void preInit() {
 	TAConfig.gauntletVisDiscounts = TAConfigManager
 		.addOption(new ConfigOptionDoubleList(false, gameplay.gauntletVisDiscounts));

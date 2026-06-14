@@ -33,11 +33,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
-import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import thecodex6824.thaumicaugmentation.api.entity.DamageSourceImpetus;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.PacketParticleEffect.ParticleEffect;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
 public final class ImpetusAPI {
 
@@ -108,9 +105,7 @@ public final class ImpetusAPI {
     }
     
     public static void createImpetusParticles(World world, Vec3d origin, Vec3d dest) {
-        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                origin.x, origin.y, origin.z, dest.x, dest.y, dest.z, 0.04F), 
-                new TargetPoint(world.provider.getDimension(), dest.x, dest.y, dest.z, 64.0F));
+	TAInternals.sendVoidStreaksEffect(world, origin, dest, 0.04);
     }
     
     public static boolean drainEnergyIntoStorage(World world, IImpetusStorage src, IImpetusStorage dest) {
@@ -123,9 +118,7 @@ public final class ImpetusAPI {
         if (extracted > 0) {
             dest.receiveEnergy(extracted, false);
             if (effectOrigin != null && effectDest != null) {
-                TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                        effectOrigin.x, effectOrigin.y, effectOrigin.z, effectDest.x, effectDest.y, effectDest.z, 0.04F), 
-                        new TargetPoint(world.provider.getDimension(), effectDest.x, effectDest.y, effectDest.z, 64.0F));
+        	TAInternals.sendVoidStreaksEffect(world, effectOrigin, effectDest, 0.04);
             }
             return true;
         }
@@ -170,9 +163,7 @@ public final class ImpetusAPI {
                                 if (extracted > 0) {
                                     dest.receiveEnergy(extracted, false);
                                     if (effectDest != null) {
-                                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                                                x + 0.5, y + 0.5, z + 0.5, effectDest.x, effectDest.y, effectDest.z, 0.04F), 
-                                                new TargetPoint(world.provider.getDimension(), effectDest.x, effectDest.y, effectDest.z, 64.0F));
+                                	TAInternals.sendVoidStreaksEffect(world, new Vec3d(x + 0.5, y + 0.5, z + 0.5), effectDest, 0.04);
                                     }
                                     receivedEnergy = true;
                                 }
@@ -194,9 +185,7 @@ public final class ImpetusAPI {
                 if (extracted > 0) {
                     dest.receiveEnergy(extracted, false);
                     if (effectDest != null) {
-                        TANetwork.INSTANCE.sendToAllTracking(new PacketParticleEffect(ParticleEffect.VOID_STREAKS, 
-                                entity.posX, entity.posY, entity.posZ, effectDest.x, effectDest.y, effectDest.z, 0.04F), 
-                                new TargetPoint(world.provider.getDimension(), effectDest.x, effectDest.y, effectDest.z, 64.0F));
+                	TAInternals.sendVoidStreaksEffect(world, entity.getPositionVector(), effectDest, 0.04);
                     }
                     receivedEnergy = true;
                 }

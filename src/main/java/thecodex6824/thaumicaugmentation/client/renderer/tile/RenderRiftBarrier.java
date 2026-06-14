@@ -22,9 +22,9 @@ package thecodex6824.thaumicaugmentation.client.renderer.tile;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraftforge.client.model.animation.FastTESR;
+import thecodex6824.thaumicaugmentation.api.util.ShaderType;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
-import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 public class RenderRiftBarrier extends FastTESR<TileRiftBarrier> {
     

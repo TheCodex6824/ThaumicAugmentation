@@ -61,6 +61,7 @@ import thecodex6824.thaumicaugmentation.api.TAItems;
 import thecodex6824.thaumicaugmentation.api.ThaumicAugmentationAPI;
 import thecodex6824.thaumicaugmentation.api.block.property.IHorizontallyDirectionalBlock;
 import thecodex6824.thaumicaugmentation.api.util.FluxRiftReconstructor;
+import thecodex6824.thaumicaugmentation.api.util.ShaderType;
 import thecodex6824.thaumicaugmentation.client.fx.FXArcCustom;
 import thecodex6824.thaumicaugmentation.client.fx.FXGenericP2ECustomSpeed;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
@@ -70,7 +71,6 @@ import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
 import thecodex6824.thaumicaugmentation.common.tile.TileRiftBarrier;
 import thecodex6824.thaumicaugmentation.common.tile.TileStarfieldGlass;
 import thecodex6824.thaumicaugmentation.common.util.ITARenderHelper;
-import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 import javax.annotation.Nullable;
 import java.nio.FloatBuffer;

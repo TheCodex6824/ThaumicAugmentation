@@ -33,6 +33,7 @@ public final class CardHelper {
     
     private CardHelper() {}
     
+    @SuppressWarnings("deprecation")
     private static void updateBlockList() {
         BLOCKED = ImmutableSet.copyOf(TAConfig.deniedCategories.getValue());
     }

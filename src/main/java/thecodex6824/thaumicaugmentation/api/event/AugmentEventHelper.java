@@ -21,7 +21,6 @@
 package thecodex6824.thaumicaugmentation.api.event;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
@@ -32,10 +31,9 @@ import thecodex6824.thaumicaugmentation.api.augment.CapabilityAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugment;
 import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.augment.armor.IArmorAugment;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.api.util.DamageWrapper;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
-import thecodex6824.thaumicaugmentation.common.network.PacketAugmentableItemSync;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 /**
  * Utility class for firing augment-related events.
@@ -211,11 +209,7 @@ public final class AugmentEventHelper {
             }
             
             if (sync) {
-                PacketAugmentableItemSync syncPacket = new PacketAugmentableItemSync(entity.getEntityId(), index, cap.getSyncNBT());
-                if (entity instanceof EntityPlayerMP)
-                    TANetwork.INSTANCE.sendTo(syncPacket, (EntityPlayerMP) entity);
-              
-                TANetwork.INSTANCE.sendToAllTracking(syncPacket, entity);
+        	TAInternals.syncAugmentableItem(entity, index, cap);
             }
         }
     }

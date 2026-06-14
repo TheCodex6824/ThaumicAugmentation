@@ -68,6 +68,11 @@ public final class TAConfig {
     public static ConfigOptionBoolean disableExpensiveWardFeatures;
 
     public static ConfigOptionBoolean reducedEffects;
+    /**
+     * Thaumcraft Fix now has an optimized flux rift renderer that far surpasses the one in this mod.
+     * Please use that instead. This will be deleted in the next major release.
+     */
+    @Deprecated
     public static ConfigOptionBoolean optimizedFluxRiftRenderer;
     public static ConfigOptionBoolean enableBoosterKeybind;
     public static ConfigOptionBoolean disableShaders;
@@ -88,7 +93,20 @@ public final class TAConfig {
     public static ConfigOptionInt fractureLocatorUpdateInterval;
     public static ConfigOptionBoolean fracturesAlwaysTeleport;
     
+    /**
+     * Disabling the coremod will be removed in the next major release.
+     * Many things that required a coremod in this mod will be moved to Thaumcraft Fix,
+     * and many features have no chance of working properly without the coremod.
+     */
+    @Deprecated
     public static ConfigOptionBoolean disableCoremod;
+    /**
+     * Disabling individual transformers will be removed in the next major release.
+     * The proper functioning of the mod can't be guaranteed when this is used,
+     * and hopefully with the cleanup of the coremod and (hopefully) moving to mixins
+     * in the future this will not be needed.
+     */
+    @Deprecated
     public static ConfigOptionStringList disabledTransformers;
     
     public static ConfigOptionBoolean gauntletCastAnimation;
@@ -119,6 +137,11 @@ public final class TAConfig {
     
     public static ConfigOptionFloat primalCutterDamage;
     
+    /**
+     * Starting with the next major release, Thaumcraft Fix's API will be used
+     * instead of this config option.
+     */
+    @Deprecated
     public static ConfigOptionStringList deniedCategories;
     
     public static ConfigOptionBoolean generateSpires;

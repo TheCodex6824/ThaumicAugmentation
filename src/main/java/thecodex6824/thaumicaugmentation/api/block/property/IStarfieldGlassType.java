@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
-import thecodex6824.thaumicaugmentation.common.util.ShaderType;
+import thecodex6824.thaumicaugmentation.api.util.ShaderType;
 
 public interface IStarfieldGlassType {
 

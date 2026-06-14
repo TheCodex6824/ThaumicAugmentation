@@ -72,6 +72,7 @@ import thecodex6824.thaumicaugmentation.api.item.IImpetusLinker;
 import thecodex6824.thaumicaugmentation.api.item.IMorphicTool;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 import thecodex6824.thaumicaugmentation.api.util.RaytraceHelper;
+import thecodex6824.thaumicaugmentation.api.util.ShaderType;
 import thecodex6824.thaumicaugmentation.client.fx.FXImpulseBeam;
 import thecodex6824.thaumicaugmentation.client.renderer.texture.TATextures;
 import thecodex6824.thaumicaugmentation.client.shader.TAShaderManager;
@@ -81,7 +82,6 @@ import thecodex6824.thaumicaugmentation.common.block.trait.INoBlockOutline;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
 import thecodex6824.thaumicaugmentation.common.util.ISoundHandle;
 import thecodex6824.thaumicaugmentation.common.util.MorphicArmorHelper;
-import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Vector4d;

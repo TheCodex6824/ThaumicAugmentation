@@ -40,11 +40,11 @@ import thaumcraft.api.entities.IEldritchMob;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TABlocks;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.util.ShaderType;
 import thecodex6824.thaumicaugmentation.api.ward.storage.CapabilityWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorage;
 import thecodex6824.thaumicaugmentation.api.ward.storage.IWardStorageServer;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
-import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 public class TileObelisk extends TileEntity implements ITickable, IShaderRenderingCallback {
     

@@ -26,8 +26,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.TAConfig;
+import thecodex6824.thaumicaugmentation.api.util.ShaderType;
 import thecodex6824.thaumicaugmentation.common.util.IShaderRenderingCallback;
-import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 public class TileStarfieldGlass extends TileEntity implements IShaderRenderingCallback {
     

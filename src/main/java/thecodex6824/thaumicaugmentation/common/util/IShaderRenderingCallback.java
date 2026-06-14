@@ -20,6 +20,8 @@
 
 package thecodex6824.thaumicaugmentation.common.util;
 
+import thecodex6824.thaumicaugmentation.api.util.ShaderType;
+
 @FunctionalInterface
 public interface IShaderRenderingCallback {
 

@@ -20,6 +20,16 @@
 
 package thecodex6824.thaumicaugmentation.common.item;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -88,15 +98,6 @@ import thecodex6824.thaumicaugmentation.common.capability.provider.SimpleCapabil
 import thecodex6824.thaumicaugmentation.common.item.prefab.ItemTABase;
 import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 import thecodex6824.thaumicaugmentation.common.util.ItemHelper;
-
-import javax.annotation.Nullable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, IDyeableItem, ITieredCaster, IWarpingGear {
 
@@ -479,6 +480,7 @@ public class ItemTieredCasterGauntlet extends ItemTABase implements IArchitect, 
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack caster = player.getHeldItem(hand);
         if (isStoringFocus(caster) && !isCasterOnCooldown(player)) {

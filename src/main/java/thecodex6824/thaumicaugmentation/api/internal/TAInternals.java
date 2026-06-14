@@ -22,8 +22,16 @@ package thecodex6824.thaumicaugmentation.api.internal;
 
 import java.util.Collection;
 
+import org.apache.logging.log4j.Logger;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import thaumcraft.api.casters.FocusPackage;
+import thecodex6824.thaumicaugmentation.api.augment.IAugmentableItem;
 import thecodex6824.thaumicaugmentation.api.impetus.node.IImpetusNode;
 import thecodex6824.thaumicaugmentation.api.util.DimensionalBlockPos;
 
@@ -71,6 +79,31 @@ public final class TAInternals {
     
     public static void updateImpetusNode(IImpetusNode node, DimensionalBlockPos connection, boolean output, boolean remove) {
         provider.updateImpetusNode(node, connection, output, remove);
+    }
+    
+    public static Logger getModLogger() {
+	return provider.getModLogger();
+    }
+    
+    public static void sendWispZap(Entity source, Entity target, int color) {
+	provider.sendWispZap(source, target, color);
+    }
+    
+    public static void syncAugmentableItem(Entity holder, int index, IAugmentableItem item) {
+	provider.syncAugmentableItem(holder, index, item);
+    }
+    
+    public static void sendVoidStreaksEffect(World world, Vec3d source, Vec3d target, double scale) {
+	provider.sendVoidStreaksEffect(world, source, target, scale);
+    }
+    
+    /**
+     * The only purpose of this is to break a dependency between the API and the main mod,
+     * it will also be deleted with the API method in the next major release.
+     */
+    @Deprecated
+    public static void replaceAndFixFoci(FocusPackage fPackage, EntityLivingBase caster) {
+	provider.replaceAndFixFoci(fPackage, caster);
     }
     
 }

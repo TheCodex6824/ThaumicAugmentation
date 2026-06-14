@@ -28,7 +28,6 @@ import java.util.function.Consumer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
 import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 
@@ -54,20 +53,20 @@ public final class CasterAugmentBuilder {
     public static final IBuilderCasterStrengthProvider NULL_STRENGTH = new IBuilderCasterStrengthProvider() {
         @Override
         public double calculateStrength(ICustomCasterAugment augment, FocusWrapper focus, Entity user) {
-            ThaumicAugmentation.getLogger().warn("A null strength provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
+            TAInternals.getModLogger().warn("A null strength provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
             return 1.0;
         }
         
         @Override
         public int calculateTintColor(ICustomCasterAugment augment) {
-            ThaumicAugmentation.getLogger().warn("A null strength provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
+            TAInternals.getModLogger().warn("A null strength provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
             return 0xFFFFFFFF;
         }
     };
     public static final IBuilderCasterEffectProvider NULL_EFFECT = new IBuilderCasterEffectProvider() {
         @Override
         public void apply(ICustomCasterAugment augment, Entity caster, ItemStack casterStack, FocusWrapper focus, double strength) {
-            ThaumicAugmentation.getLogger().warn("A null effect provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
+            TAInternals.getModLogger().warn("A null effect provider was invoked! This is probably a bug.\n{}", Arrays.toString(Thread.currentThread().getStackTrace()));
         }
     };
     

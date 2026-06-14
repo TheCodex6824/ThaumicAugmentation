@@ -27,14 +27,12 @@ import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.SoundCategory;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.common.lib.SoundsTC;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 import thecodex6824.thaumicaugmentation.api.util.QuadConsumer;
 import thecodex6824.thaumicaugmentation.common.entity.EntityPrimalWisp;
-import thecodex6824.thaumicaugmentation.common.network.PacketWispZap;
-import thecodex6824.thaumicaugmentation.common.network.TANetwork;
 
 public final class PrimalWispAttackRegistry {
 
@@ -61,11 +59,7 @@ public final class PrimalWispAttackRegistry {
         else
             source.getEntityWorld().playSound(null, source.getPosition(), SoundsTC.zap, SoundCategory.PLAYERS, 1.0F, 1.1F);
         
-        PacketWispZap packet = new PacketWispZap(source.getEntityId(), target.getEntityId(), color);
-        if (source instanceof EntityPlayerMP)
-            TANetwork.INSTANCE.sendTo(packet, (EntityPlayerMP) source);
-        
-        TANetwork.INSTANCE.sendToAllTracking(packet, source);
+        TAInternals.sendWispZap(source, target, color);
     }
     
 }

@@ -28,9 +28,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.animation.FastTESR;
+import thecodex6824.thaumicaugmentation.api.util.ShaderType;
 import thecodex6824.thaumicaugmentation.client.event.RenderEventHandler;
 import thecodex6824.thaumicaugmentation.common.tile.TileObelisk;
-import thecodex6824.thaumicaugmentation.common.util.ShaderType;
 
 public class RenderObelisk extends FastTESR<TileObelisk> {
     

@@ -27,9 +27,9 @@ import java.util.HashSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.Constants.NBT;
-import thecodex6824.thaumicaugmentation.ThaumicAugmentation;
+import net.minecraftforge.common.util.INBTSerializable;
+import thecodex6824.thaumicaugmentation.api.internal.TAInternals;
 
 /**
  * Default implementation for {@link IFractureLocations}.
@@ -87,7 +87,7 @@ public class FractureLocations implements IFractureLocations, INBTSerializable<N
                 if (coord.length == 3)
                     positions.add(new BlockPos(coord[0], coord[1], coord[2]));
                 else {
-                    ThaumicAugmentation.getLogger().warn("A CapabilityFractureLocation instance contained invalid position data!");
+                    TAInternals.getModLogger().warn("A CapabilityFractureLocation instance contained invalid position data!");
                     break;
                 }
             }

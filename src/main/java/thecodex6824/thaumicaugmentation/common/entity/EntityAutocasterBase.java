@@ -20,8 +20,16 @@
 
 package thecodex6824.thaumicaugmentation.common.entity;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
+
 import com.google.common.base.Predicates;
 import com.google.common.math.DoubleMath;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -58,12 +66,6 @@ import thecodex6824.thaumicaugmentation.api.event.CastEvent;
 import thecodex6824.thaumicaugmentation.api.util.FocusUtils;
 import thecodex6824.thaumicaugmentation.api.util.FocusWrapper;
 import thecodex6824.thaumicaugmentation.common.entity.ai.EntityLookHelperUnlimitedPitch;
-
-import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
 
 public abstract class EntityAutocasterBase extends EntityCreature {
 
@@ -173,6 +175,7 @@ public abstract class EntityAutocasterBase extends EntityCreature {
         return cachedMaxDistanceSquared;
     }
     
+    @SuppressWarnings("deprecation")
     protected void attackEntityWithFocus() {
         ItemStack held = getHeldItemMainhand();
         if (held != null && held.getItem() instanceof ItemFocus) {
