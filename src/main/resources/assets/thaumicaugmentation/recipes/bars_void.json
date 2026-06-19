@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "type": "forge:ore_dict",
+      "ore": "ingotVoid"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:bars",
+    "data": 3,
+    "count": 16
+  }
+}

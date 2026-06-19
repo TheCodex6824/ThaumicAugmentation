@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "type": "forge:ore_dict",
+      "ore": "ingotThaumium"
+    }
+  },
+  "result": {
+    "item": "thaumicaugmentation:bars",
+    "data": 2,
+    "count": 16
+  }
+}

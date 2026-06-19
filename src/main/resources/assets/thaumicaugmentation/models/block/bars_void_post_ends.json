@@ -1,0 +1,26 @@
+{
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"textures": {
+		"edge": "thaumicaugmentation:blocks/void_bars",
+		"particle": "thaumicaugmentation:blocks/void_bars"
+	},
+	"elements": [
+		{
+			"from": [7, 0.0001, 7],
+			"to": [9, 0.001, 9],
+			"faces": {
+				"up": {"uv": [9, 7, 11, 9], "texture": "#edge"},
+				"down": {"uv": [9, 6, 11, 8], "texture": "#edge"}
+			}
+		},
+		{
+			"from": [7, 15.99, 7],
+			"to": [9, 15.999, 9],
+			"faces": {
+				"up": {"uv": [5, 7, 7, 9], "texture": "#edge"},
+				"down": {"uv": [5, 7, 7, 9], "texture": "#edge"}
+			}
+		}
+	]
+}
